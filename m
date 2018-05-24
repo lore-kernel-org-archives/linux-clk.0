@@ -1,51 +1,251 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:50884 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935486AbeE2QiZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 May 2018 12:38:25 -0400
-Received: from mail-wr0-f171.google.com (mail-wr0-f171.google.com [209.85.128.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42E5620851
-        for <linux-clk@vger.kernel.org>; Tue, 29 May 2018 16:38:24 +0000 (UTC)
-Received: by mail-wr0-f171.google.com with SMTP id 94-v6so26608703wrf.5
-        for <linux-clk@vger.kernel.org>; Tue, 29 May 2018 09:38:24 -0700 (PDT)
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 24 May 2018 09:50:33 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v9 02/15] clk: mux: Split out register accessors for reuse
+Message-ID: <20180524165033.GB14924@minitux>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-3-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180529150455.17300-4-peron.clem@gmail.com>
-References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-4-peron.clem@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 May 2018 11:38:02 -0500
-Message-ID: <CABGGisywxqoFjhp6uOwZ-TG-Dv4dKLtZMnq90EcccurAvuwcVg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] Documentation: DT: add i.MX EPIT timer binding
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520347148-27852-3-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 29, 2018 at 10:04 AM, Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail=
-.com> wrote:
-> From: Cl=C3=A9ment Peron <clement.peron@devialet.com>
->
-> Add devicetree binding document for NXP's i.MX SoC specific
-> EPIT timer driver.
->
-> Signed-off-by: Cl=C3=A9ment Peron <clement.peron@devialet.com>
+On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
+
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> We want to reuse the logic in clk-mux.c for other clock drivers
+> that don't use readl as register accessors. Fortunately, there
+> really isn't much to the mux code besides the table indirection
+> and quirk flags if you assume any bit shifting and masking has
+> been done already. Pull that logic out into reusable functions
+> that operate on an optional table and some flags so that other
+> drivers can use the same logic.
+> 
+> [Sricharan: Rebased for mainline]
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+This should read as a log, where the first entry is Stephen stating that
+he acquired or wrote the code and can release it according to the
+license requirements. Then you state that you acquired it, changed it
+and are releasing it according to the license requirements.
+
+
+PS. Please expand your last name.
+
+Regards,
+Bjorn
+
 > ---
->  .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.tx=
-t
-
-Please send DT bindings to the correct list.
-
-Rob
+>  drivers/clk/clk-mux.c         | 74 +++++++++++++++++++++++++++----------------
+>  drivers/clk/nxp/clk-lpc32xx.c | 21 +++---------
+>  include/linux/clk-provider.h  |  6 ++++
+>  3 files changed, 57 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 39cabe1..28223fa 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -26,35 +26,25 @@
+>   * parent - parent is adjustable through clk_set_parent
+>   */
+>  
+> -static u8 clk_mux_get_parent(struct clk_hw *hw)
+> +unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
+> +				unsigned int *table,
+> +				unsigned long flags)
+>  {
+> -	struct clk_mux *mux = to_clk_mux(hw);
+>  	int num_parents = clk_hw_get_num_parents(hw);
+> -	u32 val;
+> -
+> -	/*
+> -	 * FIXME need a mux-specific flag to determine if val is bitwise or numeric
+> -	 * e.g. sys_clkin_ck's clksel field is 3 bits wide, but ranges from 0x1
+> -	 * to 0x7 (index starts at one)
+> -	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+> -	 * val = 0x4 really means "bit 2, index starts at bit 0"
+> -	 */
+> -	val = clk_readl(mux->reg) >> mux->shift;
+> -	val &= mux->mask;
+>  
+> -	if (mux->table) {
+> +	if (table) {
+>  		int i;
+>  
+>  		for (i = 0; i < num_parents; i++)
+> -			if (mux->table[i] == val)
+> +			if (table[i] == val)
+>  				return i;
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
+> +	if (val && (flags & CLK_MUX_INDEX_BIT))
+>  		val = ffs(val) - 1;
+>  
+> -	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
+> +	if (val && (flags & CLK_MUX_INDEX_ONE))
+>  		val--;
+>  
+>  	if (val >= num_parents)
+> @@ -62,23 +52,53 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+>  
+>  	return val;
+>  }
+> +EXPORT_SYMBOL_GPL(clk_mux_get_parent);
+>  
+> -static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+> +static u8 _clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>  	struct clk_mux *mux = to_clk_mux(hw);
+>  	u32 val;
+> -	unsigned long flags = 0;
+>  
+> -	if (mux->table) {
+> -		index = mux->table[index];
+> +	/*
+> +	 * FIXME need a mux-specific flag to determine if val is bitwise or
+> +	 * numeric e.g. sys_clkin_ck's clksel field is 3 bits wide,
+> +	 * but ranges from 0x1 to 0x7 (index starts at one)
+> +	 * OTOH, pmd_trace_clk_mux_ck uses a separate bit for each clock, so
+> +	 * val = 0x4 really means "bit 2, index starts at bit 0"
+> +	 */
+> +	val = clk_readl(mux->reg) >> mux->shift;
+> +	val &= mux->mask;
+> +
+> +	return clk_mux_get_parent(hw, val, mux->table, mux->flags);
+> +}
+> +
+> +unsigned int clk_mux_reindex(u8 index, unsigned int *table,
+> +			     unsigned long flags)
+> +{
+> +	unsigned int val = index;
+> +
+> +	if (table) {
+> +		val = table[val];
+>  	} else {
+> -		if (mux->flags & CLK_MUX_INDEX_BIT)
+> -			index = 1 << index;
+> +		if (flags & CLK_MUX_INDEX_BIT)
+> +			val = 1 << index;
+>  
+> -		if (mux->flags & CLK_MUX_INDEX_ONE)
+> -			index++;
+> +		if (flags & CLK_MUX_INDEX_ONE)
+> +			val++;
+>  	}
+>  
+> +	return val;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_mux_reindex);
+> +
+> +static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +	struct clk_mux *mux = to_clk_mux(hw);
+> +	u32 val;
+> +	unsigned long flags = 0;
+> +
+> +	index = clk_mux_reindex(index, mux->table, mux->flags);
+> +
+>  	if (mux->lock)
+>  		spin_lock_irqsave(mux->lock, flags);
+>  	else
+> @@ -102,14 +122,14 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>  }
+>  
+>  const struct clk_ops clk_mux_ops = {
+> -	.get_parent = clk_mux_get_parent,
+> +	.get_parent = _clk_mux_get_parent,
+>  	.set_parent = clk_mux_set_parent,
+>  	.determine_rate = __clk_mux_determine_rate,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_mux_ops);
+>  
+>  const struct clk_ops clk_mux_ro_ops = {
+> -	.get_parent = clk_mux_get_parent,
+> +	.get_parent = _clk_mux_get_parent,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
+>  
+> diff --git a/drivers/clk/nxp/clk-lpc32xx.c b/drivers/clk/nxp/clk-lpc32xx.c
+> index f5d815f..9b34150 100644
+> --- a/drivers/clk/nxp/clk-lpc32xx.c
+> +++ b/drivers/clk/nxp/clk-lpc32xx.c
+> @@ -999,29 +999,16 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	.set_rate = clk_divider_set_rate,
+>  };
+>  
+> -static u8 clk_mux_get_parent(struct clk_hw *hw)
+> +static u8 _clk_mux_get_parent(struct clk_hw *hw)
+>  {
+>  	struct lpc32xx_clk_mux *mux = to_lpc32xx_mux(hw);
+> -	u32 num_parents = clk_hw_get_num_parents(hw);
+>  	u32 val;
+>  
+>  	regmap_read(clk_regmap, mux->reg, &val);
+>  	val >>= mux->shift;
+>  	val &= mux->mask;
+>  
+> -	if (mux->table) {
+> -		u32 i;
+> -
+> -		for (i = 0; i < num_parents; i++)
+> -			if (mux->table[i] == val)
+> -				return i;
+> -		return -EINVAL;
+> -	}
+> -
+> -	if (val >= num_parents)
+> -		return -EINVAL;
+> -
+> -	return val;
+> +	return clk_mux_get_parent(hw, val, mux->table, 0);
+>  }
+>  
+>  static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+> @@ -1036,11 +1023,11 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>  }
+>  
+>  static const struct clk_ops lpc32xx_clk_mux_ro_ops = {
+> -	.get_parent = clk_mux_get_parent,
+> +	.get_parent = _clk_mux_get_parent,
+>  };
+>  
+>  static const struct clk_ops lpc32xx_clk_mux_ops = {
+> -	.get_parent = clk_mux_get_parent,
+> +	.get_parent = _clk_mux_get_parent,
+>  	.set_parent = clk_mux_set_parent,
+>  	.determine_rate = __clk_mux_determine_rate,
+>  };
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index f711be6..344ad92 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -488,6 +488,12 @@ struct clk_mux {
+>  extern const struct clk_ops clk_mux_ops;
+>  extern const struct clk_ops clk_mux_ro_ops;
+>  
+> +unsigned int clk_mux_get_parent(struct clk_hw *hw, unsigned int val,
+> +				unsigned int *table,
+> +				unsigned long flags);
+> +unsigned int clk_mux_reindex(u8 index, unsigned int *table,
+> +			     unsigned long flags);
+> +
+>  struct clk *clk_register_mux(struct device *dev, const char *name,
+>  		const char * const *parent_names, u8 num_parents,
+>  		unsigned long flags,
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
