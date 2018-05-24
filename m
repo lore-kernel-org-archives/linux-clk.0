@@ -1,103 +1,138 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
 	sboyd@kernel.org,
-	stefan@agner.ch,
-	adriana.reus@nxp.com,
-	rui.silva@linaro.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
-Date: Fri, 18 May 2018 09:01:05 +0800
-Message-Id: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v12 7/8] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Thu, 24 May 2018 10:50:17 +0300
+Message-Id: <1527148218-16540-8-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Correct enet clock gates as below:
+The CPU clock controller's primary PLL operates on a single VCO range,
+between 600MHz and 3GHz. However the CPUs do support OPPs with
+frequencies between 300MHz and 600MHz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
+So for frequencies above 600MHz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300MHz and 600MHz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
 
-Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
-IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
-
-Based on Andy Duan's patch from the NXP kernel tree.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 ---
- drivers/clk/imx/clk-imx7d.c             | 10 ++++++----
- include/dt-bindings/clock/imx7d-clock.h |  4 ++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 23d5090a..d4936b9 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -26,6 +26,8 @@ static u32 share_count_sai1;
- static u32 share_count_sai2;
- static u32 share_count_sai3;
- static u32 share_count_nand;
-+static u32 share_count_enet1;
-+static u32 share_count_enet2;
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 620fdc2..ff5c0a5 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -68,6 +68,8 @@ enum _pmux_input {
+ 	NUM_OF_PMUX_INPUTS
+ };
  
- static const struct clk_div_table test_div_table[] = {
- 	{ .val = 3, .div = 1, },
-@@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk", "mipi_dsi_post_div", base + 0x4650, 0);
- 	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk", "mipi_csi_post_div", base + 0x4640, 0);
- 	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk", "mipi_dphy_post_div", base + 0x4660, 0);
-+	clks[IMX7D_ENET1_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base + 0x4700, 0, &share_count_enet1);
-+	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div", base + 0x4700, 0, &share_count_enet1);
-+	clks[IMX7D_ENET2_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base + 0x4710, 0, &share_count_enet2);
-+	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div", base + 0x4710, 0, &share_count_enet2);
- 	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk", "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
- 	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk",  "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
- 	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk", "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
-@@ -812,10 +818,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk", "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
- 	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk",  "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
- 	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk", "spdif_post_div", base + 0x44d0, 0);
--	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk", "enet1_ref_post_div", base + 0x44e0, 0);
--	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base + 0x44f0, 0);
--	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500, 0);
--	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
- 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
- 	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
- 	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index b2325d3e2..0d67f53 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -168,7 +168,7 @@
- #define IMX7D_SPDIF_ROOT_SRC		155
- #define IMX7D_SPDIF_ROOT_CG		156
- #define IMX7D_SPDIF_ROOT_DIV		157
--#define IMX7D_ENET1_REF_ROOT_CLK	158
-+#define IMX7D_ENET1_IPG_ROOT_CLK        158
- #define IMX7D_ENET1_REF_ROOT_SRC	159
- #define IMX7D_ENET1_REF_ROOT_CG		160
- #define IMX7D_ENET1_REF_ROOT_DIV	161
-@@ -176,7 +176,7 @@
- #define IMX7D_ENET1_TIME_ROOT_SRC	163
- #define IMX7D_ENET1_TIME_ROOT_CG	164
- #define IMX7D_ENET1_TIME_ROOT_DIV	165
--#define IMX7D_ENET2_REF_ROOT_CLK	166
-+#define IMX7D_ENET2_IPG_ROOT_CLK        166
- #define IMX7D_ENET2_REF_ROOT_SRC	167
- #define IMX7D_ENET2_REF_ROOT_CG		168
- #define IMX7D_ENET2_REF_ROOT_DIV	169
++#define DIV_2_THRESHOLD		600000000
++
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+        [PLL_OFF_ALPHA_VAL] = 0x08,
+@@ -95,10 +97,11 @@ enum _pmux_input {
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4828,
++	.config_ctl_val = 0x200d4aa8,
+ 	.config_ctl_hi_val = 0x006,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -140,7 +143,7 @@ enum _pmux_input {
+ 	.vco_mask = 0x3 << 20,
+ 	.config_ctl_val = 0x4001051b,
+ 	.post_div_mask = 0x3 << 8,
+-	.post_div_val = 0x1,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -181,6 +184,7 @@ struct clk_cpu_8996_mux {
+ 	u8	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -226,6 +230,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
+ 	struct clk_hw *parent = cpuclk->pll;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
++
++		parent = cpuclk->pll_div_2;
++	}
++
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
+ 
+@@ -237,13 +248,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
+ 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -295,6 +312,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -315,6 +333,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
 -- 
-2.7.4
+1.9.1
