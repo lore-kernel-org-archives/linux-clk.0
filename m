@@ -1,53 +1,127 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 4/7] arm64: allwinner: h6: add node for R_PIO pin controller
-Date: Fri,  4 May 2018 02:38:44 +0800
-Message-Id: <20180503183847.11046-5-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+Date: Thu, 24 May 2018 10:28:41 +0100
+Message-Id: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 SoC has a R_PIO pin controller which controls PL and PM
-GPIO banks.
+This adds the Renesas R9A06G032 bare bone support.
 
-Add support for it.
+This currently only handles generic parts (gic, architected timer)
+and a UART.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index db9da343ba46..a18b78fb4850 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -183,5 +183,18 @@
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
+diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+new file mode 100644
+index 0000000..9534f1b
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032.dtsi
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
 +
-+		r_pio: pinctrl@7022000 {
-+			compatible = "allwinner,sun50i-h6-r-pinctrl";
-+			reg = <0x07022000 0x400>;
-+			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB1>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			#gpio-cells = <3>;
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++/ {
++	compatible = "renesas,r9a06g032";
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <0>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a7";
++			reg = <1>;
++			clocks = <&sysctrl R9A06G032_DIV_CA7>;
++		};
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&gic>;
++		ranges;
++
++		sysctrl: sysctrl@4000c000 {
++			compatible = "renesas,r9a06g032-sysctrl";
++			reg = <0x4000c000 0x1000>;
++			status = "okay";
++			#clock-cells = <1>;
++		};
++
++		uart0: serial@40060000 {
++			compatible = "snps,dw-apb-uart";
++			reg = <0x40060000 0x400>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++			reg-shift = <2>;
++			reg-io-width = <4>;
++			clocks = <&sysctrl R9A06G032_CLK_UART0>;
++			clock-names = "baudclk";
++			status = "disabled";
++		};
++
++		gic: gic@44101000 {
++			compatible = "arm,cortex-a7-gic", "arm,gic-400";
 +			interrupt-controller;
 +			#interrupt-cells = <3>;
++			reg = <0x44101000 0x1000>, /* Distributer */
++			      <0x44102000 0x2000>, /* CPU interface */
++			      <0x44104000 0x2000>, /* Virt interface control */
++			      <0x44106000 0x2000>; /* Virt CPU interface */
++			interrupts =
++				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
 +		};
- 	};
- };
++	};
++
++	timer {
++		compatible = "arm,cortex-a7-timer",
++			     "arm,armv7-timer";
++		interrupt-parent = <&gic>;
++		arm,cpu-registers-not-fw-configured;
++		always-on;
++		interrupts =
++			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
++			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++};
 -- 
-2.15.1
+2.7.4
