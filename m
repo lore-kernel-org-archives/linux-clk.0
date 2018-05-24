@@ -1,86 +1,156 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: kbuild test robot <lkp@intel.com>
-CC: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
-	"b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, "sboyd@kernel.org" <sboyd@kernel.org>, Stephen Boyd
-	<sboyd@codeaurora.org>
-Subject: RE: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
-Date: Fri, 25 May 2018 09:51:16 +0000
-Message-ID: 
- <AM0PR04MB4211BF66D1C5E025C264687080690@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1521602391-30356-4-git-send-email-aisheng.dong@nxp.com>
- <201803231452.YBWTInPr%fengguang.wu@intel.com>
-In-Reply-To: <201803231452.YBWTInPr%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 24 May 2018 10:39:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, andy.gross@linaro.org,
+	david.brown@linaro.org, rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
+Message-ID: <20180524173926.GC14924@minitux>
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: kbuild test robot [mailto:lkp@intel.com]
-> Sent: Friday, March 23, 2018 2:49 PM
-> To: A.s. Dong <aisheng.dong@nxp.com>
-> Cc: kbuild-all@01.org; linux-clk@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; hdegoede@redhat.com;
-> b.zolnierkie@samsung.com; linux@armlinux.org.uk; linux-
-> fbdev@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
-> sboyd@kernel.org; A.s. Dong <aisheng.dong@nxp.com>; Stephen Boyd
-> <sboyd@codeaurora.org>
-> Subject: Re: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
->=20
+On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
 
-[...]
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Krait CPUs have a handful of L2 cache controller registers that
+> live behind a cp15 based indirection register. First you program
+> the indirection register (l2cpselr) to point the L2 'window'
+> register (l2cpdr) at what you want to read/write.  Then you
+> read/write the 'window' register to do what you want. The
+> l2cpselr register is not banked per-cpu so we must lock around
+> accesses to it to prevent other CPUs from re-pointing l2cpdr
+> underneath us.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-> All errors (new ones prefixed by >>):
->=20
->    In file included from include/linux/cpufreq.h:14:0,
->                     from arch/powerpc/platforms/cell/cpufreq_spudemand.c:=
-23:
->    include/linux/clk.h:679:1: error: expected identifier or '(' before '{=
-' token
->     {
->     ^
-> >> include/linux/clk.h:677:32: error: 'devm_clk_bulk_get_all' declared
-> >> 'static' but never defined [-Werror=3Dunused-function]
->     static inline int __must_check devm_clk_bulk_get_all(struct device *d=
-ev,
->                                    ^~~~~~~~~~~~~~~~~~~~~
->    cc1: all warnings being treated as errors
->=20
-> vim +677 include/linux/clk.h
->=20
->    676
->  > 677	static inline int __must_check devm_clk_bulk_get_all(struct device
-> *dev,
->    678							     struct
-> clk_bulk_data **clks);
+This should have your signed-off-by here as well.
 
-Thanks for the reporting.
-Caused by the extra unneeded ';' at the end of the line.
-Will fix.
+Apart from that:
 
-Regards
-Dong Aisheng
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
->  > 679	{
->    680
->    681		return 0;
->    682	}
->    683
->=20
+Regards,
+Bjorn
+
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Ce=
-nter
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flist
-> s.01.org%2Fpipermail%2Fkbuild-
-> all&data=3D02%7C01%7Caisheng.dong%40nxp.com%7Ce9e35f96c61a4c46d1790
-> 8d5908a4d46%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6365738
-> 46071200287&sdata=3DyIWEjcpE2tyJP%2BmsMPqn%2F83TCsxw64J%2Ba5ue73
-> qGnN0%3D&reserved=3D0                   Intel Corporation
+>  arch/arm/common/Kconfig                   |  3 ++
+>  arch/arm/common/Makefile                  |  1 +
+>  arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+>  arch/arm/include/asm/krait-l2-accessors.h | 10 +++++++
+>  4 files changed, 62 insertions(+)
+>  create mode 100644 arch/arm/common/krait-l2-accessors.c
+>  create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+> 
+> diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+> index e5ad070..c8e1986 100644
+> --- a/arch/arm/common/Kconfig
+> +++ b/arch/arm/common/Kconfig
+> @@ -7,6 +7,9 @@ config DMABOUNCE
+>  	bool
+>  	select ZONE_DMA
+>  
+> +config KRAIT_L2_ACCESSORS
+> +	bool
+> +
+>  config SHARP_LOCOMO
+>  	bool
+>  
+> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+> index 70b4a14..eec6cd1 100644
+> --- a/arch/arm/common/Makefile
+> +++ b/arch/arm/common/Makefile
+> @@ -7,6 +7,7 @@ obj-y				+= firmware.o
+>  
+>  obj-$(CONFIG_SA1111)		+= sa1111.o
+>  obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+> +obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+>  obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+>  obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+>  obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+> diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+> new file mode 100644
+> index 0000000..9a97dda
+> --- /dev/null
+> +++ b/arch/arm/common/krait-l2-accessors.c
+> @@ -0,0 +1,48 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#include <linux/spinlock.h>
+> +#include <linux/export.h>
+> +
+> +#include <asm/barrier.h>
+> +#include <asm/krait-l2-accessors.h>
+> +
+> +static DEFINE_RAW_SPINLOCK(krait_l2_lock);
+> +
+> +void krait_set_l2_indirect_reg(u32 addr, u32 val)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&krait_l2_lock, flags);
+> +	/*
+> +	 * Select the L2 window by poking l2cpselr, then write to the window
+> +	 * via l2cpdr.
+> +	 */
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
+> +	isb();
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
+> +	isb();
+> +
+> +	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
+> +}
+> +EXPORT_SYMBOL(krait_set_l2_indirect_reg);
+> +
+> +u32 krait_get_l2_indirect_reg(u32 addr)
+> +{
+> +	u32 val;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&krait_l2_lock, flags);
+> +	/*
+> +	 * Select the L2 window by poking l2cpselr, then read from the window
+> +	 * via l2cpdr.
+> +	 */
+> +	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
+> +	isb();
+> +	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
+> +
+> +	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
+> +
+> +	return val;
+> +}
+> +EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+> diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+> new file mode 100644
+> index 0000000..dd7c474
+> --- /dev/null
+> +++ b/arch/arm/include/asm/krait-l2-accessors.h
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> +
+> +#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
+> +#define __ASMARM_KRAIT_L2_ACCESSORS_H
+> +
+> +extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
+> +extern u32 krait_get_l2_indirect_reg(u32 addr);
+> +
+> +#endif
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
