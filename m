@@ -1,130 +1,60 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFA0327.2080204@samsung.com>
-Date: Tue, 15 May 2018 06:44:07 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
-	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
-	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
-	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
-	Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
-	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
-	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
-	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions
- to a common place.
-In-reply-to: <20180514211610.26618-2-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
-	<CGME20180514211637epcas4p4017318fec5b9d7ace763d72e35216449@epcas4p4.samsung.com>
-	<20180514211610.26618-2-enric.balletbo@collabora.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 24 May 2018 09:01:14 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
+Message-ID: <20180524060114.GJ4249@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Enric,
+Configurations and Makefile for BD71837 regulator driver
 
-On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
-> Some rk3399 GRF (Generic Register Files) definitions can be used for
-> different drivers. Move these definitions to a common include so we
-> don't need to duplicate these definitions.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
->  include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
->  2 files changed, 28 insertions(+), 16 deletions(-)
->  create mode 100644 include/soc/rockchip/rk3399_grf.h
-> 
-> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
-> index 22b113363ffc..2fbbcbeb644f 100644
-> --- a/drivers/devfreq/event/rockchip-dfi.c
-> +++ b/drivers/devfreq/event/rockchip-dfi.c
-> @@ -26,6 +26,8 @@
->  #include <linux/list.h>
->  #include <linux/of.h>
->  
-> +#include <soc/rockchip/rk3399_grf.h>
-> +
->  #define RK3399_DMC_NUM_CH	2
->  
->  /* DDRMON_CTRL */
-> @@ -43,18 +45,6 @@
->  #define DDRMON_CH1_COUNT_NUM		0x3c
->  #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
->  
-> -/* pmu grf */
-> -#define PMUGRF_OS_REG2	0x308
-> -#define DDRTYPE_SHIFT	13
-> -#define DDRTYPE_MASK	7
-> -
-> -enum {
-> -	DDR3 = 3,
-> -	LPDDR3 = 6,
-> -	LPDDR4 = 7,
-> -	UNUSED = 0xFF
-> -};
-> -
->  struct dmc_usage {
->  	u32 access;
->  	u32 total;
-> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
->  	u32 ddr_type;
->  
->  	/* get ddr type */
-> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
-> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
-> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
-> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
-> +		    RK3399_PMUGRF_DDRTYPE_MASK;
->  
->  	/* clear DDRMON_CTRL setting */
->  	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
->  
->  	/* set ddr type to dfi */
-> -	if (ddr_type == LPDDR3)
-> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
->  		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
-> -	else if (ddr_type == LPDDR4)
-> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
->  		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
->  
->  	/* enable count, use software mode */
-> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
-> new file mode 100644
-> index 000000000000..0f94034e2e9a
-> --- /dev/null
-> +++ b/include/soc/rockchip/rk3399_grf.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Rockchip Generic Register Files definitions
-> + *
-> + * Copyright (c) 2018, Collabora Ltd.
-> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> + */
-> +
-> +#ifndef __SOC_RK3399_GRF_H
-> +#define __SOC_RK3399_GRF_H
-> +
-> +/* PMU GRF Registers */
-> +#define RK3399_PMUGRF_OS_REG2		0x308
-> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
-> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
-> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
-> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
-> +
-> +#endif
-> 
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/regulator/Kconfig  | 11 +++++++++++
+ drivers/regulator/Makefile |  1 +
+ 2 files changed, 12 insertions(+)
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 097f61784a7d..139f4b53fea0 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -180,6 +180,17 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
+ 
++config REGULATOR_BD71837
++	tristate "ROHM BD71837 Power Regulator"
++	depends on MFD_BD71837
++	help
++	  This driver supports voltage regulators on ROHM BD71837 PMIC.
++	  This will enable support for the software controllable buck
++	  and LDO regulators.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called bd71837-regulator.
++
+ config REGULATOR_BD9571MWV
+ 	tristate "ROHM BD9571MWV Regulators"
+ 	depends on MFD_BD9571MWV
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 590674fbecd7..1b4d8ec416c2 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
++obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.3
