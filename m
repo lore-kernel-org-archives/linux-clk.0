@@ -1,52 +1,73 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Wed, 30 May 2018 15:34:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
- the regulator tree
-Message-ID: <20180530143408.GN6920@sirena.org.uk>
-References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <E1fNysa-0006jU-41@debutante>
- <20180530111425.GD13528@localhost.localdomain>
- <20180530111714.GJ6920@sirena.org.uk>
- <20180530125828.GF13528@localhost.localdomain>
+Return-Path: <gilad@benyossef.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="N/GrjenRD+RJfyz+"
-In-Reply-To: <20180530125828.GF13528@localhost.localdomain>
+In-Reply-To: <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
+References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+ <1526387370-17142-4-git-send-email-gilad@benyossef.com> <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+ <20180516074333.i2672u435ymwffk3@verge.net.au> <CAOtvUMfFjokOLCg6aHNQESJ_q4Jiok3izrPtae5wR+cND=XL6g@mail.gmail.com>
+ <CAMuHMdVM55S7+PdnKusX-qkTxioc=0kQ6EGSbwv+kbLk5RCUYw@mail.gmail.com>
+ <CAOtvUMcf-fHduThORv3cbcN16wEm_Si27OjSjAmSc9g5eK4PJw@mail.gmail.com> <CAMuHMdX-t8WfjRKpZ7UxXBbBNojsn-8z7_BM9grmLJcf=9Ks2Q@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 24 May 2018 16:20:33 +0300
+Message-ID: <CAOtvUMdCSoxYjpyb+fD36EE5+4sV4CjrxwK94RQ7bNKE5rajmQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, May 22, 2018 at 10:48 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
+>
+> On Mon, May 21, 2018 at 3:43 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+>> On Thu, May 17, 2018 at 1:16 PM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>>> Indeed. From a quick glance, it looks like drivers/crypto/ccree/cc_driver.c
+>>> does not distinguish between the absence of the clock property, and an
+>>> actual error in getting the clock, and never considers any error a failure
+>>> (incl. -PROBE_DEFER).
+>>>
+>>> As of_clk_get() returns -ENOENT for both a missing clock property and a
+>>> missing clock, you should use (devm_)clk_get() instead, and distinguish
+>>> between NULL (no clock property) and IS_ERR() (actual failure -> abort).
+>>
+>> I was trying to do as you suggested but I didn't quite get what is the
+>> dev_id (2nd) parameter to devm_clk_get parameter is supposed to be.
+>
+> It's the (optional) name of the clock, helpful in case there is more than one.
+> In your case, NULL is fine.
+>
 
---N/GrjenRD+RJfyz+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have assumed as much and tried it, it did not work and so I assumed
+I am missing something and asked you.
+It turns out I was missing the fact I was using the wrong device tree
+file... :-(
 
-On Wed, May 30, 2018 at 03:58:28PM +0300, Matti Vaittinen wrote:
+So thanks, it works now :-)
 
-> Oh, right. Thanks! So MFD and clk portions should go through the other
-> trees then.
+Having said that, while using devm)clk_get() is a better approach, it
+does not seems to distinguish
+between no "clocks" and a failure to clock information - it returns
+ENOENT in both cases as well.
 
-That's what I'd expect, yes.
+Thanks,
+Gilad
 
---N/GrjenRD+RJfyz+
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOtl8ACgkQJNaLcl1U
-h9BTTwf/Ua0VXKUuBdaB373nBoZMUzMdsiRxJ0FhQZtMyeTsGbNvvxxkwCGnPHH3
-Hu4tMMwj9k0ELyfLAUVC9hNMK2fjTFi436zLeum/GRVs90bowdUVw0zABNsyKv8f
-Tm4emO6OL2vi+2PlzAbkoeBksRg81+FvGSYw4pPX826F6pdFTODkWpAo7OZtRtEE
-ZKV2M5xvz4+linOokhJgfkMfiMjUTdbVL2lpgYx3uzMu3gekhIolPoVGDgTB1kjq
-Lp4XucUP0mqp7ICK6Okm6CSkPsU7t2If4ITLvn0OtMtbN7MAgJFzsPknxWEvZuQ4
-zNmnLQcBnnGVSW8i4F32gCzwlzjlSA==
-=m4ln
------END PGP SIGNATURE-----
-
---N/GrjenRD+RJfyz+--
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
