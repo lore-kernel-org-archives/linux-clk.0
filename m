@@ -1,54 +1,69 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Thu, 24 May 2018 13:53:35 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Cc: Stefan Agner <stefan@agner.ch>, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
- richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza
- Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180524135335.6aa0b7a4@bbrezillon>
-In-Reply-To: <CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
-References: <cover.1526990589.git.stefan@agner.ch>
-	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-	<CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
-	<d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
-	<CAGefG56khQ2835c2QCteit7FuL_yG+APpj6-4vRRPxztFtkAMA@mail.gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 24 May 2018 08:58:39 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH 5/9] clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+Message-ID: <20180524055838.GF4249@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Benjamin,
+Document devicetree bindings for ROHM BD71837 PMIC clock output.
 
-On Thu, 24 May 2018 13:30:14 +0200
-Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
 
-> Hi Stefan,
-> 
-> It seems to me that a probe similar to what the BootROM does shouldn't
-> be awfully complicated to implement - just cycle through the switch
-> cases in case of an ECC error. But I guess that's more of an idea for
-> further improvements rather than a comment to the patch set under
-> review.
-
-Nope, not really an option, because you're not guaranteed that the NAND
-will be used as a boot media, and the first page or first set of pages
-might just be erased.
-
-> 
-> However, I think that allowing for an override of the oobsize
-> inference would be a good idea before merging, no? This could just be
-> a trivial #ifdef (at least temporarily). If you agree but don't feel
-> like doing it yourself, I'd be happy to pitch in. Let me know.
-
-That's why we have nand-ecc-xxx properties in the DT.
-
-Regards,
-
-Boris
+diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+new file mode 100644
+index 000000000000..9759fd145781
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+@@ -0,0 +1,37 @@
++ROHM BD71837 Power Management Integrated Circuit clock bindings
++
++BD71837 clock node should be sub node of the BD71837 MFD node.
++See BD71837 MFD bindings at
++Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++
++Required properties:
++- compatible		: Should be "rohm,bd71837-clk"
++- clock-frequency	: Should be 32768
++- #clock-cells		: Should be 0
++
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
++  Name "bd71837-32k-out" is used if this is not given.
++
++
++Example:
++
++pmic: bd71837@4b {
++	compatible = "rohm,bd71837";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x4b>;
++	interrupt-parent = <&gpio1>;
++	interrupts = <29 GPIO_ACTIVE_LOW>;
++	interrupt-names = "irq";
++	#interrupt-cells = <1>;
++	interrupt-controller;
++
++	/* Clock node */
++	clk: bd71837-32k-out {
++		compatible = "rohm,bd71837-clk";
++		#clock-cells = <0>;
++		clock-frequency  = <32768>;
++		clock-output-names = "bd71837-32k-out";
++	};
++};
+-- 
+2.14.3
