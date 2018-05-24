@@ -1,55 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:45432 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755175AbeEaNuD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 May 2018 09:50:03 -0400
-Date: Thu, 31 May 2018 06:50:00 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
-Subject: Re: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for
- MCAN on dra76x
-Message-ID: <20180531135000.GL5705@atomide.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-5-faiz_abbas@ti.com>
- <20180530145726.GD5705@atomide.com>
- <0b627ab6-59f1-4a4f-42d2-5d6846adfe0b@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <0b627ab6-59f1-4a4f-42d2-5d6846adfe0b@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org
+Subject: [PATCH v12 5/8] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+Date: Thu, 24 May 2018 10:50:15 +0300
+Message-Id: <1527148218-16540-6-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180531 10:17]:
-> Hi,
-> 
-> On Wednesday 30 May 2018 08:27 PM, Tony Lindgren wrote:
-> > * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
-> >> The dra76x MCAN generic interconnect module has a its own
-> >> format for the bits in the control registers.
-> ...
-> >>  static int sysc_init_pdata(struct sysc *ddata)
-> >>  {
-> >>  	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-> >> @@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
-> >>  	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
-> >>  	{ .compatible = "ti,sysc-usb-host-fs",
-> >>  	  .data = &sysc_omap4_usb_host_fs, },
-> >> +	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
-> >>  	{  },
-> >>  };
-> > 
-> > Looks good to me. And presumably you checked that no other dra7 modules
-> > use sysconfig register bit layout like this?
-> > 
-> 
-> As far as I could see, Yes.
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
-OK thanks for checking it.
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
 
-Regards,
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
 
-Tony
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 0000000..8458783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
+-- 
+1.9.1
