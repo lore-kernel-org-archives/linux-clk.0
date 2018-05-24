@@ -1,158 +1,124 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
-References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
- <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
-Message-ID: <152574189516.138124.5711696582182066656@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v7 1/3] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Mon, 07 May 2018 18:11:35 -0700
+Return-Path: <ilialin@codeaurora.org>
+From: Ilia Lin <ilialin@codeaurora.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	mark.rutland@arm.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	will.deacon@arm.com
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	vireshk@kernel.org,
+	ilialin@codeaurora.org,
+	Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v12 6/8] clk: qcom: cpu-8996: Add support to switch to alternate PLL
+Date: Thu, 24 May 2018 10:50:16 +0300
+Message-Id: <1527148218-16540-7-git-send-email-ilialin@codeaurora.org>
+In-Reply-To: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
+References: <1527148218-16540-1-git-send-email-ilialin@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-05-07 03:50:18)
-> For some root clock generators, there could be child branches which are
-> controlled by an entity other than application processor subsystem. For
-> such RCGs, as per application processor subsystem clock driver, all of
-> its downstream clocks are disabled and RCG is in disabled state but in
-> reality downstream clocks can be left enabled before.
-> =
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-> So in this scenario, when RCG is disabled as per clock driver's point of
-> view and when rate scaling request comes before downstream clock enable
-> request, then RCG fails to update its configuration because in reality
-> RCG is on and it expects its new source to already be in enable state but
-> in reality new source is off. In order to avoid having the RCG to go into
-> an invalid state, add support to update the CFG, M, N and D registers
-> during set_rate() without configuration update and defer the actual RCG
-> configuration update to be done during clk_enable() as at this point of
-> time, both its new parent and safe source will be already enabled and RCG
-> can safely switch to new parent.
-> =
+Each of the CPU clusters on msm8996 are powered via a primary
+PLL and a secondary PLL. The primary PLL is what drives the
+CPU clk, except for times when we are reprogramming the PLL
+itself, when we temporarily switch to an alternate PLL.
+Use clock rate change notifiers to support this.
 
-> During clk_disable() request, configure it to safe source as both its
-> parents, safe source and current parent will be enabled and RCG can
-> safely execute a switch.
-> =
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
-
-Applied to clk-next. I squashed some style fixups and logic
-simplifications in too.
-
-
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 6827ab32c82c..e63911cbfef9 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -797,7 +797,6 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
- 	const char *name =3D clk_hw_get_name(hw);
- 	int ret, count;
- =
-
--	/* Force enable bit */
- 	ret =3D regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
- 				 CMD_ROOT_EN, CMD_ROOT_EN);
- 	if (ret)
-@@ -808,12 +807,10 @@ static int clk_rcg2_set_force_enable(struct clk_hw *h=
-w)
- 		if (clk_rcg2_is_enabled(hw))
- 			return 0;
- =
-
--		/* Delay for 1usec and retry polling the status bit */
- 		udelay(1);
- 	}
--	if (!count)
--		pr_err("%s: RCG did not turn on\n", name);
- =
-
-+	pr_err("%s: RCG did not turn on\n", name);
- 	return -ETIMEDOUT;
- }
- =
-
-@@ -821,7 +818,6 @@ static int clk_rcg2_clear_force_enable(struct clk_hw *h=
-w)
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index d92cad93..620fdc2 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -52,6 +52,7 @@
+  * detect voltage droops.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -178,10 +179,14 @@ struct clk_cpu_8996_mux {
+ 	u32	reg;
+ 	u8	shift;
+ 	u8	width;
++	struct notifier_block nb;
+ 	struct clk_hw	*pll;
+ 	struct clk_regmap clkr;
+ };
+ 
++#define to_clk_cpu_8996_mux_nb(_nb) \
++	container_of(_nb, struct clk_cpu_8996_mux, nb)
++
+ static inline
+ struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
  {
- 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
- =
-
--	/* Clear force enable bit */
- 	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
- 					CMD_ROOT_EN, 0);
+@@ -227,6 +232,26 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
  }
-@@ -832,9 +828,6 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, c=
-onst struct freq_tbl *f)
- 	struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
- 	int ret;
- =
-
--	if (!f)
--		return -EINVAL;
--
- 	ret =3D clk_rcg2_set_force_enable(hw);
- 	if (ret)
- 		return ret;
-@@ -858,10 +851,9 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw,=
- unsigned long rate,
- =
-
- 	/*
- 	 * In case clock is disabled, update the CFG, M, N and D registers
--	 * and do not hit the update bit of CMD register.
-+	 * and don't hit the update bit of CMD register.
- 	 */
- 	if (!__clk_is_enabled(hw->clk))
--		/* Skip the configuration update */
- 		return __clk_rcg2_configure(rcg, f);
- =
-
- 	return clk_rcg2_shared_force_enable_clear(hw, f);
-@@ -879,8 +871,8 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
- 	int ret;
- =
-
- 	/*
--	 * Set the update bit only.
--	 * As required configuration has been already written in set_rate() op.
-+	 * Set the update bit because required configuration has already
-+	 * been written in set_rate() op.
- 	 */
- 	ret =3D clk_rcg2_set_force_enable(hw);
- 	if (ret)
-@@ -899,8 +891,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	u32 cfg;
- =
-
- 	/*
--	 * Store current configuration as switching to safe source
--	 * would clear the SRC and DIV of CFG register.
-+	 * Store current configuration as switching to safe source would clear
-+	 * the SRC and DIV of CFG register.
- 	 */
- 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
- =
-
-@@ -915,7 +907,7 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	clk_rcg2_set_force_enable(hw);
- =
-
- 	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
--				rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
-+		     rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
- =
-
- 	update_config(rcg);
-=20
+ 
++int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
++			void *data)
++{
++	int ret;
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
++		break;
++	case POST_RATE_CHANGE:
++		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		break;
++	default:
++		ret = 0;
++		break;
++	}
++
++	return notifier_from_errno(ret);
++};
+ const struct clk_ops clk_cpu_8996_mux_ops = {
+ 	.set_parent = clk_cpu_8996_mux_set_parent,
+ 	.get_parent = clk_cpu_8996_mux_get_parent,
+@@ -270,6 +295,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -289,6 +315,7 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
+ 		.parent_names = (const char *[]){
+@@ -347,6 +374,12 @@ struct clk_regmap *clks[] = {
+ 	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
+ 	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
+ 
++	ret = clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
++	if (ret)
++		return ret;
++
++	ret = clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
++
+ 	return ret;
+ }
+ 
+-- 
+1.9.1
