@@ -1,74 +1,82 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
-	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v6 02/11] firmware: xilinx: Add Zynqmp firmware driver
-Date: Mon, 14 May 2018 19:06:19 +0000
-Message-ID: <SN1PR02MB37580153B7BD4C229AA0AAEFB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-3-git-send-email-jollys@xilinx.com>
- <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
-In-Reply-To: <9cbfb3cd-daa3-f145-c6f2-f15f61d1bea0@arm.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Thu, 24 May 2018 10:28:42 +0100
+Message-Id: <1527154169-32380-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
-cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUaHVyc2RheSwg
-TWF5IDEwLCAyMDE4IDc6MDUgQU0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
-PjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gbWluZ29Aa2VybmVsLm9yZzsgZ3JlZ2to
-QGxpbnV4Zm91bmRhdGlvbi5vcmc7IG1hdHRAY29kZWJsdWVwcmludC5jby51azsNCj4gaGthbGx3
-ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92
-QGdtYWlsLmNvbTsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEu
-b3JnOyBtaWNoYWwuc2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJr
-LnJ1dGxhbmRAYXJtLmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogU3VkZWVw
-IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbngu
-Y29tPjsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgSm9sbHkg
-U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMDIvMTFd
-IGZpcm13YXJlOiB4aWxpbng6IEFkZCBaeW5xbXAgZmlybXdhcmUgZHJpdmVyDQo+IA0KPiANCj4g
-DQo+IE9uIDEwLzA0LzE4IDIwOjM4LCBKb2xseSBTaGFoIHdyb3RlOg0KPiA+IEZyb206IFJhamFu
-IFZhamEgPHJhamFudkB4aWxpbnguY29tPg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBpcyBhZGRpbmcg
-Y29tbXVuaWNhdGlvbiBsYXllciB3aXRoIGZpcm13YXJlLg0KPiA+IEZpcm13YXJlIGRyaXZlciBw
-cm92aWRlcyBhbiBpbnRlcmZhY2UgdG8gZmlybXdhcmUgQVBJcy4NCj4gPiBJbnRlcmZhY2UgQVBJ
-cyBjYW4gYmUgdXNlZCBieSBhbnkgZHJpdmVyIHRvIGNvbW11bmljYXRlIHRvDQo+ID4gUE1VRlco
-UGxhdGZvcm0gTWFuYWdlbWVudCBVbml0KS4gQWxsIHJlcXVlc3RzIGdvIHRocm91Z2ggQVRGLg0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmFqYW4gVmFqYSA8cmFqYW52QHhpbGlueC5jb20+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogSm9sbHkgU2hhaCA8am9sbHlzQHhpbGlueC5jb20+DQo+ID4gLS0t
-DQo+IA0KPiBbLi4uXQ0KPiANCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBnZXRfc2V0X2NvbmR1
-aXRfbWV0aG9kKCkgLSBDaG9vc2UgU01DIG9yIEhWQyBiYXNlZCBjb21tdW5pY2F0aW9uDQo+ID4g
-KyAqIEBucDoJCVBvaW50ZXIgdG8gdGhlIGRldmljZV9ub2RlIHN0cnVjdHVyZQ0KPiA+ICsgKg0K
-PiA+ICsgKiBVc2UgU01DIG9yIEhWQy1iYXNlZCBmdW5jdGlvbnMgdG8gY29tbXVuaWNhdGUgd2l0
-aCBFTDIvRUwzLg0KPiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IFJldHVybnMgMCBvbiBzdWNjZXNz
-IG9yIGVycm9yIGNvZGUgICovIHN0YXRpYyBpbnQNCj4gPiArZ2V0X3NldF9jb25kdWl0X21ldGhv
-ZChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKSB7DQo+ID4gKwljb25zdCBjaGFyICptZXRob2Q7DQo+
-ID4gKw0KPiA+ICsJaWYgKG9mX3Byb3BlcnR5X3JlYWRfc3RyaW5nKG5wLCAibWV0aG9kIiwgJm1l
-dGhvZCkpIHsNCj4gPiArCQlwcl93YXJuKCIlcyBtaXNzaW5nIFwibWV0aG9kXCIgcHJvcGVydHlc
-biIsIF9fZnVuY19fKTsNCj4gPiArCQlyZXR1cm4gLUVOWElPOw0KPiA+ICsJfQ0KPiA+ICsNCj4g
-PiArCWlmICghc3RyY21wKCJodmMiLCBtZXRob2QpKSB7DQo+ID4gKwkJZG9fZndfY2FsbCA9IGRv
-X2Z3X2NhbGxfaHZjOw0KPiA+ICsJfSBlbHNlIGlmICghc3RyY21wKCJzbWMiLCBtZXRob2QpKSB7
-DQo+ID4gKwkJZG9fZndfY2FsbCA9IGRvX2Z3X2NhbGxfc21jOw0KPiA+ICsJfSBlbHNlIHsNCj4g
-PiArCQlwcl93YXJuKCIlcyBJbnZhbGlkIFwibWV0aG9kXCIgcHJvcGVydHk6ICVzXG4iLA0KPiA+
-ICsJCQlfX2Z1bmNfXywgbWV0aG9kKTsNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiArCX0N
-Cj4gPiArDQo+IA0KPiBNYXJrIFIgZGlkIHNvbWUgY2xlYW51cCBhcm91bmQgU01DQ0MgY29uZHVp
-dHNbMV0uIEl0IG1ha2VzIHNlbnNlIHRvIGJhc2UgdGhpcw0KPiBvbiB0b3AgdGhhdC4gQnV0IGlm
-IHlvdSBtYW5hZ2UgdG8gcHVzaCB0aGlzIGZvciB2NC4xOCwgdGhlbiB5b3UgbWF5IG5lZWQgdG8g
-d2FpdA0KPiBmb3IgdGhhdCB0byBiZSBtZXJnZWQgYW5kIGNsZWFuIGl0IHVwIGFmdGVyIHY0LjE4
-DQo+IA0KPiAtLQ0KPiBSZWdhcmRzLA0KPiBTdWRlZXANCg0KTWFyayBSIGRpZCBjaGFuZ2UgZm9y
-IFNNQ0NDIGVudW1zIGFuZCB3ZSBhcmUgbm90IHVzaW5nIGFueSBTTUNDQyBlbnVtcyBzbyB3ZSBk
-b24ndCBoYXZlIGFueSBkZXBlbmRlbmN5IG9uIHRoYXQuDQoNClRoYW5rcywNCkpvbGx5IFNoYWgN
-Cg0KPiANCj4gWzFdIGh0dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2FybS1rZXJuZWwvbXNn
-NjUwMzA1Lmh0bWwNCg==
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
+
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index f4753b0..6157897 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -814,6 +814,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..292af58
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db",
++			"renesas,r9a06g032";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
+-- 
+2.7.4
