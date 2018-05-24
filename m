@@ -1,72 +1,87 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Stefan Agner <stefan@agner.ch>
-CC: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-Date: Thu, 10 May 2018 01:53:10 +0000
-Message-ID: 
- <HE1PR04MB311361C15FDC2EAE3AA1FE3587980@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <20180418124908.3079-1-stefan@agner.ch>
- <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
- <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
- <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
- <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
- <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
- <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
-In-Reply-To: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 24 May 2018 08:57:14 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH 3/9] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+Message-ID: <20180524055714.GD4249@localhost.localdomain>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
->=20
-> On 09.05.2018 03:26, Jacky Bai wrote:
-> >> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate
-> >> change
-> >>
-> >> Quoting Stefan Agner (2018-05-08 06:20:03)
-> >> > On 08.05.2018 09:32, Jacky Bai wrote:
-> >> > >
-> >> > > I have tried two 6ULL board, I don't meet such issue. System can
-> >> > > boot up successfully with commit 6f9575e55632 included.
-> >> > > Anyway, the change in this patch is ok for me. it is no harm to
-> >> > > the BUS clock change flow.
-> >> >
-> >> > Hm, that is interesting, maybe it is because we use a different SKU?
-> >> > Or maybe bootloader?
-> >> >
-> >> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
-> >> > using U-Boot 2016.11.
-> >> >
-> >>
-> >> I'll throw this into fixes today because it fixes something to be
-> >> useful. It's still interesting to see what's different between the two=
- setups
-> though.
-> >
-> > Thanks.
-> >
-> > I will find some 800MHz parts and have a try with different bootloader =
-later.
-> > Will let you know, when I have some results.
-> >
->=20
-> FWIW, I tried two SKUs here:
-> MCIMX6Z2DVM05AA (528Mhz)
-> MCIMX6Z2CVM08AA (800MHz)
->=20
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
- MCIMX6Z or  MCIMX6Y ? I think i.MX6ULL should be 6Y.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 55 ++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-Jacky
-
-> Both run at 396MHz in U-Boot, and both freeze and the same location.
->=20
-> --
-> Stefan
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+new file mode 100644
+index 000000000000..b00c3753b454
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,55 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
++
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDO’s to provide all the power rails required by the SoC and
++the commonly used peripherals.
++
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 1 or 2.
++			    The first cell is the IRQ number.
++			    The second cell if present is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - regulators:		: List of child nodes that specify the regulators
++			  Please see ../regulator/rohm,bd71837-regulator.txt
++ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
++
++Example:
++
++	pmic: bd71837@4b {
++		compatible = "rohm,bd71837";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++
++		regulators {
++			compatible = "rohm,bd71837-pmic";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++			...
++		};
++		clk: bd71837-32k-out {
++			compatible = "rohm,bd71837-clk";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "bd71837-32k-out";
++		};
++	};
+-- 
+2.14.3
