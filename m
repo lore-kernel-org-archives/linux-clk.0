@@ -1,47 +1,55 @@
-Return-Path: <sboyd@kernel.org>
-From: sboyd@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.17-rc5
-Date: Fri, 18 May 2018 16:02:09 -0700
-Message-Id: <20180518230209.260757-1-sboyd@kernel.org>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Thu, 24 May 2018 13:07:31 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Benjamin Lindqvist <benjamin.lindqvist@endian.se>, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, Lucas Stach <dev@lynxeye.de>, miquel.raynal@bootlin.com,
+ richard@nod.at, marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, Mirza
+ Krak <mirza.krak@gmail.com>, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180524130731.0c00094d@bbrezillon>
+In-Reply-To: <d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+	<CAGefG55kvShaLhNYsFznbOq0_6RNbb+eJ47DLnnU9qRRpwu-iA@mail.gmail.com>
+	<d8d6cb9fcd8ce7ea5c13b227012de6d2@agner.ch>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@kernel.org>
+On Thu, 24 May 2018 13:00:41 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-The following changes since commit c964cfc612b59910593fa10ee1c2673db274c9c7:
+> 
+> > 
+> > Note that we're in fact using this patch set in Linux today, but
+> > we had to remove the oobsize inference part. Currently we're
+> > simply hard coding it to CFG_TVAL_4, but maybe it would be
+> > cleaner to add ECC algo as a board config instead, e.g. in the
+> > .dts file or whatever. This seems to be done by other vendors
+> > already, see for example excerpt of
+> > Documentation/devicetree/bindings/mtd/gpmc-nand.txt below:
+> > 
+> >  - ti,nand-ecc-opt: A string setting the ECC layout to use. One of:
+> > "sw" 1-bit Hamming ecc code via software
+> > "hw" <deprecated> use "ham1" instead
+> > "hw-romcode" <deprecated> use "ham1" instead
+> > "ham1" 1-bit Hamming ecc code
+> > "bch4" 4-bit BCH ecc code
+> > "bch8" 8-bit BCH ecc code
+> > "bch16" 16-bit BCH ECC code
+> > Refer below "How to select correct ECC scheme for your device ?"
+> > 
+> > It seems as if this method would be equally applicable to Tegra NAND.  
+> 
+> Yeah, ideally we can reuse "nand-ecc-algo". Although, Reed-Solomon is
+> not yet in the list.  So using this property would require to extend
+> this standard property.
 
-  Merge tag 'meson-clk-fixes-4.17-1' of https://github.com/BayLibre/clk-meson into clk-fixes (2018-05-01 14:44:16 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 9a160601f3fb6ffa196b87d1b5643646be486405:
-
-  clk: stm32: fix: stm32 clock drivers are not compiled by default (2018-05-15 15:47:03 -0700)
-
-----------------------------------------------------------------
-A modified revert of a patch that made new choices come out for a couple
-stm32 clk drivers that really always need to be there when that
-particular machine is compiled in and boot fix on i.MX for Stefan who
-noticed odd behavior from the critical flag patch that came in during
-the merge window.
-
-----------------------------------------------------------------
-Gabriel Fernandez (1):
-      clk: stm32: fix: stm32 clock drivers are not compiled by default
-
-Stefan Agner (1):
-      clk: imx6ull: use OSC clock during AXI rate change
-
- drivers/clk/Kconfig          | 6 ++----
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 2 files changed, 3 insertions(+), 5 deletions(-)
-
--- 
-Sent by a computer through tubes
+I'm okay with that ;-).
