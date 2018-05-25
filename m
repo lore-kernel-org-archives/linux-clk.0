@@ -1,107 +1,96 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Thu, 24 May 2018 14:23:56 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Stefan Agner <stefan@agner.ch>
-Cc: dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
- robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, dev@lynxeye.de,
- miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
- krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
- jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180524142356.0fc68797@bbrezillon>
-In-Reply-To: <7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
-References: <cover.1526990589.git.stefan@agner.ch>
-	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
-	<20180523161810.0ed9fe80@bbrezillon>
-	<2d8107f0e6568512d691e9ea25a1e4e5@agner.ch>
-	<20180524105614.3c51736c@bbrezillon>
-	<7b3cc3991fb054130fd54c6fdfec5097@agner.ch>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 25 May 2018 11:18:52 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: sboyd@kernel.org, mturquette@baylibre.com,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
+	srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v2 2/3] clk: qcom: Register the gdscs before the clocks
+Message-ID: <20180525181851.GF14924@minitux>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-3-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180323082616.10142-3-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 24 May 2018 13:09:53 +0200
-Stefan Agner <stefan@agner.ch> wrote:
+On Fri 23 Mar 01:26 PDT 2018, Rajendra Nayak wrote:
 
-> On 24.05.2018 10:56, Boris Brezillon wrote:
-> > On Thu, 24 May 2018 10:46:27 +0200
-> > Stefan Agner <stefan@agner.ch> wrote:
-> >   
-> >> Hi Boris,
-> >>
-> >> Thanks for the initial review! One small question below:
-> >>
-> >> On 23.05.2018 16:18, Boris Brezillon wrote:  
-> >> > Hi Stefan,
-> >> >
-> >> > On Tue, 22 May 2018 14:07:06 +0200
-> >> > Stefan Agner <stefan@agner.ch> wrote:  
-> >> >> +
-> >> >> +struct tegra_nand {
-> >> >> +	void __iomem *regs;
-> >> >> +	struct clk *clk;
-> >> >> +	struct gpio_desc *wp_gpio;
-> >> >> +
-> >> >> +	struct nand_chip chip;
-> >> >> +	struct device *dev;
-> >> >> +
-> >> >> +	struct completion command_complete;
-> >> >> +	struct completion dma_complete;
-> >> >> +	bool last_read_error;
-> >> >> +
-> >> >> +	dma_addr_t data_dma;
-> >> >> +	void *data_buf;
-> >> >> +	dma_addr_t oob_dma;
-> >> >> +	void *oob_buf;
-> >> >> +
-> >> >> +	int cur_chip;
-> >> >> +};  
-> >> >
-> >> > This struct should be split in 2 structures: one representing the NAND
-> >> > controller and one representing the NAND chip:
-> >> >
-> >> > struct tegra_nand_controller {
-> >> > 	struct nand_hw_control base;
-> >> > 	void __iomem *regs;
-> >> > 	struct clk *clk;
-> >> > 	struct device *dev;
-> >> > 	struct completion command_complete;
-> >> > 	struct completion dma_complete;
-> >> > 	bool last_read_error;
-> >> > 	int cur_chip;
-> >> > };
-> >> >
-> >> > struct tegra_nand {
-> >> > 	struct nand_chip base;
-> >> > 	dma_addr_t data_dma;
-> >> > 	void *data_buf;
-> >> > 	dma_addr_t oob_dma;
-> >> > 	void *oob_buf;
-> >> > };  
-> >>
-> >> Is there a particular reason why you would leave DMA buffers in the chip
-> >> structure? It seems that is more a controller thing...  
-> > 
-> > The size of those buffers is likely to be device dependent, so if you
-> > have several NANDs connected to the controller, you'll either have to
-> > have one buffer at the controller level which is max(all-chip-buf-size)
-> > or a buffer per device.
-> > 
-> > Also, do you really need these buffers? The core already provide some
-> > which are suitable for DMA (chip->oob_poi and chip->data_buf).
-> >   
+> We have atleast some instances of ALWAYS_ON gdscs, which need to
+> be turned ON *before* some clocks within the gdsc domain marked
+> with a CLK_IS_CRITICAL can be turned ON.
+> To facilitate this sequence, register the GDCSs (and hence handle
+> the ALWAYS_ON gdscs) before we register clocks (and handle the
+> clocks marked as CLK_IS_CRITICAL)
 > 
-> Good question, I am not sure, that was existing code.
-> 
-> Are you sure data_buf it is DMA capable?
-> 
-> nand_scan_tail allocates with kmalloc:
-> 
-> chip->data_buf = kmalloc(mtd->writesize + mtd->oobsize, GFP_KERNEL);
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 
-Yes, kmalloc() allocates DMA-able buffers, so those are DMA-safe.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/clk/qcom/common.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index b8064a336d46..39ce64c2783b 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -228,22 +228,6 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  	if (!cc)
+>  		return -ENOMEM;
+>  
+> -	cc->rclks = rclks;
+> -	cc->num_rclks = num_clks;
+> -
+> -	for (i = 0; i < num_clks; i++) {
+> -		if (!rclks[i])
+> -			continue;
+> -
+> -		ret = devm_clk_register_regmap(dev, rclks[i]);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+> -	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
+> -	if (ret)
+> -		return ret;
+> -
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+>  	reset->rcdev.ops = &qcom_reset_ops;
+> @@ -272,6 +256,22 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  			return ret;
+>  	}
+>  
+> +	cc->rclks = rclks;
+> +	cc->num_rclks = num_clks;
+> +
+> +	for (i = 0; i < num_clks; i++) {
+> +		if (!rclks[i])
+> +			continue;
+> +
+> +		ret = devm_clk_register_regmap(dev, rclks[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	ret = devm_of_clk_add_hw_provider(dev, qcom_cc_clk_hw_get, cc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
