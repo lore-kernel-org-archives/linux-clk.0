@@ -1,49 +1,54 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, rajanv@xilinx.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v6 06/11] firmware: xilinx: Add debugfs interface
-To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
- mingo@kernel.org, gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
- hkallweit1@gmail.com, keescook@chromium.org, dmitry.torokhov@gmail.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, michal.simek@xilinx.com,
- robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-7-git-send-email-jollys@xilinx.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <b880a598-54cb-6428-e60d-232615e809c1@arm.com>
-Date: Thu, 10 May 2018 15:26:26 +0100
-MIME-Version: 1.0
-In-Reply-To: <1523389127-14243-7-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Lechner <david@lechnology.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] clk: davinci: pll-dm355: drop pll2_sysclk2
+Date: Fri, 25 May 2018 13:11:42 -0500
+Message-Id: <20180525181150.17873-2-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This removes pll2_sysclk2 from the TI DM355 clock driver. This SoC
+doesn't have such a clock. Also, SYSCLK_ALWAYS_ENABLED is transferred
+to pll2_sysclk1 since it drives the DDR and doesn't have another
+mechanism to keep it on.
 
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+---
+ drivers/clk/davinci/pll-dm355.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On 10/04/18 20:38, Jolly Shah wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
-> 
-> Firmware-debug provides debugfs interface to all APIs.
-> Debugfs can be used to call firmware APIs with required
-> parameters.
-> 
-> Usage:
-> * Calling firmware API through debugfs:
->   # echo "<api-name> <arg1> .. <argn>" > /sys/.../zynqmp-firmware/pm
-> 
-> * Read output of last called firmware API:
->   # cat /sys/.../zynqmp-firmware/pm
-> 
-> Refer ug1200 for more information on these APIs:
->   * https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pdf
-> 
-> Add basic debugfs file to get API version.
-Who are the users of this apart from debugging ? I am bit over sensitive
-as this remote processor manages/controls the power and other shared
-resources in the system. Giving such fine grained access to user space
-is not a good idea. I assume you want this DEBUGFS off by default on
-production images ?
-
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 5345f8286c50..718d9bbbf30d 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -62,8 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+-SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ {
+@@ -71,8 +70,6 @@ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+-	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
+-
+ 	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
+ 
+ 	return 0;
 -- 
-Regards,
-Sudeep
+2.17.0
