@@ -1,46 +1,54 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 22 May 2018 13:10:00 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 07/26] dt-bindings: display: Add compatible for A64
- DE2 tcon1 blocks
-Message-ID: <20180522181000.GA19875@rob-hp-laptop>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
- <20180518094536.17201-8-jagan@amarulasolutions.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Fri, 25 May 2018 08:08:25 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180525050825.GA16888@localhost.localdomain>
+References: <20180524060036.GI4249@localhost.localdomain>
+ <20180524141427.GU4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
+ <20180524175940.GC4828@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180518094536.17201-8-jagan@amarulasolutions.com>
+In-Reply-To: <20180524175940.GC4828@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 18, 2018 at 03:15:17PM +0530, Jagan Teki wrote:
-> Allwinner A64 has DE2 pipeline with tcon0 and tcon1 block
-> which is similar Allwinner A83T.
+On Thu, May 24, 2018 at 06:59:40PM +0100, Mark Brown wrote:
+> On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
 > 
-> This patch adds dt-binding documentation for A64 DE2 tcon1 blocks.
+> > > what is the lock doing and what is this wrapper function intended to do?
 > 
-> Mixer1 has different configuration for A64 so use separate compatible
-> but tcon1 has similar behaviour with A83T so add fallback compatible.
+> > This was the other spot which I was unsure how to handle. Datasheet for
+> > the chip says that if voltage is to be changed, the regulator must be
+> > disabled. Thus my voltage changing function checks if regulator is enabled
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v2:
-> - Add fallback compatible for tcon1
-> - Add separate compatible for mixer1 
-> 
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> Ugh, this chip is not very good is it?
+I am not the correct guy to judge that as I don't have too wide
+experience on PMICs. (This is first PMIC I have been working with).
+Probably this chip has some other advantages and is thus used.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>  Don't bounce the supply to
+> change the voltage silently, that's clearly a bad idea - the devices
+> using the supply are going to get very upset when the power gets removed
+> just because they changed the voltage.  Instead implement a custom set
+> operation that returns an error if the user attempts to change the
+> voltage while the regualtor is enabled.
+
+Makes perfect sense. I will change the operation to this.
+
+Br,
+    Matti Vaittinen
