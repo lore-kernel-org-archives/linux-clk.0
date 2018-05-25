@@ -1,68 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37206 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936821AbeE2RFR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 13:05:17 -0400
-From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To: Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH v3 2/5] clk: imx6: add EPIT clock support
-Date: Tue, 29 May 2018 19:04:33 +0200
-Message-Id: <20180529170436.22711-3-peron.clem@gmail.com>
-In-Reply-To: <20180529170436.22711-1-peron.clem@gmail.com>
-References: <20180529170436.22711-1-peron.clem@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 25 May 2018 11:18:15 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: sboyd@kernel.org, mturquette@baylibre.com,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
+	srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
+Message-ID: <20180525181815.GE14924@minitux>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-2-rnayak@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180323082616.10142-2-rnayak@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Colin Didier <colin.didier@devialet.com>
+On Fri 23 Mar 01:26 PDT 2018, Rajendra Nayak wrote:
 
-Add EPIT clock support to the i.MX6Q clocking infrastructure.
+> Some GDSCs might have software control to turn them off, but we might
+> want to keep them enabled always, in some cases because of lack of
+> support in kernel to handle a graceful turning off/on of such GDSCs.
+> Most common instances would be the GDCSs which power up the noc/bus
+> fabrics, which need bus drivers to handle them and atleast support for
+> which is missing on all qcom SoCs.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 
-Signed-off-by: Colin Didier <colin.didier@devialet.com>
-Signed-off-by: Clément Peron <clement.peron@devialet.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
----
- drivers/clk/imx/clk-imx6q.c               | 2 ++
- include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8d518ad5dc13..b9ea7037e193 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	else
- 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
- 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
-+	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
-+	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
- 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
- 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
- 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
-diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-index da59fd9cdb5e..7ad171b8f3bf 100644
---- a/include/dt-bindings/clock/imx6qdl-clock.h
-+++ b/include/dt-bindings/clock/imx6qdl-clock.h
-@@ -271,6 +271,8 @@
- #define IMX6QDL_CLK_PRE_AXI			258
- #define IMX6QDL_CLK_MLB_SEL			259
- #define IMX6QDL_CLK_MLB_PODF			260
--#define IMX6QDL_CLK_END				261
-+#define IMX6QDL_CLK_EPIT1			261
-+#define IMX6QDL_CLK_EPIT2			262
-+#define IMX6QDL_CLK_END				263
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
--- 
-2.17.0
+Regards,
+Bjorn
 
+> ---
+>  drivers/clk/qcom/gdsc.c | 8 ++++++++
+>  drivers/clk/qcom/gdsc.h | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a4f3580587b7..15f4bb5efd68 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -291,6 +291,14 @@ static int gdsc_init(struct gdsc *sc)
+>  	if ((sc->flags & VOTABLE) && on)
+>  		gdsc_enable(&sc->pd);
+>  
+> +	/* If ALWAYS_ON GDSCs are not ON, turn them ON */
+> +	if (sc->flags & ALWAYS_ON) {
+> +		if (!on)
+> +			gdsc_enable(&sc->pd);
+> +		on = true;
+> +		sc->pd.flags |= GENPD_FLAG_ALWAYS_ON;
+> +	}
+> +
+>  	if (on || (sc->pwrsts & PWRSTS_RET))
+>  		gdsc_force_mem_on(sc);
+>  	else
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 39648348e5ec..7fd78cec7e5b 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -53,6 +53,7 @@ struct gdsc {
+>  #define VOTABLE		BIT(0)
+>  #define CLAMP_IO	BIT(1)
+>  #define HW_CTRL		BIT(2)
+> +#define ALWAYS_ON	BIT(3)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
