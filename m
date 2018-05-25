@@ -1,42 +1,43 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/4] ARM: dts: tegra20: Add interrupt to External Memory Controller
-Date: Wed, 30 May 2018 18:06:44 +0300
-Message-Id: <20180530150646.19030-3-digetx@gmail.com>
-In-Reply-To: <20180530150646.19030-1-digetx@gmail.com>
-References: <20180530150646.19030-1-digetx@gmail.com>
+Return-Path: <daniel@zonque.org>
+From: Daniel Mack <daniel@zonque.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v2 0/2] clk: Add driver for MAX9485
+Date: Fri, 25 May 2018 20:20:56 +0200
+Message-Id: <20180525182058.25969-1-daniel@zonque.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Add interrupt entry into the EMC DT node.
+This is v2 of the driver for Maxim's MAX9485 programmable audio clock
+generator.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+v1 → v2:
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 983dd5c14794..3cd3cb28cfd9 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -609,6 +609,7 @@
- 	memory-controller@7000f400 {
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f400 0x200>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
+* Now served as two patches, one for the DT bits, and one for the actual
+  implementation. The DT bits are put in the 1st patch because the
+  implementation depends on the shared header file.
+
+* Added support for suspend/resume
+
+
+Daniel Mack (2):
+  dts: clk: add devicetree bindings for MAX9485
+  clk: Add driver for MAX9485
+
+ .../devicetree/bindings/clock/maxim,max9485.txt    |  59 +++
+ drivers/clk/Kconfig                                |   8 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-max9485.c                          | 408 +++++++++++++++++++++
+ include/dt-bindings/clock/maxim,max9485.h          |  18 +
+ 5 files changed, 494 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
+ create mode 100644 drivers/clk/clk-max9485.c
+ create mode 100644 include/dt-bindings/clock/maxim,max9485.h
+
 -- 
-2.17.0
+2.14.3
