@@ -1,146 +1,88 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-2-david@lechnology.com>
- <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <5177c1e3-9004-0d6e-6707-caf3c7efc884@lechnology.com>
-Date: Tue, 1 May 2018 20:44:47 -0500
-MIME-Version: 1.0
-In-Reply-To: <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH 1/3] dt-bindings: clk: Update Stingray binding doc
+Date: Fri, 25 May 2018 09:45:15 -0700
+Message-Id: <1527266717-8406-2-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/01/2018 08:27 AM, Sekhar Nori wrote:
-> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->> This modifies the TI DaVinci PLL clock driver to allow for the case
->> when dev == NULL. On some (most) SoCs that use this driver, the PLL
->> clock needs to be registered during early boot because it is used
->> for clocksource/clockevent and there will be no platform device available.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
-> 
->> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
->> index 23a24c944f1d..7c4d808b8fdb 100644
->> --- a/drivers/clk/davinci/pll.c
->> +++ b/drivers/clk/davinci/pll.c
->> @@ -111,6 +111,31 @@ struct davinci_pll_clk {
->>   #define to_davinci_pll_clk(_hw) \
->>   	container_of((_hw), struct davinci_pll_clk, hw)
->>   
->> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
->> +{
->> +	if (dev)
->> +		return devm_kzalloc(dev, size, flags);
->> +
->> +	return kzalloc(size, flags);
-> 
-> I would shift to using kzalloc() only. The utility of devm_kzalloc() is
-> gone if you cannot always rely on it since you have to handle the free
-> for the other case. Same thing for other devres APIs below.
-> 
+Update Stingray clock binding document to add additional clock entries
+with names matching the latest ASIC datasheet. Also modify a few existing
+entries to make their naming more consistent with the rest of the entries
 
-I omitted the usual unwinding on failure since if a non-platform-device
-clock fails to init, then Linux won't boot anyway. I left the devm stuff
-in there since there is one case where this driver is still used as a
-platform device, thinking that there could be an EPROBE_DEFER. However
-I think all uses of these inline functions are after the last possible
-EPROBE_DEFER, so doing as you suggest is probably just fine.
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+---
+ .../bindings/clock/brcm,iproc-clocks.txt           | 26 ++++++++++++----------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-
->> +}
->> +
->> +static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
->> +					size_t size, gfp_t flags)
->> +{
->> +	if (dev)
->> +		return devm_kmalloc_array(dev, n, size, flags);
->> +
->> +	return kmalloc_array(n, size, flags);
->> +}
->> +
->> +static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
->> +{
->> +	if (dev)
->> +		return devm_clk_register(dev, hw);
->> +
->> +	return clk_register(NULL, hw);
->> +}
->> +
-> 
-> 
->> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
->> index b1b6fb23f972..92a0978a7d29 100644
->> --- a/drivers/clk/davinci/pll.h
->> +++ b/drivers/clk/davinci/pll.h
->> @@ -11,6 +11,7 @@
->>   #include <linux/bitops.h>
->>   #include <linux/clk-provider.h>
->>   #include <linux/of.h>
->> +#include <linux/regmap.h>
->>   #include <linux/types.h>
->>   
->>   #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
->> @@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
->>   struct clk *davinci_pll_clk_register(struct device *dev,
->>   				     const struct davinci_pll_clk_info *info,
->>   				     const char *parent_name,
->> -				     void __iomem *base);
->> +				     void __iomem *base,
->> +				     struct regmap *cfgchip);
->>   struct clk *davinci_pll_auxclk_register(struct device *dev,
->>   					const char *name,
->>   					void __iomem *base);
->> @@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
->>   			    const struct davinci_pll_sysclk_info *info,
->>   			    void __iomem *base);
->>   
->> -int of_davinci_pll_init(struct device *dev,
->> +int of_davinci_pll_init(struct device *dev, struct device_node *node,
->>   			const struct davinci_pll_clk_info *info,
->>   			const struct davinci_pll_obsclk_info *obsclk_info,
->>   			const struct davinci_pll_sysclk_info **div_info,
->>   			u8 max_sysclk_id,
->> -			void __iomem *base);
->> +			void __iomem *base,
->> +			struct regmap *cfgchip);
->>   
->>   /* Platform-specific callbacks */
->>   
->> -int da830_pll_init(struct device *dev, void __iomem *base);
->> +int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
->>   
->> -int da850_pll0_init(struct device *dev, void __iomem *base);
->> -int da850_pll1_init(struct device *dev, void __iomem *base);
->> -int of_da850_pll0_init(struct device *dev, void __iomem *base);
->> -int of_da850_pll1_init(struct device *dev, void __iomem *base);
->> +int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-> 
-> Having this declared both here and in include/linux/clk/davinci.h is
-> strange. Can we include that file directly where its needed?
-> 
-
-Sure thing. There are a number of duplicates that can be eliminated.
-
->> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
->> new file mode 100644
->> index 000000000000..1298cca509ac
->> --- /dev/null
->> +++ b/include/linux/clk/davinci.h
->> @@ -0,0 +1,24 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Clock driver for TI Davinci PSC controllers
-> 
-> PSC/PLL controllers.
-> 
-> Thanks,
-> Sekhar
-> 
+diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+index f8e4a93..ab730ea 100644
+--- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
+@@ -276,36 +276,38 @@ These clock IDs are defined in:
+     clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
+     clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
+     clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
+-    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
++    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH_CLK
++    clk_fs		genpll2		6	BCM_SR_GENPLL2_FS_CLK
+ 
+     genpll3		crystal		0	BCM_SR_GENPLL3
+     clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
+     clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
+ 
+     genpll4		crystal		0	BCM_SR_GENPLL4
+-    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
++    clk_ccn		genpll4		1	BCM_SR_GENPLL4_CCN_CLK
+     clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
+-    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
++    clk_noc		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
+     clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
+     clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
+ 
+-
+     genpll5		crystal		0	BCM_SR_GENPLL5
+-    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
+-    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
+-    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
++    clk_fs4_hf		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
++    clk_crypto_ae	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
++    clk_raid_ae		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
+ 
+     genpll6		crystal		0	BCM_SR_GENPLL6
+-    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
++    clk_48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
+ 
+     lcpll0		crystal		0	BCM_SR_LCPLL0
+     clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
+     clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
+-    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
+-    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
++    clk_sata_350	lcpll0		3	BCM_SR_LCPLL0_SATA_350_CLK
++    clk_sata_500	lcpll0		4	BCM_SR_LCPLL0_SATA_500_CLK
+ 
+     lcpll1		crystal		0	BCM_SR_LCPLL1
+-    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
++    clk_wan		lcpll1		1	BCM_SR_LCPLL1_WAN_CLK
++    clk_usb_ref		lcpll1		2	BCM_SR_LCPLL1_USB_REF_CLK
++    clk_crmu_ts		lcpll1		3	BCM_SR_LCPLL1_CRMU_TS_CLK
+ 
+     lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
+-    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
++    clk_pcie_phy_ref	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
+-- 
+2.1.4
