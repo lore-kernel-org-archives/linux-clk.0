@@ -1,331 +1,848 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: [PATCH v4 5/7] ASoC: atmel-i2s: add driver for the new Atmel I2S controller
+Date: Fri, 25 May 2018 15:34:26 +0300
+Message-ID: <1527251668-31396-6-git-send-email-codrin.ciubotariu@microchip.com>
+In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <152574299379.138124.17545715298285645263@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: qcom: Add support for RCG to register for DFS
-Date: Mon, 07 May 2018 18:29:53 -0700
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-02 21:12:32)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index e63db10..7c35bca 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -122,6 +131,10 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8=
- index)
->         int ret;
->         u32 cfg =3D rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-> =
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-> +       /* In DFS mode skip updating the RCG CFG */
-> +       if (rcg->flags & DFS_ENABLE_RCG)
-> +               return 0;
-> +
->         ret =3D regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_=
-REG,
->                                  CFG_SRC_SEL_MASK, cfg);
->         if (ret)
-> @@ -296,6 +309,9 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, uns=
-igned long rate,
->         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
->         const struct freq_tbl *f;
-> =
+This patch adds support for the Atmel I2S controller embedded into
+sama5d2x SoCs.
 
-> +       if (rcg->flags & DFS_ENABLE_RCG)
-> +               return -EPERM;
-> +
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
 
-Please no.
+Changes in v4:
+	- treated -EPROBE_DEFER on probe;
+	- replaced ternary operator with if;
+	- return -EINVAL if we don't support the number of audio channels.
 
->         switch (policy) {
->         case FLOOR:
->                 f =3D qcom_find_freq_floor(rcg->freq_tbl, rate);
-> @@ -790,3 +806,159 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, un=
-signed long rate,
->         .determine_rate =3D clk_gfx3d_determine_rate,
->  };
->  EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-> +
-> +/* Common APIs to be used for DFS based RCGR */
-> +static u8 clk_parent_index_pre_div_and_mode(struct clk_hw *hw, u32 offse=
-t,
+ sound/soc/atmel/Kconfig     |   9 +
+ sound/soc/atmel/Makefile    |   2 +
+ sound/soc/atmel/atmel-i2s.c | 765 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 776 insertions(+)
+ create mode 100644 sound/soc/atmel/atmel-i2s.c
 
-Fix return type please.
-
-> +               u32 *mode, u32 *pre_div)
-> +{
-> +       struct clk_rcg2 *rcg;
-> +       int num_parents;
-> +       u32 cfg, mask;
-> +       int i, ret;
-> +
-> +       if (!hw)
-> +               return -EINVAL;
-
-Why?
-
-> +
-> +       num_parents =3D clk_hw_get_num_parents(hw);
-> +
-> +       rcg =3D to_clk_rcg2(hw);
-> +
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cf=
-g);
-
-We may need to pass the regmap into here so this can be done before the
-clk is registered so that we can switch out the clk_ops at runtime. But
-that may not be the case if my other comment makes sense further down.
-
-> +       if (ret)
-> +               goto err;
-> +
-> +       mask =3D BIT(rcg->hid_width) - 1;
-> +       *pre_div =3D cfg & mask ? (cfg & mask) : 1;
-> +
-> +       *mode =3D cfg & CFG_MODE_MASK;
-> +       *mode >>=3D CFG_MODE_SHIFT;
-> +
-> +       cfg &=3D CFG_SRC_SEL_MASK;
-> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
-> +
-> +       for (i =3D 0; i < num_parents; i++)
-> +               if (cfg =3D=3D rcg->parent_map[i].cfg)
-> +                       return i;
-> +err:
-> +       return 0;
-> +}
-> +
-> +static int calculate_m_and_n(struct clk_hw *hw, u32 m_offset, u32 n_offs=
-et,
-> +               u32 mode, u32 *m, u32 *n)
-
-Instead of returning pointers, please have these functions update a
-frequency table entry structure.
-
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       u32 val, mask;
-> +       int ret =3D 0;
-> +
-> +       if (!hw)
-> +               return -EINVAL;
-> +
-> +       *m =3D *n =3D 0;
-> +
-> +       if (mode) {
-> +               /* Calculate M & N values */
-> +               mask =3D BIT(rcg->mnd_width) - 1;
-> +               ret =3D  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_=
-offset,
-> +                                       &val);
-> +               if (ret) {
-> +                       pr_err("Failed to read M offset register\n");
-> +                       goto err;
-> +               }
-> +
-> +               val &=3D mask;
-> +               *m  =3D val;
-> +
-> +               ret =3D  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_=
-offset,
-> +                                       &val);
-> +               if (ret) {
-> +                       pr_err("Failed to read N offset register\n");
-> +                       goto err;
-> +               }
-> +
-> +               /* val ~(N-M) */
-> +               val =3D ~val;
-> +               val &=3D mask;
-> +               val +=3D *m;
-> +               *n =3D val;
-> +       }
-> +err:
-> +       return ret;
-> +}
-> +
-> +int clk_rcg2_get_dfs_clock_rate(struct clk_rcg2 *clk, struct device *dev)
-> +{
-> +       int i, j, index, ret =3D 0;
-> +       unsigned long calc_freq, prate;
-> +       u32 val, pre_div =3D 0, mode =3D 0, m =3D 0, n =3D 0;
-> +       struct freq_tbl *dfs_freq_tbl;
-> +       struct clk_hw *phw;
-> +
-> +       if (!clk)
-> +               return -EINVAL;
-
-Never happens?
-
-> +
-> +       /* Check for DFS_EN */
-> +       ret =3D regmap_read(clk->clkr.regmap, clk->cmd_rcgr + SE_CMD_DFSR=
-_OFFSET,
-> +                                               &val);
-> +       if (ret) {
-> +               dev_err(dev, "Failed to read DFS enable register\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (!(val & SE_CMD_DFS_EN))
-> +               return ret;
-> +
-> +       dfs_freq_tbl =3D devm_kzalloc(dev, MAX_PERF_LEVEL *
-> +                               sizeof(struct freq_tbl), GFP_KERNEL);
-
-Use devm_kcalloc() for numbers of elements in an array.
-
-> +       if (!dfs_freq_tbl)
-> +               return -ENOMEM;
-> +
-> +       /* Populate the Perf Level */
-> +       for (i =3D 0; i < MAX_PERF_LEVEL; i++) {
-> +               /* Get parent index and mode */
-> +               index =3D clk_parent_index_pre_div_and_mode(&clk->clkr.hw,
-> +                                                       SE_PERF_DFSR(i), =
-&mode,
-> +                                                       &pre_div);
-> +               if (index < 0) {
-> +                       pr_err("Failed to get parent index & mode %d\n", =
-index);
-> +                       return index;
-> +               }
-> +
-> +               /* clock pre_div */
-> +               dfs_freq_tbl[i].pre_div =3D pre_div;
-> +
-> +               /* Fill the parent src */
-> +               dfs_freq_tbl[i].src =3D clk->parent_map[index].src;
-> +
-> +               /* Get the parent clock and parent rate */
-> +               phw =3D clk_hw_get_parent_by_index(&clk->clkr.hw, index);
-> +               prate =3D clk_hw_get_rate(phw);
-
-Urgh this is sort of annoying. We'll need the parents to be registered
-when the frequency table is created, just so we can parse the parent
-rate out and calculate the final frequency? What do we do if the parent
-isn't registered yet? We may need to push this logic into the determine
-rate path, and calculate the frequency table lazily at that point and
-hope that the parent is registered with some frequency. Otherwise fail
-the determine rate call.
-
-> +
-> +               ret =3D calculate_m_and_n(&clk->clkr.hw, SE_PERF_M_DFSR(i=
-),
-> +                                       SE_PERF_N_DFSR(i), mode, &m, &n);
-> +               if (ret)
-> +                       goto err;
-> +
-> +               dfs_freq_tbl[i].m =3D m;
-> +               dfs_freq_tbl[i].n =3D n;
-> +
-> +               /* calculate the final frequency */
-> +               calc_freq =3D calc_rate(prate, dfs_freq_tbl[i].m,
-> +                                               dfs_freq_tbl[i].n, mode,
-> +                                               dfs_freq_tbl[i].pre_div);
-> +
-> +               /* Check for duplicate frequencies */
-> +               for (j =3D 0; j  < i; j++) {
-> +                       if (dfs_freq_tbl[j].freq =3D=3D calc_freq)
-> +                               goto done;
-> +               }
-> +
-> +               dfs_freq_tbl[i].freq =3D calc_freq;
-> +       }
-> +done:
-> +       j =3D i;
-
-Why do we care about j =3D i? It isn't used now.
-
-> +
-> +       clk->flags |=3D DFS_ENABLE_RCG;
-
-I'd rather the ops are replaced with different clk_ops for DFS
-explicitly. The flag is not very nice.
-
-> +       clk->freq_tbl =3D dfs_freq_tbl;
-> +err:
-> +       return ret;
-> +}
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index b8064a3..b27699b 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights reser=
-ved.
->   *
->   * This software is licensed under the terms of the GNU General Public
->   * License version 2, as published by the Free Software Foundation, and
-
-SPDX update?
-
-> @@ -288,4 +288,25 @@ int qcom_cc_probe(struct platform_device *pdev, cons=
-t struct qcom_cc_desc *desc)
->  }
->  EXPORT_SYMBOL_GPL(qcom_cc_probe);
-> =
-
-> +int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
-> +                        const struct qcom_cc_dfs_desc *desc)
-> +{
-> +       struct clk_dfs *clks =3D desc->clks;
-> +       size_t num_clks =3D desc->num_clks;
-> +       int i, ret =3D 0;
-> +
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               ret =3D clk_rcg2_get_dfs_clock_rate(clks[i].rcg, &pdev->d=
-ev);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev,
-> +                               "Failed calculating DFS frequencies for %=
-s\n",
-> +                               clk_hw_get_name(&(clks[i].rcg)->clkr.hw));
-
-That is a long line. Preferably iterate a local variable 'rcg' that is
-set to the start of the array and ++ through this loop.
-
-> +                       break;
-> +               }
-> +       }
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(qcom_cc_register_rcg_dfs);
-> +
->  MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> index 00196ee..6627aec 100644
-> --- a/drivers/clk/qcom/common.h
-> +++ b/drivers/clk/qcom/common.h
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2014, 2018, The Linux Foundation. All rights reserved.
->   *
->   * This software is licensed under the terms of the GNU General Public
->   * License version 2, as published by the Free Software Foundation, and
-> @@ -48,6 +48,15 @@ struct parent_map {
->         u8 cfg;
->  };
-> =
-
-> +struct clk_dfs {
-> +       struct clk_rcg2 *rcg;
-> +};
-
-Just have an array of clk_rcg2's instead of this struct? I'd add it to
-the common descriptor structure too, because I'm going to guess this is
-common going forward.
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index dcee145..64b784e 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -88,4 +88,13 @@ config SND_ATMEL_SOC_TSE850_PCM5142
+ 	help
+ 	  Say Y if you want to add support for the ASoC driver for the
+ 	  Axentia TSE-850 with a PCM5142 codec.
++
++config SND_ATMEL_SOC_I2S
++	tristate "Atmel ASoC driver for boards using I2S"
++	depends on OF && (ARCH_AT91 || COMPILE_TEST)
++	select SND_SOC_GENERIC_DMAENGINE_PCM
++	select REGMAP_MMIO
++	help
++	  Say Y or M if you want to add support for Atmel ASoc driver for boards
++	  using I2S.
+ endif
+diff --git a/sound/soc/atmel/Makefile b/sound/soc/atmel/Makefile
+index 4440646..cd87cb4 100644
+--- a/sound/soc/atmel/Makefile
++++ b/sound/soc/atmel/Makefile
+@@ -3,10 +3,12 @@
+ snd-soc-atmel-pcm-pdc-objs := atmel-pcm-pdc.o
+ snd-soc-atmel-pcm-dma-objs := atmel-pcm-dma.o
+ snd-soc-atmel_ssc_dai-objs := atmel_ssc_dai.o
++snd-soc-atmel-i2s-objs := atmel-i2s.o
+ 
+ obj-$(CONFIG_SND_ATMEL_SOC_PDC) += snd-soc-atmel-pcm-pdc.o
+ obj-$(CONFIG_SND_ATMEL_SOC_DMA) += snd-soc-atmel-pcm-dma.o
+ obj-$(CONFIG_SND_ATMEL_SOC_SSC) += snd-soc-atmel_ssc_dai.o
++obj-$(CONFIG_SND_ATMEL_SOC_I2S) += snd-soc-atmel-i2s.o
+ 
+ # AT91 Machine Support
+ snd-soc-sam9g20-wm8731-objs := sam9g20_wm8731.o
+diff --git a/sound/soc/atmel/atmel-i2s.c b/sound/soc/atmel/atmel-i2s.c
+new file mode 100644
+index 0000000..5d3b5af
+--- /dev/null
++++ b/sound/soc/atmel/atmel-i2s.c
+@@ -0,0 +1,765 @@
++/*
++ * Driver for Atmel I2S controller
++ *
++ * Copyright (C) 2015 Atmel Corporation
++ *
++ * Author: Cyrille Pitchen <cyrille.pitchen@atmel.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/device.h>
++#include <linux/slab.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/clk.h>
++#include <linux/mfd/syscon.h>
++
++#include <sound/core.h>
++#include <sound/pcm.h>
++#include <sound/pcm_params.h>
++#include <sound/initval.h>
++#include <sound/soc.h>
++#include <sound/dmaengine_pcm.h>
++
++#define ATMEL_I2SC_MAX_TDM_CHANNELS	8
++
++/*
++ * ---- I2S Controller Register map ----
++ */
++#define ATMEL_I2SC_CR		0x0000	/* Control Register */
++#define ATMEL_I2SC_MR		0x0004	/* Mode Register */
++#define ATMEL_I2SC_SR		0x0008	/* Status Register */
++#define ATMEL_I2SC_SCR		0x000c	/* Status Clear Register */
++#define ATMEL_I2SC_SSR		0x0010	/* Status Set Register */
++#define ATMEL_I2SC_IER		0x0014	/* Interrupt Enable Register */
++#define ATMEL_I2SC_IDR		0x0018	/* Interrupt Disable Register */
++#define ATMEL_I2SC_IMR		0x001c	/* Interrupt Mask Register */
++#define ATMEL_I2SC_RHR		0x0020	/* Receiver Holding Register */
++#define ATMEL_I2SC_THR		0x0024	/* Transmitter Holding Register */
++#define ATMEL_I2SC_VERSION	0x0028	/* Version Register */
++
++/*
++ * ---- Control Register (Write-only) ----
++ */
++#define ATMEL_I2SC_CR_RXEN	BIT(0)	/* Receiver Enable */
++#define ATMEL_I2SC_CR_RXDIS	BIT(1)	/* Receiver Disable */
++#define ATMEL_I2SC_CR_CKEN	BIT(2)	/* Clock Enable */
++#define ATMEL_I2SC_CR_CKDIS	BIT(3)	/* Clock Disable */
++#define ATMEL_I2SC_CR_TXEN	BIT(4)	/* Transmitter Enable */
++#define ATMEL_I2SC_CR_TXDIS	BIT(5)	/* Transmitter Disable */
++#define ATMEL_I2SC_CR_SWRST	BIT(7)	/* Software Reset */
++
++/*
++ * ---- Mode Register (Read/Write) ----
++ */
++#define ATMEL_I2SC_MR_MODE_MASK		GENMASK(0, 0)
++#define ATMEL_I2SC_MR_MODE_SLAVE	(0 << 0)
++#define ATMEL_I2SC_MR_MODE_MASTER	(1 << 0)
++
++#define ATMEL_I2SC_MR_DATALENGTH_MASK		GENMASK(4, 2)
++#define ATMEL_I2SC_MR_DATALENGTH_32_BITS	(0 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_24_BITS	(1 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_20_BITS	(2 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_18_BITS	(3 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_16_BITS	(4 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_16_BITS_COMPACT	(5 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_8_BITS		(6 << 2)
++#define ATMEL_I2SC_MR_DATALENGTH_8_BITS_COMPACT	(7 << 2)
++
++#define ATMEL_I2SC_MR_FORMAT_MASK	GENMASK(7, 6)
++#define ATMEL_I2SC_MR_FORMAT_I2S	(0 << 6)
++#define ATMEL_I2SC_MR_FORMAT_LJ		(1 << 6)  /* Left Justified */
++#define ATMEL_I2SC_MR_FORMAT_TDM	(2 << 6)
++#define ATMEL_I2SC_MR_FORMAT_TDMLJ	(3 << 6)
++
++/* Left audio samples duplicated to right audio channel */
++#define ATMEL_I2SC_MR_RXMONO		BIT(8)
++
++/* Receiver uses one DMA channel ... */
++#define ATMEL_I2SC_MR_RXDMA_MASK	GENMASK(9, 9)
++#define ATMEL_I2SC_MR_RXDMA_SINGLE	(0 << 9)  /* for all audio channels */
++#define ATMEL_I2SC_MR_RXDMA_MULTIPLE	(1 << 9)  /* per audio channel */
++
++/* I2SDO output of I2SC is internally connected to I2SDI input */
++#define ATMEL_I2SC_MR_RXLOOP		BIT(10)
++
++/* Left audio samples duplicated to right audio channel */
++#define ATMEL_I2SC_MR_TXMONO		BIT(12)
++
++/* Transmitter uses one DMA channel ... */
++#define ATMEL_I2SC_MR_TXDMA_MASK	GENMASK(13, 13)
++#define ATMEL_I2SC_MR_TXDMA_SINGLE	(0 << 13)  /* for all audio channels */
++#define ATMEL_I2SC_MR_TXDME_MULTIPLE	(1 << 13)  /* per audio channel */
++
++/* x sample transmitted when underrun */
++#define ATMEL_I2SC_MR_TXSAME_MASK	GENMASK(14, 14)
++#define ATMEL_I2SC_MR_TXSAME_ZERO	(0 << 14)  /* Zero sample */
++#define ATMEL_I2SC_MR_TXSAME_PREVIOUS	(1 << 14)  /* Previous sample */
++
++/* Audio Clock to I2SC Master Clock ratio */
++#define ATMEL_I2SC_MR_IMCKDIV_MASK	GENMASK(21, 16)
++#define ATMEL_I2SC_MR_IMCKDIV(div) \
++	(((div) << 16) & ATMEL_I2SC_MR_IMCKDIV_MASK)
++
++/* Master Clock to fs ratio */
++#define ATMEL_I2SC_MR_IMCKFS_MASK	GENMASK(29, 24)
++#define ATMEL_I2SC_MR_IMCKFS(fs) \
++	(((fs) << 24) & ATMEL_I2SC_MR_IMCKFS_MASK)
++
++/* Master Clock mode */
++#define ATMEL_I2SC_MR_IMCKMODE_MASK	GENMASK(30, 30)
++/* 0: No master clock generated (selected clock drives I2SCK pin) */
++#define ATMEL_I2SC_MR_IMCKMODE_I2SCK	(0 << 30)
++/* 1: master clock generated (internally generated clock drives I2SMCK pin) */
++#define ATMEL_I2SC_MR_IMCKMODE_I2SMCK	(1 << 30)
++
++/* Slot Width */
++/* 0: slot is 32 bits wide for DATALENGTH = 18/20/24 bits. */
++/* 1: slot is 24 bits wide for DATALENGTH = 18/20/24 bits. */
++#define ATMEL_I2SC_MR_IWS		BIT(31)
++
++/*
++ * ---- Status Registers ----
++ */
++#define ATMEL_I2SC_SR_RXEN	BIT(0)	/* Receiver Enabled */
++#define ATMEL_I2SC_SR_RXRDY	BIT(1)	/* Receive Ready */
++#define ATMEL_I2SC_SR_RXOR	BIT(2)	/* Receive Overrun */
++
++#define ATMEL_I2SC_SR_TXEN	BIT(4)	/* Transmitter Enabled */
++#define ATMEL_I2SC_SR_TXRDY	BIT(5)	/* Transmit Ready */
++#define ATMEL_I2SC_SR_TXUR	BIT(6)	/* Transmit Underrun */
++
++/* Receive Overrun Channel */
++#define ATMEL_I2SC_SR_RXORCH_MASK	GENMASK(15, 8)
++#define ATMEL_I2SC_SR_RXORCH(ch)	(1 << (((ch) & 0x7) + 8))
++
++/* Transmit Underrun Channel */
++#define ATMEL_I2SC_SR_TXURCH_MASK	GENMASK(27, 20)
++#define ATMEL_I2SC_SR_TXURCH(ch)	(1 << (((ch) & 0x7) + 20))
++
++/*
++ * ---- Interrupt Enable/Disable/Mask Registers ----
++ */
++#define ATMEL_I2SC_INT_RXRDY	ATMEL_I2SC_SR_RXRDY
++#define ATMEL_I2SC_INT_RXOR	ATMEL_I2SC_SR_RXOR
++#define ATMEL_I2SC_INT_TXRDY	ATMEL_I2SC_SR_TXRDY
++#define ATMEL_I2SC_INT_TXUR	ATMEL_I2SC_SR_TXUR
++
++static const struct regmap_config atmel_i2s_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = ATMEL_I2SC_VERSION,
++};
++
++struct atmel_i2s_gck_param {
++	int		fs;
++	unsigned long	mck;
++	int		imckdiv;
++	int		imckfs;
++};
++
++#define I2S_MCK_12M288		12288000UL
++#define I2S_MCK_11M2896		11289600UL
++
++/* mck = (32 * (imckfs+1) / (imckdiv+1)) * fs */
++static const struct atmel_i2s_gck_param gck_params[] = {
++	/* mck = 12.288MHz */
++	{  8000, I2S_MCK_12M288, 0, 47},	/* mck = 1536 fs */
++	{ 16000, I2S_MCK_12M288, 1, 47},	/* mck =  768 fs */
++	{ 24000, I2S_MCK_12M288, 3, 63},	/* mck =  512 fs */
++	{ 32000, I2S_MCK_12M288, 3, 47},	/* mck =  384 fs */
++	{ 48000, I2S_MCK_12M288, 7, 63},	/* mck =  256 fs */
++	{ 64000, I2S_MCK_12M288, 7, 47},	/* mck =  192 fs */
++	{ 96000, I2S_MCK_12M288, 7, 31},	/* mck =  128 fs */
++	{192000, I2S_MCK_12M288, 7, 15},	/* mck =   64 fs */
++
++	/* mck = 11.2896MHz */
++	{ 11025, I2S_MCK_11M2896, 1, 63},	/* mck = 1024 fs */
++	{ 22050, I2S_MCK_11M2896, 3, 63},	/* mck =  512 fs */
++	{ 44100, I2S_MCK_11M2896, 7, 63},	/* mck =  256 fs */
++	{ 88200, I2S_MCK_11M2896, 7, 31},	/* mck =  128 fs */
++	{176400, I2S_MCK_11M2896, 7, 15},	/* mck =   64 fs */
++};
++
++struct atmel_i2s_dev;
++
++struct atmel_i2s_caps {
++	int	(*mck_init)(struct atmel_i2s_dev *, struct device_node *np);
++};
++
++struct atmel_i2s_dev {
++	struct device				*dev;
++	struct regmap				*regmap;
++	struct clk				*pclk;
++	struct clk				*gclk;
++	struct clk				*aclk;
++	struct snd_dmaengine_dai_dma_data	playback;
++	struct snd_dmaengine_dai_dma_data	capture;
++	unsigned int				fmt;
++	const struct atmel_i2s_gck_param	*gck_param;
++	const struct atmel_i2s_caps		*caps;
++};
++
++static irqreturn_t atmel_i2s_interrupt(int irq, void *dev_id)
++{
++	struct atmel_i2s_dev *dev = dev_id;
++	unsigned int sr, imr, pending, ch, mask;
++	irqreturn_t ret = IRQ_NONE;
++
++	regmap_read(dev->regmap, ATMEL_I2SC_SR, &sr);
++	regmap_read(dev->regmap, ATMEL_I2SC_IMR, &imr);
++	pending = sr & imr;
++
++	if (!pending)
++		return IRQ_NONE;
++
++	if (pending & ATMEL_I2SC_INT_RXOR) {
++		mask = ATMEL_I2SC_SR_RXOR;
++
++		for (ch = 0; ch < ATMEL_I2SC_MAX_TDM_CHANNELS; ++ch) {
++			if (sr & ATMEL_I2SC_SR_RXORCH(ch)) {
++				mask |= ATMEL_I2SC_SR_RXORCH(ch);
++				dev_err(dev->dev,
++					"RX overrun on channel %d\n", ch);
++			}
++		}
++		regmap_write(dev->regmap, ATMEL_I2SC_SCR, mask);
++		ret = IRQ_HANDLED;
++	}
++
++	if (pending & ATMEL_I2SC_INT_TXUR) {
++		mask = ATMEL_I2SC_SR_TXUR;
++
++		for (ch = 0; ch < ATMEL_I2SC_MAX_TDM_CHANNELS; ++ch) {
++			if (sr & ATMEL_I2SC_SR_TXURCH(ch)) {
++				mask |= ATMEL_I2SC_SR_TXURCH(ch);
++				dev_err(dev->dev,
++					"TX underrun on channel %d\n", ch);
++			}
++		}
++		regmap_write(dev->regmap, ATMEL_I2SC_SCR, mask);
++		ret = IRQ_HANDLED;
++	}
++
++	return ret;
++}
++
++#define ATMEL_I2S_RATES		SNDRV_PCM_RATE_8000_192000
++
++#define ATMEL_I2S_FORMATS	(SNDRV_PCM_FMTBIT_S8 |		\
++				 SNDRV_PCM_FMTBIT_S16_LE |	\
++				 SNDRV_PCM_FMTBIT_S18_3LE |	\
++				 SNDRV_PCM_FMTBIT_S20_3LE |	\
++				 SNDRV_PCM_FMTBIT_S24_3LE |	\
++				 SNDRV_PCM_FMTBIT_S24_LE |	\
++				 SNDRV_PCM_FMTBIT_S32_LE)
++
++static int atmel_i2s_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct atmel_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
++
++	dev->fmt = fmt;
++	return 0;
++}
++
++static int atmel_i2s_prepare(struct snd_pcm_substream *substream,
++			     struct snd_soc_dai *dai)
++{
++	struct atmel_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
++	bool is_playback = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	unsigned int rhr, sr = 0;
++
++	if (is_playback) {
++		regmap_read(dev->regmap, ATMEL_I2SC_SR, &sr);
++		if (sr & ATMEL_I2SC_SR_RXRDY) {
++			/*
++			 * The RX Ready flag should not be set. However if here,
++			 * we flush (read) the Receive Holding Register to start
++			 * from a clean state.
++			 */
++			dev_dbg(dev->dev, "RXRDY is set\n");
++			regmap_read(dev->regmap, ATMEL_I2SC_RHR, &rhr);
++		}
++	}
++
++	return 0;
++}
++
++static int atmel_i2s_get_gck_param(struct atmel_i2s_dev *dev, int fs)
++{
++	int i, best;
++
++	if (!dev->gclk || !dev->aclk) {
++		dev_err(dev->dev, "cannot generate the I2S Master Clock\n");
++		return -EINVAL;
++	}
++
++	/*
++	 * Find the best possible settings to generate the I2S Master Clock
++	 * from the PLL Audio.
++	 */
++	dev->gck_param = NULL;
++	best = INT_MAX;
++	for (i = 0; i < ARRAY_SIZE(gck_params); ++i) {
++		const struct atmel_i2s_gck_param *gck_param = &gck_params[i];
++		int val = abs(fs - gck_param->fs);
++
++		if (val < best) {
++			best = val;
++			dev->gck_param = gck_param;
++		}
++	}
++
++	return 0;
++}
++
++static int atmel_i2s_hw_params(struct snd_pcm_substream *substream,
++			       struct snd_pcm_hw_params *params,
++			       struct snd_soc_dai *dai)
++{
++	struct atmel_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
++	bool is_playback = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	unsigned int mr = 0;
++	int ret;
++
++	switch (dev->fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		mr |= ATMEL_I2SC_MR_FORMAT_I2S;
++		break;
++
++	default:
++		dev_err(dev->dev, "unsupported bus format\n");
++		return -EINVAL;
++	}
++
++	switch (dev->fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBS_CFS:
++		/* codec is slave, so cpu is master */
++		mr |= ATMEL_I2SC_MR_MODE_MASTER;
++		ret = atmel_i2s_get_gck_param(dev, params_rate(params));
++		if (ret)
++			return ret;
++		break;
++
++	case SND_SOC_DAIFMT_CBM_CFM:
++		/* codec is master, so cpu is slave */
++		mr |= ATMEL_I2SC_MR_MODE_SLAVE;
++		dev->gck_param = NULL;
++		break;
++
++	default:
++		dev_err(dev->dev, "unsupported master/slave mode\n");
++		return -EINVAL;
++	}
++
++	switch (params_channels(params)) {
++	case 1:
++		if (is_playback)
++			mr |= ATMEL_I2SC_MR_TXMONO;
++		else
++			mr |= ATMEL_I2SC_MR_RXMONO;
++		break;
++	case 2:
++		break;
++	default:
++		dev_err(dev->dev, "unsupported number of audio channels\n");
++		return -EINVAL;
++	}
++
++	switch (params_format(params)) {
++	case SNDRV_PCM_FORMAT_S8:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_8_BITS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S16_LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_16_BITS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S18_3LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_18_BITS | ATMEL_I2SC_MR_IWS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S20_3LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_20_BITS | ATMEL_I2SC_MR_IWS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S24_3LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_24_BITS | ATMEL_I2SC_MR_IWS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S24_LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_24_BITS;
++		break;
++
++	case SNDRV_PCM_FORMAT_S32_LE:
++		mr |= ATMEL_I2SC_MR_DATALENGTH_32_BITS;
++		break;
++
++	default:
++		dev_err(dev->dev, "unsupported size/endianness for audio samples\n");
++		return -EINVAL;
++	}
++
++	return regmap_write(dev->regmap, ATMEL_I2SC_MR, mr);
++}
++
++static int atmel_i2s_switch_mck_generator(struct atmel_i2s_dev *dev,
++					  bool enabled)
++{
++	unsigned int mr, mr_mask;
++	unsigned long aclk_rate;
++	int ret;
++
++	mr = 0;
++	mr_mask = (ATMEL_I2SC_MR_IMCKDIV_MASK |
++		   ATMEL_I2SC_MR_IMCKFS_MASK |
++		   ATMEL_I2SC_MR_IMCKMODE_MASK);
++
++	if (!enabled) {
++		/* Disable the I2S Master Clock generator. */
++		ret = regmap_write(dev->regmap, ATMEL_I2SC_CR,
++				   ATMEL_I2SC_CR_CKDIS);
++		if (ret)
++			return ret;
++
++		/* Reset the I2S Master Clock generator settings. */
++		ret = regmap_update_bits(dev->regmap, ATMEL_I2SC_MR,
++					 mr_mask, mr);
++		if (ret)
++			return ret;
++
++		/* Disable/unprepare the PMC generated clock. */
++		clk_disable_unprepare(dev->gclk);
++
++		/* Disable/unprepare the PLL audio clock. */
++		clk_disable_unprepare(dev->aclk);
++		return 0;
++	}
++
++	if (!dev->gck_param)
++		return -EINVAL;
++
++	aclk_rate = dev->gck_param->mck * (dev->gck_param->imckdiv + 1);
++
++	/* Fist change the PLL audio clock frequency ... */
++	ret = clk_set_rate(dev->aclk, aclk_rate);
++	if (ret)
++		return ret;
++
++	/*
++	 * ... then set the PMC generated clock rate to the very same frequency
++	 * to set the gclk parent to aclk.
++	 */
++	ret = clk_set_rate(dev->gclk, aclk_rate);
++	if (ret)
++		return ret;
++
++	/* Prepare and enable the PLL audio clock first ... */
++	ret = clk_prepare_enable(dev->aclk);
++	if (ret)
++		return ret;
++
++	/* ... then prepare and enable the PMC generated clock. */
++	ret = clk_prepare_enable(dev->gclk);
++	if (ret)
++		return ret;
++
++	/* Update the Mode Register to generate the I2S Master Clock. */
++	mr |= ATMEL_I2SC_MR_IMCKDIV(dev->gck_param->imckdiv);
++	mr |= ATMEL_I2SC_MR_IMCKFS(dev->gck_param->imckfs);
++	mr |= ATMEL_I2SC_MR_IMCKMODE_I2SMCK;
++	ret = regmap_update_bits(dev->regmap, ATMEL_I2SC_MR, mr_mask, mr);
++	if (ret)
++		return ret;
++
++	/* Finally enable the I2S Master Clock generator. */
++	return regmap_write(dev->regmap, ATMEL_I2SC_CR,
++			    ATMEL_I2SC_CR_CKEN);
++}
++
++static int atmel_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
++			     struct snd_soc_dai *dai)
++{
++	struct atmel_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
++	bool is_playback = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	bool is_master, mck_enabled;
++	unsigned int cr, mr;
++	int err;
++
++	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_START:
++	case SNDRV_PCM_TRIGGER_RESUME:
++	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
++		cr = is_playback ? ATMEL_I2SC_CR_TXEN : ATMEL_I2SC_CR_RXEN;
++		mck_enabled = true;
++		break;
++	case SNDRV_PCM_TRIGGER_STOP:
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
++		cr = is_playback ? ATMEL_I2SC_CR_TXDIS : ATMEL_I2SC_CR_RXDIS;
++		mck_enabled = false;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	/* Read the Mode Register to retrieve the master/slave state. */
++	err = regmap_read(dev->regmap, ATMEL_I2SC_MR, &mr);
++	if (err)
++		return err;
++	is_master = (mr & ATMEL_I2SC_MR_MODE_MASK) == ATMEL_I2SC_MR_MODE_MASTER;
++
++	/* If master starts, enable the audio clock. */
++	if (is_master && mck_enabled)
++		err = atmel_i2s_switch_mck_generator(dev, true);
++	if (err)
++		return err;
++
++	err = regmap_write(dev->regmap, ATMEL_I2SC_CR, cr);
++	if (err)
++		return err;
++
++	/* If master stops, disable the audio clock. */
++	if (is_master && !mck_enabled)
++		err = atmel_i2s_switch_mck_generator(dev, false);
++
++	return err;
++}
++
++static const struct snd_soc_dai_ops atmel_i2s_dai_ops = {
++	.prepare	= atmel_i2s_prepare,
++	.trigger	= atmel_i2s_trigger,
++	.hw_params	= atmel_i2s_hw_params,
++	.set_fmt	= atmel_i2s_set_dai_fmt,
++};
++
++static int atmel_i2s_dai_probe(struct snd_soc_dai *dai)
++{
++	struct atmel_i2s_dev *dev = snd_soc_dai_get_drvdata(dai);
++
++	snd_soc_dai_init_dma_data(dai, &dev->playback, &dev->capture);
++	return 0;
++}
++
++static struct snd_soc_dai_driver atmel_i2s_dai = {
++	.probe	= atmel_i2s_dai_probe,
++	.playback = {
++		.channels_min = 1,
++		.channels_max = 2,
++		.rates = ATMEL_I2S_RATES,
++		.formats = ATMEL_I2S_FORMATS,
++	},
++	.capture = {
++		.channels_min = 1,
++		.channels_max = 2,
++		.rates = ATMEL_I2S_RATES,
++		.formats = ATMEL_I2S_FORMATS,
++	},
++	.ops = &atmel_i2s_dai_ops,
++	.symmetric_rates = 1,
++};
++
++static const struct snd_soc_component_driver atmel_i2s_component = {
++	.name	= "atmel-i2s",
++};
++
++static int atmel_i2s_sama5d2_mck_init(struct atmel_i2s_dev *dev,
++				      struct device_node *np)
++{
++	struct clk *muxclk;
++	int err;
++
++	if (!dev->gclk)
++		return 0;
++
++	/* muxclk is optional, so we return error for probe defer only */
++	muxclk = devm_clk_get(dev->dev, "muxclk");
++	if (IS_ERR(muxclk)) {
++		err = PTR_ERR(muxclk);
++		if (err == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		dev_warn(dev->dev,
++			 "failed to get the I2S clock control: %d\n", err);
++		return 0;
++	}
++
++	return clk_set_parent(muxclk, dev->gclk);
++}
++
++static const struct atmel_i2s_caps atmel_i2s_sama5d2_caps = {
++	.mck_init = atmel_i2s_sama5d2_mck_init,
++};
++
++static const struct of_device_id atmel_i2s_dt_ids[] = {
++	{
++		.compatible = "atmel,sama5d2-i2s",
++		.data = (void *)&atmel_i2s_sama5d2_caps,
++	},
++
++	{ /* sentinel */ }
++};
++
++MODULE_DEVICE_TABLE(of, atmel_i2s_dt_ids);
++
++static int atmel_i2s_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	const struct of_device_id *match;
++	struct atmel_i2s_dev *dev;
++	struct resource *mem;
++	struct regmap *regmap;
++	void __iomem *base;
++	int irq;
++	int err = -ENXIO;
++	unsigned int pcm_flags = 0;
++	unsigned int version;
++
++	/* Get memory for driver data. */
++	dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return -ENOMEM;
++
++	/* Get hardware capabilities. */
++	match = of_match_node(atmel_i2s_dt_ids, np);
++	if (match)
++		dev->caps = match->data;
++
++	/* Map I/O registers. */
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(&pdev->dev, base,
++				       &atmel_i2s_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* Request IRQ. */
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		return irq;
++
++	err = devm_request_irq(&pdev->dev, irq, atmel_i2s_interrupt, 0,
++			       dev_name(&pdev->dev), dev);
++	if (err)
++		return err;
++
++	/* Get the peripheral clock. */
++	dev->pclk = devm_clk_get(&pdev->dev, "pclk");
++	if (IS_ERR(dev->pclk)) {
++		err = PTR_ERR(dev->pclk);
++		dev_err(&pdev->dev,
++			"failed to get the peripheral clock: %d\n", err);
++		return err;
++	}
++
++	/* Get audio clocks to generate the I2S Master Clock (I2S_MCK) */
++	dev->aclk = devm_clk_get(&pdev->dev, "aclk");
++	dev->gclk = devm_clk_get(&pdev->dev, "gclk");
++	if (IS_ERR(dev->aclk) && IS_ERR(dev->gclk)) {
++		if (PTR_ERR(dev->aclk) == -EPROBE_DEFER ||
++		    PTR_ERR(dev->gclk) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		/* Master Mode not supported */
++		dev->aclk = NULL;
++		dev->gclk = NULL;
++	} else if (IS_ERR(dev->gclk)) {
++		err = PTR_ERR(dev->gclk);
++		dev_err(&pdev->dev,
++			"failed to get the PMC generated clock: %d\n", err);
++		return err;
++	} else if (IS_ERR(dev->aclk)) {
++		err = PTR_ERR(dev->aclk);
++		dev_err(&pdev->dev,
++			"failed to get the PLL audio clock: %d\n", err);
++		return err;
++	}
++
++	dev->dev = &pdev->dev;
++	dev->regmap = regmap;
++	platform_set_drvdata(pdev, dev);
++
++	/* Do hardware specific settings to initialize I2S_MCK generator */
++	if (dev->caps && dev->caps->mck_init) {
++		err = dev->caps->mck_init(dev, np);
++		if (err)
++			return err;
++	}
++
++	/* Enable the peripheral clock. */
++	err = clk_prepare_enable(dev->pclk);
++	if (err)
++		return err;
++
++	/* Get IP version. */
++	regmap_read(dev->regmap, ATMEL_I2SC_VERSION, &version);
++	dev_info(&pdev->dev, "hw version: %#x\n", version);
++
++	/* Enable error interrupts. */
++	regmap_write(dev->regmap, ATMEL_I2SC_IER,
++		     ATMEL_I2SC_INT_RXOR | ATMEL_I2SC_INT_TXUR);
++
++	err = devm_snd_soc_register_component(&pdev->dev,
++					      &atmel_i2s_component,
++					      &atmel_i2s_dai, 1);
++	if (err) {
++		dev_err(&pdev->dev, "failed to register DAI: %d\n", err);
++		clk_disable_unprepare(dev->pclk);
++		return err;
++	}
++
++	/* Prepare DMA config. */
++	dev->playback.addr	= (dma_addr_t)mem->start + ATMEL_I2SC_THR;
++	dev->playback.maxburst	= 1;
++	dev->capture.addr	= (dma_addr_t)mem->start + ATMEL_I2SC_RHR;
++	dev->capture.maxburst	= 1;
++
++	if (of_property_match_string(np, "dma-names", "rx-tx") == 0)
++		pcm_flags |= SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX;
++	err = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, pcm_flags);
++	if (err) {
++		dev_err(&pdev->dev, "failed to register PCM: %d\n", err);
++		clk_disable_unprepare(dev->pclk);
++		return err;
++	}
++
++	return 0;
++}
++
++static int atmel_i2s_remove(struct platform_device *pdev)
++{
++	struct atmel_i2s_dev *dev = platform_get_drvdata(pdev);
++
++	clk_disable_unprepare(dev->pclk);
++
++	return 0;
++}
++
++static struct platform_driver atmel_i2s_driver = {
++	.driver		= {
++		.name	= "atmel_i2s",
++		.of_match_table	= of_match_ptr(atmel_i2s_dt_ids),
++	},
++	.probe		= atmel_i2s_probe,
++	.remove		= atmel_i2s_remove,
++};
++module_platform_driver(atmel_i2s_driver);
++
++MODULE_DESCRIPTION("Atmel I2S Controller driver");
++MODULE_AUTHOR("Cyrille Pitchen <cyrille.pitchen@atmel.com>");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
