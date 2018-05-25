@@ -1,36 +1,80 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1526895204.2822.4.camel@baylibre.com>
-Subject: Re: [PATCH v2 2/2] clk: meson: axg: let mpll clocks round closest
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 21 May 2018 11:33:24 +0200
-In-Reply-To: <61fa49ae-e73e-957e-e28a-134102f82194@baylibre.com>
-References: <20180515163652.19980-1-jbrunet@baylibre.com>
-         <20180515163652.19980-3-jbrunet@baylibre.com>
-         <61fa49ae-e73e-957e-e28a-134102f82194@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
+	"b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, Stephen Boyd <sboyd@codeaurora.org>, Masahiro Yamada
+	<yamada.masahiro@socionext.com>
+Subject: RE: [PATCH V2 2/4] clk: add new APIs to operate on all available
+ clocks
+Date: Fri, 25 May 2018 09:49:45 +0000
+Message-ID: 
+ <AM0PR04MB42110066C43E037F2E0501CB80690@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+ <1521602391-30356-3-git-send-email-aisheng.dong@nxp.com>
+ <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <152182421754.178046.7553203878044979411@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-05-15 at 18:46 +0200, Neil Armstrong wrote:
-> On 15/05/2018 18:36, Jerome Brunet wrote:
-> > Let the mpll dividers achieve the closest rate possible, even if
-> > it means rounding the requested rate up.
-> > 
-> > This is done to improve the accuracy of the rates provided by these
-> > plls to the audio subsystem
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> > 
-[...]
-> 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-
-Applied
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
+bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgTWFyY2ggMjQsIDIwMTggMTI6
+NTcgQU0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBsaW51eC1jbGtA
+dmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IG10dXJxdWV0dGVAYmF5bGlicmUu
+Y29tOyBoZGVnb2VkZUByZWRoYXQuY29tOw0KPiBiLnpvbG5pZXJraWVAc2Ftc3VuZy5jb207IGxp
+bnV4QGFybWxpbnV4Lm9yZy51azsgbGludXgtDQo+IGZiZGV2QHZnZXIua2VybmVsLm9yZzsgZGwt
+bGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IEEucy4gRG9uZw0KPiA8YWlzaGVuZy5kb25n
+QG54cC5jb20+OyBTdGVwaGVuIEJveWQgPHNib3lkQGNvZGVhdXJvcmEub3JnPjsNCj4gTWFzYWhp
+cm8gWWFtYWRhIDx5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbT4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCBWMiAyLzRdIGNsazogYWRkIG5ldyBBUElzIHRvIG9wZXJhdGUgb24gYWxsIGF2YWls
+YWJsZQ0KPiBjbG9ja3MNCj4gDQo+IFF1b3RpbmcgRG9uZyBBaXNoZW5nICgyMDE4LTAzLTIwIDIw
+OjE5OjQ5KQ0KPiA+IEBAIC01MCw2ICs1MiwzOCBAQCBzdGF0aWMgaW50IF9fbXVzdF9jaGVjayBv
+Zl9jbGtfYnVsa19nZXQoc3RydWN0DQo+IGRldmljZV9ub2RlICpucCwgaW50IG51bV9jbGtzLA0K
+PiA+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiAgfQ0KPiA+ICBFWFBPUlRfU1lNQk9MKG9mX2Ns
+a19idWxrX2dldCk7DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IF9fbXVzdF9jaGVjayBvZl9jbGtf
+YnVsa19nZXRfYWxsKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY2xrX2J1bGtfZGF0YQ0KPiA+ICsq
+KmNsa3MpIHsNCj4gPiArICAgICAgIHN0cnVjdCBjbGtfYnVsa19kYXRhICpjbGtfYnVsazsNCj4g
+PiArICAgICAgIGludCBudW1fY2xrczsNCj4gPiArICAgICAgIGludCByZXQ7DQo+ID4gKw0KPiA+
+ICsgICAgICAgbnVtX2Nsa3MgPSBvZl9jbGtfZ2V0X3BhcmVudF9jb3VudChucCk7DQo+ID4gKyAg
+ICAgICBpZiAoIW51bV9jbGtzKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4gPiAr
+DQo+ID4gKyAgICAgICBjbGtfYnVsayA9IGtjYWxsb2MobnVtX2Nsa3MsIHNpemVvZigqY2xrX2J1
+bGspLCBHRlBfS0VSTkVMKTsNCj4gDQo+IENhbiBiZSBrbWFsbG9jX2FycmF5PyBvZl9jbGtfYnVs
+a19nZXQoKSBhbHJlYWR5IGNsZWFycyB0aGluZ3Mgb3V0DQo+IGFwcHJvcHJpYXRlbHkuDQoNClll
+cywgaW5kZWVkLiBXaWxsIHVzZSBrbWFsbG9jX2FycmF5IGluc3RlYWQuDQoNCj4gDQo+ID4gKyAg
+ICAgICBpZiAoIWNsa19idWxrKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsN
+Cj4gPiArDQo+ID4gKyAgICAgICByZXQgPSBvZl9jbGtfYnVsa19nZXQobnAsIG51bV9jbGtzLCBj
+bGtfYnVsayk7DQo+ID4gKyAgICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGtm
+cmVlKGNsa19idWxrKTsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiArICAg
+ICAgIH0NCj4gPiArDQo+ID4gKyAgICAgICAqY2xrcyA9IGNsa19idWxrOw0KPiA+ICsNCj4gPiAr
+ICAgICAgIHJldHVybiBudW1fY2xrczsNCj4gPiArfQ0KPiA+ICsjZWxzZQ0KPiA+ICtzdGF0aWMg
+aW50IF9fbXVzdF9jaGVjayBvZl9jbGtfYnVsa19nZXRfYWxsKHN0cnVjdCBkZXZpY2Vfbm9kZSAq
+bnAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
+Y3QgY2xrX2J1bGtfZGF0YQ0KPiA+ICsqKmNsa3MpIHsNCj4gPiArICAgICAgIHJldHVybiAtRU5P
+RU5UOw0KPiA+ICt9DQo+ID4gICNlbmRpZg0KPiANCj4gVGhpcyBlbHNlIGNhbiBwcm9iYWJseSBi
+ZSBkcm9wcGVkIHRvby4NCj4gDQoNClJpZ2h0Lg0KDQo+ID4NCj4gPiAgdm9pZCBjbGtfYnVsa19w
+dXQoaW50IG51bV9jbGtzLCBzdHJ1Y3QgY2xrX2J1bGtfZGF0YSAqY2xrcykgQEAgLTkwLDYNCj4g
+PiArMTI0LDI5IEBAIGludCBfX211c3RfY2hlY2sgY2xrX2J1bGtfZ2V0KHN0cnVjdCBkZXZpY2Ug
+KmRldiwgaW50DQo+ID4gbnVtX2Nsa3MsICB9ICBFWFBPUlRfU1lNQk9MKGNsa19idWxrX2dldCk7
+DQo+ID4NCj4gPiArdm9pZCBjbGtfYnVsa19wdXRfYWxsKGludCBudW1fY2xrcywgc3RydWN0IGNs
+a19idWxrX2RhdGEgKmNsa3MpIHsNCj4gPiArICAgICAgIGlmIChJU19FUlJfT1JfTlVMTChjbGtz
+KSkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuOw0KPiA+ICsNCj4gPiArICAgICAgIGNsa19i
+dWxrX3B1dChudW1fY2xrcywgY2xrcyk7DQo+ID4gKw0KPiA+ICsgICAgICAga2ZyZWUoY2xrcyk7
+DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTChjbGtfYnVsa19wdXRfYWxsKTsNCj4gPiArDQo+
+ID4gK2ludCBfX211c3RfY2hlY2sgY2xrX2J1bGtfZ2V0X2FsbChzdHJ1Y3QgZGV2aWNlICpkZXYs
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjbGtfYnVsa19k
+YXRhICoqY2xrcykgew0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldl9v
+Zl9ub2RlKGRldik7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKCFucCkNCj4gPiArICAgICAgICAg
+ICAgICAgcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIG9mX2Nsa19idWxrX2dl
+dF9hbGwobnAsIGNsa3MpOyB9DQo+ID4gK0VYUE9SVF9TWU1CT0woY2xrX2J1bGtfZ2V0X2FsbCk7
+DQo+IA0KPiBMb29rcyBiZXR0ZXIhDQoNClRoYW5rcw0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcN
+Cg==
