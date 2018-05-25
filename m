@@ -1,36 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+Date: Fri, 25 May 2018 15:34:27 +0300
+Message-ID: <1527251668-31396-7-git-send-email-codrin.ciubotariu@microchip.com>
+In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503183847.11046-4-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io> <20180503183847.11046-4-icenowy@aosc.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 May 2018 14:20:06 +0200
-Message-ID: <CACRpkdY2HXmn8iez3LhVUPQKcxwxRW1t18jWj0PbQi6=wFf_2Q@mail.gmail.com>
-Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin controller
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 3, 2018 at 8:38 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-> which controls the PL and PM pin banks.
->
-> Add support for it.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
+each I2S node.
 
-Patch applied with the ACKs.
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+[codrin.ciubotariu@microchip.com: added phandle to new mux clock]
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index eeb6afa..eca73ce 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -58,6 +58,8 @@
+ 		serial1 = &uart3;
+ 		tcb0 = &tcb0;
+ 		tcb1 = &tcb1;
++		i2s0 = &i2s0;
++		i2s1 = &i2s1;
+ 	};
+ 
+ 	cpus {
+@@ -1313,6 +1315,22 @@
+ 				clocks = <&clk32k>;
+ 			};
+ 
++			i2s0: i2s@f8050000 {
++				compatible = "atmel,sama5d2-i2s";
++				reg = <0xf8050000 0x100>;
++				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(31))>,
++				       <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(32))>;
++				dma-names = "tx", "rx";
++				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
++				clock-names = "pclk", "gclk", "aclk", "muxclk";
++				status = "disabled";
++			};
++
+ 			can0: can@f8054000 {
+ 				compatible = "bosch,m_can";
+ 				reg = <0xf8054000 0x4000>, <0x210000 0x4000>;
+@@ -1506,6 +1524,22 @@
+ 				status = "disabled";
+ 			};
+ 
++			i2s1: i2s@fc04c000 {
++				compatible = "atmel,sama5d2-i2s";
++				reg = <0xfc04c000 0x100>;
++				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(33))>,
++				       <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(34))>;
++				dma-names = "tx", "rx";
++				clocks = <&i2s1_clk>, <&i2s1_gclk>, <&audio_pll_pmc>, <&i2s1muxck>;
++				clock-names = "pclk", "gclk", "aclk", "muxclk";
++				status = "disabled";
++			};
++
+ 			can1: can@fc050000 {
+ 				compatible = "bosch,m_can";
+ 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
+-- 
+2.7.4
