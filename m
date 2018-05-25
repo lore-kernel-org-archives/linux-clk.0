@@ -1,101 +1,171 @@
-Return-Path: <ping.bai@nxp.com>
-From: Jacky Bai <ping.bai@nxp.com>
-To: Stefan Agner <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
-	<fabio.estevam@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-Date: Tue, 8 May 2018 07:32:33 +0000
-Message-ID: 
- <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <20180418124908.3079-1-stefan@agner.ch>
- <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
-In-Reply-To: <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	Anson.Huang@nxp.com,
+	ping.bai@nxp.com,
+	linux-imx@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH RESEND V4 5/9] clk: imx: add composite clk support
+Date: Fri, 25 May 2018 15:51:07 +0800
+Message-Id: <1527234671-31755-6-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
->=20
-> Hi Jacky,
->=20
-> On 02.05.2018 09:38, Shawn Guo wrote:
-> > Hi Jacky,
-> >
-> > Do you see this problem on i.MX6 ULL?  What's your take on Stefan's fix=
-?
->=20
-> Any comment to this?
->=20
-> It is 4.17.0-rc4 is out and i.MX 6ULL is still broken :-(
->=20
-Hi Stefan,
+The imx composite clk is designed for Peripheral Clock Control (PCC)
+module observed in IMX ULP SoC series. e.g. i.MX7ULP.
 
-I have tried two 6ULL board, I don't meet such issue. System can boot up su=
-ccessfully with commit 6f9575e55632 included.
-Anyway, the change in this patch is ok for me. it is no harm to the BUS clo=
-ck change flow.
+NOTE pcc can only be operated when clk is gated.
 
-Jacky
-> --
-> Stefan
->=20
-> >
-> > Shawn
-> >
-> > On Wed, Apr 18, 2018 at 02:49:08PM +0200, Stefan Agner wrote:
-> >> On i.MX6 ULL using PLL3 seems to cause a freeze when setting the
-> >> parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear since
-> >> commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag for busy
-> >> divider and busy mux"), probably because the clock is now forced to
-> >> be on.
-> >>
-> >> Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy
-> >> divider and busy mux")
-> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> >> ---
-> >> This addresses a regression ssen on v4.17-rc1 where the kernel boots
-> >> during clock initialization, see also:
-> >>
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpa
-> >>
-> tchwork.kernel.org%2Fpatch%2F10295927%2F&data=3D02%7C01%7Cping.bai%
-> 40nx
-> >>
-> p.com%7C023287ec65034c4db45f08d5b419effb%7C686ea1d3bc2b4c6fa92cd9
-> 9c5c
-> >>
-> 301635%7C0%7C0%7C636612945852594725&sdata=3DU0ZGid9ZBey0FXfId2dhZb
-> hVl8p
-> >> CcjTiexG3JHYwCA4%3D&reserved=3D0
-> >>
-> >>  drivers/clk/imx/clk-imx6ul.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/clk/imx/clk-imx6ul.c
-> >> b/drivers/clk/imx/clk-imx6ul.c index 114ecbb94ec5..12320118f8de
-> >> 100644
-> >> --- a/drivers/clk/imx/clk-imx6ul.c
-> >> +++ b/drivers/clk/imx/clk-imx6ul.c
-> >> @@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct
-> device_node *ccm_node)
-> >>  	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
-> >>
-> >>  	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz
-> */
-> >> -	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL],
-> clks[IMX6UL_CLK_PLL3_USB_OTG]);
-> >> +	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL],
-> >> +clks[IMX6UL_CLK_OSC]);
-> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH],
-> clks[IMX6UL_CLK_PERIPH_CLK2]);
-> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE],
-> clks[IMX6UL_CLK_PLL2_BUS]);
-> >>  	clk_set_parent(clks[IMX6UL_CLK_PERIPH],
-> >> clks[IMX6UL_CLK_PERIPH_PRE]);
-> >> --
-> >> 2.17.0
-> >>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:
+ * remove an unneeded blank line change
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile        |  1 +
+ drivers/clk/imx/clk-composite.c | 85 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h           |  6 +++
+ 3 files changed, 92 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-composite.c
+
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index e5b0d42..f4da12c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -4,6 +4,7 @@ obj-y += \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-cpu.o \
++	clk-composite.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
+ 	clk-gate-exclusive.o \
+diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+new file mode 100644
+index 0000000..297974b
+--- /dev/null
++++ b/drivers/clk/imx/clk-composite.c
+@@ -0,0 +1,85 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/slab.h>
++
++#define PCG_PCS_SHIFT	24
++#define PCG_PCS_MASK	0x7
++#define PCG_CGC_SHIFT	30
++#define PCG_FRAC_SHIFT	3
++#define PCG_FRAC_WIDTH	1
++#define PCG_FRAC_MASK	BIT(3)
++#define PCG_PCD_SHIFT	0
++#define PCG_PCD_WIDTH	3
++#define PCG_PCD_MASK	0x7
++
++struct clk_hw *imx_clk_composite(const char *name,
++			      const char * const *parent_names,
++			      int num_parents, bool mux_present,
++			      bool rate_present, bool gate_present,
++			      void __iomem *reg)
++{
++	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
++	struct clk_fractional_divider *fd = NULL;
++	struct clk_gate *gate = NULL;
++	struct clk_mux *mux = NULL;
++	struct clk_hw *hw;
++
++	if (mux_present) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++		mux_hw = &mux->hw;
++		mux->reg = reg;
++		mux->shift = PCG_PCS_SHIFT;
++		mux->mask = PCG_PCS_MASK;
++	}
++
++	if (rate_present) {
++		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
++		if (!fd) {
++			kfree(mux);
++			return ERR_PTR(-ENOMEM);
++		}
++		fd_hw = &fd->hw;
++		fd->reg = reg;
++		fd->mshift = PCG_FRAC_SHIFT;
++		fd->mwidth = PCG_FRAC_WIDTH;
++		fd->mmask  = PCG_FRAC_MASK;
++		fd->nshift = PCG_PCD_SHIFT;
++		fd->nwidth = PCG_PCD_WIDTH;
++		fd->nmask = PCG_PCD_MASK;
++		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
++	}
++
++	if (gate_present) {
++		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++		if (!gate) {
++			kfree(mux);
++			kfree(fd);
++			return ERR_PTR(-ENOMEM);
++		}
++		gate_hw = &gate->hw;
++		gate->reg = reg;
++		gate->bit_idx = PCG_CGC_SHIFT;
++	}
++
++	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
++				       mux_hw, &clk_mux_ops, fd_hw,
++				       &clk_fractional_divider_ops, gate_hw,
++				       &clk_gate_ops, CLK_SET_RATE_GATE |
++				       CLK_SET_PARENT_GATE);
++	if (IS_ERR(hw)) {
++		kfree(mux);
++		kfree(fd);
++		kfree(gate);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index a5a9374..bc43f68 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+ 			     const char **parent_names, int num_parents);
+ 
++struct clk_hw *imx_clk_composite(const char *name,
++				 const char * const *parent_names,
++				 int num_parents, bool mux_present,
++				 bool rate_present, bool gate_present,
++				 void __iomem *reg);
++
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+-- 
+2.7.4
