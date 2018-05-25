@@ -1,57 +1,55 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 29 May 2018 08:39:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180529073958.GB4790@dell>
-References: <20180528090003.GA8778@localhost.localdomain>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Fri, 25 May 2018 14:32:40 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	"Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180525113240.GE16888@localhost.localdomain>
+References: <20180524060036.GI4249@localhost.localdomain>
+ <20180524141427.GU4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
+ <20180525072253.GC16888@localhost.localdomain>
+ <20180525101423.GH4828@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180528090003.GA8778@localhost.localdomain>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180525101423.GH4828@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 28 May 2018, Matti Vaittinen wrote:
-
-> Patch series adding support for ROHM BD71837 PMIC.
+On Fri, May 25, 2018 at 11:14:23AM +0100, Mark Brown wrote:
+> On Fri, May 25, 2018 at 10:22:53AM +0300, Matti Vaittinen wrote:
+> > On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
 > 
-> BD71837 is a programmable Power Management IC for powering single-core,
-> dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-> low BOM cost and compact solution footprint. It integrates 8 buck
-> regulators and 7 LDO’s to provide all the power rails required by the
-> SoC and the commonly used peripherals.
+> > > > devm_regulator_regster()
 > 
-> The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-> naming is generic and not tied to any specific purposes. However there
-> is following limitations which make it mostly suitable for use cases
-> where the processor where PMIC driver is running is powered by the PMIC:
+> > > Makes sense. Thanks
 > 
-> - The PMIC is not re-initialized if it resets. PMIC may reset as a
->   result of voltage monitoring (over/under voltage) or due to reset
->   request. Driver is only initializing PMIC at probe. This is not
->   problem as long as processor controlling PMIC is powered by PMIC.
+> > I was going to do 
 > 
-> - The PMIC internal state machine is ignored by driver. Driver assumes
->   the PMIC is wired so that it is always in "run" state when controlled
->   by the driver.
-
-FYI, this patch-set is going to be difficult to manage since it was
-not sent 'threaded'.  As people start replying to different patches,
-they are going to scatter-bomb throughout all of the recipient's
-inboxes.
-
-If/when you send a subsequent version, could you please ensure you
-send the set threaded so the patches keep in relation to one another
-as they are reviewed?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > -       pmic = kzalloc(sizeof(struct bd71837_pmic), GFP_KERNEL);
+> > +       pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
+> > +                           GFP_KERNEL);
+> 
+> > and
+> 
+> > -               rdev = regulator_register(desc, &config);
+> > +               rdev = devm_regulator_register(&pdev->dev, desc, &config);
+> > 
+> > but is there now a race regarding freeing the pmic structure and
+> > unregistering the regulator?
+> 
+> Why?  devm_ stuff gets unwound in the opposite order to the order in
+> which it was allocated.
+Allright. Then there's no problems. I'll do the change.
