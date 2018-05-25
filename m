@@ -1,64 +1,29 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v7 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
-Date: Thu, 17 May 2018 07:50:14 +0200
-Message-Id: <20180517055014.6607-7-o.rempel@pengutronix.de>
-In-Reply-To: <20180517055014.6607-1-o.rempel@pengutronix.de>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
+To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org,
+ mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-2-rnayak@codeaurora.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <d0f36b0e-852d-c0b7-53f8-ac5ad9d34d9e@linaro.org>
+Date: Fri, 25 May 2018 19:20:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180323082616.10142-2-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This board, as well as some other boards with i.MX6 and a PMIC, uses a
-"PMIC_STBY_REQ" line to notify the PMIC about a state change.
-The PMIC is programmed for a specific state change before triggering the
-line.
-In this case, PMIC_STBY_REQ can be used for stand by, sleep
-and power off modes.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
-index 2e98c92adff7..a0e9753ee767 100644
---- a/arch/arm/boot/dts/imx6dl-riotboard.dts
-+++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
-@@ -90,6 +90,10 @@
- 	status = "okay";
- };
- 
-+&clks {
-+	fsl,pmic-stby-poweroff;
-+};
-+
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
-@@ -170,6 +174,7 @@
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <16 8>;
-+		fsl,pmic-stby-poweroff;
- 
- 		regulators {
- 			reg_vddcore: sw1ab {				/* VDDARM_IN */
--- 
-2.17.0
+On 23/03/18 08:26, Rajendra Nayak wrote:
+> Some GDSCs might have software control to turn them off, but we might
+> want to keep them enabled always, in some cases because of lack of
+> support in kernel to handle a graceful turning off/on of such GDSCs.
+> Most common instances would be the GDCSs which power up the noc/bus
+> fabrics, which need bus drivers to handle them and atleast support for
+> which is missing on all qcom SoCs.
+> 
+> Signed-off-by: Rajendra Nayak<rnayak@codeaurora.org>
+Tested-by: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
