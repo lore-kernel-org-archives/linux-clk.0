@@ -1,82 +1,97 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v9 02/27] clk: davinci: da850-pll: change PLL0 to
- CLK_OF_DECLARE
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-3-david@lechnology.com>
- <fe791ecf-ebd0-4e9e-722e-bfa07acc4ea2@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f92d3a7c-3a1f-d267-6424-af1f38badd76@lechnology.com>
-Date: Tue, 1 May 2018 20:46:09 -0500
-MIME-Version: 1.0
-In-Reply-To: <fe791ecf-ebd0-4e9e-722e-bfa07acc4ea2@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH 3/3] arm64: dts: Update Stingray clock DT nodes
+Date: Fri, 25 May 2018 09:45:17 -0700
+Message-Id: <1527266717-8406-4-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/01/2018 08:46 AM, Sekhar Nori wrote:
-> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->> PLL0 on davinci/da850-type device needs to be registered early in boot
->> because it is needed for clocksource/clockevent. Change the driver
->> to use CLK_OF_DECLARE for this special case.
->>
->> Signed-off-by: David Lechner <david@lechnology.com>
->> ---
->>
->> v9 changes:
->> - new patch in v9
->>
->>
->>   drivers/clk/davinci/pll-da850.c | 26 ++++++++++++++++++++++----
->>   drivers/clk/davinci/pll.c       |  4 +++-
->>   drivers/clk/davinci/pll.h       |  2 +-
->>   3 files changed, 26 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
->> index 00a6ece7b524..743527de1da2 100644
->> --- a/drivers/clk/davinci/pll-da850.c
->> +++ b/drivers/clk/davinci/pll-da850.c
->> @@ -12,6 +12,8 @@
->>   #include <linux/init.h>
->>   #include <linux/kernel.h>
->>   #include <linux/mfd/da8xx-cfgchip.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/of_address.h>
->>   #include <linux/of.h>
->>   #include <linux/types.h>
->>   
->> @@ -135,11 +137,27 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
->>   	NULL
->>   };
->>   
->> -int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
->> +void of_da850_pll0_init(struct device_node *node)
->>   {
->> -	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
->> -				   &da850_pll0_obsclk_info,
->> -				   da850_pll0_sysclk_info, 7, base, cfgchip);
->> +	void __iomem *base;
->> +	struct regmap *cfgchip;
->> +
->> +	base = of_iomap(node, 0);
->> +	if (!base) {
->> +		pr_err("%s: ioremap failed\n", __func__);
->> +		return;
->> +	}
->> +
->> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
->> +	if (IS_ERR(cfgchip)) {
->> +		pr_warn("%s: failed to get cfgchip (%ld)\n", __func__,
->> +			PTR_ERR(cfgchip));
->> +		cfgchip = NULL;
->> +	}
-> 
-> Is this error handling for cfgchip needed here considering
-> davinci_pll_clk_register() already checks and warns.
+Update clock output names in the Stingray clock DT nodes so they match
+the binding document and the latest ASIC datasheet. Also add entries
+for LCPLL2
 
-Ah, good point. I'll clean this up.
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 26 ++++++++++++++++------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+index 3a4d452..10a106a 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -52,12 +52,24 @@
+ 			reg = <0x0001d104 0x32>,
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll0", "clk_125", "clk_scr",
++			clock-output-names = "genpll0", "clk_125m", "clk_scr",
+ 					     "clk_250", "clk_pcie_axi",
+ 					     "clk_paxc_axi_x2",
+ 					     "clk_paxc_axi";
+ 		};
+ 
++		genpll2: genpll2@1d1ac {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll2";
++			reg = <0x0001d1ac 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll2", "clk_nic",
++					     "clk_ts_500_ref", "clk_125_nitro",
++					     "clk_chimp", "clk_nic_flash",
++					     "clk_fs";
++		};
++
+ 		genpll3: genpll3@1d1e0 {
+ 			#clock-cells = <1>;
+ 			compatible = "brcm,sr-genpll3";
+@@ -75,8 +87,8 @@
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+ 			clock-output-names = "genpll4", "clk_ccn",
+-					     "clk_tpiu_pll", "noc_clk",
+-					     "pll_chclk_fs4",
++					     "clk_tpiu_pll", "clk_noc",
++					     "clk_chclk_fs4",
+ 					     "clk_bridge_fscpu";
+ 		};
+ 
+@@ -86,8 +98,8 @@
+ 			reg = <0x0001d248 0x32>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll5", "fs4_hf_clk",
+-					     "crypto_ae_clk", "raid_ae_clk";
++			clock-output-names = "genpll5", "clk_fs4_hf",
++					     "clk_crypto_ae", "clk_raid_ae";
+ 		};
+ 
+ 		lcpll0: lcpll0@1d0c4 {
+@@ -107,9 +119,9 @@
+ 			reg = <0x0001d138 0x3c>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "lcpll1", "clk_wanpn",
++			clock-output-names = "lcpll1", "clk_wan",
+ 					     "clk_usb_ref",
+-					     "timesync_evt_clk";
++					     "clk_crmu_ts";
+ 		};
+ 
+ 		hsls_clk: hsls_clk {
+-- 
+2.1.4
