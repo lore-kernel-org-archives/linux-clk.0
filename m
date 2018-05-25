@@ -1,73 +1,43 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Sekhar Nori <nsekhar@ti.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [v7 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Thu,  3 May 2018 16:09:15 +0530
-Message-Id: <1525343956-10089-1-git-send-email-tdas@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 4/9] clk: davinci: pll-dm646x: keep PLL2 SYSCLK1 always enabled
+Date: Fri, 25 May 2018 13:11:45 -0500
+Message-Id: <20180525181150.17873-5-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
- [v7]
-  * Addressed comments from Stephen
-	- Keep only xo_board as clock parent.
-	- Associate divs from SoC specific clock listing to calculate
-	   the clock rate.
-	- Add back the recalc_rate clock ops to return the clock rate
-	   based on the parent rate and div associated with clock.
-	- void cast kept to avoid compiler warnings.
+From: Sekhar Nori <nsekhar@ti.com>
 
- [v6]
-   * Addressed comments from Rob
-   * Addressed comments from Stephen
+PLL2 SYSCLK1 on DM646x is connected to DDR2 PHY and cannot
+be disabled. Mark it so to prevent unused clock disable
+infrastructure from disabling it.
 
- [v5]
-   * Addressed comments from Stephen
-   * Introduced a new DT property to take clock divs
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/pll-dm646x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- [v4]
-  * Addressed comments from Stephen
-
- [v3]
-  * Addressed documentation & code review comments from Bjorn
-  * Addressed bindings comments from Rob
-  * Updated the patch series order for bindings
-
- [v2]
-  * Addressed comments from Stephen
-  * Addressed comments from Evan
-
-This patch series adds a driver and device tree documentation binding
-for the clock control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
-would send requests for the RPMh managed clock resources.
-
-The RPMh clock driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.
-
-Thanks,
-Taniya
-
-[1]: https://lkml.org/lkml/2018/3/9/979
-[2]: https://lkml.org/lkml/2018/3/14/787
-
-Taniya Das (1):
-  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-
- drivers/clk/qcom/Kconfig    |   9 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/clk-rpmh.c | 368 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 378 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+index a61cc3256418..0ae827e3ce80 100644
+--- a/drivers/clk/davinci/pll-dm646x.c
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -72,7 +72,7 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
+ 	.flags = 0,
+ };
+ 
+-SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm646x_pll2_init(struct device *dev, void __iomem *base)
+ {
+-- 
+2.17.0
