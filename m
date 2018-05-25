@@ -1,84 +1,117 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com>
-References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 May 2018 11:23:48 +0200
-Message-ID: <CAMuHMdUb4fWFB9oP41ejO0_FDxmgBPL0GxQnkFv18Zfb5=1-fw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <daniel@zonque.org>
+From: Daniel Mack <daniel@zonque.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v2 1/2] dts: clk: add devicetree bindings for MAX9485
+Date: Fri, 25 May 2018 20:20:57 +0200
+Message-Id: <20180525182058.25969-2-daniel@zonque.org>
+In-Reply-To: <20180525182058.25969-1-daniel@zonque.org>
+References: <20180525182058.25969-1-daniel@zonque.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+This patch adds the devicetree bindings for MAX9485, a programmable audio
+clock generator.
 
-On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas R9A06G032 SYSCTRL node description.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+---
+ .../devicetree/bindings/clock/maxim,max9485.txt    | 59 ++++++++++++++++++++++
+ include/dt-bindings/clock/maxim,max9485.h          | 18 +++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
+ create mode 100644 include/dt-bindings/clock/maxim,max9485.h
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> @@ -0,0 +1,32 @@
-> +* Renesas R9A06G032 SYSCTRL
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be:
-> +    - "renesas,r9a06g032-sysctrl"
-> +  - reg: Base address and length of the SYSCTRL IO block.
-> +  - #clock-cells: Must be 1
-
-No clocks/clock-names for the external clock inputs?
-
-"RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
- reference clock outputs for RMII/MII."
-
-Given the documentation explicitly mentions the module clocks are to be
-used for power-management, you may want to add #power-domain-cells as well,
-and let the driver register clock domain. But that can be added later
-(although it will break backwards compatibility with old DTBs).
-
-As PWRCTRL_* registers allow to reset individual modules, #reset-cells is
-another thing to add later.  It's good to start thinking early about how to
-reference resets, though.
-E.g. on other Renesas-SoCs, module resets uses the same numerical
-references as module clocks.
-
-
-> +
-> +Examples
-> +--------
-> +
-> +  - SYSCTRL node:
-> +
-> +       sysctrl: sysctrl@4000c000 {
-
-system-controller@
-
-> +               compatible = "renesas,r9a06g032-sysctrl";
-> +               reg = <0x4000c000 0x1000>;
-> +               #clock-cells = <1>;
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+new file mode 100644
+index 000000000000..61bec1100a94
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+@@ -0,0 +1,59 @@
++Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
++
++This device exposes 4 clocks in total:
++
++- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
++- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
++			frequencies
++- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
++
++MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
++requests.
++
++Required properties:
++- compatible:	"maxim,max9485"
++- clocks:	Input clock, must provice 27.000 MHz
++- clock-names:	Must be set to "xclk"
++- #clock-cells: From common clock binding; shall be set to 1
++
++Optional properties:
++- reset-gpios:		GPIO descriptor connected to the #RESET input pin
++- vdd-supply:		A regulator node for Vdd
++- clock-output-names:	Name of output clocks, as defined in common clock
++			bindings
++
++If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
++and "clkout2".
++
++Clocks are defined as preprocessor macros in the dt-binding header.
++
++Example:
++
++	#include <dt-bindings/clock/maxim,max9485.h>
++
++	xo-27mhz: xo-27mhz {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++
++	&i2c0 {
++		max9485: audio-clock@63 {
++			reg = <0x63>;
++			compatible = "maxim,max9485";
++			clock-names = "xclk";
++			clocks = <&xo-27mhz>;
++			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
++			vdd-supply = <&3v3-reg>;
++			#clock-cells = <1>;
++		};
++	};
++
++	// Clock consumer node
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clock-names = "foo-input-clk";
++		clocks = <&max9485 MAX9485_CLKOUT1>;
++	};
+diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
+new file mode 100644
+index 000000000000..185b09ce1869
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max9485.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2018 Daniel Mack
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_MAX9485_CLK_H
++#define __DT_BINDINGS_MAX9485_CLK_H
++
++#define MAX9485_MCLKOUT	0
++#define MAX9485_CLKOUT	1
++#define MAX9485_CLKOUT1	2
++#define MAX9485_CLKOUT2	3
++
++#endif /* __DT_BINDINGS_MAX9485_CLK_H */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.14.3
