@@ -1,128 +1,67 @@
 Return-Path: <david@lechnology.com>
 From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Sekhar Nori <nsekhar@ti.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Fri, 18 May 2018 11:48:14 -0500
-Message-Id: <20180518164829.27052-13-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Subject: [PATCH 5/9] clk: davinci: psc-dm365: fix few clocks
+Date: Fri, 25 May 2018 13:11:46 -0500
+Message-Id: <20180525181150.17873-6-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+From: Sekhar Nori <nsekhar@ti.com>
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Fix parent of EMAC and voice codec PSC clocks. Documentation is clear
+on EMAC clock parent, but its not fully clear on parent of voice codec
+clock. The implementation chosen is matches arch/arm/mach-davinci/dm365.c.
+Add a comment explaining this for posterity.
 
-Also, the #includes are sorted since we are adding some here.
+There is only one power domain on DM365. Fix the power domain of voice
+codec and vpss dac modules.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+While at it, add a comment explaining how the parent of vpss dac clock was
+derived. Note that this patch does not touch the parent of vpss dac clock.
+
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
+ drivers/clk/davinci/psc-dm365.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-v10 changes:
-- none
-
-v10 changes:
-- none
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 78390c64e6ca..73de449bbc68 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
-+
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+index 3ad915f37376..289af3913fb0 100644
+--- a/drivers/clk/davinci/psc-dm365.c
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -65,9 +65,22 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
+ 	LPSC(31, 0, arm,         pll2_sysclk2, NULL,               LPSC_ALWAYS_ENABLED),
+ 	LPSC(38, 0, spi3,        pll1_sysclk4, spi3_clkdev,        0),
+ 	LPSC(39, 0, spi4,        pll1_auxclk,  spi4_clkdev,        0),
+-	LPSC(40, 0, emac,        pll2_sysclk4, emac_clkdev,        0),
+-	LPSC(44, 1, voice_codec, pll1_sysclk3, voice_codec_clkdev, 0),
+-	LPSC(46, 1, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
++	LPSC(40, 0, emac,        pll1_sysclk4, emac_clkdev,        0),
++	/*
++	 * The TRM (ARM Subsystem User's Guide) shows two clocks input into
++	 * voice codec module (PLL2 SYSCLK4 with a DIV2 and PLL1 SYSCLK4). Its
++	 * not fully clear from documentation which clock should be considered
++	 * as parent for PSC. The clock chosen here is to maintain
++	 * compatibility with existing code in arch/arm/mach-davinci/dm365.c
++	 */
++	LPSC(44, 0, voice_codec, pll2_sysclk4, voice_codec_clkdev, 0),
++	/*
++	 * Its not fully clear from TRM (ARM Subsystem User's Guide) as to what
++	 * the parent of VPSS DAC LPSC should actually be. PLL1 SYSCLK3 feeds
++	 * into HDVICP and MJCP. The clock chosen here is to remain compatible
++	 * with code existing in arch/arm/mach-davinci/dm365.c
++	 */
++	LPSC(46, 0, vpss_dac,    pll1_sysclk3, vpss_dac_clkdev,    0),
+ 	LPSC(47, 0, vpss_master, pll1_sysclk5, vpss_master_clkdev, 0),
+ 	LPSC(50, 0, mjcp,        pll1_sysclk3, NULL,               0),
+ 	{ }
 -- 
 2.17.0
