@@ -1,74 +1,78 @@
-Return-Path: <sunjg79@163.com>
-From: sunjg79@163.com
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: shawn.guo@linaro.org,
-	xuejiancheng@hisilicon.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jianguo Sun <sunjianguo1@huawei.com>
-Subject: [PATCH] clk: hisilicon: add missing usb3 clocks for Hi3798CV200 SoC
-Date: Fri,  4 May 2018 16:56:30 +0800
-Message-Id: <1525424190-15619-1-git-send-email-sunjg79@163.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>
+Subject: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+Date: Fri, 25 May 2018 15:34:22 +0300
+Message-ID: <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jianguo Sun <sunjianguo1@huawei.com>
+The I2S mux clock can be used to select the I2S input clock. The
+available parents are the peripheral and the generated clocks.
 
-There are two USB3 host controllers on Hi3798CV200 SoC.
-This commit adds missing clocks for them.
-
-Signed-off-by: Jianguo Sun <sunjianguo1@huawei.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 ---
- drivers/clk/hisilicon/crg-hi3798cv200.c | 17 +++++++++++++++++
- include/dt-bindings/clock/histb-clock.h |  8 ++++++++
- 2 files changed, 25 insertions(+)
+ .../devicetree/bindings/clock/at91-clock.txt       | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index 743eec1..4fe0b2a 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -186,6 +186,23 @@ static const struct hisi_gate_clock hi3798cv200_gate_clks[] = {
- 		CLK_SET_RATE_PARENT, 0xbc, 0, 0 },
- 	{ HISTB_USB2_PHY2_REF_CLK, "clk_u2_phy2_ref", "24m",
- 		CLK_SET_RATE_PARENT, 0xbc, 2, 0 },
-+	/* USB3 */
-+	{ HISTB_USB3_BUS_CLK, "clk_u3_bus", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 0, 0 },
-+	{ HISTB_USB3_UTMI_CLK, "clk_u3_utmi", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 4, 0 },
-+	{ HISTB_USB3_PIPE_CLK, "clk_u3_pipe", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 3, 0 },
-+	{ HISTB_USB3_SUSPEND_CLK, "clk_u3_suspend", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 2, 0 },
-+	{ HISTB_USB3_BUS_CLK1, "clk_u3_bus1", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 16, 0 },
-+	{ HISTB_USB3_UTMI_CLK1, "clk_u3_utmi1", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 20, 0 },
-+	{ HISTB_USB3_PIPE_CLK1, "clk_u3_pipe1", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 19, 0 },
-+	{ HISTB_USB3_SUSPEND_CLK1, "clk_u3_suspend1", NULL,
-+		CLK_SET_RATE_PARENT, 0xb0, 18, 0 },
- };
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index 51c259a..1c46b3c 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -90,6 +90,8 @@ Required properties:
+ 	"atmel,sama5d2-clk-audio-pll-pmc"
+ 		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+ 		and can be used by peripheral clock or generic clock
++	"atmel,sama5d2-clk-i2s-mux":
++		at91 I2S clock source selection
  
- static struct hisi_clock_data *hi3798cv200_clk_register(
-diff --git a/include/dt-bindings/clock/histb-clock.h b/include/dt-bindings/clock/histb-clock.h
-index fab30b3..136de24 100644
---- a/include/dt-bindings/clock/histb-clock.h
-+++ b/include/dt-bindings/clock/histb-clock.h
-@@ -62,6 +62,14 @@
- #define HISTB_USB2_PHY1_REF_CLK		40
- #define HISTB_USB2_PHY2_REF_CLK		41
- #define HISTB_COMBPHY0_CLK		42
-+#define HISTB_USB3_BUS_CLK		43
-+#define HISTB_USB3_UTMI_CLK		44
-+#define HISTB_USB3_PIPE_CLK		45
-+#define HISTB_USB3_SUSPEND_CLK		46
-+#define HISTB_USB3_BUS_CLK1		47
-+#define HISTB_USB3_UTMI_CLK1		48
-+#define HISTB_USB3_PIPE_CLK1		49
-+#define HISTB_USB3_SUSPEND_CLK1		50
- 
- /* clocks provided by mcu CRG */
- #define HISTB_MCE_CLK			1
+ Required properties for SCKC node:
+ - reg : defines the IO memory reserved for the SCKC.
+@@ -507,3 +509,35 @@ For example:
+ 			atmel,clk-output-range = <0 83000000>;
+ 		};
+ 	};
++
++Required properties for I2S mux clocks:
++- #size-cells : shall be 0 (reg is used to encode I2S bus id).
++- #address-cells : shall be 1 (reg is used to encode I2S bus id).
++- name: device tree node describing a specific mux clock.
++	* #clock-cells : from common clock binding; shall be set to 0.
++	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
++	  peripheral and generated clock; the first phandle shall belong to the
++	  peripheral clock and the second one shall belong to the generated
++	  clock; "clock-indices" property can be user to specify
++	  the correct order.
++	* reg: I2S bus id of the corresponding mux clock.
++	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
++
++For example:
++	i2s_clkmux {
++		compatible = "atmel,sama5d2-clk-i2s-mux";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2s0muxck: i2s0_muxclk {
++			clocks = <&i2s0_clk>, <&i2s0_gclk>;
++			#clock-cells = <0>;
++			reg = <0>;
++		};
++
++		i2s1muxck: i2s1_muxclk {
++			clocks = <&i2s1_clk>, <&i2s1_gclk>;
++			#clock-cells = <0>;
++			reg = <1>;
++		};
++	};
 -- 
 2.7.4
