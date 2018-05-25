@@ -1,80 +1,145 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33628 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751693AbeERVyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 17:54:52 -0400
-Received: by mail-wr0-f196.google.com with SMTP id a15-v6so3263432wrm.0
-        for <linux-clk@vger.kernel.org>; Fri, 18 May 2018 14:54:52 -0700 (PDT)
-References: <20180518092806.3829-1-rui.silva@linaro.org> <20180518092806.3829-9-rui.silva@linaro.org> <20180518165146.GC21131@rob-hp-laptop>
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 08/12] ARM: dts: imx7s: add multiplexer controls
-In-reply-to: <20180518165146.GC21131@rob-hp-laptop>
-Date: Fri, 18 May 2018 22:54:49 +0100
-Message-ID: <m3wow0d3yu.fsf@linaro.org>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	Anson.Huang@nxp.com,
+	ping.bai@nxp.com,
+	linux-imx@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH RESEND V4 7/9] clk: imx: make mux parent strings const
+Date: Fri, 25 May 2018 15:51:09 +0800
+Message-Id: <1527234671-31755-8-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
-On Fri 18 May 2018 at 16:51, Rob Herring wrote:
-> On Fri, May 18, 2018 at 10:28:02AM +0100, Rui Miguel Silva 
-> wrote:
->> The IOMUXC General Purpose Register has bitfield to control 
->> video bus
->> multiplexer to control the CSI input between the MIPI-CSI2 and 
->> parallel
->> interface. Add that register and mask.
->> 
->> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->> ---
->>  arch/arm/boot/dts/imx7s.dtsi | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->> 
->> diff --git a/arch/arm/boot/dts/imx7s.dtsi 
->> b/arch/arm/boot/dts/imx7s.dtsi
->> index 67450ad89940..3590dab529f9 100644
->> --- a/arch/arm/boot/dts/imx7s.dtsi
->> +++ b/arch/arm/boot/dts/imx7s.dtsi
->> @@ -520,8 +520,14 @@
->>  
->>  			gpr: iomuxc-gpr@30340000 {
->>  				compatible = 
->>  "fsl,imx7d-iomuxc-gpr",
->> -					"fsl,imx6q-iomuxc-gpr", 
->> "syscon";
->> +					"fsl,imx6q-iomuxc-gpr", 
->> "syscon", "simple-mfd";
->>  				reg = <0x30340000 0x10000>;
->> +
->> +				mux: mux-controller {
->> +					compatible = "mmio-mux";
->> +					#mux-control-cells = <1>;
->> +					mux-reg-masks = <0x14 
->> 0x00000010>;
->
-> If 1 bit control, then #mux-control-cells can be 0.
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
-Ack.
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
 
->
->> +				};
->>  			};
->>  
->>  			ocotp: ocotp-ctrl@30350000 {
->> -- 
->> 2.17.0
->> 
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
 
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+---
+ChangeLog:
+v1->v3: no changes
+---
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 9903652..e695622 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e..44817c1 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+ };
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
+ {
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index bc43f68..7fca912 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk_hw *imx_clk_composite(const char *name,
+ 				 const char * const *parent_names,
+@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ }
+ 
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -204,7 +205,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -212,7 +214,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -220,8 +223,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+-- 
+2.7.4
