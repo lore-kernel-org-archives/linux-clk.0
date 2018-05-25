@@ -1,170 +1,104 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
-        boris.brezillon@bootlin.com, broonie@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nicolas.ferre@microchip.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
-Cc: Cristian.Birsan@microchip.com
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
-Message-ID: <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
-Date: Thu, 31 May 2018 08:26:36 -0700
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 12:31:43 +0200
+Message-ID: <CAMuHMdVzN0Cbc9+MJqC4EzVgD3bkDixkf10NA13ko87cMwvpLA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
-> This driver is a simple muxing driver that controls the
-> I2S's clock input by using syscon/regmap to change the parrent.
+Hi Michel,
 
-s/parrent/parent/
+On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the constants necessary to use the renesas,r9a06g032-sysctrl no=
+de.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-> The available inputs can be Peripheral clock and Generated clock.
+Thanks for your patch!
 
-Why capitalize peripheral and generated?
-
-> =
-
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> ---
-> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
-> index 1254bf9..903f23c 100644
-> --- a/arch/arm/mach-at91/Kconfig
-> +++ b/arch/arm/mach-at91/Kconfig
-> @@ -27,6 +27,7 @@ config SOC_SAMA5D2
->         select HAVE_AT91_H32MX
->         select HAVE_AT91_GENERATED_CLK
->         select HAVE_AT91_AUDIO_PLL
-> +       select HAVE_AT91_I2S_MUX_CLK
->         select PINCTRL_AT91PIO4
->         help
->           Select this if ou are using one of Microchip's SAMA5D2 family S=
-oC.
-> @@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
->  config HAVE_AT91_AUDIO_PLL
->         bool
->  =
-
-> +config HAVE_AT91_I2S_MUX_CLK
-> +       bool
-> +
->  config SOC_SAM_V4_V5
->         bool
->  =
-
-
-I guess this is OK.
-
-> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-> index 082596f..facc169 100644
-> --- a/drivers/clk/at91/Makefile
-> +++ b/drivers/clk/at91/Makefile
-> @@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)               +=3D clk-=
-usb.o
->  obj-$(CONFIG_HAVE_AT91_SMD)            +=3D clk-smd.o
->  obj-$(CONFIG_HAVE_AT91_H32MX)          +=3D clk-h32mx.o
->  obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)  +=3D clk-generated.o
-> +obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)    +=3D clk-i2s-mux.o
-> diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mu=
-x.c
-> new file mode 100644
-> index 0000000..2d56ded
 > --- /dev/null
-> +++ b/drivers/clk/at91/clk-i2s-mux.c
-> @@ -0,0 +1,117 @@
+> +++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
+
+You can still call this file r9a06g032-clocks.h, if you want, as it
+contains clock definitions only.
+
+> @@ -0,0 +1,187 @@
 > +/* SPDX-License-Identifier: GPL-2.0 */
 > +/*
-> + *  Copyright (C) 2018 Microchip Technology Inc,
-> + *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.co=
-m>
+> + * R9A06G032 sysctrl IDs
 > + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
 > + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from zx-reboot.c
 > + */
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
+> +#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+> +#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
 > +
-> +#include <soc/at91/atmel-sfr.h>
-> +
-> +#define        I2S_BUS_NR      2
-> +
-> +struct clk_i2s_mux {
-> +       struct clk_hw hw;
-> +       struct regmap *regmap;
-> +       u32 bus_id;
+> +#define R9A06G032_CLKOUT                       0
+> +#define R9A06G032_CLK_PLL_USB                  1
+> +#define R9A06G032_CLK_48                       1 /* AKA CLK_PLL_USB */
+> +#define R9A06G032_CLKOUT_D10                   2
+> +#define R9A06G032_CLKOUT_D16                   3
+> +#define R9A06G032_MSEBIS_CLK                   3 /* AKA CLKOUT_D16 */
+> +#define R9A06G032_MSEBIM_CLK                   3 /* AKA CLKOUT_D16 */
+> +#define R9A06G032_CLKOUT_D160                  4
+> +#define R9A06G032_CLKOUT_D1OR2                 5
+> +#define R9A06G032_CLK_DDRPHY_PLLCLK            5 /* AKA CLKOUT_D1OR2 */
 
-Can be a u8?
+[...]
 
-> +};
-> +
-> +#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
-> +
-> +static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
-> +{
-> +       struct clk_i2s_mux *mux =3D to_clk_i2s_mux(hw);
-> +       u32 val;
-> +
-> +       regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
-> +
-> +       return (val & BIT(mux->bus_id)) >> mux->bus_id;
-> +}
-> +
-> +static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct clk_i2s_mux *mux =3D to_clk_i2s_mux(hw);
-> +
-> +       return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
-> +                                 BIT(mux->bus_id), index << mux->bus_id);
-> +}
-> +
-> +const struct clk_ops clk_i2s_mux_ops =3D {
+I have 3 comments:
 
-static?
+  1. I had expected this list to match (both name- and order-wise) Appendix
+     C ("Clock Tree Structure") in the RZ/N1[DSL] User=E2=80=99s Manual: Sy=
+stem
+     Introduction, Multiplexing, Electrical and Mechanical Information.
+     That would make it easier to review.
 
-> +       .get_parent =3D clk_i2s_mux_get_parent,
-> +       .set_parent =3D clk_i2s_mux_set_parent,
-> +       .determine_rate =3D __clk_mux_determine_rate,
-> +};
-> +
-> +static struct clk_hw * __init
-> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
-> +                         const char * const *parent_names,
-> +                         unsigned int num_parents, u32 bus_id)
-> +{
-> +       struct clk_init_data init =3D {};
-> +       struct clk_i2s_mux *i2s_ck;
-> +       int ret;
-> +
-> +       i2s_ck =3D kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
-> +       if (!i2s_ck)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &clk_i2s_mux_ops;
-> +       init.parent_names =3D parent_names;
-> +       init.num_parents =3D num_parents;
-> +       init.flags =3D CLK_IGNORE_UNUSED;
+  2. These definitions seems to be a mix of:
+       1. Internal core clocks,
+       2. Other core clocks,
+       3. Module clocks.
 
-Really? Why?
+     The internal clocks do not need to be referenced from DT, so I would
+     not make them part of the DT bindings.
 
-> +
-> +       i2s_ck->hw.init =3D &init;
-> +       i2s_ck->bus_id =3D bus_id;
-> +       i2s_ck->regmap =3D regmap;
-> +
-> +       ret =3D clk_hw_register(NULL, &i2s_ck->hw);
-> +       if (ret) {
-> +               kfree(i2s_ck);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return &i2s_ck->hw;
-> +}
+  3. It looks like the module clocks can be referred to by register offset
+     and bit position, which is similar to how this is handled on R-Car
+     SoCs.
+     Perhaps you can just drop the definitions for these from the header
+     file, and refer to them by (combined) register offset and bit position
+     instead?
+     Or am I missing something?
+     I believe this can also be done for the module resets (later).
+
+Thanks again!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
