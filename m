@@ -1,60 +1,92 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout11.siol.net ([213.250.19.138]:34844 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752709AbeESSdA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 May 2018 14:33:00 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 13/15] drm/sun4i: Add support for A64 HDMI PHY
-Date: Sat, 19 May 2018 20:31:25 +0200
-Message-Id: <20180519183127.2718-14-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:2687 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933238AbeEYMf1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 May 2018 08:35:27 -0400
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: [PATCH v4 7/7] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+Date: Fri, 25 May 2018 15:34:28 +0300
+Message-ID: <1527251668-31396-8-git-send-email-codrin.ciubotariu@microchip.com>
+In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PHY is the same as in H3, except it can switch between two clock
-parents.
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+This patch sets the pin muxing for the I2S controllers
+
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+[codrin.ciubotariu@microchip.com: added pin muxing for the second
+controller]
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 7a911f0a3ae3..0c9d67bb1007 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -396,6 +396,14 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 	.name		= "phy"
- };
+diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+index e4bbb7e..0391731 100644
+--- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
+@@ -281,6 +281,11 @@
+ 				status = "okay";
+ 			};
  
-+static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
-+	.has_phy_clk = true,
-+	.has_second_pll = true,
-+	.phy_init = &sun8i_hdmi_phy_init_h3,
-+	.phy_disable = &sun8i_hdmi_phy_disable_h3,
-+	.phy_config = &sun8i_hdmi_phy_config_h3,
-+};
++			i2s0: i2s@f8050000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_i2s0_default>;
++			};
 +
- static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
- 	.phy_init = &sun8i_hdmi_phy_init_a83t,
- 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
-@@ -410,6 +418,10 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
- };
+ 			can0: can@f8054000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can0_default>;
+@@ -424,6 +429,24 @@
+ 					bias-disable;
+ 				};
  
- static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun50i-a64-hdmi-phy",
-+		.data = &sun50i_a64_hdmi_phy,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
- 		.data = &sun8i_a83t_hdmi_phy,
++				pinctrl_i2s0_default: i2s0_default {
++					pinmux = <PIN_PC1__I2SC0_CK>,
++						 <PIN_PC2__I2SC0_MCK>,
++						 <PIN_PC3__I2SC0_WS>,
++						 <PIN_PC4__I2SC0_DI0>,
++						 <PIN_PC5__I2SC0_DO0>;
++					bias-disable;
++				};
++
++				pinctrl_i2s1_default: i2s1_default {
++					pinmux = <PIN_PA15__I2SC1_CK>,
++						 <PIN_PA14__I2SC1_MCK>,
++						 <PIN_PA16__I2SC1_WS>,
++						 <PIN_PA17__I2SC1_DI0>,
++						 <PIN_PA18__I2SC1_DO0>;
++					bias-disable;
++				};
++
+ 				pinctrl_key_gpio_default: key_gpio_default {
+ 					pinmux = <PIN_PB9__GPIO>;
+ 					bias-pull-up;
+@@ -546,6 +569,11 @@
+ 				status = "okay";
+ 			};
+ 
++			i2s1: i2s@fc04c000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_i2s1_default>;
++			};
++
+ 			can1: can@fc050000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_default>;
 -- 
-2.17.0
+2.7.4
 
