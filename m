@@ -1,52 +1,86 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: davinci: pll-dm355: drop pll2_sysclk2
-Date: Wed,  9 May 2018 10:36:41 -0500
-Message-Id: <20180509153642.22399-2-david@lechnology.com>
-In-Reply-To: <20180509153642.22399-1-david@lechnology.com>
-References: <20180509153642.22399-1-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:14730 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932994AbeEYMe6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 May 2018 08:34:58 -0400
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>
+Subject: [PATCH v4 0/7] ASoC: add driver for Atmel I2S controller
+Date: Fri, 25 May 2018 15:34:21 +0300
+Message-ID: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes pll2_sysclk2 from the TI DM355 clock driver. This SoC
-doesn't have such a clock. Also, SYSCLK_ALWAYS_ENABLED is transferred
-to pll2_sysclk1 since it drives the DDR and doesn't have another
-mechanism to keep it on.
+This is a rework of Cyrille's patches named:
+[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
+https://lkml.org/lkml/2015/9/29/454
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/clk/davinci/pll-dm355.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+This is the version 4 of the series, and addresses the received feedback
+on the mailing lists.
 
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-index 5345f8286c50..718d9bbbf30d 100644
---- a/drivers/clk/davinci/pll-dm355.c
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -62,8 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
- 
--SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
--SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
- 
- int dm355_pll2_init(struct device *dev, void __iomem *base)
- {
-@@ -71,8 +70,6 @@ int dm355_pll2_init(struct device *dev, void __iomem *base)
- 
- 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
- 
--	davinci_pll_sysclk_register(dev, &pll2_sysclk2, base);
--
- 	davinci_pll_sysclkbp_clk_register(dev, "pll2_sysclkbp", base);
- 
- 	return 0;
+This series applies on top of asoc-next branch of broonie/sound.git.
+
+Based on received feedback, I created a mux clock driver to select the I2S
+clock source, that also includes proper devicetree bindings and nodes.
+Also, I added the I2S nodes in sama5d2's devicetree, with the missing
+pin muxing for the second I2S controller.
+
+This series of patches adds support to the new Atmel I2S controller
+embedded on sama5d2 SoCs.
+
+ChangeLog
+
+v3 -> v4
+ - as suggested by Rob Herring:
+   - added a clock mux driver for I2S's clock control bit;
+   - more precise description of I2S's devicetree bindings;
+   - removed SoC and internal detalls from bindings;
+ - addressed comments from Mark Brown;
+ - added devicetree nodes and pin muxing for I2S;
+
+v2 -> v3
+- fix the coding style, add some more comments and add a section dedicated
+  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
+  Brown.
+
+v1 -> v2
+- initialize dev->dev before calling dev->caps->mck_init()
+
+
+Codrin Ciubotariu (3):
+  dt-bindings: clk: at91: add an I2S mux clock
+  clk: at91: add I2S clock mux driver
+  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+
+Cyrille Pitchen (4):
+  ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+  ASoC: atmel-i2s: add driver for the new Atmel I2S controller
+  ARM: dts: at91: sama5d2: add nodes for I2S controllers
+  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+
+ .../devicetree/bindings/clock/at91-clock.txt       |  34 +
+ .../devicetree/bindings/sound/atmel-i2s.txt        |  47 ++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts        |  28 +
+ arch/arm/boot/dts/sama5d2.dtsi                     |  52 ++
+ arch/arm/mach-at91/Kconfig                         |   4 +
+ drivers/clk/at91/Makefile                          |   1 +
+ drivers/clk/at91/clk-i2s-mux.c                     | 117 ++++
+ sound/soc/atmel/Kconfig                            |   9 +
+ sound/soc/atmel/Makefile                           |   2 +
+ sound/soc/atmel/atmel-i2s.c                        | 765 +++++++++++++++++++++
+ 10 files changed, 1059 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/atmel-i2s.txt
+ create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+ create mode 100644 sound/soc/atmel/atmel-i2s.c
+
 -- 
-2.17.0
+2.7.4
+
