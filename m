@@ -1,86 +1,212 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH 03/15] clk: sunxi-ng: r40: Export video PLLs
-Date: Sat, 19 May 2018 20:31:15 +0200
-Message-Id: <20180519183127.2718-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Lechner <david@lechnology.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 9/9] clk: davinci: Fix link errors when not all SoCs are enabled
+Date: Fri, 25 May 2018 13:11:50 -0500
+Message-Id: <20180525181150.17873-10-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
+This fixes linker errors due to undefined symbols when one or more of
+the TI DaVinci SoCs is not enabled in the kernel config.
 
-Export them.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
- include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/clk/davinci/pll.c   | 16 ++++++++++++++++
+ drivers/clk/davinci/pll.h   | 11 ++++++++---
+ drivers/clk/davinci/psc.c   | 14 ++++++++++++++
+ drivers/clk/davinci/psc.h   | 12 ++++++++++++
+ include/linux/clk/davinci.h | 19 +++++++++++++++----
+ 5 files changed, 65 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-index 0db8e1e97af8..db2a1243f9ff 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-@@ -25,7 +25,9 @@
- #define CLK_PLL_AUDIO_2X	4
- #define CLK_PLL_AUDIO_4X	5
- #define CLK_PLL_AUDIO_8X	6
--#define CLK_PLL_VIDEO0		7
-+
-+/* PLL_VIDEO0 is exported */
-+
- #define CLK_PLL_VIDEO0_2X	8
- #define CLK_PLL_VE		9
- #define CLK_PLL_DDR0		10
-@@ -34,7 +36,9 @@
- #define CLK_PLL_PERIPH0_2X	13
- #define CLK_PLL_PERIPH1		14
- #define CLK_PLL_PERIPH1_2X	15
--#define CLK_PLL_VIDEO1		16
-+
-+/* PLL_VIDEO1 is exported */
-+
- #define CLK_PLL_VIDEO1_2X	17
- #define CLK_PLL_SATA		18
- #define CLK_PLL_SATA_OUT	19
-diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
-index 4fa5f69fc297..f9e15a235626 100644
---- a/include/dt-bindings/clock/sun8i-r40-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
-@@ -43,6 +43,10 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
- #define _DT_BINDINGS_CLK_SUN8I_R40_H_
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 84a343060bc8..65abd371692d 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -860,25 +860,41 @@ static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *de
+ }
  
-+#define CLK_PLL_VIDEO0		7
-+
-+#define CLK_PLL_VIDEO1		16
-+
- #define CLK_CPU			24
+ /* needed in early boot for clocksource/clockevent */
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ CLK_OF_DECLARE(da850_pll0, "ti,da850-pll0", of_da850_pll0_init);
++#endif
  
- #define CLK_BUS_MIPI_DSI	29
+ static const struct of_device_id davinci_pll_of_match[] = {
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ 	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
++#endif
+ 	{ }
+ };
+ 
+ static const struct platform_device_id davinci_pll_id_table[] = {
++#ifdef CONFIG_ARCH_DAVINCI_DA830
+ 	{ .name = "da830-pll",   .driver_data = (kernel_ulong_t)da830_pll_init   },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ 	{ .name = "da850-pll0",  .driver_data = (kernel_ulong_t)da850_pll0_init  },
+ 	{ .name = "da850-pll1",  .driver_data = (kernel_ulong_t)da850_pll1_init  },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM355
+ 	{ .name = "dm355-pll1",  .driver_data = (kernel_ulong_t)dm355_pll1_init  },
+ 	{ .name = "dm355-pll2",  .driver_data = (kernel_ulong_t)dm355_pll2_init  },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM365
+ 	{ .name = "dm365-pll1",  .driver_data = (kernel_ulong_t)dm365_pll1_init  },
+ 	{ .name = "dm365-pll2",  .driver_data = (kernel_ulong_t)dm365_pll2_init  },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM644x
+ 	{ .name = "dm644x-pll1", .driver_data = (kernel_ulong_t)dm644x_pll1_init },
+ 	{ .name = "dm644x-pll2", .driver_data = (kernel_ulong_t)dm644x_pll2_init },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM646x
+ 	{ .name = "dm646x-pll1", .driver_data = (kernel_ulong_t)dm646x_pll1_init },
+ 	{ .name = "dm646x-pll2", .driver_data = (kernel_ulong_t)dm646x_pll2_init },
++#endif
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index b2e5c4496645..7cc354dd29e2 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -122,14 +122,19 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 
+ /* Platform-specific callbacks */
+ 
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ void of_da850_pll0_init(struct device_node *node);
+ int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM355
+ int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM644x
+ int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM646x
+ int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++#endif
+ 
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 6326ba1fe3cc..fffbed5e263b 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -513,20 +513,34 @@ int of_davinci_psc_clk_init(struct device *dev,
+ }
+ 
+ static const struct of_device_id davinci_psc_of_match[] = {
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ 	{ .compatible = "ti,da850-psc0", .data = &of_da850_psc0_init_data },
+ 	{ .compatible = "ti,da850-psc1", .data = &of_da850_psc1_init_data },
++#endif
+ 	{ }
+ };
+ 
+ static const struct platform_device_id davinci_psc_id_table[] = {
++#ifdef CONFIG_ARCH_DAVINCI_DA830
+ 	{ .name = "da830-psc0", .driver_data = (kernel_ulong_t)&da830_psc0_init_data },
+ 	{ .name = "da830-psc1", .driver_data = (kernel_ulong_t)&da830_psc1_init_data },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ 	{ .name = "da850-psc0", .driver_data = (kernel_ulong_t)&da850_psc0_init_data },
+ 	{ .name = "da850-psc1", .driver_data = (kernel_ulong_t)&da850_psc1_init_data },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM355
+ 	{ .name = "dm355-psc",  .driver_data = (kernel_ulong_t)&dm355_psc_init_data  },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM365
+ 	{ .name = "dm365-psc",  .driver_data = (kernel_ulong_t)&dm365_psc_init_data  },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM644x
+ 	{ .name = "dm644x-psc", .driver_data = (kernel_ulong_t)&dm644x_psc_init_data },
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM646x
+ 	{ .name = "dm646x-psc", .driver_data = (kernel_ulong_t)&dm646x_psc_init_data },
++#endif
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
+index c2a7df6413fe..6a42529d31a9 100644
+--- a/drivers/clk/davinci/psc.h
++++ b/drivers/clk/davinci/psc.h
+@@ -94,15 +94,27 @@ struct davinci_psc_init_data {
+ 	int (*psc_init)(struct device *dev, void __iomem *base);
+ };
+ 
++#ifdef CONFIG_ARCH_DAVINCI_DA830
+ extern const struct davinci_psc_init_data da830_psc0_init_data;
+ extern const struct davinci_psc_init_data da830_psc1_init_data;
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ extern const struct davinci_psc_init_data da850_psc0_init_data;
+ extern const struct davinci_psc_init_data da850_psc1_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc0_init_data;
+ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM355
+ extern const struct davinci_psc_init_data dm355_psc_init_data;
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM356
+ extern const struct davinci_psc_init_data dm365_psc_init_data;
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM644x
+ extern const struct davinci_psc_init_data dm644x_psc_init_data;
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM646x
+ extern const struct davinci_psc_init_data dm646x_psc_init_data;
++#endif
+ 
+ #endif /* __CLK_DAVINCI_PSC_H__ */
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+index 62764c5cc86e..8a7b5cd7eac0 100644
+--- a/include/linux/clk/davinci.h
++++ b/include/linux/clk/davinci.h
+@@ -13,17 +13,28 @@
+ 
+ /* function for registering clocks in early boot */
+ 
++#ifdef CONFIG_ARCH_DAVINCI_DA830
+ int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DA850
+ int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM355
+ int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm355_psc_init(struct device *dev, void __iomem *base);
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM365
+ int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+-
+-int dm355_psc_init(struct device *dev, void __iomem *base);
+ int dm365_psc_init(struct device *dev, void __iomem *base);
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM644x
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ int dm644x_psc_init(struct device *dev, void __iomem *base);
++#endif
++#ifdef CONFIG_ARCH_DAVINCI_DM646x
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ int dm646x_psc_init(struct device *dev, void __iomem *base);
++#endif
+ 
+ #endif /* __LINUX_CLK_DAVINCI_PLL_H___ */
 -- 
 2.17.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
