@@ -1,161 +1,70 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-To: 
-Cc: djkurtz@chromium.org,
-	akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	christian.koenig@amd.com,
-	airlied@redhat.com,
-	Shaoyun.Liu@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	rjw@rjwysocki.net,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-Date: Wed,  9 May 2018 17:59:00 +0800
-Message-Id: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <broonie@sirena.org.uk>
+Date: Fri, 25 May 2018 11:24:58 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 4/9] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <20180525102458.GJ4828@sirena.org.uk>
+References: <20180524055752.GE4249@localhost.localdomain>
+ <20180524140118.GS4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B47@WILL-MAIL002.REu.RohmEu.com>
+ <20180524175721.GB4828@sirena.org.uk>
+ <20180525055430.GB16888@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: akshu.agrawal@amd.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jmkJtp15SxLq1SbD"
+In-Reply-To: <20180525055430.GB16888@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Stoney SoC provides oscout clock. This clock can support 25Mhz and
-48Mhz of frequency.
-The clock is available for general system use.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
-v2: config change, added SPDX tag and used clk_hw_register_.
-v3: Fix kbuild warning for checking of NULL pointer
-v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
-v5: Fix license, used static array
- drivers/clk/x86/Makefile             |  3 +-
- drivers/clk/x86/clk-st.c             | 77 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 17 ++++++++
- 3 files changed, 96 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/x86/clk-st.c
- create mode 100644 include/linux/platform_data/clk-st.h
+--jmkJtp15SxLq1SbD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-index 1367afb..00303bc 100644
---- a/drivers/clk/x86/Makefile
-+++ b/drivers/clk/x86/Makefile
-@@ -1,3 +1,4 @@
-+obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-+obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
- clk-x86-lpss-objs		:= clk-lpt.o
- obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
--obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-new file mode 100644
-index 0000000..fb62f39
---- /dev/null
-+++ b/drivers/clk/x86/clk-st.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: MIT
-+/*
-+ * clock framework for AMD Stoney based clocks
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
-+#include <linux/platform_device.h>
-+
-+/* Clock Driving Strength 2 register */
-+#define CLKDRVSTR2	0x28
-+/* Clock Control 1 register */
-+#define MISCCLKCNTL1	0x40
-+/* Auxiliary clock1 enable bit */
-+#define OSCCLKENB	2
-+/* 25Mhz auxiliary output clock freq bit */
-+#define OSCOUT1CLK25MHZ	16
-+
-+#define ST_CLK_48M	0
-+#define ST_CLK_25M	1
-+#define ST_CLK_MUX	2
-+#define ST_CLK_GATE	3
-+#define ST_MAX_CLKS	4
-+
-+static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
-+static struct clk_hw *hws[ST_MAX_CLKS];
-+
-+static int st_clk_probe(struct platform_device *pdev)
-+{
-+	struct st_clk_data *st_data;
-+
-+	st_data = dev_get_platdata(&pdev->dev);
-+	if (!st_data || !st_data->base)
-+		return -EINVAL;
-+
-+	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-+						     48000000);
-+	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-+						     25000000);
-+
-+	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-+		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-+		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-+
-+	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-+
-+	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-+		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-+		CLK_GATE_SET_TO_DISABLE, NULL);
-+
-+	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-+
-+	return 0;
-+}
-+
-+static int st_clk_remove(struct platform_device *pdev)
-+{
-+	int i;
-+
-+	for (i = 0; i < ST_MAX_CLKS; i++)
-+		clk_hw_unregister(hws[i]);
-+	return 0;
-+}
-+
-+static struct platform_driver st_clk_driver = {
-+	.driver = {
-+		.name = "clk-st",
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = st_clk_probe,
-+	.remove = st_clk_remove,
-+};
-+builtin_platform_driver(st_clk_driver);
-diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
-new file mode 100644
-index 0000000..7cdb6a4
---- /dev/null
-+++ b/include/linux/platform_data/clk-st.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * clock framework for AMD Stoney based clock
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ */
-+
-+#ifndef __CLK_ST_H
-+#define __CLK_ST_H
-+
-+#include <linux/compiler.h>
-+
-+struct st_clk_data {
-+	void __iomem *base;
-+};
-+
-+#endif /* __CLK_ST_H */
--- 
-1.9.1
+On Fri, May 25, 2018 at 08:54:30AM +0300, Matti Vaittinen wrote:
+> On Thu, May 24, 2018 at 06:57:21PM +0100, Mark Brown wrote:
+
+> > You can look at the regulators node within the parent device, you know
+> > that in Linux the parent device will be the MFD.
+
+> So I should parse the device-tree in MFD my driver in order to locate
+> the regulators node? Isn't that somewhat like code dublication? If we
+> rely on compatibles we can avoid device-tree parsing in MFD driver,
+
+No, there's no need to do this - the child can just look at the of_node
+of the parent since it can never be instantiated otherwise.
+
+> right? An in-tree example of this is:
+
+There are some bad examples (and some where the same regulators can get
+used with multiple different parents) but that's no reason not to follow
+good practice.
+
+--jmkJtp15SxLq1SbD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsH5HoACgkQJNaLcl1U
+h9Drrwf9H6otj10qIc8vXKx60U0IrSi0dtXfTKSeJMWeuElp1J7E6COsbouwImXE
+uh+FgmF2eC5HgXWrkELT7Sc+9FfzxOHmievxmnB+cz5oL3Q64FkLO1W3vV6embAk
+VF3Su3R+RPF+0jAFJm1cqOOVXWYKc1q9Dd8VTx3qCNXF93rCA9Q7V1XEBgIGlQqp
+wRWI6/1gWaVatWtwGYqOXD9YWxHwMGSZu9QbyxYGY607df0pohuTQH5kHGXAGaVC
+cNwyAH20E2i0YJuWhV4y7LDB9wi8+2dtQ57WlB+AT1A/jEQ41vrgMEt3YoubcCJf
+KVuH0O+wzznJSPbgEvlcV2+nMIhZOQ==
+=Ma5W
+-----END PGP SIGNATURE-----
+
+--jmkJtp15SxLq1SbD--
