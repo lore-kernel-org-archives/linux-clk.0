@@ -1,324 +1,152 @@
-Return-Path: <ilialin@codeaurora.org>
-From: <ilialin@codeaurora.org>
-To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
-Cc: <mturquette@baylibre.com>,
-	<sboyd@kernel.org>,
-	<robh@kernel.org>,
-	<mark.rutland@arm.com>,
-	<rjw@rjwysocki.net>,
-	<lgirdwood@gmail.com>,
-	<broonie@kernel.org>,
-	<andy.gross@linaro.org>,
-	<david.brown@linaro.org>,
-	<catalin.marinas@arm.com>,
-	<will.deacon@arm.com>,
-	<linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<rnayak@codeaurora.org>,
-	<amit.kucheria@linaro.org>,
-	<nicolas.dechesne@linaro.org>,
-	<celster@codeaurora.org>,
-	<tfinkel@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org> <1525348355-25471-13-git-send-email-ilialin@codeaurora.org> <20180504060827.7bddb53ln2ogwcvv@vireshk-i7>
-In-Reply-To: <20180504060827.7bddb53ln2ogwcvv@vireshk-i7>
-Subject: RE: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Fri, 4 May 2018 09:44:48 +0300
-Message-ID: <002a01d3e373$6b6ee410$424cac30$@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAMMfpEwKa90XHu_igCxRQLy_CSVHTkN8eD8f7o=wgtttSn=FqA@mail.gmail.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
+ <CAMMfpEyTORirKiE417AQzCLzxDTKmy83bwivpfJaHQsKUKMc_w@mail.gmail.com>
+ <CAMuHMdWAU9wZkA+Z0BNAGrLV1WrCO3PgCTo2p=q3Mq9Tm6JBGA@mail.gmail.com> <CAMMfpEwKa90XHu_igCxRQLy_CSVHTkN8eD8f7o=wgtttSn=FqA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 11:12:30 +0200
+Message-ID: <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
+To: M P <buserror@gmail.com>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Michel,
 
+On Wed, May 23, 2018 at 10:17 AM, M P <buserror@gmail.com> wrote:
+> On Wed, 23 May 2018 at 08:26, Geert Uytterhoeven <geert@linux-m68k.org>
+> wrote:
+>> On Wed, May 23, 2018 at 8:44 AM, M P <buserror@gmail.com> wrote:
+>> > On Tue, 22 May 2018 at 19:44, Geert Uytterhoeven <geert@linux-m68k.org>
+>> > wrote:
+>> >> On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
+>> >> <michel.pollet@bp.renesas.com> wrote:
+>> >> > --- /dev/null
+>> >> > +++ b/include/dt-bindings/clock/rzn1-clocks.h
+>> >
+>> >> Given this is part of the DT ABI, and there exist multiple different
+> RZ/N1
+>> >> SoCs (and there are probably planned more), I wouldn't call this header
+>> >> file "rzn1-clocks.h", but e.g. "r9a06g032-clocks.h".
+>> >
+>> > Actually, no, there already are two r906g03X devices that will work
+>> > perfectly fine with this driver. We had that discussion before, and you
+>> > insist and me removing mentions of the rzn1 everywhere, however, this
+>> > applies to *two* devices already, and I'm supposed to upstream support
+> for
+>> > them. I can't rename r9g06g032 because it is *inexact* that's why it's
+>
+>> My worry is not that there are two r906g03X devices that will work fine
+>> with this driver, but that there will be other "rzn1" devices that will
+> not
+>> work with these bindings (the header file is part of the bindings).
+>> Besides, RZ/N1D and RZ/N1S (Which apparently differ in packaging only?
+>> Oh no, RZ/N1D (the larger package) has less QSPI channels than RZ/N1S
+>> (the smaller package)), there's also (at least) RZ/N1L.
+>
+>> > called rzn1. So unless you let me call it r9a06g0xx-clocks.h (which i
+> know
+>> > you won't as per multiple previous discussions) this can't be called
+>> > r9a06g032 because it won't be fit for my purpose when I try to bring
+> back
+>> > the RZ/N1S into the picture.
+>
+>> You can add r9a06g033-clocks.h when adding support for RZ/N1S.
+>
+> So it is now acceptable to duplicate a huge amount of code, and constants
+> when in fact there differences are so minor they would require minimal
+> amount of code to take care of them? That just flies straight against my
+> 30+ years of programming -- We're going to have twice the *identical* code,
+> twice the header, and completely incompatible device tree files -- I mean,
+> *right now* our rzn1.dtsi works *as is* on the 1D and 1S, we've got ONE
+> file to maintain, and you can switch your CPU board from 1D to 1S and your
+> 'board file' can stay the same.
+>
+> Wasn't it the idea of that stuff in the first place? Isn't it in the
+> customer/engineer interest to be able to cross grade from one
+> manufacturer's device *in the same series* to another without having to
+> duplicate his whole board file?
 
-> -----Original Message-----
-> From: Viresh Kumar <viresh.kumar@linaro.org>
-> Sent: Friday, May 4, 2018 09:08
-> To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
-> mark.rutland@arm.com; rjw@rjwysocki.net; lgirdwood@gmail.com;
-> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
-> catalin.marinas@arm.com; will.deacon@arm.com; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
-> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> rnayak@codeaurora.org; amit.kucheria@linaro.org;
-> nicolas.dechesne@linaro.org; celster@codeaurora.org;
-> tfinkel@codeaurora.org
-> Subject: Re: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
-> 
-> On 03-05-18, 14:52, Ilia Lin wrote:
-> > In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO
-> > processors, the CPU ferequencies subset and voltage value of each OPP
-> > varies based on the silicon variant in use. Qualcomm Process Voltage
-> > Scaling Tables defines the voltage and frequency value based on the
-> > msm-id in SMEM and speedbin blown in the efuse combination.
-> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
-> > SoC to provide the OPP framework with required information.
-> > This is used to determine the voltage and frequency value for each OPP
-> > of
-> > operating-points-v2 table when it is parsed by the OPP framework.
-> >
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  drivers/cpufreq/Kconfig.arm          |  11 +++
-> >  drivers/cpufreq/Makefile             |   1 +
-> >  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
-> >  drivers/cpufreq/qcom-cpufreq-kryo.c  | 153
-> > +++++++++++++++++++++++++++++++++++
-> >  4 files changed, 168 insertions(+)
-> >  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
-> >
-> > diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> > index de55c7d..f9da18c 100644
-> > --- a/drivers/cpufreq/Kconfig.arm
-> > +++ b/drivers/cpufreq/Kconfig.arm
-> > @@ -124,6 +124,17 @@ config ARM_OMAP2PLUS_CPUFREQ
-> >  	depends on ARCH_OMAP2PLUS
-> >  	default ARCH_OMAP2PLUS
-> >
-> > +config ARM_QCOM_CPUFREQ_KRYO
-> > +	tristate "Qualcomm Technologies, Inc. Kryo based CPUFreq"
-> 
-> I don't see any reply to Sricharan's query on this being tristate.
+Yes, all of these are desirable.
 
-Why shouldn't we leave possibility to compile the cpufreq-dt built-in, and
-the qcom-cpufreq-kryo module?
+Now, given the clock definitions for RZ/N1[DSL] are the same (although some
+don't exist on some variants), you could keep on using RZN1_CLK_FOO for the
+names of the defines, and store them in a common file, included by the
+soc-specific file. But please make clear the common file cannot be included
+directly, so the filename does not become part of the DT ABI, and you are
+shielded from future marketing silliness (e.g. next quarter's RZ/N1X being
+totally different).
 
-> 
-> > +	depends on QCOM_QFPROM
-> > +	depends on QCOM_SMEM
-> > +	select PM_OPP
-> > +	help
-> > +	  This adds the CPUFreq driver for
-> > +	  Qualcomm Technologies, Inc. Kryo SoC based boards.
-> > +
-> > +	  If in doubt, say N.
-> > +
-> >  config ARM_S3C_CPUFREQ
-> >  	bool
-> >  	help
-> > diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile index
-> > 8d24ade..fb4a2ec 100644
-> > --- a/drivers/cpufreq/Makefile
-> > +++ b/drivers/cpufreq/Makefile
-> > @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+=
-> mvebu-cpufreq.o
-> >  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
-> >  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
-> >  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-> > +obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-
-> kryo.o
-> >  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
-> >  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
-> >  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-> > diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > index 3b585e4..77d6ab8 100644
-> > --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> > +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> > @@ -118,6 +118,9 @@
-> >
-> >  	{ .compatible = "nvidia,tegra124", },
-> >
-> > +	{ .compatible = "qcom,apq8096", },
-> > +	{ .compatible = "qcom,msm8996", },
-> > +
-> >  	{ .compatible = "st,stih407", },
-> >  	{ .compatible = "st,stih410", },
-> >
-> > diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > new file mode 100644
-> > index 0000000..32371cc
-> > --- /dev/null
-> > +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> > @@ -0,0 +1,153 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> 
-> Incorrect multi line comment.
+E.g.:
 
-This was done as per Bjorn's instruction.
+include/dt-bindings/clock/r9a06g033-clocks.h:
 
-> 
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > + modify
-> > + * it under the terms of the GNU General Public License version 2 and
-> > + * only version 2 as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> > + */
-> > +
-> > +#include <linux/cpu.h>
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +//#include <linux/io.h>
-> 
-> ??
+    #ifndef __DT_BINDINGS_R9A06G033_CLOCK_H__
+    #define __DT_BINDINGS_R9A06G033_CLOCK_H__
 
-Not good. Will fix this.bbbbbbbb
+    #include "rzn1-clocks.h"
 
-> 
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/nvmem-consumer.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm_opp.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/soc/qcom/smem.h>
-> > +
-> > +#define MSM_ID_SMEM	137
-> > +#define SILVER_LEAD	0
-> > +#define GOLD_LEAD	2
-> > +
-> > +enum _msm_id {
-> > +	MSM8996V3 = 0xF6ul,
-> > +	APQ8096V3 = 0x123ul,
-> > +	MSM8996SG = 0x131ul,
-> > +	APQ8096SG = 0x138ul,
-> > +};
-> > +
-> > +enum _msm8996_version {
-> > +	MSM8996_V3,
-> > +	MSM8996_SG,
-> > +	NUM_OF_MSM8996_VERSIONS,
-> > +};
-> > +
-> > +static enum _msm8996_version __init
-> > +qcom_cpufreq_kryo_get_msm_id(void)
-> > +{
-> > +	size_t len;
-> > +	u32 *msm_id;
-> > +	enum _msm8996_version version;
-> > +
-> > +	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY,
-> MSM_ID_SMEM, &len);
-> > +	/* The first 4 bytes are format, next to them is the actual msm-id
-*/
-> > +	msm_id++;
-> > +
-> > +	switch ((enum _msm_id)*msm_id) {
-> > +	case MSM8996V3:
-> > +	case APQ8096V3:
-> > +		version = MSM8996_V3;
-> > +		break;
-> > +	case MSM8996SG:
-> > +	case APQ8096SG:
-> > +		version = MSM8996_SG;
-> > +		break;
-> > +	default:
-> > +		version = NUM_OF_MSM8996_VERSIONS;
-> > +	}
-> > +
-> > +	return version;
-> > +}
-> > +
-> > +static int __init qcom_cpufreq_kryo_driver_init(void)
-> > +{
-> > +	size_t len;
-> > +	int ret;
-> > +	u32 versions;
-> > +	enum _msm8996_version msm8996_version;
-> > +	u8 *speedbin;
-> > +	struct platform_device *pdev;
-> > +	struct device *cpu_dev;
-> > +	struct device_node *np;
-> > +	struct nvmem_cell *speedbin_nvmem;
-> > +	struct opp_table *opp_temp = NULL;
-> > +
-> > +	cpu_dev = get_cpu_device(SILVER_LEAD);
-> > +	if (IS_ERR_OR_NULL(cpu_dev))
-> > +		return PTR_ERR(cpu_dev);
-> > +
-> > +	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> > +	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> > +		dev_err(cpu_dev, "Not Snapdragon 820/821!");
-> > +		return -ENODEV;
-> > +        }
-> > +
-> > +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> > +	if (IS_ERR_OR_NULL(np))
-> > +		return PTR_ERR(np);
-> > +
-> > +	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> > +		ret = -ENOENT;
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> > +	if (IS_ERR(speedbin_nvmem)) {
-> > +		ret = PTR_ERR(speedbin_nvmem);
-> > +		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> > +
-> > +	switch (msm8996_version) {
-> > +	case MSM8996_V3:
-> > +		versions = 1 << (unsigned int)(*speedbin);
-> > +		break;
-> > +	case MSM8996_SG:
-> > +		versions = 1 << ((unsigned int)(*speedbin) + 4);
-> > +		break;
-> > +	default:
-> > +		BUG();
-> > +		break;
-> > +	}
-> > +
-> > +	ret = PTR_ERR_OR_ZERO(opp_temp = \
-> > +
-> dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> > +	if (0 > ret)
-> > +		goto free_np;
-> > +
-> > +	cpu_dev = get_cpu_device(GOLD_LEAD);
-> > +	ret =
-> PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1
-> ));
-> > +	if (0 > ret)
-> > +		goto put_supported_hw_silver;
-> > +
-> > +	of_node_put(np);
-> > +
-> > +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-> > +	if (IS_ERR(pdev)) {
-> > +		return PTR_ERR(pdev);
-> 
-> Don't need to free resources on error here ?
+    // ... additions and fixups, if needed
 
-You are right. Will fix.
+   #endif // __DT_BINDINGS_R9A06G033_CLOCK_H__
 
-> 
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +put_supported_hw_silver:
-> > +	dev_pm_opp_put_supported_hw(opp_temp);
-> > +
-> > +free_np:
-> > +	of_node_put(np);
-> > +
-> > +	return ret;
-> > +}
-> > +late_initcall(qcom_cpufreq_kryo_driver_init);
-> > +
-> > +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq
-> > +driver"); MODULE_LICENSE("GPL v2");
-> > --
-> > 1.9.1
-> 
-> --
-> viresh
+include/dt-bindings/clock/rzn1-clocks.h:
+
+    #ifndef __DT_BINDINGS_RZN1_CLOCK_H__
+    #define __DT_BINDINGS_RZN1_CLOCK_H__
+
+    #ifndef __DT_BINDINGS_R9A06G033_CLOCK_H__
+    #error Do not include rzn1-clocks.h directly
+    #endif
+
+    #define RZN1_CLK_FOO    0
+    #define RZN1_CLK_BAR    1
+    ...
+
+    #endif // __DT_BINDINGS_RZN1_CLOCK_H__
+
+As for the driver, I think you should make sure the driver instantiates no
+clocks that don't exist on the actual SoC it runs on.
+
+BTW, someone asked why I didn't use the same definitions for R-Car M3-W and
+R-Car H3 (there were only a few differences), and didn't use common
+definitions for all R-Car Gen3 SoCs.
+I doubted a long time that we made the right decision, but then V3M and V3H
+appeared in later revisions of the datasheet, and D3 and E3 later,
+reconfirming our decision.
+
+Even for compatible values for IP cores within the same family: there are
+differences, but usually we only discover them after a while.
+In theory all the same IP cores in R-Car Gen3 SoCs are the same (except for
+obvious differences like clocks and pinctrl), in practice they are not.
+So it may sound silly to have SoC-specific compatible values for the gross
+of the IP cores, but it would be worse if we got bitten later by not having
+them.
+
+BTW, you're too quick reposting your series. I can't finish my reviews in
+time ;-)
+Please give people a reasonable amount of time to handle them.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
