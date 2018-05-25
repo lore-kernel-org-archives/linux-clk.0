@@ -1,266 +1,30 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: David Lechner <david@lechnology.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] clk: davinci: psc: allow for dev == NULL
-Date: Fri, 25 May 2018 13:11:49 -0500
-Message-Id: <20180525181150.17873-9-david@lechnology.com>
-In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
-References: <20180525181150.17873-1-david@lechnology.com>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 2/3] clk: qcom: Register the gdscs before the clocks
+To: Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org,
+ mturquette@baylibre.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-3-rnayak@codeaurora.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <b0f5df15-d312-166d-f7fe-43bf0c49df23@linaro.org>
+Date: Fri, 25 May 2018 19:20:55 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180323082616.10142-3-rnayak@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On some davinci SoCs, we need to register the PSC clocks during early
-boot because they are needed for clocksource/clockevent. These changes
-allow for dev == NULL because in this case, we won't have a platform
-device for the clocks.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
- drivers/clk/davinci/psc-dm355.c  |  3 +-
- drivers/clk/davinci/psc-dm365.c  |  3 +-
- drivers/clk/davinci/psc-dm644x.c |  3 +-
- drivers/clk/davinci/psc-dm646x.c |  3 +-
- drivers/clk/davinci/psc.c        | 58 ++++++++++++++++++++++++--------
- include/linux/clk/davinci.h      |  5 +++
- 6 files changed, 57 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
-index 128e7345b20c..ddd250107c4e 100644
---- a/drivers/clk/davinci/psc-dm355.c
-+++ b/drivers/clk/davinci/psc-dm355.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -68,7 +69,7 @@ static const struct davinci_lpsc_clk_info dm355_psc_info[] = {
- 	{ }
- };
- 
--static int dm355_psc_init(struct device *dev, void __iomem *base)
-+int dm355_psc_init(struct device *dev, void __iomem *base)
- {
- 	return davinci_psc_register_clocks(dev, dm355_psc_info, 42, base);
- }
-diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
-index 289af3913fb0..8c73086cc676 100644
---- a/drivers/clk/davinci/psc-dm365.c
-+++ b/drivers/clk/davinci/psc-dm365.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -86,7 +87,7 @@ static const struct davinci_lpsc_clk_info dm365_psc_info[] = {
- 	{ }
- };
- 
--static int dm365_psc_init(struct device *dev, void __iomem *base)
-+int dm365_psc_init(struct device *dev, void __iomem *base)
- {
- 	return davinci_psc_register_clocks(dev, dm365_psc_info, 52, base);
- }
-diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
-index c22367baa46f..fc0230e3a3d6 100644
---- a/drivers/clk/davinci/psc-dm644x.c
-+++ b/drivers/clk/davinci/psc-dm644x.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -63,7 +64,7 @@ static const struct davinci_lpsc_clk_info dm644x_psc_info[] = {
- 	{ }
- };
- 
--static int dm644x_psc_init(struct device *dev, void __iomem *base)
-+int dm644x_psc_init(struct device *dev, void __iomem *base)
- {
- 	return davinci_psc_register_clocks(dev, dm644x_psc_info, 41, base);
- }
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-index 468ef86ea40b..c3f82ed70a80 100644
---- a/drivers/clk/davinci/psc-dm646x.c
-+++ b/drivers/clk/davinci/psc-dm646x.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/init.h>
-@@ -58,7 +59,7 @@ static const struct davinci_lpsc_clk_info dm646x_psc_info[] = {
- 	{ }
- };
- 
--static int dm646x_psc_init(struct device *dev, void __iomem *base)
-+int dm646x_psc_init(struct device *dev, void __iomem *base)
- {
- 	return davinci_psc_register_clocks(dev, dm646x_psc_info, 46, base);
- }
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index ce170e600f09..6326ba1fe3cc 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -15,6 +15,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/clk.h>
-+#include <linux/clk/davinci.h>
- #include <linux/clkdev.h>
- #include <linux/err.h>
- #include <linux/of_address.h>
-@@ -63,7 +64,7 @@ struct davinci_psc_data {
- 
- /**
-  * struct davinci_lpsc_clk - LPSC clock structure
-- * @dev: the device that provides this LPSC
-+ * @dev: the device that provides this LPSC or NULL
-  * @hw: clk_hw for the LPSC
-  * @pm_domain: power domain for the LPSC
-  * @genpd_clk: clock reference owned by @pm_domain
-@@ -221,6 +222,7 @@ static void davinci_psc_genpd_detach_dev(struct generic_pm_domain *pm_domain,
- 
- /**
-  * davinci_lpsc_clk_register - register LPSC clock
-+ * @dev: the clocks's device or NULL
-  * @name: name of this clock
-  * @parent_name: name of clock's parent
-  * @regmap: PSC MMIO region
-@@ -238,7 +240,7 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
- 	int ret;
- 	bool is_on;
- 
--	lpsc = devm_kzalloc(dev, sizeof(*lpsc), GFP_KERNEL);
-+	lpsc = kzalloc(sizeof(*lpsc), GFP_KERNEL);
- 	if (!lpsc)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -261,9 +263,15 @@ davinci_lpsc_clk_register(struct device *dev, const char *name,
- 	lpsc->pd = pd;
- 	lpsc->flags = flags;
- 
--	ret = devm_clk_hw_register(dev, &lpsc->hw);
--	if (ret < 0)
-+	ret = clk_hw_register(dev, &lpsc->hw);
-+	if (ret < 0) {
-+		kfree(lpsc);
- 		return ERR_PTR(ret);
-+	}
-+
-+	/* for now, genpd is only registered when using device-tree */
-+	if (!dev || !dev->of_node)
-+		return lpsc;
- 
- 	/* genpd attach needs a way to look up this clock */
- 	ret = clk_hw_register_clkdev(&lpsc->hw, name, best_dev_name(dev));
-@@ -378,13 +386,15 @@ __davinci_psc_register_clocks(struct device *dev,
- 	struct regmap *regmap;
- 	int i, ret;
- 
--	psc = devm_kzalloc(dev, sizeof(*psc), GFP_KERNEL);
-+	psc = kzalloc(sizeof(*psc), GFP_KERNEL);
- 	if (!psc)
- 		return ERR_PTR(-ENOMEM);
- 
--	clks = devm_kmalloc_array(dev, num_clks, sizeof(*clks), GFP_KERNEL);
--	if (!clks)
--		return ERR_PTR(-ENOMEM);
-+	clks = kmalloc_array(num_clks, sizeof(*clks), GFP_KERNEL);
-+	if (!clks) {
-+		ret = -ENOMEM;
-+		goto err_free_psc;
-+	}
- 
- 	psc->clk_data.clks = clks;
- 	psc->clk_data.clk_num = num_clks;
-@@ -396,16 +406,20 @@ __davinci_psc_register_clocks(struct device *dev,
- 	for (i = 0; i < num_clks; i++)
- 		clks[i] = ERR_PTR(-ENOENT);
- 
--	pm_domains = devm_kcalloc(dev, num_clks, sizeof(*pm_domains), GFP_KERNEL);
--	if (!pm_domains)
--		return ERR_PTR(-ENOMEM);
-+	pm_domains = kcalloc(num_clks, sizeof(*pm_domains), GFP_KERNEL);
-+	if (!pm_domains) {
-+		ret = -ENOMEM;
-+		goto err_free_clks;
-+	}
- 
- 	psc->pm_data.domains = pm_domains;
- 	psc->pm_data.num_domains = num_clks;
- 
--	regmap = devm_regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
--	if (IS_ERR(regmap))
--		return ERR_CAST(regmap);
-+	regmap = regmap_init_mmio(dev, base, &davinci_psc_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		goto err_free_pm_domains;
-+	}
- 
- 	for (; info->name; info++) {
- 		struct davinci_lpsc_clk *lpsc;
-@@ -423,6 +437,13 @@ __davinci_psc_register_clocks(struct device *dev,
- 		pm_domains[info->md] = &lpsc->pm_domain;
- 	}
- 
-+	/*
-+	 * for now, a reset controller is only registered when there is a device
-+	 * to associate it with.
-+	 */
-+	if (!dev)
-+		return psc;
-+
- 	psc->rcdev.ops = &davinci_psc_reset_ops;
- 	psc->rcdev.owner = THIS_MODULE;
- 	psc->rcdev.dev = dev;
-@@ -436,6 +457,15 @@ __davinci_psc_register_clocks(struct device *dev,
- 		dev_warn(dev, "Failed to register reset controller (%d)\n", ret);
- 
- 	return psc;
-+
-+err_free_pm_domains:
-+	kfree(pm_domains);
-+err_free_clks:
-+	kfree(clks);
-+err_free_psc:
-+	kfree(psc);
-+
-+	return ERR_PTR(ret);
- }
- 
- int davinci_psc_register_clocks(struct device *dev,
-diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-index ebdd9df1c0ef..62764c5cc86e 100644
---- a/include/linux/clk/davinci.h
-+++ b/include/linux/clk/davinci.h
-@@ -21,4 +21,9 @@ int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgch
- int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
- int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
- 
-+int dm355_psc_init(struct device *dev, void __iomem *base);
-+int dm365_psc_init(struct device *dev, void __iomem *base);
-+int dm644x_psc_init(struct device *dev, void __iomem *base);
-+int dm646x_psc_init(struct device *dev, void __iomem *base);
-+
- #endif /* __LINUX_CLK_DAVINCI_PLL_H___ */
--- 
-2.17.0
+On 23/03/18 08:26, Rajendra Nayak wrote:
+> We have atleast some instances of ALWAYS_ON gdscs, which need to
+> be turned ON*before*  some clocks within the gdsc domain marked
+> with a CLK_IS_CRITICAL can be turned ON.
+> To facilitate this sequence, register the GDCSs (and hence handle
+> the ALWAYS_ON gdscs) before we register clocks (and handle the
+> clocks marked as CLK_IS_CRITICAL)
+> 
+> Signed-off-by: Rajendra Nayak<rnayak@codeaurora.org>
+> ---
+Tested-by: Srinivas Kandagatla<srinivas.kandagatla@linaro.org>
