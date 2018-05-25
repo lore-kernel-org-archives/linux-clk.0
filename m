@@ -1,106 +1,94 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 13/27] ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Fri, 18 May 2018 11:48:15 -0500
-Message-Id: <20180518164829.27052-14-david@lechnology.com>
-In-Reply-To: <20180518164829.27052-1-david@lechnology.com>
-References: <20180518164829.27052-1-david@lechnology.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>
+CC: <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+Date: Fri, 25 May 2018 15:34:25 +0300
+Message-ID: <1527251668-31396-5-git-send-email-codrin.ciubotariu@microchip.com>
+In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The common clock framework will take care of disabling unused clocks when
-we switch from the legacy davinci clocks and having this enabled will
-cause compile errors after we switch, so remove it now.
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+This patch adds DT bindings for the new Atmel I2S controller embedded
+inside sama5d2x SoCs.
+
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 ---
 
-v11 changes:
-- none
+Changes in v4:
+	- more specific description for dmas, dma-names, clocks, clock-names
+	  properties;
+	- removed SoC and internal details of the block IP;
+	- added description for the new clock mux phandle;
 
-v10 changes:
-- none
+ .../devicetree/bindings/sound/atmel-i2s.txt        | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/atmel-i2s.txt
 
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/mach-davinci/Kconfig               | 12 ------------
- arch/arm/mach-davinci/common.c              |  1 -
- arch/arm/mach-davinci/include/mach/common.h |  6 ------
- 3 files changed, 19 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index 05c3eecf47cb..ba9912b4dfab 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -231,18 +231,6 @@ config DAVINCI_MUX_WARNINGS
- 	  to change the pin multiplexing setup. When there are no warnings
- 	  printed, it's safe to deselect DAVINCI_MUX for your product.
- 
--config DAVINCI_RESET_CLOCKS
--	bool "Reset unused clocks during boot"
--	depends on ARCH_DAVINCI
--	help
--	  Say Y if you want to reset unused clocks during boot.
--	  This option saves power, but assumes all drivers are
--	  using the clock framework. Broken drivers that do not
--	  yet use clock framework may not work with this option.
--	  If you are booting from another operating system, you
--	  probably do not want this option enabled until your
--	  device drivers work properly.
--
- endmenu
- 
- endif
-diff --git a/arch/arm/mach-davinci/common.c b/arch/arm/mach-davinci/common.c
-index bcb6a7ba84e9..e03f95ccd95c 100644
---- a/arch/arm/mach-davinci/common.c
-+++ b/arch/arm/mach-davinci/common.c
-@@ -118,5 +118,4 @@ void __init davinci_common_init(const struct davinci_soc_info *soc_info)
- void __init davinci_init_late(void)
- {
- 	davinci_cpufreq_init();
--	davinci_clk_disable_unused();
- }
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index 5f45d0ac66a8..ded8f5f42725 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -83,12 +83,6 @@ extern void davinci_common_init(const struct davinci_soc_info *soc_info);
- extern void davinci_init_ide(void);
- void davinci_init_late(void);
- 
--#ifdef CONFIG_DAVINCI_RESET_CLOCKS
--int davinci_clk_disable_unused(void);
--#else
--static inline int davinci_clk_disable_unused(void) { return 0; }
--#endif
--
- #ifdef CONFIG_CPU_FREQ
- int davinci_cpufreq_init(void);
- #else
+diff --git a/Documentation/devicetree/bindings/sound/atmel-i2s.txt b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+new file mode 100644
+index 0000000..735368b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/atmel-i2s.txt
+@@ -0,0 +1,47 @@
++* Atmel I2S controller
++
++Required properties:
++- compatible:     Should be "atmel,sama5d2-i2s".
++- reg:            Should be the physical base address of the controller and the
++                  length of memory mapped region.
++- interrupts:     Should contain the interrupt for the controller.
++- dmas:           Should be one per channel name listed in the dma-names property,
++                  as described in atmel-dma.txt and dma.txt files.
++- dma-names:      Two dmas have to be defined, "tx" and "rx".
++                  This IP also supports one shared channel for both rx and tx;
++                  if this mode is used, one "rx-tx" name must be used.
++- clocks:         Must contain an entry for each entry in clock-names.
++                  Please refer to clock-bindings.txt.
++- clock-names:    Should be one of each entry matching the clocks phandles list:
++                  - "pclk" (peripheral clock) Required.
++                  - "gclk" (generated clock) Optional (1).
++                  - "aclk" (Audio PLL clock) Optional (1).
++                  - "muxclk" (I2S mux clock) Optional (1).
++
++Optional properties:
++- pinctrl-0:      Should specify pin control groups used for this controller.
++- princtrl-names: Should contain only one value - "default".
++
++
++(1) : Only the peripheral clock is required. The generated clock, the Audio
++      PLL clock adn the I2S mux clock are optional and should only be set
++      together, when Master Mode is required.
++
++Example:
++
++	i2s@f8050000 {
++		compatible = "atmel,sama5d2-i2s";
++		reg = <0xf8050000 0x300>;
++		interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
++		dmas = <&dma0
++			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++			 AT91_XDMAC_DT_PERID(31))>,
++		       <&dma0
++			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++			 AT91_XDMAC_DT_PERID(32))>;
++		dma-names = "tx", "rx";
++		clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
++		clock-names = "pclk", "gclk", "aclk", "muxclk";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_i2s0_default>;
++	};
 -- 
-2.17.0
+2.7.4
