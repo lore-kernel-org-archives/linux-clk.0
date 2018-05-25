@@ -1,47 +1,60 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sun, 27 May 2018 10:27:39 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [RFC PATCH] regulator: bd71837: buck_7_volts[] can be static
-Message-ID: <20180527022739.GA21367@lkp-wsm-ep1>
-References: <20180524060114.GJ4249@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Lechner <david@lechnology.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/9] clk: davinci: pll-dm355: fix SYSCLKn parent names
+Date: Fri, 25 May 2018 13:11:43 -0500
+Message-Id: <20180525181150.17873-3-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+This fixes the parent clock names of the SYSCLKn clocks for the DM355
+SoC in the TI DaVinici PLL clock driver.
 
-Fixes: 9ebaeaf21446 ("regulator: bd71837: Build BD71837 regulator driver")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+It appears that this name just didn't get updated to the correct name
+like the other SoCs during the driver's development.
+
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 ---
- bd71837-regulator.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/davinci/pll-dm355.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-index e6c3fa7..d48b71c 100644
---- a/drivers/regulator/bd71837-regulator.c
-+++ b/drivers/regulator/bd71837-regulator.c
-@@ -207,7 +207,7 @@ static const struct regulator_linear_range bd71837_buck6_voltage_ranges[] = {
-  * 110 = 1.95V
-  * 111 = 1.995V
-  */
--const unsigned int buck_7_volts[] = {
-+static const unsigned int buck_7_volts[] = {
- 	1605000, 1695000, 1755000, 1800000, 1845000, 1905000, 1950000, 1995000
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 718d9bbbf30d..93f4a53d6b44 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
  };
  
-@@ -232,7 +232,7 @@ static const struct regulator_linear_range bd71837_ldo1_voltage_ranges[] = {
-  * LDO2
-  * 0.8 or 0.9V
-  */
--const unsigned int ldo_2_volts[] = {
-+static const unsigned int ldo_2_volts[] = {
- 	900000, 800000
+-SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+-SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll1_init(struct device *dev, void __iomem *base)
+ {
+@@ -62,7 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
  };
  
+-SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
++SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+ int dm355_pll2_init(struct device *dev, void __iomem *base)
+ {
+-- 
+2.17.0
