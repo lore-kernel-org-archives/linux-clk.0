@@ -1,107 +1,51 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Lechner <david@lechnology.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [v5 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Tue,  1 May 2018 14:11:32 +0530
-Message-Id: <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/9] clk: davinci: psc-dm355: fix ASP0/1 clkdev lookups
+Date: Fri, 25 May 2018 13:11:44 -0500
+Message-Id: <20180525181150.17873-4-david@lechnology.com>
+In-Reply-To: <20180525181150.17873-1-david@lechnology.com>
+References: <20180525181150.17873-1-david@lechnology.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
-devices would be used for communicating resource state requests to control
-the clocks managed by RPMh.
+The clkdev lookups for the ASP0/1 devices on TI DM355 were declared, but
+not assigned to any LPSC. This assigns the clkdev lookups to the
+correct LPSCs.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reported-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 32 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h              | 24 ++++++++++++++++
- 2 files changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
- create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+ drivers/clk/davinci/psc-dm355.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-new file mode 100644
-index 0000000..ecc1dbe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-@@ -0,0 +1,32 @@
-+Qualcomm Technologies, Inc. RPMh Clocks
-+-------------------------------------------------------
-+
-+Resource Power Manager Hardened (RPMh) manages shared resources on
-+some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-+other hardware subsystems via RSC to control clocks.
-+
-+Required properties :
-+- compatible : shall contain "qcom,sdm845-rpmh-clk"
-+
-+- #clock-cells : must contain 1
-+
-+Optional properties :
-+- assigned-clk-divs : property should contain a list of divs for each clock in
-+			the clk-output-names property. In case divs are not
-+			provided the clock rate would be same as parent rate.
-+- clk-output-names :  a list of strings of clock output signal for the divs to
-+			 be applied.
-+
-+Example :
-+
-+#include <dt-bindings/clock/qcom,rpmh.h>
-+
-+	&apps_rsc {
-+		rpmhcc: clock-controller {
-+			compatible = "qcom,sdm845-rpmh-clk";
-+			#clock-cells = <1>;
-+			assigned-clk-divs = <2 2 2>;
-+			clk-output-names = "bi_tcxo", "lnbb_clk2",
-+						"lnbb_clk3";
-+		};
-+	};
-diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
-new file mode 100644
-index 0000000..36caab2
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,rpmh.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
-+#define _DT_BINDINGS_CLK_MSM_RPMH_H
-+
-+/* RPMh controlled clocks */
-+#define RPMH_CXO_CLK				0
-+#define RPMH_CXO_CLK_A				1
-+#define RPMH_LN_BB_CLK2				2
-+#define RPMH_LN_BB_CLK2_A			3
-+#define RPMH_LN_BB_CLK3				4
-+#define RPMH_LN_BB_CLK3_A			5
-+#define RPMH_RF_CLK1				6
-+#define RPMH_RF_CLK1_A				7
-+#define RPMH_RF_CLK2				8
-+#define RPMH_RF_CLK2_A				9
-+#define RPMH_RF_CLK3				10
-+#define RPMH_RF_CLK3_A				11
-+#define RPMH_RF_CLK4				12
-+#define RPMH_RF_CLK4_A				13
-+
-+#endif
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/davinci/psc-dm355.c b/drivers/clk/davinci/psc-dm355.c
+index 6995ecea2677..128e7345b20c 100644
+--- a/drivers/clk/davinci/psc-dm355.c
++++ b/drivers/clk/davinci/psc-dm355.c
+@@ -41,14 +41,14 @@ static const struct davinci_lpsc_clk_info dm355_psc_info[] = {
+ 	LPSC(5,  0, timer3,      pll1_auxclk,  NULL,               0),
+ 	LPSC(6,  0, spi1,        pll1_sysclk2, spi1_clkdev,        0),
+ 	LPSC(7,  0, mmcsd1,      pll1_sysclk2, mmcsd1_clkdev,      0),
+-	LPSC(8,  0, asp1,        pll1_sysclk2, NULL,               0),
++	LPSC(8,  0, asp1,        pll1_sysclk2, mcbsp1_clkdev,      0),
+ 	LPSC(9,  0, usb,         pll1_sysclk2, usb_clkdev,         0),
+ 	LPSC(10, 0, pwm3,        pll1_auxclk,  NULL,               0),
+ 	LPSC(11, 0, spi2,        pll1_sysclk2, spi2_clkdev,        0),
+ 	LPSC(12, 0, rto,         pll1_auxclk,  NULL,               0),
+ 	LPSC(14, 0, aemif,       pll1_sysclk2, aemif_clkdev,       0),
+ 	LPSC(15, 0, mmcsd0,      pll1_sysclk2, mmcsd0_clkdev,      0),
+-	LPSC(17, 0, asp0,        pll1_sysclk2, NULL,               0),
++	LPSC(17, 0, asp0,        pll1_sysclk2, mcbsp0_clkdev,      0),
+ 	LPSC(18, 0, i2c,         pll1_auxclk,  i2c_clkdev,         0),
+ 	LPSC(19, 0, uart0,       pll1_auxclk,  uart0_clkdev,       0),
+ 	LPSC(20, 0, uart1,       pll1_auxclk,  uart1_clkdev,       0),
+-- 
+2.17.0
