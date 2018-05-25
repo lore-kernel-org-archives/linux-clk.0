@@ -1,44 +1,56 @@
-Return-Path: <gilad@benyossef.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Fri, 25 May 2018 10:22:53 +0300
+To: "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"lee.jones@linaro.org" <lee.jones@linaro.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Mutanen, Mikko" <Mikko.Mutanen@fi.rohmeurope.com>,
+	"Haikola, Heikki" <Heikki.Haikola@fi.rohmeurope.com>
+Subject: Re: [PATCH 8/9] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180525072253.GC16888@localhost.localdomain>
+References: <20180524060036.GI4249@localhost.localdomain>
+ <20180524141427.GU4828@sirena.org.uk>
+ <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
 MIME-Version: 1.0
-In-Reply-To: <1526387370-17142-2-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com> <1526387370-17142-2-git-send-email-gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 17 May 2018 15:54:17 +0300
-Message-ID: <CAOtvUMcN2kYFQEiMc7ignecPTdt9yOnfs2=TDjRnMAJ9WNRbuQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] crypto: ccree: drop signature register check
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <042F8805D2046347BB8420BEAE397A4016C06B60@WILL-MAIL002.REu.RohmEu.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Herbert,
+On Thu, May 24, 2018 at 05:51:27PM +0000, Vaittinen, Matti wrote:
+> 
+> From: Mark Brown [broonie@kernel.org]
+> > Sent: Thursday, May 24, 2018 5:14 PM
+> > On Thu, May 24, 2018 at 09:00:36AM +0300, Matti Vaittinen wrote:
+> > > +             rdev = regulator_register(desc, &config);
+> > > +             if (IS_ERR(rdev)) {
+> >
+> > devm_regulator_regster()
+> 
+> Makes sense. Thanks
 
-On Tue, May 15, 2018 at 3:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> We were using the content of the signature register as a sanity
-> check for the hardware functioning but it turns out not all
-> implementers use the same values so the check is giving false
-> negative on certain SoCs and so we drop it.
->
+I was going to do 
 
-Please drop this patch. I have found a better fix and will send a v2 soon.
+-       pmic = kzalloc(sizeof(struct bd71837_pmic), GFP_KERNEL);
++       pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
++                           GFP_KERNEL);
 
-Thanks,
-Gilad
+and
 
+-               rdev = regulator_register(desc, &config);
++               rdev = devm_regulator_register(&pdev->dev, desc, &config);
 
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
+but is there now a race regarding freeing the pmic structure and
+unregistering the regulator?
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+Best Regards
+    Matti Vaittinen
