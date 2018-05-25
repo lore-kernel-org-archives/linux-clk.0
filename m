@@ -1,84 +1,288 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Thu, 31 May 2018 10:17:17 +0300
-To: Rob Herring <robh@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180531071717.GG13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	Anson.Huang@nxp.com,
+	ping.bai@nxp.com,
+	linux-imx@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH RESEND V4 4/9] clk: imx: add pfdv2 support
+Date: Fri, 25 May 2018 15:51:06 +0800
+Message-Id: <1527234671-31755-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
+References: <1527234671-31755-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180531030129.GA16122@rob-hp-laptop>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Rob,
+The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
+Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
 
-Thanks for the review!
+NOTE pfdv2 can only be operated when clk is gated.
 
-On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > + - interrupts		: The interrupt line the device is connected to.
-> > + - interrupt-controller	: Marks the device node as an interrupt controller.
-> 
-> What sub blocks have interrupts?
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-The PMIC can generate interrupts from events which cause it to reset.
-Eg, irq from watchdog line change, power button pushes, reset request
-via register interface etc. I don't know any generic handling for these
-interrupts. In "normal" use-case this PMIC is powering the processor
-where driver is running and I do not see reasonable handling because
-power-reset is going to follow the irq.
+---
+ChangeLog:
+v2->v3:
+ * no changes
+v1->v2:
+ * change to readl_poll_timeout
+ * add pfd lock to protect share reg access between rate and enable/disable
+   operations and multiple pfd instances.
+ * use clk_hw_register
+---
+ drivers/clk/imx/Makefile    |   3 +-
+ drivers/clk/imx/clk-pfdv2.c | 201 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 206 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
 
-This IRQ might be relevant if use for PMIC is such that it is not
-powering the processor where the driver is runninng. Then the controlling
-processor can get the notification that chips powered by PMIC are
-resetting. But handling for this must be use-case specific, right? So in
-short - none of the current sub-devices use the IRQs - they are there
-for specific use-cases which some boards may implement. Any suggestions
-how to document the available interrupts? (power button line, sw reset
-etc). My current assumption has been that one who is interested in using
-these irqs should really also see the data-sheet for IRQs. But I admit
-that documenting available interrupts here would be helpful. I will just
-cook up some explanation and send it as a patch if no suggestions on how
-to document those.
-
-Patches 3/6 and 6/6 from the series were already applied to Mark's tree.
-So how should I send further patches? Should I still send the whole series
-(including already applied patches 3/6 and 6/6) or only the ones I change?
-
-> > +Example:
-> > +
-> > +	pmic: bd71837@4b {
-> 
-> Node names should be generic ideally. So "pmic@4b"
-
-I'll change that.
-
-> > +		clk: bd71837-32k-out {
-> 
-> clock-controller {
-
-And I'll change that too.
-
-> 
-> > +			compatible = "rohm,bd71837-clk";
-> > +			#clock-cells = <0>;
-> > +			clock-frequency = <32768>;
-> 
-> Can this be anything else?
-
-Not so that I know. Frequency is fixed. Is there a problem with this?
-
-
-Br,
-	Matti Vaittinen
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index bfe31bf..e5b0d42 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+ 	clk-pllv4.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-pfdv2.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+new file mode 100644
+index 0000000..afb2904
+--- /dev/null
++++ b/drivers/clk/imx/clk-pfdv2.c
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/**
++ * struct clk_pfdv2 - IMX PFD clock
++ * @clk_hw:	clock source
++ * @reg:	PFD register address
++ * @gate_bit:	Gate bit offset
++ * @vld_bit:	Valid bit offset
++ * @frac_off:	PLL Fractional Divider offset
++ */
++
++struct clk_pfdv2 {
++	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		gate_bit;
++	u8		vld_bit;
++	u8		frac_off;
++};
++
++#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
++
++#define CLK_PFDV2_FRAC_MASK 0x3f
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static DEFINE_SPINLOCK(pfd_lock);
++
++static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
++{
++	u32 val;
++
++	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
++				  0, LOCK_TIMEOUT_US);
++}
++
++static int clk_pfdv2_enable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return clk_pfdv2_wait(pfd);
++}
++
++static void clk_pfdv2_disable(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u32 val;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val |= pfd->gate_bit;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++}
++
++static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	u64 tmp = parent_rate;
++	u8 frac;
++
++	frac = (readl_relaxed(pfd->reg) >> pfd->frac_off)
++		& CLK_PFDV2_FRAC_MASK;
++
++	if (!frac) {
++		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
++			 clk_hw_get_name(hw));
++		return 0;
++	}
++
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	u64 tmp = *prate;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	tmp = *prate;
++	tmp *= 18;
++	do_div(tmp, frac);
++
++	return tmp;
++}
++
++static int clk_pfdv2_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++
++	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
++		return 0;
++
++	return 1;
++}
++
++static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pfdv2 *pfd = to_clk_pfdv2(hw);
++	unsigned long flags;
++	u64 tmp = parent_rate;
++	u32 val;
++	u8 frac;
++
++	tmp = tmp * 18 + rate / 2;
++	do_div(tmp, rate);
++	frac = tmp;
++	if (frac < 12)
++		frac = 12;
++	else if (frac > 35)
++		frac = 35;
++
++	spin_lock_irqsave(&pfd_lock, flags);
++	val = readl_relaxed(pfd->reg);
++	val &= ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
++	val |= frac << pfd->frac_off;
++	writel_relaxed(val, pfd->reg);
++	spin_unlock_irqrestore(&pfd_lock, flags);
++
++	return 0;
++}
++
++static const struct clk_ops clk_pfdv2_ops = {
++	.enable		= clk_pfdv2_enable,
++	.disable	= clk_pfdv2_disable,
++	.recalc_rate	= clk_pfdv2_recalc_rate,
++	.round_rate	= clk_pfdv2_round_rate,
++	.set_rate	= clk_pfdv2_set_rate,
++	.is_enabled     = clk_pfdv2_is_enabled,
++};
++
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx)
++{
++	struct clk_init_data init;
++	struct clk_pfdv2 *pfd;
++	struct clk_hw *hw;
++	int ret;
++
++	WARN_ON(idx > 3);
++
++	pfd = kzalloc(sizeof(*pfd), GFP_KERNEL);
++	if (!pfd)
++		return ERR_PTR(-ENOMEM);
++
++	pfd->reg = reg;
++	pfd->gate_bit = 1 << ((idx + 1) * 8 - 1);
++	pfd->vld_bit = pfd->gate_bit - 1;
++	pfd->frac_off = idx * 8;
++
++	init.name = name;
++	init.ops = &clk_pfdv2_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	pfd->hw.init = &init;
++
++	hw = &pfd->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pfd);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 2fb4f1d..a5a9374 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
+ struct clk *imx_clk_pfd(const char *name, const char *parent_name,
+ 		void __iomem *reg, u8 idx);
+ 
++struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
++			     void __iomem *reg, u8 idx);
++
+ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 				 void __iomem *reg, u8 shift, u8 width,
+ 				 void __iomem *busy_reg, u8 busy_shift);
+-- 
+2.7.4
