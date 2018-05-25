@@ -1,76 +1,68 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	stefan@agner.ch,
-	adriana.reus@nxp.com,
-	rui.silva@linaro.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: imx7: correct enet clock settings
-Date: Thu, 17 May 2018 16:40:22 +0800
-Message-Id: <1526546422-7431-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
-References: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com> <1527154169-32380-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 May 2018 11:27:46 +0200
+Message-ID: <CAMuHMdW5VvZ-wbO7TuZC2z+KFPLq_PhBGe3WbAeES-nezb7tmQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch corrects ENET "ipg" and "enet_out"
-clock settings according to clock driver's changes.
+Hi Michel,
 
-Based on Andy Duan's patch from the NXP kernel tree.
+On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles generic parts (gic, architected timer)
+> and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx7d.dtsi | 4 ++--
- arch/arm/boot/dts/imx7s.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/arm/boot/dts/imx7d.dtsi b/arch/arm/boot/dts/imx7d.dtsi
-index 200714e..92022ea 100644
---- a/arch/arm/boot/dts/imx7d.dtsi
-+++ b/arch/arm/boot/dts/imx7d.dtsi
-@@ -120,11 +120,11 @@
- 			<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
- 			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+		clocks = <&clks IMX7D_ENET2_IPG_ROOT_CLK>,
- 			<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 			<&clks IMX7D_ENET2_TIME_ROOT_CLK>,
- 			<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
--			<&clks IMX7D_ENET_PHY_REF_ROOT_CLK>;
-+			<&clks IMX7D_ENET_PHY_REF_ROOT_DIV>;
- 		clock-names = "ipg", "ahb", "ptp",
- 			"enet_clk_ref", "enet_out";
- 		fsl,num-tx-queues=<3>;
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index 4d42335..cf4ba53 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -1091,11 +1091,11 @@
- 					<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
- 					<GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX7D_ENET_AXI_ROOT_CLK>,
-+				clocks = <&clks IMX7D_ENET1_IPG_ROOT_CLK>,
- 					<&clks IMX7D_ENET_AXI_ROOT_CLK>,
- 					<&clks IMX7D_ENET1_TIME_ROOT_CLK>,
- 					<&clks IMX7D_PLL_ENET_MAIN_125M_CLK>,
--					<&clks IMX7D_ENET_PHY_REF_ROOT_CLK>;
-+					<&clks IMX7D_ENET_PHY_REF_ROOT_DIV>;
- 				clock-names = "ipg", "ahb", "ptp",
- 					"enet_clk_ref", "enet_out";
- 				fsl,num-tx-queues=<3>;
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+
+> +       soc {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               interrupt-parent = <&gic>;
+> +               ranges;
+> +
+> +               sysctrl: sysctrl@4000c000 {
+
+system-controller@
+
+> +                       compatible = "renesas,r9a06g032-sysctrl";
+> +                       reg = <0x4000c000 0x1000>;
+> +                       status = "okay";
+> +                       #clock-cells = <1>;
+> +               };
+
+With the minor nit above resolved, and pending acceptance of the
+sysctrl bindings:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
