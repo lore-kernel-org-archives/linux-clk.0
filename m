@@ -1,166 +1,86 @@
-Return-Path: <mhiramat@kernel.org>
-Date: Mon, 14 May 2018 22:31:26 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
- Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ananth N Mavinakayanahalli
- <ananth@linux.vnet.ibm.com>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michal Simek
- <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger
- <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, x86@kernel.org, Chris Zankel <chris@zankel.net>, Max
- Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>, David Howells
- <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Herbert Xu
- <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
- <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul
- <seanpaul@chromium.org>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
- Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>, Kent
- Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley
- <tvboxspy@gmail.com>, Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee
- <sudipm.mukherjee@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
- "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett
- <josh@joshtriplett.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross
- <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore
- <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris
- <eparis@parisplace.org>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>, Peter Zijlstra
- <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin
- <npiggin@gmail.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget
- <luc.maranget@inria.fr>, Akira Yokosawa <akiyks@gmail.com>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>, Namhyung
- Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
- user-mode-linux-devel@lists.sourceforge.net,
- user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
- linux-block@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
- linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
- devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
- cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
- linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-Id: <20180514223126.8d738475fbb53fba9ff199d9@kernel.org>
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-	<e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: kbuild test robot <lkp@intel.com>
+CC: "kbuild-all@01.org" <kbuild-all@01.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>,
+	"b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "sboyd@kernel.org" <sboyd@kernel.org>, Stephen Boyd
+	<sboyd@codeaurora.org>
+Subject: RE: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
+Date: Fri, 25 May 2018 09:51:16 +0000
+Message-ID: 
+ <AM0PR04MB4211BF66D1C5E025C264687080690@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1521602391-30356-4-git-send-email-aisheng.dong@nxp.com>
+ <201803231452.YBWTInPr%fengguang.wu@intel.com>
+In-Reply-To: <201803231452.YBWTInPr%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed,  9 May 2018 10:18:52 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+> -----Original Message-----
+> From: kbuild test robot [mailto:lkp@intel.com]
+> Sent: Friday, March 23, 2018 2:49 PM
+> To: A.s. Dong <aisheng.dong@nxp.com>
+> Cc: kbuild-all@01.org; linux-clk@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; hdegoede@redhat.com;
+> b.zolnierkie@samsung.com; linux@armlinux.org.uk; linux-
+> fbdev@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
+> sboyd@kernel.org; A.s. Dong <aisheng.dong@nxp.com>; Stephen Boyd
+> <sboyd@codeaurora.org>
+> Subject: Re: [PATCH V2 3/4] clk: add managed version of clk_bulk_get_all
+>=20
 
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
-> 	./scripts/documentation-file-ref-check --fix-rst
-> 
-> Manually checked if the produced result is valid, removing a few
-> false-positives.
+[...]
 
-The part of kprobes and trace_kprobe changes look good to me :)
+> All errors (new ones prefixed by >>):
+>=20
+>    In file included from include/linux/cpufreq.h:14:0,
+>                     from arch/powerpc/platforms/cell/cpufreq_spudemand.c:=
+23:
+>    include/linux/clk.h:679:1: error: expected identifier or '(' before '{=
+' token
+>     {
+>     ^
+> >> include/linux/clk.h:677:32: error: 'devm_clk_bulk_get_all' declared
+> >> 'static' but never defined [-Werror=3Dunused-function]
+>     static inline int __must_check devm_clk_bulk_get_all(struct device *d=
+ev,
+>                                    ^~~~~~~~~~~~~~~~~~~~~
+>    cc1: all warnings being treated as errors
+>=20
+> vim +677 include/linux/clk.h
+>=20
+>    676
+>  > 677	static inline int __must_check devm_clk_bulk_get_all(struct device
+> *dev,
+>    678							     struct
+> clk_bulk_data **clks);
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Thanks for the reporting.
+Caused by the extra unneeded ';' at the end of the line.
+Will fix.
 
-Thank you,
+Regards
+Dong Aisheng
 
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+>  > 679	{
+>    680
+>    681		return 0;
+>    682	}
+>    683
+>=20
 > ---
->  .../admin-guide/kernel-parameters.txt         |  4 ++--
->  .../bindings/input/rotary-encoder.txt         |  2 +-
->  Documentation/driver-api/gpio/consumer.rst    |  2 +-
->  Documentation/kprobes.txt                     |  4 ++--
->  Documentation/trace/coresight.txt             |  2 +-
->  Documentation/trace/events.rst                |  2 +-
->  Documentation/trace/ftrace-uses.rst           |  2 +-
->  Documentation/trace/histogram.txt             |  2 +-
->  Documentation/trace/intel_th.rst              |  2 +-
->  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
->  Documentation/translations/ja_JP/howto.rst    |  4 ++--
->  .../translations/zh_CN/magic-number.txt       |  4 ++--
->  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
->  MAINTAINERS                                   | 20 +++++++++----------
->  arch/Kconfig                                  |  2 +-
->  arch/arm/include/asm/cacheflush.h             |  2 +-
->  arch/arm64/include/asm/cacheflush.h           |  2 +-
->  arch/microblaze/include/asm/cacheflush.h      |  2 +-
->  arch/um/Kconfig.um                            |  2 +-
->  arch/unicore32/include/asm/cacheflush.h       |  2 +-
->  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
->  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
->  block/Kconfig                                 |  2 +-
->  certs/Kconfig                                 |  2 +-
->  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
->  crypto/asymmetric_keys/signature.c            |  2 +-
->  drivers/char/Kconfig                          |  2 +-
->  drivers/clk/clk.c                             |  4 ++--
->  drivers/clk/ingenic/cgu.h                     |  2 +-
->  drivers/gpu/vga/Kconfig                       |  2 +-
->  drivers/gpu/vga/vgaarb.c                      |  2 +-
->  drivers/input/joystick/Kconfig                | 10 +++++-----
->  drivers/input/joystick/iforce/Kconfig         |  2 +-
->  drivers/input/joystick/walkera0701.c          |  2 +-
->  drivers/input/misc/Kconfig                    |  4 ++--
->  drivers/input/misc/rotary_encoder.c           |  2 +-
->  drivers/input/mouse/Kconfig                   |  6 +++---
->  drivers/input/mouse/alps.c                    |  2 +-
->  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
->  drivers/lightnvm/pblk-rb.c                    |  2 +-
->  drivers/md/bcache/Kconfig                     |  2 +-
->  drivers/md/bcache/btree.c                     |  2 +-
->  drivers/md/bcache/extents.c                   |  2 +-
->  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
->  drivers/media/pci/meye/Kconfig                |  2 +-
->  drivers/media/platform/pxa_camera.c           |  4 ++--
->  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
->  drivers/media/radio/Kconfig                   |  2 +-
->  drivers/media/radio/si470x/Kconfig            |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
->  drivers/media/usb/zr364xx/Kconfig             |  2 +-
->  drivers/parport/Kconfig                       |  6 +++---
->  drivers/staging/media/bcm2048/TODO            |  2 +-
->  include/keys/asymmetric-subtype.h             |  2 +-
->  include/keys/asymmetric-type.h                |  2 +-
->  include/linux/assoc_array.h                   |  2 +-
->  include/linux/assoc_array_priv.h              |  2 +-
->  include/linux/circ_buf.h                      |  2 +-
->  include/linux/ftrace.h                        |  2 +-
->  include/linux/rculist_nulls.h                 |  2 +-
->  include/uapi/linux/prctl.h                    |  2 +-
->  include/xen/interface/io/kbdif.h              |  2 +-
->  kernel/cgroup/cpuset.c                        |  2 +-
->  kernel/trace/Kconfig                          | 16 +++++++--------
->  lib/Kconfig                                   |  2 +-
->  security/selinux/hooks.c                      |  2 +-
->  sound/core/Kconfig                            |  4 ++--
->  sound/drivers/Kconfig                         |  4 ++--
->  sound/pci/Kconfig                             | 10 +++++-----
->  tools/include/uapi/linux/prctl.h              |  2 +-
->  tools/lib/api/fs/fs.c                         |  2 +-
->  tools/memory-model/README                     | 10 +++++-----
->  tools/perf/util/bpf-prologue.c                |  2 +-
->  .../config/custom-timeline-functions.cfg      |  4 ++--
->  74 files changed, 120 insertions(+), 120 deletions(-)
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> 0-DAY kernel test infrastructure                Open Source Technology Ce=
+nter
+> https://emea01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flist
+> s.01.org%2Fpipermail%2Fkbuild-
+> all&data=3D02%7C01%7Caisheng.dong%40nxp.com%7Ce9e35f96c61a4c46d1790
+> 8d5908a4d46%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6365738
+> 46071200287&sdata=3DyIWEjcpE2tyJP%2BmsMPqn%2F83TCsxw64J%2Ba5ue73
+> qGnN0%3D&reserved=3D0                   Intel Corporation
