@@ -1,51 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:20356 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755562AbeEaQg5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 12:36:57 -0400
-Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
- node for MCAN
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>
-References: <20180530141133.3711-1-faiz_abbas@ti.com>
- <20180530141133.3711-6-faiz_abbas@ti.com> <20180530150402.GE5705@atomide.com>
- <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
- <20180531134507.GK5705@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <1effa8c0-6749-faf5-3f09-9f51dc55532f@ti.com>
-Date: Thu, 31 May 2018 22:08:07 +0530
+Return-Path: <fengguang.wu@intel.com>
+Date: Sat, 26 May 2018 21:45:31 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: kbuild-all@01.org, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>, phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/5] clk: renesas: Renesas R9A06G032 clock driver
+Message-ID: <201805261954.tlXfbMbi%fengguang.wu@intel.com>
+References: <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531134507.GK5705@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527154169-32380-6-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Michel,
 
-On Thursday 31 May 2018 07:15 PM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180531 10:22]:
->> On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
->>> Looks good to me except I think the reset won't do anything currently
->>> with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
->>>
->>> Can you please check? It might be worth adding the reset function to
->>> ti-sysc.c for non "ti,hwmods" case and that just might remove the
->>> need for any hwmod code for this module.
->>>
->>
->> If I understand correctly, this involves adding a (*reset_module) in
->> ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
->> similar to ti_sysc_idle_module(). Right?
-> 
-> Well try moving "ti,hwmods" to the module level first. Then reset will
-> happen with enable.
+Thank you for the patch! Perhaps something to improve:
 
-Ok. Let me try that.
+[auto build test WARNING on renesas-drivers/clk-renesas]
+[also build test WARNING on v4.17-rc6]
+[cannot apply to robh/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Thanks,
-Faiz
+url:    https://github.com/0day-ci/linux/commits/Michel-Pollet/dt-bindings-Add-the-r9a06g032-sysctrl-h-file/20180526-154235
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/renesas/r9a06g032-clocks.c:430:22: sparse: cast removes address space of expression
+>> drivers/clk/renesas/r9a06g032-clocks.c:431:30: sparse: incorrect type in argument 1 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/r9a06g032-clocks.c:431:30:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/r9a06g032-clocks.c:431:30:    got unsigned int [usertype] *reg
+   drivers/clk/renesas/r9a06g032-clocks.c:516:22: sparse: cast removes address space of expression
+   drivers/clk/renesas/r9a06g032-clocks.c:528:38: sparse: incorrect type in argument 2 (different address spaces) @@    expected unsigned int [noderef] [usertype] <asn:2>*reg @@    got eref] [usertype] <asn:2>*reg @@
+   drivers/clk/renesas/r9a06g032-clocks.c:528:38:    expected unsigned int [noderef] [usertype] <asn:2>*reg
+   drivers/clk/renesas/r9a06g032-clocks.c:528:38:    got unsigned int [usertype] *reg
+
+vim +430 drivers/clk/renesas/r9a06g032-clocks.c
+
+   421	
+   422	#define to_r9a06g032_divider(_hw) \
+   423			container_of(_hw, struct r9a06g032_clk_div, hw)
+   424	
+   425	static unsigned long r9a06g032_divider_recalc_rate(
+   426		struct clk_hw *hw,
+   427		unsigned long parent_rate)
+   428	{
+   429		struct r9a06g032_clk_div *clk = to_r9a06g032_divider(hw);
+ > 430		u32 *reg = ((u32 *)clk->clocks->reg) + clk->reg;
+ > 431		long div = clk_readl(reg);
+   432	
+   433		if (div < clk->min)
+   434			div = clk->min;
+   435		else if (div > clk->max)
+   436			div = clk->max;
+   437		return DIV_ROUND_UP(parent_rate, div);
+   438	}
+   439	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
