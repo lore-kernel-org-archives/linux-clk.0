@@ -1,116 +1,131 @@
-Return-Path: <shawn.lin@rock-chips.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-rockchip@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Shawn Lin <shawn.lin@rock-chips.com>
-Subject: [PATCH] clk: add clock panic dump in tree-view
-Date: Thu, 10 May 2018 16:50:05 +0800
-Message-Id: <1525942205-111855-1-git-send-email-shawn.lin@rock-chips.com>
+Return-Path: <miquel.raynal@bootlin.com>
+Date: Mon, 28 May 2018 00:23:54 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
+ krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
+Message-ID: <20180528002354.45025afd@xps13>
+In-Reply-To: <20180527215442.14760-3-stefan@agner.ch>
+References: <20180527215442.14760-3-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Sometimes it's useful and for debugging to check the whole system clock
-configuration in tree-view upon panic.
+Hi Stefan,
 
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
----
+On Sun, 27 May 2018 23:54:38 +0200, Stefan Agner <stefan@agner.ch>
+wrote:
 
- Documentation/admin-guide/kernel-parameters.txt |  3 ++
- drivers/clk/clk.c                               | 67 +++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+> From: Lucas Stach <dev@lynxeye.de>
+>=20
+> This adds the devicetree binding for the Tegra 2 NAND flash
+> controller.
+>=20
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-=
+nand.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.tx=
+t b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> new file mode 100644
+> index 000000000000..49e472af1b39
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+> @@ -0,0 +1,62 @@
+> +NVIDIA Tegra NAND Flash controller
+> +
+> +Required properties:
+> +- compatible: Must be one of:
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 3487be7..7bbdb6f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -519,6 +519,9 @@
- 			debug and development, but should not be needed on a
- 			platform with proper driver support.  For more
- 			information, see Documentation/clk.txt.
-+	clk_panic_dump
-+			[CLK]
-+			Dump the whole clock tree-view upon panic.
- 
- 	clock=		[BUGS=X86-32, HW] gettimeofday clocksource override.
- 			[Deprecated]
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9ae92aa..adb5537 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2802,6 +2802,73 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif
- 
-+static bool clk_pdump_enable;
-+static int __init clk_pdump_setup(char *__unused)
-+{
-+	clk_pdump_enable  = true;
-+	return 1;
-+}
-+__setup("clk_panic_dump", clk_pdump_setup);
-+
-+static void clk_pdump_show_one(struct clk_core *c, int level)
-+{
-+	if (!c)
-+		return;
-+
-+	pr_err("%*s%-*s %11d %12d %11lu %10lu %-3d\n",
-+		level * 3 + 1, "", 30 - level * 3, c->name,
-+		c->enable_count, c->prepare_count, clk_core_get_rate(c),
-+		clk_core_get_accuracy(c), clk_core_get_phase(c));
-+}
-+
-+static void clk_pdump_show_subtree(struct clk_core *c, int level)
-+{
-+	struct clk_core *child;
-+
-+	if (!c)
-+		return;
-+
-+	clk_pdump_show_one(c, level);
-+
-+	hlist_for_each_entry(child, &c->children, child_node)
-+		clk_pdump_show_subtree(child, level + 1);
-+}
-+
-+static int clk_panic_dump(struct notifier_block *this, unsigned long ev,
-+			  void *ptr)
-+{
-+	struct clk_core *c;
-+
-+	if (!clk_pdump_enable)
-+		return 0;
-+
-+	pr_err("clock panic dump:\n");
-+	pr_err("   clock                         enable_cnt  prepare_cnt        rate   accuracy   phase\n");
-+	pr_err("----------------------------------------------------------------------------------------\n");
-+
-+	clk_prepare_lock();
-+
-+	hlist_for_each_entry(c, &clk_root_list, child_node)
-+		clk_pdump_show_subtree(c, 0);
-+	hlist_for_each_entry(c, &clk_orphan_list, child_node)
-+		clk_pdump_show_subtree(c, 0);
-+
-+	clk_prepare_unlock();
-+
-+	return 0;
-+}
-+
-+static struct notifier_block clk_pdump_block = {
-+	.notifier_call = clk_panic_dump,
-+};
-+
-+static int clk_register_pdump(void)
-+{
-+	atomic_notifier_chain_register(&panic_notifier_list, &clk_pdump_block);
-+	return 0;
-+}
-+late_initcall_sync(clk_register_pdump);
-+
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
--- 
-1.9.1
+Nitpick: just put the compatible here as there is only one?
+
+> +  - "nvidia,tegra20-nand"
+> +- reg: MMIO address range
+> +- interrupts: interrupt output of the NFC controller
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +  See ../clocks/clock-bindings.txt for details.
+> +- clock-names: Must include the following entries:
+> +  - nand
+> +- resets: Must contain an entry for each entry in reset-names.
+> +  See ../reset/reset.txt for details.
+> +- reset-names: Must include the following entries:
+> +  - nand
+> +
+> +Optional children nodes:
+> +Individual NAND chips are children of the NAND controller node. Currently
+> +only one NAND chip supported.
+> +
+> +Required children node properties:
+> +- reg: An integer ranging from 1 to 6 representing the CS line to use.
+
+=46rom 1? It usually starts at 0.
+
+> +
+> +Optional children node properties:
+> +- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by de=
+fault
+> +- nand-ecc-algo: string, algorithm of NAND ECC.
+> +		 Supported values are: "rs", "bch".
+> +- nand-bus-width : 8 or 16 bus width if not present 8
+> +- nand-on-flash-bbt: boolean to enable on flash bbt option if not presen=
+t false
+> +- nand-ecc-strength: integer representing the number of bits to correct
+> +		     per ECC step. Supported strength using HW ECC modes are:
+> +		     - RS: 4, 6, 8
+> +		     - BCH: 4, 8, 14, 16
+> +- nand-ecc-step-size: integer representing the number of data bytes
+> +		      that are covered by a single ECC step. Must be 512.
+
+Please don't re-explain nand generic DT properties, point to nand.txt
+instead.
+
+> +- wp-gpios: GPIO specifier for the write protect pin.
+> +
+> +Optional child node of NAND chip nodes:
+> +Partitions: see partition.txt
+> +
+> +  Example:
+> +	nand@70008000 {
+> +		compatible =3D "nvidia,tegra20-nand";
+> +		reg =3D <0x70008000 0x100>;
+> +		interrupts =3D <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks =3D <&tegra_car TEGRA20_CLK_NDFLASH>;
+> +		clock-names =3D "nand";
+> +		resets =3D <&tegra_car 13>;
+> +		reset-names =3D "nand";
+> +
+> +		nand-chip@0 {
+> +			reg =3D <0>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			nand-bus-width =3D <8>;
+> +			nand-on-flash-bbt;
+> +			nand-ecc-algo =3D "bch";
+> +			nand-ecc-step-size =3D <512>;
+
+In the driver you only refer to step sizes of 512 B, you can remove the
+property from the bindings.
+
+> +			nand-ecc-strength =3D <8>;
+> +			wp-gpios =3D <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
+
+
+
+--=20
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
