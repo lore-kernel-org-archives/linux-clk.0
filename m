@@ -1,84 +1,115 @@
-Return-Path: <mathieu.poirier@linaro.org>
-MIME-Version: 1.0
-In-Reply-To: <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org> <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 16 May 2018 09:12:56 -0600
-Message-ID: <CANLsYkwXUGJ-DM4M48SXuy+31r6sC7_Q3fc9Rgue6wFdeMQv6g@mail.gmail.com>
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>,
-	Richard Weinberger <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Gustavo Padovan <gustavo@padovan.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Sean Paul <seanpaul@chromium.org>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley <tvboxspy@gmail.com>,
-	Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>,
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel@zh-kernel.org,
-	user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
-	linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
-	linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
-	devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
-	cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
-	linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <stefan@agner.ch>
+From: Stefan Agner <stefan@agner.ch>
+To: boris.brezillon@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	thierry.reding@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: dev@lynxeye.de,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	marcel@ziswiler.com,
+	krzk@kernel.org,
+	digetx@gmail.com,
+	benjamin.lindqvist@endian.se,
+	jonathanh@nvidia.com,
+	pdeschrijver@nvidia.com,
+	pgaikwad@nvidia.com,
+	mirza.krak@gmail.com,
+	linux-mtd@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2 2/6] mtd: rawnand: tegra: add devicetree binding
+Date: Sun, 27 May 2018 23:54:38 +0200
+Message-Id: <20180527215442.14760-3-stefan@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 9 May 2018 at 07:18, Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
->         ./scripts/documentation-file-ref-check --fix-rst
->
-> Manually checked if the produced result is valid, removing a few
-> false-positives.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
+From: Lucas Stach <dev@lynxeye.de>
 
->
-> diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-> index 1d74ad0202b6..efbc832146e7 100644
-> --- a/Documentation/trace/coresight.txt
-> +++ b/Documentation/trace/coresight.txt
-> @@ -426,5 +426,5 @@ root@genericarmv8:~#
->  Details on how to use the generic STM API can be found here [2].
->
->  [1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
-> -[2]. Documentation/trace/stm.txt
-> +[2]. Documentation/trace/stm.rst
->  [3]. https://github.com/Linaro/perf-opencsd
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../bindings/mtd/nvidia,tegra20-nand.txt      | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+new file mode 100644
+index 000000000000..49e472af1b39
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+@@ -0,0 +1,62 @@
++NVIDIA Tegra NAND Flash controller
++
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
++
++Optional children nodes:
++Individual NAND chips are children of the NAND controller node. Currently
++only one NAND chip supported.
++
++Required children node properties:
++- reg: An integer ranging from 1 to 6 representing the CS line to use.
++
++Optional children node properties:
++- nand-ecc-mode: String, operation mode of the NAND ecc mode. "hw" by default
++- nand-ecc-algo: string, algorithm of NAND ECC.
++		 Supported values are: "rs", "bch".
++- nand-bus-width : 8 or 16 bus width if not present 8
++- nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
++- nand-ecc-strength: integer representing the number of bits to correct
++		     per ECC step. Supported strength using HW ECC modes are:
++		     - RS: 4, 6, 8
++		     - BCH: 4, 8, 14, 16
++- nand-ecc-step-size: integer representing the number of data bytes
++		      that are covered by a single ECC step. Must be 512.
++- wp-gpios: GPIO specifier for the write protect pin.
++
++Optional child node of NAND chip nodes:
++Partitions: see partition.txt
++
++  Example:
++	nand@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++
++		nand-chip@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-step-size = <512>;
++			nand-ecc-strength = <8>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
+-- 
+2.17.0
