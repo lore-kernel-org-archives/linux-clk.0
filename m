@@ -11,35 +11,45 @@ Cc: Shawn Guo <shawnguo@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
-Subject: [PATCH 1/5] ARM: imx: remove inexistant EPIT timer init
-Date: Mon, 28 May 2018 19:34:08 +0200
-Message-Id: <20180528173412.10000-2-peron.clem@gmail.com>
-In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
-References: <20180528173412.10000-1-peron.clem@gmail.com>
+Subject: [PATCH 0/5] Reintroduce i.MX EPIT Timer
+Date: Mon, 28 May 2018 19:34:07 +0200
+Message-Id: <20180528173412.10000-1-peron.clem@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Clément Peron <clement.peron@devialet.com>
 
-i.MX EPIT timer has been removed but not the init function declaration.
+As suggested in the commit message we have added the device tree support,
+proper bindings and we moved the driver into the correct folder.
+
+Moreover we made some changes like use of relaxed IO accesor,
+implement sched_clock, delay_timer and reduce the clockevents min_delta.
 
 Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- arch/arm/mach-imx/common.h | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-index c8d68e918b2f..18aae76fa2da 100644
---- a/arch/arm/mach-imx/common.h
-+++ b/arch/arm/mach-imx/common.h
-@@ -38,7 +38,6 @@ void imx21_soc_init(void);
- void imx27_soc_init(void);
- void imx31_soc_init(void);
- void imx35_soc_init(void);
--void epit_timer_init(void __iomem *base, int irq);
- int mx21_clocks_init(unsigned long lref, unsigned long fref);
- int mx27_clocks_init(unsigned long fref);
- int mx31_clocks_init(unsigned long fref);
+Clément Peron (2):
+  ARM: imx: remove inexistant EPIT timer init
+  Documentation: DT: add i.MX EPIT timer binding
+
+Colin Didier (3):
+  ARM: clk-imx6q: add EPIT clock support
+  clocksource: add driver for i.MX EPIT timer
+  ARM: dts: imx6qdl: add missing compatible and clock properties for
+    EPIT
+
+ .../devicetree/bindings/clock/imx6q,epit.txt  |  25 ++
+ arch/arm/boot/dts/imx6qdl.dtsi                |  12 +
+ arch/arm/mach-imx/common.h                    |   1 -
+ drivers/clk/imx/clk-imx6q.c                   |   2 +
+ drivers/clocksource/Kconfig                   |  12 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-imx-epit.c          | 254 ++++++++++++++++++
+ include/dt-bindings/clock/imx6qdl-clock.h     |   4 +-
+ 8 files changed, 309 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
+
 -- 
 2.17.0
