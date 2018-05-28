@@ -1,54 +1,66 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <peron.clem@gmail.com>
+Return-Path: <peron.clem@gmail.com>
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.dider@devialet.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH 3/5] Documentation: DT: add i.MX EPIT timer binding
+Date: Mon, 28 May 2018 19:34:10 +0200
+Message-Id: <20180528173412.10000-4-peron.clem@gmail.com>
+In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
+References: <20180528173412.10000-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180531072145.GH13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030436.GB16122@rob-hp-laptop> <20180531072145.GH13528@localhost.localdomain>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 31 May 2018 09:00:00 -0500
-Message-ID: <CAL_Jsq+thofEt0fXnbV=dsXggGHS=vdHwSLLKQCVvL5cMDO5wA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for
- BD71837 regulators
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 2:21 AM, Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
-> On Wed, May 30, 2018 at 10:04:36PM -0500, Rob Herring wrote:
->> On Wed, May 30, 2018 at 11:42:32AM +0300, Matti Vaittinen wrote:
->> > Document devicetree bindings for ROHM BD71837 PMIC regulators.
->> > +ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bin=
-dings
->> > +
->> > +BD71837MWV is a programmable Power Management
->> > +IC (PMIC) for powering single-core, dual-core, and
->> > +quad-core SoC=E2=80=99s such as NXP-i.MX 8M. It is optimized
->> > +for low BOM cost and compact solution footprint. It
->> > +integrates 8 Buck regulators and 7 LDO=E2=80=99s to provide all
->> > +the power rails required by the SoC and the commonly
->> > +used peripherals.
->>
->> Why duplicate this from the core binding?
->
-> I can remove this. I just thought it is nice to see what this chip is
-> doing even without opening the MFD binding doc. Just same question as in
-> the other patch - how should I deliver the change? This was already
-> applied to Mark's tree - should I do new patch on top of the Mark's tree
-> - or do patch against tree which does not yet contain this change? If I
->   do it on top of Mark's tree then Mark should apply it, right? If I do
->  it against some other three, thene there will be merge conflict with
->  Mark, right?
+From: Clément Peron <clement.peron@devialet.com>
 
-I thought he only applied the regulator driver part. If not, then
-don't worry about it. (But the right answer would be to do an
-incremental patch on top of his tree).
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
 
-Rob
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+new file mode 100644
+index 000000000000..d54d455cebdc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+@@ -0,0 +1,25 @@
++Binding for the i.MX6 EPIT timer
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: should be "fsl,imx6q-epit"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names
++- clock-names : as described in the clock bindings
++
++Example:
++	epit1: epit@20d0000 {
++		compatible = "fsl,imx6q-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>,
++			<&clks IMX6QDL_CLK_IPG_PER>,
++			<&clks IMX6QDL_CLK_CKIL>;
++		clock-names = "ipg", "per", "ckil";
++	};
+-- 
+2.17.0
