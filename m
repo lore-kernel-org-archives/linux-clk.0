@@ -1,50 +1,73 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Thu, 31 May 2018 13:23:15 +0300
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180531102315.GA5150@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180531071717.GG13528@localhost.localdomain>
+Return-Path: <dev@lynxeye.de>
+Message-ID: <040f1774efe7430a3802ac48f1980122ba5b1128.camel@lynxeye.de>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+From: Lucas Stach <dev@lynxeye.de>
+To: Stefan Agner <stefan@agner.ch>, Peter De Schrijver
+ <pdeschrijver@nvidia.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
+ marcel@ziswiler.com,  krzk@kernel.org, digetx@gmail.com,
+ benjamin.lindqvist@endian.se,  jonathanh@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com,  linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
+Date: Mon, 28 May 2018 17:58:11 +0200
+In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
+References: <20180527215442.14760-5-stefan@agner.ch>
+	 <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+	 <5665b799f763daa82dced238fb494863@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> Hello Rob,
-> 
-> Thanks for the review!
-> 
-> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > > + - interrupts		: The interrupt line the device is connected to.
-> > > + - interrupt-controller	: Marks the device node as an interrupt controller.
+Am Montag, den 28.05.2018, 17:53 +0200 schrieb Stefan Agner:
+> On 28.05.2018 09:55, Peter De Schrijver wrote:
+> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+> > > From: Lucas Stach <dev@lynxeye.de>
+> > > 
+> > > Set up the NAND Flash controller clock to run at 150MHz
+> > > instead of the rate set by the bootloader. This is a
+> > > conservative rate which also yields good performance.
+> > > 
+> > > Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> > > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra20.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> > > index 0ee56dd04cec..dff8c425cd28 100644
+> > > --- a/drivers/clk/tegra/clk-tegra20.c
+> > > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > > @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> > >  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > >  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> > >  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> > > +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+> > >  	/* must be the last entry */
+> > >  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> > >  };
+> > > --
+> > > 2.17.0
+> > > 
 > > 
-> > What sub blocks have interrupts?
+> > Maybe better to specify this in the Tegra20 dtsi? See 
+> > "Assigned clock parents and rates" in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
 > 
-> The PMIC can generate interrupts from events which cause it to reset.
-> Eg, irq from watchdog line change, power button pushes, reset request
-> via register interface etc. I don't know any generic handling for these
-> interrupts. In "normal" use-case this PMIC is powering the processor
-> where driver is running and I do not see reasonable handling because
-> power-reset is going to follow the irq.
+> assigned-clocks indeed works just fine for this case. Thanks for
+> bringing this up, will drop this patch and add the device tree
+> properties in v3.
 > 
+> Hm, interesting that none of the Tegra device tree make use of the
+> feature so far. I guess there would be other cases where this would be
+> useful as well (the one just above, VDE?).
 
-Oh, but when reading this I understand that the interrupt-controller
-property should at least be optional.
+Most of the Tegra clock init stuff (including this patch) was written
+before we had assigned-clocks as some common DT facility. But fully
+agree on dropping this patch.
 
-Br,
-    Matti Vaittinen
+Regards,
+Lucas
