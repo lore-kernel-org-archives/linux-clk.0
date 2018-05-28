@@ -1,55 +1,66 @@
-Return-Path: <gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-Date: Tue, 15 May 2018 13:29:29 +0100
-Message-Id: <1526387370-17142-4-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
+Return-Path: <stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 28 May 2018 17:53:08 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+ marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+ benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+In-Reply-To: <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+Message-ID: <5665b799f763daa82dced238fb494863@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add bindings for CryptoCell instance in the SoC.
+On 28.05.2018 09:55, Peter De Schrijver wrote:
+> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+>> From: Lucas Stach <dev@lynxeye.de>
+>>
+>> Set up the NAND Flash controller clock to run at 150MHz
+>> instead of the rate set by the bootloader. This is a
+>> conservative rate which also yields good performance.
+>>
+>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>> index 0ee56dd04cec..dff8c425cd28 100644
+>> --- a/drivers/clk/tegra/clk-tegra20.c
+>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+>> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+>>  	/* must be the last entry */
+>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>>  };
+>> --
+>> 2.17.0
+>>
+> 
+> Maybe better to specify this in the Tegra20 dtsi? See 
+> "Assigned clock parents and rates" in
+> Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+assigned-clocks indeed works just fine for this case. Thanks for
+bringing this up, will drop this patch and add the device tree
+properties in v3.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 91486b4..6c76841 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -528,6 +528,14 @@
- 			status = "disabled";
- 		};
- 
-+		arm_cc630p: crypto@e6601000 {
-+			compatible = "arm,cryptocell-630p-ree";
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
-+			reg = <0x0 0xe6601000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD 229>;
-+		};
-+
- 		i2c3: i2c@e66d0000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.7.4
+Hm, interesting that none of the Tegra device tree make use of the
+feature so far. I guess there would be other cases where this would be
+useful as well (the one just above, VDE?).
+
+--
+Stefan
