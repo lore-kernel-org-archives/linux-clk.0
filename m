@@ -1,60 +1,45 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
+Return-Path: <peron.clem@gmail.com>
+Return-Path: <peron.clem@gmail.com>
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.dider@devialet.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v8 02/15] clk: qcom: Make clk_alpha_pll_configure available to modules
-Date: Thu, 17 May 2018 14:19:02 +0300
-Message-Id: <1526555955-29960-3-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
+	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH 1/5] ARM: imx: remove inexistant EPIT timer init
+Date: Mon, 28 May 2018 19:34:08 +0200
+Message-Id: <20180528173412.10000-2-peron.clem@gmail.com>
+In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
+References: <20180528173412.10000-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+From: Clément Peron <clement.peron@devialet.com>
 
-Allow clk_alpha_pll_configure to be called from loadable
-kernel modules.
+i.MX EPIT timer has been removed but not the init function declaration.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-imx/common.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9722b70..57f2084 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -228,6 +228,7 @@ void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	if (pll->flags & SUPPORTS_FSM_MODE)
- 		qcom_pll_set_fsm_mode(regmap, PLL_MODE(pll), 6, 0);
- }
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_configure);
- 
- static int clk_alpha_pll_hwfsm_enable(struct clk_hw *hw)
- {
+diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
+index c8d68e918b2f..18aae76fa2da 100644
+--- a/arch/arm/mach-imx/common.h
++++ b/arch/arm/mach-imx/common.h
+@@ -38,7 +38,6 @@ void imx21_soc_init(void);
+ void imx27_soc_init(void);
+ void imx31_soc_init(void);
+ void imx35_soc_init(void);
+-void epit_timer_init(void __iomem *base, int irq);
+ int mx21_clocks_init(unsigned long lref, unsigned long fref);
+ int mx27_clocks_init(unsigned long fref);
+ int mx31_clocks_init(unsigned long fref);
 -- 
-1.9.1
+2.17.0
