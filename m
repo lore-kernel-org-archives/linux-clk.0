@@ -1,538 +1,332 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
+Return-Path: <peron.clem@gmail.com>
+Return-Path: <peron.clem@gmail.com>
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.dider@devialet.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 16/27] ARM: davinci: da830: Remove legacy clock init
-Date: Wed,  9 May 2018 12:25:55 -0500
-Message-Id: <20180509172606.29387-17-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+	Colin Didier <colin.didier@devialet.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH 4/5] clocksource: add driver for i.MX EPIT timer
+Date: Mon, 28 May 2018 19:34:11 +0200
+Message-Id: <20180528173412.10000-5-peron.clem@gmail.com>
+In-Reply-To: <20180528173412.10000-1-peron.clem@gmail.com>
+References: <20180528173412.10000-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/da830.c.
+From: Colin Didier <colin.didier@devialet.com>
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Add driver for NXP's EPIT timer used in i.MX 6 family of SoC.
+
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
+ drivers/clocksource/Kconfig          |  12 ++
+ drivers/clocksource/Makefile         |   1 +
+ drivers/clocksource/timer-imx-epit.c | 254 +++++++++++++++++++++++++++
+ 3 files changed, 267 insertions(+)
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
 
-v10 changes:
-- none
-
-v9 changes:
-- rebased
-
-v8 changes:
-- none
-
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/board-da830-evm.c |  12 -
- arch/arm/mach-davinci/da830.c           | 412 ------------------------
- 2 files changed, 424 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index ccddbae951d6..b2470141dba3 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -110,23 +110,11 @@ static __init void da830_evm_usb_init(void)
- {
- 	int ret;
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 8e8a09755d10..cc1ed592fa6f 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -576,6 +576,18 @@ config H8300_TPU
+ 	  This enables the clocksource for the H8300 platform with the
+ 	  H8S2678 cpu.
  
--#ifdef CONFIG_COMMON_CLK
- 	ret = da8xx_register_usb_phy_clocks();
- 	if (ret)
- 		pr_warn("%s: USB PHY CLK registration failed: %d\n",
- 			__func__, ret);
--#else
--	/* USB_REFCLKIN is not used. */
--	ret = da8xx_register_usb20_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
--			__func__, ret);
- 
--	ret = da8xx_register_usb11_phy_clk(false);
--	if (ret)
--		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
--			__func__, ret);
--#endif
- 	ret = da8xx_register_usb_phy();
- 	if (ret)
- 		pr_warn("%s: USB PHY registration failed: %d\n",
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 8a79e245db1f..0bc5bd2665df 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -24,11 +24,6 @@
- 
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -41,404 +36,6 @@
- 
- #define DA830_REF_FREQ		24000000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll0_data = {
--	.num		= 1,
--	.phys_base	= DA8XX_PLL0_BASE,
--	.flags		= PLL_HAS_PREDIV | PLL_HAS_POSTDIV,
--};
--
--static struct clk ref_clk = {
--	.name		= "ref_clk",
--	.rate		= DA830_REF_FREQ,
--};
--
--static struct clk pll0_clk = {
--	.name		= "pll0",
--	.parent		= &ref_clk,
--	.pll_data	= &pll0_data,
--	.flags		= CLK_PLL,
--};
--
--static struct clk pll0_aux_clk = {
--	.name		= "pll0_aux_clk",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll0_sysclk2 = {
--	.name		= "pll0_sysclk2",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV2,
--};
--
--static struct clk pll0_sysclk3 = {
--	.name		= "pll0_sysclk3",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV3,
--};
--
--static struct clk pll0_sysclk4 = {
--	.name		= "pll0_sysclk4",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV4,
--};
--
--static struct clk pll0_sysclk5 = {
--	.name		= "pll0_sysclk5",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV5,
--};
--
--static struct clk pll0_sysclk6 = {
--	.name		= "pll0_sysclk6",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV6,
--};
--
--static struct clk pll0_sysclk7 = {
--	.name		= "pll0_sysclk7",
--	.parent		= &pll0_clk,
--	.flags		= CLK_PLL,
--	.div_reg	= PLLDIV7,
--};
--
--static struct clk i2c0_clk = {
--	.name		= "i2c0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_0_clk = {
--	.name		= "timer0",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk timerp64_1_clk = {
--	.name		= "timer1",
--	.parent		= &pll0_aux_clk,
--};
--
--static struct clk arm_rom_clk = {
--	.name		= "arm_rom",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_ARM_RAM_ROM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr0_ss_clk = {
--	.name		= "scr0_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR0_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr1_ss_clk = {
--	.name		= "scr1_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR1_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk scr2_ss_clk = {
--	.name		= "scr2_ss",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SCR2_SS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk dmax_clk = {
--	.name		= "dmax",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_PRUSS,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tpcc_clk = {
--	.name		= "tpcc",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPCC,
--	.flags		= ALWAYS_ENABLED | CLK_PSC,
--};
--
--static struct clk tptc0_clk = {
--	.name		= "tptc0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC0,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk tptc1_clk = {
--	.name		= "tptc1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_TPTC1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk mmcsd_clk = {
--	.name		= "mmcsd",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_MMC_SD,
--};
--
--static struct clk uart0_clk = {
--	.name		= "uart0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name		= "uart1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_UART1,
--	.gpsc		= 1,
--};
--
--static struct clk uart2_clk = {
--	.name		= "uart2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_UART2,
--	.gpsc		= 1,
--};
--
--static struct clk spi0_clk = {
--	.name		= "spi0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC0_SPI0,
--};
--
--static struct clk spi1_clk = {
--	.name		= "spi1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_SPI1,
--	.gpsc		= 1,
--};
--
--static struct clk ecap0_clk = {
--	.name		= "ecap0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk ecap1_clk = {
--	.name		= "ecap1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk ecap2_clk = {
--	.name		= "ecap2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_ECAP,
--	.gpsc		= 1,
--};
--
--static struct clk pwm0_clk = {
--	.name		= "pwm0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk pwm1_clk = {
--	.name		= "pwm1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk pwm2_clk = {
--	.name		= "pwm2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_PWM,
--	.gpsc		= 1,
--};
--
--static struct clk eqep0_clk = {
--	.name		= "eqep0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_EQEP,
--	.gpsc		= 1,
--};
--
--static struct clk eqep1_clk = {
--	.name		= "eqep1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_EQEP,
--	.gpsc		= 1,
--};
--
--static struct clk lcdc_clk = {
--	.name		= "lcdc",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_LCDC,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp0_clk = {
--	.name		= "mcasp0",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_McASP0,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp1_clk = {
--	.name		= "mcasp1",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_McASP1,
--	.gpsc		= 1,
--};
--
--static struct clk mcasp2_clk = {
--	.name		= "mcasp2",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA830_LPSC1_McASP2,
--	.gpsc		= 1,
--};
--
--static struct clk usb20_clk = {
--	.name		= "usb20",
--	.parent		= &pll0_sysclk2,
--	.lpsc		= DA8XX_LPSC1_USB20,
--	.gpsc		= 1,
--};
--
--static struct clk cppi41_clk = {
--	.name		= "cppi41",
--	.parent		= &usb20_clk,
--};
--
--static struct clk aemif_clk = {
--	.name		= "aemif",
--	.parent		= &pll0_sysclk3,
--	.lpsc		= DA8XX_LPSC0_EMIF25,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk aintc_clk = {
--	.name		= "aintc",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC0_AINTC,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk secu_mgr_clk = {
--	.name		= "secu_mgr",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC0_SECU_MGR,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk emac_clk = {
--	.name		= "emac",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_CPGMAC,
--	.gpsc		= 1,
--};
--
--static struct clk gpio_clk = {
--	.name		= "gpio",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_GPIO,
--	.gpsc		= 1,
--};
--
--static struct clk i2c1_clk = {
--	.name		= "i2c1",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_I2C,
--	.gpsc		= 1,
--};
--
--static struct clk usb11_clk = {
--	.name		= "usb11",
--	.parent		= &pll0_sysclk4,
--	.lpsc		= DA8XX_LPSC1_USB11,
--	.gpsc		= 1,
--};
--
--static struct clk emif3_clk = {
--	.name		= "emif3",
--	.parent		= &pll0_sysclk5,
--	.lpsc		= DA8XX_LPSC1_EMIF3C,
--	.gpsc		= 1,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk arm_clk = {
--	.name		= "arm",
--	.parent		= &pll0_sysclk6,
--	.lpsc		= DA8XX_LPSC0_ARM,
--	.flags		= ALWAYS_ENABLED,
--};
--
--static struct clk rmii_clk = {
--	.name		= "rmii",
--	.parent		= &pll0_sysclk7,
--};
--
--static struct clk_lookup da830_clks[] = {
--	CLK(NULL,		"ref",		&ref_clk),
--	CLK(NULL,		"pll0",		&pll0_clk),
--	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
--	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
--	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
--	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
--	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
--	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
--	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
--	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
--	CLK(NULL,		"timer0",	&timerp64_0_clk),
--	CLK("davinci-wdt",	NULL,		&timerp64_1_clk),
--	CLK(NULL,		"arm_rom",	&arm_rom_clk),
--	CLK(NULL,		"scr0_ss",	&scr0_ss_clk),
--	CLK(NULL,		"scr1_ss",	&scr1_ss_clk),
--	CLK(NULL,		"scr2_ss",	&scr2_ss_clk),
--	CLK(NULL,		"dmax",		&dmax_clk),
--	CLK(NULL,		"tpcc",		&tpcc_clk),
--	CLK(NULL,		"tptc0",	&tptc0_clk),
--	CLK(NULL,		"tptc1",	&tptc1_clk),
--	CLK("da830-mmc.0",	NULL,		&mmcsd_clk),
--	CLK("serial8250.0",	NULL,		&uart0_clk),
--	CLK("serial8250.1",	NULL,		&uart1_clk),
--	CLK("serial8250.2",	NULL,		&uart2_clk),
--	CLK("spi_davinci.0",	NULL,		&spi0_clk),
--	CLK("spi_davinci.1",	NULL,		&spi1_clk),
--	CLK(NULL,		"ecap0",	&ecap0_clk),
--	CLK(NULL,		"ecap1",	&ecap1_clk),
--	CLK(NULL,		"ecap2",	&ecap2_clk),
--	CLK(NULL,		"pwm0",		&pwm0_clk),
--	CLK(NULL,		"pwm1",		&pwm1_clk),
--	CLK(NULL,		"pwm2",		&pwm2_clk),
--	CLK("eqep.0",		NULL,		&eqep0_clk),
--	CLK("eqep.1",		NULL,		&eqep1_clk),
--	CLK("da8xx_lcdc.0",	"fck",		&lcdc_clk),
--	CLK("davinci-mcasp.0",	NULL,		&mcasp0_clk),
--	CLK("davinci-mcasp.1",	NULL,		&mcasp1_clk),
--	CLK("davinci-mcasp.2",	NULL,		&mcasp2_clk),
--	CLK("musb-da8xx",	NULL,		&usb20_clk),
--	CLK("cppi41-dmaengine",	NULL,		&cppi41_clk),
--	CLK(NULL,		"aemif",	&aemif_clk),
--	CLK(NULL,		"aintc",	&aintc_clk),
--	CLK(NULL,		"secu_mgr",	&secu_mgr_clk),
--	CLK("davinci_emac.1",	NULL,		&emac_clk),
--	CLK("davinci_mdio.0",   "fck",          &emac_clk),
--	CLK(NULL,		"gpio",		&gpio_clk),
--	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
--	CLK("ohci-da8xx",	NULL,	&usb11_clk),
--	CLK(NULL,		"emif3",	&emif3_clk),
--	CLK(NULL,		"arm",		&arm_clk),
--	CLK(NULL,		"rmii",		&rmii_clk),
--	CLK(NULL,		NULL,		NULL),
--};
--#endif
--
- /*
-  * Device specific mux setup
-  *
-@@ -1136,8 +733,6 @@ static struct map_desc da830_io_desc[] = {
- 	},
- };
- 
--static u32 da830_psc_bases[] = { DA8XX_PSC0_BASE, DA8XX_PSC1_BASE };
--
- /* Contents of JTAG ID register used to identify exact cpu type */
- static struct davinci_id da830_ids[] = {
- 	{
-@@ -1206,8 +801,6 @@ static const struct davinci_soc_info davinci_soc_info_da830 = {
- 	.jtag_id_reg		= DA8XX_SYSCFG0_BASE + DA8XX_JTAG_ID_REG,
- 	.ids			= da830_ids,
- 	.ids_num		= ARRAY_SIZE(da830_ids),
--	.psc_bases		= da830_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(da830_psc_bases),
- 	.pinmux_base		= DA8XX_SYSCFG0_BASE + 0x120,
- 	.pinmux_pins		= da830_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(da830_pins),
-@@ -1229,7 +822,6 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll;
- 	struct clk *clk;
- 
-@@ -1242,10 +834,6 @@ void __init da830_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(da830_clks);
--	davinci_timer_init(&timerp64_0_clk);
--#endif
- }
- 
- static struct resource da830_psc0_resources[] = {
++config CLKSRC_IMX_EPIT
++	bool "Clocksource using i.MX EPIT"
++	depends on ARM && CLKDEV_LOOKUP && (ARCH_MXC || COMPILE_TEST)
++	select CLKSRC_OF if OF
++	select CLKSRC_MMIO
++	help
++	  This enables EPIT support available on some i.MX platforms.
++	  Normally you don't have a reason to do so as the EPIT has
++	  the same features and uses the same clocks as the GPT.
++	  Anyway, on some systems the GPT may be in use for other
++	  purposes.
++
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+ 	depends on ARM && CLKDEV_LOOKUP
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 00caf37e52f9..d9426f69ec69 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -69,6 +69,7 @@ obj-$(CONFIG_INTEGRATOR_AP_TIMER)	+= timer-integrator-ap.o
+ obj-$(CONFIG_CLKSRC_VERSATILE)		+= versatile.o
+ obj-$(CONFIG_CLKSRC_MIPS_GIC)		+= mips-gic-timer.o
+ obj-$(CONFIG_CLKSRC_TANGO_XTAL)		+= tango_xtal.o
++obj-$(CONFIG_CLKSRC_IMX_EPIT)		+= timer-imx-epit.o
+ obj-$(CONFIG_CLKSRC_IMX_GPT)		+= timer-imx-gpt.o
+ obj-$(CONFIG_CLKSRC_IMX_TPM)		+= timer-imx-tpm.o
+ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+diff --git a/drivers/clocksource/timer-imx-epit.c b/drivers/clocksource/timer-imx-epit.c
+new file mode 100644
+index 000000000000..96eb6435a9c3
+--- /dev/null
++++ b/drivers/clocksource/timer-imx-epit.c
+@@ -0,0 +1,254 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * i.MX EPIT Timer
++ *
++ * Copyright (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
++ * Copyright (C) 2018 Colin Didier <colin.didier@devialet.com>
++ */
++
++#define EPITCR		0x00
++#define EPITSR		0x04
++#define EPITLR		0x08
++#define EPITCMPR	0x0c
++#define EPITCNR		0x10
++
++#define EPITCR_EN			(1 << 0)
++#define EPITCR_ENMOD			(1 << 1)
++#define EPITCR_OCIEN			(1 << 2)
++#define EPITCR_RLD			(1 << 3)
++#define EPITCR_PRESC(x)			(((x) & 0xfff) << 4)
++#define EPITCR_SWR			(1 << 16)
++#define EPITCR_IOVW			(1 << 17)
++#define EPITCR_DBGEN			(1 << 18)
++#define EPITCR_WAITEN			(1 << 19)
++#define EPITCR_RES			(1 << 20)
++#define EPITCR_STOPEN			(1 << 21)
++#define EPITCR_OM_DISCON		(0 << 22)
++#define EPITCR_OM_TOGGLE		(1 << 22)
++#define EPITCR_OM_CLEAR			(2 << 22)
++#define EPITCR_OM_SET			(3 << 22)
++#define EPITCR_CLKSRC_OFF		(0 << 24)
++#define EPITCR_CLKSRC_PERIPHERAL	(1 << 24)
++#define EPITCR_CLKSRC_REF_HIGH		(2 << 24)
++#define EPITCR_CLKSRC_REF_LOW		(3 << 24)
++
++#define EPITSR_OCIF			(1 << 0)
++
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/clockchips.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/sched_clock.h>
++#include <linux/slab.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++
++
++struct epit_timer {
++	void __iomem *base;
++	int irq;
++	struct clk *clk_per;
++	struct clock_event_device ced;
++	struct irqaction act;
++};
++
++static inline struct epit_timer *to_epit_timer(struct clock_event_device *ced)
++{
++	return container_of(ced, struct epit_timer, ced);
++}
++
++static inline void epit_irq_disable(struct epit_timer *epittm)
++{
++	u32 val;
++
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
++}
++
++static inline void epit_irq_enable(struct epit_timer *epittm)
++{
++	u32 val;
++
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
++}
++
++static void epit_irq_acknowledge(struct epit_timer *epittm)
++{
++	writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
++}
++
++static void __iomem *sched_clock_reg;
++
++static u64 notrace epit_read_sched_clock(void)
++{
++	return ~readl_relaxed(sched_clock_reg);
++}
++
++static int __init epit_clocksource_init(struct epit_timer *epittm)
++{
++	unsigned int c = clk_get_rate(epittm->clk_per);
++
++	sched_clock_reg = epittm->base + EPITCNR;
++	sched_clock_register(epit_read_sched_clock, 32, c);
++
++	return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c, 200, 32,
++			clocksource_mmio_readl_down);
++}
++
++/* clock event */
++
++static int epit_set_next_event(unsigned long cycles,
++		struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long tcmp;
++
++	tcmp = readl_relaxed(epittm->base + EPITCNR) - cycles;
++
++	writel_relaxed(tcmp, epittm->base + EPITCMPR);
++
++	return 0;
++}
++
++/* Left event sources disabled, no more interrupts appear */
++static int epit_shutdown(struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
++
++	/*
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
++	 */
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt */
++	epit_irq_acknowledge(epittm);
++
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++static int epit_set_oneshot(struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
++
++	/*
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
++	 */
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt, only while switching mode */
++	if (!clockevent_state_oneshot(ced))
++		epit_irq_acknowledge(epittm);
++
++	/*
++	 * Do not put overhead of interrupt enable/disable into
++	 * epit_set_next_event(), the core has about 4 minutes
++	 * to call epit_set_next_event() or shutdown clock after
++	 * mode switching
++	 */
++	epit_irq_enable(epittm);
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++/*
++ * IRQ handler for the timer
++ */
++static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
++{
++	struct clock_event_device *ced = dev_id;
++	struct epit_timer *epittm = to_epit_timer(ced);
++
++	epit_irq_acknowledge(epittm);
++
++	ced->event_handler(ced);
++
++	return IRQ_HANDLED;
++}
++
++static int __init epit_clockevent_init(struct epit_timer *epittm)
++{
++	struct clock_event_device *ced = &epittm->ced;
++	struct irqaction *act = &epittm->act;
++
++	ced->name = "epit";
++	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
++	ced->set_state_shutdown = epit_shutdown;
++	ced->tick_resume = epit_shutdown;
++	ced->set_state_oneshot = epit_set_oneshot;
++	ced->set_next_event = epit_set_next_event;
++	ced->rating = 200;
++	ced->cpumask = cpumask_of(0);
++	ced->irq = epittm->irq;
++	clockevents_config_and_register(ced, clk_get_rate(epittm->clk_per),
++		0xff, 0xfffffffe);
++
++	act->name = "i.MX EPIT Timer Tick",
++	act->flags = IRQF_TIMER | IRQF_IRQPOLL;
++	act->handler = epit_timer_interrupt;
++	act->dev_id = ced;
++
++	/* Make irqs happen */
++	return setup_irq(epittm->irq, act);
++}
++
++static int __init epit_timer_init(struct device_node *np)
++{
++	struct epit_timer *epittm;
++	struct clk *clk_ipg;
++
++	epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
++	if (!epittm)
++		return -ENOMEM;
++
++	epittm->base = of_iomap(np, 0);
++	if (!epittm->base)
++		return -ENXIO;
++
++	epittm->irq = irq_of_parse_and_map(np, 0);
++	if (epittm->irq <= 0)
++		return -EINVAL;
++
++	epittm->clk_per = of_clk_get_by_name(np, "per");
++
++	clk_ipg = of_clk_get_by_name(np, "ipg");
++	if (!IS_ERR(clk_ipg))
++		clk_prepare_enable(clk_ipg);
++
++	if (IS_ERR(epittm->clk_per)) {
++		pr_err("i.MX EPIT: unable to get clk\n");
++		return PTR_ERR(epittm->clk_per);
++	}
++	clk_prepare_enable(epittm->clk_per);
++
++	/*
++	 * Initialise to a known state (all timers off, and timing reset)
++	 */
++	writel_relaxed(0x0, epittm->base + EPITCR);
++
++	writel_relaxed(0xffffffff, epittm->base + EPITLR);
++	writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN,
++		epittm->base + EPITCR);
++
++	/* init and register the timer to the framework */
++	epit_clocksource_init(epittm);
++	epit_clockevent_init(epittm);
++
++	return 0;
++}
++CLOCKSOURCE_OF_DECLARE(mx6q_timer, "fsl,imx6q-epit", epit_timer_init);
 -- 
 2.17.0
