@@ -1,70 +1,59 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:60602 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932116AbeE1Q5R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 May 2018 12:57:17 -0400
+Date: Mon, 28 May 2018 18:57:14 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
+Cc: Stefan Agner <stefan@agner.ch>, Dmitry Osipenko <digetx@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek =?UTF-8?B?VmHFoXV0?= <marek.vasut@gmail.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Lucas Stach <dev@lynxeye.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>, richard@nod.at,
+        Marcel Ziswiler <marcel@ziswiler.com>, krzk@kernel.org,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Mirza Krak <mirza.krak@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180528185714.0a33bdc7@bbrezillon>
+In-Reply-To: <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
+References: <20180527215442.14760-4-stefan@agner.ch>
+        <b9cfc23e-2434-fd90-ae2d-e51f28b16038@gmail.com>
+        <c4df253d318e7c268e8999d5f3bfcd0f@agner.ch>
+        <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
- <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <152520902751.138124.3904360654314728163@swboyd.mtv.corp.google.com>
-Subject: Re: [v5 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Tue, 01 May 2018 14:10:27 -0700
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-01 01:41:32)
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/=
-Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> new file mode 100644
-> index 0000000..ecc1dbe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> @@ -0,0 +1,32 @@
-> +Qualcomm Technologies, Inc. RPMh Clocks
-> +-------------------------------------------------------
-> +
-> +Resource Power Manager Hardened (RPMh) manages shared resources on
-> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> +other hardware subsystems via RSC to control clocks.
-> +
-> +Required properties :
-> +- compatible : shall contain "qcom,sdm845-rpmh-clk"
-> +
-> +- #clock-cells : must contain 1
-> +
-> +Optional properties :
-> +- assigned-clk-divs : property should contain a list of divs for each cl=
-ock in
-> +                       the clk-output-names property. In case divs are n=
-ot
-> +                       provided the clock rate would be same as parent r=
-ate.
-> +- clk-output-names :  a list of strings of clock output signal for the d=
-ivs to
-> +                        be applied.
-> +
-> +Example :
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +       &apps_rsc {
-> +               rpmhcc: clock-controller {
-> +                       compatible =3D "qcom,sdm845-rpmh-clk";
-> +                       #clock-cells =3D <1>;
-> +                       assigned-clk-divs =3D <2 2 2>;
+On Mon, 28 May 2018 18:41:26 +0200
+Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
 
-This property shouldn't need to exist. Instead, add a fixed div-2 clock
-to the DTS file (I guess in the SoC file) to divide the crystal
-frequency into the rate you want (19.2 MHz in this case).
+> Note that it's certainly possible to encode U-Boot and kernel with
+> RS[4] and still use RS[8] for the rootfs even if the boot rom doesn't
+> support it.
 
-> +                       clk-output-names =3D "bi_tcxo", "lnbb_clk2",
-> +                                               "lnbb_clk3";
+Not if you want to read/write from/to the uboot partition from Linux.
 
-We don't need this either.
+Per-partition ECC setup is not supported, so the only solutions we have
+right now are:
+1/ use the same ECC config as the one use by the bootrom
+2/ only access uboot partition in raw mode from Linux (that implies
+   generating images containing the ECC bytes so that they can be
+   flashed to the device in raw mode)
+3/ never access uboot partitions from Linux (not sure we want that)
+
+> This whole 'use-bootable-ecc-only' business seems a bit
+> overengineered.
+> 
+
+Hm, I don't find it over-engineered.
