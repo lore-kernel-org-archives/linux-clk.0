@@ -1,49 +1,85 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH 0/9] clk: davinci: outstanding fixes
-To: Michael Turquette <mturquette@baylibre.com>,
-        David Lechner
-	<david@lechnology.com>, Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Kevin
- Hilman <khilman@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180525181150.17873-1-david@lechnology.com>
- <20180530200947.982.19495@harbor.lan>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <8f188ff5-50d1-f128-ecc5-d25edda325d4@ti.com>
-Date: Thu, 31 May 2018 10:13:40 +0530
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Mon, 28 May 2018 12:00:45 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v2 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <20180528090045.GC8778@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180530200947.982.19495@harbor.lan>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 31 May 2018 01:39 AM, Michael Turquette wrote:
-> Hi David,
-> 
-> Quoting David Lechner (2018-05-25 11:11:41)
->> This is a resend of all of the outstanding DaVinci clock patches plus one new
->> patch. All of the patches (except the new one) have been reviewed and tested
->> by someone other than me.
->>
->> The new patch ("clk: davinci: Fix link errors when not all SoCs are enabled")
->> should be fairly trivial.
->>
->> I am resending them all in one series to hopefully make it easier to get them
->> picked up by having them in the correct order to avoid merge conflicts. This
->> series is based on the clk/clk-davinci-psc-da830 branch.
-> 
-> I picked them all and pushed to clk/clk-davinci based on -rc1. There are
-> some comments on the individual patches, all of which are of the "please
-> revisit this and fix it up later" variety.
-> 
-> Going forward I'm happy for you and/or Sekhar to send clk PRs to Stephen
-> and myself. The same rules apply for PRs: all patches need to be posted
-> to the list the old fashioned way for review. But PRs make our lives a
-> bit easier, especially when dealing with chip variants from the same SoC
-> family like we have with davinci.
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
-Thanks Mike! David is listed as maintainer for drivers/clk/davinci/* and
-I believe he can be generating pull requests going forward. I can work
-as the backup, of course.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-Regards,
-Sekhar
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+new file mode 100644
+index 000000000000..bbc46d38b162
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,52 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
++
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDO’s to provide all the power rails required by the SoC and
++the commonly used peripherals.
++
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 1 or 2.
++			    The first cell is the IRQ number.
++			    The second cell if present is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - regulators:		: List of child nodes that specify the regulators
++			  Please see ../regulator/rohm,bd71837-regulator.txt
++ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
++
++Example:
++
++	pmic: bd71837@4b {
++		compatible = "rohm,bd71837";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++			...
++		};
++		clk: bd71837-32k-out {
++			compatible = "rohm,bd71837-clk";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "bd71837-32k-out";
++		};
++	};
+-- 
+2.14.3
