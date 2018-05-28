@@ -1,61 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:41455 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeERQuY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 12:50:24 -0400
-Date: Fri, 18 May 2018 11:50:22 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rui Miguel Silva <rui.silva@linaro.org>
-Cc: mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 07/12] ARM: dts: imx7s: add mipi phy power domain
-Message-ID: <20180518165022.GB21131@rob-hp-laptop>
-References: <20180518092806.3829-1-rui.silva@linaro.org>
- <20180518092806.3829-8-rui.silva@linaro.org>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Mon, 28 May 2018 12:01:14 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v2 4/6] clk: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <20180528090114.GE8778@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180518092806.3829-8-rui.silva@linaro.org>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 18, 2018 at 10:28:01AM +0100, Rui Miguel Silva wrote:
-> Add power domain index 0 related with mipi-phy to imx7s.
-> 
-> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
-> ---
->  arch/arm/boot/dts/imx7s.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-> index 4d42335c0dee..67450ad89940 100644
-> --- a/arch/arm/boot/dts/imx7s.dtsi
-> +++ b/arch/arm/boot/dts/imx7s.dtsi
-> @@ -636,6 +636,12 @@
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  
-> +					pgc_mipi_phy: pgc-power-domain@0 {
+Document devicetree bindings for ROHM BD71837 PMIC clock output.
 
-power-domain@0
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
 
-> +						#power-domain-cells = <0>;
-> +						reg = <0>;
-> +						power-supply = <&reg_1p0d>;
-> +					};
-> +
->  					pgc_pcie_phy: pgc-power-domain@1 {
-
-ditto.
-
->  						#power-domain-cells = <0>;
->  						reg = <1>;
-> -- 
-> 2.17.0
-> 
+diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+new file mode 100644
+index 000000000000..9759fd145781
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+@@ -0,0 +1,37 @@
++ROHM BD71837 Power Management Integrated Circuit clock bindings
++
++BD71837 clock node should be sub node of the BD71837 MFD node.
++See BD71837 MFD bindings at
++Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++
++Required properties:
++- compatible		: Should be "rohm,bd71837-clk"
++- clock-frequency	: Should be 32768
++- #clock-cells		: Should be 0
++
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
++  Name "bd71837-32k-out" is used if this is not given.
++
++
++Example:
++
++pmic: bd71837@4b {
++	compatible = "rohm,bd71837";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x4b>;
++	interrupt-parent = <&gpio1>;
++	interrupts = <29 GPIO_ACTIVE_LOW>;
++	interrupt-names = "irq";
++	#interrupt-cells = <1>;
++	interrupt-controller;
++
++	/* Clock node */
++	clk: bd71837-32k-out {
++		compatible = "rohm,bd71837-clk";
++		#clock-cells = <0>;
++		clock-frequency  = <32768>;
++		clock-output-names = "bd71837-32k-out";
++	};
++};
+-- 
+2.14.3
