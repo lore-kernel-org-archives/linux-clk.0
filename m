@@ -1,121 +1,78 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-To: 
-Cc: djkurtz@chromium.org,
-	akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	christian.koenig@amd.com,
-	airlied@redhat.com,
-	Shaoyun.Liu@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	rjw@rjwysocki.net,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v3 2/2] ACPI: APD: Add AMD misc clock handler support
-Date: Wed,  9 May 2018 17:59:01 +0800
-Message-Id: <1525859941-23654-3-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Tue, 29 May 2018 15:00:28 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180529120028.GB13528@localhost.localdomain>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180529114740.GG23509@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: akshu.agrawal@amd.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180529114740.GG23509@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-AMD SoC exposes clock for general purpose use. The clock registration
-is done in clk-st driver. The MMIO mapping are passed on to the
-clock driver for accessing the registers.
-The misc clock handler will create MMIO mappings to access the
-clock registers and enable the clock driver to expose the clock
-for use of drivers which will connect to it.
+Hello,
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
-v2: Submitted with dependent patch, removed unneeded kfree for devm_kzalloc
-v3: used devm_ioremap and fix coccinelle warning
- drivers/acpi/acpi_apd.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+On Tue, May 29, 2018 at 12:47:40PM +0100, Mark Brown wrote:
+> On Tue, May 29, 2018 at 01:02:15PM +0300, Matti Vaittinen wrote:
+> 
+> > @@ -0,0 +1,677 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/* Copyright (C) 2018 ROHM Semiconductors */
+> > +/*
+> > + * bd71837-regulator.c ROHM BD71837MWV regulator driver
+> > + */
+> 
+> The SPDX header (and the rest of the block) need to be C++ comments.
 
-diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-index d553b00..2664452 100644
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/clkdev.h>
-@@ -72,6 +73,47 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- }
- 
- #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
-+
-+static int misc_check_res(struct acpi_resource *ares, void *data)
-+{
-+	struct resource res;
-+
-+	return !acpi_dev_resource_memory(ares, &res);
-+}
-+
-+static int st_misc_setup(struct apd_private_data *pdata)
-+{
-+	struct acpi_device *adev = pdata->adev;
-+	struct platform_device *clkdev;
-+	struct st_clk_data *clk_data;
-+	struct resource_entry *rentry;
-+	struct list_head resource_list;
-+	int ret;
-+
-+	clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(&resource_list);
-+	ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
-+				     NULL);
-+	if (ret < 0)
-+		return -ENOENT;
-+
-+	list_for_each_entry(rentry, &resource_list, node) {
-+		clk_data->base = devm_ioremap(&adev->dev, rentry->res->start,
-+					      resource_size(rentry->res));
-+		break;
-+	}
-+
-+	acpi_dev_free_resource_list(&resource_list);
-+
-+	clkdev = platform_device_register_data(&adev->dev, "clk-st",
-+					       PLATFORM_DEVID_NONE, clk_data,
-+					       sizeof(*clk_data));
-+	return PTR_ERR_OR_ZERO(clkdev);
-+}
-+
- static const struct apd_device_desc cz_i2c_desc = {
- 	.setup = acpi_apd_setup,
- 	.fixed_clk_rate = 133000000,
-@@ -94,6 +136,10 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- 	.fixed_clk_rate = 48000000,
- 	.properties = uart_properties,
- };
-+
-+static const struct apd_device_desc st_misc_desc = {
-+	.setup = st_misc_setup,
-+};
- #endif
- 
- #ifdef CONFIG_ARM64
-@@ -179,6 +225,7 @@ static int acpi_apd_create_device(struct acpi_device *adev,
- 	{ "AMD0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMD0030", },
-+	{ "AMD0040", APD_ADDR(st_misc_desc)},
- #endif
- #ifdef CONFIG_ARM64
- 	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
--- 
-1.9.1
+Oh. My bad. I mixed up the C and Cpp style comments. So I will convert
+the SPDX and following block to // (Cpp -style) comments.
+> 
+> > +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
+> > +{
+> > +	int ret = -EINVAL;
+> > +	struct bd71837_pmic *pmic = rdev->reg_data;
+> > +
+> > +	/* According to the data sheet we must not change regulator voltage
+> > +	 * when it is enabled. Thus we need to check if regulator is enabled
+> > +	 * before changing the voltage. This mutex is used to avoid race where
+> > +	 * we might enable regulator after it's state has been checked but
+> > +	 * before the voltage is changed
+> > +	 */
+> > +	mutex_lock(&pmic->mtx);
+> > +	if (!set)
+> > +		ret = regulator_disable_regmap(rdev);
+> > +	else
+> > +		ret = regulator_enable_regmap(rdev);
+> > +	mutex_unlock(&pmic->mtx);
+> > +
+> 
+> This still has the weird locking/wrapper thing going on.  The regulator
+> core will ensure that only one operation is called on a given regulator
+> at once.
+Ok. I''ll remove the mutex and wrapper since core handles this. Also,
+after re-reading the data sheet I see that this restriction to voltage
+changes (regulator must be disabled when voltage is changed) is not
+mentioned for first 4 bucks. I will confirm if they can be changed when
+enabled and also reflect this in next patch set.
+
+> 
+> > +static const struct regulator_desc bd71837_regulators[] = {
+> > +	{
+> > +	 .name = "buck1",
+> 
+> The indentation style here is weird, please follow CodingStyle.  Looks
+> like the second level is just indented by a space for some reason, and
+> there's similar problems elsewhere.
+I'll change this too.
+
+Br,
+	Matti Vaittinen
