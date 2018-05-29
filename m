@@ -1,61 +1,85 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [v5 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
- <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
- <20180501124333.GA32660@rob-hp-laptop>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <cbd9d87c-93ed-a004-487d-4014ac7a93b2@codeaurora.org>
-Date: Tue, 1 May 2018 21:03:42 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42447 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754977AbeE2PU4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 11:20:56 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180501124333.GA32660@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180529150455.17300-5-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-5-peron.clem@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 29 May 2018 12:20:55 -0300
+Message-ID: <CAOMZO5AMK=vn7NCiQs-Ps-q=UyBro1J_+P4rTooU7nmHK20TjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] clocksource: add driver for i.MX EPIT timer
+To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, May 29, 2018 at 12:04 PM, Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail=
+.com> wrote:
 
+> +static int __init epit_timer_init(struct device_node *np)
+> +{
+> +       struct epit_timer *epittm;
+> +       struct clk *clk_ipg;
+> +       int ret;
+> +
+> +       epittm =3D kzalloc(sizeof(*epittm), GFP_KERNEL);
+> +       if (!epittm)
+> +               return -ENOMEM;
+> +
+> +       epittm->base =3D of_iomap(np, 0);
+> +       if (!epittm->base) {
+> +               ret =3D -ENXIO;
+> +               goto out_kfree;
+> +       }
+> +
+> +       epittm->irq =3D irq_of_parse_and_map(np, 0);
+> +       if (!epittm->irq) {
+> +               ret =3D -EINVAL;
+> +               goto out_kfree;
 
-On 5/1/2018 6:13 PM, Rob Herring wrote:
-> On Tue, May 01, 2018 at 02:11:33PM +0530, Taniya Das wrote:
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
->>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   drivers/clk/qcom/Kconfig              |   9 +
->>   drivers/clk/qcom/Makefile             |   1 +
->>   drivers/clk/qcom/clk-rpmh.c           | 387 ++++++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,rpmh.h |   2 -
->>   4 files changed, 397 insertions(+), 2 deletions(-)
->>   create mode 100644 drivers/clk/qcom/clk-rpmh.c
-> 
->> diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
->> index 36caab2..f48fbd6 100644
->> --- a/include/dt-bindings/clock/qcom,rpmh.h
->> +++ b/include/dt-bindings/clock/qcom,rpmh.h
->> @@ -18,7 +18,5 @@
->>   #define RPMH_RF_CLK2_A				9
->>   #define RPMH_RF_CLK3				10
->>   #define RPMH_RF_CLK3_A				11
->> -#define RPMH_RF_CLK4				12
->> -#define RPMH_RF_CLK4_A				13
-> 
-> Did you mean to have this or squash into previous patch?
-> 
+You should jump to out_iounmap and call of_iounmap().
 
-Thanks, my mistake. It was meant to be squashed in the previous patch. I 
-would take care of it in the next series.
+> +       }
+> +
+> +       clk_ipg =3D of_clk_get_by_name(np, "ipg");
+> +       if (IS_ERR(clk_ipg)) {
+> +               pr_err("i.MX EPIT: unable to get clk_ipg\n");
+> +               ret =3D PTR_ERR(clk_ipg);
+> +               goto out_kfree;
+> +       }
+> +       clk_prepare_enable(clk_ipg);
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+clk_prepare_enable() may fail, so better check its return value and
+propagate it in the case of error.
 
---
+> +
+> +       epittm->clk_per =3D of_clk_get_by_name(np, "per");
+> +       if (IS_ERR(epittm->clk_per)) {
+> +               pr_err("i.MX EPIT: unable to get clk_per\n");
+> +               ret =3D PTR_ERR(epittm->clk_per);
+> +               goto out_clk_ipg_disable;
+> +       }
+> +       clk_prepare_enable(epittm->clk_per);
+
+Ditto.
+
+> +
+> +       /*
+> +        * Initialise to a known state (all timers off, and timing reset)
+> +        */
+
+For a single line of comment you could simply write:
+
+/* bla bla */
