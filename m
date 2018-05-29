@@ -1,158 +1,68 @@
-Return-Path: <nsekhar@ti.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v10_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford
-	<aford173@gmail.com>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree
-	<devicetree@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-References: <20180509172606.29387-1-david@lechnology.com>
- <CAHCN7xJ6+vmyrTQGYH=pKz5GRf7rLT4otreNgu6TJi_3UAEX5w@mail.gmail.com>
- <CAMRc=MdO0EtzDHp3RF4ym3umWM_KfhvpWHV2+Y3270ygKz9iGw@mail.gmail.com>
- <CAHCN7xJt=tsc2zHWu+6y_2z=+kHdaovh3TD_MJ1+UeUbTdyj8w@mail.gmail.com>
- <CAMpxmJUKGS_wm1O+HJBt2yY=BQ4169ka1p0264O-PJFdGj5Fdg@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c16cdbb3-c4a2-b1e3-0804-6bfc4249641d@ti.com>
-Date: Wed, 16 May 2018 16:13:07 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:37206 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936821AbeE2RFR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 13:05:17 -0400
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v3 2/5] clk: imx6: add EPIT clock support
+Date: Tue, 29 May 2018 19:04:33 +0200
+Message-Id: <20180529170436.22711-3-peron.clem@gmail.com>
+In-Reply-To: <20180529170436.22711-1-peron.clem@gmail.com>
+References: <20180529170436.22711-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJUKGS_wm1O+HJBt2yY=BQ4169ka1p0264O-PJFdGj5Fdg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday 16 May 2018 01:17 PM, Bartosz Golaszewski wrote:
-> 2018-05-16 0:44 GMT+02:00 Adam Ford <aford173@gmail.com>:
->> On Tue, May 15, 2018 at 4:25 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>> 2018-05-14 2:40 GMT+02:00 Adam Ford <aford173@gmail.com>:
->>>> On Wed, May 9, 2018 at 12:25 PM, David Lechner <david@lechnology.com> wrote:
->>>>> This series converts mach-davinci to use the common clock framework.
->>>>>
->>>>> The series works like this, the first 3 patches fix some issues with the clock
->>>>> drivers that have already been accepted into the mainline kernel.
->>>>>
->>>>> Then, starting with "ARM: davinci: pass clock as parameter to
->>>>> davinci_timer_init()", we get the mach code ready for the switch by adding the
->>>>> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->>>>> around the legacy clocks so that we can switch easily between the old and the
->>>>> new.
->>>>>
->>>>> "ARM: davinci: switch to common clock framework" actually flips the switch
->>>>> to start using the new clock drivers. Then the next 8 patches remove all
->>>>> of the old clock code.
->>>>>
->>>>> The final four patches add device tree clock support to the one SoC that
->>>>> supports it.
->>>>>
->>>>> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->>>>> board file).
->>>>>
->>>>
->>>> I am not sure if I did something wrong, but I attempted to build and I
->>>> wasn't able to boot the da850-evm.dtb your repo common-clk-v11,
->>>> however the legacy board file boot was OK.
->>>>
->>>> make davinci_all_defconfig ARCH=arm
->>>> make zImage modules da850-evm.dtb ARCH=arm CROSS_COMPILE=arm-linux- -j8
->>>>
->>>> 3140416 bytes read in 1464 ms (2 MiB/s)
->>>> 20353 bytes read in 15 ms (1.3 MiB/s)
->>>> ## Flattened Device Tree blob at c0600000
->>>>    Booting using the fdt blob at 0xc0600000
->>>>    Loading Device Tree to c7e57000, end c7e5ef80 ... OK
->>>>
->>>> Starting kernel ...
->>>>
->>>> Uncompressing Linux... done, booting the kernel.
->>>>
->>>> (and hang)
->>>>
->>>> If you have some suggestions, I am try them as I get time.
->>>>
->>>> adam
->>>>
->>>
->>> Runs fine on da850-lcdk and dm365-evm. I'll test the da850-evm
->>> tomorrow when I'll have access to it.
->>
->> I set the bootargs to: bootargs=console=ttyS2,115200n8
->> clk_ignore_unused root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
->>
->> I enabled DEBUG_LL and EARLY_PRINTK, yet when it loads, I only get:
+From: Colin Didier <colin.didier@devialet.com>
 
-With DEBUG_LL, you dont get any prints "automatically". You need add 
-printascii() calls where you need. I use the attached patch which 
-patches printk() calls with printascii()[1]
+Add EPIT clock support to the i.MX6Q clocking infrastructure.
 
->>
->> ## Flattened Device Tree blob at c0600000
->>    Booting using the fdt blob at 0xc0600000
->>    Loading Device Tree to c7e57000, end c7e5ef35 ... OK
->>
->> Starting kernel ...
->>
->> Uncompressing Linux... done, booting the kernel.
->>
->>
->> I am doing this at my home, so I don't have a debugger for the
->> DA850-EVM.  I am using a SOM that is an AM1808, but I vaguely remember
->> something about enabling a DSP clock somewhere, but I cannot seem to
->> find the e-mail.  I know its counter intuitive that we'd need to
->> enable a clock that runs the DSP since it doesn't exist on the AM1808,
->> but I would have thought the clk_ignore_unused would have worked
->> around that issue.
->>
->> If someone else has a DA850-EVM or suggestions, I'm willing to try
->> them as I have time.
->>
->> adam
-> 
-> Hi Adam,
-> 
-> everything works fine for me both when booting the DTB and in legacy
-> mode on da850-evm.
-> 
-> I'm using the following bootargs:
->     ip=dhcp console=ttyS2,115200n8 root=/dev/nfs rw nfsroot=<snip!>,v3
-> nfsrootdebug
-> 
-> Regular davinci_all_defconfig on David's common-clk-v11 branch.
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx6q.c               | 2 ++
+ include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Adam, if you still cannot get it to work, one problem could be that the 
-DT size has increased and its being overwritten. You could look at where 
-you are loading various binaries. Or append the .dtb to zImage and 
-switch on APPENDED_DTB config in kernel.
-
-Thanks,
-Sekhar
-
-[1]
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 5b5a708..c3419c0 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1488,6 +1488,7 @@ static size_t cont_print_text(char *text, size_t size)
- 	return textlen;
- }
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..b9ea7037e193 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	else
+ 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
+ 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
++	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
++	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
+ 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index da59fd9cdb5e..7ad171b8f3bf 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -271,6 +271,8 @@
+ #define IMX6QDL_CLK_PRE_AXI			258
+ #define IMX6QDL_CLK_MLB_SEL			259
+ #define IMX6QDL_CLK_MLB_PODF			260
+-#define IMX6QDL_CLK_END				261
++#define IMX6QDL_CLK_EPIT1			261
++#define IMX6QDL_CLK_EPIT2			262
++#define IMX6QDL_CLK_END				263
  
-+void printascii(char *);
- asmlinkage int vprintk_emit(int facility, int level,
- 			    const char *dict, size_t dictlen,
- 			    const char *fmt, va_list args)
-@@ -1552,6 +1553,7 @@ asmlinkage int vprintk_emit(int facility, int level,
- 		text_len--;
- 		lflags |= LOG_NEWLINE;
- 	}
-+	printascii(text);
- 
- 	/* strip kernel syslog prefix and extract log level or control flags */
- 	if (facility == 0) {
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+-- 
+2.17.0
+
