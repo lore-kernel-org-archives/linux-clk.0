@@ -1,57 +1,92 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 01/26] dt-bindings: clock: Add compatible for A64 DE2 CCU
-Date: Fri, 18 May 2018 15:15:11 +0530
-Message-Id: <20180518094536.17201-2-jagan@amarulasolutions.com>
-In-Reply-To: <20180518094536.17201-1-jagan@amarulasolutions.com>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+To: Stefan Agner <stefan@agner.ch>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
+ computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+ marcel@ziswiler.com, krzk@kernel.org, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+ linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+ <5665b799f763daa82dced238fb494863@agner.ch>
+ <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
+ <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <04cdfdf5-33c5-b569-9cd7-dda1b9ea0baf@gmail.com>
+Date: Tue, 29 May 2018 15:19:47 +0300
+MIME-Version: 1.0
+In-Reply-To: <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64 has DE2 CCU is similar to H3/H5 SoC.
+On 29.05.2018 15:12, Stefan Agner wrote:
+> On 29.05.2018 09:48, Peter De Schrijver wrote:
+>> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
+>>> On 28.05.2018 09:55, Peter De Schrijver wrote:
+>>>> On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+>>>>> From: Lucas Stach <dev@lynxeye.de>
+>>>>>
+>>>>> Set up the NAND Flash controller clock to run at 150MHz
+>>>>> instead of the rate set by the bootloader. This is a
+>>>>> conservative rate which also yields good performance.
+>>>>>
+>>>>> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>>>> ---
+>>>>>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>>>>> index 0ee56dd04cec..dff8c425cd28 100644
+>>>>> --- a/drivers/clk/tegra/clk-tegra20.c
+>>>>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>>>>> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>>>>>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>>>>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+>>>>>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+>>>>> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+>>>>>  	/* must be the last entry */
+>>>>>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+>>>>>  };
+>>>>> --
+>>>>> 2.17.0
+>>>>>
+>>>>
+>>>> Maybe better to specify this in the Tegra20 dtsi? See
+>>>> "Assigned clock parents and rates" in
+>>>> Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>>
+>>> assigned-clocks indeed works just fine for this case. Thanks for
+>>> bringing this up, will drop this patch and add the device tree
+>>> properties in v3.
+>>>
+>>> Hm, interesting that none of the Tegra device tree make use of the
+>>> feature so far. I guess there would be other cases where this would be
+>>> useful as well (the one just above, VDE?).
+>>>
+>>
+>> Yes, historically this feature wasn't available, so we used these init tables.
+>> Unfortunately it's not easy to get rid of them for parent and rate
+>> configuration, because new kernels should also work with existing DTBs, so we
+>> can't just add assigned-clock properties and remove the existing table
+>> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
+>> are only enabled by the init table. For not yet merged blocks, this is
+>> ofcourse not a concern.
+> 
+> Sure I understand.
+> 
+> Was just somewhat surprised that it isn't used at all yet (grep -r -e
+> assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
+> assigned clocks bindings have been merged in 2014 :-)
+> 
+> At least "clk: tegra: Specify VDE clock rate" merged earlier this year
+> would have been a candidate already.
 
-So add compatible for A64 which is fallback compatible
-for H5, so update fallback binding.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes for v2:
-- Add fallback compatible
-
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index f2fa87c4765c..e3ffe0bcd0a0 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -7,6 +7,7 @@ Required properties :
- 		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk", "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
- - clocks: phandle to the clocks feeding the display engine subsystem.
--- 
-2.14.3
+I wasn't even aware of existence of the assigned-clock properties, probably just
+like others.
