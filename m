@@ -1,55 +1,80 @@
-Return-Path: <xieyisheng1@huawei.com>
-Subject: Re: [PATCH 12/33] clk: bcm2835: use match_string() helper
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
- <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
- <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, "Eric
- Anholt" <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
-	<linux-clk@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
-	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <00acb90b-1c2c-a855-2a8f-f60a859a0f85@huawei.com>
-Date: Tue, 22 May 2018 11:42:55 +0800
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 29 May 2018 10:48:04 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stefan Agner <stefan@agner.ch>
+CC: <boris.brezillon@bootlin.com>, <dwmw2@infradead.org>,
+	<computersforpeace@gmail.com>, <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <dev@lynxeye.de>,
+	<miquel.raynal@bootlin.com>, <richard@nod.at>, <marcel@ziswiler.com>,
+	<krzk@kernel.org>, <digetx@gmail.com>, <benjamin.lindqvist@endian.se>,
+	<jonathanh@nvidia.com>, <pgaikwad@nvidia.com>, <mirza.krak@gmail.com>,
+	<linux-mtd@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
+Message-ID: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
+References: <20180527215442.14760-5-stefan@agner.ch>
+ <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
+ <5665b799f763daa82dced238fb494863@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf6rDpFQCt+qG3DSWKZm36F1hkAVPtGzr6NHPuQg4vhXQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5665b799f763daa82dced238fb494863@agner.ch>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andy,
+On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
+> On 28.05.2018 09:55, Peter De Schrijver wrote:
+> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
+> >> From: Lucas Stach <dev@lynxeye.de>
+> >>
+> >> Set up the NAND Flash controller clock to run at 150MHz
+> >> instead of the rate set by the bootloader. This is a
+> >> conservative rate which also yields good performance.
+> >>
+> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> >> ---
+> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> >> index 0ee56dd04cec..dff8c425cd28 100644
+> >> --- a/drivers/clk/tegra/clk-tegra20.c
+> >> +++ b/drivers/clk/tegra/clk-tegra20.c
+> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
+> >>  	/* must be the last entry */
+> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+> >>  };
+> >> --
+> >> 2.17.0
+> >>
+> > 
+> > Maybe better to specify this in the Tegra20 dtsi? See 
+> > "Assigned clock parents and rates" in
+> > Documentation/devicetree/bindings/clock/clock-bindings.txt
+> 
+> assigned-clocks indeed works just fine for this case. Thanks for
+> bringing this up, will drop this patch and add the device tree
+> properties in v3.
+> 
+> Hm, interesting that none of the Tegra device tree make use of the
+> feature so far. I guess there would be other cases where this would be
+> useful as well (the one just above, VDE?).
+> 
 
-On 2018/5/22 5:50, Andy Shevchenko wrote:
-> On Mon, May 21, 2018 at 2:57 PM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
->> match_string() returns the index of an array for a matching string,
->> which can be used intead of open coded variant.
->>
->> Cc: Michael Turquette <mturquette@baylibre.com>
->> Cc: Stephen Boyd <sboyd@kernel.org>
->> Cc: Eric Anholt <eric@anholt.net>
->> Cc: Stefan Wahren <stefan.wahren@i2se.com>
->> Cc: linux-clk@vger.kernel.org
->> Cc: linux-rpi-kernel@lists.infradead.org
->> Cc: linux-arm-kernel@lists.infradead.org
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> 
->> -       size_t i, j;
->> -       int ret;
->> +       int i, ret;
-> 
-> I do not see any need to change type for i.
+Yes, historically this feature wasn't available, so we used these init tables.
+Unfortunately it's not easy to get rid of them for parent and rate
+configuration, because new kernels should also work with existing DTBs, so we
+can't just add assigned-clock properties and remove the existing table
+entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
+are only enabled by the init table. For not yet merged blocks, this is
+ofcourse not a concern.
 
-Right, I just want to smaller the line of code, for unsinged int is also OK for i.
-Anyway, I can change it as your suggestion in next version.
+Cheers,
 
-Thanks
-Yisheng
-
-> 
->> +               ret = match_string(cprman_parent_names,
->> +                                  ARRAY_SIZE(cprman_parent_names),
->> +                                  parents[i]);
->> +               if (ret >= 0)
->> +                       parents[i] = cprman->real_parent_names[ret];
-> 
-> 
+Peter.
