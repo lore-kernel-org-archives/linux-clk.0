@@ -1,38 +1,65 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Mon, 21 May 2018 10:19:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: ilialin@codeaurora.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v8 10/15] cpufreq: Add Kryo CPU scaling driver
-Message-ID: <20180521044938.bnr2sdkmvdorfxqm@vireshk-i7>
-References: <1526555955-29960-1-git-send-email-ilialin@codeaurora.org>
- <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <20180518014538.duphof6enscpm5vp@vireshk-i7>
- <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 3/5] Documentation: DT: add i.MX EPIT timer binding
+Date: Tue, 29 May 2018 17:04:53 +0200
+Message-Id: <20180529150455.17300-4-peron.clem@gmail.com>
+In-Reply-To: <20180529150455.17300-1-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <019201d3ef66$db97aed0$92c70c70$@codeaurora.org>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19-05-18, 14:45, ilialin@codeaurora.org wrote:
-> Hi Viresh,
-> 
-> If I send patches in reply, it will produce new patches, instead of answers
-> in the thread. Please find below the file dump.
+From: Clément Peron <clement.peron@devialet.com>
 
-There is one email from you which appears to be just fine and appears
-to be in reply to this thread only. Maybe its your email client that
-screwed it up for you ? Things look good in mutt.
+Add devicetree binding document for NXP's i.MX SoC specific
+EPIT timer driver.
 
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ .../devicetree/bindings/clock/imx6q,epit.txt  | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+new file mode 100644
+index 000000000000..d54d455cebdc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+@@ -0,0 +1,25 @@
++Binding for the i.MX6 EPIT timer
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible: should be "fsl,imx6q-epit"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- interrupts: Should contain EPIT controller interrupt
++- clocks: list of clock specifiers, must contain an entry for each required
++  entry in clock-names
++- clock-names : as described in the clock bindings
++
++Example:
++	epit1: epit@20d0000 {
++		compatible = "fsl,imx6q-epit";
++		reg = <0x020d0000 0x4000>;
++		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&clks IMX6QDL_CLK_EPIT1>,
++			<&clks IMX6QDL_CLK_IPG_PER>,
++			<&clks IMX6QDL_CLK_CKIL>;
++		clock-names = "ipg", "per", "ckil";
++	};
 -- 
-viresh
+2.17.0
