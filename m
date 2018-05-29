@@ -1,88 +1,61 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 2/5] ARM: clk-imx6q: add EPIT clock support
+Date: Tue, 29 May 2018 17:04:52 +0200
+Message-Id: <20180529150455.17300-3-peron.clem@gmail.com>
+In-Reply-To: <20180529150455.17300-1-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 29 May 2018 14:12:35 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: boris.brezillon@bootlin.com, dwmw2@infradead.org,
- computersforpeace@gmail.com, marek.vasut@gmail.com, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
- marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
- benjamin.lindqvist@endian.se, jonathanh@nvidia.com, pgaikwad@nvidia.com,
- mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
- linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] clk: tegra20: init NDFLASH clock to sensible rate
-In-Reply-To: <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
-References: <20180527215442.14760-5-stefan@agner.ch>
- <20180528075510.GQ6835@tbergstrom-lnx.Nvidia.com>
- <5665b799f763daa82dced238fb494863@agner.ch>
- <20180529074804.GA6708@tbergstrom-lnx.Nvidia.com>
-Message-ID: <90180dd9fc6e60175c54b9d70e50f0e5@agner.ch>
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29.05.2018 09:48, Peter De Schrijver wrote:
-> On Mon, May 28, 2018 at 05:53:08PM +0200, Stefan Agner wrote:
->> On 28.05.2018 09:55, Peter De Schrijver wrote:
->> > On Sun, May 27, 2018 at 11:54:40PM +0200, Stefan Agner wrote:
->> >> From: Lucas Stach <dev@lynxeye.de>
->> >>
->> >> Set up the NAND Flash controller clock to run at 150MHz
->> >> instead of the rate set by the bootloader. This is a
->> >> conservative rate which also yields good performance.
->> >>
->> >> Signed-off-by: Lucas Stach <dev@lynxeye.de>
->> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >> ---
->> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
->> >>  1 file changed, 1 insertion(+)
->> >>
->> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
->> >> index 0ee56dd04cec..dff8c425cd28 100644
->> >> --- a/drivers/clk/tegra/clk-tegra20.c
->> >> +++ b/drivers/clk/tegra/clk-tegra20.c
->> >> @@ -1049,6 +1049,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
->> >>  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->> >>  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
->> >>  	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
->> >> +	{ TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0 },
->> >>  	/* must be the last entry */
->> >>  	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
->> >>  };
->> >> --
->> >> 2.17.0
->> >>
->> >
->> > Maybe better to specify this in the Tegra20 dtsi? See
->> > "Assigned clock parents and rates" in
->> > Documentation/devicetree/bindings/clock/clock-bindings.txt
->>
->> assigned-clocks indeed works just fine for this case. Thanks for
->> bringing this up, will drop this patch and add the device tree
->> properties in v3.
->>
->> Hm, interesting that none of the Tegra device tree make use of the
->> feature so far. I guess there would be other cases where this would be
->> useful as well (the one just above, VDE?).
->>
-> 
-> Yes, historically this feature wasn't available, so we used these init tables.
-> Unfortunately it's not easy to get rid of them for parent and rate
-> configuration, because new kernels should also work with existing DTBs, so we
-> can't just add assigned-clock properties and remove the existing table
-> entries. What we could do is use the CLK_IS_CRITICAL flag for all clocks which
-> are only enabled by the init table. For not yet merged blocks, this is
-> ofcourse not a concern.
+From: Colin Didier <colin.didier@devialet.com>
 
-Sure I understand.
+Add EPIT clock support to the i.MX6Q clocking infrastructure.
 
-Was just somewhat surprised that it isn't used at all yet (grep -r -e
-assigned-clock arch/arm/boot/dts/tegra* returns nothing). After all,
-assigned clocks bindings have been merged in 2014 :-)
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ drivers/clk/imx/clk-imx6q.c               | 2 ++
+ include/dt-bindings/clock/imx6qdl-clock.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-At least "clk: tegra: Specify VDE clock rate" merged earlier this year
-would have been a candidate already.
-
---
-Stefan
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..b9ea7037e193 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -753,6 +753,8 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	else
+ 		clk[IMX6Q_CLK_ECSPI5] = imx_clk_gate2("ecspi5",        "ecspi_root",        base + 0x6c, 8);
+ 	clk[IMX6QDL_CLK_ENET]         = imx_clk_gate2("enet",          "ipg",               base + 0x6c, 10);
++	clk[IMX6QDL_CLK_EPIT1]        = imx_clk_gate2("epit1",         "ipg",               base + 0x6c, 12);
++	clk[IMX6QDL_CLK_EPIT2]        = imx_clk_gate2("epit2",         "ipg",               base + 0x6c, 14);
+ 	clk[IMX6QDL_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal",   "esai_podf",   base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
+ 	clk[IMX6QDL_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem", "ahb",             base + 0x6c, 16, &share_count_esai);
+diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
+index da59fd9cdb5e..7ad171b8f3bf 100644
+--- a/include/dt-bindings/clock/imx6qdl-clock.h
++++ b/include/dt-bindings/clock/imx6qdl-clock.h
+@@ -271,6 +271,8 @@
+ #define IMX6QDL_CLK_PRE_AXI			258
+ #define IMX6QDL_CLK_MLB_SEL			259
+ #define IMX6QDL_CLK_MLB_PODF			260
+-#define IMX6QDL_CLK_END				261
++#define IMX6QDL_CLK_EPIT1			261
++#define IMX6QDL_CLK_EPIT2			262
++#define IMX6QDL_CLK_END				263
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
+-- 
+2.17.0
