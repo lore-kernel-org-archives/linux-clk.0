@@ -1,39 +1,105 @@
-Return-Path: <fengguang.wu@intel.com>
-Date: Sun, 27 May 2018 10:27:39 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: kbuild-all@01.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH 9/9] regulator: bd71837: Build BD71837 regulator driver
-Message-ID: <201805270821.IfPrgwb1%fengguang.wu@intel.com>
-References: <20180524060114.GJ4249@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180524060114.GJ4249@localhost.localdomain>
+Return-Path: <SRS0=7qdu=IQ=linuxfoundation.org=gregkh@kernel.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 4/5] clk: tegra: no need to check return value of debugfs_create functions
+Date: Tue, 29 May 2018 18:08:03 +0200
+Message-Id: <20180529160804.1982-4-gregkh@linuxfoundation.org>
+In-Reply-To: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matti,
+When calling debugfs functions, there is no need to ever check the
+return value.  The function can work or not, but the code logic should
+never do something different based on this.
 
-Thank you for the patch! Perhaps something to improve:
+The return value of these functions were never checked in the end
+anyway, so it is obvious this does not change any functionality :)
 
-[auto build test WARNING on ljones-mfd/for-mfd-next]
-[also build test WARNING on v4.17-rc6]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/mfd-regulator-clk-bd71837-ROHM-BD71837-PMIC-driver/20180526-192351
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-Please review and possibly fold the followup patch.
-
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/clk/tegra/clk-dfll.c | 42 ++++++++++--------------------------
+ 1 file changed, 11 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 0a7deee74eea..48ee43734e05 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1196,42 +1196,24 @@ static const struct file_operations attr_registers_fops = {
+ 	.release	= single_release,
+ };
+ 
+-static int dfll_debug_init(struct tegra_dfll *td)
++static void dfll_debug_init(struct tegra_dfll *td)
+ {
+-	int ret;
++	struct dentry *root;
+ 
+ 	if (!td || (td->mode == DFLL_UNINITIALIZED))
+-		return 0;
+-
+-	td->debugfs_dir = debugfs_create_dir("tegra_dfll_fcpu", NULL);
+-	if (!td->debugfs_dir)
+-		return -ENOMEM;
+-
+-	ret = -ENOMEM;
+-
+-	if (!debugfs_create_file("enable", S_IRUGO | S_IWUSR,
+-				 td->debugfs_dir, td, &enable_fops))
+-		goto err_out;
+-
+-	if (!debugfs_create_file("lock", S_IRUGO,
+-				 td->debugfs_dir, td, &lock_fops))
+-		goto err_out;
++		return;
+ 
+-	if (!debugfs_create_file("rate", S_IRUGO,
+-				 td->debugfs_dir, td, &rate_fops))
+-		goto err_out;
++	root = debugfs_create_dir("tegra_dfll_fcpu", NULL);
++	td->debugfs_dir = root;
+ 
+-	if (!debugfs_create_file("registers", S_IRUGO,
+-				 td->debugfs_dir, td, &attr_registers_fops))
+-		goto err_out;
+-
+-	return 0;
+-
+-err_out:
+-	debugfs_remove_recursive(td->debugfs_dir);
+-	return ret;
++	debugfs_create_file("enable", S_IRUGO | S_IWUSR, root, td, &enable_fops);
++	debugfs_create_file("lock", S_IRUGO, root, td, &lock_fops);
++	debugfs_create_file("rate", S_IRUGO, root, td, &rate_fops);
++	debugfs_create_file("registers", S_IRUGO, root, td, &attr_registers_fops);
+ }
+ 
++#else
++static void inline dfll_debug_init(struct tegra_dfll *td) { }
+ #endif /* CONFIG_DEBUG_FS */
+ 
+ /*
+@@ -1715,9 +1697,7 @@ int tegra_dfll_register(struct platform_device *pdev,
+ 		return ret;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_FS
+ 	dfll_debug_init(td);
+-#endif
+ 
+ 	return 0;
+ }
+-- 
+2.17.0
