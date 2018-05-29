@@ -1,54 +1,34 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-To: 
-Cc: djkurtz@chromium.org,
-	akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	christian.koenig@amd.com,
-	airlied@redhat.com,
-	Shaoyun.Liu@amd.com,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	rjw@rjwysocki.net,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org
-Subject: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
-Date: Wed,  9 May 2018 17:58:59 +0800
-Message-Id: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: akshu.agrawal@amd.com
+In-Reply-To: <20180529150455.17300-6-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com> <20180529150455.17300-6-peron.clem@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 29 May 2018 12:24:05 -0300
+Message-ID: <CAOMZO5CQ2899cEgqmrSHhE_p6SWckvaR50TmpDNbgR+M-j3fdw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] ARM: dts: imx6qdl: add missing compatible and
+ clock properties for EPIT
+To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-AMD ST/CZ platform provides a general system clock which can be used
-by any driver. Registration of this clock will done in clk-st driver.
-While the ACPI misc device will create the required MMIO mappings
-and pass the same to the clk-st driver. The clk-st driver will
-use the address to enable/disable and set frequency.
+On Tue, May 29, 2018 at 12:04 PM, Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail=
+.com> wrote:
+> From: Colin Didier <colin.didier@devialet.com>
+>
+> Add missing compatible and clock properties for EPIT node.
+>
+> Signed-off-by: Colin Didier <colin.didier@devialet.com>
+> Signed-off-by: Cl=C3=A9ment Peron <clement.peron@devialet.com>
 
-Changelog:
-v2:
-  clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
-  ACPI: APD: Add AMD misc clock handler support: No change (v2)
-v3:
-  clk: x86: Add ST oscout platform clock:
-		v4->v5 use static array, change license
-  ACPI: APD: Add AMD misc clock handler support:
-		v2->v3 use devm_ioremap, fix warning
-
-Akshu Agrawal (2):
-  clk: x86: Add ST oscout platform clock
-  ACPI: APD: Add AMD misc clock handler support
-
- drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
- drivers/clk/x86/Makefile             |  1 +
- drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 35 ++++++++++++++
- 4 files changed, 174 insertions(+)
- create mode 100644 drivers/clk/x86/clk-st.c
- create mode 100644 include/linux/platform_data/clk-st.h
-
--- 
-1.9.1
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
