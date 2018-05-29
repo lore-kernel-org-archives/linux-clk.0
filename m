@@ -1,92 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:52570 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751166AbeEULFr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 07:05:47 -0400
-From: <ilialin@codeaurora.org>
-To: "'Russell King - ARM Linux'" <linux@armlinux.org.uk>
-Cc: <viresh.kumar@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-soc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org> <1526898690-4018-1-git-send-email-ilialin@codeaurora.org> <20180521105428.GM17671@n2100.armlinux.org.uk>
-In-Reply-To: <20180521105428.GM17671@n2100.armlinux.org.uk>
-Subject: RE: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Mon, 21 May 2018 14:05:41 +0300
-Message-ID: <000b01d3f0f3$aa961cc0$ffc25640$@codeaurora.org>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Tue, 29 May 2018 12:59:21 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v3 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <62f33ea3c40224e225b7ad8ee2ae49fdbb710f4f.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-You are right.
-cpu_dev_silver != cpu_dev_gold, and I found this with my tests as well.
-Thank you.
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
-> -----Original Message-----
-> From: Russell King - ARM Linux <linux@armlinux.org.uk>
-> Sent: Monday, May 21, 2018 13:54
-> To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: viresh.kumar@linaro.org; devicetree@vger.kernel.org; linux-
-> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-soc@vger.kernel.org; linux-
-> clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-> 
-> On Mon, May 21, 2018 at 01:31:30PM +0300, Ilia Lin wrote:
-> > +#define SILVER_LEAD	0
-> > +#define GOLD_LEAD	2
-> 
-> Okay, two different values here, but "GOLD_LEAD" appears unused.
-> 
-> > +	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-> > +	if (NULL == cpu_dev_silver)
-> > +		return -ENODEV;
-> > +
-> > +	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-> > +	if (NULL == cpu_dev_gold)
-> > +		return -ENODEV;
-> 
-> get_cpu_device() takes the logical CPU number.  So the above gets CPU 0
-> each time, and so cpu_dev_silver == cpu_dev_gold here.  So what's the
-> point of the second get_cpu_device() ?  If it's supposed to be:
-> 
-> 	cpu_dev_gold = get_cpu_device(GOLD_LEAD);
-> 
-> That would get CPU 2, but in terms of these defines, it doesn't make that
-> much sense.  What exactly does "silver lead" and "gold lead" refer to in
-these
-> definitions?
-> 
-> > +	opp_silver =
-> dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-> > +	if (IS_ERR(opp_silver)) {
-> > +		dev_err(cpu_dev_silver, "Failed to set supported
-> hardware\n");
-> > +		ret = PTR_ERR(opp_silver);
-> > +		goto free_np;
-> > +	}
-> > +
-> > +	opp_gold =
-> dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-> > +	if (IS_ERR(opp_gold)) {
-> > +		dev_err(cpu_dev_gold, "Failed to set supported
-> hardware\n");
-> > +		ret = PTR_ERR(opp_gold);
-> > +		goto free_opp_silver;
-> > +	}
-> 
-> Given that cpu_dev_silver == cpu_dev_gold, doesn't the second call to
-> dev_pm_opp_set_supported_hw() always fail, as opp_table-
-> >supported_hw will be set by the first call?
-> 
-> To me, this driver looks completely useless as it will always fail to
-initialise,
-> and I question whether this code has even been runtime tested.
-> 
-> --
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps
-> up According to speedtest.net: 8.21Mbps down 510kbps up
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+new file mode 100644
+index 000000000000..bbc46d38b162
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,52 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
++
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDO’s to provide all the power rails required by the SoC and
++the commonly used peripherals.
++
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - interrupt-controller	: Marks the device node as an interrupt controller.
++ - #interrupt-cells	: The number of cells to describe an IRQ, should be 1 or 2.
++			    The first cell is the IRQ number.
++			    The second cell if present is the flags, encoded as trigger
++			    masks from ../interrupt-controller/interrupts.txt.
++ - regulators:		: List of child nodes that specify the regulators
++			  Please see ../regulator/rohm,bd71837-regulator.txt
++ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
++
++Example:
++
++	pmic: bd71837@4b {
++		compatible = "rohm,bd71837";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#interrupt-cells = <1>;
++		interrupt-controller;
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++			...
++		};
++		clk: bd71837-32k-out {
++			compatible = "rohm,bd71837-clk";
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++			clock-output-names = "bd71837-32k-out";
++		};
++	};
+-- 
+2.14.3
