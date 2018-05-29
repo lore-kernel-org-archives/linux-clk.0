@@ -1,62 +1,33 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Rajan Vaja <RAJANV@xilinx.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v6 04/11] firmware: xilinx: Add query data API
-To: Jolly Shah <JOLLYS@xilinx.com>,
- "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
- "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
- "keescook@chromium.org" <keescook@chromium.org>,
- "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
- "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-5-git-send-email-jollys@xilinx.com>
- <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
- <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <ab9632f5-882d-462d-d830-0316cad56baf@arm.com>
-Date: Tue, 15 May 2018 10:34:18 +0100
+Return-Path: <horms@verge.net.au>
+Date: Tue, 29 May 2018 17:13:45 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] crypto: ccree: silence debug prints
+Message-ID: <20180529161345.rhx73mixbnxrfzum@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-4-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
-In-Reply-To: <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 14/05/18 20:16, Jolly Shah wrote:
-> HI Sudeep,
+On Thu, May 24, 2018 at 03:19:08PM +0100, Gilad Ben-Yossef wrote:
+> The cache parameter register configuration was being too verbose.
+> Use dev_dbg() to only provide the information if needed.
 > 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-[...]
-
->> 
->> Can you give more insight into this ? How will be this used ? How
->> this aligns with data we get from DT ? I am just trying to
->> understand how is this information split between this API and DT
->> for example.
->> 
-> 
-> This API is used to get clock information from firmware and register
-> clocks accordingly in driver. In our case, firmware maintains
-> database of all clocks available on chip. DT will provide information
-> for off chip reference clocks only. This is to avoid duplication of
-> clocks data in DT and firmware both as firmware anyways need clock
-> data to manage them.
-> 
-
-I wanted to understand the difference with example. What kind of
-information you get from DT and what you get from firmware ?
-
--- 
-Regards,
-Sudeep
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
