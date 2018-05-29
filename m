@@ -1,82 +1,68 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:38904 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752188AbeETBur (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 May 2018 21:50:47 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43542 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936492AbeE2PFL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 11:05:11 -0400
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v2 5/5] ARM: dts: imx6qdl: add missing compatible and clock properties for EPIT
+Date: Tue, 29 May 2018 17:04:55 +0200
+Message-Id: <20180529150455.17300-6-peron.clem@gmail.com>
+In-Reply-To: <20180529150455.17300-1-peron.clem@gmail.com>
+References: <20180529150455.17300-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180519183127.2718-8-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <20180519183127.2718-8-jernej.skrabec@siol.net>
-From: Julian Calaby <julian.calaby@gmail.com>
-Date: Sun, 20 May 2018 11:50:25 +1000
-Message-ID: <CAGRGNgU+PaygxkVkfcxUqMeV1TijJrZRkPkff7b4cxdVY6NQLA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 07/15] dt-bindings: display: sun4i-drm: Add
- R40 HDMI pipeline
-To: jernej.skrabec@siol.net
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jernej,
+From: Colin Didier <colin.didier@devialet.com>
 
-On Sun, May 20, 2018 at 4:31 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Missing compatibles and descriptions needed to implement R40 HDMI
-> pipeline are added.
->
-> For mixers only compatibles are added.
->
-> TCON description is expanded with R40 TV TCON compatibles. If the SoC
-> has TCON TOP unit, phandle to that unit has to be specified. Additional
-> clock has to be specified if SoC has TCON TOP and TCON is TV TCON.
->
-> New compatible is added for DWC HDMI PHY, which has additional clock
-> specified.
+Add missing compatible and clock properties for EPIT node.
 
-There's a bunch of A64 related stuff mixed in here, is the R40
-compatible with the A64's parts? If so, you should probably mention
-that in the commit log.
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
+---
+ arch/arm/boot/dts/imx6qdl.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt         | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index a099957ab62a..634276f713e8 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -111,8 +112,9 @@ Required properties:
->    - resets: phandle to the reset controller driving the PHY
->    - reset-names: must be "phy"
->
-> -H3 HDMI PHY requires additional clock:
-> +H3 and A64 HDMI PHY requires additional clocks:
->    - pll-0: parent of phy clock
-> +  - pll-1: second possible phy clock parent (A64 only)
-
-Maybe split this into two:
-
-H3 HDMI PHY ...
-   - pll-0: ...
-
-A64 HDMI PHY ...
-   - pll-0: ...
-   - pll-1: ...
-
-At the moment a quick reading implies that H3 needs pll-1.
-
-Thanks,
-
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index c003e62bf290..16fec147dcb8 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -844,13 +844,25 @@
+ 			};
+ 
+ 			epit1: epit@20d0000 { /* EPIT1 */
++				compatible = "fsl,imx6q-epit";
+ 				reg = <0x020d0000 0x4000>;
+ 				interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT1>,
++					<&clks IMX6QDL_CLK_IPG_PER>,
++					<&clks IMX6QDL_CLK_CKIL>;
++				clock-names = "ipg", "per", "ckil";
++				status = "disabled";
+ 			};
+ 
+ 			epit2: epit@20d4000 { /* EPIT2 */
++				compatible = "fsl,imx6q-epit";
+ 				reg = <0x020d4000 0x4000>;
+ 				interrupts = <0 57 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6QDL_CLK_EPIT2>,
++					<&clks IMX6QDL_CLK_IPG_PER>,
++					<&clks IMX6QDL_CLK_CKIL>;
++				clock-names = "ipg", "per", "ckil";
++				status = "disabled";
+ 			};
+ 
+ 			src: src@20d8000 {
 -- 
-Julian Calaby
+2.17.0
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
