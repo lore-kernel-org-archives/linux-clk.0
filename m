@@ -1,262 +1,366 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v5 12/14] cpufreq: Add Kryo CPU scaling driver
-Date: Thu,  3 May 2018 14:52:33 +0300
-Message-Id: <1525348355-25471-13-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54131 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936853AbeE2RFT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 May 2018 13:05:19 -0400
+From: =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To: Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?q?Cl=C3=A9ment=20Peron?= <clement.peron@devialet.com>
+Subject: [PATCH v3 4/5] clocksource: add driver for i.MX EPIT timer
+Date: Tue, 29 May 2018 19:04:35 +0200
+Message-Id: <20180529170436.22711-5-peron.clem@gmail.com>
+In-Reply-To: <20180529170436.22711-1-peron.clem@gmail.com>
+References: <20180529170436.22711-1-peron.clem@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU ferequencies subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+From: Colin Didier <colin.didier@devialet.com>
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Add driver for NXP's EPIT timer used in i.MX 6 family of SoC.
+
+Signed-off-by: Colin Didier <colin.didier@devialet.com>
+Signed-off-by: Clément Peron <clement.peron@devialet.com>
 ---
- drivers/cpufreq/Kconfig.arm          |  11 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 153 +++++++++++++++++++++++++++++++++++
- 4 files changed, 168 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+ drivers/clocksource/Kconfig          |  12 ++
+ drivers/clocksource/Makefile         |   1 +
+ drivers/clocksource/timer-imx-epit.c | 283 +++++++++++++++++++++++++++
+ 3 files changed, 296 insertions(+)
+ create mode 100644 drivers/clocksource/timer-imx-epit.c
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..f9da18c 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,17 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 8e8a09755d10..920a0874f3a4 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -576,6 +576,18 @@ config H8300_TPU
+ 	  This enables the clocksource for the H8300 platform with the
+ 	  H8S2678 cpu.
  
-+config ARM_QCOM_CPUFREQ_KRYO
-+	tristate "Qualcomm Technologies, Inc. Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
++config CLKSRC_IMX_EPIT
++	bool "Clocksource using i.MX EPIT"
++	depends on ARM && CLKDEV_LOOKUP && OF && (ARCH_MXC || COMPILE_TEST)
++	select TIMER_OF
++	select CLKSRC_MMIO
 +	help
-+	  This adds the CPUFreq driver for
-+	  Qualcomm Technologies, Inc. Kryo SoC based boards.
++	  This enables EPIT support available on some i.MX platforms.
++	  Normally you don't have a reason to do so as the EPIT has
++	  the same features and uses the same clocks as the GPT.
++	  Anyway, on some systems the GPT may be in use for other
++	  purposes.
 +
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
- 
- 	{ .compatible = "nvidia,tegra124", },
- 
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
+ config CLKSRC_IMX_GPT
+ 	bool "Clocksource using i.MX GPT" if COMPILE_TEST
+ 	depends on ARM && CLKDEV_LOOKUP
+diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+index 00caf37e52f9..d9426f69ec69 100644
+--- a/drivers/clocksource/Makefile
++++ b/drivers/clocksource/Makefile
+@@ -69,6 +69,7 @@ obj-$(CONFIG_INTEGRATOR_AP_TIMER)	+= timer-integrator-ap.o
+ obj-$(CONFIG_CLKSRC_VERSATILE)		+= versatile.o
+ obj-$(CONFIG_CLKSRC_MIPS_GIC)		+= mips-gic-timer.o
+ obj-$(CONFIG_CLKSRC_TANGO_XTAL)		+= tango_xtal.o
++obj-$(CONFIG_CLKSRC_IMX_EPIT)		+= timer-imx-epit.o
+ obj-$(CONFIG_CLKSRC_IMX_GPT)		+= timer-imx-gpt.o
+ obj-$(CONFIG_CLKSRC_IMX_TPM)		+= timer-imx-tpm.o
+ obj-$(CONFIG_ASM9260_TIMER)		+= asm9260_timer.o
+diff --git a/drivers/clocksource/timer-imx-epit.c b/drivers/clocksource/timer-imx-epit.c
 new file mode 100644
-index 0000000..32371cc
+index 000000000000..87025d5f3a97
 --- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,153 @@
++++ b/drivers/clocksource/timer-imx-epit.c
+@@ -0,0 +1,283 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved.
++/*
++ * i.MX EPIT Timer
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * Copyright (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
++ * Copyright (C) 2018 Colin Didier <colin.didier@devialet.com>
++ * Copyright (C) 2018 Clément Péron <clement.peron@devialet.com>
 + */
 +
-+#include <linux/cpu.h>
++#include <linux/clk.h>
++#include <linux/clockchips.h>
 +#include <linux/err.h>
-+#include <linux/init.h>
-+//#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
 +#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
++#include <linux/sched_clock.h>
 +#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
 +
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
++#define EPITCR				0x00
++#define EPITSR				0x04
++#define EPITLR				0x08
++#define EPITCMPR			0x0c
++#define EPITCNR				0x10
 +
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
++#define EPITCR_EN			BIT(0)
++#define EPITCR_ENMOD			BIT(1)
++#define EPITCR_OCIEN			BIT(2)
++#define EPITCR_RLD			BIT(3)
++#define EPITCR_PRESC(x)			(((x) & 0xfff) << 4)
++#define EPITCR_SWR			BIT(16)
++#define EPITCR_IOVW			BIT(17)
++#define EPITCR_DBGEN			BIT(18)
++#define EPITCR_WAITEN			BIT(19)
++#define EPITCR_RES			BIT(20)
++#define EPITCR_STOPEN			BIT(21)
++#define EPITCR_OM_DISCON		(0 << 22)
++#define EPITCR_OM_TOGGLE		(1 << 22)
++#define EPITCR_OM_CLEAR			(2 << 22)
++#define EPITCR_OM_SET			(3 << 22)
++#define EPITCR_CLKSRC_OFF		(0 << 24)
++#define EPITCR_CLKSRC_PERIPHERAL	(1 << 24)
++#define EPITCR_CLKSRC_REF_HIGH		(2 << 24)
++#define EPITCR_CLKSRC_REF_LOW		(3 << 24)
++
++#define EPITSR_OCIF			BIT(0)
++
++struct epit_timer {
++	void __iomem *base;
++	int irq;
++	struct clk *clk_per;
++	struct clock_event_device ced;
++	struct irqaction act;
 +};
 +
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
++static void __iomem *sched_clock_reg;
 +
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++static inline struct epit_timer *to_epit_timer(struct clock_event_device *ced)
 +{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
++	return container_of(ced, struct epit_timer, ced);
 +}
 +
-+static int __init qcom_cpufreq_kryo_driver_init(void)
++static inline void epit_irq_disable(struct epit_timer *epittm)
 +{
-+	size_t len;
++	u32 val;
++
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
++}
++
++static inline void epit_irq_enable(struct epit_timer *epittm)
++{
++	u32 val;
++
++	val = readl_relaxed(epittm->base + EPITCR);
++	writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
++}
++
++static void epit_irq_acknowledge(struct epit_timer *epittm)
++{
++	writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
++}
++
++static u64 notrace epit_read_sched_clock(void)
++{
++	return ~readl_relaxed(sched_clock_reg);
++}
++
++static int __init epit_clocksource_init(struct epit_timer *epittm)
++{
++	unsigned int c = clk_get_rate(epittm->clk_per);
++
++	sched_clock_reg = epittm->base + EPITCNR;
++	sched_clock_register(epit_read_sched_clock, 32, c);
++
++	return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c, 200, 32,
++			clocksource_mmio_readl_down);
++}
++
++static int epit_set_next_event(unsigned long cycles,
++			       struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long tcmp;
++
++	tcmp = readl_relaxed(epittm->base + EPITCNR) - cycles;
++	writel_relaxed(tcmp, epittm->base + EPITCMPR);
++
++	return 0;
++}
++
++/* Left event sources disabled, no more interrupts appear */
++static int epit_shutdown(struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
++
++	/*
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
++	 */
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt */
++	epit_irq_acknowledge(epittm);
++
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++static int epit_set_oneshot(struct clock_event_device *ced)
++{
++	struct epit_timer *epittm = to_epit_timer(ced);
++	unsigned long flags;
++
++	/*
++	 * The timer interrupt generation is disabled at least
++	 * for enough time to call epit_set_next_event()
++	 */
++	local_irq_save(flags);
++
++	/* Disable interrupt in EPIT module */
++	epit_irq_disable(epittm);
++
++	/* Clear pending interrupt, only while switching mode */
++	if (!clockevent_state_oneshot(ced))
++		epit_irq_acknowledge(epittm);
++
++	/*
++	 * Do not put overhead of interrupt enable/disable into
++	 * epit_set_next_event(), the core has about 4 minutes
++	 * to call epit_set_next_event() or shutdown clock after
++	 * mode switching
++	 */
++	epit_irq_enable(epittm);
++	local_irq_restore(flags);
++
++	return 0;
++}
++
++static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
++{
++	struct clock_event_device *ced = dev_id;
++	struct epit_timer *epittm = to_epit_timer(ced);
++
++	epit_irq_acknowledge(epittm);
++
++	ced->event_handler(ced);
++
++	return IRQ_HANDLED;
++}
++
++static int __init epit_clockevent_init(struct epit_timer *epittm)
++{
++	struct clock_event_device *ced = &epittm->ced;
++	struct irqaction *act = &epittm->act;
++
++	ced->name = "epit";
++	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
++	ced->set_state_shutdown = epit_shutdown;
++	ced->tick_resume = epit_shutdown;
++	ced->set_state_oneshot = epit_set_oneshot;
++	ced->set_next_event = epit_set_next_event;
++	ced->rating = 200;
++	ced->cpumask = cpumask_of(0);
++	ced->irq = epittm->irq;
++	clockevents_config_and_register(ced, clk_get_rate(epittm->clk_per),
++		0xff, 0xfffffffe);
++
++	act->name = "i.MX EPIT Timer Tick",
++	act->flags = IRQF_TIMER | IRQF_IRQPOLL;
++	act->handler = epit_timer_interrupt;
++	act->dev_id = ced;
++
++	/* Make irqs happen */
++	return setup_irq(epittm->irq, act);
++}
++
++static int __init epit_timer_init(struct device_node *np)
++{
++	struct epit_timer *epittm;
++	struct clk *clk_ipg;
 +	int ret;
-+	u32 versions;
-+	enum _msm8996_version msm8996_version;
-+	u8 *speedbin;
-+	struct platform_device *pdev;
-+	struct device *cpu_dev;
-+	struct device_node *np;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct opp_table *opp_temp = NULL;
 +
-+	cpu_dev = get_cpu_device(SILVER_LEAD);
-+	if (IS_ERR_OR_NULL(cpu_dev))
-+		return PTR_ERR(cpu_dev);
++	epittm = kzalloc(sizeof(*epittm), GFP_KERNEL);
++	if (!epittm)
++		return -ENOMEM;
 +
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+        }
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-+	if (IS_ERR_OR_NULL(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
++	epittm->base = of_iomap(np, 0);
++	if (!epittm->base) {
++		ret = -ENXIO;
++		goto out_kfree;
 +	}
 +
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
++	epittm->irq = irq_of_parse_and_map(np, 0);
++	if (!epittm->irq) {
++		ret = -EINVAL;
++		goto out_iounmap;
 +	}
 +
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
++	clk_ipg = of_clk_get_by_name(np, "ipg");
++	if (IS_ERR(clk_ipg)) {
++		pr_err("i.MX EPIT: unable to get clk_ipg\n");
++		ret = PTR_ERR(clk_ipg);
++		goto out_iounmap;
 +	}
 +
-+	ret = PTR_ERR_OR_ZERO(opp_temp = \
-+			      dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-+	if (0 > ret)
-+		goto free_np;
++	ret = clk_prepare_enable(clk_ipg);
++	if (ret) {
++		pr_err("i.MX EPIT: unable to prepare+enable clk_ipg\n");
++		goto out_clk_ipg_disable;
++	}
 +
-+	cpu_dev = get_cpu_device(GOLD_LEAD);
-+	ret = PTR_ERR_OR_ZERO(dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-+	if (0 > ret)
-+		goto put_supported_hw_silver;
++	epittm->clk_per = of_clk_get_by_name(np, "per");
++	if (IS_ERR(epittm->clk_per)) {
++		pr_err("i.MX EPIT: unable to get clk_per\n");
++		ret = PTR_ERR(epittm->clk_per);
++		goto out_clk_ipg_disable;
++	}
 +
-+	of_node_put(np);
++	ret = clk_prepare_enable(epittm->clk_per);
++	if (ret) {
++		pr_err("i.MX EPIT: unable to prepare+enable clk_per\n");
++		goto out_clk_ipg_disable;
++	}
 +
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (IS_ERR(pdev)) {
-+		return PTR_ERR(pdev);
++	/* Initialise to a known state (all timers off, and timing reset) */
++	writel_relaxed(0x0, epittm->base + EPITCR);
++	writel_relaxed(0xffffffff, epittm->base + EPITLR);
++	writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN,
++		       epittm->base + EPITCR);
++
++	ret = epit_clocksource_init(epittm);
++	if(ret) {
++		pr_err("i.MX EPIT: failed to init clocksource\n");
++		goto out_clk_per_disable;
++	}
++
++	ret = epit_clockevent_init(epittm);
++	if(ret) {
++		pr_err("i.MX EPIT: failed to init clockevent\n");
++		goto out_clk_per_disable;
 +	}
 +
 +	return 0;
 +
-+put_supported_hw_silver:
-+	dev_pm_opp_put_supported_hw(opp_temp);
-+
-+free_np:
-+	of_node_put(np);
++out_clk_per_disable:
++	clk_disable_unprepare(epittm->clk_per);
++out_clk_ipg_disable:
++	clk_disable_unprepare(clk_ipg);
++out_iounmap:
++	iounmap(epittm->base);
++out_kfree:
++	kfree(epittm);
 +
 +	return ret;
 +}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
++TIMER_OF_DECLARE(mx6q_timer, "fsl,imx6q-epit", epit_timer_init);
 -- 
-1.9.1
+2.17.0
+
