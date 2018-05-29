@@ -1,135 +1,82 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 00/14] CPU scaling support for msm8996
-Date: Mon, 14 May 2018 16:11:46 +0300
-Message-Id: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 29 May 2018 12:47:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180529114740.GG23509@sirena.org.uk>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+In-Reply-To: <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-[v6]
- * Addressed comments from Viresh about:
- ** Comments style
- ** Kconfig bool instead of tristate
- ** DT and documentation style
- ** Resourses deallocation on an error
- ** Typos
 
-[v5]
- * Rebased
- * Addressed comments from Bjorn about SPDX style,
-   functions and parameters naming
- * Addressed comments from Viresh DT properties and style, comments style,
-   resourses deallocation, documentation placement
- * Addressed comments from Sricharan about unnessesary include
- * Addressed comments from Nicolas
- * Addressed comments from Rob about the commit messages and acks
- * Addressed comments from Mark
+--64j1qyTOoGvYcHb1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[v4]
- * Adressed all comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
+On Tue, May 29, 2018 at 01:02:15PM +0300, Matti Vaittinen wrote:
 
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
+> @@ -0,0 +1,677 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (C) 2018 ROHM Semiconductors */
+> +/*
+> + * bd71837-regulator.c ROHM BD71837MWV regulator driver
+> + */
 
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
+The SPDX header (and the rest of the block) need to be C++ comments.
 
-Clocks:
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
+> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
+> +{
+> +	int ret = -EINVAL;
+> +	struct bd71837_pmic *pmic = rdev->reg_data;
+> +
+> +	/* According to the data sheet we must not change regulator voltage
+> +	 * when it is enabled. Thus we need to check if regulator is enabled
+> +	 * before changing the voltage. This mutex is used to avoid race where
+> +	 * we might enable regulator after it's state has been checked but
+> +	 * before the voltage is changed
+> +	 */
+> +	mutex_lock(&pmic->mtx);
+> +	if (!set)
+> +		ret = regulator_disable_regmap(rdev);
+> +	else
+> +		ret = regulator_enable_regmap(rdev);
+> +	mutex_unlock(&pmic->mtx);
+> +
 
-Regulators:
-Added SAW regulator support to the SPMI regulator driver. The SAW regulators
-will be controlled through special CPU registers instead of direct
-SPMI accesses.
+This still has the weird locking/wrapper thing going on.  The regulator
+core will ensure that only one operation is called on a given regulator
+at once.
 
-Cpufreq:
-The qcom-cpufreq-kryo driver is aimed to support different SOC versions.
-The driver reads eFuse information and chooses the required OPP subset
-by passing the OPP supported-hw parameter.
+> +static const struct regulator_desc bd71837_regulators[] = {
+> +	{
+> +	 .name = "buck1",
 
-A previous post of RFC can be found here:
-https://patchwork.kernel.org/patch/10377887/
+The indentation style here is weird, please follow CodingStyle.  Looks
+like the second level is just indented by a space for some reason, and
+there's similar problems elsewhere.
 
-Ilia Lin (11):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  clk: qcom: Add CPU clock driver for msm8996
-  clk: qcom: Add DT bindings for CPU clock driver for msm8996
-  clk: qcom: Add ACD path to CPU clock driver for msm8996
-  dt: qcom: Add opp and thermal to the msm8996
-  regulator: qcom_spmi: Add support for SAW
-  dt-bindings: qcom_spmi: Add support for SAW documentation
-  dt: qcom: Add SAW regulator for 8x96 CPUs
-  cpufreq: Add Kryo CPU scaling driver
-  dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-  dt: qcom: Add qcom-cpufreq-kryo driver configuration
+--64j1qyTOoGvYcHb1
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Rajendra Nayak (3):
-  clk: qcom: Make clk_alpha_pll_configure available to modules
-  clk: qcom: cpu-8996: Add support to switch to alternate PLL
-  clk: qcom: cpu-8996: Add support to switch below 600Mhz
+-----BEGIN PGP SIGNATURE-----
 
- .../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
- .../devicetree/bindings/opp/kryo-cpufreq.txt       | 680 +++++++++++++++++++++
- .../bindings/regulator/qcom,spmi-regulator.txt     |  45 ++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dts        |   2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 650 +++++++++++++++++++-
- drivers/clk/clk-fixed-factor.c                     |   2 +-
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 519 ++++++++++++++++
- drivers/cpufreq/Kconfig.arm                        |  11 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c               |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c                | 148 +++++
- drivers/perf/Kconfig                               |   1 +
- drivers/perf/qcom_l2_pmu.c                         |  90 +--
- drivers/regulator/qcom_spmi-regulator.c            | 133 +++-
- drivers/soc/qcom/Kconfig                           |   3 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  65 ++
- include/soc/qcom/kryo-l2-accessors.h               |  21 +
- 22 files changed, 2329 insertions(+), 80 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
- create mode 100644 Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
- create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
- create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsNPdsACgkQJNaLcl1U
+h9DIMwf9Gko/cLaIOR7E6jd5feuDxB3vTjXfFNZPaTspdh0DO16BEpXHpqfVKEfU
+J8h+FlYeXeaiGA6PGN8hqVSR/VV4duOTRzstjYYeTNpBeYTDeL8KBP2JyqTd5rcO
+r+Wup8DMwGXZi7DbPcCYWef3KBe01tRvijThMkouhfu+6SUpc8jgaeNAQlcAw4O/
+cbNIseTZs82gJAeAp3QJq4qvPNn7LpUjrZh85A0Xp9lVi0h4H/x60LDVPB+EmsII
+gzwDVmIopWv2U+75lkYXSVA0q+fYgzUpT6Cv5eaa19xL1E5KDquvp6CqTNwrjbhX
+s/D6TS6ufJyFzVUuAp59DT2LhrZXwQ==
+=Zutn
+-----END PGP SIGNATURE-----
 
--- 
-1.9.1
+--64j1qyTOoGvYcHb1--
