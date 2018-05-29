@@ -1,92 +1,161 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Tue, 29 May 2018 13:00:01 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v3 3/6] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <81fa35b78d71d43ef2fcfeebc8d4b35c1a97599f.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com> <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 May 2018 11:12:07 +0200
-Message-ID: <CAMuHMdXETt75rGyYRsNEK0O5CO3A-bG70g=-f23y6PO_uK6rWg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Document devicetree bindings for ROHM BD71837 PMIC regulators.
 
-On Tue, May 22, 2018 at 12:01 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-> bone support.
->
-> This currently only handles generic parts (gic, architected timer)
-> and a UART.
-> For simplicity sake, this also relies on the bootloader to set the
-> pinctrl and clocks.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/rzn1-clock.h>
-> +
-> +/ {
-> +       compatible = "renesas,r9a06g032", "renesas,rzn1";
-
-Please drop the "renesas,rzn1".
-
-
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               clocks = <&clock RZN1_DIV_CA7>;
-
-I think the clocks property should be moved to the individual CPU nodes.
-
-> +
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <0>;
-> +               };
-> +
-> +               cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a7";
-> +                       reg = <1>;
-> +               };
-> +       };
-
-The rest looks OK to me (pending acceptance of the clock bindings).
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+new file mode 100644
+index 000000000000..4edf3137d9f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+@@ -0,0 +1,126 @@
++ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
++
++BD71837MWV is a programmable Power Management
++IC (PMIC) for powering single-core, dual-core, and
++quad-core SoC’s such as NXP-i.MX 8M. It is optimized
++for low BOM cost and compact solution footprint. It
++integrates 8 Buck regulators and 7 LDO’s to provide all
++the power rails required by the SoC and the commonly
++used peripherals.
++
++Required properties:
++ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
++
++List of regulators provided by this controller. BD71837 regulators node
++should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
++Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
++definition for each of these nodes is defined using the standard
++binding for regulators at
++Documentation/devicetree/bindings/regulator/regulator.txt.
++Note that if BD71837 starts at RUN state you probably want to use
++regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
++disabled by driver at startup. LDO5 and LDO6 are supplied by those and
++if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
++cause PMIC to reset.
++
++The valid names for regulator nodes are:
++BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
++LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
++
++Optional properties:
++- Any optional property defined in bindings/regulator/regulator.txt
++
++Example:
++regulators {
++	buck1: BUCK1 {
++		regulator-name = "buck1";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-ramp-delay = <1250>;
++	};
++	buck2: BUCK2 {
++		regulator-name = "buck2";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-ramp-delay = <1250>;
++	};
++	buck3: BUCK3 {
++		regulator-name = "buck3";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++	};
++	buck4: BUCK4 {
++		regulator-name = "buck4";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++	};
++	buck5: BUCK5 {
++		regulator-name = "buck5";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1350000>;
++		regulator-boot-on;
++	};
++	buck6: BUCK6 {
++		regulator-name = "buck6";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++	};
++	buck7: BUCK7 {
++		regulator-name = "buck7";
++		regulator-min-microvolt = <1605000>;
++		regulator-max-microvolt = <1995000>;
++		regulator-boot-on;
++	};
++	buck8: BUCK8 {
++		regulator-name = "buck8";
++		regulator-min-microvolt = <800000>;
++		regulator-max-microvolt = <1400000>;
++	};
++
++	ldo1: LDO1 {
++		regulator-name = "ldo1";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++	};
++	ldo2: LDO2 {
++		regulator-name = "ldo2";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++		regulator-boot-on;
++	};
++	ldo3: LDO3 {
++		regulator-name = "ldo3";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++	ldo4: LDO4 {
++		regulator-name = "ldo4";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <1800000>;
++	};
++	ldo5: LDO5 {
++		regulator-name = "ldo5";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++	ldo6: LDO6 {
++		regulator-name = "ldo6";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <1800000>;
++	};
++	ldo7_reg: LDO7 {
++		regulator-name = "ldo7";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++};
++
++
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.14.3
