@@ -1,57 +1,166 @@
-Return-Path: <rjwysocki@gmail.com>
+Return-Path: <horms@verge.net.au>
+Date: Tue, 29 May 2018 17:12:52 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
+Message-ID: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-2-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
- <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com> <20362702.FCbsg9xPKv@aspire.rjw.lan>
- <9f31fc22-b97f-0241-30cd-798ee03b2f1d@amd.com> <152641886428.237094.9491189918943948420@swboyd.mtv.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 May 2018 10:23:27 +0200
-Message-ID: <CAJZ5v0gKvMFSyZy3K11d1P8+5ZBNk2ecFAuRTrQ_3obYJM8iTw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Daniel Kurtz <djkurtz@chromium.org>, Alex Deucher <Alexander.Deucher@amd.com>,
-	Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Len Brown <lenb@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527171551-21979-2-git-send-email-gilad@benyossef.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 11:14 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Agrawal, Akshu (2018-05-15 02:39:08)
->>
->>
->> On 5/15/2018 3:02 PM, Rafael J. Wysocki wrote:
->> > On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
->> >> Stoney SoC provides oscout clock. This clock can support 25Mhz and
->> >> 48Mhz of frequency.
->> >> The clock is available for general system use.
->> >>
->> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
->> >
->> > I'm not sure if the Stephen Boyd's comments on one of the previous
->> > versions of this patch have been addressed.  Have they?
->> >
->> > In any case, if I'm expected to take this, I need an ACK from Stephen on it.
->> >
->> > Thanks,
->> > Rafael
->> >
->>
->> All comments of Stephen Boyd and Daniel Kurtz have been addressed.
->>
->> Stephen, if you are Ok with this can you please ACK it.
->>
->
-> It could go via clk tree and meet up with the acpi patch in -next right?
-> I'm fine with it going through acpi path though so whichever way works.
+On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
+> The product signature and HW revision register have different offset on the
+> older HW revisions.
+> This fixes the problem of the driver failing sanity check on silicon
+> despite working on the FPGA emulation systems.
+> 
+> Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
 
-It's better if it goes in as a series IMO and then if it goes via
-ACPI, the clock dependency will be clear from the git history.
+Did the above introduce a regression that is fixed by this patch
+or did it add a feature that only works with this patch?
 
-So if you don't mind, I'll queue this series up for 4.18.
+In the case of the latter I would drop the Fixes tag,
+but I don't feel strongly about it.
 
-Thanks,
-Rafael
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+
+Minor not below not withstanding,
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  drivers/crypto/ccree/cc_debugfs.c   | 7 +++++--
+>  drivers/crypto/ccree/cc_driver.c    | 8 ++++++--
+>  drivers/crypto/ccree/cc_driver.h    | 2 ++
+>  drivers/crypto/ccree/cc_host_regs.h | 6 ++++--
+>  4 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/crypto/ccree/cc_debugfs.c b/drivers/crypto/ccree/cc_debugfs.c
+> index 08f8db4..5ca184e 100644
+> --- a/drivers/crypto/ccree/cc_debugfs.c
+> +++ b/drivers/crypto/ccree/cc_debugfs.c
+> @@ -26,7 +26,8 @@ struct cc_debugfs_ctx {
+>  static struct dentry *cc_debugfs_dir;
+>  
+>  static struct debugfs_reg32 debug_regs[] = {
+> -	CC_DEBUG_REG(HOST_SIGNATURE),
+> +	{ .name = "SIGNATURE" }, /* Must be 0th */
+> +	{ .name = "VERSION" }, /* Must be 1st */
+>  	CC_DEBUG_REG(HOST_IRR),
+>  	CC_DEBUG_REG(HOST_POWER_DOWN_EN),
+>  	CC_DEBUG_REG(AXIM_MON_ERR),
+> @@ -34,7 +35,6 @@ static struct debugfs_reg32 debug_regs[] = {
+>  	CC_DEBUG_REG(HOST_IMR),
+>  	CC_DEBUG_REG(AXIM_CFG),
+>  	CC_DEBUG_REG(AXIM_CACHE_PARAMS),
+> -	CC_DEBUG_REG(HOST_VERSION),
+>  	CC_DEBUG_REG(GPR_HOST),
+>  	CC_DEBUG_REG(AXIM_MON_COMP),
+>  };
+> @@ -58,6 +58,9 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
+>  	struct debugfs_regset32 *regset;
+>  	struct dentry *file;
+>  
+> +	debug_regs[0].offset = drvdata->sig_offset;
+> +	debug_regs[1].offset = drvdata->ver_offset;
+> +
+>  	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+>  		return -ENOMEM;
+> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+> index 89ce013..6f93ce7 100644
+> --- a/drivers/crypto/ccree/cc_driver.c
+> +++ b/drivers/crypto/ccree/cc_driver.c
+> @@ -207,9 +207,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	if (hw_rev->rev >= CC_HW_REV_712) {
+>  		new_drvdata->hash_len_sz = HASH_LEN_SIZE_712;
+>  		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP);
+> +		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_712);
+> +		new_drvdata->ver_offset = CC_REG(HOST_VERSION_712);
+>  	} else {
+>  		new_drvdata->hash_len_sz = HASH_LEN_SIZE_630;
+>  		new_drvdata->axim_mon_offset = CC_REG(AXIM_MON_COMP8);
+> +		new_drvdata->sig_offset = CC_REG(HOST_SIGNATURE_630);
+> +		new_drvdata->ver_offset = CC_REG(HOST_VERSION_630);
+>  	}
+>  
+>  	platform_set_drvdata(plat_dev, new_drvdata);
+> @@ -276,7 +280,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  	}
+>  
+>  	/* Verify correct mapping */
+> -	signature_val = cc_ioread(new_drvdata, CC_REG(HOST_SIGNATURE));
+> +	signature_val = cc_ioread(new_drvdata, new_drvdata->sig_offset);
+>  	if (signature_val != hw_rev->sig) {
+>  		dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
+>  			signature_val, hw_rev->sig);
+> @@ -287,7 +291,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+>  
+>  	/* Display HW versions */
+>  	dev_info(dev, "ARM CryptoCell %s Driver: HW version 0x%08X, Driver version %s\n",
+> -		 hw_rev->name, cc_ioread(new_drvdata, CC_REG(HOST_VERSION)),
+> +		 hw_rev->name, cc_ioread(new_drvdata, new_drvdata->ver_offset),
+>  		 DRV_MODULE_VERSION);
+>  
+>  	rc = init_cc_regs(new_drvdata, true);
+> diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
+> index 2048fde..95f82b2 100644
+> --- a/drivers/crypto/ccree/cc_driver.h
+> +++ b/drivers/crypto/ccree/cc_driver.h
+> @@ -129,6 +129,8 @@ struct cc_drvdata {
+
+This patch doesn't make things (much) worse
+but struct cc_drvdata has a rather incomplete kdoc.
+
+>  	enum cc_hw_rev hw_rev;
+>  	u32 hash_len_sz;
+>  	u32 axim_mon_offset;
+> +	u32 sig_offset;
+> +	u32 ver_offset;
+>  };
+>  
+>  struct cc_crypto_alg {
+> diff --git a/drivers/crypto/ccree/cc_host_regs.h b/drivers/crypto/ccree/cc_host_regs.h
+> index f510018..616b2e1 100644
+> --- a/drivers/crypto/ccree/cc_host_regs.h
+> +++ b/drivers/crypto/ccree/cc_host_regs.h
+> @@ -45,7 +45,8 @@
+>  #define CC_HOST_ICR_DSCRPTR_WATERMARK_QUEUE0_CLEAR_BIT_SIZE	0x1UL
+>  #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SHIFT	0x17UL
+>  #define CC_HOST_ICR_AXIM_COMP_INT_CLEAR_BIT_SIZE	0x1UL
+> -#define CC_HOST_SIGNATURE_REG_OFFSET	0xA24UL
+> +#define CC_HOST_SIGNATURE_712_REG_OFFSET	0xA24UL
+> +#define CC_HOST_SIGNATURE_630_REG_OFFSET	0xAC8UL
+>  #define CC_HOST_SIGNATURE_VALUE_BIT_SHIFT	0x0UL
+>  #define CC_HOST_SIGNATURE_VALUE_BIT_SIZE	0x20UL
+>  #define CC_HOST_BOOT_REG_OFFSET	0xA28UL
+> @@ -105,7 +106,8 @@
+>  #define CC_HOST_BOOT_ONLY_ENCRYPT_LOCAL_BIT_SIZE	0x1UL
+>  #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SHIFT	0x1EUL
+>  #define CC_HOST_BOOT_AES_EXISTS_LOCAL_BIT_SIZE	0x1UL
+> -#define CC_HOST_VERSION_REG_OFFSET	0xA40UL
+> +#define CC_HOST_VERSION_712_REG_OFFSET	0xA40UL
+> +#define CC_HOST_VERSION_630_REG_OFFSET	0xAD8UL
+>  #define CC_HOST_VERSION_VALUE_BIT_SHIFT	0x0UL
+>  #define CC_HOST_VERSION_VALUE_BIT_SIZE	0x20UL
+>  #define CC_HOST_KFDE0_VALID_REG_OFFSET	0xA60UL
+> -- 
+> 2.7.4
+> 
