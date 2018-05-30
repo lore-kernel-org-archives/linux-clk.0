@@ -1,47 +1,55 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH] clk: davinci: psc-da830: fix USB0 48MHz PHY clock
- registration
-To: Stephen Boyd <sboyd@kernel.org>, David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>
-CC: Linux clk Mailing List <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List
-	<linux-arm-kernel@lists.infradead.org>
-References: <20180507113457.4716-1-nsekhar@ti.com>
- <152642368847.237094.1884631416189964435@swboyd.mtv.corp.google.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <9f8a876b-6a66-687c-f83f-51b8d896c50a@ti.com>
-Date: Wed, 16 May 2018 10:44:14 +0530
+Return-Path: <broonie@sirena.org.uk>
+Date: Wed, 30 May 2018 12:17:14 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
+ the regulator tree
+Message-ID: <20180530111714.GJ6920@sirena.org.uk>
+References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <E1fNysa-0006jU-41@debutante>
+ <20180530111425.GD13528@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <152642368847.237094.1884631416189964435@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q5r20fdKX+PFtYHw"
+In-Reply-To: <20180530111425.GD13528@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-On Wednesday 16 May 2018 04:04 AM, Stephen Boyd wrote:
-> Quoting Sekhar Nori (2018-05-07 04:34:57)
->> USB0 48MHz PHY clock registration fails on DA830 because the
->> da8xx-cfgchip clock driver cannot get a reference to USB0
->> LPSC clock.
->>
->> The USB0 LPSC needs to be enabled during PHY clock enable. Setup
->> the clock lookup correctly to fix this.
->>
->> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->> ---
-> 
-> Applied to clk-next
-> 
-> Did this need a fixes tag? And should it go into 4.17 final? Or it's not
-> causing problems right now?
+--q5r20fdKX+PFtYHw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We have not switched DaVinci to use common clock framework still. So no,
-this does not cause problems right now. All drivers/clk/davinci/*
-patches can be included for v4.18.
+On Wed, May 30, 2018 at 02:14:25PM +0300, Matti Vaittinen wrote:
 
-Although if you are sending a v4.17 pull request to Linus anyway, and
-can include this, I would not mind it ;) We don't need stable backports
-definitely, so no need to add a Fixes: tag.
+> Does this mean this single patch was applied? I am sorry if I did not
+> follow correct policy/way of informing the dependencies - but there is a
+> dependency. The patch 1/6 contains the header file
+> include/linux/mfd/bd71837.h with bunch of definitions this patch is
+> requiring.
 
-Thanks,
-Sekhar
+Your driver won't actually get built until the MFD parts end up in the
+same tree since the regulator driver depends on the MFD so there's no
+problem, the code will just sit there and not cause any problems.
+
+--q5r20fdKX+PFtYHw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsOiDoACgkQJNaLcl1U
+h9C0Uwf9FffLG3KwDPEbrDy2gWR4EXdFCpKw9k3uQal6TZNRpKxPZ1m10XDfpCKv
+f80INeTZW0mnU7TPsFhnWs4czsdpUL4M5DZHVC8X7MDTlTE2TsbJ9mGjPiziFrpN
+6dCebSH14VVIH0/BVoqOzI1L+pCbVXBe5OQo69o1Gu2gTWj8s1GPYQ3yl/g1Wa9d
+daw6eG0sNVGhmu54HuLW1dxtDC97ENuLAdt8+bG2cWC1UljH+1S1zTQzXtiQsP8f
+ePg8xwhqeP6z7cssLUMl5uCAi3kdhectNgR3nx/ILrCDNUA9YcwmE82/zi1JmHVX
+IQUJc2UpuVVJ4mgDfZw0gd7jHLYJ0A==
+=Yxz3
+-----END PGP SIGNATURE-----
+
+--q5r20fdKX+PFtYHw--
