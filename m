@@ -1,439 +1,295 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v9 09/15] dt: qcom: Add opp and thermal to the msm8996
-Date: Mon, 21 May 2018 14:25:26 +0300
-Message-Id: <1526901932-9514-10-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v7 05/10] firmware: xilinx: Add clock APIs
+Date: Wed, 30 May 2018 13:55:20 -0700
+Message-ID: <1527713725-1086-6-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
- 1 file changed, 260 insertions(+), 9 deletions(-)
+From: Rajan Vaja <rajanv@xilinx.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 37b7152c..e6cf290 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -97,6 +98,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -109,6 +113,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -117,6 +124,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -129,6 +139,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -155,6 +168,182 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
+Add clock APIs to control clocks through firmware
+interface.
+
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 186 ++++++++++++++++++++++++++++++++++-
+ include/linux/firmware/xlnx-zynqmp.h |  30 ++++++
+ 2 files changed, 214 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 86d9bb8..c764d6e 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -269,14 +269,196 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+  */
+ static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
+ {
+-	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
+-				   qdata.arg2, qdata.arg3, out);
++	int ret;
 +
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <844800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <960000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 <1228800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 <1593600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
++	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				  qdata.arg2, qdata.arg3, out);
 +
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
++	/*
++	 * For clock name query, all bytes in SMC response are clock name
++	 * characters and return code is always success. For invalid clocks,
++	 * clock name bytes would be 0s.
++	 */
++	return qdata.qid == PM_QID_CLOCK_GET_NAME ? 0 : ret;
++}
 +
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <403200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <806400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <940800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 <1248000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 <1555200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 <1824000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 <1920000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 <1996800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 <2073600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 <2150400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
++/**
++ * zynqmp_pm_clock_enable() - Enable the clock for given id
++ * @clock_id:	ID of the clock to be enabled
++ *
++ * This function is used by master to enable the clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_enable(u32 clock_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_ENABLE, clock_id, 0, 0, 0, NULL);
++}
 +
- 	thermal-zones {
- 		cpu-thermal0 {
- 			polling-delay-passive = <250>;
-@@ -163,18 +352,34 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu_alert0: trip0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit0: trip1 {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++/**
++ * zynqmp_pm_clock_disable() - Disable the clock for given id
++ * @clock_id:	ID of the clock to be disable
++ *
++ * This function is used by master to disable the clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_disable(u32 clock_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_DISABLE, clock_id, 0, 0, 0, NULL);
++}
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal1 {
-@@ -184,18 +389,34 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu_alert1: trip0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit1: trip1 {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
++/**
++ * zynqmp_pm_clock_getstate() - Get the clock state for given id
++ * @clock_id:	ID of the clock to be queried
++ * @state:	1/0 (Enabled/Disabled)
++ *
++ * This function is used by master to get the state of clock
++ * including peripherals and PLL clocks.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getstate(u32 clock_id, u32 *state)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETSTATE, clock_id, 0,
++				  0, 0, ret_payload);
++	*state = ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setdivider() - Set the clock divider for given id
++ * @clock_id:	ID of the clock
++ * @divider:	divider value
++ *
++ * This function is used by master to set divider for any clock
++ * to achieve desired rate.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setdivider(u32 clock_id, u32 divider)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETDIVIDER, clock_id, divider,
++				   0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getdivider() - Get the clock divider for given id
++ * @clock_id:	ID of the clock
++ * @divider:	divider value
++ *
++ * This function is used by master to get divider values
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getdivider(u32 clock_id, u32 *divider)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETDIVIDER, clock_id, 0,
++				  0, 0, ret_payload);
++	*divider = ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setrate() - Set the clock rate for given id
++ * @clock_id:	ID of the clock
++ * @rate:	rate value in hz
++ *
++ * This function is used by master to set rate for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setrate(u32 clock_id, u64 rate)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETRATE, clock_id,
++				   rate & 0xFFFFFFFF,
++				   (rate >> 32) & 0xFFFFFFFF,
++				   0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getrate() - Get the clock rate for given id
++ * @clock_id:	ID of the clock
++ * @rate:	rate value in hz
++ *
++ * This function is used by master to get rate
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getrate(u32 clock_id, u64 *rate)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETRATE, clock_id, 0,
++				  0, 0, ret_payload);
++	*rate = ((u64)ret_payload[2] << 32) | ret_payload[1];
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_clock_setparent() - Set the clock parent for given id
++ * @clock_id:	ID of the clock
++ * @parent_id:	parent id
++ *
++ * This function is used by master to set parent for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_setparent(u32 clock_id, u32 parent_id)
++{
++	return zynqmp_pm_invoke_fn(PM_CLOCK_SETPARENT, clock_id,
++				   parent_id, 0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_clock_getparent() - Get the clock parent for given id
++ * @clock_id:	ID of the clock
++ * @parent_id:	parent id
++ *
++ * This function is used by master to get parent index
++ * for any clock.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETPARENT, clock_id, 0,
++				  0, 0, ret_payload);
++	*parent_id = ret_payload[1];
++
++	return ret;
+ }
  
- 		cpu-thermal2 {
-@@ -205,18 +426,33 @@
- 			thermal-sensors = <&tsens0 8>;
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
+ 	.query_data = zynqmp_pm_query_data,
++	.clock_enable = zynqmp_pm_clock_enable,
++	.clock_disable = zynqmp_pm_clock_disable,
++	.clock_getstate = zynqmp_pm_clock_getstate,
++	.clock_setdivider = zynqmp_pm_clock_setdivider,
++	.clock_getdivider = zynqmp_pm_clock_getdivider,
++	.clock_setrate = zynqmp_pm_clock_setrate,
++	.clock_getrate = zynqmp_pm_clock_getrate,
++	.clock_setparent = zynqmp_pm_clock_setparent,
++	.clock_getparent = zynqmp_pm_clock_getparent,
+ };
  
- 			trips {
--				cpu_alert2: trip0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 354385d..29fb352 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -36,6 +36,15 @@ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_IOCTL = 34,
+ 	PM_QUERY_DATA,
++	PM_CLOCK_ENABLE,
++	PM_CLOCK_DISABLE,
++	PM_CLOCK_GETSTATE,
++	PM_CLOCK_SETDIVIDER,
++	PM_CLOCK_GETDIVIDER,
++	PM_CLOCK_SETRATE,
++	PM_CLOCK_GETRATE,
++	PM_CLOCK_SETPARENT,
++	PM_CLOCK_GETPARENT,
+ };
  
--				cpu_crit2: trip1 {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
+ /* PMU-FW return status codes */
+@@ -49,8 +58,20 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
  
- 		cpu-thermal3 {
-@@ -226,9 +462,14 @@
- 			thermal-sensors = <&tsens0 10>;
++enum pm_ioctl_id {
++	IOCTL_SET_PLL_FRAC_MODE = 8,
++	IOCTL_GET_PLL_FRAC_MODE,
++	IOCTL_SET_PLL_FRAC_DATA,
++	IOCTL_GET_PLL_FRAC_DATA,
++};
++
+ enum pm_query_id {
+ 	PM_QID_INVALID,
++	PM_QID_CLOCK_GET_NAME,
++	PM_QID_CLOCK_GET_TOPOLOGY,
++	PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
++	PM_QID_CLOCK_GET_PARENTS,
++	PM_QID_CLOCK_GET_ATTRIBUTES,
+ };
  
- 			trips {
--				cpu_alert3: trip0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
+ /**
+@@ -71,6 +92,15 @@ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
+ 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
++	int (*clock_enable)(u32 clock_id);
++	int (*clock_disable)(u32 clock_id);
++	int (*clock_getstate)(u32 clock_id, u32 *state);
++	int (*clock_setdivider)(u32 clock_id, u32 divider);
++	int (*clock_getdivider)(u32 clock_id, u32 *divider);
++	int (*clock_setrate)(u32 clock_id, u64 rate);
++	int (*clock_getrate)(u32 clock_id, u64 *rate);
++	int (*clock_setparent)(u32 clock_id, u32 parent_id);
++	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+ };
  
-@@ -238,6 +479,16 @@
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -414,7 +665,7 @@
- 		};
- 
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom,msm8996-apcc";
- 			reg = <0x6400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
-@@ -1001,7 +1252,7 @@
- 
- 				pinctrl-names = "default", "sleep";
- 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
--				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
-+				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
- 
- 				vdda-supply = <&pm8994_l28>;
- 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
-1.9.1
+2.7.4
