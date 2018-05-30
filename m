@@ -1,44 +1,161 @@
-Return-Path: <herbert@gondor.apana.org.au>
-Date: Thu, 31 May 2018 00:28:04 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-Message-ID: <20180530162804.zp4n22nprqmigywz@gondor.apana.org.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Wed, 30 May 2018 11:42:32 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v4 3/6] regulator: bd71837: Devicetree bindings for BD71837
+ regulators
+Message-ID: <318229ca7ffcceb090fc8d0c43f887decc3082f0.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 24, 2018 at 03:19:05PM +0100, Gilad Ben-Yossef wrote:
-> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> Salvator-X boards and fixes some driver issues uncovered that prevented
-> to work properly.
-> 
-> Changes from v1:
-> - Properly fix the bug that caused us to read a bad signature register
->   rather than dropping the check
-> - Proper DT fields as indicated by Geert Uytterhoeven.
-> - Better clock enabling as suggested by Geert Uytterhoeven.
-> 
-> Note! the last two patches in the set depend on the
-> "clk: renesas: r8a7795: Add CR clock" patch from Geert Uytterhoeven.
+Document devicetree bindings for ROHM BD71837 PMIC regulators.
 
-Patches 1-3 applied.  Thanks.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/regulator/rohm,bd71837-regulator.txt  | 126 +++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+
+diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+new file mode 100644
+index 000000000000..4edf3137d9f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+@@ -0,0 +1,126 @@
++ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
++
++BD71837MWV is a programmable Power Management
++IC (PMIC) for powering single-core, dual-core, and
++quad-core SoC’s such as NXP-i.MX 8M. It is optimized
++for low BOM cost and compact solution footprint. It
++integrates 8 Buck regulators and 7 LDO’s to provide all
++the power rails required by the SoC and the commonly
++used peripherals.
++
++Required properties:
++ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
++
++List of regulators provided by this controller. BD71837 regulators node
++should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
++Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++Regulator nodes should be named to BUCK_<number> and LDO_<number>. The
++definition for each of these nodes is defined using the standard
++binding for regulators at
++Documentation/devicetree/bindings/regulator/regulator.txt.
++Note that if BD71837 starts at RUN state you probably want to use
++regulator-boot-on at least for BUCK6 and BUCK7 so that those are not
++disabled by driver at startup. LDO5 and LDO6 are supplied by those and
++if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
++cause PMIC to reset.
++
++The valid names for regulator nodes are:
++BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
++LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
++
++Optional properties:
++- Any optional property defined in bindings/regulator/regulator.txt
++
++Example:
++regulators {
++	buck1: BUCK1 {
++		regulator-name = "buck1";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-ramp-delay = <1250>;
++	};
++	buck2: BUCK2 {
++		regulator-name = "buck2";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-ramp-delay = <1250>;
++	};
++	buck3: BUCK3 {
++		regulator-name = "buck3";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++	};
++	buck4: BUCK4 {
++		regulator-name = "buck4";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++	};
++	buck5: BUCK5 {
++		regulator-name = "buck5";
++		regulator-min-microvolt = <700000>;
++		regulator-max-microvolt = <1350000>;
++		regulator-boot-on;
++	};
++	buck6: BUCK6 {
++		regulator-name = "buck6";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++	};
++	buck7: BUCK7 {
++		regulator-name = "buck7";
++		regulator-min-microvolt = <1605000>;
++		regulator-max-microvolt = <1995000>;
++		regulator-boot-on;
++	};
++	buck8: BUCK8 {
++		regulator-name = "buck8";
++		regulator-min-microvolt = <800000>;
++		regulator-max-microvolt = <1400000>;
++	};
++
++	ldo1: LDO1 {
++		regulator-name = "ldo1";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++	};
++	ldo2: LDO2 {
++		regulator-name = "ldo2";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <900000>;
++		regulator-boot-on;
++	};
++	ldo3: LDO3 {
++		regulator-name = "ldo3";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++	ldo4: LDO4 {
++		regulator-name = "ldo4";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <1800000>;
++	};
++	ldo5: LDO5 {
++		regulator-name = "ldo5";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++	ldo6: LDO6 {
++		regulator-name = "ldo6";
++		regulator-min-microvolt = <900000>;
++		regulator-max-microvolt = <1800000>;
++	};
++	ldo7_reg: LDO7 {
++		regulator-name = "ldo7";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++	};
++};
++
++
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.3
