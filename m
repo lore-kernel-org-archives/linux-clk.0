@@ -1,41 +1,447 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37048 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750791AbeEPPOQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 May 2018 11:14:16 -0400
-Received: by mail-wr0-f193.google.com with SMTP id h5-v6so1825145wrm.4
-        for <linux-clk@vger.kernel.org>; Wed, 16 May 2018 08:14:15 -0700 (PDT)
-Message-ID: <1526483653.2897.62.camel@baylibre.com>
-Subject: Re: [PATCH v2] clk: meson: use SPDX license identifiers consistently
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
-Date: Wed, 16 May 2018 17:14:13 +0200
-In-Reply-To: <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
-References: <20180516085040.6771-1-jbrunet@baylibre.com>
-         <152648298576.210890.18097934570675275263@swboyd.mtv.corp.google.com>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33035 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeE3JyA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 05:54:00 -0400
+Received: by mail-it0-f65.google.com with SMTP id k17-v6so856884ita.0
+        for <linux-clk@vger.kernel.org>; Wed, 30 May 2018 02:54:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180529170436.22711-1-peron.clem@gmail.com> <20180529170436.22711-5-peron.clem@gmail.com>
+ <e2e8bbe6-5957-a8fa-af3c-816f0ad80e32@mentor.com>
+In-Reply-To: <e2e8bbe6-5957-a8fa-af3c-816f0ad80e32@mentor.com>
+From: =?UTF-8?Q?Cl=C3=A9ment_PERON?= <clement.peron@devialet.com>
+Date: Wed, 30 May 2018 11:53:33 +0200
+Message-ID: <CAOws1GGF5Uv35SKxTkM+oGjNW5cNrsDWvxoVox11nzQO5t2PEw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] clocksource: add driver for i.MX EPIT timer
+To: vladimir_zapolskiy@mentor.com
+Cc: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, fabio.estevam@nxp.com,
+        s.hauer@pengutronix.de, robh@kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de
 Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-05-16 at 08:03 -0700, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-05-16 01:50:40)
-> > Replace every license notices in drivers/clk/meson by SPDX license
-> > identifiers, as described in license-rules.rst
-> > 
-> > Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Hi Vladimir,
+
+Le mer. 30 mai 2018 =C3=A0 08:56, Vladimir Zapolskiy <
+vladimir_zapolskiy@mentor.com> a =C3=A9crit :
+
+> Hi Cl=C3=A9ment,
+
+> please find some more review comments.
+
+> On 05/29/2018 08:04 PM, Cl=C3=A9ment P=C3=A9ron wrote:
+> > From: Colin Didier <colin.didier@devialet.com>
+> >
+> > Add driver for NXP's EPIT timer used in i.MX 6 family of SoC.
+> >
+> > Signed-off-by: Colin Didier <colin.didier@devialet.com>
+> > Signed-off-by: Cl=C3=A9ment Peron <clement.peron@devialet.com>
 > > ---
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
-> I take it this will come through a PR? Otherwise I can apply it to
-> clk-meson branch.
+> >  drivers/clocksource/Kconfig          |  12 ++
+> >  drivers/clocksource/Makefile         |   1 +
+> >  drivers/clocksource/timer-imx-epit.c | 283 +++++++++++++++++++++++++++
+> >  3 files changed, 296 insertions(+)
+> >  create mode 100644 drivers/clocksource/timer-imx-epit.c
+> >
+> > diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> > index 8e8a09755d10..920a0874f3a4 100644
+> > --- a/drivers/clocksource/Kconfig
+> > +++ b/drivers/clocksource/Kconfig
+> > @@ -576,6 +576,18 @@ config H8300_TPU
+> >         This enables the clocksource for the H8300 platform with the
+> >         H8S2678 cpu.
+> >
+> > +config CLKSRC_IMX_EPIT
+> > +     bool "Clocksource using i.MX EPIT"
+> > +     depends on ARM && CLKDEV_LOOKUP && OF && (ARCH_MXC ||
+COMPILE_TEST)
 
-We may have a few other patches coming this week. I was planning on making
-another PR sometime next week, if this is OK with you.
+> Here 'depends on ARM' can be removed, because ARCH_MXC implies it.
 
+> Also ARCH_MXC implies ARCH_MULTIPLATFORM, which implies USE_OF in turn,
+> so I would say that the following line is correct, sorry about a previous
+> comment asking to add an explicit OF dependency:
+
+>          depends on CLKDEV_LOOKUP && (ARCH_MXC || COMPILE_TEST)
+
+> However most of the clocksource drivers follow 'bool "..." if
+COMPILE_TEST'
+> pattern, and it might be preferable to maintainers.
+
+Usually, the timer driver are selected in the arch Kconfig. But in this
+case,
+we want to keep the i.MX GPT except if the user explicitly select the i.MX
+EPIT.
+With the "if COMPILE_TEST" the user can't choose it.
+
+
+> > +     select TIMER_OF
+
+> The driver does not have this dependency.
+
+> > +     select CLKSRC_MMIO
+> > +     help
+> > +       This enables EPIT support available on some i.MX platforms.
+> > +       Normally you don't have a reason to do so as the EPIT has
+> > +       the same features and uses the same clocks as the GPT.
+> > +       Anyway, on some systems the GPT may be in use for other
+> > +       purposes.
+> > +
+> >  config CLKSRC_IMX_GPT
+> >       bool "Clocksource using i.MX GPT" if COMPILE_TEST
+> >       depends on ARM && CLKDEV_LOOKUP
+> > diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefil=
+e
+> > index 00caf37e52f9..d9426f69ec69 100644
+> > --- a/drivers/clocksource/Makefile
+> > +++ b/drivers/clocksource/Makefile
+> > @@ -69,6 +69,7 @@ obj-$(CONFIG_INTEGRATOR_AP_TIMER)   +=3D
+timer-integrator-ap.o
+> >  obj-$(CONFIG_CLKSRC_VERSATILE)               +=3D versatile.o
+> >  obj-$(CONFIG_CLKSRC_MIPS_GIC)                +=3D mips-gic-timer.o
+> >  obj-$(CONFIG_CLKSRC_TANGO_XTAL)              +=3D tango_xtal.o
+> > +obj-$(CONFIG_CLKSRC_IMX_EPIT)                +=3D timer-imx-epit.o
+> >  obj-$(CONFIG_CLKSRC_IMX_GPT)         +=3D timer-imx-gpt.o
+> >  obj-$(CONFIG_CLKSRC_IMX_TPM)         +=3D timer-imx-tpm.o
+> >  obj-$(CONFIG_ASM9260_TIMER)          +=3D asm9260_timer.o
+> > diff --git a/drivers/clocksource/timer-imx-epit.c
+b/drivers/clocksource/timer-imx-epit.c
+> > new file mode 100644
+> > index 000000000000..87025d5f3a97
+> > --- /dev/null
+> > +++ b/drivers/clocksource/timer-imx-epit.c
+> > @@ -0,0 +1,283 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * i.MX EPIT Timer
+> > + *
+> > + * Copyright (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
+> > + * Copyright (C) 2018 Colin Didier <colin.didier@devialet.com>
+> > + * Copyright (C) 2018 Cl=C3=A9ment P=C3=A9ron <clement.peron@devialet.=
+com>
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clockchips.h>
+> > +#include <linux/err.h>
+
+> The include above can be dropped.
+
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+
+> The include above can be dropped.
+
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/of.h>
+
+> The include above can be dropped.
+
+> > +#include <linux/sched_clock.h>
+> > +#include <linux/slab.h>
+> > +
+> > +#define EPITCR                               0x00
+> > +#define EPITSR                               0x04
+> > +#define EPITLR                               0x08
+> > +#define EPITCMPR                     0x0c
+> > +#define EPITCNR                              0x10
+> > +
+> > +#define EPITCR_EN                    BIT(0)
+> > +#define EPITCR_ENMOD                 BIT(1)
+> > +#define EPITCR_OCIEN                 BIT(2)
+> > +#define EPITCR_RLD                   BIT(3)
+> > +#define EPITCR_PRESC(x)                      (((x) & 0xfff) << 4)
+> > +#define EPITCR_SWR                   BIT(16)
+> > +#define EPITCR_IOVW                  BIT(17)
+> > +#define EPITCR_DBGEN                 BIT(18)
+> > +#define EPITCR_WAITEN                        BIT(19)
+> > +#define EPITCR_RES                   BIT(20)
+> > +#define EPITCR_STOPEN                        BIT(21)
+> > +#define EPITCR_OM_DISCON             (0 << 22)
+> > +#define EPITCR_OM_TOGGLE             (1 << 22)
+> > +#define EPITCR_OM_CLEAR                      (2 << 22)
+> > +#define EPITCR_OM_SET                        (3 << 22)
+> > +#define EPITCR_CLKSRC_OFF            (0 << 24)
+> > +#define EPITCR_CLKSRC_PERIPHERAL     (1 << 24)
+> > +#define EPITCR_CLKSRC_REF_HIGH               (2 << 24)
+> > +#define EPITCR_CLKSRC_REF_LOW                (3 << 24)
+> > +
+> > +#define EPITSR_OCIF                  BIT(0)
+> > +
+> > +struct epit_timer {
+> > +     void __iomem *base;
+> > +     int irq;
+> > +     struct clk *clk_per;
+> > +     struct clock_event_device ced;
+> > +     struct irqaction act;
+> > +};
+> > +
+> > +static void __iomem *sched_clock_reg;
+> > +
+> > +static inline struct epit_timer *to_epit_timer(struct
+clock_event_device *ced)
+> > +{
+> > +     return container_of(ced, struct epit_timer, ced);
+> > +}
+> > +
+> > +static inline void epit_irq_disable(struct epit_timer *epittm)
+> > +{
+> > +     u32 val;
+> > +
+> > +     val =3D readl_relaxed(epittm->base + EPITCR);
+> > +     writel_relaxed(val & ~EPITCR_OCIEN, epittm->base + EPITCR);
+> > +}
+> > +
+> > +static inline void epit_irq_enable(struct epit_timer *epittm)
+> > +{
+> > +     u32 val;
+> > +
+> > +     val =3D readl_relaxed(epittm->base + EPITCR);
+> > +     writel_relaxed(val | EPITCR_OCIEN, epittm->base + EPITCR);
+> > +}
+> > +
+> > +static void epit_irq_acknowledge(struct epit_timer *epittm)
+> > +{
+> > +     writel_relaxed(EPITSR_OCIF, epittm->base + EPITSR);
+> > +}
+> > +
+> > +static u64 notrace epit_read_sched_clock(void)
+> > +{
+> > +     return ~readl_relaxed(sched_clock_reg);
+> > +}
+> > +
+> > +static int __init epit_clocksource_init(struct epit_timer *epittm)
+> > +{
+> > +     unsigned int c =3D clk_get_rate(epittm->clk_per);
+> > +
+> > +     sched_clock_reg =3D epittm->base + EPITCNR;
+> > +     sched_clock_register(epit_read_sched_clock, 32, c);
+> > +
+> > +     return clocksource_mmio_init(epittm->base + EPITCNR, "epit", c,
+200, 32,
+> > +                     clocksource_mmio_readl_down);
+> > +}
+> > +
+
+> I would suggest to place epit_clocksource_init() function right before
+> epit_timer_init().
+
+> > +static int epit_set_next_event(unsigned long cycles,
+> > +                            struct clock_event_device *ced)
+> > +{
+> > +     struct epit_timer *epittm =3D to_epit_timer(ced);
+> > +     unsigned long tcmp;
+> > +
+> > +     tcmp =3D readl_relaxed(epittm->base + EPITCNR) - cycles;
+> > +     writel_relaxed(tcmp, epittm->base + EPITCMPR);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +/* Left event sources disabled, no more interrupts appear */
+> > +static int epit_shutdown(struct clock_event_device *ced)
+> > +{
+> > +     struct epit_timer *epittm =3D to_epit_timer(ced);
+> > +     unsigned long flags;
+> > +
+> > +     /*
+> > +      * The timer interrupt generation is disabled at least
+> > +      * for enough time to call epit_set_next_event()
+> > +      */
+> > +     local_irq_save(flags);
+> > +
+> > +     /* Disable interrupt in EPIT module */
+> > +     epit_irq_disable(epittm);
+> > +
+> > +     /* Clear pending interrupt */
+> > +     epit_irq_acknowledge(epittm);
+> > +
+> > +     local_irq_restore(flags);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int epit_set_oneshot(struct clock_event_device *ced)
+> > +{
+> > +     struct epit_timer *epittm =3D to_epit_timer(ced);
+> > +     unsigned long flags;
+> > +
+> > +     /*
+> > +      * The timer interrupt generation is disabled at least
+> > +      * for enough time to call epit_set_next_event()
+> > +      */
+> > +     local_irq_save(flags);
+> > +
+> > +     /* Disable interrupt in EPIT module */
+> > +     epit_irq_disable(epittm);
+> > +
+> > +     /* Clear pending interrupt, only while switching mode */
+> > +     if (!clockevent_state_oneshot(ced))
+> > +             epit_irq_acknowledge(epittm);
+> > +
+> > +     /*
+> > +      * Do not put overhead of interrupt enable/disable into
+> > +      * epit_set_next_event(), the core has about 4 minutes
+> > +      * to call epit_set_next_event() or shutdown clock after
+> > +      * mode switching
+> > +      */
+> > +     epit_irq_enable(epittm);
+> > +     local_irq_restore(flags);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static irqreturn_t epit_timer_interrupt(int irq, void *dev_id)
+> > +{
+> > +     struct clock_event_device *ced =3D dev_id;
+> > +     struct epit_timer *epittm =3D to_epit_timer(ced);
+> > +
+> > +     epit_irq_acknowledge(epittm);
+> > +
+> > +     ced->event_handler(ced);
+> > +
+> > +     return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int __init epit_clockevent_init(struct epit_timer *epittm)
+> > +{
+> > +     struct clock_event_device *ced =3D &epittm->ced;
+> > +     struct irqaction *act =3D &epittm->act;
+> > +
+> > +     ced->name =3D "epit";
+> > +     ced->features =3D CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_DYNIRQ;
+> > +     ced->set_state_shutdown =3D epit_shutdown;
+> > +     ced->tick_resume =3D epit_shutdown;
+> > +     ced->set_state_oneshot =3D epit_set_oneshot;
+> > +     ced->set_next_event =3D epit_set_next_event;
+> > +     ced->rating =3D 200;
+> > +     ced->cpumask =3D cpumask_of(0);
+> > +     ced->irq =3D epittm->irq;
+> > +     clockevents_config_and_register(ced,
+clk_get_rate(epittm->clk_per),
+> > +             0xff, 0xfffffffe);
+
+> Please indent the wrapped line.
+
+> > +
+> > +     act->name =3D "i.MX EPIT Timer Tick",
+> > +     act->flags =3D IRQF_TIMER | IRQF_IRQPOLL;
+> > +     act->handler =3D epit_timer_interrupt;
+> > +     act->dev_id =3D ced;
+> > +
+> > +     /* Make irqs happen */
+> > +     return setup_irq(epittm->irq, act);
+> > +}
+> > +
+> > +static int __init epit_timer_init(struct device_node *np)
+> > +{
+> > +     struct epit_timer *epittm;
+> > +     struct clk *clk_ipg;
+> > +     int ret;
+> > +
+> > +     epittm =3D kzalloc(sizeof(*epittm), GFP_KERNEL);
+> > +     if (!epittm)
+> > +             return -ENOMEM;
+> > +
+> > +     epittm->base =3D of_iomap(np, 0);
+> > +     if (!epittm->base) {
+> > +             ret =3D -ENXIO;
+> > +             goto out_kfree;
+> > +     }
+> > +
+> > +     epittm->irq =3D irq_of_parse_and_map(np, 0);
+> > +     if (!epittm->irq) {
+> > +             ret =3D -EINVAL;
+> > +             goto out_iounmap;
+> > +     }
+> > +
+> > +     clk_ipg =3D of_clk_get_by_name(np, "ipg");
+> > +     if (IS_ERR(clk_ipg)) {
+> > +             pr_err("i.MX EPIT: unable to get clk_ipg\n");
+> > +             ret =3D PTR_ERR(clk_ipg);
+> > +             goto out_iounmap;
+> > +     }
+> > +
+> > +     ret =3D clk_prepare_enable(clk_ipg);
+> > +     if (ret) {
+> > +             pr_err("i.MX EPIT: unable to prepare+enable clk_ipg\n");
+> > +             goto out_clk_ipg_disable;
+> > +     }
+> > +
+> > +     epittm->clk_per =3D of_clk_get_by_name(np, "per");
+> > +     if (IS_ERR(epittm->clk_per)) {
+> > +             pr_err("i.MX EPIT: unable to get clk_per\n");
+> > +             ret =3D PTR_ERR(epittm->clk_per);
+> > +             goto out_clk_ipg_disable;
+> > +     }
+> > +
+> > +     ret =3D clk_prepare_enable(epittm->clk_per);
+> > +     if (ret) {
+> > +             pr_err("i.MX EPIT: unable to prepare+enable clk_per\n");
+> > +             goto out_clk_ipg_disable;
+> > +     }
+> > +
+> > +     /* Initialise to a known state (all timers off, and timing reset)
+*/
+> > +     writel_relaxed(0x0, epittm->base + EPITCR);
+> > +     writel_relaxed(0xffffffff, epittm->base + EPITLR);
+> > +     writel_relaxed(EPITCR_EN | EPITCR_CLKSRC_REF_HIGH | EPITCR_WAITEN=
+,
+> > +                    epittm->base + EPITCR);
+> > +
+> > +     ret =3D epit_clocksource_init(epittm);
+> > +     if(ret) {
+
+> Add a space before left parenthesis.
+
+> > +             pr_err("i.MX EPIT: failed to init clocksource\n");
+> > +             goto out_clk_per_disable;
+> > +     }
+> > +
+> > +     ret =3D epit_clockevent_init(epittm);
+> > +     if(ret) {
+
+> Add a space before left parenthesis.
+
+> > +             pr_err("i.MX EPIT: failed to init clockevent\n");
+> > +             goto out_clk_per_disable;
+> > +     }
+> > +
+> > +     return 0;
+> > +
+> > +out_clk_per_disable:
+> > +     clk_disable_unprepare(epittm->clk_per);
+> > +out_clk_ipg_disable:
+> > +     clk_disable_unprepare(clk_ipg);
+> > +out_iounmap:
+> > +     iounmap(epittm->base);
+> > +out_kfree:
+> > +     kfree(epittm);
+> > +
+> > +     return ret;
+> > +}
+> > +TIMER_OF_DECLARE(mx6q_timer, "fsl,imx6q-epit", epit_timer_init);
+> >
+
+> Here "fsl,imx31-epit" would be way better than "fsl,imx6q-epit", please
+> fix it in the documentation as well.
+
+> --
+> With best wishes,
+> Vladimir
+
+
+Thanks for your review,
+Clement
+
+--=20
+https://www.devialet.com/buy-phantom <https://www.devialet.com/buy-phantom>
+
+
+
+- Confidential -
