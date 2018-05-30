@@ -1,77 +1,112 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH 04/15] dt-bindings: display: sunxi-drm: Add TCON TOP
- description
-Date: Sat, 19 May 2018 20:31:16 +0200
-Message-Id: <20180519183127.2718-5-jernej.skrabec@siol.net>
-In-Reply-To: <20180519183127.2718-1-jernej.skrabec@siol.net>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v7 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
+Date: Wed, 30 May 2018 13:55:15 -0700
+Message-ID: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-TCON TOP main purpose is to configure whole display pipeline. It
-determines relationships between mixers and TCONs, selects source TCON
-for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
-clock source and contains additional TV TCON and DSI gates.
+v7:
+ - Removed xilinx specific clock debugfs API support
+ - Added reviewed-by tags for FW and clock bindings
+ - Updated clock node name to clock-controller
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../bindings/display/sunxi/sun4i-drm.txt      | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+v6:
+ - Broke patch series to have base FW driver and Clock driver user
+ - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10230759/
+	https://patchwork.kernel.org/patch/10250047/
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3346c1e2a7a0..a099957ab62a 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -187,6 +187,26 @@ And on the A23, A31, A31s and A33, you need one more clock line:
-    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
-                  clock, that can be used to drive the LVDS clock
- 
-+TCON TOP
-+--------
-+
-+TCON TOPs main purpose is to configure whole display pipeline. It determines
-+relationships between mixers and TCONs, selects source TCON for HDMI, muxes
-+LCD and TV encoder GPIO output, selects TV encoder clock source and contains
-+additional TV TCON and DSI gates.
-+
-+Required properties:
-+  - compatible: value must be one of:
-+    * allwinner,sun8i-r40-tcon-top
-+  - reg: base address and size of the memory-mapped region.
-+  - clocks: phandle to the clocks feeding the TCON TOP
-+    * bus: TCON TOP interface clock
-+  - clock-names: clock name mentioned above
-+  - resets: phandle to the reset line driving the DRC
-+    * rst: TCON TOP reset line
-+  - reset-names: reset name mentioned above
-+  - #clock-cells : must contain 1
-+
- DRC
- ---
- 
+v5:
+ - Added ATF version check support
+ - Updated some functions to be static 
+ - Minor function name corrections
+
+v4:
+ - Changed clock setrate/getrate API prototype to support 64 bit rate
+ - Defined macros for get_node_status return values
+ - Moved DT node as a child of firmware
+ - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
+ - Minor changes to incorporate other review comments from v3 patch series
+
+v3:
+ - added some fixes to firmware-ggs.c
+ - updated pinmux get/set function argument names to specify function id instead of node id
+ - added new pinctrl query macros
+ - incorporated review comments from v2 patch series
+
+v2:
+ - change SPDX-License-Identifier license text style
+ - split patch into multiple patches
+ - Updated copyrights
+ - Added ABI documentation
+ - incorporated logical review comments from previuos patch. Discussed below:
+	https://patchwork.kernel.org/patch/10150665/
+
+
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (9):
+  dt-bindings: firmware: Add bindings for ZynqMP firmware
+  firmware: xilinx: Add Zynqmp firmware driver
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  firmware: xilinx: Add query data API
+  firmware: xilinx: Add clock APIs
+  firmware: xilinx: Add debugfs interface
+  firmware: xilinx: Add debugfs for IOCTL API
+  firmware: xilinx: Add debugfs for query data API
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
+ arch/arm64/Kconfig.platforms                       |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  11 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 146 ++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 150 +++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  53 ++
+ drivers/clk/zynqmp/clkc.c                          | 737 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 219 ++++++
+ drivers/clk/zynqmp/pll.c                           | 345 ++++++++++
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/xilinx/Kconfig                    |  23 +
+ drivers/firmware/xilinx/Makefile                   |   5 +
+ drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
+ drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
+ drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               | 115 ++++
+ 21 files changed, 2844 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 drivers/firmware/xilinx/Kconfig
+ create mode 100644 drivers/firmware/xilinx/Makefile
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+ create mode 100644 drivers/firmware/xilinx/zynqmp.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+ create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+
 -- 
-2.17.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.7.4
