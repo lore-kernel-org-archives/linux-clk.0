@@ -1,106 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
-Subject: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-Date: Wed, 30 May 2018 19:41:31 +0530
-Message-ID: <20180530141133.3711-5-faiz_abbas@ti.com>
-In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:45220 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751605AbeE3PEG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 May 2018 11:04:06 -0400
+Date: Wed, 30 May 2018 08:04:02 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180530150402.GE5705@atomide.com>
 References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530141133.3711-6-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The dra76x MCAN generic interconnect module has a its own
-format for the bits in the control registers.
+* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+> The ti-sysc driver provides support for manipulating the idlemodes
+> and interconnect level resets.
+...
+> --- a/arch/arm/boot/dts/dra76x.dtsi
+> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> @@ -11,6 +11,25 @@
+>  / {
+>  	compatible = "ti,dra762", "ti,dra7";
+>  
+> +	ocp {
+> +
+> +		target-module@0x42c00000 {
+> +			compatible = "ti,sysc-dra7-mcan";
+> +			ranges = <0x0 0x42c00000 0x2000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			reg = <0x42c01900 0x4>,
+> +			      <0x42c01904 0x4>,
+> +			      <0x42c01908 0x4>;
+> +			reg-names = "rev", "sysc", "syss";
+> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
+> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
+> +			ti,syss-mask = <1>;
+> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+> +			clock-names = "fck";
+> +		};
+> +	};
+> +
+>  };
 
-Therefore add a new module type, new regbits and new capabilities
-specific to the MCAN module.
+Looks good to me except I think the reset won't do anything currently
+with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
 
-CC: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- .../devicetree/bindings/bus/ti-sysc.txt         |  1 +
- drivers/bus/ti-sysc.c                           | 17 +++++++++++++++++
- include/dt-bindings/bus/ti-sysc.h               |  2 ++
- include/linux/platform_data/ti-sysc.h           |  1 +
- 4 files changed, 21 insertions(+)
+Can you please check? It might be worth adding the reset function to
+ti-sysc.c for non "ti,hwmods" case and that just might remove the
+need for any hwmod code for this module.
 
-diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-index 2957a9ae291f..ebbb11144b7b 100644
---- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
-+++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-@@ -36,6 +36,7 @@ Required standard properties:
- 		"ti,sysc-omap-aes"
- 		"ti,sysc-mcasp"
- 		"ti,sysc-usb-host-fs"
-+		"ti,sysc-dra7-mcan"
- 
- - reg		shall have register areas implemented for the interconnect
- 		target module in question such as revision, sysc and syss
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 7cd2fd04b212..83b47974567a 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1262,6 +1262,22 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
- 	.regbits = &sysc_regbits_omap4_usb_host_fs,
- };
- 
-+static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-+	.dmadisable_shift = -ENODEV,
-+	.midle_shift = -ENODEV,
-+	.sidle_shift = -ENODEV,
-+	.clkact_shift = -ENODEV,
-+	.enwkup_shift = 4,
-+	.srst_shift = 0,
-+	.emufree_shift = -ENODEV,
-+	.autoidle_shift = -ENODEV,
-+};
-+
-+static const struct sysc_capabilities sysc_dra7_mcan = {
-+	.type = TI_SYSC_DRA7_MCAN,
-+	.regbits = &sysc_regbits_dra7_mcan,
-+};
-+
- static int sysc_init_pdata(struct sysc *ddata)
- {
- 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-@@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
- 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
- 	{ .compatible = "ti,sysc-usb-host-fs",
- 	  .data = &sysc_omap4_usb_host_fs, },
-+	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
- 	{  },
- };
- MODULE_DEVICE_TABLE(of, sysc_match);
-diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
-index 2c005376ac0e..7138384e2ef9 100644
---- a/include/dt-bindings/bus/ti-sysc.h
-+++ b/include/dt-bindings/bus/ti-sysc.h
-@@ -15,6 +15,8 @@
- /* SmartReflex sysc found on 36xx and later */
- #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
- 
-+#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
-+
- /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
- #define SYSC_IDLE_FORCE			0
- #define SYSC_IDLE_NO			1
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-index 80ce28d40832..1ea3aab972b4 100644
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
- 	TI_SYSC_OMAP4_SR,
- 	TI_SYSC_OMAP4_MCASP,
- 	TI_SYSC_OMAP4_USB_HOST_FS,
-+	TI_SYSC_DRA7_MCAN,
- };
- 
- struct ti_sysc_cookie {
--- 
-2.17.0
+Regards,
+
+Tony
