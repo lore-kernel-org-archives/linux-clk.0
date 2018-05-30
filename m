@@ -1,37 +1,219 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:60870 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751296AbeERJ6C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 May 2018 05:58:02 -0400
-Date: Fri, 18 May 2018 11:57:58 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a7795: Add CR clock
-Message-ID: <20180518095758.3mguoq3ufjc7fp5q@verge.net.au>
-References: <1526552462-3476-1-git-send-email-geert+renesas@glider.be>
- <20180517143904.GA24534@bigcity.dyn.berto.se>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Wed, 30 May 2018 11:43:19 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v4 5/6] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <3d9d7239331c30826a237ae55db28d918155d504.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180517143904.GA24534@bigcity.dyn.berto.se>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 17, 2018 at 04:39:04PM +0200, Niklas Söderlund wrote:
-> Hi Geert,
-> 
-> Thanks for your patch.
-> 
-> On 2018-05-17 12:21:02 +0200, Geert Uytterhoeven wrote:
-> > Add the CR core clock, which is used by the Secure Engine (SCEG).
-> > 
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Support BD71837 gateable 32768 Hz clock.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/Kconfig       |   9 +++
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-bd71837.c | 151 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+ create mode 100644 drivers/clk/clk-bd71837.c
 
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 41492e980ef4..4b045699bb5e 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -279,6 +279,15 @@ config COMMON_CLK_STM32H7
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+ 
++config COMMON_CLK_BD71837
++	tristate "Clock driver for ROHM BD71837 PMIC MFD"
++	depends on MFD_BD71837
++	depends on I2C=y
++	depends on OF
++	help
++	  This driver supports ROHM BD71837 PMIC clock.
++
++
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index de6d06ac790b..8393c4af7d5a 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -21,6 +21,7 @@ endif
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
++obj-$(CONFIG_COMMON_CLK_BD71837)	+= clk-bd71837.o
+ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
+new file mode 100644
+index 000000000000..91456d1077ac
+--- /dev/null
++++ b/drivers/clk/clk-bd71837.c
+@@ -0,0 +1,151 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 ROHM Semiconductors
++// bd71837.c  -- ROHM BD71837MWV clock driver
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/mfd/bd71837.h>
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++
++static int bd71837_clk_enable(struct clk_hw *hw);
++static void bd71837_clk_disable(struct clk_hw *hw);
++static int bd71837_clk_is_enabled(struct clk_hw *hw);
++
++struct bd71837_clk {
++	struct clk_hw hw;
++	uint8_t reg;
++	uint8_t mask;
++	unsigned long rate;
++	struct platform_device *pdev;
++	struct bd71837 *mfd;
++};
++
++static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate);
++
++static const struct clk_ops bd71837_clk_ops = {
++	.recalc_rate = &bd71837_clk_recalc_rate,
++	.prepare = &bd71837_clk_enable,
++	.unprepare = &bd71837_clk_disable,
++	.is_prepared = &bd71837_clk_is_enabled,
++};
++
++static int bd71837_clk_set(struct clk_hw *hw, int status)
++{
++	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
++
++	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
++}
++
++static void bd71837_clk_disable(struct clk_hw *hw)
++{
++	int rv;
++	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
++
++	rv = bd71837_clk_set(hw, 0);
++	if (rv)
++		dev_err(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
++}
++
++static int bd71837_clk_enable(struct clk_hw *hw)
++{
++	return bd71837_clk_set(hw, 1);
++}
++
++static int bd71837_clk_is_enabled(struct clk_hw *hw)
++{
++	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
++
++	return c->mask & bd71837_reg_read(c->mfd, c->reg);
++}
++
++static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent_rate)
++{
++	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
++
++	return c->rate;
++}
++
++static int bd71837_clk_probe(struct platform_device *pdev)
++{
++	struct bd71837_clk *c;
++	int rval = -ENOMEM;
++	struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
++	const char *errstr = "memory allocation for bd71837 data failed";
++	struct clk_init_data init = {
++		.name = "bd71837-32k-out",
++		.ops = &bd71837_clk_ops,
++	};
++
++	c = kzalloc(sizeof(struct bd71837_clk), GFP_KERNEL);
++	if (!c)
++		goto err_out;
++
++	c->reg = BD71837_REG_OUT32K;
++	c->mask = BD71837_OUT32K_EN;
++	c->rate = BD71837_CLK_RATE;
++	c->mfd = mfd;
++	c->pdev = pdev;
++
++	if (pdev->dev.of_node)
++		of_property_read_string_index(pdev->dev.of_node,
++					      "clock-output-names", 0,
++					      &init.name);
++
++	c->hw.init = &init;
++
++	errstr = "failed to register 32K clk";
++	rval = clk_hw_register(&pdev->dev, &c->hw);
++	if (rval)
++		goto err_free;
++
++	errstr = "failed to register clkdev for bd71837";
++	rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
++	if (rval)
++		goto err_unregister;
++
++	platform_set_drvdata(pdev, c);
++	dev_dbg(&pdev->dev, "bd71837_clk successfully probed\n");
++
++	return 0;
++
++err_unregister:
++	clk_hw_unregister(&c->hw);
++err_free:
++	kfree(c);
++err_out:
++	dev_err(&pdev->dev, "%s\n", errstr);
++	return rval;
++}
++
++static int bd71837_clk_remove(struct platform_device *pdev)
++{
++	struct bd71837_clk *c = platform_get_drvdata(pdev);
++
++	if (c) {
++		clk_hw_unregister(&c->hw);
++		kfree(c);
++		platform_set_drvdata(pdev, NULL);
++	}
++	return 0;
++}
++
++static struct platform_driver bd71837_clk = {
++	.driver = {
++		.name = "bd71837-clk",
++	},
++	.probe = bd71837_clk_probe,
++	.remove = bd71837_clk_remove,
++};
++
++module_platform_driver(bd71837_clk);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD71837 chip clk driver");
++MODULE_LICENSE("GPL");
+-- 
+2.14.3
