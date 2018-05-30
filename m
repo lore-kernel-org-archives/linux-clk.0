@@ -1,34 +1,91 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:20554 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752667AbeE3OKa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 10:10:30 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
+Subject: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+Date: Wed, 30 May 2018 19:41:28 +0530
+Message-ID: <20180530141133.3711-2-faiz_abbas@ti.com>
+In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Evan Green <evgreen@chromium.org>,
- Michael Turquette <mturquette@baylibre.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-soc@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180413203336.134364-1-evgreen@chromium.org>
-Cc: Evan Green <evgreen@chromium.org>
-References: <20180413203336.134364-1-evgreen@chromium.org>
-Message-ID: <152597796114.138124.13981585478071012245@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: qcom: Base rcg parent rate off plan frequency
-Date: Thu, 10 May 2018 11:46:01 -0700
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Evan Green (2018-04-13 13:33:36)
-> _freq_tbl_determine_rate uses the pre_div found in the clock plan
-> multiplied by the requested rate from the caller to determine the
-> best parent rate to set. If the requested rate is not exactly equal
-> to the rate that was found in the clock plan, then using the requested
-> rate in parent rate calculations is incorrect. For instance, if 150MHz
-> was requested, but 200MHz was the match found, and that plan had a
-> pre_div of 3, then the parent should be set to 600MHz, not 450MHz.
-> =
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> ---
+Add MCAN hwmod data and register it for dra762 silicons.
 
-Applied to clk-next
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-This problem is ancient so I tagged it with Fixes for all the stable
-trees.
+diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+index 62352d1e6361..a2cd7f865a60 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+@@ -1355,6 +1355,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+ 	},
+ };
+ 
++/*
++ * 'mcan' class
++ *
++ */
++static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
++	.name	= "mcan",
++};
++
++/* mcan */
++static struct omap_hwmod dra76x_mcan_hwmod = {
++	.name		= "mcan",
++	.class		= &dra76x_mcan_hwmod_class,
++	.clkdm_name	= "wkupaon_clkdm",
++	.main_clk	= "mcan_clk",
++	.prcm = {
++		.omap4 = {
++			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
++			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
++			.modulemode   = MODULEMODE_SWCTRL,
++		},
++	},
++};
++
+ /*
+  * 'mcspi' class
+  *
+@@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+ 	.user		= OCP_USER_MPU,
+ };
+ 
++/* l3_main_1 -> mcan */
++static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
++	.master		= &dra7xx_l3_main_1_hwmod,
++	.slave		= &dra76x_mcan_hwmod,
++	.clk		= "l3_iclk_div",
++	.user		= OCP_USER_MPU | OCP_USER_SDMA,
++};
++
+ static struct omap_hwmod_ocp_if *dra7xx_hwmod_ocp_ifs[] __initdata = {
+ 	&dra7xx_l3_main_1__dmm,
+ 	&dra7xx_l3_main_2__l3_instr,
+@@ -3958,6 +3989,7 @@ static struct omap_hwmod_ocp_if *dra7xx_gp_hwmod_ocp_ifs[] __initdata = {
+ /* SoC variant specific hwmod links */
+ static struct omap_hwmod_ocp_if *dra76x_hwmod_ocp_ifs[] __initdata = {
+ 	&dra7xx_l4_per3__usb_otg_ss4,
++	&dra76x_l3_main_1__mcan,
+ 	NULL,
+ };
+ 
+-- 
+2.17.0
+
