@@ -1,67 +1,73 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
-	<hkallweit1@gmail.com>, "keescook@chromium.org" <keescook@chromium.org>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v6 04/11] firmware: xilinx: Add query data API
-Date: Tue, 15 May 2018 20:29:15 +0000
-Message-ID: <SN1PR02MB375832594C7B5684888B213BB8930@SN1PR02MB3758.namprd02.prod.outlook.com>
-References: <1523389127-14243-1-git-send-email-jollys@xilinx.com>
- <1523389127-14243-5-git-send-email-jollys@xilinx.com>
- <85f8f8c5-a177-dad8-e095-a9dd1c513e8d@arm.com>
- <SN1PR02MB37587E3AB2718E1DB510E35AB89C0@SN1PR02MB3758.namprd02.prod.outlook.com>
- <ab9632f5-882d-462d-d830-0316cad56baf@arm.com>
-In-Reply-To: <ab9632f5-882d-462d-d830-0316cad56baf@arm.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>
+Subject: [PATCH v2 6/6] ARM: dts: dra76x: Add MCAN node
+Date: Wed, 30 May 2018 19:41:33 +0530
+Message-ID: <20180530141133.3711-7-faiz_abbas@ti.com>
+In-Reply-To: <20180530141133.3711-1-faiz_abbas@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
-cCBIb2xsYSBbbWFpbHRvOnN1ZGVlcC5ob2xsYUBhcm0uY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBN
-YXkgMTUsIDIwMTggMjozNCBBTQ0KPiBUbzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+
-OyBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOw0KPiBtaW5nb0BrZXJuZWwub3JnOyBncmVna2hA
-bGludXhmb3VuZGF0aW9uLm9yZzsgbWF0dEBjb2RlYmx1ZXByaW50LmNvLnVrOw0KPiBoa2FsbHdl
-aXQxQGdtYWlsLmNvbTsga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOw0KPiBkbWl0cnkudG9yb2tob3ZA
-Z21haWwuY29tOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4gc2JveWRAY29kZWF1cm9yYS5v
-cmc7IG1pY2hhbC5zaW1la0B4aWxpbnguY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG1hcmsu
-cnV0bGFuZEBhcm0uY29tOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBTdWRlZXAg
-SG9sbGEgPHN1ZGVlcC5ob2xsYUBhcm0uY29tPjsgUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5j
-b20+Ow0KPiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5l
-bEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+IFN1Ympl
-Y3Q6IFJlOiBbUEFUQ0ggdjYgMDQvMTFdIGZpcm13YXJlOiB4aWxpbng6IEFkZCBxdWVyeSBkYXRh
-IEFQSQ0KPiANCj4gDQo+IA0KPiBPbiAxNC8wNS8xOCAyMDoxNiwgSm9sbHkgU2hhaCB3cm90ZToN
-Cj4gPiBISSBTdWRlZXAsDQo+ID4NCj4gDQo+IFsuLi5dDQo+IA0KPiA+Pg0KPiA+PiBDYW4geW91
-IGdpdmUgbW9yZSBpbnNpZ2h0IGludG8gdGhpcyA/IEhvdyB3aWxsIGJlIHRoaXMgdXNlZCA/IEhv
-dw0KPiA+PiB0aGlzIGFsaWducyB3aXRoIGRhdGEgd2UgZ2V0IGZyb20gRFQgPyBJIGFtIGp1c3Qg
-dHJ5aW5nIHRvIHVuZGVyc3RhbmQNCj4gPj4gaG93IGlzIHRoaXMgaW5mb3JtYXRpb24gc3BsaXQg
-YmV0d2VlbiB0aGlzIEFQSSBhbmQgRFQgZm9yIGV4YW1wbGUuDQo+ID4+DQo+ID4NCj4gPiBUaGlz
-IEFQSSBpcyB1c2VkIHRvIGdldCBjbG9jayBpbmZvcm1hdGlvbiBmcm9tIGZpcm13YXJlIGFuZCBy
-ZWdpc3Rlcg0KPiA+IGNsb2NrcyBhY2NvcmRpbmdseSBpbiBkcml2ZXIuIEluIG91ciBjYXNlLCBm
-aXJtd2FyZSBtYWludGFpbnMgZGF0YWJhc2UNCj4gPiBvZiBhbGwgY2xvY2tzIGF2YWlsYWJsZSBv
-biBjaGlwLiBEVCB3aWxsIHByb3ZpZGUgaW5mb3JtYXRpb24gZm9yIG9mZg0KPiA+IGNoaXAgcmVm
-ZXJlbmNlIGNsb2NrcyBvbmx5LiBUaGlzIGlzIHRvIGF2b2lkIGR1cGxpY2F0aW9uIG9mIGNsb2Nr
-cw0KPiA+IGRhdGEgaW4gRFQgYW5kIGZpcm13YXJlIGJvdGggYXMgZmlybXdhcmUgYW55d2F5cyBu
-ZWVkIGNsb2NrIGRhdGEgdG8NCj4gPiBtYW5hZ2UgdGhlbS4NCj4gPg0KPiANCj4gSSB3YW50ZWQg
-dG8gdW5kZXJzdGFuZCB0aGUgZGlmZmVyZW5jZSB3aXRoIGV4YW1wbGUuIFdoYXQga2luZCBvZiBp
-bmZvcm1hdGlvbg0KPiB5b3UgZ2V0IGZyb20gRFQgYW5kIHdoYXQgeW91IGdldCBmcm9tIGZpcm13
-YXJlID8NCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IFN1ZGVlcA0KDQoNCkJlbG93IGlzIGFuIGV4
-YW1wbGUgc2hvd2luZyBQTEwgYW5kIExlYWYgY2xvY2sgZGVyaXZhdGlvbjoNCg0KSW5wdXQgcmVm
-IGNsb2Nrcy0+TXV4LT5NdWx0aXBsaWVyL0RpdmlkZXItPlBMTCoNClBsbDEvcGxsMi9wbGwzL3Bs
-bDQtPk11eC0+RGl2aWRlci0+R2F0ZS0+TGVhZiBjbG9jazENCg0KSGVyZSBPZmYgY2hpcCBpbnB1
-dCByZWYgY2xvY2sgaW5mb3JtYXRpb24gY29tZXMgZnJvbSBEVC4NClJlc3QgaW5mb3JtYXRpb24g
-Zm9yIFBsbC9sZWFmIGNsb2NrcyBjb21lIGZyb20gZmlybXdhcmUgdXNpbmcgcXVlcnkgQVBJLiBG
-b3IgY2xvY2sgZHJpdmVyLCBxdWVyeSBBUEkgaXMgdXNlZCB0byBnZXQgdG9wb2xvZ3ksIGZsYWdz
-LCBwYXJlbnRzIGV0YyBpbmZvcm1hdGlvbiBwZXIgY2xvY2suDQoNClRoYW5rcywNCkpvbGx5IFNo
-YWgNCg==
+From: Franklin S Cooper Jr <fcooper@ti.com>
+
+Add support for the MCAN peripheral which supports both classic
+CAN messages along with the new CAN-FD message.
+
+Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
+
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm/boot/dts/dra76-evm.dts |  7 +++++++
+ arch/arm/boot/dts/dra76x.dtsi   | 15 +++++++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
+index 2deb96405d06..277765257410 100644
+--- a/arch/arm/boot/dts/dra76-evm.dts
++++ b/arch/arm/boot/dts/dra76-evm.dts
+@@ -404,3 +404,10 @@
+ 	phys = <&pcie1_phy>, <&pcie2_phy>;
+ 	phy-names = "pcie-phy0", "pcie-phy1";
+ };
++
++&m_can0 {
++	status = "okay";
++	can-transceiver {
++		max-bitrate = <5000000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index 57b8dc0fe719..d7a8cc569808 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -27,6 +27,21 @@
+ 			ti,syss-mask = <1>;
+ 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+ 			clock-names = "fck";
++
++			m_can0: mcan@42c01a00 {
++				compatible = "bosch,m_can";
++				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
++				reg-names = "m_can", "message_ram";
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "int0", "int1";
++				ti,hwmods = "mcan";
++				clocks = <&mcan_clk>, <&l3_iclk_div>;
++				clock-names = "cclk", "hclk";
++				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
++				status = "disabled";
++			};
+ 		};
+ 	};
+ 
+-- 
+2.17.0
