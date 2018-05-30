@@ -1,312 +1,100 @@
-Return-Path: <amit.kucheria@verdurent.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Wed, 30 May 2018 15:56:34 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180530125634.GE13528@localhost.localdomain>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180530090512.GC13528@localhost.localdomain>
+ <20180530110000.GI6920@sirena.org.uk>
 MIME-Version: 1.0
-Sender: amit.kucheria@verdurent.com
-In-Reply-To: <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
-References: <1526375616-16904-1-git-send-email-ilialin@codeaurora.org> <1526375616-16904-13-git-send-email-ilialin@codeaurora.org>
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Date: Wed, 16 May 2018 16:12:41 +0300
-Message-ID: <CAHLCerOYq4q2GE+m3MQAbMfxM4azPr95XiLKVtoPVG1Kv2Db=A@mail.gmail.com>
-Subject: Re: [PATCH v7 12/14] cpufreq: Add Kryo CPU scaling driver
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, catalin.marinas@arm.com, will.deacon@arm.com,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	lakml <linux-arm-kernel@lists.infradead.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, nicolas.dechesne@linaro.org, celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530110000.GI6920@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 12:13 PM, Ilia Lin <ilialin@codeaurora.org> wrote:
-> In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-> the CPU ferequencies subset and voltage value of each OPP varies
 
-s/ferequencies/frequency
+On Wed, May 30, 2018 at 12:00:00PM +0100, Mark Brown wrote:
+> On Wed, May 30, 2018 at 12:05:12PM +0300, Matti Vaittinen wrote:
+> 
+> > Other 4 can be used on PWM or PFM switching mode. When PWM is used
+> > voltages can be changed without disabling regulator. On PFM this should
+> > not be done. These latter 4 regulators can be forced to PWM mode via
+> > control bit in register. This driver does not support controlling this
+> > mode though. So this driver version just checks if regulator is enabled
+> > before changing the voltage and if it is the voltage change fails with
+> > -EBUSY
+> 
+> It probably should support setting modes (especially if the device isn't
+> smart enough to automatically shift which sounds like the case) but
+> that's a separate thing.
 
-> based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-> defines the voltage and frequency value based on the msm-id in SMEM
-> and speedbin blown in the efuse combination.
-> The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-> to provide the OPP framework with required information.
-> This is used to determine the voltage and frequency value for each OPP of
-> operating-points-v2 table when it is parsed by the OPP framework.
->
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm          |  11 +++
->  drivers/cpufreq/Makefile             |   1 +
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
->  drivers/cpufreq/qcom-cpufreq-kryo.c  | 150 +++++++++++++++++++++++++++++++++++
->  4 files changed, 165 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
->
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index de55c7d..5c16f05 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -124,6 +124,17 @@ config ARM_OMAP2PLUS_CPUFREQ
->         depends on ARCH_OMAP2PLUS
->         default ARCH_OMAP2PLUS
->
-> +config ARM_QCOM_CPUFREQ_KRYO
-> +       bool "Qualcomm Technologies, Inc. Kryo based CPUFreq"
+Thanks for the guidance! The first 4 BUCKs (which support DVS) do change
+the mode automatically. Latter 4 do not. I however didn't find example
+on how to allow doing this mode change via regulator framework and thus
+the driver is not allowing mode change. For me it would sound good to
+allow setting the mode via device-tree property - and via in-kernel API
+or sysfs - but as I said I didn't yet find a nice example on that. (But
+I assume this device is not first one allowing mode change and thus
+there should be an example and I probably should not invent own DT
+properties or sysfs entries for this. Guess I just need to search harder).
 
-"Qualcomm Kryo CPUFreq support" should be enough. Kconfig isn't the
-place for Trademark compliance :-)
+> 
+> > My question is whether it would be good idea to also read the 'force
+> > PWM' bit when voltage is changed and allow the change if PWM mode is
+> > forced to be used? Problem is that the check and voltage change can't be
+> > atomic so there is a chance someone changes the mode (bypassing the
+> > driver and regulator core) after this check but before we get to modify
+> > the voltage. Furthermore, I doubt the 'force PWM' is widely used (but I
+> > can't say for sure as I can't imagine all use cases) as it is not so
+> > power efficient.
+> 
+> Why would anything else be changing the mode configuration of the
+> regulator while the system is running?  That sounds like a bad idea.
+This was also my initial thought. Still with my lack of experience on this
+area (and with my experience on people inventing strange solutions) I
+felt unsure.
 
-> +       depends on QCOM_QFPROM
-> +       depends on QCOM_SMEM
-> +       select PM_OPP
-> +       help
-> +         This adds the CPUFreq driver for
-> +         Qualcomm Technologies, Inc. Kryo SoC based boards.
-> +
-> +         If in doubt, say N.
-> +
->  config ARM_S3C_CPUFREQ
->         bool
->         help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 8d24ade..fb4a2ec 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)           += mvebu-cpufreq.o
->  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)    += omap-cpufreq.o
->  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)       += pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)                   += pxa3xx-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)    += qcom-cpufreq-kryo.o
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)      += s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)      += s3c2412-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)      += s3c2416-cpufreq.o
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 3b585e4..77d6ab8 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -118,6 +118,9 @@
->
->         { .compatible = "nvidia,tegra124", },
->
-> +       { .compatible = "qcom,apq8096", },
-> +       { .compatible = "qcom,msm8996", },
-> +
->         { .compatible = "st,stih407", },
->         { .compatible = "st,stih410", },
->
-> diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> new file mode 100644
-> index 0000000..10d7236
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-> @@ -0,0 +1,150 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
+> In any case if the hardware really needs to be manually put into force
+> PWM to change voltage then the simplest thing would be to just move it
+> into force PWM mode, do the change, then change back if it wasn't
+> already in force PWM mode.
+I see 4 options for these last 4 bucks which can't switch to PWM
+automatically when voltage is changed.
 
-Stray space here.
+1. prohibit voltage change if regulator is enabled (safest? current
+   approach)
+2. allow voltage change if regulator is enabled and force PWM is used
+3. switch to 'force PWM' when changing voltage (as suggested by Mark)
+4. disable regulator for duration of voltage change (discarded option)
 
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 and
-> + * only version 2 as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#include <linux/cpu.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/nvmem-consumer.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/slab.h>
-> +#include <linux/soc/qcom/smem.h>
-> +
-> +#define MSM_ID_SMEM    137
-> +#define SILVER_LEAD    0
-> +#define GOLD_LEAD      2
-> +
-> +enum _msm_id {
-> +       MSM8996V3 = 0xF6ul,
-> +       APQ8096V3 = 0x123ul,
-> +       MSM8996SG = 0x131ul,
-> +       APQ8096SG = 0x138ul,
-> +};
-> +
-> +enum _msm8996_version {
-> +       MSM8996_V3,
-> +       MSM8996_SG,
-> +       NUM_OF_MSM8996_VERSIONS,
-> +};
-> +
-> +static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-> +{
-> +       size_t len;
-> +       u32 *msm_id;
-> +       enum _msm8996_version version;
-> +
-> +       msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-> +       /* The first 4 bytes are format, next to them is the actual msm-id */
-> +       msm_id++;
-> +
-> +       switch ((enum _msm_id)*msm_id) {
-> +       case MSM8996V3:
-> +       case APQ8096V3:
-> +               version = MSM8996_V3;
-> +               break;
-> +       case MSM8996SG:
-> +       case APQ8096SG:
-> +               version = MSM8996_SG;
-> +               break;
-> +       default:
-> +               version = NUM_OF_MSM8996_VERSIONS;
-> +       }
-> +
-> +       return version;
-> +}
-> +
-> +static int __init qcom_cpufreq_kryo_driver_init(void)
-> +{
-> +       size_t len;
-> +       int ret;
-> +       u32 versions;
-> +       enum _msm8996_version msm8996_version;
-> +       u8 *speedbin;
-> +       struct device *cpu_dev;
-> +       struct device_node *np;
-> +       struct nvmem_cell *speedbin_nvmem;
-> +       struct opp_table *opp_temp = NULL;
-> +
-> +       cpu_dev = get_cpu_device(SILVER_LEAD);
-> +       if (IS_ERR_OR_NULL(cpu_dev))
-> +               return PTR_ERR(cpu_dev);
-> +
-> +       msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-> +       if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-> +               dev_err(cpu_dev, "Not Snapdragon 820/821!");
-> +               return -ENODEV;
-> +        }
+So option 4 was discarded. Option 1 is the current approach. I will ask
+from ROHM PMIC HW colleagues what they think of Mark's suggestion
+(option 3) and implement it if HW behaves Ok. I guess option 2 is not
+worth the hassle.
 
-Use tab instead of spaces.
+> 
+> The tradeoff with forced PWM mode is that the quality of regulation will
+> be a lot better, especially if the load changes suddenly (as things like
+> CPUs often do).  Most hardware that's at all current is able respond to
+> changes in load and switch modes automatically when it's appropriate,
+> except possibly in some very low power modes.
 
-> +
-> +       np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +       if (IS_ERR_OR_NULL(np))
-> +               return PTR_ERR(np);
-> +
-> +       if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-> +               ret = -ENOENT;
-> +               goto free_np;
-> +       }
-> +
-> +       speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> +       if (IS_ERR(speedbin_nvmem)) {
-> +               ret = PTR_ERR(speedbin_nvmem);
-> +               dev_err(cpu_dev, "Could not get nvmem cell: %d\n", ret);
-> +               goto free_np;
-> +       }
-> +
-> +       speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-> +
-> +       switch (msm8996_version) {
-> +       case MSM8996_V3:
-> +               versions = 1 << (unsigned int)(*speedbin);
-> +               break;
-> +       case MSM8996_SG:
-> +               versions = 1 << ((unsigned int)(*speedbin) + 4);
-> +               break;
-> +       default:
-> +               BUG();
-> +               break;
-> +       }
-> +
-> +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> +       if (0 > ret)
+Yes. The mode switching is automatic. But there is this control bit for
+disabling automatic mode switching and forcing the PWM. Problem with
+these 4 last bucks is just that if regulator is in PFM (and it may be
+if not forced to PWM - due to this automatic switching) then the voltage
+change is not behaving well.
 
-Any particular reason to prefer this over (ret < 0) that is generally
-used? I've seen it used to avoid the == vs. = typos, but not for other
-comparisons.
+Thanks for all the support Mark!
 
-Suggest sticking to what is commonly used i.e. ret < 0.
-
-> +               goto free_opp;
-> +
-> +       cpu_dev = get_cpu_device(GOLD_LEAD);
-
-Error check cpu_dev here?
-
-> +       ret = PTR_ERR_OR_ZERO(opp_temp =
-> +                             dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-> +       if (0 > ret)
-> +               goto free_opp;
-> +
-> +
-> +       ret = PTR_ERR_OR_ZERO(platform_device_register_simple("cpufreq-dt",
-> +                                                             -1, NULL, 0));
-> +
-> +       if (0 == ret)
-> +               return 0;
-> +
-> +free_opp:
-> +       dev_pm_opp_put_supported_hw(opp_temp);
-
-This is not needed because dev_pm_opp_set_supported_hw will free
-memory in case of failure. This call in only needed in case of a
-successful get.
-
-> +
-> +free_np:
-> +       of_node_put(np);
-> +       return ret;
-
-
-Suggest something like this instead:
-
-.
-.
-
-opp_temp = dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-if (IS_ERR(opp_temp)) {
-     dev_err(cpu_dev, "Failed to set supported hardware\n");
-     ret = PTR_ERR(opp_temp);
-    goto free_np;
-}
-
-cpu_dev = get_cpu_device(GOLD_LEAD);
-
-opp_temp = dev_pm_opp_set_supported_hw(cpu_dev,&versions,1));
-if (IS_ERR(opp_temp)) {
-     dev_err(cpu_dev, "Failed to set supported hardware\n");
-     ret = PTR_ERR(opp_temp);
-    goto free_np;
-}
-
-ret =  platform_device_register_simple("cpufreq-dt", -1, NULL, 0));
-
-if (!IS_ERR_OR_NULL(ret))
-     goto out;
-
-free_np:
-     of_node_put(np);
-out:
-     return ret;
-
-> +}
-> +late_initcall(qcom_cpufreq_kryo_driver_init);
-> +
-> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 1.9.1
->
+Br,
+	Matti Vaittinen
