@@ -1,66 +1,62 @@
-Return-Path: <xieyisheng1@huawei.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Yisheng Xie <xieyisheng1@huawei.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Eric Anholt
-	<eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
-	<linux-clk@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 12/33] clk: bcm2835: use match_string() helper
-Date: Mon, 21 May 2018 19:57:49 +0800
-Message-ID: <1526903890-35761-13-git-send-email-xieyisheng1@huawei.com>
-In-Reply-To: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
-References: <1526903890-35761-1-git-send-email-xieyisheng1@huawei.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:45300 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753815AbeE3Pyw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 May 2018 11:54:52 -0400
+Date: Wed, 30 May 2018 08:54:48 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180530155448.GH5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com>
+ <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-match_string() returns the index of an array for a matching string,
-which can be used intead of open coded variant.
+* Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+> On 30/05/18 18:28, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+> > > For the OCP if part, I think that is still needed until we switch over to
+> > > full sysc driver. clkctrl_offs you probably also need because that is used
+> > > for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+> > > only removed once we are done with hwmod (or figure out some other way to
+> > > assign the clkctrl clock to a hwmod.)
+> > 
+> > Hmm might be worth testing. I thought your commit 70f05be32133
+> > ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+> > already parses the clkctrl from dts?
+> 
+> It maps the clkctrl clock to be used by hwmod, if those are available. We
+> didn't add any specific clock entries to DT for mapping the actual clkctrl
+> clock without the hwmod_data hints yet though, as that was deemed temporary
+> solution only due to transition to interconnect driver. I.e., you would need
+> something like this in DT for every device node:
+> 
+> &uart3 {
+>   clocks = <l4per_clkctrl UART3_CLK 0>;
+>   clock-names = "clkctrl";
+> };
+> 
+> ... which is currently not present.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Hmm is that not the "fck" clkctrl clock we have already in
+the dts files for the interconnect target modules?
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index fa0d5c8..a27c0d2 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1395,8 +1395,7 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	struct bcm2835_clock *clock;
- 	struct clk_init_data init;
- 	const char *parents[1 << CM_SRC_BITS];
--	size_t i, j;
--	int ret;
-+	int i, ret;
- 
- 	/*
- 	 * Replace our strings referencing parent clocks with the
-@@ -1405,12 +1404,11 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
- 	for (i = 0; i < data->num_mux_parents; i++) {
- 		parents[i] = data->parents[i];
- 
--		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
--			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
--				parents[i] = cprman->real_parent_names[j];
--				break;
--			}
--		}
-+		ret = match_string(cprman_parent_names,
-+				   ARRAY_SIZE(cprman_parent_names),
-+				   parents[i]);
-+		if (ret >= 0)
-+			parents[i] = cprman->real_parent_names[ret];
- 	}
- 
- 	memset(&init, 0, sizeof(init));
--- 
-1.7.12.4
+We can also use pdata callbacks to pass the clock node if
+needed. But I guess I don't quite still understand what we
+are missing :)
+
+Regards,
+
+Tony
