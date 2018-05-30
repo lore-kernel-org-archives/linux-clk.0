@@ -1,93 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>
-CC: <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
-Date: Fri, 25 May 2018 15:34:27 +0300
-Message-ID: <1527251668-31396-7-git-send-email-codrin.ciubotariu@microchip.com>
-In-Reply-To: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:45206 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751656AbeE3O53 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 May 2018 10:57:29 -0400
+Date: Wed, 30 May 2018 07:57:26 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 4/6] bus: ti-sysc: Add support for using ti-sysc for
+ MCAN on dra76x
+Message-ID: <20180530145726.GD5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-5-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530141133.3711-5-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+* Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+> The dra76x MCAN generic interconnect module has a its own
+> format for the bits in the control registers.
+...
+> --- a/drivers/bus/ti-sysc.c
+> +++ b/drivers/bus/ti-sysc.c
+> @@ -1262,6 +1262,22 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
+>  	.regbits = &sysc_regbits_omap4_usb_host_fs,
+>  };
+>  
+> +static const struct sysc_regbits sysc_regbits_dra7_mcan = {
+> +	.dmadisable_shift = -ENODEV,
+> +	.midle_shift = -ENODEV,
+> +	.sidle_shift = -ENODEV,
+> +	.clkact_shift = -ENODEV,
+> +	.enwkup_shift = 4,
+> +	.srst_shift = 0,
+> +	.emufree_shift = -ENODEV,
+> +	.autoidle_shift = -ENODEV,
+> +};
+> +
+> +static const struct sysc_capabilities sysc_dra7_mcan = {
+> +	.type = TI_SYSC_DRA7_MCAN,
+> +	.regbits = &sysc_regbits_dra7_mcan,
+> +};
+> +
+>  static int sysc_init_pdata(struct sysc *ddata)
+>  {
+>  	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
+> @@ -1441,6 +1457,7 @@ static const struct of_device_id sysc_match[] = {
+>  	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
+>  	{ .compatible = "ti,sysc-usb-host-fs",
+>  	  .data = &sysc_omap4_usb_host_fs, },
+> +	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
+>  	{  },
+>  };
 
-This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
-each I2S node.
+Looks good to me. And presumably you checked that no other dra7 modules
+use sysconfig register bit layout like this?
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added phandle to new mux clock]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Regards,
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index eeb6afa..eca73ce 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -58,6 +58,8 @@
- 		serial1 = &uart3;
- 		tcb0 = &tcb0;
- 		tcb1 = &tcb1;
-+		i2s0 = &i2s0;
-+		i2s1 = &i2s1;
- 	};
- 
- 	cpus {
-@@ -1313,6 +1315,22 @@
- 				clocks = <&clk32k>;
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xf8050000 0x100>;
-+				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(31))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(32))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
-+
- 			can0: can@f8054000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xf8054000 0x4000>, <0x210000 0x4000>;
-@@ -1506,6 +1524,22 @@
- 				status = "disabled";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xfc04c000 0x100>;
-+				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(33))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(34))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s1_clk>, <&i2s1_gclk>, <&audio_pll_pmc>, <&i2s1muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
-+
- 			can1: can@fc050000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
--- 
-2.7.4
+Tony
