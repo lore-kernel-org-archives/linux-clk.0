@@ -1,69 +1,40 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from anholt.net ([50.246.234.109]:46142 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753896AbeE3S1q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 May 2018 14:27:46 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: Mismatch clk-bcm2835 debugfs and vcgencmd measure_clock
-In-Reply-To: <606467100.56923.1527090826606@email.1und1.de>
-References: <606467100.56923.1527090826606@email.1und1.de>
-Date: Wed, 30 May 2018 11:27:43 -0700
-Message-ID: <87wovlhucg.fsf@anholt.net>
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, M P <buserror@gmail.com>
+CC: Michel Pollet <michel.pollet@bp.renesas.com>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Michel Pollet <buserror+upstream@gmail.com>, Magnus Damm
+	<magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v6 2/6] dt-bindings: Add the rzn1-clocks.h file
+Date: Wed, 30 May 2018 13:30:20 +0000
+Message-ID: <TY1PR01MB1769DFD4CD9803D10CE1CA4BF56C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1526983321-41949-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdW-HUBRF4rLdfzixcyMUBg7+4XU+-3zayePoyeQiBZ8ZA@mail.gmail.com>
+ <CAMMfpEyTORirKiE417AQzCLzxDTKmy83bwivpfJaHQsKUKMc_w@mail.gmail.com>
+ <CAMuHMdWAU9wZkA+Z0BNAGrLV1WrCO3PgCTo2p=q3Mq9Tm6JBGA@mail.gmail.com>
+ <CAMMfpEwKa90XHu_igCxRQLy_CSVHTkN8eD8f7o=wgtttSn=FqA@mail.gmail.com>
+ <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWVde-DfbLVbvZT4rQfsVz1z7AMyQVgbO2DXrQKsEdVcw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-
-Stefan Wahren <stefan.wahren@i2se.com> writes:
-
-> Hi, after changing the ARM frequency on a Raspberry Pi (for instance
-> bcm2835-cpufreq), the pllb_arm in clk_summary (stays the same) doesn't
-> match to the output of
->
-> vcgencmd measure_clock arm
->
-> which should be correct (tested with downstream kernel 4.14).
->
-> My question is there a chance to fix this in clk-bcm2835?
-
-Unfortunately clk_summary doesn't reflect what a get_rate() would
-return, it's just what the kernel tried to program the rate to last, so
-it doesn't catch the firmware's changes.
-
-It would be nice to either make clk_summary show the actual rate as
-returned by get_rate(), or have another column showing that.  If we had
-that column and also an optional driver method to measure rate, then
-that could replace the use of vcgencmd measure_clock with the
-measurement code currently in clk-bcm2835.c, which would be pretty nice.
-
-Back when I asked about it, the clock maintainers thought that exposing
-measurement would be a good idea, but I don't think any progress has
-been made on it.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlsO7R8ACgkQtdYpNtH8
-nugQjA/+PlpVCeGEgDaLNbxQ+igTEG0zV2ZbfFnvHxvynltuy88kx6YyE78nDIa8
-XDCZ9j9X8SzuQzDgITTcSlMbfNIVRjBKSrwDCk6dU8A0TOSc+QtJm8eMy/c3i7FN
-bem6Ny/eezghrV9hxbhj5QxE7ks+qLK+kok/D4vfN1MrYga2KLvqqe51i6Mg4L9w
-nf++wLyPG2FAsNpY01JlFV6mrKoH2HCAe4F37L7SwASuGLYdvQO/6S3TZwkhaG3V
-w9uJxPQXm/iNtJrlnRAHKXOD88/RxP7axHxzvCDyd29vM+79KjYSHrssu6bBuDTl
-fHpkm/5oikVcZfddxRD2dQ4i7qatqEhCVSuWvNLWw3bWb7j6jWaGJ5bl7KqoK1l2
-1q0I+zu12lTozi59hbhodLGozR35jv0EQUrkqQD6weVvOZBo/b18sDRviDtwykZO
-liXLzlDnKtQBpL2cfY95erFd8KeTpxgLRvodm+TAjhBB86E/3h5tTNLZKEGNw3QW
-l5+ER556NVSl1OoyMgWJQSmI7W9JC4DXvOPxN1t0geqzrD5PeMexh+c4BMEUdVIn
-0VOzCh0yg5hQlshx0CCAGNm6mzFhec8wYK0Miiv13EiRivbxPN+wZUJC61zBSjMX
-+wAXsqZ0gi8kZWtTL9Y8yd/q00QIOn2AwS6EcUAvzaJ4CFnDuA0=
-=+WN8
------END PGP SIGNATURE-----
---=-=-=--
+SGkgR2VlcnQsDQoNCk9uIDI1IE1heSAyMDE4IDEwOjEzIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90
+ZToNCiBbc25pcF0NCg0KPiBOb3csIGdpdmVuIHRoZSBjbG9jayBkZWZpbml0aW9ucyBmb3IgUlov
+TjFbRFNMXSBhcmUgdGhlIHNhbWUgKGFsdGhvdWdoIHNvbWUNCj4gZG9uJ3QgZXhpc3Qgb24gc29t
+ZSB2YXJpYW50cyksIHlvdSBjb3VsZCBrZWVwIG9uIHVzaW5nIFJaTjFfQ0xLX0ZPTyBmb3INCj4g
+dGhlIG5hbWVzIG9mIHRoZSBkZWZpbmVzLCBhbmQgc3RvcmUgdGhlbSBpbiBhIGNvbW1vbiBmaWxl
+LCBpbmNsdWRlZCBieSB0aGUNCj4gc29jLXNwZWNpZmljIGZpbGUuIEJ1dCBwbGVhc2UgbWFrZSBj
+bGVhciB0aGUgY29tbW9uIGZpbGUgY2Fubm90IGJlIGluY2x1ZGVkDQo+IGRpcmVjdGx5LCBzbyB0
+aGUgZmlsZW5hbWUgZG9lcyBub3QgYmVjb21lIHBhcnQgb2YgdGhlIERUIEFCSSwgYW5kIHlvdSBh
+cmUNCj4gc2hpZWxkZWQgZnJvbSBmdXR1cmUgbWFya2V0aW5nIHNpbGxpbmVzcyAoZS5nLiBuZXh0
+IHF1YXJ0ZXIncyBSWi9OMVggYmVpbmcNCj4gdG90YWxseSBkaWZmZXJlbnQpLg0KSG93IGRvZXMg
+YW4gaW5jbHVkZSBmaWxlbmFtZSBiZWNvbWUgcGFydCBvZiB0aGUgRFQgQUJJPw0KSSB0aG91Z2h0
+IHRoZSBkdGIgaXMgdGhlIEFCSSwgbm90IHRoZSBkdHMuIEFtIEkgd3Jvbmc/DQoNClRoYW5rcw0K
+UGhpbA0K
