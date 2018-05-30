@@ -1,88 +1,56 @@
-Return-Path: <RAJANV@xilinx.com>
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
-	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Date: Thu, 3 May 2018 09:18:30 +0000
-Message-ID: <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
- <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
-In-Reply-To: <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:57916 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932080AbeE3VSJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 17:18:09 -0400
+Subject: Re: [PATCH v7 10/10] drivers: clk: Add ZynqMP clock driver
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+        mingo@kernel.org, gregkh@linuxfoundation.org,
+        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
+        hkallweit1@gmail.com, keescook@chromium.org,
+        dmitry.torokhov@gmail.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, michal.simek@xilinx.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org
+Cc: rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Tejas Patel <tejasp@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Jolly Shah <jollys@xilinx.com>
+References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+ <1527713725-1086-11-git-send-email-jollys@xilinx.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c042fd9b-85cb-f0d3-101c-f78f3dc4fc44@infradead.org>
+Date: Wed, 30 May 2018 14:17:58 -0700
 MIME-Version: 1.0
+In-Reply-To: <1527713725-1086-11-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYWph
-biBWYWphDQo+IFNlbnQ6IDE2IE1hcmNoIDIwMTggMDU6MjAgUE0NCj4gVG86ICdTdGVwaGVuIEJv
-eWQnIDxzYm95ZEBrZXJuZWwub3JnPg0KPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsg
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA8Sk9MTFlTQHhpbGlu
-eC5jb20+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+IG10dXJxdWV0dGVA
-YmF5bGlicmUuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGNsazogY2xrLWZpeGVkLWZhY3Rv
-cjogVXNlIG5ldyBtYWNybw0KPiBDTEtfT0ZfREVDTEFSRV9EUklWRVINCj4gDQo+IEhpIFN0ZXBo
-ZW4sDQo+IA0KPiBUaGFua3MgZm9yIHRoZSBjb21tZW50Lg0KPiANCj4gPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5l
-bC5vcmddDQo+ID4gU2VudDogMTYgTWFyY2ggMjAxOCAxMjoxNyBBTQ0KPiA+IFRvOiBSYWphbiBW
-YWphIDxSQUpBTlZAeGlsaW54LmNvbT4NCj4gPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA+IDxKT0xMWVNA
-eGlsaW54LmNvbT47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gPiBtdHVy
-cXVldHRlQGJheWxpYnJlLmNvbQ0KPiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGNsazogY2xrLWZp
-eGVkLWZhY3RvcjogVXNlIG5ldyBtYWNybw0KPiA+IENMS19PRl9ERUNMQVJFX0RSSVZFUg0KPiA+
-DQo+ID4gUXVvdGluZyBSYWphbiBWYWphICgyMDE4LTAzLTA5IDExOjI3OjQwKQ0KPiA+ID4gPiBG
-cm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiA+ID4gPg0KPiA+
-ID4gPiBJcyB0aGUgaW50ZW50IHRvIHJlZ2lzdGVyIHRoZSBjbGsgdHdpY2U/IEkgYmVsaWV2ZSB0
-aGluZ3MgYXJlIHdvcmtpbmcgYXMNCj4gPiA+ID4gaW50ZW5kZWQgd2l0aG91dCB0aGlzIHBhdGNo
-LCBzbyBtYXliZSB5b3UgY2FuIGV4cGxhaW4gYSBsaXR0bGUgbW9yZSB3aGF0DQo+ID4gPiA+IHlv
-dSdyZSB0cnlpbmcgdG8gZml4Lg0KPiA+ID4gW1JhamFuXSBZZXMuIER1cmluZyBvZl9jbGtfaW5p
-dCgpIGlmIHNvbWUgRFQgZml4ZWQgZmFjdG9yIGNsb2NrIGhhcw0KPiA+ID4gcGFyZW50IHdoaWNo
-IGlzIG5laXRoZXIgbWVudGlvbmVkIGluIG91dHB1dC1jbG9jay1uYW1lcyBvZiBjbG9jaw0KPiA+
-ID4gY29udHJvbGxlciBub3IgcmVnaXN0ZXJlZCBhcyBjbG9jayBwcm92aWRlciwgb2ZfY2xrX2lu
-aXQoKSB3aWxsIHRyeSB0bw0KPiA+ID4gZm9yY2VmdWxseSByZWdpc3RlciBpbiBzZWNvbmQgbG9v
-cC4NCj4gPiA+DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZm9yY2UgfHwgcGFy
-ZW50X3JlYWR5KGNsa19wcm92aWRlci0+bnApKSB7DQo+ID4gPg0KPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0Zm9ybSBkZXZpY2VzICov
-DQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfc2V0X2ZsYWco
-Y2xrX3Byb3ZpZGVyLT5ucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBPRl9QT1BVTEFURUQpOw0KPiA+ID4NCj4gPiA+IFNvIHJlZ2lzdHJh
-dGlvbiBvZiB0aGlzIERUIGZpeGVkLWZhY3RvciBjbG9jayB3b3VsZCBmYWlsIGFzIHBhcmVudA0K
-PiA+ID4gd291bGQgYmUgTlVMTCBhcyBiZWxvdyAoY2FsbGVkIGZyb20gX29mX2ZpeGVkX2ZhY3Rv
-cl9jbGtfc2V0dXAoKSk6DQo+ID4gPiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25h
-bWUobm9kZSwgMCk7DQo+ID4gPg0KPiA+ID4gT24gdGhlIG90aGVyIGhhbmQsIGV2ZW4gaWYgcmVn
-aXN0cmF0aW9uIGZhaWxlZCwgdGhhdCBub2RlIHdpbGwgYmUNCj4gPiA+IG1hcmtlZCBhcyBPRl9Q
-T1BVTEFURUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+
-ID4gPiBiZSBjYWxsZWQgYW5kIHRoYXQgRFQgZml4ZWQtZmFjdG9yIGNsb2NrIHdvdWxkIG5ldmVy
-IGJlIHJlZ2lzdGVyZWQuDQo+ID4gPg0KPiA+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNzZWQgYXQg
-IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiA+DQo+ID4gT2suIEkgYmVs
-aWV2ZSB0aGUgYW5zd2VyIGlzIHRvIGZpeCB0aGUgRFQgdG8gZGVzY3JpYmUgdGhlIHBhcmVudCBj
-aGFpbg0KPiA+IHByb3Blcmx5IHdpdGggY2xvY2stb3V0cHV0LW5hbWVzLiBPdGhlcndpc2UsIHdl
-IGhhdmUgbm8gZ29vZCB3YXkgb2YNCj4gPiBmaWd1cmluZyBvdXQgd2hhdCB0aGUgbmFtZSBzaG91
-bGQgYmUuDQo+IFtSYWphbl0gY2xvY2sgRFQgYmluZGluZyBkb2Mgc2F5cyB0aGF0IGNsb2NrLW91
-dHB1dC1uYW1lcyBwcm9wZXJ0eQ0KPiBpcyBvcHRpb25hbCBhbmQgc29tZXRpbWVzIG5vdCByZWNv
-bW1lbmRlZC4NCj4gSSB0aGluayB0aGlzIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSB3ZSBoYXZlIHdo
-aWNoIG1hbmRhdGVzIHRvIGFkZCBjbG9jay1vdXRwdXQtDQo+IG5hbWVzDQo+IHByb3BlcnR5IChm
-b3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UpLiBBbHNvLCBJSVVDIHBsYXRmb3JtIGRyaXZlciBwcm9i
-ZSBpbiBjbGstZml4ZWQtDQo+IGZhY3Rvci5jDQo+IHdpbGwgbmV2ZXIgYmUgY2FsbGVkIHVubGVz
-cyB3ZSB1c2UgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSLg0KPiBJIGNvbXBsZXRlbHkgYWdyZWUgdGhh
-dCBwcm9wZXIgc29sdXRpb24gd291bGQgYmUgdG8gc3RvcCB1c2luZyBzdHJpbmdzIHRvDQo+IGRl
-c2NyaWJlIGNsb2NrIHRvcG9sb2d5Lg0KW1JhamFuXSBBbnkgY29tbWVudHMgb24gdGhpcz8NClVu
-bGVzcyB3ZSBoYXZlIHByb3BlciBzb2x1dGlvbiByZWFkeSwgd2UgbmVlZCB0byBoYXZlIHNvbWUg
-bWVjaGFuaXNtIHRvIGhhbmRsZSB0aGlzIHNjZW5hcmlvLg0KY2xvY2stb3V0cHV0LW5hbWVzIGlz
-IG9wdGlvbmFsIGFuZCB3aXRob3V0IHRoaXMsIGl0IG1hbmRhdGVzIHRvIHVzZSBjbG9jay1vdXRw
-dXQtbmFtZXMuDQoNCj4gDQo+ID4NCj4gPiBUaGUgYWx0ZXJuYXRpdmUgaXMgdG8gc3RhcnQgd29y
-a2luZyBvbiBhIHNvbHV0aW9uIGZvciBoYXZpbmcgdGhlIGNsaw0KPiA+IGZyYW1ld29yayBzdG9w
-IHVzaW5nIHN0cmluZ3MgdG8gZGVzY3JpYmUgY2xrIHRvcG9sb2d5LiBNeSBwbGFuIHRoZXJlIGlz
-DQo+ID4gdG8gYWxsb3cgY2xrIHJlZ2lzdHJhdGlvbiB0byBpbmRpY2F0ZSB0aGF0IGFub3RoZXIg
-cGFyZW50IG5hbWVzIGFycmF5DQo+ID4gc2hvdWxkIGJlIHVzZWQgd2l0aCBjbGtfZ2V0KCkgb2Yg
-dGhlIGRldmljZSBvciBub2RlIHBvaW50ZXIgdGhhdCdzDQo+ID4gYXNzb2NpYXRlZCB3aXRoIHRo
-ZSBjbGsgZHVyaW5nIHJlZ2lzdHJhdGlvbiB0byBmaW5kIHRoZSBwYXJlbnQgLiBJZiB3ZQ0KPiA+
-IGhhZCB0aGF0LCB0aGVuIHdlIGNvdWxkIGhvb2sgdXAgY2xrcyBpbnRvIHRoZSB0cmVlIGJ5IGNh
-bGxpbmcgY2xrX2dldCgpDQo+ID4gaW4gdGhlIGZyYW1ld29yayBhbmQgbWFwIHRocm91Z2ggdGhl
-IGNsb2NrLW5hbWVzIHByb3BlcnR5LiBUaGlzIGFsc28NCj4gPiBnZXRzIHVzIHRvIGEgcG9pbnQg
-d2hlcmUgY2xrIG5hbWVzIGRvbid0IGhhdmUgdG8gYmUgZ2xvYmFsbHkgdW5pcXVlLA0KPiA+IHdo
-aWNoIHdvdWxkIGJlIG5pY2UuDQo=
+On 05/30/2018 01:55 PM, Jolly Shah wrote:
+> From: Jolly Shah <jolly.shah@xilinx.com>
+
+
+> diff --git a/drivers/clk/zynqmp/Kconfig b/drivers/clk/zynqmp/Kconfig
+> new file mode 100644
+> index 0000000..fe815f7
+> --- /dev/null
+> +++ b/drivers/clk/zynqmp/Kconfig
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +config COMMON_CLK_ZYNQMP
+> +	bool "Support for Xilinx ZynqMP Ultrascale+ clock controllers"
+> +	depends on OF
+> +	depends on ARCH_ZYNQMP || COMPILE_TEST
+> +	depends on ZYNQMP_FIRMWARE
+> +	help
+> +	  Support for the Zynqmp Ultrascale clock controller.
+> +	  It has a dependency on the PMU firmware.
+> +	  Say Y if you want to support clock support
+
+	  Say Y if you want to include clock support.
+
+
+-- 
+~Randy
