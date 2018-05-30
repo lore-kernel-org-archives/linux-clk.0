@@ -1,51 +1,51 @@
-Return-Path: <alexandre.torgue@st.com>
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
- compiled by default
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        <gabriel.fernandez@st.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        benjamin
- GAIGNARD <benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
- <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
- <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
- <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
- <a49b89ee-2aee-274d-ccc0-3eaf7d9a3755@st.com>
- <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <503ec7d8-e493-3458-e974-5fab5649aaf8@st.com>
-Date: Wed, 16 May 2018 10:01:56 +0200
-MIME-Version: 1.0
-In-Reply-To: <152645747055.210890.12866212092853247736@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/4] dt: bindings: tegra20-emc: Document interrupt property
+Date: Wed, 30 May 2018 18:06:43 +0300
+Message-Id: <20180530150646.19030-2-digetx@gmail.com>
+In-Reply-To: <20180530150646.19030-1-digetx@gmail.com>
+References: <20180530150646.19030-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+EMC has a dedicated interrupt that is used to notify about completion of
+HW operations. Document the interrupt property.
 
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On 05/16/2018 09:57 AM, Stephen Boyd wrote:
-> Quoting Alexandre Torgue (2018-05-16 00:34:21)
->>>>
->>>> Sorry I don't understand. Clock driver is mandatory to boot each
->>>> platform and depends on machine type. Do you see a use case where we
->>>> could need to disable the clock driver? (it would impose to change
->>>> devicetree to use fixed clocks and to have a booloader which configures
->>>> all PLL and clocks).
->>>
->>> No. My understanding of the patch that introduced the options was to
->>> allow the user to disable these drivers if they wanted to. I'm just
->>> reiterating the spirit of that patch. That must be wrong?
->>>
->> Actually initial patch is a mistake. You can't boot STM32 platform
->> without clock driver. This patch fixes that, and offers the possibility
->> to not build the clock driver of the machine which are not used
->> (currently all machine are selected but to reduce memory footprint you
->> could disable not used machine in defconfig).
-> 
-> Ok I stuck the patch into clk-fixes. Will send off to Linus tomorrow or the
-> next day.
-> 
-Thanks Stephen
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+index 4c33b29dc660..a6fe401d0d48 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+@@ -10,6 +10,7 @@ Properties:
+   and chosen using the ramcode board selector. If omitted, only one
+   set of tables can be present and said tables will be used
+   irrespective of ram-code configuration.
++- interrupts : Should contain EMC General interrupt.
+ 
+ Child device nodes describe the memory settings for different configurations and clock rates.
+ 
+@@ -20,6 +21,7 @@ Example:
+ 		#size-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
++		interrupts = <0 78 0x04>;
+ 	}
+ 
+ 
+-- 
+2.17.0
