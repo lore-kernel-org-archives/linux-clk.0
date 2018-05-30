@@ -1,97 +1,101 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH 3/3] arm64: dts: Update Stingray clock DT nodes
-Date: Fri, 25 May 2018 09:45:17 -0700
-Message-Id: <1527266717-8406-4-git-send-email-ray.jui@broadcom.com>
-In-Reply-To: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
-References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
+Date: Wed, 30 May 2018 18:06:45 +0300
+Message-Id: <20180530150646.19030-4-digetx@gmail.com>
+In-Reply-To: <20180530150646.19030-1-digetx@gmail.com>
+References: <20180530150646.19030-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Update clock output names in the Stingray clock DT nodes so they match
-the binding document and the latest ASIC datasheet. Also add entries
-for LCPLL2
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 39 ++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-index 3a4d452..10a106a 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-@@ -52,12 +52,24 @@
- 			reg = <0x0001d104 0x32>,
- 			      <0x0001c854 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "genpll0", "clk_125", "clk_scr",
-+			clock-output-names = "genpll0", "clk_125m", "clk_scr",
- 					     "clk_250", "clk_pcie_axi",
- 					     "clk_paxc_axi_x2",
- 					     "clk_paxc_axi";
- 		};
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..189dbc86ab71 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
  
-+		genpll2: genpll2@1d1ac {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll2";
-+			reg = <0x0001d1ac 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll2", "clk_nic",
-+					     "clk_ts_500_ref", "clk_125_nitro",
-+					     "clk_chimp", "clk_nic_flash",
-+					     "clk_fs";
-+		};
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,19 +798,18 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
+-static void __init tegra20_periph_clk_init(void)
++static void __init tegra20_emc_clk_init(void)
+ {
+-	struct tegra_periph_init_data *data;
++	u32 emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++	u32 use_pllm_ud = BIT(29);
+ 	struct clk *clk;
+-	unsigned int i;
+ 
+-	/* ac97 */
+-	clk = tegra_clk_register_periph_gate("ac97", "pll_a_out0",
+-				    TEGRA_PERIPH_ON_APB,
+-				    clk_base, 0, 3, periph_clk_enb_refcnt);
+-	clks[TEGRA20_CLK_AC97] = clk;
++	if (emc_reg & use_pllm_ud) {
++		pr_err("%s: un-divided PllM_out0 used as clock source\n",
++		       __func__);
++		return;
++	}
+ 
+-	/* emc */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+ 			       CLK_SET_RATE_NO_REPARENT,
+@@ -822,6 +820,27 @@ static void __init tegra20_periph_clk_init(void)
+ 				    &emc_lock);
+ 	clks[TEGRA20_CLK_MC] = clk;
+ 
++	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
++				   clk_base + CLK_SOURCE_EMC, 0, 7,
++				   0, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
 +
- 		genpll3: genpll3@1d1e0 {
- 			#clock-cells = <1>;
- 			compatible = "brcm,sr-genpll3";
-@@ -75,8 +87,8 @@
- 			      <0x0001c854 0x4>;
- 			clocks = <&osc>;
- 			clock-output-names = "genpll4", "clk_ccn",
--					     "clk_tpiu_pll", "noc_clk",
--					     "pll_chclk_fs4",
-+					     "clk_tpiu_pll", "clk_noc",
-+					     "clk_chclk_fs4",
- 					     "clk_bridge_fscpu";
- 		};
- 
-@@ -86,8 +98,8 @@
- 			reg = <0x0001d248 0x32>,
- 			      <0x0001c870 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "genpll5", "fs4_hf_clk",
--					     "crypto_ae_clk", "raid_ae_clk";
-+			clock-output-names = "genpll5", "clk_fs4_hf",
-+					     "clk_crypto_ae", "clk_raid_ae";
- 		};
- 
- 		lcpll0: lcpll0@1d0c4 {
-@@ -107,9 +119,9 @@
- 			reg = <0x0001d138 0x3c>,
- 			      <0x0001c870 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "lcpll1", "clk_wanpn",
-+			clock-output-names = "lcpll1", "clk_wan",
- 					     "clk_usb_ref",
--					     "timesync_evt_clk";
-+					     "clk_crmu_ts";
- 		};
- 
- 		hsls_clk: hsls_clk {
++static void __init tegra20_periph_clk_init(void)
++{
++	struct tegra_periph_init_data *data;
++	struct clk *clk;
++	unsigned int i;
++
++	/* ac97 */
++	clk = tegra_clk_register_periph_gate("ac97", "pll_a_out0",
++				    TEGRA_PERIPH_ON_APB,
++				    clk_base, 0, 3, periph_clk_enb_refcnt);
++	clks[TEGRA20_CLK_AC97] = clk;
++
++	/* emc */
++	tegra20_emc_clk_init();
++
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
+ 				    48, periph_clk_enb_refcnt);
 -- 
-2.1.4
+2.17.0
