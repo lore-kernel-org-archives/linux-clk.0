@@ -1,99 +1,56 @@
-Return-Path: <songjunw@ecsmtp.isng.intel.com>
-From: Songjun Wu <songjun.wu@intel.com>
-To: yixin.zhu@intel.com, hua.ma@intel.com, chuanhua.lei@intel.com
-Cc: hauke.mehrtens@intel.com, thomas.langer@intel.com,
-        Songjun Wu <songjun.wu@intel.com>, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Stephen Boyd <sboyd@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "GitAuthor:Ma"@ecsmtp.isng.intel.com,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
-Subject: [PATCH 0/7] MIPS: intel: add initial support for Intel MIPS SoCs
-Date: Fri,  1 Jun 2018 13:55:40 +0800
-Message-Id: <20180601055547.1532-1-songjun.wu@intel.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 30 May 2018 12:16:49 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180530111649.GB8038@dell>
+References: <20180528090003.GA8778@localhost.localdomain>
+ <20180529073958.GB4790@dell>
+ <20180529083541.GA13528@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180529083541.GA13528@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series is for adding the support for Intel MIPS
-Interaptive SoC GRX500 family.
-It mainly includes CCF support, serial driver optimization
-and DTS modification.
+On Tue, 29 May 2018, Matti Vaittinen wrote:
 
+> Hello,
+> 
+> On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
+> > On Mon, 28 May 2018, Matti Vaittinen wrote:
+> > 
+> > > Patch series adding support for ROHM BD71837 PMIC.
+> > FYI, this patch-set is going to be difficult to manage since it was
+> > not sent 'threaded'.
+> > 
+> > If/when you send a subsequent version, could you please ensure you
+> > send the set threaded so the patches keep in relation to one another
+> > as they are reviewed?
+> 
+> Thanks for the guidance. I have not sent so many patches to community so
+> I am grateful also from all the practical tips =) Just one slight problem.
+> I have only seen emails being threaded when one is replying to an email.
+> So how should I send my patches in same thread? Just send first one and
+> then send subsequent patches as replies?
+> 
+> I just killed some unused definitions and one unused variable from the
+> code so I am about to send new version. I'll try doing that as a threaded
+> series and resend all the patches as v3.
 
-Ma, Hua (1):
-  MIPS: intel: Add initial support for Intel MIPS SoCs
+You don't need to do this manually.
 
-Songjun Wu (5):
-  tty: serial: lantiq: Always use readl()/writel()
-  tty: serial: lantiq: Convert global lock to per device lock
-  tty: serial: lantiq: Remove unneeded header includes and macros
-  tty: serial: lantiq: Add CCF support
-  MIPS: dts: Add aliases node for lantiq danube serial
-
-Zhu Yixin (1):
-  clk: intel: Add clock driver for GRX500 SoC
-
- .../devicetree/bindings/clock/intel,grx500-clk.txt |  46 ++
- .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +
- arch/mips/Kbuild.platforms                         |   1 +
- arch/mips/Kconfig                                  |  37 +-
- arch/mips/boot/dts/Makefile                        |   1 +
- arch/mips/boot/dts/intel-mips/Makefile             |   3 +
- arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +
- arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 ++++++
- arch/mips/boot/dts/lantiq/danube.dtsi              |   6 +-
- arch/mips/configs/grx500_defconfig                 | 165 +++++
- .../asm/mach-intel-mips/cpu-feature-overrides.h    |  61 ++
- arch/mips/include/asm/mach-intel-mips/ioremap.h    |  39 ++
- arch/mips/include/asm/mach-intel-mips/irq.h        |  17 +
- .../asm/mach-intel-mips/kernel-entry-init.h        |  76 +++
- arch/mips/include/asm/mach-intel-mips/spaces.h     |  29 +
- arch/mips/include/asm/mach-intel-mips/war.h        |  18 +
- arch/mips/intel-mips/Kconfig                       |  22 +
- arch/mips/intel-mips/Makefile                      |   3 +
- arch/mips/intel-mips/Platform                      |  11 +
- arch/mips/intel-mips/irq.c                         |  36 ++
- arch/mips/intel-mips/prom.c                        | 184 ++++++
- arch/mips/intel-mips/time.c                        |  56 ++
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/intel/Kconfig                          |  21 +
- drivers/clk/intel/Makefile                         |   7 +
- drivers/clk/intel/clk-cgu-api.c                    | 676 +++++++++++++++++++++
- drivers/clk/intel/clk-cgu-api.h                    | 120 ++++
- drivers/clk/intel/clk-grx500.c                     | 236 +++++++
- drivers/tty/serial/Kconfig                         |   2 +-
- drivers/tty/serial/lantiq.c                        | 415 ++++++++-----
- include/dt-bindings/clock/intel,grx500-clk.h       |  61 ++
- 32 files changed, 2418 insertions(+), 164 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
- create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
- create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
- create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
- create mode 100644 arch/mips/configs/grx500_defconfig
- create mode 100644 arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
- create mode 100644 arch/mips/include/asm/mach-intel-mips/ioremap.h
- create mode 100644 arch/mips/include/asm/mach-intel-mips/irq.h
- create mode 100644 arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
- create mode 100644 arch/mips/include/asm/mach-intel-mips/spaces.h
- create mode 100644 arch/mips/include/asm/mach-intel-mips/war.h
- create mode 100644 arch/mips/intel-mips/Kconfig
- create mode 100644 arch/mips/intel-mips/Makefile
- create mode 100644 arch/mips/intel-mips/Platform
- create mode 100644 arch/mips/intel-mips/irq.c
- create mode 100644 arch/mips/intel-mips/prom.c
- create mode 100644 arch/mips/intel-mips/time.c
- create mode 100644 drivers/clk/intel/Kconfig
- create mode 100644 drivers/clk/intel/Makefile
- create mode 100644 drivers/clk/intel/clk-cgu-api.c
- create mode 100644 drivers/clk/intel/clk-cgu-api.h
- create mode 100644 drivers/clk/intel/clk-grx500.c
- create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+Just use `git send-email` with the correct arguments.
 
 -- 
-2.11.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
