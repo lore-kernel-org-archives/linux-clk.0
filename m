@@ -1,126 +1,73 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	David Lechner <david@lechnology.com>
-Subject: [PATCH v10 12/27] ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-Date: Wed,  9 May 2018 12:25:51 -0500
-Message-Id: <20180509172606.29387-13-david@lechnology.com>
-In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
-References: <20180509172606.29387-1-david@lechnology.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v7 01/10] dt-bindings: firmware: Add bindings for ZynqMP firmware
+Date: Wed, 30 May 2018 13:55:16 -0700
+Message-ID: <1527713725-1086-2-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the new SATA REFCLK clock init in mach-davinci/devices-da8xx.c
-using the new common clock framework drivers.
+From: Rajan Vaja <rajanv@xilinx.com>
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
+Add documentation to describe Xilinx ZynqMP firmware driver
+bindings. Firmware driver provides an interface to firmware
+APIs. Interface APIs can be used by any driver to communicate
+to PMUFW (Platform Management Unit).
 
-Also, the #includes are sorted since we are adding some here.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
 
-v10 changes:
-- none
-
-v9 changes:
-- none
-
-v8 changes:
-- none
-
-v7 changes:
-- none
-
-v6 changes:
-- none
-
-
- arch/arm/mach-davinci/devices-da8xx.c | 36 ++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 78390c64e6ca..73de449bbc68 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -10,25 +10,30 @@
-  * the Free Software Foundation; either version 2 of the License, or
-  * (at your option) any later version.
-  */
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/dma-contiguous.h>
--#include <linux/serial_8250.h>
- #include <linux/ahci_platform.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk.h>
--#include <linux/reboot.h>
-+#include <linux/clkdev.h>
-+#include <linux/dma-contiguous.h>
- #include <linux/dmaengine.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/serial_8250.h>
- 
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
--#include <mach/clock.h>
-+#include <mach/time.h>
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+new file mode 100644
+index 0000000..1b431d9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -0,0 +1,29 @@
++-----------------------------------------------------------------
++Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
++-----------------------------------------------------------------
 +
-+#include "asp.h"
- #include "cpuidle.h"
- #include "sram.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include <mach/clock.h>
- #include "clock.h"
--#include "asp.h"
-+#endif
- 
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
-@@ -1040,6 +1045,7 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
-+#ifndef CONFIG_COMMON_CLK
- static struct clk sata_refclk = {
- 	.name		= "sata_refclk",
- 	.set_rate	= davinci_simple_set_rate,
-@@ -1061,6 +1067,18 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return 0;
- }
-+#else
-+int __init da850_register_sata_refclk(int rate)
-+{
-+	struct clk *clk;
++The zynqmp-firmware node describes the interface to platform firmware.
++ZynqMP has an interface to communicate with secure firmware. Firmware
++driver provides an interface to firmware APIs. Interface APIs can be
++used by any driver to communicate to PMUFW(Platform Management Unit).
++These requests include clock management, pin control, device control,
++power management service, FPGA service and other platform management
++services.
 +
-+	clk = clk_register_fixed_rate(NULL, "sata_refclk", NULL, 0, rate);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
++Required properties:
++ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
++ - method:	The method of calling the PM-API firmware layer.
++		Permitted values are:
++		  - "smc" : SMC #0, following the SMCCC
++		  - "hvc" : HVC #0, following the SMCCC
 +
-+	return clk_register_clkdev(clk, "refclk", "ahci_da850");
-+}
-+#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
++-------
++Example
++-------
++
++firmware {
++	zynqmp_firmware: zynqmp-firmware {
++		compatible = "xlnx,zynqmp-firmware";
++		method = "smc";
++	};
++};
 -- 
-2.17.0
+2.7.4
