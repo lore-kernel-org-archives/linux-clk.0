@@ -1,67 +1,72 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 16 May 2018 09:43:34 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r8a7795: add ccree binding
-Message-ID: <20180516074333.i2672u435ymwffk3@verge.net.au>
-References: <1526387370-17142-1-git-send-email-gilad@benyossef.com>
- <1526387370-17142-4-git-send-email-gilad@benyossef.com>
- <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Wed, 30 May 2018 11:42:55 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v4 4/6] clk: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <99bae24fdaee0fe101e9ed1f2e55682932b92a74.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdWzeNqsho1V6ezZb81T3_HcRzrtuQpmGXsjtFgt9BtZDQ@mail.gmail.com>
+In-Reply-To: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 04:50:44PM +0200, Geert Uytterhoeven wrote:
-> Hi Gilad,
-> 
-> On Tue, May 15, 2018 at 2:29 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> > Add bindings for CryptoCell instance in the SoC.
-> >
-> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> > @@ -528,6 +528,14 @@
-> >                         status = "disabled";
-> >                 };
-> >
-> > +               arm_cc630p: crypto@e6601000 {
-> > +                       compatible = "arm,cryptocell-630p-ree";
-> > +                       interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       #interrupt-cells = <2>;
-> 
-> I believe the #interrupt-cells property is not needed.
-> 
-> > +                       reg = <0x0 0xe6601000 0 0x1000>;
-> > +                       clocks = <&cpg CPG_MOD 229>;
-> > +               };
-> 
-> The rest looks good, but I cannot verify the register block.
-> 
-> > +
-> >                 i2c3: i2c@e66d0000 {
-> >                         #address-cells = <1>;
-> >                         #size-cells = <0>;
+Document devicetree bindings for ROHM BD71837 PMIC clock output.
 
-Thanks, I have applied this after dropping the #interrupt-cells property.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+new file mode 100644
+index 000000000000..9759fd145781
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+@@ -0,0 +1,37 @@
++ROHM BD71837 Power Management Integrated Circuit clock bindings
++
++BD71837 clock node should be sub node of the BD71837 MFD node.
++See BD71837 MFD bindings at
++Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++
++Required properties:
++- compatible		: Should be "rohm,bd71837-clk"
++- clock-frequency	: Should be 32768
++- #clock-cells		: Should be 0
++
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
++  Name "bd71837-32k-out" is used if this is not given.
++
++
++Example:
++
++pmic: bd71837@4b {
++	compatible = "rohm,bd71837";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x4b>;
++	interrupt-parent = <&gpio1>;
++	interrupts = <29 GPIO_ACTIVE_LOW>;
++	interrupt-names = "irq";
++	#interrupt-cells = <1>;
++	interrupt-controller;
++
++	/* Clock node */
++	clk: bd71837-32k-out {
++		compatible = "rohm,bd71837-clk";
++		#clock-cells = <0>;
++		clock-frequency  = <32768>;
++		clock-output-names = "bd71837-32k-out";
++	};
++};
+-- 
+2.14.3
