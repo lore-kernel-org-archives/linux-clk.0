@@ -1,50 +1,34 @@
-Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 30 May 2018 08:28:25 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180530152825.GG5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com>
+ <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180502113413.vv2r3ubfoh7gm3ms@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-10-jagan@amarulasolutions.com> <20180502113413.vv2r3ubfoh7gm3ms@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Mon, 14 May 2018 14:03:36 +0530
-Message-ID: <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
-Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> Hi,
->
-> On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
->> +             hdmi_phy: hdmi-phy@1ef0000 {
->> +                     compatible = "allwinner,sun50i-a64-hdmi-phy",
->> +                                  "allwinner,sun8i-h3-hdmi-phy";
->> +                     reg = <0x01ef0000 0x10000>;
->> +                     clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
->> +                              <&ccu CLK_PLL_VIDEO1>;
->
-> You were discussing that the PLL0 could also be used to clock the PHY,
-> has that been figured out?
+* Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+> For the OCP if part, I think that is still needed until we switch over to
+> full sysc driver. clkctrl_offs you probably also need because that is used
+> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+> only removed once we are done with hwmod (or figure out some other way to
+> assign the clkctrl clock to a hwmod.)
 
-This is what I understand from Fig: 3-3. Module Clock Diagram, both
-tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
-configuration we need use proper PLL or some logic to get common PLL
-don't know yet. Since this series adding tcon1 I've attached PLL1.
+Hmm might be worth testing. I thought your commit 70f05be32133
+("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+already parses the clkctrl from dts?
 
-Jagan.
+Regards,
 
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+Tony
