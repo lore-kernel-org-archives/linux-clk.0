@@ -1,66 +1,30 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+To: Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Ray Jui <ray.jui@broadcom.com>,
+ Rob Herring <robh+dt@kernel.org>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
- <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527500426.138124.18419525952886399750@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed, 02 May 2018 08:30:04 -0700
+In-Reply-To: <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Pramod Kumar <pramod.kumar@broadcom.com>, Ray Jui <ray.jui@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+Message-ID: <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+Date: Wed, 30 May 2018 16:41:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-02 03:51:17)
-> +               ret =3D devm_clk_hw_register(&pdev->dev, hw_clks[i]);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "failed to register %s\n",
-> +                                       hw_clks[i]->init->name);
-> +                       goto err;
-> +               }
-> +
-> +               rpmh_clk->dev =3D &pdev->dev;
-> +       }
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_ge=
-t,
-> +                                     (void *) desc);
+Subject is missing an 's' on stringray?
 
-Drop the void cast.
+Quoting Ray Jui (2018-05-25 09:45:16)
+> Update and add Stingray clock definitions and tables so they match the
+> binding document and the latest ASIC datasheet
+> =
 
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "Failed to add clock provider\n");
-> +               goto err;
-> +       }
-> +
-> +       dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
-> +
-> +       return 0;
-> +err:
-> +       if (rpmh_client)
-> +               rpmh_release(rpmh_client);
-> +
-> +       return ret;
-> +}
-> +
-> +static int clk_rpmh_remove(struct platform_device *pdev)
-> +{
-> +       const struct clk_rpmh_desc *desc =3D
-> +                       of_device_get_match_data(&pdev->dev);
-> +       struct clk_hw **hw_clks =3D desc->clks;
-> +       struct clk_rpmh *rpmh_clk =3D to_clk_rpmh(hw_clks[0]);
-> +
-> +       rpmh_release(rpmh_clk->rpmh_client);
-> +
-> +       return 0;
-> +}
+> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 
-I'll review Lina's series again. Still hoping to drop the client thing.
+Otherwise it looks ok, but maybe Pramod should be the author?
