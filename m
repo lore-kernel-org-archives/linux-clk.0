@@ -1,114 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:37765 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750945AbeEUIB7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 May 2018 04:01:59 -0400
-Date: Mon, 21 May 2018 10:01:47 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 04/15] dt-bindings: display: sunxi-drm: Add TCON TOP
- description
-Message-ID: <20180521080147.72esi2kwzcvzmetk@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net>
- <20180519183127.2718-5-jernej.skrabec@siol.net>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 6/9] clk: davinci: pll: allow dev == NULL
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+ linux-kernel@vger.kernel.org, brgl@bgdev.pl
+References: <20180525181150.17873-1-david@lechnology.com>
+ <20180525181150.17873-7-david@lechnology.com>
+ <20180530194559.982.42844@harbor.lan>
+From: David Lechner <david@lechnology.com>
+Message-ID: <41524516-3b58-0db8-1e67-3d76f8596a23@lechnology.com>
+Date: Wed, 30 May 2018 14:59:01 -0500
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6ml3nrfyv2c4gred"
-In-Reply-To: <20180519183127.2718-5-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180530194559.982.42844@harbor.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 05/30/2018 02:46 PM, Michael Turquette wrote:
+> Hi David,
+> 
+> Quoting David Lechner (2018-05-25 11:11:47)
+>> This modifies the TI Davinci PLL clock driver to allow for the case
+>> when dev == NULL. On some (most) SoCs that use this driver, the PLL
+>> clock needs to be registered during early boot because it is used
+>> for clocksource/clkevent and there will be no platform device available.
+> 
+> A lot of this stuff feels like a step backwards. E.g:
+> 
+>> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+>> index 23a24c944f1d..2eb981e61185 100644
+>> --- a/drivers/clk/davinci/pll.c
+>> +++ b/drivers/clk/davinci/pll.c
+>> @@ -11,6 +11,7 @@
+>>   
+>>   #include <linux/clk-provider.h>
+>>   #include <linux/clk.h>
+>> +#include <linux/clk/davinci.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/err.h>
+>>   #include <linux/io.h>
+>> @@ -223,6 +224,7 @@ static const struct clk_ops dm365_pll_ops = {
+>>   
+>>   /**
+>>    * davinci_pll_div_register - common *DIV clock implementation
+>> + * @dev: The PLL platform device or NULL
+>>    * @name: the clock name
+>>    * @parent_name: the parent clock name
+>>    * @reg: the *DIV register
+>> @@ -240,17 +242,21 @@ static struct clk *davinci_pll_div_register(struct device *dev,
+>>          const struct clk_ops *divider_ops = &clk_divider_ops;
+>>          struct clk_gate *gate;
+>>          struct clk_divider *divider;
+>> +       struct clk *clk;
+>> +       int ret;
+>>   
+>> -       gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+>> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+>>          if (!gate)
+>>                  return ERR_PTR(-ENOMEM);
+>>   
+>>          gate->reg = reg;
+>>          gate->bit_idx = DIV_ENABLE_SHIFT;
+>>   
+>> -       divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+>> -       if (!divider)
+>> -               return ERR_PTR(-ENOMEM);
+>> +       divider = kzalloc(sizeof(*divider), GFP_KERNEL);
+>> +       if (!divider) {
+>> +               ret = -ENOMEM;
+>> +               goto err_free_gate;
+>> +       }
+>>   
+>>          divider->reg = reg;
+>>          divider->shift = DIV_RATIO_SHIFT;
+> 
+> Oh no my poor devm_ helpers!
+> 
+> I understand that we need to support early boot drivers better, so this
+> patch can be merged.
+> 
+> However I'm curious if you're tracking Bartosz's early_platform_driver
+> efforts? Converting to that if it is ever merged would likely be
+> cleaner:
+> 
+> https://lkml.kernel.org/r/20180511162028.20616-1-brgl@bgdev.pl
+> 
+> Best regards,
+> Mike
+> 
 
---6ml3nrfyv2c4gred
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Sat, May 19, 2018 at 08:31:16PM +0200, Jernej Skrabec wrote:
-> TCON TOP main purpose is to configure whole display pipeline. It
-> determines relationships between mixers and TCONs, selects source TCON
-> for HDMI, muxes LCD and TV encoder GPIO output,
-
-I'm not sure you mean GPIO here, but rather pin?
-
-> selects TV encoder clock source and contains additional TV TCON and
-> DSI gates.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt      | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
-t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> index 3346c1e2a7a0..a099957ab62a 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> @@ -187,6 +187,26 @@ And on the A23, A31, A31s and A33, you need one more=
- clock line:
->     - 'lvds-alt': An alternative clock source, separate from the TCON cha=
-nnel 0
->                   clock, that can be used to drive the LVDS clock
-> =20
-> +TCON TOP
-> +--------
-> +
-> +TCON TOPs main purpose is to configure whole display pipeline. It determ=
-ines
-> +relationships between mixers and TCONs, selects source TCON for HDMI, mu=
-xes
-> +LCD and TV encoder GPIO output, selects TV encoder clock source and cont=
-ains
-> +additional TV TCON and DSI gates.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun8i-r40-tcon-top
-> +  - reg: base address and size of the memory-mapped region.
-> +  - clocks: phandle to the clocks feeding the TCON TOP
-> +    * bus: TCON TOP interface clock
-> +  - clock-names: clock name mentioned above
-> +  - resets: phandle to the reset line driving the DRC
-> +    * rst: TCON TOP reset line
-> +  - reset-names: reset name mentioned above
-> +  - #clock-cells : must contain 1
-> +
-
-I guess you should better describe the OF-graph endpoints, and the
-clocks output. Just using the binding additions here doesn't allow to
-get a clear idea of how the DT should look like.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---6ml3nrfyv2c4gred
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsCfOsACgkQ0rTAlCFN
-r3Tr2g//TSH3w+DxFk8kkj0BXT7kxlxYgUNAyh+wzKXYhv/akZEXRBYODGylh+hS
-aJLX45Eg+xHK6xGWS+u5sm4WboUgmxtMfxYnS06dFPtWWeMDFpDeN7JgdLMWSuh2
-GktruPv7EsOCre7IUVUhtGaXyouz6jHQA7glGXvXtf3WbJqAwQ+8gMonrT7p3xZP
-yh9oDtjtOvlV0cOv2fPMAU1WF63ly8AqCXFhuMmDHNR371sqoj2z/LZqCNjULC8E
-FV3APQ/YmZrMBeXEcRCPcg+LoapYKAtGlCuMCxflPKRX4NIzMDYjB7x9ZreKiDM7
-NpSL3bY/whrcmM+c3MnmzO4f7qO5bYLOxqmEP42WYilZybnATqYdt2EFr4QBI/zI
-WWP4IKLcSARHZ0/gJjJw7UrFUF01iEjL7BlyEPpv2KX1usl9jSOkTpNTDTJIf1nb
-mBKFdQYTr45zED44wcj30lieuhK4L6U3zOhCxvtp/1z6XzAX9eIxMdc9P1abXHJj
-op2wJzBTIw6kH7im4cXXEQ7XzqAbLKQn63rjcvyYlxDWpzI2WlAdBKRqIj3vVLgw
-/NKz0ClGx41W0aATVceOIWVBNLFf4XQ2qMqOQp//K35TFkBOk63MOwaOjCxYZ+Lk
-V6rRA1bYofnxBTMytXVbnJfDjwAAVeVrOITkQPDR4qPvJOY40xg=
-=W+4R
------END PGP SIGNATURE-----
-
---6ml3nrfyv2c4gred--
+Yes. In fact, this is what got Bartosz working on it in the first
+place. :-)
