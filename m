@@ -1,131 +1,40 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v6 4/6] ARM: dts: Renesas RZ/N1 SoC base device tree file
-Date: Tue, 22 May 2018 11:01:24 +0100
-Message-Id: <1526983321-41949-5-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1526983321-41949-1-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Wed, 30 May 2018 15:58:28 +0300
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: Applied "regulator: bd71837: BD71837 PMIC regulator driver" to
+ the regulator tree
+Message-ID: <20180530125828.GF13528@localhost.localdomain>
+References: <72e644d9855621ea8cfd7ec555e2da02403f21f6.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <E1fNysa-0006jU-41@debutante>
+ <20180530111425.GD13528@localhost.localdomain>
+ <20180530111714.GJ6920@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530111714.GJ6920@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds the Renesas RZ/N1D (Part #R9A06G032) SoC bare
-bone support.
+On Wed, May 30, 2018 at 12:17:14PM +0100, Mark Brown wrote:
+> On Wed, May 30, 2018 at 02:14:25PM +0300, Matti Vaittinen wrote:
+> 
+> > The patch 1/6 contains the header file
+> > include/linux/mfd/bd71837.h with bunch of definitions this patch is
+> > requiring.
+> 
+> Your driver won't actually get built until the MFD parts end up in the
+> same tree since the regulator driver depends on the MFD so there's no
+> problem, the code will just sit there and not cause any problems.
 
-This currently only handles generic parts (gic, architected timer)
-and a UART.
-For simplicity sake, this also relies on the bootloader to set the
-pinctrl and clocks.
+Oh, right. Thanks! So MFD and clk portions should go through the other
+trees then.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 86 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
-
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-new file mode 100644
-index 0000000..c7764c7
---- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/rzn1-clock.h>
-+
-+/ {
-+	compatible = "renesas,r9a06g032", "renesas,rzn1";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock RZN1_DIV_CA7>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+		};
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		clock: clocks@4000c000 {
-+			compatible = "renesas,r9a06g032-clocks",
-+					"renesas,rzn1-clocks";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&clock RZN1_CLK_UART0>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
--- 
-2.7.4
+Br,
+	Matti Vaittinen
