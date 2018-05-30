@@ -1,59 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:60602 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932116AbeE1Q5R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 May 2018 12:57:17 -0400
-Date: Mon, 28 May 2018 18:57:14 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Benjamin Lindqvist <benjamin.lindqvist@endian.se>
-Cc: Stefan Agner <stefan@agner.ch>, Dmitry Osipenko <digetx@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek =?UTF-8?B?VmHFoXV0?= <marek.vasut@gmail.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Lucas Stach <dev@lynxeye.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>, richard@nod.at,
-        Marcel Ziswiler <marcel@ziswiler.com>, krzk@kernel.org,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Mirza Krak <mirza.krak@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180528185714.0a33bdc7@bbrezillon>
-In-Reply-To: <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
-References: <20180527215442.14760-4-stefan@agner.ch>
-        <b9cfc23e-2434-fd90-ae2d-e51f28b16038@gmail.com>
-        <c4df253d318e7c268e8999d5f3bfcd0f@agner.ch>
-        <CAGefG56pyKd=rCjArVtvO1mnXzacrD+BW4_AkJSDRtw-2Gf3Nw@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>, Faiz Abbas <faiz_abbas@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+Date: Wed, 30 May 2018 18:15:42 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180530145047.GC5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 28 May 2018 18:41:26 +0200
-Benjamin Lindqvist <benjamin.lindqvist@endian.se> wrote:
-
-> Note that it's certainly possible to encode U-Boot and kernel with
-> RS[4] and still use RS[8] for the rootfs even if the boot rom doesn't
-> support it.
-
-Not if you want to read/write from/to the uboot partition from Linux.
-
-Per-partition ECC setup is not supported, so the only solutions we have
-right now are:
-1/ use the same ECC config as the one use by the bootrom
-2/ only access uboot partition in raw mode from Linux (that implies
-   generating images containing the ECC bytes so that they can be
-   flashed to the device in raw mode)
-3/ never access uboot partitions from Linux (not sure we want that)
-
-> This whole 'use-bootable-ecc-only' business seems a bit
-> overengineered.
+On 30/05/18 17:50, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+>> From: Lokesh Vutla <lokeshvutla@ti.com>
+>>
+>> Add MCAN hwmod data and register it for dra762 silicons.
+>>
+>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+>> ---
+>>   arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 32 +++++++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> index 62352d1e6361..a2cd7f865a60 100644
+>> --- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> +++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+>> @@ -1355,6 +1355,29 @@ static struct omap_hwmod dra7xx_mailbox13_hwmod = {
+>>   	},
+>>   };
+>>   
+>> +/*
+>> + * 'mcan' class
+>> + *
+>> + */
+>> +static struct omap_hwmod_class dra76x_mcan_hwmod_class = {
+>> +	.name	= "mcan",
+>> +};
+>> +
+>> +/* mcan */
+>> +static struct omap_hwmod dra76x_mcan_hwmod = {
+>> +	.name		= "mcan",
+>> +	.class		= &dra76x_mcan_hwmod_class,
+>> +	.clkdm_name	= "wkupaon_clkdm",
+>> +	.main_clk	= "mcan_clk",
+>> +	.prcm = {
+>> +		.omap4 = {
+>> +			.clkctrl_offs = DRA7XX_CM_WKUPAON_ADC_CLKCTRL_OFFSET,
+>> +			.context_offs = DRA7XX_RM_WKUPAON_ADC_CONTEXT_OFFSET,
+>> +			.modulemode   = MODULEMODE_SWCTRL,
+>> +		},
+>> +	},
+>> +};
 > 
+> You should be now able to leave out at least the clkctrl_offs and modulemode
+> here. Please also check if leaving out clkdm_name and main_clk now works :)
+> 
+>> @@ -3818,6 +3841,14 @@ static struct omap_hwmod_ocp_if dra7xx_l4_per2__epwmss2 = {
+>>   	.user		= OCP_USER_MPU,
+>>   };
+>>   
+>> +/* l3_main_1 -> mcan */
+>> +static struct omap_hwmod_ocp_if dra76x_l3_main_1__mcan = {
+>> +	.master		= &dra7xx_l3_main_1_hwmod,
+>> +	.slave		= &dra76x_mcan_hwmod,
+>> +	.clk		= "l3_iclk_div",
+>> +	.user		= OCP_USER_MPU | OCP_USER_SDMA,
+>> +};
+> 
+> I think this we still need though for the clk. Tero, do you have any comments
+> on what all clocks can now be left out?
 
-Hm, I don't find it over-engineered.
+For the OCP if part, I think that is still needed until we switch over 
+to full sysc driver. clkctrl_offs you probably also need because that is 
+used for mapping the omap_hwmod against a specific clkctrl clock. Those 
+can be only removed once we are done with hwmod (or figure out some 
+other way to assign the clkctrl clock to a hwmod.)
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
