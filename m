@@ -1,48 +1,57 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, Michael Trimarchi <michael@amarulasolutions.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/26] drm/sun4i: Add support for multiple DW HDMI PHY clock parents
-Date: Fri, 18 May 2018 17:34:48 +0200
-Message-ID: <3855913.NIurOIk8c1@jernej-laptop>
-In-Reply-To: <20180518152651.lfymc3kj7npj5tww@flea>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com> <4909574.Q3IFWM0xt6@jernej-laptop> <20180518152651.lfymc3kj7npj5tww@flea>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:60855 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751191AbeE3Pms (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 11:42:48 -0400
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>
+CC: Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+Date: Wed, 30 May 2018 18:41:59 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180530152825.GG5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 30/05/18 18:28, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+>> For the OCP if part, I think that is still needed until we switch over to
+>> full sysc driver. clkctrl_offs you probably also need because that is used
+>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+>> only removed once we are done with hwmod (or figure out some other way to
+>> assign the clkctrl clock to a hwmod.)
+> 
+> Hmm might be worth testing. I thought your commit 70f05be32133
+> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+> already parses the clkctrl from dts?
 
-Dne petek, 18. maj 2018 ob 17:26:51 CEST je Maxime Ripard napisal(a):
-> On Fri, May 18, 2018 at 04:46:41PM +0200, Jernej =C5=A0krabec wrote:
-> > > And this is a bit sloppy, since if phy_clk_num =3D=3D 3, you won't tr=
-y to
-> > > lookup pll-2 either.
-> >=20
-> > It is highly unlikely this will be higher than 2, at least for this HDMI
-> > PHY, since it has only 1 bit reserved for parent selection. But since I
-> > have to fix it, I'll add ">=3D 2"
->=20
-> If we're only going to have two parents at most, ever, why don't we
-> had just a single other boolean. This would be less intrusive, and we
-> wouldn't have to check for those corner cases.
+It maps the clkctrl clock to be used by hwmod, if those are available. 
+We didn't add any specific clock entries to DT for mapping the actual 
+clkctrl clock without the hwmod_data hints yet though, as that was 
+deemed temporary solution only due to transition to interconnect driver. 
+I.e., you would need something like this in DT for every device node:
 
-That works for me too. And since it's only the code, it can always be rewor=
-ked=20
-if there is the need.
+&uart3 {
+   clocks = <l4per_clkctrl UART3_CLK 0>;
+   clock-names = "clkctrl";
+};
 
-Best regards,
-Jernej
+... which is currently not present.
 
->=20
-> > BTW, I'll resend fixed version of this patch for my R40 HDMI series, si=
-nce
-> > there is nothing to hold it back, unlike for this.
->=20
-> Awesome, thanks!
-> Maxime
->=20
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+Alternatively you could rename the main_clk in the hwmod_data to point 
+towards the clkctrl clock, but again, that would be a temporary solution 
+only.
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
