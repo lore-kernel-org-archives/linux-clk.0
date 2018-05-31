@@ -1,104 +1,74 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v7 04/10] firmware: xilinx: Add query data API
-Date: Wed, 30 May 2018 13:55:19 -0700
-Message-ID: <1527713725-1086-5-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
-References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:43992 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeEaEGl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 00:06:41 -0400
+Date: Wed, 30 May 2018 23:06:38 -0500
+From: Rob Herring <robh@kernel.org>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, bcousson@baylibre.com, tony@atomide.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180531040638.GA26751@rob-hp-laptop>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530141133.3711-6-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
+> The ti-sysc driver provides support for manipulating the idlemodes
+> and interconnect level resets.
+> 
+> Add the generic interconnect target module node for MCAN to support
+> the same.
+> 
+> CC: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  arch/arm/boot/dts/dra76x.dtsi | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+> index bfc82636999c..57b8dc0fe719 100644
+> --- a/arch/arm/boot/dts/dra76x.dtsi
+> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> @@ -11,6 +11,25 @@
+>  / {
+>  	compatible = "ti,dra762", "ti,dra7";
+>  
+> +	ocp {
+> +
+> +		target-module@0x42c00000 {
 
-Add ZynqMP firmware query data API to query platform
-specific information(clocks, pins) from firmware.
+Build your dtb with W=1 and fix warnings you add (drop '0x').
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+This is a CAN bus controller? If so, then use 'can' for node name.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 34c5ad5..86d9bb8 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
- 				   arg1, arg2, out);
- }
- 
-+/**
-+ * zynqmp_pm_query_data() - Get query data from firmware
-+ * @qdata:	Variable to the zynqmp_pm_query_data structure
-+ * @out:	Returned output value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				   qdata.arg2, qdata.arg3, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-+	.query_data = zynqmp_pm_query_data,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 2eec6e7..354385d 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -35,6 +35,7 @@
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
-+	PM_QUERY_DATA,
- };
- 
- /* PMU-FW return status codes */
-@@ -48,9 +49,28 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_query_id {
-+	PM_QID_INVALID,
-+};
-+
-+/**
-+ * struct zynqmp_pm_query_data - PM query data structure
-+ * @qid:	query ID
-+ * @arg1:	Argument 1 of query data
-+ * @arg2:	Argument 2 of query data
-+ * @arg3:	Argument 3 of query data
-+ */
-+struct zynqmp_pm_query_data {
-+	u32 qid;
-+	u32 arg1;
-+	u32 arg2;
-+	u32 arg3;
-+};
-+
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
-+	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+> +			compatible = "ti,sysc-dra7-mcan";
+> +			ranges = <0x0 0x42c00000 0x2000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			reg = <0x42c01900 0x4>,
+> +			      <0x42c01904 0x4>,
+> +			      <0x42c01908 0x4>;
+> +			reg-names = "rev", "sysc", "syss";
+> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
+> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
+> +			ti,syss-mask = <1>;
+> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+> +			clock-names = "fck";
+> +		};
+> +	};
+> +
+>  };
+>  
+>  /* MCAN interrupts are hard-wired to irqs 67, 68 */
+> -- 
+> 2.17.0
+> 
