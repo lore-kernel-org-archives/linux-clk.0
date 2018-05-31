@@ -1,169 +1,96 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/6] clk: meson: add triple phase clock driver
-Date: Tue, 22 May 2018 18:34:54 +0200
-Message-Id: <20180522163457.13834-4-jbrunet@baylibre.com>
-In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
-References: <20180522163457.13834-1-jbrunet@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33866 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932475AbeEaA6a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 20:58:30 -0400
+Date: Wed, 30 May 2018 19:58:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
+        boris.brezillon@bootlin.com, alexandre.belloni@bootlin.com,
+        broonie@kernel.org, Cristian.Birsan@microchip.com
+Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+Message-ID: <20180531005827.GA17203@rob-hp-laptop>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a driver to control the output of the sample clock generator found
-in the axg audio clock controller.
+On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
+> The I2S mux clock can be used to select the I2S input clock. The
+> available parents are the peripheral and the generated clocks.
+> 
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> ---
+>  .../devicetree/bindings/clock/at91-clock.txt       | 34 ++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+> index 51c259a..1c46b3c 100644
+> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+> @@ -90,6 +90,8 @@ Required properties:
+>  	"atmel,sama5d2-clk-audio-pll-pmc"
+>  		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+>  		and can be used by peripheral clock or generic clock
+> +	"atmel,sama5d2-clk-i2s-mux":
+> +		at91 I2S clock source selection
 
-The goal of this driver is to coherently control the phase provided to
-the different element using the sample clock generator. This simplify
-the usage of the sample clock generator a lot, without comprising the
-ability of the SoC.
+Is this boolean or takes some values. If latter, what are valid values?
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/Kconfig        |  5 +++
- drivers/clk/meson/Makefile       |  1 +
- drivers/clk/meson/clk-triphase.c | 68 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc-audio.h   | 20 ++++++++++++
- 4 files changed, 94 insertions(+)
- create mode 100644 drivers/clk/meson/clk-triphase.c
- create mode 100644 drivers/clk/meson/clkc-audio.h
+>  
+>  Required properties for SCKC node:
+>  - reg : defines the IO memory reserved for the SCKC.
+> @@ -507,3 +509,35 @@ For example:
+>  			atmel,clk-output-range = <0 83000000>;
+>  		};
+>  	};
+> +
+> +Required properties for I2S mux clocks:
+> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
+> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
+> +- name: device tree node describing a specific mux clock.
+> +	* #clock-cells : from common clock binding; shall be set to 0.
+> +	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
+> +	  peripheral and generated clock; the first phandle shall belong to the
+> +	  peripheral clock and the second one shall belong to the generated
+> +	  clock; "clock-indices" property can be user to specify
+> +	  the correct order.
+> +	* reg: I2S bus id of the corresponding mux clock.
+> +	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
+> +
+> +For example:
+> +	i2s_clkmux {
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 9d00809f07fc..9ad95966aa3d 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -3,6 +3,11 @@ config COMMON_CLK_AMLOGIC
- 	depends on ARCH_MESON || COMPILE_TEST
- 	select COMMON_CLK_REGMAP_MESON
- 
-+config COMMON_CLK_AMLOGIC_AUDIO
-+	bool
-+	depends on ARCH_MESON || COMPILE_TEST
-+	select COMMON_CLK_AMLOGIC
-+
- config COMMON_CLK_MESON_AO
- 	bool
- 	depends on OF
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 162e4a6f5c55..74ec070b0974 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,6 +4,7 @@
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
-diff --git a/drivers/clk/meson/clk-triphase.c b/drivers/clk/meson/clk-triphase.c
-new file mode 100644
-index 000000000000..4a59936251e5
---- /dev/null
-+++ b/drivers/clk/meson/clk-triphase.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc-audio.h"
-+
-+/*
-+ * This is a special clock for the audio controller.
-+ * The phase of mst_sclk clock output can be controlled independently
-+ * for the outside world (ph0), the tdmout (ph1) and tdmin (ph2).
-+ * Controlling these 3 phases as just one makes things simpler and
-+ * give the same clock view to all the element on the i2s bus.
-+ * If necessary, we can still control the phase in the tdm block
-+ * which makes these independent control redundant.
-+ */
-+static inline struct meson_clk_triphase_data *
-+meson_clk_triphase_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_triphase_data *)clk->data;
-+}
-+
-+static void meson_clk_triphase_sync(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-+	unsigned int val;
-+
-+	/* Get phase 0 and sync it to phase 1 and 2 */
-+	val = meson_parm_read(clk->map, &tph->ph0);
-+	meson_parm_write(clk->map, &tph->ph1, val);
-+	meson_parm_write(clk->map, &tph->ph2, val);
-+}
-+
-+static int meson_clk_triphase_get_phase(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-+	unsigned int val;
-+
-+	/* Phase are in sync, reading phase 0 is enough */
-+	val = meson_parm_read(clk->map, &tph->ph0);
-+
-+	return meson_clk_degrees_from_val(val, tph->ph0.width);
-+}
-+
-+static int meson_clk_triphase_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
-+	unsigned int val;
-+
-+	val = meson_clk_degrees_to_val(degrees, tph->ph0.width);
-+	meson_parm_write(clk->map, &tph->ph0, val);
-+	meson_parm_write(clk->map, &tph->ph1, val);
-+	meson_parm_write(clk->map, &tph->ph2, val);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops meson_clk_triphase_ops = {
-+	.init		= meson_clk_triphase_sync,
-+	.get_phase	= meson_clk_triphase_get_phase,
-+	.set_phase	= meson_clk_triphase_set_phase,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_triphase_ops);
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-new file mode 100644
-index 000000000000..286ff1201258
---- /dev/null
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+#ifndef __MESON_CLKC_AUDIO_H
-+#define __MESON_CLKC_AUDIO_H
-+
-+#include "clkc.h"
-+
-+struct meson_clk_triphase_data {
-+	struct parm ph0;
-+	struct parm ph1;
-+	struct parm ph2;
-+};
-+
-+extern const struct clk_ops meson_clk_triphase_ops;
-+
-+#endif /* __MESON_CLKC_AUDIO_H */
--- 
-2.14.3
+What is this a child of?
+
+> +		compatible = "atmel,sama5d2-clk-i2s-mux";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+
+How do you address this block? My guess is you don't because it is just 
+part of some other block and you are just creating this node to 
+instantiate a driver. Just make the node for the actual h/w block a 
+clock provider and define the clock ids (0 and 1).
+
+> +
+> +		i2s0muxck: i2s0_muxclk {
+> +			clocks = <&i2s0_clk>, <&i2s0_gclk>;
+> +			#clock-cells = <0>;
+> +			reg = <0>;
+> +		};
+> +
+> +		i2s1muxck: i2s1_muxclk {
+> +			clocks = <&i2s1_clk>, <&i2s1_gclk>;
+> +			#clock-cells = <0>;
+> +			reg = <1>;
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
