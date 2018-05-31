@@ -1,177 +1,71 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-Subject: Re: [PATCH] clk: x86: Add ST oscout platform clock
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com,
- Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- Dave Airlie <airlied@redhat.com>, Shaoyun Liu <Shaoyun.Liu@amd.com>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1525072055-17898-1-git-send-email-akshu.agrawal@amd.com>
- <152521188500.138124.10561048787941050422@swboyd.mtv.corp.google.com>
-From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Message-ID: <b8fc236e-032b-7806-e44c-0bbe9faefc66@amd.com>
-Date: Thu, 3 May 2018 13:45:05 +0530
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 31 May 2018 08:26:23 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, bcousson@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+Message-ID: <20180531152623.GN5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com>
+ <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+ <20180530155448.GH5705@atomide.com>
+ <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <152521188500.138124.10561048787941050422@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Return-Path: Akshu.Agrawal@amd.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 5/2/2018 3:28 AM, Stephen Boyd wrote:
-> Quoting Akshu Agrawal (2018-04-30 00:06:53)
->> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
->> index 1367afb..f7ebae1 100644
->> --- a/drivers/clk/x86/Makefile
->> +++ b/drivers/clk/x86/Makefile
->> @@ -1,3 +1,4 @@
->>   clk-x86-lpss-objs              := clk-lpt.o
->>   obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
->>   obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
->> +obj-$(CONFIG_X86)              += clk-st.o
+* Tero Kristo <t-kristo@ti.com> [180531 06:18]:
+> On 30/05/18 18:54, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+> > > On 30/05/18 18:28, Tony Lindgren wrote:
+> > > > * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+> > > > > For the OCP if part, I think that is still needed until we switch over to
+> > > > > full sysc driver. clkctrl_offs you probably also need because that is used
+> > > > > for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+> > > > > only removed once we are done with hwmod (or figure out some other way to
+> > > > > assign the clkctrl clock to a hwmod.)
+> > > > 
+> > > > Hmm might be worth testing. I thought your commit 70f05be32133
+> > > > ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+> > > > already parses the clkctrl from dts?
+> > > 
+> > > It maps the clkctrl clock to be used by hwmod, if those are available. We
+> > > didn't add any specific clock entries to DT for mapping the actual clkctrl
+> > > clock without the hwmod_data hints yet though, as that was deemed temporary
+> > > solution only due to transition to interconnect driver. I.e., you would need
+> > > something like this in DT for every device node:
+> > > 
+> > > &uart3 {
+> > >    clocks = <l4per_clkctrl UART3_CLK 0>;
+> > >    clock-names = "clkctrl";
+> > > };
+> > > 
+> > > ... which is currently not present.
+> > 
+> > Hmm is that not the "fck" clkctrl clock we have already in
+> > the dts files for the interconnect target modules?
 > 
-> No desire to make a Kconfig for this driver so it isn't included all the
-> time on x86 devices that don't have this hardware?
+> Oh okay, yeah, we could parse that one, but currently it is not done, and is
+> not present for everything either I believe.
 > 
-
-Accepted, will use AMD specific config.
-
->> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
->> new file mode 100644
->> index 0000000..6ac0dc5
->> --- /dev/null
->> +++ b/drivers/clk/x86/clk-st.c
->> @@ -0,0 +1,80 @@
->> +/*
->> + * clock framework for AMD Stoney based clocks
->> + *
->> + * Copyright 2018 Advanced Micro Devices, Inc.
->> + *
->> + * Permission is hereby granted, free of charge, to any person obtaining a
->> + * copy of this software and associated documentation files (the "Software"),
->> + * to deal in the Software without restriction, including without limitation
->> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
->> + * and/or sell copies of the Software, and to permit persons to whom the
->> + * Software is furnished to do so, subject to the following conditions:
->> + *
->> + * The above copyright notice and this permission notice shall be included in
->> + * all copies or substantial portions of the Software.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
->> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
->> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
->> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + * OTHER DEALINGS IN THE SOFTWARE.
+> > We can also use pdata callbacks to pass the clock node if
+> > needed. But I guess I don't quite still understand what we
+> > are missing :)
 > 
-> Can you use the SPDX tags here?
-> 
+> So, what is missing is the glue logic only from the hwmod codebase. Right
+> now this is not supported but should be relatively trivial thing to add if
+> we really want to do this.
 
-Accepted. Will add in v2.
+OK let's think about this a bit for v4.19 then.
 
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_data/clk-st.h>
->> +#include <linux/platform_device.h>
->> +
->> +/* Clock Driving Strength 2 register */
->> +#define CLKDRVSTR2     0x28
->> +/* Clock Control 1 register */
->> +#define MISCCLKCNTL1   0x40
->> +/* Auxiliary clock1 enable bit */
->> +#define OSCCLKENB      2
->> +/* 25Mhz auxiliary output clock freq bit */
->> +#define OSCOUT1CLK25MHZ        16
->> +
->> +static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
->> +
->> +static int st_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct st_clk_data *st_data;
->> +       struct clk *clk_48m;
->> +       struct clk *clk_25m;
->> +       struct clk *clk_oscout1_mux;
->> +       struct clk *clk_oscout1;
->> +
->> +       st_data = dev_get_platdata(&pdev->dev);
->> +       if (!st_data || !st_data->base)
->> +               return -EINVAL;
->> +
->> +       clk_48m = clk_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
->> +                                         48000000);
->> +       clk_25m = clk_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
->> +                                         25000000);
->> +
->> +       clk_oscout1_mux = clk_register_mux(NULL, "oscout1_mux",
->> +               clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
->> +               0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
->> +
->> +       clk_set_parent(clk_oscout1_mux, clk_25m);
->> +
->> +       clk_oscout1 = clk_register_gate(NULL, "oscout1", "oscout1_mux",
->> +               0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
->> +               CLK_GATE_SET_TO_DISABLE, NULL);
->> +
->> +       clk_register_clkdev(clk_oscout1, "oscout1", NULL);
-> 
-> Can you use the clk_hw registration and clkdev APIs? It would mean that
-> clk_set_parent() call up above would still be needed but I guess that's
-> OK. We don't currently have a way for non-DT based drivers to configure
-> the parents of a clk when it's registered.
-> 
+Regards,
 
-Accepted, Changing in v2 to use clk_hw_register_.
-
->> +
->> +       return 0;
->> +}
->> +
->> diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
->> new file mode 100644
->> index 0000000..5ede980
->> --- /dev/null
->> +++ b/include/linux/platform_data/clk-st.h
->> @@ -0,0 +1,32 @@
->> +/*
->> + * clock framework for AMD Stoney based clock
->> + *
->> + * Copyright 2018 Advanced Micro Devices, Inc.
->> + *
->> + * Permission is hereby granted, free of charge, to any person obtaining a
->> + * copy of this software and associated documentation files (the "Software"),
->> + * to deal in the Software without restriction, including without limitation
->> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
->> + * and/or sell copies of the Software, and to permit persons to whom the
->> + * Software is furnished to do so, subject to the following conditions:
->> + *
->> + * The above copyright notice and this permission notice shall be included in
->> + * all copies or substantial portions of the Software.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
->> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
->> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
->> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
->> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
->> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
->> + * OTHER DEALINGS IN THE SOFTWARE.
->> + */
->> +
->> +#ifndef __CLK_ST_H
->> +#define __CLK_ST_H
->> +
->> +struct st_clk_data {
->> +       void __iomem *base;
-> 
-> Can you include compiler.h in this file for the __iomem usage?
-> 
-
-Accepted. Will add in v2.
-
-Thanks,
-Akshu
+Tony
