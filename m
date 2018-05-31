@@ -1,109 +1,68 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-Subject: Re: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Cc: "djkurtz@chromium.org" <djkurtz@chromium.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "Koenig, Christian" <Christian.Koenig@amd.com>,
- "airlied@redhat.com" <airlied@redhat.com>, "Liu, Shaoyun"
- <Shaoyun.Liu@amd.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "lenb@kernel.org"
- <lenb@kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-References: <1525688013-9928-1-git-send-email-akshu.agrawal@amd.com>
- <1525688013-9928-2-git-send-email-akshu.agrawal@amd.com>
- <BN6PR12MB1809A66A78024F2E519A1A34F79B0@BN6PR12MB1809.namprd12.prod.outlook.com>
- <82d294fc-d108-a32a-1ada-2763f40dac01@amd.com>
- <BN6PR12MB18094F5327A8DA2F560383E6F79A0@BN6PR12MB1809.namprd12.prod.outlook.com>
-From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
-Message-ID: <1a90185b-cec7-f9aa-c273-0f0f5f381b82@amd.com>
-Date: Wed, 9 May 2018 10:17:07 +0530
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com> <20180530150402.GE5705@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
+Date: Thu, 31 May 2018 15:51:04 +0530
 MIME-Version: 1.0
-In-Reply-To: <BN6PR12MB18094F5327A8DA2F560383E6F79A0@BN6PR12MB1809.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Return-Path: Akshu.Agrawal@amd.com
+In-Reply-To: <20180530150402.GE5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
+On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180530 14:12]:
+>> The ti-sysc driver provides support for manipulating the idlemodes
+>> and interconnect level resets.
+> ...
+>> --- a/arch/arm/boot/dts/dra76x.dtsi
+>> +++ b/arch/arm/boot/dts/dra76x.dtsi
+>> @@ -11,6 +11,25 @@
+>>  / {
+>>  	compatible = "ti,dra762", "ti,dra7";
+>>  
+>> +	ocp {
+>> +
+>> +		target-module@0x42c00000 {
+>> +			compatible = "ti,sysc-dra7-mcan";
+>> +			ranges = <0x0 0x42c00000 0x2000>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <1>;
+>> +			reg = <0x42c01900 0x4>,
+>> +			      <0x42c01904 0x4>,
+>> +			      <0x42c01908 0x4>;
+>> +			reg-names = "rev", "sysc", "syss";
+>> +			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
+>> +					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
+>> +			ti,syss-mask = <1>;
+>> +			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+>> +			clock-names = "fck";
+>> +		};
+>> +	};
+>> +
+>>  };
+> 
+> Looks good to me except I think the reset won't do anything currently
+> with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
+> 
+> Can you please check? It might be worth adding the reset function to
+> ti-sysc.c for non "ti,hwmods" case and that just might remove the
+> need for any hwmod code for this module.
+> 
 
-On 5/8/2018 9:08 PM, Deucher, Alexander wrote:
->> -----Original Message-----
->> From: Agrawal, Akshu
->> Sent: Tuesday, May 8, 2018 12:04 AM
->> To: Deucher, Alexander <Alexander.Deucher@amd.com>
->> Cc: djkurtz@chromium.org; mturquette@baylibre.com; sboyd@kernel.org;
->> Koenig, Christian <Christian.Koenig@amd.com>; airlied@redhat.com; Liu,
->> Shaoyun <Shaoyun.Liu@amd.com>; linux-kernel@vger.kernel.org; linux-
->> clk@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org; linux-
->> acpi@vger.kernel.org
->> Subject: Re: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
->>
->>
->>
->> On 5/8/2018 3:14 AM, Deucher, Alexander wrote:
->>>> -----Original Message-----
->>>> From: Agrawal, Akshu
->>>> Sent: Monday, May 7, 2018 6:14 AM
->>>> Cc: djkurtz@chromium.org; Agrawal, Akshu <Akshu.Agrawal@amd.com>;
->>>> Deucher, Alexander <Alexander.Deucher@amd.com>;
->>>> mturquette@baylibre.com; sboyd@kernel.org; Koenig, Christian
->>>> <Christian.Koenig@amd.com>; airlied@redhat.com; Liu, Shaoyun
->>>> <Shaoyun.Liu@amd.com>; linux-kernel@vger.kernel.org; linux-
->>>> clk@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org; linux-
->>>> acpi@vger.kernel.org
->>>> Subject: [PATCH v4 1/2] clk: x86: Add ST oscout platform clock
->>>>
->>>> Stoney SoC provides oscout clock. This clock can support 25Mhz and
->>>> 48Mhz of frequency.
->>>> The clock is available for general system use.
->>>>
->>>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
->>>> ---
->>>> v2: config change, added SPDX tag and used clk_hw_register_.
->>>> v3: Fix kbuild warning for checking of NULL pointer
->>>> v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
->>>>  drivers/clk/x86/Makefile             |  3 +-
->>>>  drivers/clk/x86/clk-st.c             | 85
->>>> ++++++++++++++++++++++++++++++++++++
->>>>  include/linux/platform_data/clk-st.h | 17 ++++++++
->>>>  3 files changed, 104 insertions(+), 1 deletion(-)  create mode
->>>> 100644 drivers/clk/x86/clk-st.c  create mode 100644
->>>> include/linux/platform_data/clk-st.h
->>>>
->>>> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
->>>> index 1367afb..00303bc 100644
->>>> --- a/drivers/clk/x86/Makefile
->>>> +++ b/drivers/clk/x86/Makefile
->>>> @@ -1,3 +1,4 @@
->>>> +obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
->>>> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
->>>>  clk-x86-lpss-objs		:= clk-lpt.o
->>>>  obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
->>>> -obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
->>>> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c new
->>>> file mode
->>>> 100644 index 0000000..8a7795c
->>>> --- /dev/null
->>>> +++ b/drivers/clk/x86/clk-st.c
->>>> @@ -0,0 +1,85 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>
->>> Should this be MIT?  The original license was MIT.
->>>
->>> Alex
->>>
->>
->> We are adding SPDX tag, while license remains same GPL-2.0
->>
->> What I have read is this is "to provide license identifiers inside the source
->> code that could be easily parsed by machines and would allow checking for
->> license compliance of an open source project easier."
-> 
-> My point as just that the original license on the file that you first sent out was MIT so the SPDX tag should be MIT rather than GPL.  E.g.,
-> SPDX-License-Identifier: MIT
-> 
-Oh right it should be MIT, will change it.
+If I understand correctly, this involves adding a (*reset_module) in
+ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
+similar to ti_sysc_idle_module(). Right?
 
 Thanks,
-Akshu
+Faiz
