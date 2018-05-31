@@ -1,87 +1,65 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Fri, 18 May 2018 12:39:08 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-Message-ID: <20180518103908.GF5312@ulmo>
-References: <20180508162607.3500-1-digetx@gmail.com>
- <20180508162607.3500-3-digetx@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z+pzSjdB7cqptWpS"
-In-Reply-To: <20180508162607.3500-3-digetx@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Rob Herring <robh@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030129.GA16122@rob-hp-laptop>
+ <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+ <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+Message-ID: <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+Date: Thu, 31 May 2018 07:57:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Rob Herring (2018-05-31 07:07:24)
+> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+> >> Hello Rob,
+> >>
+> >> Thanks for the review!
+> >>
+> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> >> > > + - interrupts            : The interrupt line the device is conne=
+cted to.
+> >> > > + - interrupt-controller  : Marks the device node as an interrupt =
+controller.
+> >> >
+> >> > What sub blocks have interrupts?
+> >>
+> >> The PMIC can generate interrupts from events which cause it to reset.
+> >> Eg, irq from watchdog line change, power button pushes, reset request
+> >> via register interface etc. I don't know any generic handling for these
+> >> interrupts. In "normal" use-case this PMIC is powering the processor
+> >> where driver is running and I do not see reasonable handling because
+> >> power-reset is going to follow the irq.
+> >>
+> >
+> > Oh, but when reading this I understand that the interrupt-controller
+> > property should at least be optional.
+> =
 
---z+pzSjdB7cqptWpS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I don't think it should. The h/w either has an interrupt controller or
+> it doesn't. My concern is you added it but nothing uses it which tells
+> me your binding is incomplete. I'd rather see complete bindings even
+> if you don't have drivers. For example, as-is, there's not really any
+> need for the clocks child node. You can just make the parent a clock
+> provider. But we need a complete picture of the h/w to make that
+> determination.
+> =
 
-On Tue, May 08, 2018 at 07:26:04PM +0300, Dmitry Osipenko wrote:
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-by: Marc Dietrich <marvin24@gmx.de>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->=20
-> Changelog:
->=20
-> v3:
-> 	- No change.
->=20
-> v2:
-> 	- See changelog of "Restore ULPI USB on Tegra20" v2 series.
->=20
->  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
->  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
->  3 files changed, 40 insertions(+), 12 deletions(-)
 
-Linus,
-
-were you going to pick this up for v4.18? There's a runtime dependency
-on this from some clock patches that I'd like to get into v4.18.
-
-I see I never gave my Acked-by on this particular patch, so here goes:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---z+pzSjdB7cqptWpS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr+rUwACgkQ3SOs138+
-s6F4Zg/+PiE7355bzPMINxgk/9Q+qcq1ME2JselWa8MQtM5FT5RcXkLY5OlkNk9+
-Nf+1BlqOI2cEzUQK7OfB0Qi/Ev0eDaEcLyVt+R41QUkd5QH5Cf+k5/7Xc1BS6E3q
-qQjPgLPk/DGBUl3Rv97Z08x6JZsTfw/Qzubz1l9l9baCIPSrpBq6ou7T2zbG/6B8
-bh7qYQlZFieFPuFQGqKw6l28mNBqV6HWTsunBSjpbLISs/LmXSKkjEQvYuUn3PIx
-HGFoMOtHBlbCQ93/kjL/6+ZjELSJhYgcJ+x4Fy6FWLMVWkUkk3/wjitzYN3ZyS/R
-MwWfhDBuT3fuaPiFQj8ZrD+B8lCiKm5rWBeao0g8fTNzSIGfXFqCC0byS8MzN+CV
-96BbSB8zRww4+TTAIRIVXIExqsBtHmQK9b/IjOIEPQ20UD3nWiIp0B9jBgWTOrUT
-wvncljX+VoZgYWAHUhZnp5ylC5KpPv8u8PyI323DICI1PkIVi4C6YYWSgUw8oIMZ
-+t1TYLeJlcPPZ0aRTjX5kda6ivwULV/lsbebKA8cMxfWm2ufb70Bqc6Gp3I+Inzz
-aVph7jGViUNZnWWt8AO9XvXDka+Otrk8YzLn6F2pjnHoL3Dk+UykUx6kDKSTDZWT
-ep17CM2hrXFXBSVbZ1mjT9rILYKfdmwf7A2X5NLbUDKL6ATD1RU=
-=Or8C
------END PGP SIGNATURE-----
-
---z+pzSjdB7cqptWpS--
+I don't see a reason to have the clk subnode either.
