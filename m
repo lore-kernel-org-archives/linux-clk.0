@@ -1,59 +1,48 @@
-Return-Path: <gilad@benyossef.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-To: Simon Horman <horms@verge.net.au>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH v2 3/5] crypto: ccree: silence debug prints
-Date: Thu, 24 May 2018 15:19:08 +0100
-Message-Id: <1527171551-21979-4-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [GIT PULL] clk: tegra: Changes for v4.18-rc1
+Date: Thu, 31 May 2018 10:45:31 +0200
+Message-Id: <20180531084531.25421-1-thierry.reding@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The cache parameter register configuration was being too verbose.
-Use dev_dbg() to only provide the information if needed.
+Hi Michael, Stephen,
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- drivers/crypto/ccree/cc_driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index b266657..1e40e76 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -168,14 +168,14 @@ int init_cc_regs(struct cc_drvdata *drvdata, bool is_probe)
- 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
- 
- 	if (is_probe)
--		dev_info(dev, "Cache params previous: 0x%08X\n", val);
-+		dev_dbg(dev, "Cache params previous: 0x%08X\n", val);
- 
- 	cc_iowrite(drvdata, CC_REG(AXIM_CACHE_PARAMS), cache_params);
- 	val = cc_ioread(drvdata, CC_REG(AXIM_CACHE_PARAMS));
- 
- 	if (is_probe)
--		dev_info(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
--			 val, cache_params);
-+		dev_dbg(dev, "Cache params current: 0x%08X (expect: 0x%08X)\n",
-+			val, cache_params);
- 
- 	return 0;
- }
--- 
-2.7.4
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.18-clk
+
+for you to fetch changes up to 5d797111afe12e488e08432fd9b372fae2cc7e93:
+
+  clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20 (2018-05-18 12:35:28 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Changes for v4.18-rc1
+
+Contains a proper implementation of the CDEV1/2 clocks on Tegra20.
+
+----------------------------------------------------------------
+Dmitry Osipenko (3):
+      clk: tegra20: Add DEV1/DEV2 OSC dividers
+      clk: tegra20: Correct parents of CDEV1/2 clocks
+      clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+
+ drivers/clk/tegra/clk-tegra114.c |  2 +-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  | 52 ++++++++++++++++++++++++++++++++++++----
+ drivers/clk/tegra/clk-tegra210.c |  2 +-
+ drivers/clk/tegra/clk-tegra30.c  |  2 +-
+ drivers/clk/tegra/clk.c          |  5 ++--
+ drivers/clk/tegra/clk.h          |  2 +-
+ 7 files changed, 55 insertions(+), 12 deletions(-)
