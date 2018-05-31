@@ -1,105 +1,47 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v6 04/14] clk: qcom: Add DT bindings for CPU clock driver for msm8996
-Date: Mon, 14 May 2018 16:11:50 +0300
-Message-Id: <1526303520-5843-5-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <gilad@benyossef.com>
+MIME-Version: 1.0
+In-Reply-To: <20180529161936.prhp4oikzamr6u3n@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-6-git-send-email-gilad@benyossef.com> <20180529161936.prhp4oikzamr6u3n@verge.net.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 31 May 2018 14:55:06 +0300
+Message-ID: <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
+On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
+>> Add bindings for CryptoCell instance in the SoC.
+>>
+>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> In so far as I can review the details of this (which is not much) this
+> looks fine to me. I am, however, a little unclear in when it should be
+> accepted.
 
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
+Since Herbert Xu ACKed the driver changes, I would say the only gating
+commit is Geert's CR clock patch.
+If that one is in, than I would say this one should go in as well.
 
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
+Thanks,
+Gilad
 
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
-
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-new file mode 100644
-index 0000000..8458783
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-@@ -0,0 +1,17 @@
-+Qualcomm CPUSS clock controller for Kryo CPUs
-+----------------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+
-+			"qcom,msm8996-apcc"
-+
-+- reg : shall contain base register location and length
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	kryocc: clock-controller@6400000 {
-+		compatible = "qcom,msm8996-apcc";
-+		reg = <0x6400000 0x90000>;
-+		#clock-cells = <1>;
-+	};
 -- 
-1.9.1
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
