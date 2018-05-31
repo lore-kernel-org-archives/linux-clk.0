@@ -1,69 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:35669 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEDPMJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 May 2018 11:12:09 -0400
-Date: Fri, 4 May 2018 17:12:06 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 6/7] arm64: allwinner: h6: add R_I2C controller
-Message-ID: <20180504151206.c6oi7vtaskg4sbys@flea>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-7-icenowy@aosc.io>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Thu, 31 May 2018 10:26:59 +0300
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v2 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <20180531072659.GI13528@localhost.localdomain>
+References: <20180528090003.GA8778@localhost.localdomain>
+ <20180529073958.GB4790@dell>
+ <20180529083541.GA13528@localhost.localdomain>
+ <20180530111649.GB8038@dell>
+ <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e4pavb2hql2yh5gb"
-In-Reply-To: <20180503183847.11046-7-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <152769382760.144038.10609724773770264610@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, May 30, 2018 at 08:23:47AM -0700, Stephen Boyd wrote:
+> Quoting Lee Jones (2018-05-30 04:16:49)
+> > On Tue, 29 May 2018, Matti Vaittinen wrote:
+> > 
+> > > Hello,
+> > > 
+> > > On Tue, May 29, 2018 at 08:39:58AM +0100, Lee Jones wrote:
+> > > > On Mon, 28 May 2018, Matti Vaittinen wrote:
+> > > > 
+> > > > > Patch series adding support for ROHM BD71837 PMIC.
+> > > > FYI, this patch-set is going to be difficult to manage since it was
+> > > > not sent 'threaded'.
+> > > > 
+> > > > If/when you send a subsequent version, could you please ensure you
+> > > > send the set threaded so the patches keep in relation to one another
+> > > > as they are reviewed?
+> > > 
+> > > Thanks for the guidance. I have not sent so many patches to community so
+> > > I am grateful also from all the practical tips =) Just one slight problem.
+> > > I have only seen emails being threaded when one is replying to an email.
+> > > So how should I send my patches in same thread? Just send first one and
+> > > then send subsequent patches as replies?
+> > > 
+> > > I just killed some unused definitions and one unused variable from the
+> > > code so I am about to send new version. I'll try doing that as a threaded
+> > > series and resend all the patches as v3.
+> > 
+> > You don't need to do this manually.
+> > 
+> > Just use `git send-email` with the correct arguments.
+> > 
+> 
+> I usually send with 'git send-email *.patch' so that git can do the
+> threading for me. Looks like these patches were sent with Mutt though,
+> so perhaps 'git format-patch | git imap-send' was used without the
+> --thread option on format-patch.
 
---e4pavb2hql2yh5gb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yep. I used git format-patch without the --thread and mutt -H for
+sending. Learned the --thread after Lee pointed out the threading and
+used it for further series. Thanks for the help!
 
-On Fri, May 04, 2018 at 02:38:46AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has a R_I2C controller wired to the PL0/PL1 pins, which
-> are used in the reference design to connect AXP805 PMIC.
->=20
-> Add support for it.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-
-Dropped the headers (that should have been in your previous patch to
-maintain the bisectability) and changed for indices, and applied.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---e4pavb2hql2yh5gb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrseEUACgkQ0rTAlCFN
-r3QUsQ//URVfSDc5Gz4bXmIK8/quSPewUaV8JdrK0TedXbHiHiEkCGsB6dJlbgQ9
-FiRMi24HjHn4/7y/7ohgS4guT3XqkCtHo2EZiNBh4yMouEJyj+hdxJ+EVWOo3yW1
-f6iWUEadO2MQcb+imqFUrKF2pEOv01wRuXB74p3IxuLP2zFbqVykjBzIa3ZDEmV1
-uUieZrCs5FCJ08Untop6G+mW3ajWZvmuhhrI7xt6+h4M8pqSEfuXwElkNEnwnWcf
-5BuVvYuJi0z/mNamFgYyCjF6YSEV3GllMt/Tw7eCPKEL30J+1Ct3lGk2DBWpCYWJ
-esaFElrKzlzWU/7mxZjyme2vE6fIXoOrwO6gXJSU+gcxd61+lBTjaIMpo3TakcyJ
-FNTlpeQ8x4cjaULRBfbm9PDsVFlaxxRtXztqMy9yN7nvZIm/9saEBxQLEUYQKvaA
-XF3nRubWdgUKC0EpBDup5jQEri4d2sJ6BWh5UxR3qNW9qOlZ9mprk7ttOUF5CiMK
-TSKcsqGUFz9S8zHL7AKD2CvjI5eC5rExuR8yXitkwUSCoFkJGQHZ0yqUful3b7PK
-aEvewHBBErow4Q3/kxlvNwx1DjE58+gTTHmEHG3LDfLQJxv7gptoaIjhPZ9l8I3h
-dTcaUCvuookEYUA5L6YDHwbk+03KZjpRXuUn+3gY74d3iY5Zxu4=
-=+Zz3
------END PGP SIGNATURE-----
-
---e4pavb2hql2yh5gb--
+Br,
+    Matti Vaittinen
