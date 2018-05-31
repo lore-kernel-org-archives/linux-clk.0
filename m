@@ -1,88 +1,87 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v7 03/10] firmware: xilinx: Add zynqmp IOCTL API for device control
-Date: Wed, 30 May 2018 13:55:18 -0700
-Message-ID: <1527713725-1086-4-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
-References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Sricharan R <sricharan@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
+ <20180524173926.GC14924@minitux>
+ <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
+ <152769571081.144038.4314499217001219157@swboyd.mtv.corp.google.com>
+ <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
+Message-ID: <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
+Date: Thu, 31 May 2018 00:41:37 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Quoting Sricharan R (2018-05-30 21:57:20)
+> Hi Stephen,
+> =
 
-Add ZynqMP firmware IOCTL API to control and configure
-devices like PLLs, SD, Gem, etc.
+> On 5/30/2018 9:25 PM, Stephen Boyd wrote:
+> > Quoting Sricharan R (2018-05-24 22:40:11)
+> >> Hi Bjorn,
+> >>
+> >> On 5/24/2018 11:09 PM, Bjorn Andersson wrote:
+> >>> On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
+> >>>
+> >>>> From: Stephen Boyd <sboyd@codeaurora.org>
+> >>>>
+> >>>> Krait CPUs have a handful of L2 cache controller registers that
+> >>>> live behind a cp15 based indirection register. First you program
+> >>>> the indirection register (l2cpselr) to point the L2 'window'
+> >>>> register (l2cpdr) at what you want to read/write.  Then you
+> >>>> read/write the 'window' register to do what you want. The
+> >>>> l2cpselr register is not banked per-cpu so we must lock around
+> >>>> accesses to it to prevent other CPUs from re-pointing l2cpdr
+> >>>> underneath us.
+> >>>>
+> >>>> Cc: Mark Rutland <mark.rutland@arm.com>
+> >>>> Cc: Russell King <linux@arm.linux.org.uk>
+> >>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> >>>
+> >>> This should have your signed-off-by here as well.
+> >>>
+> >>
+> >>  ok.
+> >>
+> >>> Apart from that:
+> >>>
+> >>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> >>>
+> >>
+> > =
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  2 ++
- 2 files changed, 22 insertions(+)
+> > Will these patches come around again? I'll do a quick sweep on them
+> > today but I expect them to be resent.
+> =
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 70e335a..34c5ad5 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -241,8 +241,28 @@ static int get_set_conduit_method(struct device_node *np)
- 	return 0;
- }
- 
-+/**
-+ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
-+ * @node_id:	Node ID of the device
-+ * @ioctl_id:	ID of the requested IOCTL
-+ * @arg1:	Argument 1 to requested IOCTL call
-+ * @arg2:	Argument 2 to requested IOCTL call
-+ * @out:	Returned output value
-+ *
-+ * This function calls IOCTL to firmware for device control and configuration.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-+			   u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
-+				   arg1, arg2, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
-+	.ioctl = zynqmp_pm_ioctl,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index cb63bed..2eec6e7 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -34,6 +34,7 @@
- 
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
-+	PM_IOCTL = 34,
- };
- 
- /* PMU-FW return status codes */
-@@ -49,6 +50,7 @@ enum pm_ret_status {
- 
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
-+	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+> Sure, i will have to resend them again, fixing couple of Bjorn's
+> minor comments. Will address your comments that you would give
+> as well along with that.
+> =
+
+
+Ok. One general comment is that it would be nice if the bindings for all
+the nodes that are introduced included 'clocks' properties and also
+maybe 'clock-names' properties for the clocks that are consumed by each
+node. Right now, we hide those details from DT and rely on the string
+names to hook the clk tree up for us. That sort of prevents us from
+moving away from string easily, so I would just throw the clocks into
+the binding right now and always have them there just in case we want to
+use the binding to figure out the hierarchy in the future.
+
+I've been thinking we need to do something similar for the gcc and other
+nodes for any clks they use, but I haven't gotten around to it.
+
+Otherwise the patches look mostly ok to me. Not sure I'll have any other
+comments.
