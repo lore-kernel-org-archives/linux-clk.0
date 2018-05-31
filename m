@@ -1,158 +1,305 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, Alexander.Deucher@amd.com, mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com, airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-Date: Tue, 15 May 2018 11:32:22 +0200
-Message-ID: <20362702.FCbsg9xPKv@aspire.rjw.lan>
-In-Reply-To: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com> <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 2/3] clk: bcm: Update and add Stingray clock entries
+Date: Wed, 30 May 2018 17:36:19 -0700
+Message-Id: <1527726980-11723-3-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
+References: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wednesday, May 9, 2018 11:59:00 AM CEST Akshu Agrawal wrote:
-> Stoney SoC provides oscout clock. This clock can support 25Mhz and
-> 48Mhz of frequency.
-> The clock is available for general system use.
-> 
-> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-I'm not sure if the Stephen Boyd's comments on one of the previous
-versions of this patch have been addressed.  Have they?
+Update and add Stingray clock definitions and tables so they match the
+binding document and the latest ASIC datasheet
 
-In any case, if I'm expected to take this, I need an ACK from Stephen on it.
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+---
+ drivers/clk/bcm/clk-sr.c           | 135 ++++++++++++++++++++++++++++++++-----
+ include/dt-bindings/clock/bcm-sr.h |  24 +++++--
+ 2 files changed, 137 insertions(+), 22 deletions(-)
 
-Thanks,
-Rafael
-
-> ---
-> v2: config change, added SPDX tag and used clk_hw_register_.
-> v3: Fix kbuild warning for checking of NULL pointer
-> v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
-> v5: Fix license, used static array
->  drivers/clk/x86/Makefile             |  3 +-
->  drivers/clk/x86/clk-st.c             | 77 ++++++++++++++++++++++++++++++++++++
->  include/linux/platform_data/clk-st.h | 17 ++++++++
->  3 files changed, 96 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/x86/clk-st.c
->  create mode 100644 include/linux/platform_data/clk-st.h
-> 
-> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-> index 1367afb..00303bc 100644
-> --- a/drivers/clk/x86/Makefile
-> +++ b/drivers/clk/x86/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
->  clk-x86-lpss-objs		:= clk-lpt.o
->  obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
-> -obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-> new file mode 100644
-> index 0000000..fb62f39
-> --- /dev/null
-> +++ b/drivers/clk/x86/clk-st.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: MIT
-> +/*
-> + * clock framework for AMD Stoney based clocks
-> + *
-> + * Copyright 2018 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_data/clk-st.h>
-> +#include <linux/platform_device.h>
-> +
-> +/* Clock Driving Strength 2 register */
-> +#define CLKDRVSTR2	0x28
-> +/* Clock Control 1 register */
-> +#define MISCCLKCNTL1	0x40
-> +/* Auxiliary clock1 enable bit */
-> +#define OSCCLKENB	2
-> +/* 25Mhz auxiliary output clock freq bit */
-> +#define OSCOUT1CLK25MHZ	16
-> +
-> +#define ST_CLK_48M	0
-> +#define ST_CLK_25M	1
-> +#define ST_CLK_MUX	2
-> +#define ST_CLK_GATE	3
-> +#define ST_MAX_CLKS	4
-> +
-> +static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
-> +static struct clk_hw *hws[ST_MAX_CLKS];
-> +
-> +static int st_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct st_clk_data *st_data;
-> +
-> +	st_data = dev_get_platdata(&pdev->dev);
-> +	if (!st_data || !st_data->base)
-> +		return -EINVAL;
-> +
-> +	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-> +						     48000000);
-> +	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-> +						     25000000);
-> +
-> +	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-> +		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-> +		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-> +
-> +	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-> +
-> +	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-> +		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-> +		CLK_GATE_SET_TO_DISABLE, NULL);
-> +
-> +	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-> +
-> +	return 0;
-> +}
-> +
-> +static int st_clk_remove(struct platform_device *pdev)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ST_MAX_CLKS; i++)
-> +		clk_hw_unregister(hws[i]);
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver st_clk_driver = {
-> +	.driver = {
-> +		.name = "clk-st",
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe = st_clk_probe,
-> +	.remove = st_clk_remove,
-> +};
-> +builtin_platform_driver(st_clk_driver);
-> diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
-> new file mode 100644
-> index 0000000..7cdb6a4
-> --- /dev/null
-> +++ b/include/linux/platform_data/clk-st.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * clock framework for AMD Stoney based clock
-> + *
-> + * Copyright 2018 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef __CLK_ST_H
-> +#define __CLK_ST_H
-> +
-> +#include <linux/compiler.h>
-> +
-> +struct st_clk_data {
-> +	void __iomem *base;
-> +};
-> +
-> +#endif /* __CLK_ST_H */
-> 
+diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
+index adc74f4..7b9efc0 100644
+--- a/drivers/clk/bcm/clk-sr.c
++++ b/drivers/clk/bcm/clk-sr.c
+@@ -56,8 +56,8 @@ static const struct iproc_pll_ctrl sr_genpll0 = {
+ };
+ 
+ static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
+-	[BCM_SR_GENPLL0_SATA_CLK] = {
+-		.channel = BCM_SR_GENPLL0_SATA_CLK,
++	[BCM_SR_GENPLL0_125M_CLK] = {
++		.channel = BCM_SR_GENPLL0_125M_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+@@ -102,6 +102,65 @@ static int sr_genpll0_clk_init(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct iproc_pll_ctrl sr_genpll2 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 13, 12),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
++};
++
++static const struct iproc_clk_ctrl sr_genpll2_clk[] = {
++	[BCM_SR_GENPLL2_NIC_CLK] = {
++		.channel = BCM_SR_GENPLL2_NIC_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL2_TS_500_CLK] = {
++		.channel = BCM_SR_GENPLL2_TS_500_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL2_125_NITRO_CLK] = {
++		.channel = BCM_SR_GENPLL2_125_NITRO_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL2_CHIMP_CLK] = {
++		.channel = BCM_SR_GENPLL2_CHIMP_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL2_NIC_FLASH_CLK] = {
++		.channel = BCM_SR_GENPLL2_NIC_FLASH_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
++	[BCM_SR_GENPLL2_FS4_CLK] = {
++		.channel = BCM_SR_GENPLL2_FS4_CLK,
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x1c, 20, 9),
++	},
++};
++
++static int sr_genpll2_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_genpll2, NULL, 0, sr_genpll2_clk,
++			    ARRAY_SIZE(sr_genpll2_clk));
++	return 0;
++}
++
+ static const struct iproc_pll_ctrl sr_genpll3 = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		IPROC_CLK_PLL_NEEDS_SW_CFG,
+@@ -157,6 +216,30 @@ static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+ 	},
++	[BCM_SR_GENPLL4_TPIU_PLL_CLK] = {
++		.channel = BCM_SR_GENPLL4_TPIU_PLL_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL4_NOC_CLK] = {
++		.channel = BCM_SR_GENPLL4_NOC_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL4_CHCLK_FS4_CLK] = {
++		.channel = BCM_SR_GENPLL4_CHCLK_FS4_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK] = {
++		.channel = BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
+ };
+ 
+ static int sr_genpll4_clk_init(struct platform_device *pdev)
+@@ -181,18 +264,21 @@ static const struct iproc_pll_ctrl sr_genpll5 = {
+ };
+ 
+ static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
+-	[BCM_SR_GENPLL5_FS_CLK] = {
+-		.channel = BCM_SR_GENPLL5_FS_CLK,
+-		.flags = IPROC_CLK_AON,
++	[BCM_SR_GENPLL5_FS4_HF_CLK] = {
++		.channel = BCM_SR_GENPLL5_FS4_HF_CLK,
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+ 	},
+-	[BCM_SR_GENPLL5_SPU_CLK] = {
+-		.channel = BCM_SR_GENPLL5_SPU_CLK,
+-		.flags = IPROC_CLK_AON,
+-		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++	[BCM_SR_GENPLL5_CRYPTO_AE_CLK] = {
++		.channel = BCM_SR_GENPLL5_CRYPTO_AE_CLK,
++		.enable = ENABLE_VAL(0x4, 7, 1, 12),
+ 		.mdiv = REG_VAL(0x18, 10, 9),
+ 	},
++	[BCM_SR_GENPLL5_RAID_AE_CLK] = {
++		.channel = BCM_SR_GENPLL5_RAID_AE_CLK,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
+ };
+ 
+ static int sr_genpll5_clk_init(struct platform_device *pdev)
+@@ -214,24 +300,30 @@ static const struct iproc_pll_ctrl sr_lcpll0 = {
+ };
+ 
+ static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
+-	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
+-		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
++	[BCM_SR_LCPLL0_SATA_REFP_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFP_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
+ 		.mdiv = REG_VAL(0x14, 0, 9),
+ 	},
+-	[BCM_SR_LCPLL0_USB_REF_CLK] = {
+-		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
++	[BCM_SR_LCPLL0_SATA_REFN_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFN_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 8, 2, 14),
+ 		.mdiv = REG_VAL(0x14, 10, 9),
+ 	},
+-	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
+-		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
++	[BCM_SR_LCPLL0_SATA_350_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_350_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 9, 3, 15),
+ 		.mdiv = REG_VAL(0x14, 20, 9),
+ 	},
++	[BCM_SR_LCPLL0_SATA_500_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_500_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 10, 4, 16),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
+ };
+ 
+ static int sr_lcpll0_clk_init(struct platform_device *pdev)
+@@ -259,6 +351,18 @@ static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
+ 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
+ 		.mdiv = REG_VAL(0x14, 0, 9),
+ 	},
++	[BCM_SR_LCPLL1_USB_REF_CLK] = {
++		.channel = BCM_SR_LCPLL1_USB_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x14, 10, 9),
++	},
++	[BCM_SR_LCPLL1_CRMU_TS_CLK] = {
++		.channel = BCM_SR_LCPLL1_CRMU_TS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x14, 20, 9),
++	},
+ };
+ 
+ static int sr_lcpll1_clk_init(struct platform_device *pdev)
+@@ -298,6 +402,7 @@ static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
+ 
+ static const struct of_device_id sr_clk_dt_ids[] = {
+ 	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
++	{ .compatible = "brcm,sr-genpll2", .data = sr_genpll2_clk_init },
+ 	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
+ 	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
+ 	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
+diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
+index cff6c6f..419011b 100644
+--- a/include/dt-bindings/clock/bcm-sr.h
++++ b/include/dt-bindings/clock/bcm-sr.h
+@@ -35,7 +35,7 @@
+ 
+ /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
+ #define BCM_SR_GENPLL0			0
+-#define BCM_SR_GENPLL0_SATA_CLK		1
++#define BCM_SR_GENPLL0_125M_CLK		1
+ #define BCM_SR_GENPLL0_SCR_CLK		2
+ #define BCM_SR_GENPLL0_250M_CLK		3
+ #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
+@@ -50,9 +50,11 @@
+ /* GENPLL 2 clock channel ID NITRO MHB*/
+ #define BCM_SR_GENPLL2			0
+ #define BCM_SR_GENPLL2_NIC_CLK		1
+-#define BCM_SR_GENPLL2_250_NITRO_CLK	2
++#define BCM_SR_GENPLL2_TS_500_CLK	2
+ #define BCM_SR_GENPLL2_125_NITRO_CLK	3
+ #define BCM_SR_GENPLL2_CHIMP_CLK	4
++#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
++#define BCM_SR_GENPLL2_FS4_CLK		6
+ 
+ /* GENPLL 3 HSLS clock channel ID */
+ #define BCM_SR_GENPLL3			0
+@@ -62,11 +64,16 @@
+ /* GENPLL 4 SCR clock channel ID */
+ #define BCM_SR_GENPLL4			0
+ #define BCM_SR_GENPLL4_CCN_CLK		1
++#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
++#define BCM_SR_GENPLL4_NOC_CLK		3
++#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
++#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
+ 
+ /* GENPLL 5 FS4 clock channel ID */
+ #define BCM_SR_GENPLL5			0
+-#define BCM_SR_GENPLL5_FS_CLK		1
+-#define BCM_SR_GENPLL5_SPU_CLK		2
++#define BCM_SR_GENPLL5_FS4_HF_CLK	1
++#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
++#define BCM_SR_GENPLL5_RAID_AE_CLK	3
+ 
+ /* GENPLL 6 NITRO clock channel ID */
+ #define BCM_SR_GENPLL6			0
+@@ -74,13 +81,16 @@
+ 
+ /* LCPLL0  clock channel ID */
+ #define BCM_SR_LCPLL0			0
+-#define BCM_SR_LCPLL0_SATA_REF_CLK	1
+-#define BCM_SR_LCPLL0_USB_REF_CLK	2
+-#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
++#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
++#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
++#define BCM_SR_LCPLL0_SATA_350_CLK	3
++#define BCM_SR_LCPLL0_SATA_500_CLK	4
+ 
+ /* LCPLL1  clock channel ID */
+ #define BCM_SR_LCPLL1			0
+ #define BCM_SR_LCPLL1_WAN_CLK		1
++#define BCM_SR_LCPLL1_USB_REF_CLK	2
++#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
+ 
+ /* LCPLL PCIE  clock channel ID */
+ #define BCM_SR_LCPLL_PCIE		0
+-- 
+2.1.4
