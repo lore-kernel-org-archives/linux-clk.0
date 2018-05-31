@@ -1,41 +1,78 @@
 Return-Path: <robherring2@gmail.com>
 Return-Path: <robherring2@gmail.com>
-Date: Tue, 22 May 2018 13:10:25 -0500
+Date: Wed, 30 May 2018 22:05:22 -0500
 From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 14/26] dt-bindings: display: Add compatible for A64
- HDMI
-Message-ID: <20180522181025.GA20871@rob-hp-laptop>
-References: <20180518094536.17201-1-jagan@amarulasolutions.com>
- <20180518094536.17201-15-jagan@amarulasolutions.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 4/6] clk: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180531030522.GC16122@rob-hp-laptop>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <99bae24fdaee0fe101e9ed1f2e55682932b92a74.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180518094536.17201-15-jagan@amarulasolutions.com>
+In-Reply-To: <99bae24fdaee0fe101e9ed1f2e55682932b92a74.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 18, 2018 at 03:15:24PM +0530, Jagan Teki wrote:
-> HDMI on Allwinner A64 has similar like H3/H5/A83T.
-> 
-> Add compatible a64 and update A83T compatible as fallback.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v2:
-> - Add fallback compatible
-> 
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->  1 file changed, 1 insertion(+)
+On Wed, May 30, 2018 at 11:42:55AM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC clock output.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Comments from the core binding apply here too.
+
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../bindings/clock/rohm,bd71837-clock.txt          | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> new file mode 100644
+> index 000000000000..9759fd145781
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+> @@ -0,0 +1,37 @@
+> +ROHM BD71837 Power Management Integrated Circuit clock bindings
+> +
+> +BD71837 clock node should be sub node of the BD71837 MFD node.
+> +See BD71837 MFD bindings at
+> +Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> +
+> +Required properties:
+> +- compatible		: Should be "rohm,bd71837-clk"
+> +- clock-frequency	: Should be 32768
+> +- #clock-cells		: Should be 0
+> +
+> +Optional properties:
+> +- clock-output-names	: Should contain name for output clock.
+> +  Name "bd71837-32k-out" is used if this is not given.
+> +
+> +
+> +Example:
+> +
+> +pmic: bd71837@4b {
+> +	compatible = "rohm,bd71837";
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	reg = <0x4b>;
+> +	interrupt-parent = <&gpio1>;
+> +	interrupts = <29 GPIO_ACTIVE_LOW>;
+> +	interrupt-names = "irq";
+> +	#interrupt-cells = <1>;
+> +	interrupt-controller;
+> +
+> +	/* Clock node */
+> +	clk: bd71837-32k-out {
+> +		compatible = "rohm,bd71837-clk";
+> +		#clock-cells = <0>;
+> +		clock-frequency  = <32768>;
+> +		clock-output-names = "bd71837-32k-out";
+> +	};
+> +};
+> -- 
+> 2.14.3
+> 
