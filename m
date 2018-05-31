@@ -1,92 +1,63 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:46956 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeEaEDw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 00:03:52 -0400
+Date: Wed, 30 May 2018 23:03:50 -0500
+From: Rob Herring <robh@kernel.org>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, bcousson@baylibre.com, tony@atomide.com,
+        paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the
+ mcan clocks
+Message-ID: <20180531040350.GA25132@rob-hp-laptop>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-4-faiz_abbas@ti.com>
 MIME-Version: 1.0
-To: Alexandre Torgue <alexandre.torgue@st.com>,
- Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- benjamin GAIGNARD <benjamin.gaignard@st.com>,
- Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
- <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
- <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
-Message-ID: <152642091618.237094.8294094887191293130@swboyd.mtv.corp.google.com>
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
- default
-Date: Tue, 15 May 2018 14:48:36 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180530141133.3711-4-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Alexandre Torgue (2018-05-14 05:45:57)
-> =
+On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
+> Add clkctrl data for the m_can clocks and register it within the
+> clkctrl driver
+> 
+> CC: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  drivers/clk/ti/clk-7xx.c         | 1 +
+>  include/dt-bindings/clock/dra7.h | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+> index fb249a1637a5..71a122b2dc67 100644
+> --- a/drivers/clk/ti/clk-7xx.c
+> +++ b/drivers/clk/ti/clk-7xx.c
+> @@ -708,6 +708,7 @@ static const struct omap_clkctrl_reg_data dra7_wkupaon_clkctrl_regs[] __initcons
+>  	{ DRA7_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+>  	{ DRA7_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0060:24" },
+>  	{ DRA7_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0068:24" },
+> +	{ DRA7_ADC_CLKCTRL, NULL, CLKF_SW_SUP, "mcan_clk" },
+>  	{ 0 },
+>  };
+>  
+> diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+> index 5e1061b15aed..d7549c57cac3 100644
+> --- a/include/dt-bindings/clock/dra7.h
+> +++ b/include/dt-bindings/clock/dra7.h
+> @@ -168,5 +168,6 @@
+>  #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+>  #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+>  #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
+> +#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
 
-> =
+ADC and mcan are the same thing?
 
-> On 05/05/2018 04:45 AM, Stephen Boyd wrote:
-> > Quoting Alexandre Torgue (2018-05-04 00:54:16)
-> >> Stephen
-> >>
-> >> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
-> >>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>>
-> >>> Clock driver is mandatory if the machine is selected.
-> >>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-> >>> with the machine(s).
-> >>>
-> >>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of=
- the stm32 drivers")
-> >>>
-> >>
-> >> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4=
-.17.
-> > =
-
-> > Thanks for the bump. I missed this one. Of course, the user can still s=
-elect
-> > the configs now, just it's annoying for upgrade path.
-> > =
-
-> >>
-> >>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> >>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> >>> ---
-> >>>    drivers/clk/Kconfig | 6 ++----
-> >>>    1 file changed, 2 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> >>> index 24a5bc3..721572a 100644
-> >>> --- a/drivers/clk/Kconfig
-> >>> +++ b/drivers/clk/Kconfig
-> >>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
-> >>>          Support for stm32mp157 SoC family clocks
-> >>>    =
-
-> >>>    config COMMON_CLK_STM32F
-> >>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> >>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> >>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MAC=
-H_STM32F746)
-> > =
-
-> > But the point of the change this patch is fixing was to expose these to
-> > the user to turn off they wanted. You'll need to do something like that
-> > again here, instead of removing the prompt and replacing it with a
-> > def_bool.
-> > =
-
-> =
-
-> Sorry I don't understand. Clock driver is mandatory to boot each =
-
-> platform and depends on machine type. Do you see a use case where we =
-
-> could need to disable the clock driver? (it would impose to change =
-
-> devicetree to use fixed clocks and to have a booloader which configures =
-
-> all PLL and clocks).
-
-No. My understanding of the patch that introduced the options was to
-allow the user to disable these drivers if they wanted to. I'm just
-reiterating the spirit of that patch. That must be wrong?
+>  
+>  #endif
+> -- 
+> 2.17.0
+> 
