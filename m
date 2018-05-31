@@ -1,364 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 05/15] drm/sun4i: Add TCON TOP driver
-Date: Mon, 21 May 2018 17:15:15 +0200
-Message-ID: <5965231.6ucpJrPIQ5@jernej-laptop>
-In-Reply-To: <20180521080517.3qmlfajqpn4uw7jv@flea>
-References: <20180519183127.2718-1-jernej.skrabec@siol.net> <20180519183127.2718-6-jernej.skrabec@siol.net> <20180521080517.3qmlfajqpn4uw7jv@flea>
+Return-Path: <xieyisheng1@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
+	"Michael Turquette" <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, "Eric Anholt" <eric@anholt.net>, Stefan Wahren
+	<stefan.wahren@i2se.com>, <linux-clk@vger.kernel.org>,
+	<linux-rpi-kernel@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 08/21] clk: bcm2835: use match_string() helper
+Date: Thu, 31 May 2018 19:11:13 +0800
+Message-ID: <1527765086-19873-9-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+match_string() returns the index of an array for a matching string,
+which can be used instead of open coded variant.
 
-Dne ponedeljek, 21. maj 2018 ob 10:05:17 CEST je Maxime Ripard napisal(a):
-> On Sat, May 19, 2018 at 08:31:17PM +0200, Jernej Skrabec wrote:
-> > As already described in DT binding, TCON TOP is responsible for
-> > configuring display pipeline. In this initial driver focus is on HDMI
-> > pipeline, so TVE and LCD configuration is not implemented.
-> > 
-> > Implemented features:
-> > - HDMI source selection
-> > - clock driver (TCON and DSI gating)
-> > - connecting mixers and TCONS
-> > 
-> > Something similar also existed in previous SoCs, except that it was part
-> > of first TCON.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/Makefile             |   3 +-
-> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c     | 256 +++++++++++++++++++++
-> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.h     |  20 ++
-> >  include/dt-bindings/clock/sun8i-tcon-top.h |  11 +
-> >  4 files changed, 289 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> >  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-> >  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/Makefile
-> > b/drivers/gpu/drm/sun4i/Makefile index 2589f4acd5ae..09fbfd6304ba 100644
-> > --- a/drivers/gpu/drm/sun4i/Makefile
-> > +++ b/drivers/gpu/drm/sun4i/Makefile
-> > @@ -16,7 +16,8 @@ sun8i-drm-hdmi-y		+= sun8i_hdmi_phy_clk.o
-> > 
-> >  sun8i-mixer-y			+= sun8i_mixer.o sun8i_ui_layer.o \
-> >  
-> >  				   sun8i_vi_layer.o sun8i_ui_scaler.o \
-> > 
-> > -				   sun8i_vi_scaler.o sun8i_csc.o
-> > +				   sun8i_vi_scaler.o sun8i_csc.o \
-> > +				   sun8i_tcon_top.o
-> > 
-> >  sun4i-tcon-y			+= sun4i_crtc.o
-> >  sun4i-tcon-y			+= sun4i_dotclock.o
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c new file mode 100644
-> > index 000000000000..075a356a6dfa
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > @@ -0,0 +1,256 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
-> > +
-> > +#include <drm/drmP.h>
-> > +
-> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
-> > +
-> > +#include <linux/bitfield.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +#include "sun8i_tcon_top.h"
-> > +
-> > +#define TCON_TOP_PORT_SEL_REG		0x1C
-> > +#define TCON_TOP_PORT_DE0_MSK			GENMASK(1, 0)
-> > +#define TCON_TOP_PORT_DE1_MSK			GENMASK(5, 4)
-> > +#define TCON_TOP_PORT_TCON_LCD0			0
-> > +#define TCON_TOP_PORT_TCON_LCD1			1
-> > +#define TCON_TOP_PORT_TCON_TV0			2
-> > +#define TCON_TOP_PORT_TCON_TV1			3
-> > +
-> > +#define TCON_TOP_GATE_SRC_REG		0x20
-> > +#define TCON_TOP_HDMI_SRC_MSK			GENMASK(29, 28)
-> > +#define TCON_TOP_HDMI_SRC_NONE			0
-> > +#define TCON_TOP_HDMI_SRC_TCON_TV0		1
-> > +#define TCON_TOP_HDMI_SRC_TCON_TV1		2
-> > +#define TCON_TOP_TCON_TV1_GATE			24
-> > +#define TCON_TOP_TCON_TV0_GATE			20
-> > +#define TCON_TOP_TCON_DSI_GATE			16
-> > +
-> > +#define CLK_NUM					3
-> > +
-> > +struct sun8i_tcon_top {
-> > +	struct clk		*bus;
-> > +	void __iomem		*regs;
-> > +	struct reset_control	*rst;
-> > +
-> > +	/*
-> > +	 * spinlock is used for locking access to registers from different
-> > +	 * places - tcon driver and clk subsystem.
-> > +	 */
-> > +	spinlock_t		reg_lock;
-> > +};
-> > +
-> > +struct sun8i_tcon_top_gate {
-> > +	const char	*name;
-> > +	u8		bit;
-> > +	int		index;
-> > +};
-> > +
-> > +static const struct sun8i_tcon_top_gate gates[] = {
-> > +	{"bus-tcon-top-dsi", TCON_TOP_TCON_DSI_GATE, CLK_BUS_TCON_TOP_DSI},
-> > +	{"bus-tcon-top-tv0", TCON_TOP_TCON_TV0_GATE, CLK_BUS_TCON_TOP_TV0},
-> > +	{"bus-tcon-top-tv1", TCON_TOP_TCON_TV1_GATE, CLK_BUS_TCON_TOP_TV1},
-> > +};
-> > +
-> > +void sun8i_tcon_top_set_hdmi_src(struct sun8i_tcon_top *tcon_top, int
-> > tcon) +{
-> > +	unsigned long flags;
-> > +	u32 val;
-> > +
-> > +	if (tcon > 1) {
-> > +		DRM_ERROR("TCON index is too high!\n");
-> > +		return;
-> > +	}
-> > +
-> > +	spin_lock_irqsave(&tcon_top->reg_lock, flags);
-> > +
-> > +	val = readl(tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > +	val &= ~TCON_TOP_HDMI_SRC_MSK;
-> > +	val |= FIELD_PREP(TCON_TOP_HDMI_SRC_MSK,
-> > +			  TCON_TOP_HDMI_SRC_TCON_TV0 + tcon);
-> > +	writel(val, tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > +
-> > +	spin_unlock_irqrestore(&tcon_top->reg_lock, flags);
-> > +}
-> > +
-> > +void sun8i_tcon_top_de_config(struct sun8i_tcon_top *tcon_top,
-> > +			      int mixer, enum tcon_type tcon_type, int tcon)
-> > +{
-> > +	unsigned long flags;
-> > +	u32 val, reg;
-> > +
-> > +	if (mixer > 1) {
-> > +		DRM_ERROR("Mixer index is too high!\n");
-> > +		return;
-> > +	}
-> > +
-> > +	if (tcon > 1) {
-> > +		DRM_ERROR("TCON index is too high!\n");
-> > +		return;
-> > +	}
-> > +
-> > +	switch (tcon_type) {
-> > +	case tcon_type_lcd:
-> > +		val = TCON_TOP_PORT_TCON_LCD0 + tcon;
-> > +		break;
-> > +	case tcon_type_tv:
-> > +		val = TCON_TOP_PORT_TCON_TV0 + tcon;
-> > +		break;
-> > +	default:
-> > +		DRM_ERROR("Invalid TCON type!\n");
-> > +		return;
-> > +	}
-> > +
-> > +	spin_lock_irqsave(&tcon_top->reg_lock, flags);
-> > +
-> > +	reg = readl(tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > +	if (mixer == 0) {
-> > +		reg &= ~TCON_TOP_PORT_DE0_MSK;
-> > +		reg |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, val);
-> > +	} else {
-> > +		reg &= ~TCON_TOP_PORT_DE1_MSK;
-> > +		reg |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, val);
-> > +	}
-> > +	writel(reg, tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > +
-> > +	spin_unlock_irqrestore(&tcon_top->reg_lock, flags);
-> > +}
-> > +
-> > +static int sun8i_tcon_top_probe(struct platform_device *pdev)
-> > +{
-> > +	struct clk_hw_onecell_data *clk_data;
-> > +	struct sun8i_tcon_top *tcon_top;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct resource *res;
-> > +	int ret, i;
-> > +
-> > +	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
-> > +	if (!tcon_top)
-> > +		return -ENOMEM;
-> > +
-> > +	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data) +
-> > +				sizeof(*clk_data->hws) * CLK_NUM,
-> > +				GFP_KERNEL);
-> > +	if (!clk_data)
-> > +		return -ENOMEM;
-> > +
-> > +	spin_lock_init(&tcon_top->reg_lock);
-> > +
-> > +	tcon_top->rst = devm_reset_control_get(dev, "rst");
-> > +	if (IS_ERR(tcon_top->rst)) {
-> > +		dev_err(dev, "Couldn't get our reset line\n");
-> > +		return PTR_ERR(tcon_top->rst);
-> > +	}
-> > +
-> > +	tcon_top->bus = devm_clk_get(dev, "bus");
-> > +	if (IS_ERR(tcon_top->bus)) {
-> > +		dev_err(dev, "Couldn't get the bus clock\n");
-> > +		return PTR_ERR(tcon_top->bus);
-> > +	}
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	tcon_top->regs = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(tcon_top->regs))
-> > +		return PTR_ERR(tcon_top->regs);
-> > +
-> > +	ret = reset_control_deassert(tcon_top->rst);
-> > +	if (ret) {
-> > +		dev_err(dev, "Could not deassert ctrl reset control\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = clk_prepare_enable(tcon_top->bus);
-> > +	if (ret) {
-> > +		dev_err(dev, "Could not enable bus clock\n");
-> > +		goto err_assert_reset;
-> > +	}
-> > +
-> > +	/*
-> > +	 * Default register values might have some reserved bits set, which
-> > +	 * prevents TCON TOP from working properly. Set them to 0 here.
-> > +	 */
-> > +	writel(0, tcon_top->regs + TCON_TOP_PORT_SEL_REG);
-> > +	writel(0, tcon_top->regs + TCON_TOP_GATE_SRC_REG);
-> > +
-> > +	for (i = 0; i < CLK_NUM; i++) {
-> > +		const char *parent_name = "bus-tcon-top";
-> 
-> I guess retrieving the parent's clock name at runtime would be more
-> flexible.
-> 
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+v2:
+ - donot change the type of i  - per Andy
 
-It is, but will it ever be anything else?
+ drivers/clk/bcm/clk-bcm2835.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-> > +		struct clk_init_data init;
-> > +		struct clk_gate *gate;
-> > +
-> > +		gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
-> > +		if (!gate) {
-> > +			ret = -ENOMEM;
-> > +			goto err_disable_clock;
-> > +		}
-> > +
-> > +		init.name = gates[i].name;
-> > +		init.ops = &clk_gate_ops;
-> > +		init.flags = CLK_IS_BASIC;
-> > +		init.parent_names = &parent_name;
-> > +		init.num_parents = 1;
-> > +
-> > +		gate->reg = tcon_top->regs + TCON_TOP_GATE_SRC_REG;
-> > +		gate->bit_idx = gates[i].bit;
-> > +		gate->lock = &tcon_top->reg_lock;
-> > +		gate->hw.init = &init;
-> > +
-> > +		ret = devm_clk_hw_register(dev, &gate->hw);
-> > +		if (ret)
-> > +			goto err_disable_clock;
-> 
-> Isn't it what clk_hw_register_gate is doing?
-> 
-
-Almost, but not exactly. My goal was to use devm_* functions, so there is no 
-need to do any special cleanup.
-
-> > +		clk_data->hws[gates[i].index] = &gate->hw;
-> > +	}
-> > +
-> > +	clk_data->num = CLK_NUM;
-> > +
-> > +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, 
-clk_data);
-> > +	if (ret)
-> > +		goto err_disable_clock;
-> > +
-> > +	platform_set_drvdata(pdev, tcon_top);
-> > +
-> > +	return 0;
-> > +
-> > +err_disable_clock:
-> > +	clk_disable_unprepare(tcon_top->bus);
-> > +err_assert_reset:
-> > +	reset_control_assert(tcon_top->rst);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int sun8i_tcon_top_remove(struct platform_device *pdev)
-> > +{
-> > +	struct sun8i_tcon_top *tcon_top = platform_get_drvdata(pdev);
-> > +
-> > +	clk_disable_unprepare(tcon_top->bus);
-> > +	reset_control_assert(tcon_top->rst);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +const struct of_device_id sun8i_tcon_top_of_table[] = {
-> > +	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
-> > +	{ /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
-> > +
-> > +static struct platform_driver sun8i_tcon_top_platform_driver = {
-> > +	.probe		= sun8i_tcon_top_probe,
-> > +	.remove		= sun8i_tcon_top_remove,
-> > +	.driver		= {
-> > +		.name		= "sun8i-tcon-top",
-> > +		.of_match_table	= sun8i_tcon_top_of_table,
-> > +	},
-> > +};
-> > +module_platform_driver(sun8i_tcon_top_platform_driver);
-> > +
-> > +MODULE_AUTHOR("Jernej Skrabec <jernej.skrabec@siol.net>");
-> > +MODULE_DESCRIPTION("Allwinner R40 TCON TOP driver");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h new file mode 100644
-> > index 000000000000..19126e07d2a6
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-> > @@ -0,0 +1,20 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
-> > +
-> > +#ifndef _SUN8I_TCON_TOP_H_
-> > +#define _SUN8I_TCON_TOP_H_
-> > +
-> > +#include <linux/device.h>
-> > +
-> > +struct sun8i_tcon_top;
-> > +
-> > +enum tcon_type {
-> > +	tcon_type_lcd,
-> > +	tcon_type_tv,
-> 
-> The usual practice is to have the enum values upper-case.
-
-Ok.
-
-Best regards,
-Jernej
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index fa0d5c8..5e18433 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1395,7 +1395,7 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	struct bcm2835_clock *clock;
+ 	struct clk_init_data init;
+ 	const char *parents[1 << CM_SRC_BITS];
+-	size_t i, j;
++	size_t i;
+ 	int ret;
+ 
+ 	/*
+@@ -1405,12 +1405,11 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	for (i = 0; i < data->num_mux_parents; i++) {
+ 		parents[i] = data->parents[i];
+ 
+-		for (j = 0; j < ARRAY_SIZE(cprman_parent_names); j++) {
+-			if (strcmp(parents[i], cprman_parent_names[j]) == 0) {
+-				parents[i] = cprman->real_parent_names[j];
+-				break;
+-			}
+-		}
++		ret = match_string(cprman_parent_names,
++				   ARRAY_SIZE(cprman_parent_names),
++				   parents[i]);
++		if (ret >= 0)
++			parents[i] = cprman->real_parent_names[ret];
+ 	}
+ 
+ 	memset(&init, 0, sizeof(init));
+-- 
+1.7.12.4
