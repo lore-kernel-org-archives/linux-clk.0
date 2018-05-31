@@ -1,65 +1,134 @@
-Return-Path: <SRS0=7qdu=IQ=linuxfoundation.org=gregkh@kernel.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5/5] clk: remove clk_debugfs_add_file()
-Date: Tue, 29 May 2018 18:08:04 +0200
-Message-Id: <20180529160804.1982-5-gregkh@linuxfoundation.org>
-In-Reply-To: <20180529160804.1982-1-gregkh@linuxfoundation.org>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+Return-Path: <gilad@benyossef.com>
+MIME-Version: 1.0
+In-Reply-To: <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <1527171551-21979-2-git-send-email-gilad@benyossef.com> <20180529161248.fphjnceozoyxqy7v@verge.net.au>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Thu, 31 May 2018 14:49:54 +0300
+Message-ID: <CAOtvUMebK3eM0O0C4bMa+13vej6egVV389AZ=HOnruPbfxZDkg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] crypto: ccree: correct host regs offset
+To: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: multipart/alternative; boundary="000000000000da90a2056d7f104e"
 List-ID: <linux-clk.vger.kernel.org>
 
-No one was using this api call, so remove it.  If it is ever needed in
-the future, a "raw" debugfs call can be used.
+--000000000000da90a2056d7f104e
+Content-Type: text/plain; charset="UTF-8"
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/clk/clk.c            | 13 -------------
- include/linux/clk-provider.h |  5 -----
- 2 files changed, 18 deletions(-)
+On Tue, May 29, 2018 at 7:12 PM, Simon Horman <horms@verge.net.au> wrote:
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ef701ce44439..59207cd6138a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2669,19 +2669,6 @@ static void clk_debug_unregister(struct clk_core *core)
- 	mutex_unlock(&clk_debug_lock);
- }
- 
--struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
--				void *data, const struct file_operations *fops)
--{
--	struct dentry *d = NULL;
--
--	if (hw->core->dentry)
--		d = debugfs_create_file(name, mode, hw->core->dentry, data,
--					fops);
--
--	return d;
--}
--EXPORT_SYMBOL_GPL(clk_debugfs_add_file);
--
- /**
-  * clk_debug_init - lazily populate the debugfs clk directory
-  *
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 210a890008f9..00e55d4d07f1 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -996,10 +996,5 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
- 
- #endif	/* platform dependent I/O accessors */
- 
--#ifdef CONFIG_DEBUG_FS
--struct dentry *clk_debugfs_add_file(struct clk_hw *hw, char *name, umode_t mode,
--				void *data, const struct file_operations *fops);
--#endif
--
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
--- 
-2.17.0
+> On Thu, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:
+> > The product signature and HW revision register have different offset on
+> the
+> > older HW revisions.
+> > This fixes the problem of the driver failing sanity check on silicon
+> > despite working on the FPGA emulation systems.
+> >
+> > Fixes: 27b3b22dd98c ("crypto: ccree - add support for older HW revs")
+>
+> Did the above introduce a regression that is fixed by this patch
+> or did it add a feature that only works with this patch?
+>
+>
+Sort of in between - the first patch made more devices work but
+unreliability (it will sometime work, sometime doesn't).
+This one make it work reliably.
+
+
+> In the case of the latter I would drop the Fixes tag,
+> but I don't feel strongly about it.
+>
+
+
+
+>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> Minor not below not withstanding,
+>
+
+
+
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> Thank you for the review and help :-)
+
+Gilad
+
+--000000000000da90a2056d7f104e
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
+te">On Tue, May 29, 2018 at 7:12 PM, Simon Horman <span dir=3D"ltr">&lt;<a =
+href=3D"mailto:horms@verge.net.au" target=3D"_blank">horms@verge.net.au</a>=
+&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0 0=
+ 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"><span class=3D"">On Th=
+u, May 24, 2018 at 03:19:06PM +0100, Gilad Ben-Yossef wrote:<br>
+&gt; The product signature and HW revision register have different offset o=
+n the<br>
+&gt; older HW revisions.<br>
+&gt; This fixes the problem of the driver failing sanity check on silicon<b=
+r>
+&gt; despite working on the FPGA emulation systems.<br>
+&gt; <br>
+&gt; Fixes: 27b3b22dd98c (&quot;crypto: ccree - add support for older HW re=
+vs&quot;)<br>
+<br>
+</span>Did the above introduce a regression that is fixed by this patch<br>
+or did it add a feature that only works with this patch?<br>
+<br></blockquote><div><br></div><div>Sort of in between - the first patch m=
+ade more devices work but unreliability (it will sometime work, sometime do=
+esn&#39;t).</div><div>This one make it work reliably.</div><div>=C2=A0</div=
+><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1=
+px #ccc solid;padding-left:1ex">
+In the case of the latter I would drop the Fixes tag,<br>
+but I don&#39;t feel strongly about it.<br></blockquote><div><br></div><div=
+>=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex">
+<span class=3D""><br>
+&gt; Cc: <a href=3D"mailto:stable@vger.kernel.org">stable@vger.kernel.org</=
+a><br>
+&gt; Signed-off-by: Gilad Ben-Yossef &lt;<a href=3D"mailto:gilad@benyossef.=
+com">gilad@benyossef.com</a>&gt;<br>
+<br>
+</span>Minor not below not withstanding,<br></blockquote><div><br></div><di=
+v><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bo=
+rder-left:1px #ccc solid;padding-left:1ex">
+<br>
+Reviewed-by: Simon Horman &lt;<a href=3D"mailto:horms%2Brenesas@verge.net.a=
+u">horms+renesas@verge.net.au</a>&gt;<br>
+<div><div class=3D"h5"><br></div></div></blockquote><div>
+
+<div style=3D"color:rgb(34,34,34);font-family:arial,sans-serif;font-size:sm=
+all;font-style:normal;font-variant-ligatures:normal;font-variant-caps:norma=
+l;font-weight:400;letter-spacing:normal;text-align:start;text-indent:0px;te=
+xt-transform:none;white-space:normal;word-spacing:0px;background-color:rgb(=
+255,255,255);text-decoration-style:initial;text-decoration-color:initial">T=
+hank you for the review and help :-)</div><div style=3D"color:rgb(34,34,34)=
+;font-family:arial,sans-serif;font-size:small;font-style:normal;font-varian=
+t-ligatures:normal;font-variant-caps:normal;font-weight:400;letter-spacing:=
+normal;text-align:start;text-indent:0px;text-transform:none;white-space:nor=
+mal;word-spacing:0px;background-color:rgb(255,255,255);text-decoration-styl=
+e:initial;text-decoration-color:initial"><br></div><div style=3D"color:rgb(=
+34,34,34);font-family:arial,sans-serif;font-size:small;font-style:normal;fo=
+nt-variant-ligatures:normal;font-variant-caps:normal;font-weight:400;letter=
+-spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-=
+space:normal;word-spacing:0px;background-color:rgb(255,255,255);text-decora=
+tion-style:initial;text-decoration-color:initial">Gilad=C2=A0</div>
+
+<br></div></div>
+</div></div>
+
+--000000000000da90a2056d7f104e--
