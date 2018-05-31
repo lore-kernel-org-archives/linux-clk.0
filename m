@@ -1,259 +1,186 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:39832 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEUKbf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 May 2018 06:31:35 -0400
-From: Ilia Lin <ilialin@codeaurora.org>
-To: viresh.kumar@linaro.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] cpufreq: Add Kryo CPU scaling driver
-Date: Mon, 21 May 2018 13:31:30 +0300
-Message-Id: <1526898690-4018-1-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <buserror@gmail.com>
+MIME-Version: 1.0
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdVzN0Cbc9+MJqC4EzVgD3bkDixkf10NA13ko87cMwvpLA@mail.gmail.com>
+ <CAMMfpEwpiZnZEykzxQJMTwE+cDnOD_qA3nUzyB96DGTWPzSJrw@mail.gmail.com> <CAMuHMdXQWSVh37HqrvFWeLNHZ5zNh0=9+hV0_nsQ9mi1HQSCaQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXQWSVh37HqrvFWeLNHZ5zNh0=9+hV0_nsQ9mi1HQSCaQ@mail.gmail.com>
+From: M P <buserror@gmail.com>
+Date: Thu, 31 May 2018 11:01:09 +0100
+Message-ID: <CAMMfpEwnB26q+JzEfwby409XkUPWpNZAD8FhRWJfjW=0naY+pg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>,
+	buserror+upstream@gmail.com, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, geert+renesas@glider.be,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-the CPU frequency subset and voltage value of each OPP varies
-based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-defines the voltage and frequency value based on the msm-id in SMEM
-and speedbin blown in the efuse combination.
-The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-to provide the OPP framework with required information.
-This is used to determine the voltage and frequency value for each OPP of
-operating-points-v2 table when it is parsed by the OPP framework.
+Hi Geert,
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/Kconfig.arm          |  10 +++
- drivers/cpufreq/Makefile             |   1 +
- drivers/cpufreq/cpufreq-dt-platdev.c |   3 +
- drivers/cpufreq/qcom-cpufreq-kryo.c  | 164 +++++++++++++++++++++++++++++++++++
- 4 files changed, 178 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-kryo.c
+On Thu, 31 May 2018 at 10:32, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
+>
+> Hi Michel,
+>
+> On Thu, May 31, 2018 at 11:11 AM, M P <buserror@gmail.com> wrote:
+> > On Fri, 25 May 2018 at 11:31, Geert Uytterhoeven <geert@linux-m68k.org>
+> > wrote:
+> >> On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+> >> <michel.pollet@bp.renesas.com> wrote:
+> >> > This adds the constants necessary to use the renesas,r9a06g032-sysct=
+rl
+> > node.
+>
+> >> > @@ -0,0 +1,187 @@
+> >> > +/* SPDX-License-Identifier: GPL-2.0 */
+> >> > +/*
+> >> > + * R9A06G032 sysctrl IDs
+> >> > + *
+> >> > + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> >> > + *
+> >> > + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.co=
+m>
+> >> > + * Derived from zx-reboot.c
+> >> > + */
+> >> > +
+> >> > +#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+> >> > +#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+> >> > +
+> >> > +#define R9A06G032_CLKOUT                       0
+> >> > +#define R9A06G032_CLK_PLL_USB                  1
+> >> > +#define R9A06G032_CLK_48                       1 /* AKA CLK_PLL_USB=
+ */
+> >> > +#define R9A06G032_CLKOUT_D10                   2
+> >> > +#define R9A06G032_CLKOUT_D16                   3
+> >> > +#define R9A06G032_MSEBIS_CLK                   3 /* AKA CLKOUT_D16 =
+*/
+> >> > +#define R9A06G032_MSEBIM_CLK                   3 /* AKA CLKOUT_D16 =
+*/
+> >> > +#define R9A06G032_CLKOUT_D160                  4
+> >> > +#define R9A06G032_CLKOUT_D1OR2                 5
+> >> > +#define R9A06G032_CLK_DDRPHY_PLLCLK            5 /* AKA CLKOUT_D1OR=
+2 */
+> >
+> >> [...]
+> >
+> >> I have 3 comments:
+> >
+> >>    1. I had expected this list to match (both name- and order-wise)
+> > Appendix
+> >>       C ("Clock Tree Structure") in the RZ/N1[DSL] User=E2=80=99s Manu=
+al: System
+> >>       Introduction, Multiplexing, Electrical and Mechanical Informatio=
+n.
+> >>       That would make it easier to review.
+> >
+> > Well, that document was made a *long* time after the internal documenta=
+tion
+> > we used to generate the clock lists. There are a few things we had to d=
+o:
+> >
+> > * Renumber peripherals. We decided a long time ago that u-boot and linu=
+x
+> > would stick to zero based peripherals, and not one based numbers. It's =
+next
+> > to impossible to keep mixing number based across software base, so we u=
+se
+> > UART0 while the hardware manual mentions UART1 -- It *is* documented
+> > extensively with out SDK, and makes life using linux a lot easier. It's
+> > across all our SDK, u-boot, webapps readmes, howtos etc.
+> >
+> > * Rename some peripherals. Plenty of peripherals names made little sens=
+e
+> > and had zero consistency, in fact, many names were different depending =
+on
+> > the place they were used! -- "flashnand"+"nand_flash"+"FNAND" etc,
+> > "QUADSPI"+"QSPI" etc etc so we also re-normalized the names to match li=
+nux
+> > conventions.
+> >
+> > * Other internal reasons I can't document here
+> >
+> > Also, the value here are made up anyway -- so I've decided to sort them=
+ to
+> > make sure any clock that has a parent is numbered *after* the parent...
+>
+> Well, all of that combines makes it very hard for us to review the list.
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index de55c7d..0bfd40e 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -124,6 +124,16 @@ config ARM_OMAP2PLUS_CPUFREQ
- 	depends on ARCH_OMAP2PLUS
- 	default ARCH_OMAP2PLUS
- 
-+config ARM_QCOM_CPUFREQ_KRYO
-+	bool "Qualcomm Kryo based CPUFreq"
-+	depends on QCOM_QFPROM
-+	depends on QCOM_SMEM
-+	select PM_OPP
-+	help
-+	  This adds the CPUFreq driver for Qualcomm Kryo SoC based boards.
-+
-+	  If in doubt, say N.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 8d24ade..fb4a2ec 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
- obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 3b585e4..77d6ab8 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -118,6 +118,9 @@
- 
- 	{ .compatible = "nvidia,tegra124", },
- 
-+	{ .compatible = "qcom,apq8096", },
-+	{ .compatible = "qcom,msm8996", },
-+
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
- 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-new file mode 100644
-index 0000000..4e002d0b
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+/*
-+ * In Certain QCOM SoCs like apq8096 and msm8996 that have KRYO processors,
-+ * the CPU frequency subset and voltage value of each OPP varies
-+ * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
-+ * defines the voltage and frequency value based on the msm-id in SMEM
-+ * and speedbin blown in the efuse combination.
-+ * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
-+ * to provide the OPP framework with required information.
-+ * This is used to determine the voltage and frequency value for each OPP of
-+ * operating-points-v2 table when it is parsed by the OPP framework.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-consumer.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/soc/qcom/smem.h>
-+
-+#define MSM_ID_SMEM	137
-+#define SILVER_LEAD	0
-+#define GOLD_LEAD	2
-+
-+enum _msm_id {
-+	MSM8996V3 = 0xF6ul,
-+	APQ8096V3 = 0x123ul,
-+	MSM8996SG = 0x131ul,
-+	APQ8096SG = 0x138ul,
-+};
-+
-+enum _msm8996_version {
-+	MSM8996_V3,
-+	MSM8996_SG,
-+	NUM_OF_MSM8996_VERSIONS,
-+};
-+
-+static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
-+{
-+	size_t len;
-+	u32 *msm_id;
-+	enum _msm8996_version version;
-+
-+	msm_id = qcom_smem_get(QCOM_SMEM_HOST_ANY, MSM_ID_SMEM, &len);
-+	/* The first 4 bytes are format, next to them is the actual msm-id */
-+	msm_id++;
-+
-+	switch ((enum _msm_id)*msm_id) {
-+	case MSM8996V3:
-+	case APQ8096V3:
-+		version = MSM8996_V3;
-+		break;
-+	case MSM8996SG:
-+	case APQ8096SG:
-+		version = MSM8996_SG;
-+		break;
-+	default:
-+		version = NUM_OF_MSM8996_VERSIONS;
-+	}
-+
-+	return version;
-+}
-+
-+static int __init qcom_cpufreq_kryo_driver_init(void)
-+{
-+	struct device *cpu_dev_silver, *cpu_dev_gold;
-+	struct opp_table *opp_silver, *opp_gold;
-+	enum _msm8996_version msm8996_version;
-+	struct nvmem_cell *speedbin_nvmem;
-+	struct platform_device *pdev;
-+	struct device_node *np;
-+	u8 *speedbin;
-+	u32 versions;
-+	size_t len;
-+	int ret;
-+
-+	cpu_dev_silver = get_cpu_device(SILVER_LEAD);
-+	if (NULL == cpu_dev_silver)
-+		return -ENODEV;
-+
-+	cpu_dev_gold = get_cpu_device(SILVER_LEAD);
-+	if (NULL == cpu_dev_gold)
-+		return -ENODEV;
-+
-+	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
-+	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
-+		dev_err(cpu_dev_silver, "Not Snapdragon 820/821!");
-+		return -ENODEV;
-+	}
-+
-+	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev_silver);
-+	if (IS_ERR(np))
-+		return PTR_ERR(np);
-+
-+	if (!of_device_is_compatible(np, "operating-points-v2-kryo-cpu")) {
-+		ret = -ENOENT;
-+		goto free_np;
-+	}
-+
-+	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-+	if (IS_ERR(speedbin_nvmem)) {
-+		ret = PTR_ERR(speedbin_nvmem);
-+		dev_err(cpu_dev_silver, "Could not get nvmem cell: %d\n", ret);
-+		goto free_np;
-+	}
-+
-+	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
-+	nvmem_cell_put(speedbin_nvmem);
-+
-+	switch (msm8996_version) {
-+	case MSM8996_V3:
-+		versions = 1 << (unsigned int)(*speedbin);
-+		break;
-+	case MSM8996_SG:
-+		versions = 1 << ((unsigned int)(*speedbin) + 4);
-+		break;
-+	default:
-+		BUG();
-+		break;
-+	}
-+
-+	opp_silver = dev_pm_opp_set_supported_hw(cpu_dev_silver,&versions,1);
-+	if (IS_ERR(opp_silver)) {
-+		dev_err(cpu_dev_silver, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_silver);
-+		goto free_np;
-+	}
-+
-+	opp_gold = dev_pm_opp_set_supported_hw(cpu_dev_gold,&versions,1);
-+	if (IS_ERR(opp_gold)) {
-+		dev_err(cpu_dev_gold, "Failed to set supported hardware\n");
-+		ret = PTR_ERR(opp_gold);
-+		goto free_opp_silver;
-+	}
-+
-+	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
-+	if (!IS_ERR(pdev))
-+		return 0;
-+
-+	ret = PTR_ERR(pdev);
-+	dev_err(cpu_dev_silver, "Failed to register platform device\n");
-+	dev_pm_opp_put_supported_hw(opp_gold);
-+
-+free_opp_silver:
-+	dev_pm_opp_put_supported_hw(opp_silver);
-+
-+free_np:
-+	of_node_put(np);
-+
-+	return ret;
-+}
-+late_initcall(qcom_cpufreq_kryo_driver_init);
-+
-+MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+I understand -- the previous format was a lot more readable, here I had to
+work to make the table as small as I could, and quite a few bits of readabi=
+lity
+were lost in the process. It's already a huge file.
 
+I'm not sure if that would help, but here is the link to the old table
+format I used
+https://github.com/renesas-rz/rzn1_linux/blob/rzn1-stable/drivers/clk/rzn1/=
+rzn1-clkctrl-tables.h
+
+I had to throw that away to make up the new composite table that now contai=
+ns
+what was in the device tree file before. However the names are the same.
+
+Perhaps I could change how I encode the register/bit pairs to use 8+8 bits =
+to
+make the hex constants more readable?
+
+>
+> >>    2. These definitions seems to be a mix of:
+> >>         1. Internal core clocks,
+> >>         2. Other core clocks,
+> >>         3. Module clocks.
+> >
+> >>       The internal clocks do not need to be referenced from DT, so I w=
+ould
+> >>       not make them part of the DT bindings.
+> >
+> > Why? I'm told that "Bindings aren't for linux" -- why can't I imagine
+> > 'something' needing them? Why would I decide NOT to include them,
+> > as they are there? I 'factored' a few of them to the same number when
+>
+> Just general safety w.r.t. unchangeable DT definitions: anything that is
+> not listed here cannot be declared wrong later.
+
+Well, I need these #define *somewhere* as I use them in my driver. So what
+do you want me to do?
++ Remove the header, move the constants into the driver?
++ Use hard coded numbers in the DT and remove the header entirely?
++ Duplicate the header, keep the full one with the driver, and only list
+the CA7+UART0 one in the dt-binding and duplicate the ones I need as
+I go along?
+
+>
+> > applicable.
+>
+> You're 100% sure they're the same?
+
+Yes, the script logic hasn't changed in 2 years, and we've been using that
+hierarchy extensively since.
+Basically the logic is that if a clock doesn't have a gate and isn't a divi=
+sor
+of some sort, it's factored with it's parent clock... it used to be
+done with a DT
+alias of the same name.
+
+>
+> > This is all done automatically BTW -- a script takes the original clock=
+ing
+> > spreadsheet, and converts it into a table, correcting 'human input' as =
+it
+> > goes along.
+>
+> So the internal spreadsheet doesn't match the public documentation neithe=
+r?
+
+Nope, as usual, people who wrote the documentation went their own way at
+some point, and didn't backport any changes they made.
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+
+Cheers,
+Michel
