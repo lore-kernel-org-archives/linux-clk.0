@@ -1,82 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout6.siol.net ([213.250.19.133]:34612 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752451AbeESSc1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 19 May 2018 14:32:27 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 00/15] Add support for R40 HDMI pipeline
-Date: Sat, 19 May 2018 20:31:12 +0200
-Message-Id: <20180519183127.2718-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <xieyisheng1@huawei.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <andy.shevchenko@gmail.com>, Yisheng Xie <xieyisheng1@huawei.com>,
+	"Michael Turquette" <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 09/21] clk: use match_string() helper
+Date: Thu, 31 May 2018 19:11:14 +0800
+Message-ID: <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
+In-Reply-To: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds support for R40 HDMI pipeline. It is a bit special
-than other already supported pipelines because it has additional unit
-called TCON TOP responsible for relationship configuration between
-mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-and TV TCONs, TV encoder clock settings and pin muxing between LCD
-and TV encoders.
+match_string() returns the index of an array for a matching string,
+which can be used instead of open coded variant.
 
-However, it seems that TCON TOP will become a norm, since newer
-Allwinner SoCs like H6 also have this unit.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+v2:
+ - leave second parameter on the first line  - per Andy
 
-I tested different possible configurations:
-- mixer0 <> TCON-TV0 <> HDMI
-- mixer0 <> TCON-TV1 <> HDMI
-- mixer1 <> TCON-TV0 <> HDMI
-- mixer1 <> TCON-TV1 <> HDMI
+ drivers/clk/clk.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Please review.
-
-Best regards,
-Jernej
-
-Jernej Skrabec (15):
-  clk: sunxi-ng: r40: Add minimal rate for video PLLs
-  clk: sunxi-ng: r40: Allow setting parent rate to display related
-    clocks
-  clk: sunxi-ng: r40: Export video PLLs
-  dt-bindings: display: sunxi-drm: Add TCON TOP description
-  drm/sun4i: Add TCON TOP driver
-  drm/sun4i: tcon: Add support for tcon-top
-  dt-bindings: display: sun4i-drm: Add R40 HDMI pipeline
-  drm/sun4i: DE2 mixer: Add index quirk
-  drm/sun4i: Add support for R40 mixers
-  drm/sun4i: Add support for R40 TV TCONs
-  drm/sun4i: DW HDMI PHY: Add support for second PLL
-  drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
-    driver
-  drm/sun4i: Add support for A64 HDMI PHY
-  ARM: dts: sun8i: r40: Add HDMI pipeline
-  ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
-
- .../bindings/display/sunxi/sun4i-drm.txt      |  36 ++-
- .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  50 ++++
- arch/arm/boot/dts/sun8i-r40.dtsi              | 166 ++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c          |  58 ++--
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h          |   8 +-
- drivers/gpu/drm/sun4i/Makefile                |   3 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c            |  67 +++++
- drivers/gpu/drm/sun4i/sun4i_tcon.h            |   8 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   8 +-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        |  61 ++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c    |  90 ++++--
- drivers/gpu/drm/sun4i/sun8i_mixer.c           |  30 +-
- drivers/gpu/drm/sun4i/sun8i_mixer.h           |   2 +
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c        | 256 ++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_tcon_top.h        |  20 ++
- include/dt-bindings/clock/sun8i-r40-ccu.h     |   4 +
- include/dt-bindings/clock/sun8i-tcon-top.h    |  11 +
- 17 files changed, 813 insertions(+), 65 deletions(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
- create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7af555f..d01bdda 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2171,7 +2171,6 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent)
+ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ {
+ 	struct clk_core *core, *parent_core;
+-	unsigned int i;
+ 
+ 	/* NULL clocks should be nops, so return success if either is NULL. */
+ 	if (!clk || !parent)
+@@ -2184,11 +2183,8 @@ bool clk_has_parent(struct clk *clk, struct clk *parent)
+ 	if (core->parent == parent_core)
+ 		return true;
+ 
+-	for (i = 0; i < core->num_parents; i++)
+-		if (strcmp(core->parent_names[i], parent_core->name) == 0)
+-			return true;
+-
+-	return false;
++	return match_string(core->parent_names, core->num_parents,
++			    parent_core->name) >= 0;
+ }
+ EXPORT_SYMBOL_GPL(clk_has_parent);
+ 
 -- 
-2.17.0
-
+1.7.12.4
