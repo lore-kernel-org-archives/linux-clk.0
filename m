@@ -1,43 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38347 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750810AbeEORCc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 May 2018 13:02:32 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Add Actions Semi S900 clk entries
+To: Stephen Boyd <sboyd@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: daniel.thompson@linaro.org, manivannanece23@gmail.com,
+        bdong@ucrobotics.com, liuwei@actions-semi.com,
+        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
+        hzhang@ucrobotics.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1527780180-15041-1-git-send-email-manivannan.sadhasivam@linaro.org>
+ <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <e6ff5bfc-2c19-9b39-311b-a527f90e4b5b@suse.de>
+Date: Thu, 31 May 2018 22:34:09 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180515164229.4606-1-jbrunet@baylibre.com>
-References: <20180515164229.4606-1-jbrunet@baylibre.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Tue, 15 May 2018 14:02:31 -0300
-Message-ID: <CAOMZO5A20PRCgajpc7FaaWdGEGi13dV+dO9Z9SLDZEhxfs94Mw@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: use SPDX license identifiers consistently
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <152779875340.144038.4898809848995507014@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, May 15, 2018 at 1:42 PM, Jerome Brunet <jbrunet@baylibre.com> wrote:
+Am 31.05.2018 um 22:32 schrieb Stephen Boyd:
+> Quoting Manivannan Sadhasivam (2018-05-31 08:23:00)
+>> Add S900 clk entries under ARCH_ACTIONS
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> Unless you wanted me to apply this?
 
-> diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-> index f7ab5b1db342..ac0743cd0f2f 100644
-> --- a/drivers/clk/meson/clk-audio-divider.c
-> +++ b/drivers/clk/meson/clk-audio-divider.c
-> @@ -1,18 +1,7 @@
-> +// SPDX-License-Identifier: GPL-2.0+
+I'll take it once I have my 4.17 branches rebased to 4.18.
 
-Here you put GPL2.0+, but it should be GPL2.0 instead
+Thanks,
+Andreas
 
->  /*
->   * Copyright (c) 2017 AmLogic, Inc.
->   * Author: Jerome Brunet <jbrunet@baylibre.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify it
-> - * under the terms and conditions of the GNU General Public License,
-> - * version 2, as published by the Free Software Foundation.
-
-.... according to the original text.
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
