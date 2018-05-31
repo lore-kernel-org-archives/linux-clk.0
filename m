@@ -1,99 +1,127 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	stefan@agner.ch,
-	adriana.reus@nxp.com,
-	rui.silva@linaro.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] clk: imx7d: correct enet clock CCGR register offset
-Date: Thu, 17 May 2018 16:40:21 +0800
-Message-Id: <1526546422-7431-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <marek.vasut@gmail.com>
+Return-Path: <marek.vasut@gmail.com>
+Subject: Re: [PATCH] clk: vc5: Fix div-by-0 when rounding a rate of zero
+To: Steve Longerbeam <slongerbeam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steve Longerbeam <steve_longerbeam@mentor.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>
+References: <1527791036-11251-1-git-send-email-steve_longerbeam@mentor.com>
+ <1084deae-ca55-aba1-ec08-7e1d976de7b7@gmail.com>
+ <e6d84bd1-5ad9-1a01-1cdf-0356fea82c16@gmail.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <f7a05f4b-35c4-4900-24bd-44aab1c669cb@gmail.com>
+Date: Thu, 31 May 2018 20:35:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+In-Reply-To: <e6d84bd1-5ad9-1a01-1cdf-0356fea82c16@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Correct enet clock CCGR register offset.
+On 05/31/2018 08:32 PM, Steve Longerbeam wrote:
+> Hi Marek,
+> 
+> 
+> On 05/31/2018 11:25 AM, Marek Vasut wrote:
+>> On 05/31/2018 08:23 PM, Steve Longerbeam wrote:
+>>> Just return zero for a rounded rate if requested rate is zero.
+>>>
+>>> This was caught by CONFIG_UBSAN:
+>>>
+>>> [  192.266748] UBSAN: Undefined behaviour in
+>>> drivers/clk/clk-versaclock5.c:513:17
+>>> [  192.274050] division by zero
+>>> [  192.276976] CPU: 0 PID: 2579 Comm: vsp-unit-test-0 Tainted: G   
+>>> B   WC      4.14.17-02752-g13fb96f #1
+>>> [  192.286378] Hardware name: Renesas Salvator-X board based on
+>>> r8a7795 ES2.0+ (DT)
+>>> [  192.293852] Call trace:
+>>> [  192.296343] [<ffff2000080900dc>] dump_backtrace+0x0/0x390
+>>> [  192.301807] [<ffff200008090480>] show_stack+0x14/0x1c
+>>> [  192.306920] [<ffff200008f66574>] dump_stack+0x134/0x1a8
+>>> [  192.312213] [<ffff2000087aaa30>] ubsan_epilogue+0x14/0x60
+>>> [  192.317677] [<ffff2000087ab4d0>]
+>>> __ubsan_handle_divrem_overflow+0x11c/0x170
+>>> [  192.324720] [<ffff200008852120>] vc5_fod_round_rate+0x68/0x148
+>>> [  192.330620] [<ffff20000884567c>] clk_calc_new_rates+0x238/0x3fc
+>>> [  192.336607] [<ffff2000088456e0>] clk_calc_new_rates+0x29c/0x3fc
+>>> [  192.342595] [<ffff2000088483ac>] clk_core_set_rate_nolock+0x48/0x11c
+>>> [  192.349019] [<ffff2000088484b4>] clk_set_rate+0x34/0x4c
+>>> [  192.354307] [<ffff20000895e304>] rcar_du_pm_suspend+0x274/0x2f4
+>>> [  192.360297] [<ffff20000898feac>] platform_pm_suspend+0x78/0xb8
+>>> [  192.366198] [<ffff2000089a5604>] dpm_run_callback+0x584/0xa18
+>>> [  192.372010] [<ffff2000089a69e0>] __device_suspend+0x1a8/0x534
+>>> [  192.377822] [<ffff2000089adc48>] dpm_suspend+0x130/0xea0
+>>> [  192.383197] [<ffff2000089b0344>] dpm_suspend_start+0x130/0x138
+>>> [  192.389099] [<ffff20000817f584>]
+>>> suspend_devices_and_enter+0xf0/0x1778
+>>> [  192.395700] [<ffff200008183014>] pm_suspend+0x2408/0x245c
+>>> [  192.401162] [<ffff20000817c0a4>] state_store+0xf0/0x130
+>>> [  192.406451] [<ffff200008f6f19c>] kobj_attr_store+0x5c/0x6c
+>>> [  192.412002] [<ffff2000084f4c94>] sysfs_kf_write+0xe8/0xfc
+>>> [  192.417466] [<ffff2000084f30b0>] kernfs_fop_write+0x22c/0x2e4
+>>> [  192.423281] [<ffff2000083e46d4>] __vfs_write+0x104/0x34c
+>>> [  192.428656] [<ffff2000083e4cc4>] vfs_write+0x134/0x2d8
+>>> [  192.433857] [<ffff2000083e5150>] SyS_write+0xbc/0x12c
+>>> [  192.438967] Exception stack(0xffff8006cd1cfec0 to 0xffff8006cd1d0000)
+>>> [  192.445480] fec0: 0000000000000001 000000001e303f00
+>>> 0000000000000004 0000ffff959a5000
+>>> [  192.453397] fee0: 0000000000000000 0000000155510004
+>>> 0000000000000003 000000000000006d
+>>> [  192.461314] ff00: 0000000000000040 0000000000000000
+>>> 0000ffffcc304800 0000000000000020
+>>> [  192.469230] ff20: 0000000000000000 0000000000000000
+>>> 0000000000000001 0000000000000008
+>>> [  192.477148] ff40: 00000000004eb3b8 0000ffff958bb840
+>>> 000000000000003d 0000000000000001
+>>> [  192.485065] ff60: 000000001e303f00 0000ffff959a1508
+>>> 0000000000000004 000000001e303f00
+>>> [  192.492982] ff80: 0000000000000004 00000000004d4c68
+>>> 0000000000000001 0000000000000000
+>>> [  192.500899] ffa0: 000000001e30d5c0 0000ffffcc304820
+>>> 0000ffff958bec64 0000ffffcc304820
+>>> [  192.508816] ffc0: 0000ffff95912898 0000000020000000
+>>> 0000000000000001 0000000000000040
+>>> [  192.516733] ffe0: 0000000000000000 0000000000000000
+>>> 0000000000000000 0000000000000000
+>>> [  192.524650] [<ffff200008083ef0>] el0_svc_naked+0x24/0x28
+>>>
+>>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+>>> ---
+>>>   drivers/clk/clk-versaclock5.c | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/clk-versaclock5.c
+>>> b/drivers/clk/clk-versaclock5.c
+>>> index decffb3..113523d 100644
+>>> --- a/drivers/clk/clk-versaclock5.c
+>>> +++ b/drivers/clk/clk-versaclock5.c
+>>> @@ -509,6 +509,10 @@ static long vc5_fod_round_rate(struct clk_hw
+>>> *hw, unsigned long rate,
+>>>       u32 div_int;
+>>>       u64 div_frc;
+>>>   +    /* prevent div-by-0 */
+>>> +    if (rate == 0)
+>>> +        return 0;
+>>> +
+>>>       /* Determine integer part, which is 12 bit wide */
+>>>       div_int = f_in / rate;
+>>>       /*
+>>>
+>> Can this actually happen ?
+> 
+> We caught this using the Renesas 3.6.0 BSP release, when performing
+> a suspend of rcar-du driver. The rcar_du_pm_suspend() in 3.6.0 BSP is
+> modified
+> from mainline version, including calling clk_set_rate() on the crtc
+> clocks with a
+> rate of zero. So this is not actually reproducible (yet) in mainline.
 
-CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
+So it sets clock to 0 ? Anyway, this looks sane, although maybe the
+whole driver could use a once-over to see if there could be more of this.
 
-IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY,
-no gate after this clock, its parent clock root has gate.
-IMX7D_ENET1_REF_ROOT_DIV/IMX7D_ENET2_REF_ROOT_DIV supplies clocks
-for enet IPG_CLK_RMII, no gate after the clock, its parent
-clock root has gate.
+Or should the clock framework even let us set clock to 0 Hz ?
 
-IMX7D_PLL_ENET_MAIN_125M_CLK (anatop pll) supplies clock for
-enet RGMII tx_clk.
-
-Based on Andy Duan's patch from the NXP kernel tree.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c             | 11 ++++++-----
- include/dt-bindings/clock/imx7d-clock.h |  4 +++-
- 2 files changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 975a20d..485ab49 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -26,6 +26,8 @@ static u32 share_count_sai1;
- static u32 share_count_sai2;
- static u32 share_count_sai3;
- static u32 share_count_nand;
-+static u32 share_count_enet1;
-+static u32 share_count_enet2;
- 
- static const struct clk_div_table test_div_table[] = {
- 	{ .val = 3, .div = 1, },
-@@ -805,6 +807,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_gate4("mipi_dsi_root_clk", "mipi_dsi_post_div", base + 0x4650, 0);
- 	clks[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_gate4("mipi_csi_root_clk", "mipi_csi_post_div", base + 0x4640, 0);
- 	clks[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_gate4("mipi_dphy_root_clk", "mipi_dphy_post_div", base + 0x4660, 0);
-+	clks[IMX7D_ENET1_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet1_ipg_root_clk", "enet_axi_post_div", base + 0x4700, 0, &share_count_enet1);
-+	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet1_time_root_clk", "enet1_time_post_div", base + 0x4700, 0, &share_count_enet1);
-+	clks[IMX7D_ENET2_IPG_ROOT_CLK] = imx_clk_gate2_shared2("enet2_ipg_root_clk", "enet_axi_post_div", base + 0x4710, 0, &share_count_enet2);
-+	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate2_shared2("enet2_time_root_clk", "enet2_time_post_div", base + 0x4710, 0, &share_count_enet2);
- 	clks[IMX7D_SAI1_ROOT_CLK] = imx_clk_gate2_shared2("sai1_root_clk", "sai1_post_div", base + 0x48c0, 0, &share_count_sai1);
- 	clks[IMX7D_SAI1_IPG_CLK]  = imx_clk_gate2_shared2("sai1_ipg_clk",  "ipg_root_clk",  base + 0x48c0, 0, &share_count_sai1);
- 	clks[IMX7D_SAI2_ROOT_CLK] = imx_clk_gate2_shared2("sai2_root_clk", "sai2_post_div", base + 0x48d0, 0, &share_count_sai2);
-@@ -812,11 +818,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_SAI3_ROOT_CLK] = imx_clk_gate2_shared2("sai3_root_clk", "sai3_post_div", base + 0x48e0, 0, &share_count_sai3);
- 	clks[IMX7D_SAI3_IPG_CLK]  = imx_clk_gate2_shared2("sai3_ipg_clk",  "ipg_root_clk",  base + 0x48e0, 0, &share_count_sai3);
- 	clks[IMX7D_SPDIF_ROOT_CLK] = imx_clk_gate4("spdif_root_clk", "spdif_post_div", base + 0x44d0, 0);
--	clks[IMX7D_ENET1_REF_ROOT_CLK] = imx_clk_gate4("enet1_ref_root_clk", "enet1_ref_post_div", base + 0x44e0, 0);
--	clks[IMX7D_ENET1_TIME_ROOT_CLK] = imx_clk_gate4("enet1_time_root_clk", "enet1_time_post_div", base + 0x44f0, 0);
--	clks[IMX7D_ENET2_REF_ROOT_CLK] = imx_clk_gate4("enet2_ref_root_clk", "enet2_ref_post_div", base + 0x4500, 0);
--	clks[IMX7D_ENET2_TIME_ROOT_CLK] = imx_clk_gate4("enet2_time_root_clk", "enet2_time_post_div", base + 0x4510, 0);
--	clks[IMX7D_ENET_PHY_REF_ROOT_CLK] = imx_clk_gate4("enet_phy_ref_root_clk", "enet_phy_ref_post_div", base + 0x4520, 0);
- 	clks[IMX7D_EIM_ROOT_CLK] = imx_clk_gate4("eim_root_clk", "eim_post_div", base + 0x4160, 0);
- 	clks[IMX7D_NAND_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_rawnand_clk", "nand_root_clk", base + 0x4140, 0, &share_count_nand);
- 	clks[IMX7D_NAND_USDHC_BUS_RAWNAND_CLK] = imx_clk_gate2_shared2("nand_usdhc_rawnand_clk", "nand_usdhc_root_clk", base + 0x4140, 0, &share_count_nand);
-diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
-index b2325d3e2..fef0647 100644
---- a/include/dt-bindings/clock/imx7d-clock.h
-+++ b/include/dt-bindings/clock/imx7d-clock.h
-@@ -455,5 +455,7 @@
- #define IMX7D_SNVS_CLK			442
- #define IMX7D_CAAM_CLK			443
- #define IMX7D_KPP_ROOT_CLK		444
--#define IMX7D_CLK_END			445
-+#define IMX7D_ENET1_IPG_ROOT_CLK        445
-+#define IMX7D_ENET2_IPG_ROOT_CLK        446
-+#define IMX7D_CLK_END			447
- #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
 -- 
-2.7.4
+Best regards,
+Marek Vasut
