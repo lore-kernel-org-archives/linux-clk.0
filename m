@@ -1,114 +1,51 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V3 3/4] clk: add managed version of clk_bulk_get_all
-Date: Fri, 25 May 2018 18:37:22 +0800
-Message-Id: <1527244643-10736-4-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:20356 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755562AbeEaQg5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 12:36:57 -0400
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com> <20180530150402.GE5705@atomide.com>
+ <2361da91-659d-1aaa-0ab8-d1473bc3a71a@ti.com>
+ <20180531134507.GK5705@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <1effa8c0-6749-faf5-3f09-9f51dc55532f@ti.com>
+Date: Thu, 31 May 2018 22:08:07 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+In-Reply-To: <20180531134507.GK5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces the managed version of clk_bulk_get_all.
+Hi,
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v2->v3:
- * a minor fix of build warning on PowerPC platform.
-v1->v2:
- * new patch
----
- drivers/clk/clk-devres.c | 24 ++++++++++++++++++++++++
- include/linux/clk.h      | 23 +++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
+On Thursday 31 May 2018 07:15 PM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180531 10:22]:
+>> On Wednesday 30 May 2018 08:34 PM, Tony Lindgren wrote:
+>>> Looks good to me except I think the reset won't do anything currently
+>>> with ti-sysc.c unless you specfify also "ti,hwmods" for the module?
+>>>
+>>> Can you please check? It might be worth adding the reset function to
+>>> ti-sysc.c for non "ti,hwmods" case and that just might remove the
+>>> need for any hwmod code for this module.
+>>>
+>>
+>> If I understand correctly, this involves adding a (*reset_module) in
+>> ti_sysc_platform_data and defining a ti_sysc_reset_module() in ti-sysc.c
+>> similar to ti_sysc_idle_module(). Right?
+> 
+> Well try moving "ti,hwmods" to the module level first. Then reset will
+> happen with enable.
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..6d3ca5e 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -70,6 +70,30 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
- 
-+int __must_check devm_clk_bulk_get_all(struct device *dev,
-+				       struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_devres *devres;
-+	int ret;
-+
-+	devres = devres_alloc(devm_clk_bulk_release,
-+			      sizeof(*devres), GFP_KERNEL);
-+	if (!devres)
-+		return -ENOMEM;
-+
-+	ret = clk_bulk_get_all(dev, clks);
-+	if (ret > 0) {
-+		devres->clks = *clks;
-+		devres->num_clks = ret;
-+		devres_add(dev, devres);
-+	} else {
-+		devres_free(devres);
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
-+
- static int devm_clk_match(struct device *dev, void *res, void *data)
- {
- 	struct clk **c = res;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index a76fdff..ef20217 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -313,6 +313,22 @@ int __must_check clk_bulk_get_all(struct device *dev,
-  */
- int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 				   struct clk_bulk_data *clks);
-+/**
-+ * devm_clk_bulk_get_all - managed get multiple clk consumers
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * This helper function allows drivers to get several clk
-+ * consumers in one operation with management, the clks will
-+ * automatically be freed when the device is unbound.
-+ */
-+
-+int __must_check devm_clk_bulk_get_all(struct device *dev,
-+				       struct clk_bulk_data **clks);
- 
- /**
-  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-@@ -658,6 +674,13 @@ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clk
- 	return 0;
- }
- 
-+static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
-+						     struct clk_bulk_data **clks)
-+{
-+
-+	return 0;
-+}
-+
- static inline struct clk *devm_get_clk_from_child(struct device *dev,
- 				struct device_node *np, const char *con_id)
- {
--- 
-2.7.4
+Ok. Let me try that.
+
+Thanks,
+Faiz
+
