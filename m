@@ -1,49 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 2/7] arm64: allwinner: h6: add PRCM CCU device node
-Date: Fri,  4 May 2018 02:38:42 +0800
-Message-Id: <20180503183847.11046-3-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
+Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
+ clocks
+To: Faiz Abbas <faiz_abbas@ti.com>, Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-4-faiz_abbas@ti.com>
+ <20180531040350.GA25132@rob-hp-laptop>
+ <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
+Date: Thu, 31 May 2018 16:29:56 +0300
+MIME-Version: 1.0
+In-Reply-To: <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 has also a PRCM CCU.
+On 31/05/18 13:14, Faiz Abbas wrote:
+> Hi,
+> 
+> On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
+>> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
+>>> Add clkctrl data for the m_can clocks and register it within the
+> ...
+>>>   
+>>> diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+>>> index 5e1061b15aed..d7549c57cac3 100644
+>>> --- a/include/dt-bindings/clock/dra7.h
+>>> +++ b/include/dt-bindings/clock/dra7.h
+>>> @@ -168,5 +168,6 @@
+>>>   #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+>>>   #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+>>>   #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
+>>> +#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
+>>
+>> ADC and mcan are the same thing?
+>>
+> 
+> The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
 
-Add its device node into the device tree.
+Is there any reason for this or is that just a documentation bug?
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 4debc3962830..db9da343ba46 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -173,5 +173,15 @@
- 			resets = <&ccu RST_BUS_UART3>;
- 			status = "disabled";
- 		};
-+
-+		r_ccu: clock@7010000 {
-+			compatible = "allwinner,sun50i-h6-r-ccu";
-+			reg = <0x07010000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>, <&iosc>,
-+				 <&ccu CLK_PLL_PERIPH0>;
-+			clock-names = "hosc", "losc", "iosc", "pll-periph";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
- 	};
- };
--- 
-2.15.1
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
