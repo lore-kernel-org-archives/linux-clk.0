@@ -1,100 +1,78 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Wed, 30 May 2018 15:56:34 +0300
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 0/6] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <20180530125634.GE13528@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180530090512.GC13528@localhost.localdomain>
- <20180530110000.GI6920@sirena.org.uk>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] ARM: dra762: hwmod: Add MCAN support
+To: Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-2-faiz_abbas@ti.com> <20180530145047.GC5705@atomide.com>
+ <cfa9c9df-57a2-69f6-9509-440dc18292e7@ti.com>
+ <20180530152825.GG5705@atomide.com>
+ <b0476932-a6e9-6ef1-69ad-c9a8c55d9739@ti.com>
+ <20180530155448.GH5705@atomide.com>
+ <98c989ca-0694-5150-f74b-35f3e4bf20c0@ti.com>
+ <20180531152623.GN5705@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <f74763ed-7e27-146b-6856-6be1b2ba630d@ti.com>
+Date: Thu, 31 May 2018 22:05:55 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180530110000.GI6920@sirena.org.uk>
+In-Reply-To: <20180531152623.GN5705@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
-On Wed, May 30, 2018 at 12:00:00PM +0100, Mark Brown wrote:
-> On Wed, May 30, 2018 at 12:05:12PM +0300, Matti Vaittinen wrote:
+On Thursday 31 May 2018 08:56 PM, Tony Lindgren wrote:
+> * Tero Kristo <t-kristo@ti.com> [180531 06:18]:
+>> On 30/05/18 18:54, Tony Lindgren wrote:
+>>> * Tero Kristo <t-kristo@ti.com> [180530 15:44]:
+>>>> On 30/05/18 18:28, Tony Lindgren wrote:
+>>>>> * Tero Kristo <t-kristo@ti.com> [180530 15:18]:
+>>>>>> For the OCP if part, I think that is still needed until we switch over to
+>>>>>> full sysc driver. clkctrl_offs you probably also need because that is used
+>>>>>> for mapping the omap_hwmod against a specific clkctrl clock. Those can be
+>>>>>> only removed once we are done with hwmod (or figure out some other way to
+>>>>>> assign the clkctrl clock to a hwmod.)
+>>>>>
+>>>>> Hmm might be worth testing. I thought your commit 70f05be32133
+>>>>> ("ARM: OMAP2+: hwmod: populate clkctrl clocks for hwmods if available")
+>>>>> already parses the clkctrl from dts?
+>>>>
+>>>> It maps the clkctrl clock to be used by hwmod, if those are available. We
+>>>> didn't add any specific clock entries to DT for mapping the actual clkctrl
+>>>> clock without the hwmod_data hints yet though, as that was deemed temporary
+>>>> solution only due to transition to interconnect driver. I.e., you would need
+>>>> something like this in DT for every device node:
+>>>>
+>>>> &uart3 {
+>>>>    clocks = <l4per_clkctrl UART3_CLK 0>;
+>>>>    clock-names = "clkctrl";
+>>>> };
+>>>>
+>>>> ... which is currently not present.
+>>>
+>>> Hmm is that not the "fck" clkctrl clock we have already in
+>>> the dts files for the interconnect target modules?
+>>
+>> Oh okay, yeah, we could parse that one, but currently it is not done, and is
+>> not present for everything either I believe.
+>>
+>>> We can also use pdata callbacks to pass the clock node if
+>>> needed. But I guess I don't quite still understand what we
+>>> are missing :)
+>>
+>> So, what is missing is the glue logic only from the hwmod codebase. Right
+>> now this is not supported but should be relatively trivial thing to add if
+>> we really want to do this.
 > 
-> > Other 4 can be used on PWM or PFM switching mode. When PWM is used
-> > voltages can be changed without disabling regulator. On PFM this should
-> > not be done. These latter 4 regulators can be forced to PWM mode via
-> > control bit in register. This driver does not support controlling this
-> > mode though. So this driver version just checks if regulator is enabled
-> > before changing the voltage and if it is the voltage change fails with
-> > -EBUSY
+> OK let's think about this a bit for v4.19 then.
 > 
-> It probably should support setting modes (especially if the device isn't
-> smart enough to automatically shift which sounds like the case) but
-> that's a separate thing.
 
-Thanks for the guidance! The first 4 BUCKs (which support DVS) do change
-the mode automatically. Latter 4 do not. I however didn't find example
-on how to allow doing this mode change via regulator framework and thus
-the driver is not allowing mode change. For me it would sound good to
-allow setting the mode via device-tree property - and via in-kernel API
-or sysfs - but as I said I didn't yet find a nice example on that. (But
-I assume this device is not first one allowing mode change and thus
-there should be an example and I probably should not invent own DT
-properties or sysfs entries for this. Guess I just need to search harder).
+I am not sure what the conclusion is. Should I try removing the
+clkctrl_offsets, clkdm_name, and main_clk?
 
-> 
-> > My question is whether it would be good idea to also read the 'force
-> > PWM' bit when voltage is changed and allow the change if PWM mode is
-> > forced to be used? Problem is that the check and voltage change can't be
-> > atomic so there is a chance someone changes the mode (bypassing the
-> > driver and regulator core) after this check but before we get to modify
-> > the voltage. Furthermore, I doubt the 'force PWM' is widely used (but I
-> > can't say for sure as I can't imagine all use cases) as it is not so
-> > power efficient.
-> 
-> Why would anything else be changing the mode configuration of the
-> regulator while the system is running?  That sounds like a bad idea.
-This was also my initial thought. Still with my lack of experience on this
-area (and with my experience on people inventing strange solutions) I
-felt unsure.
-
-> In any case if the hardware really needs to be manually put into force
-> PWM to change voltage then the simplest thing would be to just move it
-> into force PWM mode, do the change, then change back if it wasn't
-> already in force PWM mode.
-I see 4 options for these last 4 bucks which can't switch to PWM
-automatically when voltage is changed.
-
-1. prohibit voltage change if regulator is enabled (safest? current
-   approach)
-2. allow voltage change if regulator is enabled and force PWM is used
-3. switch to 'force PWM' when changing voltage (as suggested by Mark)
-4. disable regulator for duration of voltage change (discarded option)
-
-So option 4 was discarded. Option 1 is the current approach. I will ask
-from ROHM PMIC HW colleagues what they think of Mark's suggestion
-(option 3) and implement it if HW behaves Ok. I guess option 2 is not
-worth the hassle.
-
-> 
-> The tradeoff with forced PWM mode is that the quality of regulation will
-> be a lot better, especially if the load changes suddenly (as things like
-> CPUs often do).  Most hardware that's at all current is able respond to
-> changes in load and switch modes automatically when it's appropriate,
-> except possibly in some very low power modes.
-
-Yes. The mode switching is automatic. But there is this control bit for
-disabling automatic mode switching and forcing the PWM. Problem with
-these 4 last bucks is just that if regulator is in PFM (and it may be
-if not forced to PWM - due to this automatic switching) then the voltage
-change is not behaving well.
-
-Thanks for all the support Mark!
-
-Br,
-	Matti Vaittinen
+Thanks,
+Faiz
