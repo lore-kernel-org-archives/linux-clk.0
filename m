@@ -1,44 +1,54 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 18 May 2018 09:24:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 24/27] dt-bindings: timer: new bindings for TI
- DaVinci timer
-Message-ID: <20180518142418.GA2298@rob-hp-laptop>
-References: <20180509172606.29387-1-david@lechnology.com>
- <20180509172606.29387-25-david@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:45396 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755042AbeEaNlN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 31 May 2018 09:41:13 -0400
+Date: Thu, 31 May 2018 06:41:09 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com
+Subject: Re: [PATCH v2 5/6] ARM: dts: Add generic interconnect target module
+ node for MCAN
+Message-ID: <20180531134109.GJ5705@atomide.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-6-faiz_abbas@ti.com>
+ <20180531040638.GA26751@rob-hp-laptop>
+ <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180509172606.29387-25-david@lechnology.com>
+In-Reply-To: <be0fd711-c44b-dbe2-648f-08aa88c7aec4@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, May 09, 2018 at 12:26:03PM -0500, David Lechner wrote:
-> This adds new device tree bindings for the timer IP block of TI
-> DaVinci-like SoCs.
+* Faiz Abbas <faiz_abbas@ti.com> [180531 11:27]:
+> On Thursday 31 May 2018 09:36 AM, Rob Herring wrote:
+> > On Wed, May 30, 2018 at 07:41:32PM +0530, Faiz Abbas wrote:
+> >> --- a/arch/arm/boot/dts/dra76x.dtsi
+> >> +++ b/arch/arm/boot/dts/dra76x.dtsi
+> >> @@ -11,6 +11,25 @@
+> >>  / {
+> >>  	compatible = "ti,dra762", "ti,dra7";
+> >>  
+> >> +	ocp {
+> >> +
+> >> +		target-module@0x42c00000 {
+> > 
+> > Build your dtb with W=1 and fix warnings you add (drop '0x').
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
+> Sure, Will fix this.
+> > 
+> > This is a CAN bus controller? If so, then use 'can' for node name.
 > 
-> v10 changes:
-> - changed compatible to "ti,da830-timer"
-> - added interrupts and interrupt-names properties
-> - fixed grammatical error
-> 
-> v9 changes:
-> - new patch in v9
-> 
-> 
->  .../bindings/timer/ti,davinci-timer.txt       | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
+> Yes but I am using m_can along the lines of dcan in other boards (For
+> example, see arch/arm/boot/dts/am33xx.dtsi:1046). Are you saying all CAN
+> controllers should only be called can?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The module should be target-module@42c00000 and the child(ren)
+can@1a00 or mcan@1a00 if mcan is different from can.
+
+Regards,
+
+Tony
