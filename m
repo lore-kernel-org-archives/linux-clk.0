@@ -1,105 +1,145 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	viresh.kumar@linaro.org,
-	nm@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v9 05/15] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-Date: Mon, 21 May 2018 14:25:22 +0300
-Message-Id: <1526901932-9514-6-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
-References: <1526901932-9514-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <buserror@gmail.com>
+MIME-Version: 1.0
+References: <1527154169-32380-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1527154169-32380-2-git-send-email-michel.pollet@bp.renesas.com> <CAMuHMdVzN0Cbc9+MJqC4EzVgD3bkDixkf10NA13ko87cMwvpLA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVzN0Cbc9+MJqC4EzVgD3bkDixkf10NA13ko87cMwvpLA@mail.gmail.com>
+From: M P <buserror@gmail.com>
+Date: Thu, 31 May 2018 10:11:34 +0100
+Message-ID: <CAMMfpEwpiZnZEykzxQJMTwE+cDnOD_qA3nUzyB96DGTWPzSJrw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>,
+	buserror+upstream@gmail.com, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, geert+renesas@glider.be,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
+On Fri, 25 May 2018 at 11:31, Geert Uytterhoeven <geert@linux-m68k.org>
+wrote:
 
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
+> Hi Michel,
 
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
+Hi Geert,
 
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> On Thu, May 24, 2018 at 11:28 AM, Michel Pollet
+> <michel.pollet@bp.renesas.com> wrote:
+> > This adds the constants necessary to use the renesas,r9a06g032-sysctrl
+node.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-new file mode 100644
-index 0000000..8458783
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-@@ -0,0 +1,17 @@
-+Qualcomm CPUSS clock controller for Kryo CPUs
-+----------------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain only one of the following:
-+
-+			"qcom,msm8996-apcc"
-+
-+- reg : shall contain base register location and length
-+- #clock-cells : shall contain 1
-+
-+Example:
-+	kryocc: clock-controller@6400000 {
-+		compatible = "qcom,msm8996-apcc";
-+		reg = <0x6400000 0x90000>;
-+		#clock-cells = <1>;
-+	};
--- 
-1.9.1
+> Thanks for your patch!
+
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
+
+> You can still call this file r9a06g032-clocks.h, if you want, as it
+> contains clock definitions only.
+
+Well, having renamed the node, I thought it made sense to keep the naming
+consistent. Any further #define could be added to here instead of having to
+add another file...
+
+
+> > @@ -0,0 +1,187 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * R9A06G032 sysctrl IDs
+> > + *
+> > + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> > + *
+> > + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> > + * Derived from zx-reboot.c
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+> > +#define __DT_BINDINGS_R9A06G032_SYSCTRL_H__
+> > +
+> > +#define R9A06G032_CLKOUT                       0
+> > +#define R9A06G032_CLK_PLL_USB                  1
+> > +#define R9A06G032_CLK_48                       1 /* AKA CLK_PLL_USB */
+> > +#define R9A06G032_CLKOUT_D10                   2
+> > +#define R9A06G032_CLKOUT_D16                   3
+> > +#define R9A06G032_MSEBIS_CLK                   3 /* AKA CLKOUT_D16 */
+> > +#define R9A06G032_MSEBIM_CLK                   3 /* AKA CLKOUT_D16 */
+> > +#define R9A06G032_CLKOUT_D160                  4
+> > +#define R9A06G032_CLKOUT_D1OR2                 5
+> > +#define R9A06G032_CLK_DDRPHY_PLLCLK            5 /* AKA CLKOUT_D1OR2 *=
+/
+
+> [...]
+
+> I have 3 comments:
+
+>    1. I had expected this list to match (both name- and order-wise)
+Appendix
+>       C ("Clock Tree Structure") in the RZ/N1[DSL] User=E2=80=99s Manual:=
+ System
+>       Introduction, Multiplexing, Electrical and Mechanical Information.
+>       That would make it easier to review.
+
+Well, that document was made a *long* time after the internal documentation
+we used to generate the clock lists. There are a few things we had to do:
+
+* Renumber peripherals. We decided a long time ago that u-boot and linux
+would stick to zero based peripherals, and not one based numbers. It's next
+to impossible to keep mixing number based across software base, so we use
+UART0 while the hardware manual mentions UART1 -- It *is* documented
+extensively with out SDK, and makes life using linux a lot easier. It's
+across all our SDK, u-boot, webapps readmes, howtos etc.
+
+* Rename some peripherals. Plenty of peripherals names made little sense
+and had zero consistency, in fact, many names were different depending on
+the place they were used! -- "flashnand"+"nand_flash"+"FNAND" etc,
+"QUADSPI"+"QSPI" etc etc so we also re-normalized the names to match linux
+conventions.
+
+* Other internal reasons I can't document here
+
+Also, the value here are made up anyway -- so I've decided to sort them to
+make sure any clock that has a parent is numbered *after* the parent...
+
+>    2. These definitions seems to be a mix of:
+>         1. Internal core clocks,
+>         2. Other core clocks,
+>         3. Module clocks.
+
+>       The internal clocks do not need to be referenced from DT, so I woul=
+d
+>       not make them part of the DT bindings.
+
+Why? I'm told that "Bindings aren't for linux" -- why can't I imagine
+'something' needing them? Why would I decide NOT to include them,
+as they are there? I 'factored' a few of them to the same number when
+applicable.
+
+This is all done automatically BTW -- a script takes the original clocking
+spreadsheet, and converts it into a table, correcting 'human input' as it
+goes along.
+
+>    3. It looks like the module clocks can be referred to by register offs=
+et
+>       and bit position, which is similar to how this is handled on R-Car
+>       SoCs.
+>       Perhaps you can just drop the definitions for these from the header
+>       file, and refer to them by (combined) register offset and bit
+position
+>       instead?
+>       Or am I missing something?
+>       I believe this can also be done for the module resets (later).
+
+If you look in the .c file, you'll see that most gate have not just one
+register/bit pair associated with them -- there are several, spread
+across registers.. Also, there are clocks in there with two gates,
+or none. Given that, I've decided a separate numbering
+made sense.
+As mentioned, it's arbitrary, with 'root' clocks numbered lowered than
+sub-clocks.
+
+Thank you!
+
+Michel
