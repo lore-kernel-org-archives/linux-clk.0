@@ -1,77 +1,47 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Fri,  4 May 2018 15:32:37 +0530
-Message-Id: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
+Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+ Mike Looijmans <mike.looijmans@topic.nl>
+References: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
+Message-ID: <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk-si544: Properly round requested frequency to nearest match
+Date: Thu, 31 May 2018 08:34:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
- [v8]
-   * cleanup code to remove of rpmh_client handle.
-   * pass the hw_clks array to the devm_of_clk_add_hw_provider getter function.
+Quoting Mike Looijmans (2018-05-31 07:03:55)
+> The si544 driver had a rounding problem that using the result of clk_roun=
+d_rate
+> may set the clock to yet another rate, for example:
+> clk_round_rate(195000000) =3D 194999999
+> clk_round_rate(194999999) =3D 194999998
+> =
 
- [v7]
-   * Addressed comments from Stephen
-	- Keep only xo_board as clock parent.
-	- Associate divs from SoC specific clock listing to calculate
-	   the clock rate.
-	- Add back the recalc_rate clock ops to return the clock rate
-	   based on the parent rate and div associated with clock.
-	- void cast kept to avoid compiler warnings.
+> Clients would expect that after clk_set_rate(clk, freq2=3Dclk_round_rate(=
+clk, freq)) the
+> chip will be running at exactly freq2.
+> =
 
- [v6]
-   * Addressed comments from Rob
-   * Addressed comments from Stephen
+> The problem was in the calculation of the feedback divider, it was always=
+ rounded
+> down instead of to the nearest possible VCO value.
+> =
 
- [v5]
-   * Addressed comments from Stephen
-   * Introduced a new DT property to take clock divs
+> After this change, the following holds true for any supported frequency:
+> actual_freq =3D clk_round_rate(clk, freq);
+> clk_set_rate(clk, actual_freq);
+> clk_round_rate(clk, actual_freq) =3D=3D actual_freq && clk_get_rate(clk) =
+=3D=3D actual_freq
+> =
 
- [v4]
-  * Addressed comments from Stephen
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
- [v3]
-  * Addressed documentation & code review comments from Bjorn
-  * Addressed bindings comments from Rob
-  * Updated the patch series order for bindings
+Any fixes tag? I can slap =
 
- [v2]
-  * Addressed comments from Stephen
-  * Addressed comments from Evan
 
-This patch series adds a driver and device tree documentation binding
-for the clock control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
-would send requests for the RPMh managed clock resources.
+Fixes: 953cc3e81170 ("clk: Add driver for the si544 clock generator chip")
 
-The RPMh clock driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.
-
-Thanks,
-Taniya
-
-[1]: https://lkml.org/lkml/2018/3/9/979
-[2]: https://lkml.org/lkml/2018/3/14/787
-
-Taniya Das (1):
-  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-
- drivers/clk/qcom/Kconfig    |   9 ++
- drivers/clk/qcom/Makefile   |   1 +
- drivers/clk/qcom/clk-rpmh.c | 334 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 344 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+on to the patch here.
