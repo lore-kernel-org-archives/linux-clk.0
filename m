@@ -1,96 +1,101 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
-Message-ID: <152524527938.138124.8505584329413678951@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v6 2/3] clk: qcom: Add support for BRANCH_NO_DELAY flag for
- branch clocks
-Date: Wed, 02 May 2018 00:14:39 -0700
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 31 May 2018 23:44:37 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, robh+dt@kernel.org,
+ dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
+ krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+In-Reply-To: <20180531223027.57e36d0b@bbrezillon>
+References: <cover.1526990589.git.stefan@agner.ch>
+ <86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+ <20180528000422.7f18dc5f@xps13> <047a9a5e72c8db52858a505865d4f720@agner.ch>
+ <20180531223027.57e36d0b@bbrezillon>
+Message-ID: <12cb03d078c3571171362710f9019d41@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-04-30 09:20:09)
-> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> index 284df3f..5d621f3 100644
-> --- a/drivers/clk/qcom/clk-branch.h
-> +++ b/drivers/clk/qcom/clk-branch.h
-> @@ -42,6 +42,7 @@ struct clk_branch {
->  #define BRANCH_HALT_ENABLE             1 /* pol: 0 =3D halt */
->  #define BRANCH_HALT_ENABLE_VOTED       (BRANCH_HALT_ENABLE | BRANCH_VOTE=
-D)
->  #define BRANCH_HALT_DELAY              2 /* No bit to check; just delay =
-*/
-> +#define BRANCH_NO_DELAY                        3 /* No bit to check; wit=
-hout delay */
+On 31.05.2018 22:30, Boris Brezillon wrote:
+> On Thu, 31 May 2018 19:54:08 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
+> 
+>> >> +
+>> >> +	mtd->dev.parent = &pdev->dev;
+>> >> +	mtd->name = "tegra_nand";
+>> >
+>> > I just figured it was undocumented (yet) but you could have a label
+>> > string property in your nand DT node that tells you the name of the
+>> > MTD device instead of something too generic like tegra_nand.
+>> >
+>>
+>> Using label in the NAND chip subnode actually causes current U-Boot to
+>> delete (!!) the chip node and create partitions on the controller node.
+>>
+>> See:
+>> https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+>>
+>> The code essentially uses the property label to detect whether its a
+>> NAND chip or a partition...
+> 
+> Why not fixing that in uboot? The representation where the NAND device
+> and NAND controller are mixed in a single node called nand@xxx is just
+> wrong from a HW PoV, and it seems uboot is using this representation,
+> which is probably why you have a problem when trying to find the
+> partition directly under the NAND controller node.
+> 
+>>
+>> At least this is the case when using fdt_fixup_mtdparts and passing the
+>> controller compatible ("nvidia,tegra20-nand") in node_info,
+> 
+> Just a digression, but I recommend using
+> "nvidia,tegra20-nand-controller" for the compatible, because the node
+> is describing the NAND controller not the NAND chip. 
+> 
 
-Let's call it BRANCH_HALT_SKIP and indicate that it's skipping the halt
-bit check. Technically there is a bit to check, we just refuse to check
-it. I've reworked and applied this patch as below.
+Ok.
 
-From=20f9ddbd74bf4940d3b7a0eb076eb254833660643c Mon Sep 17 00:00:00 2001
-From: Amit Nischal <anischal@codeaurora.org>
-Date: Mon, 30 Apr 2018 21:50:09 +0530
-Subject: [PATCH] clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch
- clocks
+>> what our
+>> downstream U-Boot is currently doing. Maybe we should pass the
+>> compatible property of the NAND chip?
+> 
+> Or maybe you should search for partitions in children of the controller
+> node instead of searching directly under the controller node itself.
+> 
 
-There could be few clocks where the clock status bit is not
-required to be polled as the clock on/off would be controlled
-by enabling/disabling external source. Add support for the
-same by introducing new flag named as 'BRANCH_HALT_SKIP'.
+Yes, that is what it is doing... But only if that child has not a label.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-[sboyd@kernel.org: Rename flag to BRANCH_HALT_SKIP]
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/clk-branch.c | 7 +++++--
- drivers/clk/qcom/clk-branch.h | 1 +
- 2 files changed, 6 insertions(+), 2 deletions(-)
+fdt_fixup_mtdparts is common code. Change the behaviour now probably
+breaks boards... 
 
-diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-index 26f7af315066..c58c5538b1b6 100644
---- a/drivers/clk/qcom/clk-branch.c
-+++ b/drivers/clk/qcom/clk-branch.c
-@@ -77,8 +77,11 @@ static int clk_branch_wait(const struct clk_branch *br, =
-bool enabling,
- 	bool voted =3D br->halt_check & BRANCH_VOTED;
- 	const char *name =3D clk_hw_get_name(&br->clkr.hw);
- =
+Anyway, this discussion needs to be shifted to the U-Boot mailing list.
 
--	/* Skip checking halt bit if the clock is in hardware gated mode */
--	if (clk_branch_in_hwcg_mode(br))
-+	/*
-+	 * Skip checking halt bit if we're explicitly ignoring the bit or the
-+	 * clock is in hardware gated mode
-+	 */
-+	if (br->halt_check =3D=3D BRANCH_HALT_SKIP || clk_branch_in_hwcg_mode(br))
- 		return 0;
- =
+>> But afaik, chips do not have a
+>> compatible necessarily.
+> 
+> Nope, and it should stay like that.
+> 
+>>
+>> So using label in the chip node is currently a no-go for me.
+> 
+> I hope I'm wrong but I fear this is not the only problem you'll face
+> when switching to a controller+chip representation. This is just the
+> tip of the iceberg.
+> 
 
- 	if (br->halt_check =3D=3D BRANCH_HALT_DELAY || (!enabling && voted)) {
-diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-index 284df3f3c55f..1702efb1c511 100644
---- a/drivers/clk/qcom/clk-branch.h
-+++ b/drivers/clk/qcom/clk-branch.h
-@@ -42,6 +42,7 @@ struct clk_branch {
- #define BRANCH_HALT_ENABLE		1 /* pol: 0 =3D halt */
- #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
- #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
-+#define BRANCH_HALT_SKIP		3 /* Don't check halt bit */
- =
+Works not too bad otherwise, so far :-)
 
- 	struct clk_regmap clkr;
- };
--- =
+>>
+>> Will send out v3 soon.
+> 
+> Sure, let's see how v3 looks.
 
-Sent by a computer through tubes
+--
+Stefan
