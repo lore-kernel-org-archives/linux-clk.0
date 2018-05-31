@@ -1,344 +1,83 @@
-Return-Path: <ilialin@codeaurora.org>
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	mark.rutland@arm.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rnayak@codeaurora.org,
-	ilialin@codeaurora.org,
-	amit.kucheria@linaro.org,
-	nicolas.dechesne@linaro.org,
-	celster@codeaurora.org,
-	tfinkel@codeaurora.org
-Subject: [PATCH v5 11/14] dt: qcom: Add SAW regulator for 8x96 CPUs
-Date: Thu,  3 May 2018 14:52:32 +0300
-Message-Id: <1525348355-25471-12-git-send-email-ilialin@codeaurora.org>
-In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Thu, 31 May 2018 22:30:27 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, robh+dt@kernel.org,
+ dwmw2@infradead.org, computersforpeace@gmail.com, marek.vasut@gmail.com,
+ mark.rutland@arm.com, thierry.reding@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, dev@lynxeye.de, richard@nod.at, marcel@ziswiler.com,
+ krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+ jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+ mirza.krak@gmail.com, linux-mtd@lists.infradead.org,
+ linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH 2/5] mtd: rawnand: add NVIDIA Tegra NAND Flash
+ controller driver
+Message-ID: <20180531223027.57e36d0b@bbrezillon>
+In-Reply-To: <047a9a5e72c8db52858a505865d4f720@agner.ch>
+References: <cover.1526990589.git.stefan@agner.ch>
+	<86fdf19ec92b732709732fb60199f16488b4b727.1526990589.git.stefan@agner.ch>
+	<20180528000422.7f18dc5f@xps13>
+	<047a9a5e72c8db52858a505865d4f720@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-1. Add syscon node for the SAW CPU registers
-2. Add SAW regulators gang definition for s8-s11
-3. Add voltages to the OPP tables
-4. Add the s11 SAW regulator as CPU regulator
+On Thu, 31 May 2018 19:54:08 +0200
+Stefan Agner <stefan@agner.ch> wrote:
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 75 +++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+> >> +
+> >> +	mtd->dev.parent = &pdev->dev;
+> >> +	mtd->name = "tegra_nand";  
+> > 
+> > I just figured it was undocumented (yet) but you could have a label
+> > string property in your nand DT node that tells you the name of the
+> > MTD device instead of something too generic like tegra_nand.
+> >   
+> 
+> Using label in the NAND chip subnode actually causes current U-Boot to
+> delete (!!) the chip node and create partitions on the controller node.
+> 
+> See:
+> https://elixir.bootlin.com/u-boot/latest/source/common/fdt_support.c#L757
+> 
+> The code essentially uses the property label to detect whether its a
+> NAND chip or a partition...
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index e6cf290..d7adef9 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -15,6 +15,7 @@
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/thermal/thermal.h>
-+#include <dt-bindings/spmi/spmi.h>
- 
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -99,6 +100,7 @@
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
-+			cpu-supply = <&pm8994_s11_saw>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
-@@ -114,6 +116,7 @@
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			clocks = <&kryocc 0>;
-+			cpu-supply = <&pm8994_s11_saw>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
-@@ -125,6 +128,7 @@
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
-+			cpu-supply = <&pm8994_s11_saw>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
-@@ -140,6 +144,7 @@
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
- 			clocks = <&kryocc 1>;
-+			cpu-supply = <&pm8994_s11_saw>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
-@@ -174,66 +179,82 @@
- 
- 		opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-422400000 {
- 			opp-hz = /bits/ 64 <422400000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-844800000 {
- 			opp-hz = /bits/ 64 <844800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-960000000 {
- 			opp-hz = /bits/ 64 <960000000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1228800000 {
- 			opp-hz = /bits/ 64 <1228800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1593600000 {
- 			opp-hz = /bits/ 64 <1593600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 	};
-@@ -244,102 +265,127 @@
- 
- 		opp-307200000 {
- 			opp-hz = /bits/ 64 <307200000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-403200000 {
- 			opp-hz = /bits/ 64 <403200000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-480000000 {
- 			opp-hz = /bits/ 64 <480000000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-556800000 {
- 			opp-hz = /bits/ 64 <556800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-652800000 {
- 			opp-hz = /bits/ 64 <652800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-729600000 {
- 			opp-hz = /bits/ 64 <729600000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-806400000 {
- 			opp-hz = /bits/ 64 <806400000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-883200000 {
- 			opp-hz = /bits/ 64 <883200000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-940800000 {
- 			opp-hz = /bits/ 64 <940800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1036800000 {
- 			opp-hz = /bits/ 64 <1036800000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1113600000 {
- 			opp-hz = /bits/ 64 <1113600000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1190400000 {
- 			opp-hz = /bits/ 64 <1190400000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1248000000 {
- 			opp-hz = /bits/ 64 <1248000000>;
-+			opp-microvolt = <905000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1324800000 {
- 			opp-hz = /bits/ 64 <1324800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1401600000 {
- 			opp-hz = /bits/ 64 <1401600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1478400000 {
- 			opp-hz = /bits/ 64 <1478400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1555200000 {
- 			opp-hz = /bits/ 64 <1555200000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1632000000 {
- 			opp-hz = /bits/ 64 <1632000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1708800000 {
- 			opp-hz = /bits/ 64 <1708800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1785600000 {
- 			opp-hz = /bits/ 64 <1785600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1824000000 {
- 			opp-hz = /bits/ 64 <1824000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1920000000 {
- 			opp-hz = /bits/ 64 <1920000000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-1996800000 {
- 			opp-hz = /bits/ 64 <1996800000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-2073600000 {
- 			opp-hz = /bits/ 64 <2073600000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 		opp-2150400000 {
- 			opp-hz = /bits/ 64 <2150400000>;
-+			opp-microvolt = <1140000 905000 1140000>;
- 			clock-latency-ns = <200000>;
- 		};
- 	};
-@@ -656,6 +702,10 @@
- 			#mbox-cells = <1>;
- 		};
- 
-+		saw3: syscon@9A10000 {
-+			compatible = "syscon";
-+			reg = <0x9A10000 0x1000>;
-+		};
- 		gcc: clock-controller@300000 {
- 			compatible = "qcom,gcc-msm8996";
- 			#clock-cells = <1>;
-@@ -882,6 +932,31 @@
- 			#size-cells = <0>;
- 			interrupt-controller;
- 			#interrupt-cells = <4>;
-+			pmic@1 {
-+				compatible = "qcom,pm8994", "qcom,spmi-pmic";
-+				reg = <0x1 SPMI_USID>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				spm-regulators {
-+					compatible = "qcom,pm8994-regulators";
-+					qcom,saw-reg = <&saw3>;
-+					s8 {
-+						qcom,saw-slave;
-+					};
-+					s9 {
-+						qcom,saw-slave;
-+					};
-+					s10 {
-+						qcom,saw-slave;
-+					};
-+					pm8994_s11_saw: s11 {
-+						qcom,saw-leader;
-+						regulator-always-on;
-+						regulator-min-microvolt = <905000>;
-+						regulator-max-microvolt = <1140000>;
-+					};
-+				};
-+			};
- 		};
- 
- 		mmcc: clock-controller@8c0000 {
--- 
-1.9.1
+Why not fixing that in uboot? The representation where the NAND device
+and NAND controller are mixed in a single node called nand@xxx is just
+wrong from a HW PoV, and it seems uboot is using this representation,
+which is probably why you have a problem when trying to find the
+partition directly under the NAND controller node.
+
+> 
+> At least this is the case when using fdt_fixup_mtdparts and passing the
+> controller compatible ("nvidia,tegra20-nand") in node_info,
+
+Just a digression, but I recommend using
+"nvidia,tegra20-nand-controller" for the compatible, because the node
+is describing the NAND controller not the NAND chip. 
+
+> what our
+> downstream U-Boot is currently doing. Maybe we should pass the
+> compatible property of the NAND chip?
+
+Or maybe you should search for partitions in children of the controller
+node instead of searching directly under the controller node itself.
+
+> But afaik, chips do not have a
+> compatible necessarily.
+
+Nope, and it should stay like that.
+
+> 
+> So using label in the chip node is currently a no-go for me.
+
+I hope I'm wrong but I fear this is not the only problem you'll face
+when switching to a controller+chip representation. This is just the
+tip of the iceberg.
+
+> 
+> Will send out v3 soon.
+
+Sure, let's see how v3 looks.
