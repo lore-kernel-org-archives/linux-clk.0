@@ -1,120 +1,170 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
- amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
- celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH] cpufreq: Add Kryo CPU scaling driver
-To: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, mark.rutland@arm.com, viresh.kumar@linaro.org, nm@ti.com,
- lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
- david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
- rjw@rjwysocki.net, linux-clk@vger.kernel.org
-References: <1526555955-29960-11-git-send-email-ilialin@codeaurora.org>
- <1526729701-8589-1-git-send-email-ilialin@codeaurora.org>
- <153cc316-dcb5-972f-5a2f-c91fe0f6348b@arm.com>
- <000f01d3f103$3ff78ba0$bfe6a2e0$@codeaurora.org>
- <2ace10bc-e1c4-2060-94d3-eb71e966ffbe@arm.com>
- <001201d3f19a$0130a860$0391f920$@codeaurora.org>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <5b2eb27b-b852-97ff-b099-fe4c22b44937@arm.com>
-Date: Tue, 22 May 2018 10:12:34 +0100
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <001201d3f19a$0130a860$0391f920$@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
+        boris.brezillon@bootlin.com, broonie@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+Cc: Cristian.Birsan@microchip.com
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+Message-ID: <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
+Date: Thu, 31 May 2018 08:26:36 -0700
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
+> This driver is a simple muxing driver that controls the
+> I2S's clock input by using syscon/regmap to change the parrent.
+
+s/parrent/parent/
+
+> The available inputs can be Peripheral clock and Generated clock.
+
+Why capitalize peripheral and generated?
+
+> =
+
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> ---
+> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+> index 1254bf9..903f23c 100644
+> --- a/arch/arm/mach-at91/Kconfig
+> +++ b/arch/arm/mach-at91/Kconfig
+> @@ -27,6 +27,7 @@ config SOC_SAMA5D2
+>         select HAVE_AT91_H32MX
+>         select HAVE_AT91_GENERATED_CLK
+>         select HAVE_AT91_AUDIO_PLL
+> +       select HAVE_AT91_I2S_MUX_CLK
+>         select PINCTRL_AT91PIO4
+>         help
+>           Select this if ou are using one of Microchip's SAMA5D2 family S=
+oC.
+> @@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
+>  config HAVE_AT91_AUDIO_PLL
+>         bool
+>  =
+
+> +config HAVE_AT91_I2S_MUX_CLK
+> +       bool
+> +
+>  config SOC_SAM_V4_V5
+>         bool
+>  =
 
 
-On 22/05/18 07:56, ilialin@codeaurora.org wrote:
-> 
-> 
->> -----Original Message-----
->> From: Sudeep Holla <sudeep.holla@arm.com>
->> Sent: Monday, May 21, 2018 16:05
+I guess this is OK.
 
-[...]
+> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+> index 082596f..facc169 100644
+> --- a/drivers/clk/at91/Makefile
+> +++ b/drivers/clk/at91/Makefile
+> @@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)               +=3D clk-=
+usb.o
+>  obj-$(CONFIG_HAVE_AT91_SMD)            +=3D clk-smd.o
+>  obj-$(CONFIG_HAVE_AT91_H32MX)          +=3D clk-h32mx.o
+>  obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)  +=3D clk-generated.o
+> +obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)    +=3D clk-i2s-mux.o
+> diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mu=
+x.c
+> new file mode 100644
+> index 0000000..2d56ded
+> --- /dev/null
+> +++ b/drivers/clk/at91/clk-i2s-mux.c
+> @@ -0,0 +1,117 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  Copyright (C) 2018 Microchip Technology Inc,
+> + *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.co=
+m>
+> + *
+> + *
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/at91/atmel-sfr.h>
+> +
+> +#define        I2S_BUS_NR      2
+> +
+> +struct clk_i2s_mux {
+> +       struct clk_hw hw;
+> +       struct regmap *regmap;
+> +       u32 bus_id;
 
->>
->>
->> That may be true and I am not that bothered about it. But assuming physical
->> ordering from the logical cpu number is *incorrect* and will break if kernel
->> decides to change the allocation algorithm. Kernel provides no guarantee on
->> that, so you need to depend on some physical ID or may be DT to achieve
->> what your want. But the current code as it stands is wrong.
-> 
-> Got your point. In fact CPUs are numbered 0-3 and ordered into 2 clusters in the DT:
-> 
-> cpus {
-> 	#address-cells = <2>;
-> 	#size-cells = <0>;
-> 
-> 	CPU0: cpu@0 {
-> 		...
-> 		reg = <0x0 0x0>;
-> 		...
-> 	};
-> 
-> 	CPU1: cpu@1 {
-> 		...
-> 		reg = <0x0 0x1>;
-> 		...
-> 	};
-> 
-> 	CPU2: cpu@100 {
-> 		...
-> 		reg = <0x0 0x100>;
-> 		...
-> 	};
-> 
-> 	CPU3: cpu@101 {
-> 		...
-> 		reg = <0x0 0x101>;
-> 		...
-> 	};
-> 
-> 	cpu-map {
-> 		cluster0 {
-> 			core0 {
-> 				cpu = <&CPU0>;
-> 			};
-> 
-> 			core1 {
-> 				cpu = <&CPU1>;
-> 			};
-> 		};
-> 
-> 		cluster1 {
-> 			core0 {
-> 				cpu = <&CPU2>;
-> 			};
-> 
-> 			core1 {
-> 				cpu = <&CPU3>;
-> 			};
-> 		};
-> 	};
-> };
-> 
-> As far, as I understand, they are probed in the same order. 
+Can be a u8?
 
-Yes that's correct today, will that have to remain same for ever ?
-No it's not user ABI and kernel can decide to change the allocation
-order. What if for some reason one/more CPUs fails to boot or even
-configured not to boot ?
+> +};
+> +
+> +#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
+> +
+> +static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
+> +{
+> +       struct clk_i2s_mux *mux =3D to_clk_i2s_mux(hw);
+> +       u32 val;
+> +
+> +       regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
+> +
+> +       return (val & BIT(mux->bus_id)) >> mux->bus_id;
+> +}
+> +
+> +static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
+> +{
+> +       struct clk_i2s_mux *mux =3D to_clk_i2s_mux(hw);
+> +
+> +       return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
+> +                                 BIT(mux->bus_id), index << mux->bus_id);
+> +}
+> +
+> +const struct clk_ops clk_i2s_mux_ops =3D {
 
-> However, to be certain that the physical CPU is the one I intend to
-> configure, I have to fetch the device structure pointer for the cpu-map ->
-> clusterX -> core0 -> cpu path. Could you suggest a kernel API to do
-> that?
-> 
+static?
 
-Let's rewind a bit. Do you supply OPPs only on CPU0 and CPU2 ?
-If yes, that's again wrong. Simple solution is to parse all logical
-CPUs and skip if the share OPPs with some other CPUs. I think that
-logic already exists in OPP library IIRC.
+> +       .get_parent =3D clk_i2s_mux_get_parent,
+> +       .set_parent =3D clk_i2s_mux_set_parent,
+> +       .determine_rate =3D __clk_mux_determine_rate,
+> +};
+> +
+> +static struct clk_hw * __init
+> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+> +                         const char * const *parent_names,
+> +                         unsigned int num_parents, u32 bus_id)
+> +{
+> +       struct clk_init_data init =3D {};
+> +       struct clk_i2s_mux *i2s_ck;
+> +       int ret;
+> +
+> +       i2s_ck =3D kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
+> +       if (!i2s_ck)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name =3D name;
+> +       init.ops =3D &clk_i2s_mux_ops;
+> +       init.parent_names =3D parent_names;
+> +       init.num_parents =3D num_parents;
+> +       init.flags =3D CLK_IGNORE_UNUSED;
 
--- 
-Regards,
-Sudeep
+Really? Why?
+
+> +
+> +       i2s_ck->hw.init =3D &init;
+> +       i2s_ck->bus_id =3D bus_id;
+> +       i2s_ck->regmap =3D regmap;
+> +
+> +       ret =3D clk_hw_register(NULL, &i2s_ck->hw);
+> +       if (ret) {
+> +               kfree(i2s_ck);
+> +               return ERR_PTR(ret);
+> +       }
+> +
+> +       return &i2s_ck->hw;
+> +}
