@@ -1,60 +1,105 @@
-Return-Path: <cw00.choi@samsung.com>
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AFA0BAD.1050005@samsung.com>
-Date: Tue, 15 May 2018 07:20:29 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham
-	<myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob
-	Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>, Heiko
-	Stuebner <heiko@sntech.de>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, David
-	Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Derek Basehore
-	<dbasehore@chromium.org>, linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, Lin
-	Huang <hl@rock-chips.com>, kernel@collabora.com, Sean Paul
-	<seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC PATCH 02/10] dt-bindings: devfreq: rk3399_dmc: Add
- rockchip,pmu phandle.
-In-reply-to: <20180514211610.26618-3-enric.balletbo@collabora.com>
-References: <20180514211610.26618-1-enric.balletbo@collabora.com>
-	<CGME20180514211906epcas4p2a4f34ce55a219a102e11de32be23e511@epcas4p2.samsung.com>
-	<20180514211610.26618-3-enric.balletbo@collabora.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:17728 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754400AbeEaKZi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 May 2018 06:25:38 -0400
+Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
+To: Rob Herring <robh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <broonie@kernel.org>,
+        <Cristian.Birsan@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
+ <20180531005827.GA17203@rob-hp-laptop>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
+Date: Thu, 31 May 2018 13:25:26 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180531005827.GA17203@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 31.05.2018 03:58, Rob Herring wrote:
+> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
+>> The I2S mux clock can be used to select the I2S input clock. The
+>> available parents are the peripheral and the generated clocks.
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+>>   .../devicetree/bindings/clock/at91-clock.txt       | 34 ++++++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> index 51c259a..1c46b3c 100644
+>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+>> @@ -90,6 +90,8 @@ Required properties:
+>>   	"atmel,sama5d2-clk-audio-pll-pmc"
+>>   		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+>>   		and can be used by peripheral clock or generic clock
+>> +	"atmel,sama5d2-clk-i2s-mux":
+>> +		at91 I2S clock source selection
+> 
+> Is this boolean or takes some values. If latter, what are valid values?
 
-On 2018년 05월 15일 06:16, Enric Balletbo i Serra wrote:
-> The Rockchip DMC (Dynamic Memory Interface) needs to access to the PMU
-> general register files to know the DRAM type, so add a phandle to the
-> syscon that manages these registers.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-> index 0ec68141f85a..951789c0cdd6 100644
-> --- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-> +++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-> @@ -12,6 +12,8 @@ Required properties:
->  			 for details.
->  - center-supply:	 DMC supply node.
->  - status:		 Marks the node enabled/disabled.
-> +- rockchip,pmu:		 Phandle to the syscon managing the "PMU general register
-> +			 files".
->  
->  Optional properties:
->  - interrupts:		 The CPU interrupt number. The interrupt specifier
-> 
+This is the compatible string of the clock driver.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+> 
+>>   
+>>   Required properties for SCKC node:
+>>   - reg : defines the IO memory reserved for the SCKC.
+>> @@ -507,3 +509,35 @@ For example:
+>>   			atmel,clk-output-range = <0 83000000>;
+>>   		};
+>>   	};
+>> +
+>> +Required properties for I2S mux clocks:
+>> +- #size-cells : shall be 0 (reg is used to encode I2S bus id).
+>> +- #address-cells : shall be 1 (reg is used to encode I2S bus id).
+>> +- name: device tree node describing a specific mux clock.
+>> +	* #clock-cells : from common clock binding; shall be set to 0.
+>> +	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
+>> +	  peripheral and generated clock; the first phandle shall belong to the
+>> +	  peripheral clock and the second one shall belong to the generated
+>> +	  clock; "clock-indices" property can be user to specify
+>> +	  the correct order.
+>> +	* reg: I2S bus id of the corresponding mux clock.
+>> +	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
+>> +
+>> +For example:
+>> +	i2s_clkmux {
+> 
+> What is this a child of?
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+It is a child of PMC node, since both parent clocks are generated by PMC.
+
+> 
+>> +		compatible = "atmel,sama5d2-clk-i2s-mux";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+> 
+> How do you address this block? My guess is you don't because it is just
+> part of some other block and you are just creating this node to
+> instantiate a driver. Just make the node for the actual h/w block a
+> clock provider and define the clock ids (0 and 1).
+
+This block is not addressed, but its children are. The register we 
+access in this driver is not part of other block. It's a SFR register, 
+accessed through syscon and it has nothing to do with the I2S IP (see 
+SAMA5D2 DS, page 1256, fig. 44-1: I2SC Block Diagram) that is the 
+consumer of this clock. Adding a clock-id property in the I2S node would 
+be just like v3 of this series, with the difference that we use clock-id 
+instead of alias id to set the clock parent, which is not how you 
+suggested back then.
+
+Thank you for your review.
+
+Best regards,
+Codrin
+
+[...]
+
