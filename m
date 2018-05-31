@@ -1,64 +1,46 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:51169 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934727AbeE3Hi3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 May 2018 03:38:29 -0400
-Subject: Re: [PATCH v3 3/5] Documentation: DT: add i.MX EPIT timer binding
-To: =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20180529170436.22711-1-peron.clem@gmail.com>
- <20180529170436.22711-4-peron.clem@gmail.com>
- <7f2f8b6b-b7f6-99c1-fc5f-a7628a751fdc@mentor.com>
-CC: Fabio Estevam <fabio.estevam@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <5d71aced-cd2f-3f01-25b0-d87788f22c32@mentor.com>
-Date: Wed, 30 May 2018 10:38:23 +0300
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+To: Stephen Boyd <sboyd@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Pramod Kumar <pramod.kumar@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com>
+ <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
+From: Ray Jui <ray.jui@broadcom.com>
+Message-ID: <25bd1449-b0f6-aecb-b326-a00af1dc4e90@broadcom.com>
+Date: Wed, 30 May 2018 17:23:24 -0700
 MIME-Version: 1.0
-In-Reply-To: <7f2f8b6b-b7f6-99c1-fc5f-a7628a751fdc@mentor.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <152772366322.144038.12289577935853704907@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 05/30/2018 10:27 AM, Vladimir Zapolskiy wrote:
-> Hi Clément,
-> 
-> On 05/29/2018 08:04 PM, Clément Péron wrote:
->> From: Clément Peron <clement.peron@devialet.com>
+Hi Stephen,
+
+On 5/30/2018 4:41 PM, Stephen Boyd wrote:
+> Subject is missing an 's' on stringray?
+>
+
+Yes, will fix this.
+
+
+> Quoting Ray Jui (2018-05-25 09:45:16)
+>> Update and add Stingray clock definitions and tables so they match the
+>> binding document and the latest ASIC datasheet
 >>
->> Add devicetree binding document for NXP's i.MX SoC specific
->> EPIT timer driver.
->>
->> Signed-off-by: Clément Peron <clement.peron@devialet.com>
->> ---
->>  .../devicetree/bindings/clock/imx6q,epit.txt  | 24 +++++++++++++++++++
->>  1 file changed, 24 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/imx6q,epit.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/imx6q,epit.txt b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
->> new file mode 100644
->> index 000000000000..a84a60c6ae35
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/imx6q,epit.txt
+>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 > 
-> The file should be renamed to a more generic name like 'imx,epit.txt'
-> or 'imx31,epit.txt'.
-> 
-> Also note that the folder is incorrectly selected, it must be
-> Documentation/devicetree/bindings/timer/
+> Otherwise it looks ok, but maybe Pramod should be the author?
 > 
 
-And linux-clk mailing list for publishing seems to be improper one,
-instead please add Daniel Lezcano <daniel.lezcano@linaro.org> and
-Thomas Gleixner <tglx@linutronix.de> to the list of addressees,
-and the proper mailing list address is linux-kernel@vger.kernel.org
+Will fix this for all commits in this series.
 
---
-With best wishes,
-Vladimir
+I'll fix the above and send out v2.
+
+Thanks,
+
+Ray
