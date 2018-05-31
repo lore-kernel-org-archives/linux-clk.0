@@ -1,58 +1,99 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] clk: davinci: pll-dm355: fix SYSCLKn parent names
-Date: Wed,  9 May 2018 10:36:42 -0500
-Message-Id: <20180509153642.22399-3-david@lechnology.com>
-In-Reply-To: <20180509153642.22399-1-david@lechnology.com>
-References: <20180509153642.22399-1-david@lechnology.com>
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 3/3] arm64: dts: Update Stingray clock DT nodes
+Date: Wed, 30 May 2018 17:36:20 -0700
+Message-Id: <1527726980-11723-4-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
+References: <1527726980-11723-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This fixes the parent clock names of the SYSCLKn clocks for the DM355
-SoC in the TI DaVinici PLL clock driver.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-It appears that this name just didn't get updated to the correct name
-like the other SoCs during the driver's development.
+Update clock output names in the Stingray clock DT nodes so they match
+the binding document and the latest ASIC datasheet. Also add entries
+for LCPLL2
 
-Reported-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 ---
- drivers/clk/davinci/pll-dm355.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 26 ++++++++++++++++------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
-index 718d9bbbf30d..93f4a53d6b44 100644
---- a/drivers/clk/davinci/pll-dm355.c
-+++ b/drivers/clk/davinci/pll-dm355.c
-@@ -22,10 +22,10 @@ static const struct davinci_pll_clk_info dm355_pll1_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+index 3a4d452..10a106a 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -52,12 +52,24 @@
+ 			reg = <0x0001d104 0x32>,
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll0", "clk_125", "clk_scr",
++			clock-output-names = "genpll0", "clk_125m", "clk_scr",
+ 					     "clk_250", "clk_pcie_axi",
+ 					     "clk_paxc_axi_x2",
+ 					     "clk_paxc_axi";
+ 		};
  
--SYSCLK(1, pll1_sysclk1, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
--SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
--SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
--SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll1_sysclk1, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(2, pll1_sysclk2, pll1_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(3, pll1_sysclk3, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(4, pll1_sysclk4, pll1_pllen, 5, SYSCLK_ALWAYS_ENABLED);
++		genpll2: genpll2@1d1ac {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll2";
++			reg = <0x0001d1ac 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll2", "clk_nic",
++					     "clk_ts_500_ref", "clk_125_nitro",
++					     "clk_chimp", "clk_nic_flash",
++					     "clk_fs";
++		};
++
+ 		genpll3: genpll3@1d1e0 {
+ 			#clock-cells = <1>;
+ 			compatible = "brcm,sr-genpll3";
+@@ -75,8 +87,8 @@
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+ 			clock-output-names = "genpll4", "clk_ccn",
+-					     "clk_tpiu_pll", "noc_clk",
+-					     "pll_chclk_fs4",
++					     "clk_tpiu_pll", "clk_noc",
++					     "clk_chclk_fs4",
+ 					     "clk_bridge_fscpu";
+ 		};
  
- int dm355_pll1_init(struct device *dev, void __iomem *base)
- {
-@@ -62,7 +62,7 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
- 		 PLL_POSTDIV_ALWAYS_ENABLED | PLL_POSTDIV_FIXED_DIV,
- };
+@@ -86,8 +98,8 @@
+ 			reg = <0x0001d248 0x32>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll5", "fs4_hf_clk",
+-					     "crypto_ae_clk", "raid_ae_clk";
++			clock-output-names = "genpll5", "clk_fs4_hf",
++					     "clk_crypto_ae", "clk_raid_ae";
+ 		};
  
--SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
-+SYSCLK(1, pll2_sysclk1, pll2_pllen, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 		lcpll0: lcpll0@1d0c4 {
+@@ -107,9 +119,9 @@
+ 			reg = <0x0001d138 0x3c>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "lcpll1", "clk_wanpn",
++			clock-output-names = "lcpll1", "clk_wan",
+ 					     "clk_usb_ref",
+-					     "timesync_evt_clk";
++					     "clk_crmu_ts";
+ 		};
  
- int dm355_pll2_init(struct device *dev, void __iomem *base)
- {
+ 		hsls_clk: hsls_clk {
 -- 
-2.17.0
+2.1.4
