@@ -1,81 +1,57 @@
-Return-Path: <horms@verge.net.au>
-Date: Tue, 29 May 2018 17:13:32 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ofir Drang <ofir.drang@arm.com>, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] crypto: ccree: better clock handling
-Message-ID: <20180529161332.vqdtcbj54mel2tdk@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-3-git-send-email-gilad@benyossef.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527171551-21979-3-git-send-email-gilad@benyossef.com>
+In-Reply-To: <20180531102315.GA5150@localhost.localdomain>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030129.GA16122@rob-hp-laptop> <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 31 May 2018 09:07:24 -0500
+Message-ID: <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 24, 2018 at 03:19:07PM +0100, Gilad Ben-Yossef wrote:
-> Use managed clock handling, differentiate between no clock (possibly OK)
-> and clock init failure (never OK) and correctly handle clock detection
-> being deferred.
-> 
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+> On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+>> Hello Rob,
+>>
+>> Thanks for the review!
+>>
+>> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+>> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+>> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+>> > > + - interrupts            : The interrupt line the device is connected to.
+>> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
+>> >
+>> > What sub blocks have interrupts?
+>>
+>> The PMIC can generate interrupts from events which cause it to reset.
+>> Eg, irq from watchdog line change, power button pushes, reset request
+>> via register interface etc. I don't know any generic handling for these
+>> interrupts. In "normal" use-case this PMIC is powering the processor
+>> where driver is running and I do not see reasonable handling because
+>> power-reset is going to follow the irq.
+>>
+>
+> Oh, but when reading this I understand that the interrupt-controller
+> property should at least be optional.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+I don't think it should. The h/w either has an interrupt controller or
+it doesn't. My concern is you added it but nothing uses it which tells
+me your binding is incomplete. I'd rather see complete bindings even
+if you don't have drivers. For example, as-is, there's not really any
+need for the clocks child node. You can just make the parent a clock
+provider. But we need a complete picture of the h/w to make that
+determination.
 
-> ---
->  drivers/crypto/ccree/cc_driver.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-> index 6f93ce7..b266657 100644
-> --- a/drivers/crypto/ccree/cc_driver.c
-> +++ b/drivers/crypto/ccree/cc_driver.c
-> @@ -190,6 +190,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
->  	u64 dma_mask;
->  	const struct cc_hw_data *hw_rev;
->  	const struct of_device_id *dev_id;
-> +	struct clk *clk;
->  	int rc = 0;
->  
->  	new_drvdata = devm_kzalloc(dev, sizeof(*new_drvdata), GFP_KERNEL);
-> @@ -219,7 +220,24 @@ static int init_cc_resources(struct platform_device *plat_dev)
->  	platform_set_drvdata(plat_dev, new_drvdata);
->  	new_drvdata->plat_dev = plat_dev;
->  
-> -	new_drvdata->clk = of_clk_get(np, 0);
-> +	clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(clk))
-> +		switch (PTR_ERR(clk)) {
-> +		/* Clock is optional so this might be fine */
-> +		case -ENOENT:
-> +			break;
-> +
-> +		/* Clock not available, let's try again soon */
-> +		case -EPROBE_DEFER:
-> +			return -EPROBE_DEFER;
-> +
-> +		default:
-> +			dev_err(dev, "Error getting clock: %ld\n",
-> +				PTR_ERR(clk));
-> +			return PTR_ERR(clk);
-> +		}
-> +	new_drvdata->clk = clk;
-> +
->  	new_drvdata->coherent = of_dma_is_coherent(np);
->  
->  	/* Get device resources */
-> -- 
-> 2.7.4
-> 
+Rob
