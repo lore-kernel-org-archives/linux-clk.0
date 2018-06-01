@@ -1,77 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 27 Jun 2018 20:02:15 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180627180215.y5kvvdqeriadxwte@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2wy3m2pbmtcl6uw2"
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180531084531.25421-1-thierry.reding@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20180531084531.25421-1-thierry.reding@gmail.com>
+Message-ID: <152787484401.144038.7551622687822665492@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.18-rc1
+Date: Fri, 01 Jun 2018 10:40:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Thierry Reding (2018-05-31 01:45:31)
+> Hi Michael, Stephen,
+> =
 
---2wy3m2pbmtcl6uw2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
+38:
+> =
 
-On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> This series adds support for R40 HDMI pipeline. It is a bit special
-> than other already supported pipelines because it has additional unit
-> called TCON TOP responsible for relationship configuration between
-> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> and TV encoders.
->=20
-> However, it seems that TCON TOP will become a norm, since newer
-> Allwinner SoCs like H6 also have this unit.
->=20
-> I tested different possible configurations:
-> - mixer0 <> TCON-TV0 <> HDMI
-> - mixer0 <> TCON-TV1 <> HDMI
-> - mixer1 <> TCON-TV0 <> HDMI
-> - mixer1 <> TCON-TV1 <> HDMI
->=20
-> Please review.
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> =
 
-I just applied it. It didn't apply cleanly, so please make sure it
-does next time, or at least state what the dependencies are.
+> are available in the Git repository at:
+> =
 
-Thanks!
-Maxime
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
+a-for-4.18-clk
+> =
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> for you to fetch changes up to 5d797111afe12e488e08432fd9b372fae2cc7e93:
+> =
 
---2wy3m2pbmtcl6uw2
-Content-Type: application/pgp-signature; name="signature.asc"
+>   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20 (2018-05-18=
+ 12:35:28 +0200)
 
------BEGIN PGP SIGNATURE-----
+Thanks. Pulled into clk-next.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz0SYACgkQ0rTAlCFN
-r3SbdQ//euZyyHgI8fweXiCdyc7kUUDmnCUfKDb2K6NkxCqJ9W6HAtKlzNL9NIhr
-ixkSZCBtKgqmIfIaxuhBfL3Xc1k0haj6RS3rwVXOjrwd3eMMFz6ywvi2UkDNLYqA
-ROSGF/QyN5tPyEPYVEac4XYqxVOTdd0vweZHBWUSWHX0YuQM71QE5QJ7xnlhfv61
-bkQEsbnP9vbHQpYseH1v3UIwx8P7XnFS/wJ+OX5v2lwLNcFGl4Z4A8n1ZetVhIJs
-kTp88LXIImT5cWDnsDmONRbBfJvIiitICvJ/9hlN5tcAC86bBX8xuW58oRz2KAQR
-eTlzwvMR7DedVMZ7KWqtxztnPVcjCuy5ZLNYjE5ljhkueS4v1//2gzfM4fE46kOT
-FA+dW8YTIUt6iWn//S4vtXEtSINU7E6kDP5NcASKwg1RET7/ylw6TmOcVeyyjyIc
-R3HFC71s9Cp5eCFYO4ICgrU1Y7oNBhTJPdSK8f/NFJYlBMLUXAij0Dj7Dogqen+K
-lsZVMzYpQIZYvLIFwDqejmQEEnmUrT8MmLdx+1Ho0FkmeDae5pW+oX6UmyVBabZX
-ydyjntKnFxJQofKqm1NeDMTghrjmcto+Wqh//zMkJjaYQe1QGpU8WdOGVxEIoo+W
-9VFCRVtOQSSRNiMtc15s/tSrxAFzROMAdohn7KY5s5/JW0fi5QA=
-=MMdN
------END PGP SIGNATURE-----
+> =
 
---2wy3m2pbmtcl6uw2--
+> Thanks,
+> Thierry
+> =
+
+> ----------------------------------------------------------------
+> clk: tegra: Changes for v4.18-rc1
+> =
+
+> Contains a proper implementation of the CDEV1/2 clocks on Tegra20.
+> =
+
+> ----------------------------------------------------------------
+> Dmitry Osipenko (3):
+>       clk: tegra20: Add DEV1/DEV2 OSC dividers
+>       clk: tegra20: Correct parents of CDEV1/2 clocks
+>       clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+
+We have a long standing issue to resolve in CCF by returning
+EPROBE_DEFER from clk_get on clks that are orphaned. I'm going to merge
+the framework patch into clk-next after the next rc1 and see what blows
+up. Hopefully that makes this tegra specific patch irrelevant.
