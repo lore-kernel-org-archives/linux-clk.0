@@ -1,27 +1,49 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>,
- Russell King <linux@armlinux.org.uk>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
-Message-ID: <153029272800.143105.1065337298977850107@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
- __of_clk_get()
-Date: Fri, 29 Jun 2018 10:18:48 -0700
+In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be> <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 1 Jun 2018 14:04:03 +0300
+Message-ID: <CAHp75VeCmeBkUfnmx2F-czHCVVDm32WiGzvih8xozPEdv8P_Hw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
-> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
-> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
-> counting number of phandles in a property").
-> =
+On Fri, Jun 1, 2018 at 2:00 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>>
+>> This patch series:
+>>   - Changes all existing users of "%pCr" to print the result of
+>>     clk_get_rate() directly, which is safe as they all do this in task
+>>     context only,
+>>   - Removes support for the "%pCr" printk format.
+>
+> Looks good to me.
+>
+> What tree will this go through? The normal printk one? Just checking
+> that this doesn't end up falling through the cracks because nobody
+> knows who would take it...
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+We discussed few month before with Petr that he would take care of the
+patches against vsprintf.c.
+I think this is the case here.
 
-Applied to clk-next
+-- 
+With Best Regards,
+Andy Shevchenko
