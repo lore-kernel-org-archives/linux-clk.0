@@ -1,35 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-4-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-4-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 25 Jun 2018 20:30:06 +0800
-Message-ID: <CAGb2v64itH+8HEE0OVx+ys4fKg31pZcS3m0WUguH=Ny-t347ww@mail.gmail.com>
-Subject: Re: [PATCH v3 03/24] clk: sunxi-ng: r40: Export video PLLs
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
+ __of_clk_get()
+Date: Fri, 01 Jun 2018 12:20:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
->
-> Export them.
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+> counting number of phandles in a property").
+> =
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Commit bd69f73f2c81eed9 is in v3.9.
+
+Did you send this to Russell's patch tracker? Otherwise I can pick it up
+to clk-next.
