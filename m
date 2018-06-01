@@ -1,68 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:35513 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEDPKC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 May 2018 11:10:02 -0400
-Date: Fri, 4 May 2018 17:10:00 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 5/7] arm64: allwinner: h6: add R_INTC interrupt controller
-Message-ID: <20180504151000.uuvd54nzxe6p7b2f@flea>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-6-icenowy@aosc.io>
+Return-Path: <prvs=0690d33e02=mike.looijmans@topicproducts.com>
+Subject: Re: [PATCH] clk-si544: Properly round requested frequency to nearest
+ match
+To: Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>
+References: <1527775435-5017-1-git-send-email-mike.looijmans@topic.nl>
+ <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Message-ID: <9eaa65c3-f8e0-1302-5f49-8691c244476d@topic.nl>
+Date: Fri, 1 Jun 2018 07:05:44 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="udvzld57c3qc4wzk"
-In-Reply-To: <20180503183847.11046-6-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <152778087117.144038.3582001993053198941@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
---udvzld57c3qc4wzk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 04, 2018 at 02:38:45AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has also a R_INTC interrupt controller like Allwinner
-> A64 SoC, but has its base address changed due to the memory map change
-> in H6.
+=EF=BB=BFOn 31-05-18 17:34, Stephen Boyd wrote:
+> Quoting Mike Looijmans (2018-05-31 07:03:55)
+>> The si544 driver had a rounding problem that using the result of clk_rou=
+nd_rate
+>> may set the clock to yet another rate, for example:
+>> clk_round_rate(195000000) =3D 194999999
+>> clk_round_rate(194999999) =3D 194999998
+>>
+>> Clients would expect that after clk_set_rate(clk, freq2=3Dclk_round_rate=
+(clk, freq)) the
+>> chip will be running at exactly freq2.
+>>
+>> The problem was in the calculation of the feedback divider, it was alway=
+s rounded
+>> down instead of to the nearest possible VCO value.
+>>
+>> After this change, the following holds true for any supported frequency:
+>> actual_freq =3D clk_round_rate(clk, freq);
+>> clk_set_rate(clk, actual_freq);
+>> clk_round_rate(clk, actual_freq) =3D=3D actual_freq && clk_get_rate(clk)=
+ =3D=3D actual_freq
+>>
+>> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 >=20
-> Add it into the device tree.
+> Any fixes tag? I can slap
 >=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Fixes: 953cc3e81170 ("clk: Add driver for the si544 clock generator chip"=
+)
+>=20
+> on to the patch here.
+>=20
 
-Applied, thanks!
-Maxime
+I think that would be good, yes. Slap it on.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---udvzld57c3qc4wzk
-Content-Type: application/pgp-signature; name="signature.asc"
+Kind regards,
 
------BEGIN PGP SIGNATURE-----
+Mike Looijmans
+System Expert
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsd8cACgkQ0rTAlCFN
-r3Sf+A/+KMh1ATndsQ90KuLyl3An7APwcAT1Hv2ZeqQoae34c9TJMEJQ7t1zx2hP
-z2zroWAD60eimMS8AqPKhZBN6uETkkA9z1nJOo4J/kGJHKJkN5bcaI1hxJMVuMQ2
-s6WYqGzn6lnWc94l/Wi8+22Xh6qaR+OB57ImgKi3lWdZFLAn8gNP3fLBGfgOsVjq
-ozUBQm/5lb8YmtXT4s5kYMBpYLYfUVBXVsdiR6o7YixcEeMsHyMwcdVyVlMWWhqi
-VwtdUg2W1+Ey1Zo55rcFURVfRKf4tbF/CjFz5avUgeA1+C5DrS8emnQUivC/xeSG
-jSBC8uidNRgfkT/evUpKXChejw4xxQu/vr45QNxVUTEfnnR48V7gL1vBt1vnTDkG
-WqT67Ls2fULzFVbrUzhj3CkYcgOXMtKhRTADhFdfOfilHhSSwTKec/hvicoYqRxP
-HZWuVdktKM3IlEqYKvlVegjSpW6JROoLd+wa3E1eb/z6WTGOrKAxTpRsjO7inW6Y
-cmYTTuDETHP3tWTseJgFH9bvd3CJnjSQcpJr0iADMudw7lCSoRx6/NDwaxGrFZtx
-HToJ1173kEnQldE3TmqnHafKrawl+qTOD9NGorf5LuN9UuCS3SorQfHc789IHDee
-7Uw1BUNptdukt6df1G+iglKsUTtKmUXcwXTVH6m9VmTGOB2SBFo=
-=od6U
------END PGP SIGNATURE-----
+TOPIC Products
+Materiaalweg 4, NL-5681 RJ Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
 
---udvzld57c3qc4wzk--
+Please consider the environment before printing this e-mail
