@@ -1,73 +1,59 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-Date: Thu, 28 Jun 2018 11:57:35 +0200
-Message-Id: <20180628095748.4462-1-brgl@bgdev.pl>
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/4] thermal: bcm2835: Stop using printk format %pCr
+Date: Fri,  1 Jun 2018 11:28:20 +0200
+Message-Id: <1527845302-12159-3-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-This series moves all aemif/nand users to using the ti-aemif platform
-driver located in drivers/memory instead of the older API located in
-mach-davinci.
+Replace it by printing the variable that already holds the clock rate.
+Note that calling clk_get_rate() is safe here, as the code runs in task
+context.
 
-First five patches add necessary changes to the clock driver. Next
-seven convert the board files to using the ti-aemif driver. Last patch
-removes now dead code.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-v1 -> v2:
-- added missing clock lookups for ti-aemif where needed
-- removed an unnecessary davinci_nand clock lookup from psc-da850
-- moved the .id field initialization of aemif platform devices next to .name
-- tweaked the commit message for the last patch
-
-v2 -> v3:
-- in patch 6: change the davinci_nand device's id to -1 and keep the
-  includes sorted
-
-Bartosz Golaszewski (13):
-  clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
-  clk: davinci: psc-dm365: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-  clk: davinci: psc-da830: add a lookup entry for aemif clock
-  ARM: davinci: omapl138-hawk: add aemif & nand support
-  ARM: davinci: da850-evm: use aemif platform driver in legacy mode
-  ARM: davinci: dm365-evm: use the ti-aemif soc driver
-  ARM: davinci: dm644x-evm: use aemif platform driver
-  ARM: davinci: da830-evm: use aemif platform driver
-  ARM: davinci: dm646x-evm: use aemif platform driver
-  ARM: davinci: mityomapl138: use aemif platform driver
-  ARM: davinci: unduplicate aemif support
-
- arch/arm/mach-davinci/Makefile                |   2 +-
- arch/arm/mach-davinci/aemif.c                 | 218 ------------------
- arch/arm/mach-davinci/board-da830-evm.c       |  56 ++++-
- arch/arm/mach-davinci/board-da850-evm.c       |  93 ++++----
- arch/arm/mach-davinci/board-dm365-evm.c       |  59 +++--
- arch/arm/mach-davinci/board-dm644x-evm.c      |  55 +++--
- arch/arm/mach-davinci/board-dm646x-evm.c      |  52 ++++-
- arch/arm/mach-davinci/board-mityomapl138.c    |  55 +++--
- arch/arm/mach-davinci/board-omapl138-hawk.c   | 132 +++++++++++
- drivers/clk/davinci/psc-da830.c               |   3 +-
- drivers/clk/davinci/psc-da850.c               |   3 +-
- drivers/clk/davinci/psc-dm365.c               |   3 +-
- drivers/clk/davinci/psc-dm644x.c              |   3 +-
- drivers/clk/davinci/psc-dm646x.c              |   3 +-
- .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
- 15 files changed, 407 insertions(+), 331 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/aemif.c
-
+diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+index a4d6a0e2e9938190..23ad4f9f21438e45 100644
+--- a/drivers/thermal/broadcom/bcm2835_thermal.c
++++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 	rate = clk_get_rate(data->clk);
+ 	if ((rate < 1920000) || (rate > 5000000))
+ 		dev_warn(&pdev->dev,
+-			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
+-			 data->clk, data->clk);
++			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
++			 data->clk, rate);
+ 
+ 	/* register of thermal sensor and get info from DT */
+ 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
 -- 
-2.17.1
+2.7.4
