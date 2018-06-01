@@ -1,41 +1,58 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	robh@kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 0/2] Add display clock controller driver for SDM845
-Date: Mon,  4 Jun 2018 13:26:23 +0530
-Message-Id: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <pmladek@suse.com>
+Date: Fri, 1 Jun 2018 17:19:05 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, baijiaju1990@gmail.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for
+ printk format %pCr
+Message-ID: <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+ <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+ <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the display clock controller found on SDM845
-based devices. This would allow display drivers to probe and
-control their clocks.
+On Fri 2018-06-01 13:47:38, Petr Mladek wrote:
+> On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
+> > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > >
+> > > This patch series:
+> > >   - Changes all existing users of "%pCr" to print the result of
+> > >     clk_get_rate() directly, which is safe as they all do this in task
+> > >     context only,
+> > >   - Removes support for the "%pCr" printk format.
+> > 
+> > Looks good to me.
+> > 
+> > What tree will this go through? The normal printk one? Just checking
+> > that this doesn't end up falling through the cracks because nobody
+> > knows who would take it...
+> 
+> I will take it via printk.git. There already is bunch of vsprintf
+> changes for-4.18.
 
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM Display clock bindings
-  clk: qcom: Add display clock controller driver for SDM845
+It is in printk.git, branch for-4.18-vsprintf-pcr-removal now.
 
- .../devicetree/bindings/clock/qcom,dispcc.txt      |  18 +
- drivers/clk/qcom/Kconfig                           |  10 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/dispcc-sdm845.c                   | 704 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,dispcc-sdm845.h     |  42 ++
- 5 files changed, 775 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
- create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
+Also I have added Cc: stable@vger.kernel.org into the commit messages.
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Best Regards,
+Petr
