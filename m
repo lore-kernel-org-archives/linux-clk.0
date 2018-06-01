@@ -1,64 +1,48 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com> <20180620154344.GA32205@rob-hp-laptop>
-In-Reply-To: <20180620154344.GA32205@rob-hp-laptop>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Jun 2018 15:27:27 +0200
-Message-ID: <CAMuHMdW5bfhPeHxdCeJEJrkWAXvxU4wSVvDErF2DhCQfvF1rUw@mail.gmail.com>
-Subject: Re: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To: Rob Herring <robh@kernel.org>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
+References: <1527266717-8406-1-git-send-email-ray.jui@broadcom.com>
+ <1527266717-8406-3-git-send-email-ray.jui@broadcom.com> <20180531162556.GA955@rob-hp-laptop>
+ <a354f3d1-051d-8b68-e6b3-ce7a739c10c9@broadcom.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 1 Jun 2018 14:02:17 -0500
+Message-ID: <CAL_Jsq+YX01CwCycqeu5mxTUiWtnG3HKPJP5mvJO2OHcPF6v6g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: bcm: Update and add tingray clock entries
+To: Ray Jui <ray.jui@broadcom.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Pramod Kumar <pramod.kumar@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 20, 2018 at 5:43 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Jun 14, 2018 at 11:56:31AM +0100, Michel Pollet wrote:
-> > The Renesas R9A06G032 SYSCTRL node description.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > ---
-> >  .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+On Fri, Jun 1, 2018 at 12:56 PM, Ray Jui <ray.jui@broadcom.com> wrote:
+> Hi Rob,
 >
-> One nit, otherwise:
+> On 5/31/2018 9:25 AM, Rob Herring wrote:
+>>
+>> On Fri, May 25, 2018 at 09:45:16AM -0700, Ray Jui wrote:
+>>>
+>>> Update and add Stingray clock definitions and tables so they match the
+>>> binding document and the latest ASIC datasheet
+>>>
+>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+>>> ---
+>>>   drivers/clk/bcm/clk-sr.c           | 135
+>>> ++++++++++++++++++++++++++++++++-----
+>>>   include/dt-bindings/clock/bcm-sr.h |  24 +++++--
+>>
+>>
+>> This goes in the 1st patch.
 >
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-
-> > +Examples
-> > +--------
-> > +
-> > +  - SYSCTRL node:
-> > +
-> > +     sysctrl: system-controller@4000c000 {
-> > +             compatible = "renesas,r9a06g032-sysctrl";
-> > +             reg = <0x4000c000 0x1000>;
-> > +             status = "okay";
 >
-> Don't show status in examples.
+> Please help to confirm. You want 1st patch and 2nd patch to be combined into
+> a single patch?
 
-Thanks, queuing in clk-renesas-for-v4.19 with the above fixed.
+No. include/dt-bindings/* is part of the DT binding, so it goes with
+patch 1. The driver in patch 2.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
