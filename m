@@ -1,54 +1,98 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 19 Jun 2018 14:58:10 +0200
-Message-ID: <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, Ofir Drang <ofir.drang@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527574066-27237-1-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1527574066-27237-1-git-send-email-anischal@codeaurora.org>
+Message-ID: <152787098620.144038.15158473245010154723@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: qcom: Enable clocks which needs to be always on for
+ SDM845
+Date: Fri, 01 Jun 2018 09:36:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gilad,
+Quoting Amit Nischal (2018-05-28 23:07:46)
+> There are certain clocks which needs to be always enabled for system
+> operation. Remove support for such clocks from the clock driver and
+> enable them explicitly gcc driver probe. Also fix the target name in
+> kernel configuration description for SDM845 gcc driver.
 
-On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> Salvator-X boards and fixes some driver issues uncovered that prevented
-> to work properly.
+This is why we have CLK_IS_CRITICAL.
 
-With DEBUG enabled on R-Car H3, I see lots of
+> =
 
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
-    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fc3edd1..79e9144 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -231,7 +231,7 @@ config SDM_GCC_845
+>         select QCOM_GDSC
+>         depends on COMMON_CLK_QCOM
+>         help
+> -         Support for the global clock controller on msm8998 devices.
+> +         Support for the global clock controller on SDM845 devices.
+>           Say Y if you want to use peripheral devices such as UART, SPI,
+>           I2C, USB, UFS, SDDC, PCIe, etc.
+> =
 
-during boot. Is that expected?
 
-Thanks!
+This can be its own patch.
 
-Gr{oetje,eeting}s,
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index e78e6f5..b40aafc 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -3433,9 +3327,16 @@ static int gcc_sdm845_probe(struct platform_device=
+ *pdev)
+>         regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+>         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> =
 
-                        Geert
+> -       /* Enable CPUSS clocks */
+> -       regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
+> -       regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
+> +       /* Enable clocks which are required to be always ON */
+> +       regmap_update_bits(regmap, 0xb004, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0xb008, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0xb00c, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0xb028, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0xb02c, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0xb030, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0x48190, BIT(0), BIT(0));
+> +       regmap_update_bits(regmap, 0x52004, BIT(22), BIT(22));
+> +       regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Let's do CLK_IS_CRITICAL flag instead. That has the added benefit of
+checking to make sure the halt bit toggles correctly so the clks are
+verified to be enabled.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> =
+
+>         return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>  }
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bin=
+dings/clock/qcom,gcc-sdm845.h
+> index aca6126..6330c3f 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> @@ -13,185 +13,178 @@
+>  #define GCC_AGGRE_USB3_PRIM_AXI_CLK                            3
+>  #define GCC_AGGRE_USB3_SEC_AXI_CLK                             4
+>  #define GCC_BOOT_ROM_AHB_CLK                                   5
+> -#define GCC_CAMERA_AHB_CLK                                     6
+
+Don't do this. Things should only be added to here, not removed or
+reshuffled.
+
+> -#define GCC_CAMERA_AXI_CLK                                     7
+> -#define GCC_CAMERA_XO_CLK                                      8
+> -#define GCC_CE1_AHB_CLK                                                9
