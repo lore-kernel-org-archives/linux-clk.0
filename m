@@ -1,43 +1,39 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, Stefan Wahren <stefan.wahren@i2se.com>,
+To: Anson Huang <Anson.Huang@nxp.com>, adriana.reus@nxp.com,
  fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
- matteo.lisi@engicam.com, michael@amarulasolutions.com,
- mturquette@baylibre.com, robh+dt@kernel.org, shawnguo@kernel.org
+ mturquette@baylibre.com, robh+dt@kernel.org, rui.silva@linaro.org,
+ shawnguo@kernel.org, stefan@agner.ch
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1439344955.9677.1526991935718@email.1und1.de>
-Cc: linux-clk@vger.kernel.org, Linux-imx@nxp.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
- <1439344955.9677.1526991935718@email.1und1.de>
-Message-ID: <152792036327.225090.14543251343485084840@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
-Date: Fri, 01 Jun 2018 23:19:23 -0700
+In-Reply-To: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+ <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <152788068298.225090.12195731726234176520@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
+Date: Fri, 01 Jun 2018 12:18:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stefan Wahren (2018-05-22 05:25:35)
-> > +++ b/include/dt-bindings/clock/imx6ul-clock.h
-> > @@ -242,20 +242,25 @@
-> >  #define IMX6UL_CLK_CKO2_PODF         229
-> >  #define IMX6UL_CLK_CKO2                      230
-> >  #define IMX6UL_CLK_CKO                       231
-> > +#define IMX6UL_CLK_GPIO1             232
-> > +#define IMX6UL_CLK_GPIO2             233
-> > +#define IMX6UL_CLK_GPIO3             234
-> > +#define IMX6UL_CLK_GPIO4             235
-> > +#define IMX6UL_CLK_GPIO5             236
+Quoting Anson Huang (2018-05-17 18:01:05)
+> Correct enet clock gates as below:
 > =
 
-> this change looks like a breakage of devicetree ABI. You are changing the=
- mean of the existing clock IDs on i.MX6ULL, which probably regress the com=
-bination of older DTBs with newer kernel.
+> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
+> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
+> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
 > =
 
+> Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
+> IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
+> =
 
-Agreed. Why can't we just tack on more numbers at the end?
+> Based on Andy Duan's patch from the NXP kernel tree.
+> =
 
-> >  =
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-> >  /* For i.MX6ULL */
-> > -#define IMX6ULL_CLK_ESAI_PRED                232
+Applied to clk-next
