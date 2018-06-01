@@ -1,41 +1,40 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
-From: David Lechner <david@lechnology.com>
-Message-ID: <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
-Date: Mon, 25 Jun 2018 18:17:55 -0500
+Return-Path: <linus971@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
-Content-Type: text/plain; charset=utf-8; format=flowed
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 1 Jun 2018 06:00:47 -0500
+Message-ID: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: baijiaju1990@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02/2018 02:52 AM, Dan Carpenter wrote:
-> There is a copy and paste bug here.  We should be testing "usb1" instead
-> of "usb0".
-> 
-> Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index c971111d2601..20a120aa147e 100644
-> --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device *dev, struct regmap *regmap)
->   
->   	usb1 = da8xx_cfgchip_register_usb1_clk48(dev, regmap);
->   	if (IS_ERR(usb1)) {
-> -		if (PTR_ERR(usb0) == -EPROBE_DEFER)
-> +		if (PTR_ERR(usb1) == -EPROBE_DEFER)
->   			return -EPROBE_DEFER;
->   
->   		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
-> 
+On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> This patch series:
+>   - Changes all existing users of "%pCr" to print the result of
+>     clk_get_rate() directly, which is safe as they all do this in task
+>     context only,
+>   - Removes support for the "%pCr" printk format.
 
-Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
+Looks good to me.
 
-Thanks.
+What tree will this go through? The normal printk one? Just checking
+that this doesn't end up falling through the cracks because nobody
+knows who would take it...
+
+               Linus
