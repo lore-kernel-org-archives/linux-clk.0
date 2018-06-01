@@ -1,80 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Sun, 10 Jun 2018 23:09:57 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
-        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-Message-ID: <20180611060957.GN5738@atomide.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
- <20180606060826.14671-5-faiz_abbas@ti.com>
- <20180607073530.GH5738@atomide.com>
- <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
- <20180608062158.GI5738@atomide.com>
- <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
+To: Rajendra Nayak <rnayak@codeaurora.org>, mturquette@baylibre.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180323082616.10142-3-rnayak@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
+ srinivas.kandagatla@linaro.org, Rajendra Nayak <rnayak@codeaurora.org>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-3-rnayak@codeaurora.org>
+Message-ID: <152787639459.144038.8092997958450465845@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 2/3] clk: qcom: Register the gdscs before the clocks
+Date: Fri, 01 Jun 2018 11:06:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180611 06:09]:
-> Hi Tony,
-> 
-> On Friday 08 June 2018 11:51 AM, Tony Lindgren wrote:
-> > * Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
-> >> Hi,
-> >>
-> >> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
-> >>> * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
-> >>>> +static int sysc_reset(struct sysc *ddata)
-> >>>> +{
-> >>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
-> >>>> +	int val = sysc_read(ddata, offset);
-> >>>> +
-> >>>> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
-> >>>> +	sysc_write(ddata, offset, val);
-> >>>> +
-> >>>> +	/* Poll on reset status */
-> >>>> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
-> >>>> +		offset = ddata->offsets[SYSC_SYSSTATUS];
-> >>>> +
-> >>>> +		return readl_poll_timeout(ddata->module_va + offset, val,
-> >>>> +				(val & ddata->cfg.syss_mask) == 0x0,
-> >>>> +				100, MAX_MODULE_SOFTRESET_WAIT);
-> >>>> +	}
-> >>>> +
-> >>>> +	return 0;
-> >>>> +}
-> >>>
-> >>> I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
-> >>> addition to SYSC_QUIRK_RESET status to make it easy to
-> >>> read the right register?
-> >>
-> >> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
-> >> the register. Are there layouts in which the reset status bit is in the
-> >> sysconfig register rather than the sysstatus register?
-> > 
-> > Yes we can have reset status bit in either syss or syssconfig register.
-> 
-> You mean sysstatus and sysconfig right?
+Quoting Rajendra Nayak (2018-03-23 01:26:15)
+> We have atleast some instances of ALWAYS_ON gdscs, which need to
+> be turned ON *before* some clocks within the gdsc domain marked
+> with a CLK_IS_CRITICAL can be turned ON.
+> To facilitate this sequence, register the GDCSs (and hence handle
+> the ALWAYS_ON gdscs) before we register clocks (and handle the
+> clocks marked as CLK_IS_CRITICAL)
+> =
 
-Yup.
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
 
-> > We detect that in sysc_init_syss_mask() but we should also set something
-> > at that point to make it clear which reset to use. But as we don't need
-> > the quirk flag, it's probably set a function pointer after the detection.
-> > So how about let's have two functions sysc_reset() and sysc_syss_reset()
-> > and then we can implement sysc_syss_reset() in a separate patch after
-> > testing it when we have a non-platform data using example for
-> > sysc_syss_reset().
-> > 
-> 
-> Shouldn't the function I add be called sysc_syss_reset()? The reset
-> status bit is in the sysstatus.
-
-Yes
-
-Tony
+Applied to clk-next
