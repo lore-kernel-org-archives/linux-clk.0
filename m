@@ -1,39 +1,28 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra: Mark Memory Controller clock as critical
-Date: Mon,  4 Jun 2018 01:48:05 +0300
-Message-Id: <20180603224805.495-1-digetx@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Anson Huang <Anson.Huang@nxp.com>, adriana.reus@nxp.com,
+ fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
+ mturquette@baylibre.com, robh+dt@kernel.org, rui.silva@linaro.org,
+ shawnguo@kernel.org, stefan@agner.ch
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <152788068032.225090.8543051846810232845@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 1/3] clk: imx7d: correct enet phy ref clock gates
+Date: Fri, 01 Jun 2018 12:18:00 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Memory Controller should be always-on. Currently the sibling EMC clock is
-marked as critical, let's mark MC clock too for consistency.
+Quoting Anson Huang (2018-05-17 18:01:04)
+> IMX7D_ENET_PHY_REF_ROOT_DIV supplies clock for PHY directly,
+> there is no clock gate after it, rename it to
+> IMX7D_ENET_PHY_REF_ROOT_CLK to avoid device tree change.
+> =
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-divider.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee14773..58874c1bbf5e 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -194,6 +194,7 @@ static const struct clk_div_table mc_div_table[] = {
- struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
- 				  void __iomem *reg, spinlock_t *lock)
- {
--	return clk_register_divider_table(NULL, name, parent_name, 0, reg,
--					  16, 1, 0, mc_div_table, lock);
-+	return clk_register_divider_table(NULL, name, parent_name,
-+					  CLK_IS_CRITICAL, reg, 16, 1, 0,
-+					  mc_div_table, lock);
- }
--- 
-2.17.0
+Applied to clk-next
