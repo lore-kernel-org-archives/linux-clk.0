@@ -1,29 +1,105 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
+To: Stephen Boyd <sboyd@kernel.org>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
+ <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
+ <20180524173926.GC14924@minitux>
+ <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
+ <152769571081.144038.4314499217001219157@swboyd.mtv.corp.google.com>
+ <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
+ <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <9ca51832-6095-c8a5-1347-f57abf99e8f9@codeaurora.org>
+Date: Fri, 1 Jun 2018 18:50:37 +0530
 MIME-Version: 1.0
-To: Rajendra Nayak <rnayak@codeaurora.org>, mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180323082616.10142-2-rnayak@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
- srinivas.kandagatla@linaro.org, Rajendra Nayak <rnayak@codeaurora.org>
-References: <20180323082616.10142-1-rnayak@codeaurora.org>
- <20180323082616.10142-2-rnayak@codeaurora.org>
-Message-ID: <152787634364.144038.3592690846877465058@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
-Date: Fri, 01 Jun 2018 11:05:43 -0700
+In-Reply-To: <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rajendra Nayak (2018-03-23 01:26:14)
-> Some GDSCs might have software control to turn them off, but we might
-> want to keep them enabled always, in some cases because of lack of
-> support in kernel to handle a graceful turning off/on of such GDSCs.
-> Most common instances would be the GDCSs which power up the noc/bus
-> fabrics, which need bus drivers to handle them and atleast support for
-> which is missing on all qcom SoCs.
-> =
+Hi Stephen,
 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
+On 5/31/2018 1:11 PM, Stephen Boyd wrote:
+> Quoting Sricharan R (2018-05-30 21:57:20)
+>> Hi Stephen,
+>>
+>> On 5/30/2018 9:25 PM, Stephen Boyd wrote:
+>>> Quoting Sricharan R (2018-05-24 22:40:11)
+>>>> Hi Bjorn,
+>>>>
+>>>> On 5/24/2018 11:09 PM, Bjorn Andersson wrote:
+>>>>> On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
+>>>>>
+>>>>>> From: Stephen Boyd <sboyd@codeaurora.org>
+>>>>>>
+>>>>>> Krait CPUs have a handful of L2 cache controller registers that
+>>>>>> live behind a cp15 based indirection register. First you program
+>>>>>> the indirection register (l2cpselr) to point the L2 'window'
+>>>>>> register (l2cpdr) at what you want to read/write.  Then you
+>>>>>> read/write the 'window' register to do what you want. The
+>>>>>> l2cpselr register is not banked per-cpu so we must lock around
+>>>>>> accesses to it to prevent other CPUs from re-pointing l2cpdr
+>>>>>> underneath us.
+>>>>>>
+>>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>>>> Cc: Russell King <linux@arm.linux.org.uk>
+>>>>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>>>>>
+>>>>> This should have your signed-off-by here as well.
+>>>>>
+>>>>
+>>>>  ok.
+>>>>
+>>>>> Apart from that:
+>>>>>
+>>>>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>>>
+>>>>
+>>>
+>>> Will these patches come around again? I'll do a quick sweep on them
+>>> today but I expect them to be resent.
+>>
+>> Sure, i will have to resend them again, fixing couple of Bjorn's
+>> minor comments. Will address your comments that you would give
+>> as well along with that.
+>>
+> 
+> Ok. One general comment is that it would be nice if the bindings for all
+> the nodes that are introduced included 'clocks' properties and also
+> maybe 'clock-names' properties for the clocks that are consumed by each
+> node. Right now, we hide those details from DT and rely on the string
+> names to hook the clk tree up for us. That sort of prevents us from
+> moving away from string easily, so I would just throw the clocks into
+> the binding right now and always have them there just in case we want to
+> use the binding to figure out the hierarchy in the future.
+> 
 
-Applied to clk-next
+ ok, understand that mostly. So will try to revamp those patches with
+ the 'clocks' property in the binding added, reading them in the driver
+ from DT.
+
+> I've been thinking we need to do something similar for the gcc and other
+> nodes for any clks they use, but I haven't gotten around to it.
+> 
+> Otherwise the patches look mostly ok to me. Not sure I'll have any other
+> comments.
+> 
+
+ Thanks, will respin.
+
+Regards,
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
