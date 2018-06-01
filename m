@@ -1,39 +1,53 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Tue, 15 May 2018 09:34:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ilia Lin <ilialin@codeaurora.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	mark.rutland@arm.com, nm@ti.com, lgirdwood@gmail.com,
-	broonie@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-	catalin.marinas@arm.com, will.deacon@arm.com, rjw@rjwysocki.net,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
-	amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-	celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: Re: [PATCH v6 11/14] dt: qcom: Add SAW regulator for 8x96 CPUs
-Message-ID: <20180515040439.3kt6dudim2uroumd@vireshk-i7>
-References: <1526303520-5843-1-git-send-email-ilialin@codeaurora.org>
- <1526303520-5843-12-git-send-email-ilialin@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1526303520-5843-12-git-send-email-ilialin@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57217 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeFAG6b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jun 2018 02:58:31 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v1 0/4] add mailbox support for i.MX7D
+Date: Fri,  1 Jun 2018 08:58:17 +0200
+Message-Id: <20180601065821.28234-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14-05-18, 16:11, Ilia Lin wrote:
-> 1. Add syscon node for the SAW CPU registers
-> 2. Add SAW regulators gang definition for s8-s11
-> 3. Add voltages to the OPP tables
-> 4. Add the s11 SAW regulator as CPU regulator
-> 
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 75 +++++++++++++++++++++++++++++++++++
->  1 file changed, 75 insertions(+)
+This patches are providing support for mailbox (Messaging Unit)
+for i.MX7D.
+Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
+Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Both parts of i.MX messaging Unit are visible for all CPUs available
+on i.MX7D. Communication worked independent of MU side in combination
+with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on ARM Cortex-M4
+or other ways around.
+
+The question to NXP developers: are there are limitations or
+recommendations about MU vs CPU combination? The i.MX7D documentation
+talks about "Processor A" and "Processor B". It is not quite clear what
+processor it actually is (A7 or M4).
+
+Oleksij Rempel (4):
+  clk: imx7d: add IMX7D_MU_ROOT_CLK
+  dt-bindings: mailbox: provide imx-mailbox documentation
+  ARM: dts: imx7s: add i.MX7 messaging unit support
+  mailbox: Add support for i.MX7D messaging unit
+
+ .../bindings/mailbox/imx-mailbox.txt          |  35 +++
+ arch/arm/boot/dts/imx7s.dtsi                  |  18 ++
+ drivers/clk/imx/clk-imx7d.c                   |   1 +
+ drivers/mailbox/Kconfig                       |   6 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/imx-mailbox.c                 | 289 ++++++++++++++++++
+ 6 files changed, 351 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+ create mode 100644 drivers/mailbox/imx-mailbox.c
 
 -- 
-viresh
+2.17.1
+
