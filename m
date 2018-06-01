@@ -1,31 +1,72 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180529160804.1982-3-gregkh@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
- <20180529160804.1982-3-gregkh@linuxfoundation.org>
-Message-ID: <152790645859.225090.17927860777726364571@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 3/5] clk: davinci: no need to check return value of
- debugfs_create functions
-Date: Fri, 01 Jun 2018 19:27:38 -0700
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk format %pCr
+Date: Fri,  1 Jun 2018 11:28:18 +0200
+Message-Id: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Greg Kroah-Hartman (2018-05-29 09:08:02)
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> =
+	Hi all,
 
-> Cc: David Lechner <david@lechnology.com>
-> Cc: Sekhar Nori <nsekhar@ti.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.  As vsprintf() (and e.g. printk()) must be callable from any
+context, it's better to remove support for this (rarely-used) format.
 
-Applied to clk-next
+This patch series:
+  - Changes all existing users of "%pCr" to print the result of
+    clk_get_rate() directly, which is safe as they all do this in task
+    context only,
+  - Removes support for the "%pCr" printk format.
+
+Note that any remaining out-of-tree users will start seeing the clock's
+name printed instead of its rate.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  clk: renesas: cpg-mssr: Stop using printk format %pCr
+  thermal: bcm2835: Stop using printk format %pCr
+  serial: sh-sci: Stop using printk format %pCr
+  lib/vsprintf: Remove atomic-unsafe support for %pCr
+
+ Documentation/core-api/printk-formats.rst  | 3 +--
+ drivers/clk/renesas/renesas-cpg-mssr.c     | 9 +++++----
+ drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
+ drivers/tty/serial/sh-sci.c                | 4 ++--
+ lib/vsprintf.c                             | 3 ---
+ 5 files changed, 10 insertions(+), 13 deletions(-)
+
+-- 
+2.7.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
