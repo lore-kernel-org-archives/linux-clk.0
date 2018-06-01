@@ -1,92 +1,45 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <sboyd@kernel.org>
-CC: <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v5 5/5] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-Date: Mon, 18 Jun 2018 17:12:39 +0300
-Message-ID: <20180618141239.10892-6-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:46876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752333AbeFATli (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:41:38 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180522145245.3143-5-rui.silva@linaro.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+References: <20180522145245.3143-1-rui.silva@linaro.org>
+ <20180522145245.3143-5-rui.silva@linaro.org>
+Message-ID: <152788209717.225090.6042608735474113985@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 04/13] clk: imx7d: fix mipi dphy div parent
+Date: Fri, 01 Jun 2018 12:41:37 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Quoting Rui Miguel Silva (2018-05-22 07:52:36)
+> Fix the mipi dphy root divider to mipi_dphy_pre_div, this would remove a =
+orphan
+> clock and set the correct parent.
+> =
 
-This patch sets the pin muxing for the I2S controllers
+> before:
+> cat clk_orphan_summary
+>                                  enable  prepare  protect
+>    clock                          count    count    count        rate   a=
+ccuracy   phase
+> -------------------------------------------------------------------------=
+---------------
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added pin muxing for the second
-controller]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
+Applied to clk-next
 
-Changes in v5:
-	- Previous name was:
-	  [PATCH v4 7/7] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 +++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index e4bbb7e0f793..03917312dec1 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -281,6 +281,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s0_default>;
-+			};
-+
- 			can0: can@f8054000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can0_default>;
-@@ -424,6 +429,24 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2s0_default: i2s0_default {
-+					pinmux = <PIN_PC1__I2SC0_CK>,
-+						 <PIN_PC2__I2SC0_MCK>,
-+						 <PIN_PC3__I2SC0_WS>,
-+						 <PIN_PC4__I2SC0_DI0>,
-+						 <PIN_PC5__I2SC0_DO0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2s1_default: i2s1_default {
-+					pinmux = <PIN_PA15__I2SC1_CK>,
-+						 <PIN_PA14__I2SC1_MCK>,
-+						 <PIN_PA16__I2SC1_WS>,
-+						 <PIN_PA17__I2SC1_DI0>,
-+						 <PIN_PA18__I2SC1_DO0>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_key_gpio_default: key_gpio_default {
- 					pinmux = <PIN_PB9__GPIO>;
- 					bias-pull-up;
-@@ -546,6 +569,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s1_default>;
-+			};
-+
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
--- 
-2.17.1
