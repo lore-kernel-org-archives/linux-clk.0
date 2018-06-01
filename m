@@ -1,156 +1,69 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v3 1/3] dt-bindings: clk: Update Stingray binding doc
-Date: Fri,  1 Jun 2018 17:56:06 -0700
-Message-Id: <1527900968-12017-2-git-send-email-ray.jui@broadcom.com>
-In-Reply-To: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
-References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+ <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+ <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz> <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 17:28:06 +0200
+Message-ID: <CAMuHMdX6ACCiEs=EEbQV3=Ah7BZT1RJ1G0kZKeYKi_KzWoKZgQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
+ format %pCr
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Petr,
 
-Update Stingray clock binding document to add additional clock entries
-with names matching the latest ASIC datasheet. Also modify a few existing
-entries to make their naming more consistent with the rest of the entries
+On Fri, Jun 1, 2018 at 5:19 PM, Petr Mladek <pmladek@suse.com> wrote:
+> On Fri 2018-06-01 13:47:38, Petr Mladek wrote:
+>> On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
+>> > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+>> > <geert+renesas@glider.be> wrote:
+>> > >
+>> > > This patch series:
+>> > >   - Changes all existing users of "%pCr" to print the result of
+>> > >     clk_get_rate() directly, which is safe as they all do this in task
+>> > >     context only,
+>> > >   - Removes support for the "%pCr" printk format.
+>> >
+>> > Looks good to me.
+>> >
+>> > What tree will this go through? The normal printk one? Just checking
+>> > that this doesn't end up falling through the cracks because nobody
+>> > knows who would take it...
+>>
+>> I will take it via printk.git. There already is bunch of vsprintf
+>> changes for-4.18.
+>
+> It is in printk.git, branch for-4.18-vsprintf-pcr-removal now.
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- .../bindings/clock/brcm,iproc-clocks.txt           | 26 ++++++++++++----------
- include/dt-bindings/clock/bcm-sr.h                 | 24 ++++++++++++++------
- 2 files changed, 31 insertions(+), 19 deletions(-)
+Thank you.
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-index f8e4a93..ab730ea 100644
---- a/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,iproc-clocks.txt
-@@ -276,36 +276,38 @@ These clock IDs are defined in:
-     clk_ts_500_ref	genpll2		2	BCM_SR_GENPLL2_TS_500_REF_CLK
-     clk_125_nitro	genpll2		3	BCM_SR_GENPLL2_125_NITRO_CLK
-     clk_chimp		genpll2		4	BCM_SR_GENPLL2_CHIMP_CLK
--    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH
-+    clk_nic_flash	genpll2		5	BCM_SR_GENPLL2_NIC_FLASH_CLK
-+    clk_fs		genpll2		6	BCM_SR_GENPLL2_FS_CLK
- 
-     genpll3		crystal		0	BCM_SR_GENPLL3
-     clk_hsls		genpll3		1	BCM_SR_GENPLL3_HSLS_CLK
-     clk_sdio		genpll3		2	BCM_SR_GENPLL3_SDIO_CLK
- 
-     genpll4		crystal		0	BCM_SR_GENPLL4
--    ccn			genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-+    clk_ccn		genpll4		1	BCM_SR_GENPLL4_CCN_CLK
-     clk_tpiu_pll	genpll4		2	BCM_SR_GENPLL4_TPIU_PLL_CLK
--    noc_clk		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-+    clk_noc		genpll4		3	BCM_SR_GENPLL4_NOC_CLK
-     clk_chclk_fs4	genpll4		4	BCM_SR_GENPLL4_CHCLK_FS4_CLK
-     clk_bridge_fscpu	genpll4		5	BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK
- 
--
-     genpll5		crystal		0	BCM_SR_GENPLL5
--    fs4_hf_clk		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
--    crypto_ae_clk	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
--    raid_ae_clk		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
-+    clk_fs4_hf		genpll5		1	BCM_SR_GENPLL5_FS4_HF_CLK
-+    clk_crypto_ae	genpll5		2	BCM_SR_GENPLL5_CRYPTO_AE_CLK
-+    clk_raid_ae		genpll5		3	BCM_SR_GENPLL5_RAID_AE_CLK
- 
-     genpll6		crystal		0	BCM_SR_GENPLL6
--    48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
-+    clk_48_usb		genpll6		1	BCM_SR_GENPLL6_48_USB_CLK
- 
-     lcpll0		crystal		0	BCM_SR_LCPLL0
-     clk_sata_refp 	lcpll0		1	BCM_SR_LCPLL0_SATA_REFP_CLK
-     clk_sata_refn	lcpll0		2	BCM_SR_LCPLL0_SATA_REFN_CLK
--    clk_usb_ref		lcpll0		3	BCM_SR_LCPLL0_USB_REF_CLK
--    sata_refpn		lcpll0		3	BCM_SR_LCPLL0_SATA_REFPN_CLK
-+    clk_sata_350	lcpll0		3	BCM_SR_LCPLL0_SATA_350_CLK
-+    clk_sata_500	lcpll0		4	BCM_SR_LCPLL0_SATA_500_CLK
- 
-     lcpll1		crystal		0	BCM_SR_LCPLL1
--    wan 		lcpll1		1	BCM_SR_LCPLL0_WAN_CLK
-+    clk_wan		lcpll1		1	BCM_SR_LCPLL1_WAN_CLK
-+    clk_usb_ref		lcpll1		2	BCM_SR_LCPLL1_USB_REF_CLK
-+    clk_crmu_ts		lcpll1		3	BCM_SR_LCPLL1_CRMU_TS_CLK
- 
-     lcpll_pcie		crystal		0	BCM_SR_LCPLL_PCIE
--    pcie_phy_ref 	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-+    clk_pcie_phy_ref	lcpll1		1	BCM_SR_LCPLL_PCIE_PHY_REF_CLK
-diff --git a/include/dt-bindings/clock/bcm-sr.h b/include/dt-bindings/clock/bcm-sr.h
-index cff6c6f..419011b 100644
---- a/include/dt-bindings/clock/bcm-sr.h
-+++ b/include/dt-bindings/clock/bcm-sr.h
-@@ -35,7 +35,7 @@
- 
- /* GENPLL 0 clock channel ID SCR HSLS FS PCIE */
- #define BCM_SR_GENPLL0			0
--#define BCM_SR_GENPLL0_SATA_CLK		1
-+#define BCM_SR_GENPLL0_125M_CLK		1
- #define BCM_SR_GENPLL0_SCR_CLK		2
- #define BCM_SR_GENPLL0_250M_CLK		3
- #define BCM_SR_GENPLL0_PCIE_AXI_CLK	4
-@@ -50,9 +50,11 @@
- /* GENPLL 2 clock channel ID NITRO MHB*/
- #define BCM_SR_GENPLL2			0
- #define BCM_SR_GENPLL2_NIC_CLK		1
--#define BCM_SR_GENPLL2_250_NITRO_CLK	2
-+#define BCM_SR_GENPLL2_TS_500_CLK	2
- #define BCM_SR_GENPLL2_125_NITRO_CLK	3
- #define BCM_SR_GENPLL2_CHIMP_CLK	4
-+#define BCM_SR_GENPLL2_NIC_FLASH_CLK	5
-+#define BCM_SR_GENPLL2_FS4_CLK		6
- 
- /* GENPLL 3 HSLS clock channel ID */
- #define BCM_SR_GENPLL3			0
-@@ -62,11 +64,16 @@
- /* GENPLL 4 SCR clock channel ID */
- #define BCM_SR_GENPLL4			0
- #define BCM_SR_GENPLL4_CCN_CLK		1
-+#define BCM_SR_GENPLL4_TPIU_PLL_CLK	2
-+#define BCM_SR_GENPLL4_NOC_CLK		3
-+#define BCM_SR_GENPLL4_CHCLK_FS4_CLK	4
-+#define BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK	5
- 
- /* GENPLL 5 FS4 clock channel ID */
- #define BCM_SR_GENPLL5			0
--#define BCM_SR_GENPLL5_FS_CLK		1
--#define BCM_SR_GENPLL5_SPU_CLK		2
-+#define BCM_SR_GENPLL5_FS4_HF_CLK	1
-+#define BCM_SR_GENPLL5_CRYPTO_AE_CLK	2
-+#define BCM_SR_GENPLL5_RAID_AE_CLK	3
- 
- /* GENPLL 6 NITRO clock channel ID */
- #define BCM_SR_GENPLL6			0
-@@ -74,13 +81,16 @@
- 
- /* LCPLL0  clock channel ID */
- #define BCM_SR_LCPLL0			0
--#define BCM_SR_LCPLL0_SATA_REF_CLK	1
--#define BCM_SR_LCPLL0_USB_REF_CLK	2
--#define BCM_SR_LCPLL0_SATA_REFPN_CLK	3
-+#define BCM_SR_LCPLL0_SATA_REFP_CLK	1
-+#define BCM_SR_LCPLL0_SATA_REFN_CLK	2
-+#define BCM_SR_LCPLL0_SATA_350_CLK	3
-+#define BCM_SR_LCPLL0_SATA_500_CLK	4
- 
- /* LCPLL1  clock channel ID */
- #define BCM_SR_LCPLL1			0
- #define BCM_SR_LCPLL1_WAN_CLK		1
-+#define BCM_SR_LCPLL1_USB_REF_CLK	2
-+#define BCM_SR_LCPLL1_CRMU_TS_CLK	3
- 
- /* LCPLL PCIE  clock channel ID */
- #define BCM_SR_LCPLL_PCIE		0
+> Also I have added Cc: stable@vger.kernel.org into the commit messages.
+
+I can confirm all stable version references ("v4.x+") match.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.1.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
