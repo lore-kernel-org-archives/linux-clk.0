@@ -1,96 +1,66 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Tue, 8 May 2018 13:54:31 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Marcel Ziswiler <marcel@ziswiler.com>,
-	Marc Dietrich <marvin24@gmx.de>, <linux-clk@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
-Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-5-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:51587 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750750AbeFAGsB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jun 2018 02:48:01 -0400
+Subject: Re: [PATCH v2 3/6] clk: ti: dra7: Add clkctrl clock data for the mcan
+ clocks
+To: Tero Kristo <t-kristo@ti.com>, Rob Herring <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <paul@pwsan.com>
+References: <20180530141133.3711-1-faiz_abbas@ti.com>
+ <20180530141133.3711-4-faiz_abbas@ti.com>
+ <20180531040350.GA25132@rob-hp-laptop>
+ <e7e3ade1-76b7-f216-ece5-bd64a55cede6@ti.com>
+ <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <d7532c7a-d2ae-5cbf-cfd0-c347b975ed6b@ti.com>
+Date: Fri, 1 Jun 2018 12:18:37 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+In-Reply-To: <678ef467-a235-91db-8bae-f249ad98eac8@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user expects
-> parent clock to be enabled by the child, so let's return EPROBE_DEFER
-> until parent clock appear.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..04cbe7e9eff3 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
->  };
->  
-> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +						void *data)
-> +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +	const char *name;
-> +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	name = __clk_get_name(clk);
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
-> +}
-> +
+Hi,
 
-Rather than retrieving the struct clk * and comparing the names, you can use
-the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
-TEGRA20_CLK_CDEV2.
-
-Peter.
-
->  void __init tegra_add_of_provider(struct device_node *np)
->  {
->  	int i;
-> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
->  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> -- 
-> 2.17.0
+On Thursday 31 May 2018 06:59 PM, Tero Kristo wrote:
+> On 31/05/18 13:14, Faiz Abbas wrote:
+>> Hi,
+>>
+>> On Thursday 31 May 2018 09:33 AM, Rob Herring wrote:
+>>> On Wed, May 30, 2018 at 07:41:30PM +0530, Faiz Abbas wrote:
+>>>> Add clkctrl data for the m_can clocks and register it within the
+>> ...
+>>>>   diff --git a/include/dt-bindings/clock/dra7.h
+>>>> b/include/dt-bindings/clock/dra7.h
+>>>> index 5e1061b15aed..d7549c57cac3 100644
+>>>> --- a/include/dt-bindings/clock/dra7.h
+>>>> +++ b/include/dt-bindings/clock/dra7.h
+>>>> @@ -168,5 +168,6 @@
+>>>>   #define DRA7_COUNTER_32K_CLKCTRL    DRA7_CLKCTRL_INDEX(0x50)
+>>>>   #define DRA7_UART10_CLKCTRL    DRA7_CLKCTRL_INDEX(0x80)
+>>>>   #define DRA7_DCAN1_CLKCTRL    DRA7_CLKCTRL_INDEX(0x88)
+>>>> +#define DRA7_ADC_CLKCTRL    DRA7_CLKCTRL_INDEX(0xa0)
+>>>
+>>> ADC and mcan are the same thing?
+>>>
+>>
+>> The register to control MCAN clocks is called ADC_CLKCTRL, Yes.
 > 
+> Is there any reason for this or is that just a documentation bug?
+> 
+
+Looks like they meant to have an ADC in dra74 or dra72 but decided
+against it and then many years later used the same registers for MCAN
+instead. You can see ADC_CLKCTRL exists in dra72 TRM but is explicitly
+disabled.
+
+http://www.ti.com/lit/ug/spruic2b/spruic2b.pdf pg:1524
+
+
+Thanks,
+Faiz
