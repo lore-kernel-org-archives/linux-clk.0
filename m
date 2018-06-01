@@ -1,88 +1,28 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v8 03/10] firmware: xilinx: Add zynqmp IOCTL API for device control
-Date: Thu, 14 Jun 2018 11:27:35 -0700
-Message-ID: <1529000862-11510-4-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
-References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525865551-20489-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1525865551-20489-1-git-send-email-anischal@codeaurora.org>
+ <1525865551-20489-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <152788012145.144038.1961337838586630930@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM Video clock bindings
+Date: Fri, 01 Jun 2018 12:08:41 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Quoting Amit Nischal (2018-05-09 04:32:30)
+> Add device tree bindings for video clock controller for
+> Qualcomm Technology Inc's SoCs.
+> =
 
-Add ZynqMP firmware IOCTL API to control and configure
-devices like PLLs, SD, Gem, etc.
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  2 ++
- 2 files changed, 22 insertions(+)
-
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 70e335a..34c5ad5 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -241,8 +241,28 @@ static int get_set_conduit_method(struct device_node *np)
- 	return 0;
- }
- 
-+/**
-+ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
-+ * @node_id:	Node ID of the device
-+ * @ioctl_id:	ID of the requested IOCTL
-+ * @arg1:	Argument 1 to requested IOCTL call
-+ * @arg2:	Argument 2 to requested IOCTL call
-+ * @out:	Returned output value
-+ *
-+ * This function calls IOCTL to firmware for device control and configuration.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-+			   u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
-+				   arg1, arg2, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
-+	.ioctl = zynqmp_pm_ioctl,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index cb63bed..2eec6e7 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -34,6 +34,7 @@
- 
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
-+	PM_IOCTL = 34,
- };
- 
- /* PMU-FW return status codes */
-@@ -49,6 +50,7 @@ enum pm_ret_status {
- 
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
-+	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+Applied to clk-next
