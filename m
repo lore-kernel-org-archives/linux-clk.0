@@ -1,40 +1,29 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>
+To: Rajendra Nayak <rnayak@codeaurora.org>, mturquette@baylibre.com
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180529160804.1982-4-gregkh@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
- <20180529160804.1982-4-gregkh@linuxfoundation.org>
-Message-ID: <152790646204.225090.14558095359430265201@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 4/5] clk: tegra: no need to check return value of debugfs_create
- functions
-Date: Fri, 01 Jun 2018 19:27:42 -0700
+In-Reply-To: <20180323082616.10142-2-rnayak@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ stanimir.varbanov@linaro.org, vivek.gautam@codeaurora.org,
+ srinivas.kandagatla@linaro.org, Rajendra Nayak <rnayak@codeaurora.org>
+References: <20180323082616.10142-1-rnayak@codeaurora.org>
+ <20180323082616.10142-2-rnayak@codeaurora.org>
+Message-ID: <152787634364.144038.3592690846877465058@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/3] clk: qcom: gdsc: Add support for ALWAYS_ON gdscs
+Date: Fri, 01 Jun 2018 11:05:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Greg Kroah-Hartman (2018-05-29 09:08:03)
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+Quoting Rajendra Nayak (2018-03-23 01:26:14)
+> Some GDSCs might have software control to turn them off, but we might
+> want to keep them enabled always, in some cases because of lack of
+> support in kernel to handle a graceful turning off/on of such GDSCs.
+> Most common instances would be the GDCSs which power up the noc/bus
+> fabrics, which need bus drivers to handle them and atleast support for
+> which is missing on all qcom SoCs.
 > =
 
-> The return value of these functions were never checked in the end
-> anyway, so it is obvious this does not change any functionality :)
-> =
-
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
 
 Applied to clk-next
