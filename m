@@ -1,39 +1,44 @@
-Return-Path: <sboyd@kernel.org>
-From: sboyd@kernel.org
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH] clk: qcom: Export clk_fabia_pll_configure()
-Date: Sat,  2 Jun 2018 00:21:32 -0700
-Message-Id: <20180602072132.222257-1-sboyd@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:46916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752333AbeFATll (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Jun 2018 15:41:41 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rui Miguel Silva <rui.silva@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180522145245.3143-6-rui.silva@linaro.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>,
+        linux-clk@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>
+References: <20180522145245.3143-1-rui.silva@linaro.org>
+ <20180522145245.3143-6-rui.silva@linaro.org>
+Message-ID: <152788209979.225090.13218442162083992241@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 05/13] clk: imx7d: reset parent for mipi csi root
+Date: Fri, 01 Jun 2018 12:41:39 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@kernel.org>
+Quoting Rui Miguel Silva (2018-05-22 07:52:37)
+> To guarantee that we do not get Overflow in image FIFO the outer bandwidt=
+h has
+> to be faster than inputer bandwidth. For that it must be possible to set a
+> faster frequency clock. So set new parent to sys_pfd3 clock for the mipi =
+csi
+> block.
+> =
 
-This is used by the video clk driver on sdm845 and that's a module.
-Export it to prevent module build failures.
+> Acked-by: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> ---
 
-Cc: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied to clk-next
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9722b701fbdb..3c49a60072f1 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -885,6 +885,7 @@ void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 
- 	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
- }
-+EXPORT_SYMBOL_GPL(clk_fabia_pll_configure);
- 
- static int alpha_pll_fabia_enable(struct clk_hw *hw)
- {
--- 
-Sent by a computer through tubes
