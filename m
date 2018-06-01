@@ -1,26 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <pmladek@suse.com>
+Date: Fri, 1 Jun 2018 13:47:38 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, baijiaju1990@gmail.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for
+ printk format %pCr
+Message-ID: <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
+References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+ <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Paul Cercueil <paul@crapouillou.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180520163117.14125-5-paul@crapouillou.net>
-Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-References: <20180520163117.14125-1-paul@crapouillou.net>
- <20180520163117.14125-5-paul@crapouillou.net>
-Message-ID: <152792062764.225090.1565617809138811070@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 5/6] clk: ingenic: jz4770: Enable power of AHB1 bus after
- ungating VPU clock
-Date: Fri, 01 Jun 2018 23:23:47 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-05-20 09:31:16)
-> This was broken before, because the AHB1 bus was enabled before the VPU
-> clock was ungated, while it must be done afterwards.
-> =
+On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
+> On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> >
+> > This patch series:
+> >   - Changes all existing users of "%pCr" to print the result of
+> >     clk_get_rate() directly, which is safe as they all do this in task
+> >     context only,
+> >   - Removes support for the "%pCr" printk format.
+> 
+> Looks good to me.
+> 
+> What tree will this go through? The normal printk one? Just checking
+> that this doesn't end up falling through the cracks because nobody
+> knows who would take it...
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+I will take it via printk.git. There already is bunch of vsprintf
+changes for-4.18.
 
-Applied to clk-next
+Best Regards,
+Petr
