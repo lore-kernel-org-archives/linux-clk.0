@@ -1,153 +1,45 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
-Date: Wed,  6 Jun 2018 17:11:45 +0530
-Message-Id: <1528285308-25477-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <1527171551-21979-6-git-send-email-gilad@benyossef.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com> <1527171551-21979-6-git-send-email-gilad@benyossef.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Jun 2018 10:07:49 +0200
+Message-ID: <CAMuHMdUCZN_4yBWAJvSM89d-Vp=cQ9ndzaKvkM9jYZnO1OEg4g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-For some of the GDSCs, there is a requirement to enable/disable the
-few clocks before turning on/off the gdsc power domain. Add support
-for the same by specifying a list of clk_hw pointers per gdsc and
-enable/disable them along with power domain on/off callbacks.
+Hi Gilad,
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h |  5 +++++
- 2 files changed, 49 insertions(+)
+On Thu, May 24, 2018 at 4:19 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> Add bindings for CryptoCell instance in the SoC.
+>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a077133..b6adca1 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -12,6 +12,8 @@
-  */
+Thanks for the update!
 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
-@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
- 			   GMEM_RESET_MASK, 0);
- }
-+
-+static int gdsc_clk_prepare_enable(struct gdsc *sc)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < sc->clk_count; i++) {
-+		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
-+		if (ret) {
-+			for (i--; i >= 0; i--)
-+				clk_disable_unprepare(sc->clk_hws[i]->clk);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static void gdsc_clk_disable_unprepare(struct gdsc *sc)
-+{
-+	int i;
-+
-+	for (i = 0; i < sc->clk_count; i++)
-+		clk_disable_unprepare(sc->clk_hws[i]->clk);
-+}
-+
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
+Gr{oetje,eeting}s,
 
-@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		udelay(1);
- 	}
+                        Geert
 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
-
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
-
-@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	if (sc->flags & CLAMP_IO)
- 		gdsc_assert_clamp_io(sc);
-
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
-
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index bd1f2c7..59957d7 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/pm_domain.h>
-
-+struct clk_hw;
- struct regmap;
- struct reset_controller_dev;
-
-@@ -32,6 +33,8 @@
-  * @resets: ids of resets associated with this gdsc
-  * @reset_count: number of @resets
-  * @rcdev: reset controller
-+ * @clk_count: number of associated clocks
-+ * @clk_hws: clk_hw pointers for associated clocks with gdsc
-  */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-@@ -60,6 +63,8 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+	unsigned int			clk_count;
-+	struct clk_hw			*clk_hws[];
- };
-
- struct gdsc_desc {
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
