@@ -1,83 +1,88 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-Date: Sun,  3 Jun 2018 11:00:44 +0800
-Message-Id: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41969 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750729AbeFBNxj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Jun 2018 09:53:39 -0400
+From: Fabio Estevam <festevam@gmail.com>
+To: sboyd@kernel.org
+Cc: michael@amarulasolutions.com, stefan.wahren@i2se.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH] dt-bindings: clock: imx6ul: Do not change the clock definition order
+Date: Sat,  2 Jun 2018 10:53:29 -0300
+Message-Id: <1527947609-30913-1-git-send-email-festevam@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Commit f5a4670de96678 ("clk: imx: Add new clo01 and clo2 controlled
+by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
+at the end of the list, which may cause dtb breakage when running an old
+dtb with a newer kernel.
+
+In order to avoid that, simply add the new CLK_CKO clock definitions
+at the end of the list.
+
+Fixes: f5a4670de96678 ("clk: imx: Add new clo01 and clo2 controlled by CCOSR")
+Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- drivers/clk/imx/clk-imx6q.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index b9ea703..8754c61 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
- static struct clk *clk[IMX6QDL_CLK_END];
- static struct clk_onecell_data clk_data;
- 
--static unsigned int const clks_init_on[] __initconst = {
--	IMX6QDL_CLK_MMDC_CH0_AXI,
--	IMX6QDL_CLK_ROM,
--	IMX6QDL_CLK_ARM,
--};
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index 9564597..0aa1d9c 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -235,27 +235,25 @@
+ #define IMX6UL_CLK_CSI_PODF		222
+ #define IMX6UL_CLK_PLL3_120M		223
+ #define IMX6UL_CLK_KPP			224
+-#define IMX6UL_CLK_CKO1_SEL		225
+-#define IMX6UL_CLK_CKO1_PODF		226
+-#define IMX6UL_CLK_CKO1			227
+-#define IMX6UL_CLK_CKO2_SEL		228
+-#define IMX6UL_CLK_CKO2_PODF		229
+-#define IMX6UL_CLK_CKO2			230
+-#define IMX6UL_CLK_CKO			231
 -
- static struct clk_div_table clk_enet_ref_table[] = {
- 	{ .val = 0, .div = 20, },
- 	{ .val = 1, .div = 10, },
-@@ -417,7 +411,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *anatop_base, *base;
--	int i;
- 	int ret;
+-/* For i.MX6ULL */
+-#define IMX6ULL_CLK_ESAI_PRED		232
+-#define IMX6ULL_CLK_ESAI_PODF		233
+-#define IMX6ULL_CLK_ESAI_EXTAL		234
+-#define IMX6ULL_CLK_ESAI_MEM		235
+-#define IMX6ULL_CLK_ESAI_IPG		236
+-#define IMX6ULL_CLK_DCP_CLK		237
+-#define IMX6ULL_CLK_EPDC_PRE_SEL	238
+-#define IMX6ULL_CLK_EPDC_SEL		239
+-#define IMX6ULL_CLK_EPDC_PODF		240
+-#define IMX6ULL_CLK_EPDC_ACLK		241
+-#define IMX6ULL_CLK_EPDC_PIX		242
+-#define IMX6ULL_CLK_ESAI_SEL		243
++#define IMX6ULL_CLK_ESAI_PRED		225
++#define IMX6ULL_CLK_ESAI_PODF		226
++#define IMX6ULL_CLK_ESAI_EXTAL		227
++#define IMX6ULL_CLK_ESAI_MEM		228
++#define IMX6ULL_CLK_ESAI_IPG		229
++#define IMX6ULL_CLK_DCP_CLK		230
++#define IMX6ULL_CLK_EPDC_PRE_SEL	231
++#define IMX6ULL_CLK_EPDC_SEL		232
++#define IMX6ULL_CLK_EPDC_PODF		233
++#define IMX6ULL_CLK_EPDC_ACLK		234
++#define IMX6ULL_CLK_EPDC_PIX		235
++#define IMX6ULL_CLK_ESAI_SEL		236
++#define IMX6UL_CLK_CKO1_SEL		237
++#define IMX6UL_CLK_CKO1_PODF		238
++#define IMX6UL_CLK_CKO1			239
++#define IMX6UL_CLK_CKO2_SEL		240
++#define IMX6UL_CLK_CKO2_PODF		241
++#define IMX6UL_CLK_CKO2			242
++#define IMX6UL_CLK_CKO			243
+ #define IMX6UL_CLK_END			244
  
- 	clk[IMX6QDL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
-@@ -794,7 +787,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "mlb_podf",   base + 0x74, 18);
- 	else
- 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "axi",               base + 0x74, 18);
--	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20);
-+	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2_flags("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20, CLK_IS_CRITICAL);
- 	clk[IMX6QDL_CLK_MMDC_CH1_AXI] = imx_clk_gate2("mmdc_ch1_axi",  "mmdc_ch1_axi_podf", base + 0x74, 22);
- 	clk[IMX6QDL_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ahb",               base + 0x74, 28);
- 	clk[IMX6QDL_CLK_OPENVG_AXI]   = imx_clk_gate2("openvg_axi",    "axi",               base + 0x74, 30);
-@@ -808,7 +801,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	clk[IMX6QDL_CLK_GPMI_BCH]     = imx_clk_gate2("gpmi_bch",      "usdhc4",            base + 0x78, 26);
- 	clk[IMX6QDL_CLK_GPMI_IO]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
- 	clk[IMX6QDL_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
--	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
-+	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2_flags("rom",     "ahb",               base + 0x7c, 0, CLK_IS_CRITICAL);
- 	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
- 	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
- 	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
-@@ -878,9 +871,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 */
- 	clk_set_parent(clk[IMX6QDL_CLK_ENFC_SEL], clk[IMX6QDL_CLK_PLL2_PFD2_396M]);
- 
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clk[clks_init_on[i]]);
--
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY2_GATE]);
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
 -- 
 2.7.4
+
