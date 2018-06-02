@@ -1,423 +1,239 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v3 05/24] drm/sun4i: Add TCON TOP driver
-Date: Mon, 25 Jun 2018 14:02:45 +0200
-Message-Id: <20180625120304.7543-6-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v3 2/3] clk: bcm: Update and add Stingray clock entries
+Date: Fri,  1 Jun 2018 17:56:07 -0700
+Message-Id: <1527900968-12017-3-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-As already described in DT binding, TCON TOP is responsible for
-configuring display pipeline. In this initial driver focus is on HDMI
-pipeline, so TVE and LCD configuration is not implemented.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Implemented features:
-- HDMI source selection
-- clock driver (TCON and DSI gating)
-- connecting mixers and TCONS
+Update and add Stingray clock definitions and tables so they match the
+binding document and the latest ASIC datasheet
 
-Something similar also existed in previous SoCs, except that it was part
-of first TCON.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 ---
- drivers/gpu/drm/sun4i/Makefile         |   3 +-
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 300 +++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_tcon_top.h |  40 ++++
- 3 files changed, 342 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
- create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+ drivers/clk/bcm/clk-sr.c | 135 +++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 120 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-index 2589f4acd5ae..09fbfd6304ba 100644
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -16,7 +16,8 @@ sun8i-drm-hdmi-y		+= sun8i_hdmi_phy_clk.o
+diff --git a/drivers/clk/bcm/clk-sr.c b/drivers/clk/bcm/clk-sr.c
+index adc74f4..7b9efc0 100644
+--- a/drivers/clk/bcm/clk-sr.c
++++ b/drivers/clk/bcm/clk-sr.c
+@@ -56,8 +56,8 @@ static const struct iproc_pll_ctrl sr_genpll0 = {
+ };
  
- sun8i-mixer-y			+= sun8i_mixer.o sun8i_ui_layer.o \
- 				   sun8i_vi_layer.o sun8i_ui_scaler.o \
--				   sun8i_vi_scaler.o sun8i_csc.o
-+				   sun8i_vi_scaler.o sun8i_csc.o \
-+				   sun8i_tcon_top.o
+ static const struct iproc_clk_ctrl sr_genpll0_clk[] = {
+-	[BCM_SR_GENPLL0_SATA_CLK] = {
+-		.channel = BCM_SR_GENPLL0_SATA_CLK,
++	[BCM_SR_GENPLL0_125M_CLK] = {
++		.channel = BCM_SR_GENPLL0_125M_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+@@ -102,6 +102,65 @@ static int sr_genpll0_clk_init(struct platform_device *pdev)
+ 	return 0;
+ }
  
- sun4i-tcon-y			+= sun4i_crtc.o
- sun4i-tcon-y			+= sun4i_dotclock.o
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-new file mode 100644
-index 000000000000..8da0460e0028
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -0,0 +1,300 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
-+
-+#include <drm/drmP.h>
-+
-+#include <dt-bindings/clock/sun8i-tcon-top.h>
-+
-+#include <linux/bitfield.h>
-+#include <linux/component.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/of_graph.h>
-+#include <linux/platform_device.h>
-+
-+#include "sun8i_tcon_top.h"
-+
-+static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
-+					      int port_id)
-+{
-+	struct device_node *ep, *remote, *port;
-+	struct of_endpoint endpoint;
-+
-+	port = of_graph_get_port_by_id(node, port_id);
-+	if (!port)
-+		return -ENOENT;
-+
-+	for_each_available_child_of_node(port, ep) {
-+		remote = of_graph_get_remote_port_parent(ep);
-+		if (!remote)
-+			continue;
-+
-+		if (of_device_is_available(remote)) {
-+			of_graph_parse_endpoint(ep, &endpoint);
-+
-+			of_node_put(remote);
-+
-+			return endpoint.id;
-+		}
-+
-+		of_node_put(remote);
-+	}
-+
-+	return -ENOENT;
-+}
-+
-+static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
-+						   struct clk *parent,
-+						   void __iomem *regs,
-+						   spinlock_t *lock,
-+						   u8 bit, int name_index)
-+{
-+	const char *clk_name, *parent_name;
-+	int ret;
-+
-+	parent_name = __clk_get_name(parent);
-+	ret = of_property_read_string_index(dev->of_node,
-+					    "clock-output-names", name_index,
-+					    &clk_name);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return clk_hw_register_gate(dev, clk_name, parent_name,
-+				    CLK_SET_RATE_PARENT,
-+				    regs + TCON_TOP_GATE_SRC_REG,
-+				    bit, 0, lock);
++static const struct iproc_pll_ctrl sr_genpll2 = {
++	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
++		IPROC_CLK_PLL_NEEDS_SW_CFG,
++	.aon = AON_VAL(0x0, 1, 13, 12),
++	.reset = RESET_VAL(0x0, 12, 11),
++	.dig_filter = DF_VAL(0x0, 4, 3, 0, 4, 7, 3),
++	.sw_ctrl = SW_CTRL_VAL(0x10, 31),
++	.ndiv_int = REG_VAL(0x10, 20, 10),
++	.ndiv_frac = REG_VAL(0x10, 0, 20),
++	.pdiv = REG_VAL(0x14, 0, 4),
++	.status = REG_VAL(0x30, 12, 1),
 +};
 +
-+static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
-+			       void *data)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct clk *dsi, *tcon_tv0, *tcon_tv1, *tve0, *tve1;
-+	struct clk_hw_onecell_data *clk_data;
-+	struct sun8i_tcon_top *tcon_top;
-+	bool mixer0_unused = false;
-+	struct resource *res;
-+	void __iomem *regs;
-+	int ret, i, id;
-+	u32 val;
-+
-+	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
-+	if (!tcon_top)
-+		return -ENOMEM;
-+
-+	clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
-+				sizeof(*clk_data->hws) * CLK_NUM,
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+	tcon_top->clk_data = clk_data;
-+
-+	spin_lock_init(&tcon_top->reg_lock);
-+
-+	tcon_top->rst = devm_reset_control_get(dev, NULL);
-+	if (IS_ERR(tcon_top->rst)) {
-+		dev_err(dev, "Couldn't get our reset line\n");
-+		return PTR_ERR(tcon_top->rst);
-+	}
-+
-+	tcon_top->bus = devm_clk_get(dev, "bus");
-+	if (IS_ERR(tcon_top->bus)) {
-+		dev_err(dev, "Couldn't get the bus clock\n");
-+		return PTR_ERR(tcon_top->bus);
-+	}
-+
-+	dsi = devm_clk_get(dev, "dsi");
-+	if (IS_ERR(dsi)) {
-+		dev_err(dev, "Couldn't get the dsi clock\n");
-+		return PTR_ERR(dsi);
-+	}
-+
-+	tcon_tv0 = devm_clk_get(dev, "tcon-tv0");
-+	if (IS_ERR(tcon_tv0)) {
-+		dev_err(dev, "Couldn't get the tcon-tv0 clock\n");
-+		return PTR_ERR(tcon_tv0);
-+	}
-+
-+	tcon_tv1 = devm_clk_get(dev, "tcon-tv1");
-+	if (IS_ERR(tcon_tv1)) {
-+		dev_err(dev, "Couldn't get the tcon-tv1 clock\n");
-+		return PTR_ERR(tcon_tv1);
-+	}
-+
-+	tve0 = devm_clk_get(dev, "tve0");
-+	if (IS_ERR(tve0)) {
-+		dev_err(dev, "Couldn't get the tve0 clock\n");
-+		return PTR_ERR(tve0);
-+	}
-+
-+	tve1 = devm_clk_get(dev, "tve1");
-+	if (IS_ERR(tve1)) {
-+		dev_err(dev, "Couldn't get the tve1 clock\n");
-+		return PTR_ERR(tve1);
-+	}
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	ret = reset_control_deassert(tcon_top->rst);
-+	if (ret) {
-+		dev_err(dev, "Could not deassert ctrl reset control\n");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(tcon_top->bus);
-+	if (ret) {
-+		dev_err(dev, "Could not enable bus clock\n");
-+		goto err_assert_reset;
-+	}
-+
-+	val = 0;
-+
-+	/* check if HDMI mux output is connected */
-+	if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
-+		/* find HDMI input endpoint id, if it is connected at all*/
-+		id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
-+		if (id >= 0)
-+			val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
-+		else
-+			DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
-+	} else {
-+		DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
-+	}
-+
-+	writel(val, regs + TCON_TOP_GATE_SRC_REG);
-+
-+	val = 0;
-+
-+	/* process mixer0 mux output */
-+	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
-+	if (id >= 0) {
-+		val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
-+	} else {
-+		DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
-+		mixer0_unused = true;
-+	}
-+
-+	/* process mixer1 mux output */
-+	id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
-+	if (id >= 0) {
-+		val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
-+
-+		/*
-+		 * mixer0 mux has priority over mixer1 mux. We have to
-+		 * make sure mixer0 doesn't overtake TCON from mixer1.
-+		 */
-+		if (mixer0_unused && id == 0)
-+			val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
-+	} else {
-+		DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
-+	}
-+
-+	writel(val, regs + TCON_TOP_PORT_SEL_REG);
-+
-+	/*
-+	 * TCON TOP has two muxes, which select parent clock for each TCON TV
-+	 * channel clock. Parent could be either TCON TV or TVE clock. For now
-+	 * we leave this fixed to TCON TV, since TVE driver for R40 is not yet
-+	 * implemented. Once it is, graph needs to be traversed to determine
-+	 * if TVE is active on each TCON TV. If it is, mux should be switched
-+	 * to TVE clock parent.
-+	 */
-+	clk_data->hws[CLK_TCON_TOP_TV0] =
-+		sun8i_tcon_top_register_gate(dev, tcon_tv0, regs,
-+					     &tcon_top->reg_lock,
-+					     TCON_TOP_TCON_TV0_GATE, 0);
-+
-+	clk_data->hws[CLK_TCON_TOP_TV1] =
-+		sun8i_tcon_top_register_gate(dev, tcon_tv1, regs,
-+					     &tcon_top->reg_lock,
-+					     TCON_TOP_TCON_TV1_GATE, 1);
-+
-+	clk_data->hws[CLK_TCON_TOP_DSI] =
-+		sun8i_tcon_top_register_gate(dev, dsi, regs,
-+					     &tcon_top->reg_lock,
-+					     TCON_TOP_TCON_DSI_GATE, 2);
-+
-+	for (i = 0; i < CLK_NUM; i++)
-+		if (IS_ERR(clk_data->hws[i])) {
-+			ret = PTR_ERR(clk_data->hws[i]);
-+			goto err_unregister_gates;
-+		}
-+
-+	clk_data->num = CLK_NUM;
-+
-+	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-+				     clk_data);
-+	if (ret)
-+		goto err_unregister_gates;
-+
-+	dev_set_drvdata(dev, tcon_top);
-+
-+	return 0;
-+
-+err_unregister_gates:
-+	for (i = 0; i < CLK_NUM; i++)
-+		if (clk_data->hws[i])
-+			clk_hw_unregister_gate(clk_data->hws[i]);
-+	clk_disable_unprepare(tcon_top->bus);
-+err_assert_reset:
-+	reset_control_assert(tcon_top->rst);
-+
-+	return ret;
-+}
-+
-+static void sun8i_tcon_top_unbind(struct device *dev, struct device *master,
-+				  void *data)
-+{
-+	struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
-+	struct clk_hw_onecell_data *clk_data = tcon_top->clk_data;
-+	int i;
-+
-+	of_clk_del_provider(dev->of_node);
-+	for (i = 0; i < CLK_NUM; i++)
-+		clk_hw_unregister_gate(clk_data->hws[i]);
-+
-+	clk_disable_unprepare(tcon_top->bus);
-+	reset_control_assert(tcon_top->rst);
-+}
-+
-+static const struct component_ops sun8i_tcon_top_ops = {
-+	.bind	= sun8i_tcon_top_bind,
-+	.unbind	= sun8i_tcon_top_unbind,
-+};
-+
-+static int sun8i_tcon_top_probe(struct platform_device *pdev)
-+{
-+	return component_add(&pdev->dev, &sun8i_tcon_top_ops);
-+}
-+
-+static int sun8i_tcon_top_remove(struct platform_device *pdev)
-+{
-+	component_del(&pdev->dev, &sun8i_tcon_top_ops);
-+
-+	return 0;
-+}
-+
-+/* sun4i_drv uses this list to check if a device node is a TCON TOP */
-+const struct of_device_id sun8i_tcon_top_of_table[] = {
-+	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
-+EXPORT_SYMBOL(sun8i_tcon_top_of_table);
-+
-+static struct platform_driver sun8i_tcon_top_platform_driver = {
-+	.probe		= sun8i_tcon_top_probe,
-+	.remove		= sun8i_tcon_top_remove,
-+	.driver		= {
-+		.name		= "sun8i-tcon-top",
-+		.of_match_table	= sun8i_tcon_top_of_table,
++static const struct iproc_clk_ctrl sr_genpll2_clk[] = {
++	[BCM_SR_GENPLL2_NIC_CLK] = {
++		.channel = BCM_SR_GENPLL2_NIC_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
++	[BCM_SR_GENPLL2_TS_500_CLK] = {
++		.channel = BCM_SR_GENPLL2_TS_500_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL2_125_NITRO_CLK] = {
++		.channel = BCM_SR_GENPLL2_125_NITRO_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL2_CHIMP_CLK] = {
++		.channel = BCM_SR_GENPLL2_CHIMP_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL2_NIC_FLASH_CLK] = {
++		.channel = BCM_SR_GENPLL2_NIC_FLASH_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
++	[BCM_SR_GENPLL2_FS4_CLK] = {
++		.channel = BCM_SR_GENPLL2_FS4_CLK,
++		.enable = ENABLE_VAL(0x4, 11, 5, 17),
++		.mdiv = REG_VAL(0x1c, 20, 9),
 +	},
 +};
-+module_platform_driver(sun8i_tcon_top_platform_driver);
 +
-+MODULE_AUTHOR("Jernej Skrabec <jernej.skrabec@siol.net>");
-+MODULE_DESCRIPTION("Allwinner R40 TCON TOP driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.h b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-new file mode 100644
-index 000000000000..39838bbfeaee
---- /dev/null
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++static int sr_genpll2_clk_init(struct platform_device *pdev)
++{
++	iproc_pll_clk_setup(pdev->dev.of_node,
++			    &sr_genpll2, NULL, 0, sr_genpll2_clk,
++			    ARRAY_SIZE(sr_genpll2_clk));
++	return 0;
++}
 +
-+#ifndef _SUN8I_TCON_TOP_H_
-+#define _SUN8I_TCON_TOP_H_
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/reset.h>
-+#include <linux/spinlock.h>
-+
-+#define TCON_TOP_TCON_TV_SETUP_REG	0x00
-+
-+#define TCON_TOP_PORT_SEL_REG		0x1C
-+#define TCON_TOP_PORT_DE0_MSK			GENMASK(1, 0)
-+#define TCON_TOP_PORT_DE1_MSK			GENMASK(5, 4)
-+
-+#define TCON_TOP_GATE_SRC_REG		0x20
-+#define TCON_TOP_HDMI_SRC_MSK			GENMASK(29, 28)
-+#define TCON_TOP_TCON_TV1_GATE			24
-+#define TCON_TOP_TCON_TV0_GATE			20
-+#define TCON_TOP_TCON_DSI_GATE			16
-+
-+#define CLK_NUM					3
-+
-+struct sun8i_tcon_top {
-+	struct clk			*bus;
-+	struct clk_hw_onecell_data	*clk_data;
-+	struct reset_control		*rst;
-+
-+	/*
-+	 * spinlock is used to synchronize access to same
-+	 * register where multiple clock gates can be set.
-+	 */
-+	spinlock_t			reg_lock;
-+};
-+
-+extern const struct of_device_id sun8i_tcon_top_of_table[];
-+
-+#endif /* _SUN8I_TCON_TOP_H_ */
+ static const struct iproc_pll_ctrl sr_genpll3 = {
+ 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_HAS_NDIV_FRAC |
+ 		IPROC_CLK_PLL_NEEDS_SW_CFG,
+@@ -157,6 +216,30 @@ static const struct iproc_clk_ctrl sr_genpll4_clk[] = {
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+ 	},
++	[BCM_SR_GENPLL4_TPIU_PLL_CLK] = {
++		.channel = BCM_SR_GENPLL4_TPIU_PLL_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 7, 1, 13),
++		.mdiv = REG_VAL(0x18, 10, 9),
++	},
++	[BCM_SR_GENPLL4_NOC_CLK] = {
++		.channel = BCM_SR_GENPLL4_NOC_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
++	[BCM_SR_GENPLL4_CHCLK_FS4_CLK] = {
++		.channel = BCM_SR_GENPLL4_CHCLK_FS4_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 9, 3, 15),
++		.mdiv = REG_VAL(0x1c, 0, 9),
++	},
++	[BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK] = {
++		.channel = BCM_SR_GENPLL4_BRIDGE_FSCPU_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x4, 10, 4, 16),
++		.mdiv = REG_VAL(0x1c, 10, 9),
++	},
+ };
+ 
+ static int sr_genpll4_clk_init(struct platform_device *pdev)
+@@ -181,18 +264,21 @@ static const struct iproc_pll_ctrl sr_genpll5 = {
+ };
+ 
+ static const struct iproc_clk_ctrl sr_genpll5_clk[] = {
+-	[BCM_SR_GENPLL5_FS_CLK] = {
+-		.channel = BCM_SR_GENPLL5_FS_CLK,
+-		.flags = IPROC_CLK_AON,
++	[BCM_SR_GENPLL5_FS4_HF_CLK] = {
++		.channel = BCM_SR_GENPLL5_FS4_HF_CLK,
+ 		.enable = ENABLE_VAL(0x4, 6, 0, 12),
+ 		.mdiv = REG_VAL(0x18, 0, 9),
+ 	},
+-	[BCM_SR_GENPLL5_SPU_CLK] = {
+-		.channel = BCM_SR_GENPLL5_SPU_CLK,
+-		.flags = IPROC_CLK_AON,
+-		.enable = ENABLE_VAL(0x4, 6, 0, 12),
++	[BCM_SR_GENPLL5_CRYPTO_AE_CLK] = {
++		.channel = BCM_SR_GENPLL5_CRYPTO_AE_CLK,
++		.enable = ENABLE_VAL(0x4, 7, 1, 12),
+ 		.mdiv = REG_VAL(0x18, 10, 9),
+ 	},
++	[BCM_SR_GENPLL5_RAID_AE_CLK] = {
++		.channel = BCM_SR_GENPLL5_RAID_AE_CLK,
++		.enable = ENABLE_VAL(0x4, 8, 2, 14),
++		.mdiv = REG_VAL(0x18, 20, 9),
++	},
+ };
+ 
+ static int sr_genpll5_clk_init(struct platform_device *pdev)
+@@ -214,24 +300,30 @@ static const struct iproc_pll_ctrl sr_lcpll0 = {
+ };
+ 
+ static const struct iproc_clk_ctrl sr_lcpll0_clk[] = {
+-	[BCM_SR_LCPLL0_SATA_REF_CLK] = {
+-		.channel = BCM_SR_LCPLL0_SATA_REF_CLK,
++	[BCM_SR_LCPLL0_SATA_REFP_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFP_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
+ 		.mdiv = REG_VAL(0x14, 0, 9),
+ 	},
+-	[BCM_SR_LCPLL0_USB_REF_CLK] = {
+-		.channel = BCM_SR_LCPLL0_USB_REF_CLK,
++	[BCM_SR_LCPLL0_SATA_REFN_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_REFN_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 8, 2, 14),
+ 		.mdiv = REG_VAL(0x14, 10, 9),
+ 	},
+-	[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
+-		.channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
++	[BCM_SR_LCPLL0_SATA_350_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_350_CLK,
+ 		.flags = IPROC_CLK_AON,
+ 		.enable = ENABLE_VAL(0x0, 9, 3, 15),
+ 		.mdiv = REG_VAL(0x14, 20, 9),
+ 	},
++	[BCM_SR_LCPLL0_SATA_500_CLK] = {
++		.channel = BCM_SR_LCPLL0_SATA_500_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 10, 4, 16),
++		.mdiv = REG_VAL(0x18, 0, 9),
++	},
+ };
+ 
+ static int sr_lcpll0_clk_init(struct platform_device *pdev)
+@@ -259,6 +351,18 @@ static const struct iproc_clk_ctrl sr_lcpll1_clk[] = {
+ 		.enable = ENABLE_VAL(0x0, 7, 1, 13),
+ 		.mdiv = REG_VAL(0x14, 0, 9),
+ 	},
++	[BCM_SR_LCPLL1_USB_REF_CLK] = {
++		.channel = BCM_SR_LCPLL1_USB_REF_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 8, 2, 14),
++		.mdiv = REG_VAL(0x14, 10, 9),
++	},
++	[BCM_SR_LCPLL1_CRMU_TS_CLK] = {
++		.channel = BCM_SR_LCPLL1_CRMU_TS_CLK,
++		.flags = IPROC_CLK_AON,
++		.enable = ENABLE_VAL(0x0, 9, 3, 15),
++		.mdiv = REG_VAL(0x14, 20, 9),
++	},
+ };
+ 
+ static int sr_lcpll1_clk_init(struct platform_device *pdev)
+@@ -298,6 +402,7 @@ static int sr_lcpll_pcie_clk_init(struct platform_device *pdev)
+ 
+ static const struct of_device_id sr_clk_dt_ids[] = {
+ 	{ .compatible = "brcm,sr-genpll0", .data = sr_genpll0_clk_init },
++	{ .compatible = "brcm,sr-genpll2", .data = sr_genpll2_clk_init },
+ 	{ .compatible = "brcm,sr-genpll4", .data = sr_genpll4_clk_init },
+ 	{ .compatible = "brcm,sr-genpll5", .data = sr_genpll5_clk_init },
+ 	{ .compatible = "brcm,sr-lcpll0", .data = sr_lcpll0_clk_init },
 -- 
-2.18.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.1.4
