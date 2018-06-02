@@ -1,43 +1,52 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anson Huang <anson.huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180628005217.GC22683@dragon>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <fabio.estevam@nxp.com>,
- "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180628005217.GC22683@dragon>
-Message-ID: <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Date: Fri, 29 Jun 2018 11:39:38 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39418 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750927AbeFBA4S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Jun 2018 20:56:18 -0400
+Received: by mail-qk0-f195.google.com with SMTP id g14-v6so8972272qkm.6
+        for <linux-clk@vger.kernel.org>; Fri, 01 Jun 2018 17:56:18 -0700 (PDT)
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Pramod Kumar <pramod.kumar@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v3 0/3] Update Broadcom Stingray clock entries
+Date: Fri,  1 Jun 2018 17:56:05 -0700
+Message-Id: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Guo (2018-06-27 17:52:18)
-> On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> > Gentle Ping...
-> =
+This patch series updates Broadcom Stingray clock entries so they match the
+latest ASIC datasheet
 
-> I cannot apply this dts patch until the clock patch is landed on
-> mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-> created by clock patch.
-> =
+This patch series is based off v4.17-rc5 and is available on GIHUB:
+repo: https://github.com/Broadcom/arm64-linux.git
+branch: sr-clk-v3
 
+Changes since v2:
+ - Move dt-binding header change to the same patch with the binding doc
+update
 
-Does it matter if that clk ID changes across branches? Or is everything
-good if it just exists as some number? The patch adding the define
-conflicts with another patch to fix the numbering scheme to be
-incremental instead of changing IMX6UL and IMX6ULL which is annoying.
-I'll probably make a topic branch just for the fix and merge it into
-clk-fixes and this branch so you can pick it up from there if you like.
+Changes since v1:
+ - Fix patch author to Pramod Kumar on all 3 patches
+ - Fix patch subject spelling error on patch 2/3
+
+Pramod Kumar (3):
+  dt-bindings: clk: Update Stingray binding doc
+  clk: bcm: Update and add Stingray clock entries
+  arm64: dts: Update Stingray clock DT nodes
+
+ .../bindings/clock/brcm,iproc-clocks.txt           |  26 ++--
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi |  26 ++--
+ drivers/clk/bcm/clk-sr.c                           | 135 ++++++++++++++++++---
+ include/dt-bindings/clock/bcm-sr.h                 |  24 ++--
+ 4 files changed, 170 insertions(+), 41 deletions(-)
+
+-- 
+2.1.4
+
