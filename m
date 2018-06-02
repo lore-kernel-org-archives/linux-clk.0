@@ -1,59 +1,114 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <daniel@zonque.org>
+Subject: Re: [PATCH v2 2/2] clk: Add driver for MAX9485
+To: Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org,
+ Daniel Mack <zonque@gmail.com>
+References: <20180525182058.25969-1-daniel@zonque.org>
+ <20180525182058.25969-3-daniel@zonque.org>
+ <152792003850.225090.13213694533140196613@swboyd.mtv.corp.google.com>
+From: Daniel Mack <daniel@zonque.org>
+Message-ID: <6bcfa930-f317-dd20-b2d7-c708a7be5d6b@zonque.org>
+Date: Sat, 2 Jun 2018 13:14:25 +0200
 MIME-Version: 1.0
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180613130338.GH20078@localhost.localdomain>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, broonie@kernel.org,
- lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
- mturquette@baylibre.com, robh+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
- <20180613130338.GH20078@localhost.localdomain>
-Message-ID: <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Date: Mon, 25 Jun 2018 16:46:24 -0700
+In-Reply-To: <152792003850.225090.13213694533140196613@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Matti Vaittinen (2018-06-13 06:03:38)
-> On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
-> > =
+Hi Stephen,
 
-> > I see. This makes sense. I need to verify from HW colleagues whether
-> > this chip has internal oscillator or not. I originally thought we have
-> > on-chip oscillator - but as you say, we do have XIN pin in documentatio=
-n.
-> > So now I am not sure if the test board I have contains oscillator drivi=
-ng
-> > the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify =
-this.
-> =
+Thanks for the review!
 
-> It really turned out that the PMIC just acts as a clock buffer. So I do
-> as you suggested and add lookup for parent clock to the driver. I
-> planned to do it so that if no parent is found from DT - then we assume
-> the 32.768KHz clock (as described in documentation). Eg, something along
-> the lines:
-> =
+On Saturday, June 02, 2018 08:13 AM, Stephen Boyd wrote:
+> Quoting Daniel Mack (2018-05-25 11:20:58)
 
->         init.parent_names =3D of_clk_get_parent_name(pdev->dev.parent->of=
-_node, 0);
->         if (init.parent_names) {
->                 init.num_parents =3D 1;
->         } else {
->                 /* If parent is not given from DT we assume the typical u=
-se-case with
->                  * 32.768 KHz oscillator for RTC (Maybe we could just err=
-or out here?)
->                  */
->                 c->rate =3D BD71837_CLK_RATE;
->                 bd71837_clk_ops.recalc_rate =3D &bd71837_clk_recalc_rate;
->         }
+>> +enum {
+>> +       MAX9485_FS_12KHZ        = 0 << 0,
+>> +       MAX9485_FS_32KHZ        = 1 << 0,
+>> +       MAX9485_FS_44_1KHZ      = 2 << 0,
+>> +       MAX9485_FS_48KHZ        = 3 << 0,
+>> +};
+>> +
+>> +enum {
+>> +       MAX9485_SCALE_256       = 0 << 2,
+>> +       MAX9485_SCALE_384       = 1 << 2,
+>> +       MAX9485_SCALE_768       = 2 << 2,
+>> +};
+> 
+> Any reason to be an enum? Maybe they can just be #defines.
 
-You can also add a clk directly in this driver in that case there isn't
-one in DT with the rate and name of your choosing. Then the logic is the
-same and we don't need a c->rate variable.
+No particular reason, but an enum shows these values are grouped 
+together. But I can also turn them into defines, it's just a matter of 
+taste I guess.
+
+>> +struct max9485_driver_data {
+>> +       struct clk *xclk;
+>> +       struct i2c_client *client;
+>> +       u8 reg_value;
+>> +       unsigned long clkout_rate;
+>> +       struct regulator *supply;
+>> +       struct gpio_desc *reset_gpio;
+>> +       struct max9485_clk_hw hw[MAX9485_NUM_CLKS];
+>> +
+>> +       struct {
+>> +               struct clk_hw_onecell_data data;
+>> +               struct clk_hw *hw[MAX9485_NUM_CLKS];
+> 
+> I don't quite understand this one. There's already an array of clk_hw
+> pointers inside of clk_hw_onecell_data so just use that? But then
+> there's also an array of max9485_clk_hw structures, so maybe roll your
+> own clk_hw getter function?
+
+Ah, yes. The latter makes most sense. I was somehow stuck with the idea 
+that the onecell helper makes sense here. Thanks for the heads-up.
+
+>> +static int max9485_update_bits(struct max9485_driver_data *drvdata,
+>> +                              u8 mask, u8 value)
+>> +{
+>> +       int ret;
+>> +
+>> +       drvdata->reg_value &= ~mask;
+>> +       drvdata->reg_value |= value;
+>> +
+>> +       dev_dbg(&drvdata->client->dev,
+>> +               "updating mask %02x value %02x -> %02x\n",
+>> +               mask, value, drvdata->reg_value);
+>> +
+>> +       ret = i2c_master_send(drvdata->client,
+>> +                             &drvdata->reg_value,
+>> +                             sizeof(drvdata->reg_value));
+> 
+> Maybe use a regmap instead? Then you could use regmap_update_bits() in
+> the places you need it.
+
+I wish, but nope, regmap doesn't work for devices that don't actually 
+have registers, like this one. There's no extra byte for a register 
+address or such, just one plain byte of payload.
+
+[...]
+
+>> +               return -ENOMEM;
+>> +
+>> +       drvdata->xclk = devm_clk_get(dev, "xclk");
+>> +       if (IS_ERR(drvdata->xclk))
+>> +               return PTR_ERR(drvdata->xclk);
+>> +
+>> +       freq = clk_get_rate(drvdata->xclk);
+>> +       if (freq != MAX9485_INPUT_FREQ) {
+>> +               dev_err(dev, "Illegal xclk frequency of %ld\n", freq);
+>> +               return -EINVAL;
+>> +       }
+> 
+> Is this necessary? Seems pretty useless to do everywhere to make sure
+> that someone didn't design the hardware incorrectly. It would be better
+> to return the rate of the parent "xclk" by not having a recalc_rate hook
+> and relying on the parent's rate.
+
+Hmm, but the hardware doesn't work if the clock is anything else than 
+27.0MHz. But I'll remove the check no problem. After all, we don't check 
+the regulator voltages either.
+
+I've addressed all other comments. Will resend v3.
+
+
+Thanks again!
+Daniel
