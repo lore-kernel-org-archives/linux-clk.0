@@ -1,56 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41631 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751466AbeF1G70 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 02:59:26 -0400
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <52771065.UHJ1SZMy5a@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-19-jernej.skrabec@siol.net> <CAGb2v651RGegpAi-2efhBUkyFf1iC+zxOGTbRkmjuWcYSTgYJw@mail.gmail.com>
- <52771065.UHJ1SZMy5a@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 14:59:02 +0800
-Message-ID: <CAGb2v66HOrbjm4w-EoVpvPde7SoVE5X3tfcyW_Ny-vQ+ax141Q@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 18/24] drm/sun4i: DW HDMI PHY: Add
- support for second PLL
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Russell King <linux@armlinux.org.uk>, linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+ <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+ <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com>
+Message-ID: <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
+ __of_clk_get()
+Date: Fri, 01 Jun 2018 21:47:45 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 28, 2018 at 12:56 PM, Jernej Škrabec
-<jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 04:25:54 CEST je Chen-Yu Tsai napisal(a):
->> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
->> > Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
->> > between two clock parents.
->> >
->> > Add code which reads second PLL from DT.
->> >
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->>
->> This patch by itself does not do anything. It should be merged with the
->> next one.
->
-> Maxime said clock changes should be separated from DT changes.
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/578775.html
+Quoting Geert Uytterhoeven (2018-06-01 12:22:33)
+> Hi Stephen,
+> =
 
-OK. I think the boundary between these two is bit blurred in this case.
-And I think implementing support for two or more parents, then actually
-adding the second parent makes more sense.
+> On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+> >> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+> >> negative indices since commit bd69f73f2c81eed9 ("of: Create function f=
+or
+> >> counting number of phandles in a property").
+> >>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> Commit bd69f73f2c81eed9 is in v3.9.
+> >
+> > Did you send this to Russell's patch tracker? Otherwise I can pick it up
+> =
 
-ChenYu
+> Not yet. The patch tracker is for reviewed patches, AFAIK.
+> =
+
+> > to clk-next.
+> =
+
+> Thanks!
+> =
+
+
+Ok. If you need my reviewed-by to add it to the tracker feel free to
+have:
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
