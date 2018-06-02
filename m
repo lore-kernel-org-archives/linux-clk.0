@@ -1,38 +1,27 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Jun 2018 15:21:47 +0200
-Message-ID: <CAMuHMdUr+PT540D+MK5kuAsZW+4MRu5KE+kid6QZkMacRjAsXw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
+Cc: andy.shevchenko@gmail.com, Yisheng Xie <xieyisheng1@huawei.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
+ <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
+Message-ID: <152792025666.225090.11039188217774859492@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 09/21] clk: use match_string() helper
+Date: Fri, 01 Jun 2018 23:17:36 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the constants necessary to use the renesas,r9a06g032-sysctrl node.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Quoting Yisheng Xie (2018-05-31 04:11:14)
+> match_string() returns the index of an array for a matching string,
+> which can be used instead of open coded variant.
+> =
 
-Thanks, queuing in clk-renesas-for-v4.19.
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Applied to clk-next
