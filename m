@@ -1,47 +1,39 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+Return-Path: <sboyd@kernel.org>
+From: sboyd@kernel.org
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	cl@rock-chips.com,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 0/4] clk: rockchip: support clock controller for px30 SoC
-Date: Fri,  8 Jun 2018 14:31:55 +0800
-Message-Id: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH] clk: qcom: Export clk_fabia_pll_configure()
+Date: Sat,  2 Jun 2018 00:21:32 -0700
+Message-Id: <20180602072132.222257-1-sboyd@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Change in V2:
-[PATCH v2 2/4]: modify the Author name
-[PATCH v2 3/4]: provide a bit more explanation for commit message
+From: Stephen Boyd <sboyd@kernel.org>
 
-Elaine Zhang (4):
-  dt-bindings: add bindings for px30 clock controller
-  clk: rockchip: add dt-binding header for px30
-  clk: rockchip: add support for half divider
-  clk: rockchip: add clock controller for px30
+This is used by the video clk driver on sdm845 and that's a module.
+Export it to prevent module build failures.
 
- .../bindings/clock/rockchip,px30-cru.txt           |   67 ++
- drivers/clk/rockchip/Makefile                      |    2 +
- drivers/clk/rockchip/clk-half-divider.c            |  235 +++++
- drivers/clk/rockchip/clk-px30.c                    | 1080 ++++++++++++++++++++
- drivers/clk/rockchip/clk.c                         |   10 +
- drivers/clk/rockchip/clk.h                         |   86 +-
- include/dt-bindings/clock/px30-cru.h               |  402 ++++++++
- 7 files changed, 1881 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-half-divider.c
- create mode 100644 drivers/clk/rockchip/clk-px30.c
- create mode 100644 include/dt-bindings/clock/px30-cru.h
+Cc: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 9722b701fbdb..3c49a60072f1 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -885,6 +885,7 @@ void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 
+ 	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+ }
++EXPORT_SYMBOL_GPL(clk_fabia_pll_configure);
+ 
+ static int alpha_pll_fabia_enable(struct clk_hw *hw)
+ {
 -- 
-1.9.1
+Sent by a computer through tubes
