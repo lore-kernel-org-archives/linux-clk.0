@@ -1,99 +1,60 @@
-Return-Path: <ray.jui@broadcom.com>
-Return-Path: <ray.jui@broadcom.com>
-From: Ray Jui <ray.jui@broadcom.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Pramod Kumar <pramod.kumar@broadcom.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v3 3/3] arm64: dts: Update Stingray clock DT nodes
-Date: Fri,  1 Jun 2018 17:56:08 -0700
-Message-Id: <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
-In-Reply-To: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
-References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+ <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
+ <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com> <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sat, 2 Jun 2018 11:41:43 +0200
+Message-ID: <CAMuHMdVEGpYCjycdoYkaMjnPQ9dL33yPAm0EUoTtEZxkaup7XA@mail.gmail.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Pramod Kumar <pramod.kumar@broadcom.com>
+Hi Stephen,
 
-Update clock output names in the Stingray clock DT nodes so they match
-the binding document and the latest ASIC datasheet. Also add entries
-for LCPLL2
+On Sat, Jun 2, 2018 at 6:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-06-01 12:22:33)
+>> On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+>> > Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+>> >> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+>> >> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+>> >> counting number of phandles in a property").
+>> >>
+>> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> >> ---
+>> >> Commit bd69f73f2c81eed9 is in v3.9.
+>> >
+>> > Did you send this to Russell's patch tracker? Otherwise I can pick it up
+>>
+>> Not yet. The patch tracker is for reviewed patches, AFAIK.
+>>
+>> > to clk-next.
+>>
+>> Thanks!
+>>
+>
+> Ok. If you need my reviewed-by to add it to the tracker feel free to
+> have:
+>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 26 ++++++++++++++++------
- 1 file changed, 19 insertions(+), 7 deletions(-)
+Thanks, but it's much easier if you would take it, and I can avoid looking
+up again how to submit it properly to the patch tracker.
 
-diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-index 3a4d452..10a106a 100644
---- a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-+++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
-@@ -52,12 +52,24 @@
- 			reg = <0x0001d104 0x32>,
- 			      <0x0001c854 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "genpll0", "clk_125", "clk_scr",
-+			clock-output-names = "genpll0", "clk_125m", "clk_scr",
- 					     "clk_250", "clk_pcie_axi",
- 					     "clk_paxc_axi_x2",
- 					     "clk_paxc_axi";
- 		};
- 
-+		genpll2: genpll2@1d1ac {
-+			#clock-cells = <1>;
-+			compatible = "brcm,sr-genpll2";
-+			reg = <0x0001d1ac 0x32>,
-+			      <0x0001c854 0x4>;
-+			clocks = <&osc>;
-+			clock-output-names = "genpll2", "clk_nic",
-+					     "clk_ts_500_ref", "clk_125_nitro",
-+					     "clk_chimp", "clk_nic_flash",
-+					     "clk_fs";
-+		};
-+
- 		genpll3: genpll3@1d1e0 {
- 			#clock-cells = <1>;
- 			compatible = "brcm,sr-genpll3";
-@@ -75,8 +87,8 @@
- 			      <0x0001c854 0x4>;
- 			clocks = <&osc>;
- 			clock-output-names = "genpll4", "clk_ccn",
--					     "clk_tpiu_pll", "noc_clk",
--					     "pll_chclk_fs4",
-+					     "clk_tpiu_pll", "clk_noc",
-+					     "clk_chclk_fs4",
- 					     "clk_bridge_fscpu";
- 		};
- 
-@@ -86,8 +98,8 @@
- 			reg = <0x0001d248 0x32>,
- 			      <0x0001c870 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "genpll5", "fs4_hf_clk",
--					     "crypto_ae_clk", "raid_ae_clk";
-+			clock-output-names = "genpll5", "clk_fs4_hf",
-+					     "clk_crypto_ae", "clk_raid_ae";
- 		};
- 
- 		lcpll0: lcpll0@1d0c4 {
-@@ -107,9 +119,9 @@
- 			reg = <0x0001d138 0x3c>,
- 			      <0x0001c870 0x4>;
- 			clocks = <&osc>;
--			clock-output-names = "lcpll1", "clk_wanpn",
-+			clock-output-names = "lcpll1", "clk_wan",
- 					     "clk_usb_ref",
--					     "timesync_evt_clk";
-+					     "clk_crmu_ts";
- 		};
- 
- 		hsls_clk: hsls_clk {
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.1.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
