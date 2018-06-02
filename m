@@ -1,31 +1,31 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Andy Gross <andy.gross@linaro.org>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- David Brown <david.brown@linaro.org>, Manu Gautam <mgautam@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Vivek Gautam <vivek.gautam@codeaurora.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Turquette <mturquette@baylibre.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180524213735.12121-1-bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180524213735.12121-1-bjorn.andersson@linaro.org>
-Message-ID: <152788092933.225090.134215386081948476@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
-Date: Fri, 01 Jun 2018 12:22:09 -0700
+In-Reply-To: <20180529160804.1982-3-gregkh@linuxfoundation.org>
+Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>
+References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+ <20180529160804.1982-3-gregkh@linuxfoundation.org>
+Message-ID: <152790645859.225090.17927860777726364571@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 3/5] clk: davinci: no need to check return value of
+ debugfs_create functions
+Date: Fri, 01 Jun 2018 19:27:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Bjorn Andersson (2018-05-24 14:37:35)
-> The halt check of the UFS symbol clocks always fails, as such probing
-> UFS after clk_disable_unused always fails. This makes it impossible to
-> boot a system with the UFS phy or UFS HCD drivers compiled as modules.
+Quoting Greg Kroah-Hartman (2018-05-29 09:08:02)
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > =
 
-> Follow SDM845 and disable the halt check on these clocks.
-> =
-
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: David Lechner <david@lechnology.com>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
 
 Applied to clk-next
