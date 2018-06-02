@@ -1,56 +1,25 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 4/7] clk: sunxi-ng: add A64 compatible string
-Date: Fri, 22 Jun 2018 20:45:37 +0800
-Message-Id: <20180622124540.56203-3-icenowy@aosc.io>
-In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
-References: <20180622124540.56203-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+ Paul Cercueil <paul@crapouillou.net>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180520163117.14125-6-paul@crapouillou.net>
+Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+References: <20180520163117.14125-1-paul@crapouillou.net>
+ <20180520163117.14125-6-paul@crapouillou.net>
+Message-ID: <152792063369.225090.12451260873752761253@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 6/6] clk: ingenic: jz4770: Add 150us delay after enabling VPU
+ clock
+Date: Fri, 01 Jun 2018 23:23:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-As claiming Allwinner A64 SRAM C is a prerequisite for all sub-blocks of
-the A64 DE2, not only the CCU sub-block, a bus driver is then written for
-enabling the access to the whole DE2 part by claiming the SRAM.
+Quoting Paul Cercueil (2018-05-20 09:31:17)
+> This is required, as we must not use the AHB1 bus before it is stable.
+> =
 
-In this situation, the A64 compatible string will be just added with no
-other requirments, as they're processed by the parent bus driver.
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-No changes since v1.
-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 468d1abaf0ee..8df7cd93453e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -292,13 +292,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
- 		.compatible = "allwinner,sun50i-h5-de2-clk",
- 		.data = &sun50i_a64_de2_clk_desc,
- 	},
--	/*
--	 * The Allwinner A64 SoC needs some bit to be poke in syscon to make
--	 * DE2 really working.
--	 * So there's currently no A64 compatible here.
--	 * H5 shares the same reset line with A64, so here H5 is using the
--	 * clock description of A64.
--	 */
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-clk",
-+		.data = &sun50i_a64_de2_clk_desc,
-+	},
- 	{ }
- };
- 
--- 
-2.17.1
+Applied to clk-next
