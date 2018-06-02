@@ -1,80 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:20695 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755536AbeFSGqd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:46:33 -0400
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-2-songjun.wu@linux.intel.com>
- <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
- <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
- <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
-From: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <32ff76eb-6711-f0f2-2d83-6887a961855f@linux.intel.com>
-Date: Tue, 19 Jun 2018 14:46:27 +0800
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>, Ray Jui <ray.jui@broadcom.com>,
+ Rob Herring <robh+dt@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527900968-12017-2-git-send-email-ray.jui@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pramod Kumar <pramod.kumar@broadcom.com>,
+ bcm-kernel-feedback-list@broadcom.com, Ray Jui <ray.jui@broadcom.com>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+ <1527900968-12017-2-git-send-email-ray.jui@broadcom.com>
+Message-ID: <152792081356.225090.6196399335681845828@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: clk: Update Stingray binding doc
+Date: Fri, 01 Jun 2018 23:26:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Ray Jui (2018-06-01 17:56:06)
+> From: Pramod Kumar <pramod.kumar@broadcom.com>
+> =
 
+> Update Stingray clock binding document to add additional clock entries
+> with names matching the latest ASIC datasheet. Also modify a few existing
+> entries to make their naming more consistent with the rest of the entries
+> =
 
-On 6/18/2018 6:59 PM, Arnd Bergmann wrote:
-> On Mon, Jun 18, 2018 at 11:42 AM, Wu, Songjun
-> <songjun.wu@linux.intel.com> wrote:
->> On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
->>> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com>
->>> wrote:
->>>> Previous implementation uses a hard-coded register value to check if
->>>> the current serial entity is the console entity.
->>>> Now the lantiq serial driver uses the aliases for the index of the
->>>> serial port.
->>>> The lantiq danube serial dts are updated with aliases to support this.
->>>>
->>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->>>> ---
->>>>
->>>>    arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->>>>    1 file changed, 5 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi
->>>> b/arch/mips/boot/dts/lantiq/danube.dtsi
->>>> index 2dd950181f8a..7a9e15da6bd0 100644
->>>> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
->>>> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
->>>> @@ -4,6 +4,10 @@
->>>>           #size-cells = <1>;
->>>>           compatible = "lantiq,xway", "lantiq,danube";
->>>>
->>>> +       aliases {
->>>> +               serial0 = &asc1;
->>>> +       };
->>>> +
->>> You generally want the aliases to be part of the board specific file,
->>> not every board numbers their serial ports in the same way.
->>>
->> In this chip only asc1 can be used as console,  so serial0 is defined in
->> chip specific file.
-> This was a more general comment about 'aliases' being board specific
-> in principle (though we've had exceptions in the past). Even if there
-> is only one uart on the chip, I'd recommend following the same
-> conventions as the other chips that have more than one uart.
->
->         Arnd
-Accept, 'aliases' will be move to the board specific file.
+> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> ---
+
+Applied to clk-next
