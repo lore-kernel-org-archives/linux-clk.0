@@ -1,29 +1,26 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 17 Jun 2018 15:21:11 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc: Colin Didier <colin.dider@devialet.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Cl=E9ment?= Peron <clement.peron@devialet.com>
-Subject: Re: [PATCH 1/5] ARM: imx: remove inexistant EPIT timer init
-Message-ID: <20180617072109.GO16091@dragon>
-References: <20180528173412.10000-1-peron.clem@gmail.com>
- <20180528173412.10000-2-peron.clem@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180528173412.10000-2-peron.clem@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Paul Cercueil <paul@crapouillou.net>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180520163117.14125-2-paul@crapouillou.net>
+Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+References: <20180520163117.14125-1-paul@crapouillou.net>
+ <20180520163117.14125-2-paul@crapouillou.net>
+Message-ID: <152792062103.225090.8616356640432786461@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/6] clk: ingenic: Support specifying "wait for clock stable"
+ delay
+Date: Fri, 01 Jun 2018 23:23:41 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, May 28, 2018 at 07:34:08PM +0200, Clément Péron wrote:
-> From: Clément Peron <clement.peron@devialet.com>
-> 
-> i.MX EPIT timer has been removed but not the init function declaration.
-> 
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
+Quoting Paul Cercueil (2018-05-20 09:31:13)
+> Some clocks need a small delay after being ungated to run stable, as
+> using them too soon might result in hardware lockups.
+> =
 
-Applied, thanks.
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+
+Applied to clk-next
