@@ -1,54 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs57.siol.net ([185.57.226.248]:59210 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751059AbeF1Er0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 00:47:26 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have channel 0
-Date: Thu, 28 Jun 2018 06:45:56 +0200
-Message-ID: <2676604.ZYCNkuCdbT@jernej-laptop>
-In-Reply-To: <CAGb2v64EkVK+AEngEuadBzAZagyU7eyOhHhBh0iFrxS+-BbCYQ@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-10-jernej.skrabec@siol.net> <CAGb2v64EkVK+AEngEuadBzAZagyU7eyOhHhBh0iFrxS+-BbCYQ@mail.gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
+Message-ID: <152790643550.225090.7686614109247734629@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/5] clk: no need to check return value of debugfs_create
+ functions
+Date: Fri, 01 Jun 2018 19:27:15 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
-> > Because of that, all output endpoints on such TCON node will point to a
-> > encoder which is part of component framework.
-> > 
-> > Correct current graph traversing algorithm in such way that it doesn't
-> > skip output enpoints with id 0 on TV TCONs.
-> 
-> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
-> have channel 0, it must be skipped.
+Quoting Greg Kroah-Hartman (2018-05-29 09:08:00)
+> -
+> -       d =3D debugfs_create_u32("clk_protect_count", 0444, core->dentry,
+> -                              &core->protect_count);
+> -       if (!d)
+> -               goto err_out;
+> -
+> -       d =3D debugfs_create_u32("clk_notifier_count", 0444, core->dentry,
+> -                              &core->notifier_count);
+> -       if (!d)
+> -               goto err_out;
+> +       if (!core || !pdentry)
+> +               return;
+>  =
 
-I'm not sure where this is stated. I read TCON binding again. Can you please 
-point me to it?
+> -       if (core->num_parents > 1) {
+> -               d =3D debugfs_create_file("clk_possible_parents", 0444,
+> -                               core->dentry, core, &possible_parents_fop=
+s);
+> -               if (!d)
+> -                       goto err_out;
+> -       }
+> +       root =3D debugfs_create_dir(core->name, pdentry);
+> +       core->dentry =3D root;
+>  =
 
-So on TV TCONs on R40 (without channel 0) TVE would be endpoint 1 and HDMI 
-endpoint 2 (or the other way around)?
+> -       if (core->ops->debug_init) {
+> -               ret =3D core->ops->debug_init(core->hw, core->dentry);
 
-Best regards,
-Jernej
+This returns an int. We should go fix all the ops to return void now
+because nobody should care. I can pile that patch on top.
 
-
-
+Anyway, applied to clk-next.
