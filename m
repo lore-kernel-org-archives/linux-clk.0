@@ -1,104 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs61.siol.net ([185.57.226.252]:38753 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934506AbeFLUCo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:44 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 21/27] drm/sun4i: DW HDMI PHY: Add support for second PLL
-Date: Tue, 12 Jun 2018 22:00:30 +0200
-Message-Id: <20180612200036.21483-22-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <daniel@zonque.org>
+From: Daniel Mack <daniel@zonque.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v3 1/2] dts: clk: add devicetree bindings for MAX9485
+Date: Sat,  2 Jun 2018 13:15:30 +0200
+Message-Id: <20180602111531.32143-2-daniel@zonque.org>
+In-Reply-To: <20180602111531.32143-1-daniel@zonque.org>
+References: <20180602111531.32143-1-daniel@zonque.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
-between two clock parents.
+This patch adds the devicetree bindings for MAX9485, a programmable audio
+clock generator.
 
-Add code which reads second PLL from DT.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 ++
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 20 +++++++++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/clock/maxim,max9485.txt    | 59 ++++++++++++++++++++++
+ include/dt-bindings/clock/maxim,max9485.h          | 18 +++++++
+ 2 files changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
+ create mode 100644 include/dt-bindings/clock/maxim,max9485.h
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 3ba71aff92fc..46a3aa6a53a9 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -147,6 +147,7 @@ struct sun8i_hdmi_phy;
- 
- struct sun8i_hdmi_phy_variant {
- 	bool has_phy_clk;
-+	bool has_second_pll;
- 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
- 	void (*phy_disable)(struct dw_hdmi *hdmi,
- 			    struct sun8i_hdmi_phy *phy);
-@@ -160,6 +161,7 @@ struct sun8i_hdmi_phy {
- 	struct clk			*clk_mod;
- 	struct clk			*clk_phy;
- 	struct clk			*clk_pll0;
-+	struct clk			*clk_pll1;
- 	unsigned int			rcal;
- 	struct regmap			*regs;
- 	struct reset_control		*rst_phy;
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index cd07ceb71601..f50072ae054a 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -482,10 +482,19 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 			goto err_put_clk_mod;
- 		}
- 
-+		if (phy->variant->has_second_pll) {
-+			phy->clk_pll1 = of_clk_get_by_name(node, "pll-1");
-+			if (IS_ERR(phy->clk_pll1)) {
-+				dev_err(dev, "Could not get pll-1 clock\n");
-+				ret = PTR_ERR(phy->clk_pll1);
-+				goto err_put_clk_pll0;
-+			}
-+		}
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+new file mode 100644
+index 000000000000..61bec1100a94
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+@@ -0,0 +1,59 @@
++Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
 +
- 		ret = sun8i_phy_clk_create(phy, dev);
- 		if (ret) {
- 			dev_err(dev, "Couldn't create the PHY clock\n");
--			goto err_put_clk_pll0;
-+			goto err_put_clk_pll1;
- 		}
- 
- 		clk_prepare_enable(phy->clk_phy);
-@@ -528,9 +537,10 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	reset_control_put(phy->rst_phy);
- err_disable_clk_phy:
- 	clk_disable_unprepare(phy->clk_phy);
-+err_put_clk_pll1:
-+	clk_put(phy->clk_pll1);
- err_put_clk_pll0:
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
- err_put_clk_mod:
- 	clk_put(phy->clk_mod);
- err_put_clk_bus:
-@@ -551,8 +561,8 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
- 
- 	reset_control_put(phy->rst_phy);
- 
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll1);
- 	clk_put(phy->clk_mod);
- 	clk_put(phy->clk_bus);
- }
++This device exposes 4 clocks in total:
++
++- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
++- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
++			frequencies
++- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
++
++MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
++requests.
++
++Required properties:
++- compatible:	"maxim,max9485"
++- clocks:	Input clock, must provice 27.000 MHz
++- clock-names:	Must be set to "xclk"
++- #clock-cells: From common clock binding; shall be set to 1
++
++Optional properties:
++- reset-gpios:		GPIO descriptor connected to the #RESET input pin
++- vdd-supply:		A regulator node for Vdd
++- clock-output-names:	Name of output clocks, as defined in common clock
++			bindings
++
++If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
++and "clkout2".
++
++Clocks are defined as preprocessor macros in the dt-binding header.
++
++Example:
++
++	#include <dt-bindings/clock/maxim,max9485.h>
++
++	xo-27mhz: xo-27mhz {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++
++	&i2c0 {
++		max9485: audio-clock@63 {
++			reg = <0x63>;
++			compatible = "maxim,max9485";
++			clock-names = "xclk";
++			clocks = <&xo-27mhz>;
++			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
++			vdd-supply = <&3v3-reg>;
++			#clock-cells = <1>;
++		};
++	};
++
++	// Clock consumer node
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clock-names = "foo-input-clk";
++		clocks = <&max9485 MAX9485_CLKOUT1>;
++	};
+diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
+new file mode 100644
+index 000000000000..185b09ce1869
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max9485.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2018 Daniel Mack
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_MAX9485_CLK_H
++#define __DT_BINDINGS_MAX9485_CLK_H
++
++#define MAX9485_MCLKOUT	0
++#define MAX9485_CLKOUT	1
++#define MAX9485_CLKOUT1	2
++#define MAX9485_CLKOUT2	3
++
++#endif /* __DT_BINDINGS_MAX9485_CLK_H */
 -- 
-2.17.1
-
+2.14.3
