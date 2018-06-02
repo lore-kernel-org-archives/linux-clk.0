@@ -1,80 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs20.siol.net ([185.57.226.211]:38540 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933611AbeFLUCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:23 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 13/27] drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
-Date: Tue, 12 Jun 2018 22:00:22 +0200
-Message-Id: <20180612200036.21483-14-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <ray.jui@broadcom.com>
+Return-Path: <ray.jui@broadcom.com>
+From: Ray Jui <ray.jui@broadcom.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Pramod Kumar <pramod.kumar@broadcom.com>,
+	Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v3 3/3] arm64: dts: Update Stingray clock DT nodes
+Date: Fri,  1 Jun 2018 17:56:08 -0700
+Message-Id: <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
+References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-LVDS and RGB interfaces are always connected to TCONs which have channel
-0. It doesn't make sense to try to init them on TV TCONs.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-Add a check if TCON has channel 0 before trying to init LVDS or RGB
-interface.
+Update clock output names in the Stingray clock DT nodes so they match
+the binding document and the latest ASIC datasheet. Also add entries
+for LCPLL2
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 32 ++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+ .../boot/dts/broadcom/stingray/stingray-clock.dtsi | 26 ++++++++++++++++------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 5dae623968f7..b1205a7bc20f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1117,23 +1117,25 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
- 		goto err_free_dotclock;
- 	}
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+index 3a4d452..10a106a 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-clock.dtsi
+@@ -52,12 +52,24 @@
+ 			reg = <0x0001d104 0x32>,
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll0", "clk_125", "clk_scr",
++			clock-output-names = "genpll0", "clk_125m", "clk_scr",
+ 					     "clk_250", "clk_pcie_axi",
+ 					     "clk_paxc_axi_x2",
+ 					     "clk_paxc_axi";
+ 		};
  
--	/*
--	 * If we have an LVDS panel connected to the TCON, we should
--	 * just probe the LVDS connector. Otherwise, just probe RGB as
--	 * we used to.
--	 */
--	remote = of_graph_get_remote_node(dev->of_node, 1, 0);
--	if (of_device_is_compatible(remote, "panel-lvds"))
--		if (can_lvds)
--			ret = sun4i_lvds_init(drm, tcon);
-+	if (tcon->quirks->has_channel_0) {
-+		/*
-+		 * If we have an LVDS panel connected to the TCON, we should
-+		 * just probe the LVDS connector. Otherwise, just probe RGB as
-+		 * we used to.
-+		 */
-+		remote = of_graph_get_remote_node(dev->of_node, 1, 0);
-+		if (of_device_is_compatible(remote, "panel-lvds"))
-+			if (can_lvds)
-+				ret = sun4i_lvds_init(drm, tcon);
-+			else
-+				ret = -EINVAL;
- 		else
--			ret = -EINVAL;
--	else
--		ret = sun4i_rgb_init(drm, tcon);
--	of_node_put(remote);
-+			ret = sun4i_rgb_init(drm, tcon);
-+		of_node_put(remote);
++		genpll2: genpll2@1d1ac {
++			#clock-cells = <1>;
++			compatible = "brcm,sr-genpll2";
++			reg = <0x0001d1ac 0x32>,
++			      <0x0001c854 0x4>;
++			clocks = <&osc>;
++			clock-output-names = "genpll2", "clk_nic",
++					     "clk_ts_500_ref", "clk_125_nitro",
++					     "clk_chimp", "clk_nic_flash",
++					     "clk_fs";
++		};
++
+ 		genpll3: genpll3@1d1e0 {
+ 			#clock-cells = <1>;
+ 			compatible = "brcm,sr-genpll3";
+@@ -75,8 +87,8 @@
+ 			      <0x0001c854 0x4>;
+ 			clocks = <&osc>;
+ 			clock-output-names = "genpll4", "clk_ccn",
+-					     "clk_tpiu_pll", "noc_clk",
+-					     "pll_chclk_fs4",
++					     "clk_tpiu_pll", "clk_noc",
++					     "clk_chclk_fs4",
+ 					     "clk_bridge_fscpu";
+ 		};
  
--	if (ret < 0)
--		goto err_free_dotclock;
-+		if (ret < 0)
-+			goto err_free_dotclock;
-+	}
+@@ -86,8 +98,8 @@
+ 			reg = <0x0001d248 0x32>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "genpll5", "fs4_hf_clk",
+-					     "crypto_ae_clk", "raid_ae_clk";
++			clock-output-names = "genpll5", "clk_fs4_hf",
++					     "clk_crypto_ae", "clk_raid_ae";
+ 		};
  
- 	if (tcon->quirks->needs_de_be_mux) {
- 		/*
+ 		lcpll0: lcpll0@1d0c4 {
+@@ -107,9 +119,9 @@
+ 			reg = <0x0001d138 0x3c>,
+ 			      <0x0001c870 0x4>;
+ 			clocks = <&osc>;
+-			clock-output-names = "lcpll1", "clk_wanpn",
++			clock-output-names = "lcpll1", "clk_wan",
+ 					     "clk_usb_ref",
+-					     "timesync_evt_clk";
++					     "clk_crmu_ts";
+ 		};
+ 
+ 		hsls_clk: hsls_clk {
 -- 
-2.17.1
-
+2.1.4
