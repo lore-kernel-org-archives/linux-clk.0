@@ -1,34 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:37879 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933793AbeFLVxk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 17:53:40 -0400
-Date: Tue, 12 Jun 2018 15:53:37 -0600
-From: Rob Herring <robh@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: arm: remove PMC bindings
-Message-ID: <20180612215337.GA6569@rob-hp-laptop>
-References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
- <20180607084107.4461-2-alexandre.belloni@bootlin.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v1 3/4] clk: tegra20: Turn EMC clock gate into divider
+To: Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180530150646.19030-1-digetx@gmail.com>
+ <20180530150646.19030-4-digetx@gmail.com>
+ <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7bed6350-b6ee-1d79-39f5-bf0db2c2b102@gmail.com>
+Date: Sat, 2 Jun 2018 14:00:18 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180607084107.4461-2-alexandre.belloni@bootlin.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <152792144851.225090.7409061495035612435@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 07, 2018 at 10:41:04AM +0200, Alexandre Belloni wrote:
-> The PMC bindings are fully described in
-> Documentation/devicetree/bindings/clock/at91-clock.txt. Remove the
-> duplicate and incomplete documentation.
+On 02.06.2018 09:37, Stephen Boyd wrote:
+> Quoting Dmitry Osipenko (2018-05-30 08:06:45)
+>> Kernel should never gate the EMC clock as it causes immediate lockup, so
+>> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+>> gate into divider allows to implement glitch-less EMC scaling, avoiding
+>> reparenting to a backup clock.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  .../devicetree/bindings/arm/atmel-pmc.txt          | 14 --------------
->  1 file changed, 14 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
+> Looks ok to me, but I'm waiting for someone from Tegra side to ack it or
+> review it.
+> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+I've already prepared v2 with some minor cleanups and additional clk patch. For
+now waiting for Peter's review comments to v1.
