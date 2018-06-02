@@ -1,68 +1,61 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <michael@amarulasolutions.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <1527171551-21979-6-git-send-email-gilad@benyossef.com> <20180529161936.prhp4oikzamr6u3n@verge.net.au>
- <CAOtvUMeBCH+23c3FDWncMwPPe5N=7yjRKzhyLmFXrYazgGbcJw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jun 2018 10:12:24 +0200
-Message-ID: <CAMuHMdUX874g6pAz-Ze-yA3S+6aOhzUkfGN9wmQUhy-y0f7dMw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: renesas: r8a7795: add ccree binding
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+In-Reply-To: <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
+ <1439344955.9677.1526991935718@email.1und1.de> <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Sat, 2 Jun 2018 16:04:13 +0200
+Message-ID: <CAOf5uwneWyjNpD-tGGL7CgL2_jJFvDtzbi+NBg7wqGMGR4qGCw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>, Rob Herring <robh+dt@kernel.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+	Anson Huang <Anson.Huang@nxp.com>, Matteo Lisi <matteo.lisi@engicam.com>,
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Gilad,
+Hi
 
-On Thu, May 31, 2018 at 1:55 PM, Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> On Tue, May 29, 2018 at 7:19 PM, Simon Horman <horms@verge.net.au> wrote:
->> On Thu, May 24, 2018 at 03:19:10PM +0100, Gilad Ben-Yossef wrote:
->>> Add bindings for CryptoCell instance in the SoC.
->>>
->>> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
->>
->> In so far as I can review the details of this (which is not much) this
->> looks fine to me. I am, however, a little unclear in when it should be
->> accepted.
+On Sat, Jun 2, 2018 at 3:48 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Stefan,
 >
-> Since Herbert Xu ACKed the driver changes, I would say the only gating
-> commit is Geert's CR clock patch.
+> On Tue, May 22, 2018 at 9:25 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+>
+>>> --- a/include/dt-bindings/clock/imx6ul-clock.h
+>>> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+>>> @@ -242,20 +242,25 @@
+>>>  #define IMX6UL_CLK_CKO2_PODF         229
+>>>  #define IMX6UL_CLK_CKO2                      230
+>>>  #define IMX6UL_CLK_CKO                       231
+>>> +#define IMX6UL_CLK_GPIO1             232
+>>> +#define IMX6UL_CLK_GPIO2             233
+>>> +#define IMX6UL_CLK_GPIO3             234
+>>> +#define IMX6UL_CLK_GPIO4             235
+>>> +#define IMX6UL_CLK_GPIO5             236
+>>
+>> this change looks like a breakage of devicetree ABI. You are changing the mean of the existing clock IDs on i.MX6ULL, which probably regress the combination of older DTBs with newer kernel.
+>
+> Good point! I will send a fix for f5a4670de96678 ("clk: imx: Add new
+> clo01 and clo2 controlled
+> by CCOSR") which did the same reordering.
+>
 
-These are queued for v4.19.
+ull is a preatty new platform so one board was listed. Are you sure
+that we need?
 
-> If that one is in, than I would say this one should go in as well.
+Michael
 
-As the device node now has a power-domains property, the genpd code will
-try to attach it to the CPG/MSSR PM Domain, which is a clock domain.
-In the absence of the clock patch, the device's module clock cannot be
-found, and dev_pm_domain_attach() and thus platform_drv_probe() will fail,
-before calling the device driver's .probe() function.
+> Thanks
 
-So there is no longer a dependency on the clock patch, and the DT patch can
-go in in parallel (although I prefer its subject to be changed
-s/binding/device device/).
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
+| COO  -  Founder                                      Cruquiuskade 47 |
+| +31(0)851119172                                 Amsterdam 1018 AM NL |
+|                  [`as] http://www.amarulasolutions.com               |
