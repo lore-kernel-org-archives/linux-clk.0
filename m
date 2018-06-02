@@ -1,112 +1,61 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 12/13] ARM: davinci: mityomapl138: use aemif platform driver
-Date: Tue, 26 Jun 2018 11:25:36 +0200
-Message-Id: <20180626092537.6737-13-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180601105105.GD5150@localhost.localdomain>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Rob Herring <robh@kernel.org>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030129.GA16122@rob-hp-laptop>
+ <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+ <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+ <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
+ <20180601105105.GD5150@localhost.localdomain>
+Message-ID: <152792104337.225090.2257556980786807638@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+Date: Fri, 01 Jun 2018 23:30:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Matti Vaittinen (2018-06-01 03:51:05)
+> On Thu, May 31, 2018 at 07:57:53AM -0700, Stephen Boyd wrote:
+> > Quoting Rob Herring (2018-05-31 07:07:24)
+> > > =
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in mityomapl138.
+> > > I don't think it should. The h/w either has an interrupt controller or
+> > > it doesn't. My concern is you added it but nothing uses it which tells
+> > > me your binding is incomplete. I'd rather see complete bindings even
+> > > if you don't have drivers. For example, as-is, there's not really any
+> > > need for the clocks child node. You can just make the parent a clock
+> > > provider. But we need a complete picture of the h/w to make that
+> > > determination.
+> > > =
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-mityomapl138.c | 55 ++++++++++++++++------
- 1 file changed, 41 insertions(+), 14 deletions(-)
+> > =
 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 2cce0d7d2f2a..2933e0c87cfa 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -30,6 +30,7 @@
- #include <mach/da8xx.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <mach/mux.h>
- #include <linux/platform_data/spi-davinci.h>
- 
-@@ -422,27 +423,53 @@ static struct resource mityomapl138_nandflash_resource[] = {
- 	},
- };
- 
--static struct platform_device mityomapl138_nandflash_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &mityomapl138_nandflash_data,
-+static struct platform_device mityomapl138_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &mityomapl138_nandflash_data,
-+		},
-+		.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
-+		.resource	= mityomapl138_nandflash_resource,
- 	},
--	.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
--	.resource	= mityomapl138_nandflash_resource,
- };
- 
--static struct platform_device *mityomapl138_devices[] __initdata = {
--	&mityomapl138_nandflash_device,
-+static struct resource mityomapl138_aemif_resources[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data mityomapl138_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data mityomapl138_aemif_pdata = {
-+	.abus_data		= mityomapl138_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(mityomapl138_aemif_abus_data),
-+	.sub_devices		= mityomapl138_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(mityomapl138_aemif_devices),
-+};
-+
-+static struct platform_device mityomapl138_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &mityomapl138_aemif_pdata,
-+	},
-+	.resource	= mityomapl138_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(mityomapl138_aemif_resources),
- };
- 
- static void __init mityomapl138_setup_nand(void)
- {
--	platform_add_devices(mityomapl138_devices,
--				 ARRAY_SIZE(mityomapl138_devices));
--
--	if (davinci_aemif_setup(&mityomapl138_nandflash_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+	if (platform_device_register(&mityomapl138_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device\n", __func__);
- }
- 
- static const short mityomap_mii_pins[] = {
--- 
-2.17.1
+> > I don't see a reason to have the clk subnode either.
+> =
+
+> After some pondering - do you mean I could:
+> 1. remove clk binfing document and clk node.
+> 2. add clock-output-names etc to pmic node (and describe them in pmic
+> node binding document)
+> 3. use parent DT node in clk driver and do something like:
+>         if (parent->of_node)
+>                 ret =3D of_clk_add_hw_provider(parent->of_node, of_clk_hw=
+_simple_get,
+>                                              hw);
+> 4. remove the clkdev
+> =
+
+
+This sounds ok to me. As Rob said, a more complete picture of the
+hardware would make this easier.
