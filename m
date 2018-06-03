@@ -1,42 +1,60 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 2/9] ARM: davinci: omapl138-hawk: add aemif & nand support
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-3-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <41248083-69db-4b88-8a11-e7fa2bd06718@lechnology.com>
-Date: Mon, 25 Jun 2018 11:08:57 -0500
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>, Stefan Wahren <stefan.wahren@i2se.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
+	"michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
+Date: Sun, 3 Jun 2018 01:36:13 +0000
+Message-ID: 
+ <AM3PR04MB1315BD8947467077B61BB2E6F5600@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
+ <1439344955.9677.1526991935718@email.1und1.de>
+ <152792036327.225090.14543251343485084840@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <152792036327.225090.14543251343485084840@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180625152920.11549-3-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We now have support for aemif & nand from board files. As an example
-> add support for nand to da850-hawk.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
-
-> +static struct platform_device omapl138_hawk_aemif_devices[] = {
-> +	{
-> +		.name		= "davinci_nand",
-> +		.id		= 1,
-
-same comment as on da850-evm...
-
-this might need id = 0 now.
-
-> +		.dev		= {
-> +			.platform_data	= &omapl138_hawk_nandflash_data,
-> +		},
-> +		.resource	= omapl138_hawk_nandflash_resource,
-> +		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
-> +	}
-> +};
+SGksIFN0ZXBoZW4NCg0KQW5zb24gSHVhbmcNCkJlc3QgUmVnYXJkcyENCg0KDQo+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtl
+cm5lbC5vcmddDQo+IFNlbnQ6IFNhdHVyZGF5LCBKdW5lIDIsIDIwMTggMjoxOSBQTQ0KPiBUbzog
+QW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBTdGVmYW4gV2FocmVuDQo+IDxzdGVm
+YW4ud2FocmVuQGkyc2UuY29tPjsgRmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0ZXZhbUBueHAuY29t
+PjsNCj4ga2VybmVsQHBlbmd1dHJvbml4LmRlOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbWF0dGVv
+Lmxpc2lAZW5naWNhbS5jb207DQo+IG1pY2hhZWxAYW1hcnVsYXNvbHV0aW9ucy5jb207IG10dXJx
+dWV0dGVAYmF5bGlicmUuY29tOw0KPiByb2JoK2R0QGtlcm5lbC5vcmc7IHNoYXduZ3VvQGtlcm5l
+bC5vcmcNCj4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteCA8bGlu
+dXgtaW14QG54cC5jb20+Ow0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8yXSBjbGs6IGlteDZ1bDogYWRkIEdQSU8gY2xv
+Y2sgZ2F0ZXMNCj4gDQo+IFF1b3RpbmcgU3RlZmFuIFdhaHJlbiAoMjAxOC0wNS0yMiAwNToyNToz
+NSkNCj4gPiA+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svaW14NnVsLWNsb2NrLmgN
+Cj4gPiA+IEBAIC0yNDIsMjAgKzI0MiwyNSBAQA0KPiA+ID4gICNkZWZpbmUgSU1YNlVMX0NMS19D
+S08yX1BPREYgICAgICAgICAyMjkNCj4gPiA+ICAjZGVmaW5lIElNWDZVTF9DTEtfQ0tPMiAgICAg
+ICAgICAgICAgICAgICAgICAyMzANCj4gPiA+ICAjZGVmaW5lIElNWDZVTF9DTEtfQ0tPICAgICAg
+ICAgICAgICAgICAgICAgICAyMzENCj4gPiA+ICsjZGVmaW5lIElNWDZVTF9DTEtfR1BJTzEgICAg
+ICAgICAgICAgMjMyDQo+ID4gPiArI2RlZmluZSBJTVg2VUxfQ0xLX0dQSU8yICAgICAgICAgICAg
+IDIzMw0KPiA+ID4gKyNkZWZpbmUgSU1YNlVMX0NMS19HUElPMyAgICAgICAgICAgICAyMzQNCj4g
+PiA+ICsjZGVmaW5lIElNWDZVTF9DTEtfR1BJTzQgICAgICAgICAgICAgMjM1DQo+ID4gPiArI2Rl
+ZmluZSBJTVg2VUxfQ0xLX0dQSU81ICAgICAgICAgICAgIDIzNg0KPiA+DQo+ID4gdGhpcyBjaGFu
+Z2UgbG9va3MgbGlrZSBhIGJyZWFrYWdlIG9mIGRldmljZXRyZWUgQUJJLiBZb3UgYXJlIGNoYW5n
+aW5nIHRoZQ0KPiBtZWFuIG9mIHRoZSBleGlzdGluZyBjbG9jayBJRHMgb24gaS5NWDZVTEwsIHdo
+aWNoIHByb2JhYmx5IHJlZ3Jlc3MgdGhlDQo+IGNvbWJpbmF0aW9uIG9mIG9sZGVyIERUQnMgd2l0
+aCBuZXdlciBrZXJuZWwuDQo+ID4NCj4gDQo+IEFncmVlZC4gV2h5IGNhbid0IHdlIGp1c3QgdGFj
+ayBvbiBtb3JlIG51bWJlcnMgYXQgdGhlIGVuZD8NCiANCkFoLCB5ZXMsIEkgc2F3IDZVTEwgYXJl
+IGF0IHRoZSBlbmQgb2YgNlVMLCBzbyBhZGRlZCB0aGVtIGluIDZVTCwgYnV0IGRpZCBOT1QgY29u
+c2lkZXIgdGhlIG9sZCBkdGIgc3VwcG9ydC4NCg0KV2lsbCBzZW5kIG91dCBhIFYyIHBhdGNoIHRv
+IGZpeCBpdCwgYW5kIEkgc2F3IEZhYmlvIGFsc28gc2VudCBhIHBhdGNoIHRvIGZpeCB0aGUgY2xr
+bzEvMiBkZWZpbml0aW9uLCBJIHdpbGwgZG8gdGhlDQpWMiBwYXRjaCBiYXNlZCBvbiBoaXMgcGF0
+Y2guDQoNCkFuc29uLg0KDQo+IA0KPiA+ID4NCj4gPiA+ICAvKiBGb3IgaS5NWDZVTEwgKi8NCj4g
+PiA+IC0jZGVmaW5lIElNWDZVTExfQ0xLX0VTQUlfUFJFRCAgICAgICAgICAgICAgICAyMzINCg==
