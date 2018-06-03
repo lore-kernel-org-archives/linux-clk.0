@@ -1,64 +1,61 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- Thierry Reding <thierry.reding@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180531084531.25421-1-thierry.reding@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20180531084531.25421-1-thierry.reding@gmail.com>
-Message-ID: <152787484401.144038.7551622687822665492@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.18-rc1
-Date: Fri, 01 Jun 2018 10:40:44 -0700
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/5] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+Date: Mon,  4 Jun 2018 01:36:53 +0300
+Message-Id: <20180603223654.23324-5-digetx@gmail.com>
+In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
+References: <20180603223654.23324-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Thierry Reding (2018-05-31 01:45:31)
-> Hi Michael, Stephen,
-> =
+Ensure that direct PLLM sourcing is turned off for EMC as we don't support
+that configuration in the clk driver.
 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2433=
-38:
-> =
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> =
-
-> are available in the Git repository at:
-> =
-
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-4.18-clk
-> =
-
-> for you to fetch changes up to 5d797111afe12e488e08432fd9b372fae2cc7e93:
-> =
-
->   clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20 (2018-05-18=
- 12:35:28 +0200)
-
-Thanks. Pulled into clk-next.
-
-> =
-
-> Thanks,
-> Thierry
-> =
-
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.18-rc1
-> =
-
-> Contains a proper implementation of the CDEV1/2 clocks on Tegra20.
-> =
-
-> ----------------------------------------------------------------
-> Dmitry Osipenko (3):
->       clk: tegra20: Add DEV1/DEV2 OSC dividers
->       clk: tegra20: Correct parents of CDEV1/2 clocks
->       clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
-
-We have a long standing issue to resolve in CCF by returning
-EPROBE_DEFER from clk_get on clks that are orphaned. I'm going to merge
-the framework patch into clk-next after the next rc1 and see what blows
-up. Hopefully that makes this tegra specific patch irrelevant.
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 2bd35418716a..ca4eadb9520e 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 
+ static void __init tegra20_emc_clk_init(void)
+ {
++	const u32 use_pllm_ud = BIT(29);
+ 	struct clk *clk;
++	u32 emc_reg;
+ 
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
+ 				    &emc_lock);
+ 	clks[TEGRA20_CLK_MC] = clk;
+ 
++	/* un-divided pll_m_out0 is currently unsupported */
++	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++	if (emc_reg & use_pllm_ud) {
++		pr_err("%s: un-divided PllM_out0 used as clock source\n",
++		       __func__);
++		return;
++	}
++
+ 	/*
+ 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+ 	 * the same time due to a HW bug, this won't happen because we're
+-- 
+2.17.0
