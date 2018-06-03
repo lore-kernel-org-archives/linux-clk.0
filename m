@@ -1,119 +1,95 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, sean.wang@mediatek.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
- <20180430103029.GD5147@dell>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
-Date: Mon, 25 Jun 2018 17:39:05 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180430103029.GD5147@dell>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/5] clk: tegra20: Turn EMC clock gate into divider
+Date: Mon,  4 Jun 2018 01:36:52 +0300
+Message-Id: <20180603223654.23324-4-digetx@gmail.com>
+In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
+References: <20180603223654.23324-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-On 30/04/18 12:30, Lee Jones wrote:
-> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> 
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> Add binding description for the mmsys mfd for some Mediatek
->> devices. mmsys has some registers to control clock gates (which is
->> used in the clk driver) and some registers to set the routing and enable
->> the differnet blocks of the display subsystem.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
->>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
->>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
->>  3 files changed, 28 insertions(+), 3 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->>
->> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->> index 4eb8bbe15c01..4468345f8b1a 100644
->> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
->>  Required Properties:
->>  
->>  - compatible: Should be one of:
->> -	- "mediatek,mt2701-mmsys", "syscon"
->>  	- "mediatek,mt2712-mmsys", "syscon"
->>  	- "mediatek,mt6797-mmsys", "syscon"
->> -	- "mediatek,mt8173-mmsys", "syscon"
->>  - #clock-cells: Must be 1
->>  
->>  The mmsys controller uses the common clk binding from
->> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
->> index 383183a89164..85a3b4ec06cd 100644
->> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
->> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
->> @@ -9,7 +9,7 @@ function block.
->>  
->>  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
->>  For a description of the MMSYS_CONFIG binding, see
->> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
->> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->>  
->>  DISP function blocks
->>  ====================
->> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->> new file mode 100644
->> index 000000000000..2331ae16917e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->> @@ -0,0 +1,27 @@
->> +MediaTek MMSYS Multifunction Device Driver
-> 
-> What is "MMSYS"?
-> 
-> "Multi-Function Driver"s are specific to Linux.
-> 
-> What actually is the device?
-> 
-
-It's includes all the DRM parts of the SoC together with the clocks for the
-device. MMSYS IMHO stands for Multi-Media-System.
-
-Regards,
-Matthias
-
->> +MMSYS is a multifunction device with the following sub modules:
->> +- clocks for the multi-media subsystem
->> +- central node for the DRM subsystem.
->> +
->> +This document describes the binding for MFD device. The MFD takes care to initailize
->> +the clock driver and the DRM driver. More info see
->> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
->> +
->> +Required properties:
->> +- compatible: Should be one of:
->> +	- "mediatek,mt2701-mmsys", "syscon"
->> +	- "mediatek,mt8173-mmsys", "syscon"
->> +- #clock-cells: Must be 1
->> +
->> +Optional properties:
->> +- power-domains: list of powerdomains needed for the subsystem to work
->> +
->> +Example:
->> +
->> +mmsys: clock-controller@14000000 {
->> +	compatible = "mediatek,mt8173-mmsys", "syscon";
->> +	reg = <0 0x14000000 0 0x1000>;
->> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
->> +	#clock-cells = <1>;
->> +};
-> 
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..2bd35418716a 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
+ 
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as a distinct clocks.
++	 */
++	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
++				   clk_base + CLK_SOURCE_EMC, 0, 7,
++				   0, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
+-- 
+2.17.0
