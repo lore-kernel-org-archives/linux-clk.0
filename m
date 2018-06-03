@@ -1,98 +1,82 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	michael@amarulasolutions.com,
+	matteo.lisi@engicam.com
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+Date: Sun,  3 Jun 2018 09:44:05 +0800
+Message-Id: <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <20180628120031.eq2yuysz4re2olwn@verge.net.au> <20180628121609.jf4dp4azeowte7pb@verge.net.au>
-In-Reply-To: <20180628121609.jf4dp4azeowte7pb@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 28 Jun 2018 14:45:41 +0200
-Message-ID: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Simon Horman <horms@verge.net.au>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+i.MX6UL has GPIO clock gates in CCM CCGR, add
+clock property for GPIO driver to make sure all
+GPIO banks work as expected.
 
-On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
-> > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
-> > > This adds the Renesas R9A06G032 bare bone support.
-> > >
-> > > This currently only handles the SYSCTRL block note,
-> > > generic parts (gic, architected timer) and a UART.
-> > >
-> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> >
-> > Thanks, applied with the following appended:
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 9d5eeff51b5f..4c85ac04872d 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -1969,6 +1969,7 @@ S:      Supported
-> >  F:   arch/arm/boot/dts/emev2*
-> >  F:   arch/arm/boot/dts/r7s*
-> >  F:   arch/arm/boot/dts/r8a*
-> > +F:   arch/arm/boot/dts/r9a*
-> >  F:   arch/arm/boot/dts/sh*
-> >  F:   arch/arm/configs/shmobile_defconfig
-> >  F:   arch/arm/include/debug/renesas-scif.S
->
-> One more update.
->
-> dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
-> current base of the renesas tree and likely base for the rest of the v4.19
-> development cycle.
->
-> Accordingly I have removed the include of that header and replaced
-> the use of symbols it defines with numeric constants. The result is below.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+	no changes since V1.
+ arch/arm/boot/dts/imx6ul.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Oh right. Thanks!
-
-> Please:
-> 1) Check that this is correct and
-
-Looks good to me, except for the bogus "fixes" and "SoB" below
-(bad squash?)
-
-> From: Michel Pollet <michel.pollet@bp.renesas.com>
-> Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
->
-> This adds the Renesas R9A06G032 bare bone support.
->
-> This currently only handles the SYSCTRL block note,
-> generic parts (gic, architected timer) and a UART.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> [simon: updated MAINTAINERS file
-> [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->
-> fixes
-  ^^^^^
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-  ^^^^
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 1241972..405e068 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -437,6 +437,7 @@
+ 				reg = <0x0209c000 0x4000>;
+ 				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_GPIO1>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -450,6 +451,7 @@
+ 				reg = <0x020a0000 0x4000>;
+ 				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_GPIO2>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -462,6 +464,7 @@
+ 				reg = <0x020a4000 0x4000>;
+ 				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_GPIO3>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -474,6 +477,7 @@
+ 				reg = <0x020a8000 0x4000>;
+ 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_GPIO4>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -486,6 +490,7 @@
+ 				reg = <0x020ac000 0x4000>;
+ 				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6UL_CLK_GPIO5>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
