@@ -1,66 +1,56 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1528892771.2292.2.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Wed, 13 Jun 2018 14:26:11 +0200
-In-Reply-To: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
-References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Tegra20 External Memory Controller driver
+Date: Mon,  4 Jun 2018 01:36:49 +0300
+Message-Id: <20180603223654.23324-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-06-13 at 14:20 +0200, Neil Armstrong wrote:
-> On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
-> seems to be dependent on the FCLK_DIV2 to be operationnal.
-> 
-> The issue occured since v4.17-rc1 by freezing the kernel boot when
-> the 'schedutil' cpufreq governor was selected as default :
-> 
->   [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
->   domain-0 init dvfs: 4
->   [   12.087757] hctosys: unable to open rtc device (rtc0)
->   [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
->   [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> 
-> But when disabling the MMC driver, the boot finished but cpufreq failed to
-> change the CPU frequency :
-> 
->   [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
-> 
-> A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
-> the first bad commit.
-> This commit added support for the missing clock gates before the fixed PLL
-> fixed dividers (FCLK_DIVx) and the clock framework basically disabled
-> all the unused fixed dividers, thus disabled a critical clock path for
-> the SCPI Co-Processor.
-> 
-> This patch simply sets the FCLK_DIV2 gate as critical to ensure
-> nobody can disable it.
-> 
-> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Hello,
 
-Good catch !
-We'll probably have to check the axg family as well
+Couple years ago the Tegra20 EMC driver was removed from the kernel
+due to incompatible changes in the Tegra's clock driver. This patchset
+introduces a modernized EMC driver. Currently the sole purpose of the
+driver is to initialize DRAM frequency to maximum rate during of the
+kernels boot-up. Later we may consider implementing dynamic memory
+frequency scaling, utilizing functionality provided by this driver.
 
-> ---
->  drivers/clk/meson/gxbb.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b1e4d95..0e053c1 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_names = (const char *[]){ "fclk_div2_div" },
->  		.num_parents = 1,
-> +		.flags = CLK_IS_CRITICAL,
->  	},
->  };
->  
+Changelog:
+
+v2:
+	- Minor code cleanups like consistent use of writel_relaxed instead
+	  of non-relaxed version, reworded error messages, etc.
+
+	- Factored out use_pllm_ud bit checking into a standalone patch for
+	  consistency.
+
+Dmitry Osipenko (5):
+  dt: bindings: tegra20-emc: Document interrupt property
+  ARM: dts: tegra20: Add interrupt to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../bindings/arm/tegra/nvidia,tegra20-emc.txt |   2 +
+ arch/arm/boot/dts/tegra20.dtsi                |   1 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 586 ++++++++++++++++++
+ 6 files changed, 636 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
+-- 
+2.17.0
