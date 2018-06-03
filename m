@@ -1,62 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs34.siol.net ([185.57.226.225]:48244 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755331AbeFYMFm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:42 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 20/24] drm/sun4i: Add support for A64 HDMI PHY
-Date: Mon, 25 Jun 2018 14:03:00 +0200
-Message-Id: <20180625120304.7543-21-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-clk
+	<linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
+Date: Sun, 3 Jun 2018 12:48:03 +0000
+Message-ID: <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
+References: 
+ <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>,<CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
+In-Reply-To: 
+ <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-PHY is the same as in H3, except it can switch between two clock
-parents.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index aea46b08f127..82502b351aec 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -396,6 +396,14 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 	.name		= "phy"
- };
- 
-+static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
-+	.has_phy_clk = true,
-+	.has_second_pll = true,
-+	.phy_init = &sun8i_hdmi_phy_init_h3,
-+	.phy_disable = &sun8i_hdmi_phy_disable_h3,
-+	.phy_config = &sun8i_hdmi_phy_config_h3,
-+};
-+
- static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
- 	.phy_init = &sun8i_hdmi_phy_init_a83t,
- 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
-@@ -410,6 +418,10 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
- };
- 
- static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun50i-a64-hdmi-phy",
-+		.data = &sun50i_a64_hdmi_phy,
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
- 		.data = &sun8i_a83t_hdmi_phy,
--- 
-2.18.0
-
+SGksIEZhYmlvDQoNCkZyb20gQW5zb24ncyBpUGhvbmUgNg0KDQoNCj4g5ZyoIDIwMTjlubQ25pyI
+M+aXpe+8jDIwOjQ077yMRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1AZ21haWwuY29tPiDlhpnpgZPv
+vJoNCj4gDQo+PiBPbiBTdW4sIEp1biAzLCAyMDE4IGF0IDEyOjAwIEFNLCBBbnNvbiBIdWFuZyA8
+QW5zb24uSHVhbmdAbnhwLmNvbT4gd3JvdGU6DQo+PiBDbG9jayBmcmFtZXdvcmsgd2lsbCBlbmFi
+bGUgdGhvc2UgY2xvY2tzIHJlZ2lzdGVyZWQNCj4+IHdpdGggQ0xLX0lTX0NSSVRJQ0FMIGZsYWcs
+IHNvIG5vIG5lZWQgdG8gaGF2ZQ0KPj4gY2xrc19pbml0X29uIGFycmF5IGR1cmluZyBjbG9jayBp
+bml0aWFsaXphdGlvbiBub3cuDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxB
+bnNvbi5IdWFuZ0BueHAuY29tPg0KPj4gLS0tDQo+PiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZx
+LmMgfCAxNCArKy0tLS0tLS0tLS0tLQ0KPj4gMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KSwgMTIgZGVsZXRpb25zKC0pDQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgv
+Y2xrLWlteDZxLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZxLmMNCj4+IGluZGV4IGI5ZWE3
+MDMuLjg3NTRjNjEgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZxLmMN
+Cj4+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14NnEuYw0KPj4gQEAgLTk2LDEyICs5Niw2
+IEBAIHN0YXRpYyBjb25zdCBjaGFyICpwbGw3X2J5cGFzc19zZWxzW10gPSB7ICJwbGw3IiwgInBs
+bDdfYnlwYXNzX3NyYyIsIH07DQo+PiBzdGF0aWMgc3RydWN0IGNsayAqY2xrW0lNWDZRRExfQ0xL
+X0VORF07DQo+PiBzdGF0aWMgc3RydWN0IGNsa19vbmVjZWxsX2RhdGEgY2xrX2RhdGE7DQo+PiAN
+Cj4+IC1zdGF0aWMgdW5zaWduZWQgaW50IGNvbnN0IGNsa3NfaW5pdF9vbltdIF9faW5pdGNvbnN0
+ID0gew0KPj4gLSAgICAgICBJTVg2UURMX0NMS19NTURDX0NIMF9BWEksDQo+PiAtICAgICAgIElN
+WDZRRExfQ0xLX1JPTSwNCj4+IC0gICAgICAgSU1YNlFETF9DTEtfQVJNLA0KPiANCj4gSU1YNlFE
+TF9DTEtfQVJNIGRvZXMgbm90IGhhdmUgdGhlIENMS19JU19DUklUSUNBTCBmbGFnLg0KPiANCj4g
+SXMgdGhpcyBpbnRlbmRlZD8gSWYgc28sIHBsZWFzZSBtZW50aW9uIGluIHRoZSBjb21taXQgbG9n
+Lg0KDQpBcyBJIGV4cGxhaW4gaW4gcHJldmlvdXMgbWFpbCwgYnVzeSBkaXZpZGVyIGNsayB0eXBl
+IGFscmVhZHkgaW5jbHVkZSB0aGUgZmxhZyB3aGVuIHJlZ2lzdGVyZWQuDQoNCkFuc29uLg==
