@@ -1,104 +1,28 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 27/27] ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
-Date: Tue, 12 Jun 2018 22:00:36 +0200
-Message-Id: <20180612200036.21483-28-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com> <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 2 Jun 2018 23:06:38 -0300
+Message-ID: <CAOMZO5BMNhVu6UGmMDzQzEc=r1VkxNshksuuh0YVKcjs1wt41w@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Michael Trimarchi <michael@amarulasolutions.com>,
+	Matteo Lisi <matteo.lisi@engicam.com>, NXP Linux Team <Linux-imx@nxp.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Since HDMI can be considered as main output, most capable mixer is
-connected to it (mixer0).
+On Sat, Jun 2, 2018 at 10:44 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> i.MX6UL has GPIO clock gates in CCM CCGR, add
+> clock property for GPIO driver to make sure all
+> GPIO banks work as expected.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-index 27d9ccd0ef2f..0ebc2f9a980e 100644
---- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-+++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
-@@ -58,6 +58,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -93,6 +104,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci1 {
- 	status = "okay";
- };
-@@ -101,6 +116,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
-@@ -195,6 +220,26 @@
- 	status = "okay";
- };
- 
-+&tcon_top_hdmi_in_tcon_tv0 {
-+	remote-endpoint = <&tcon_tv0_out_tcon_top>;
-+};
-+
-+&tcon_top_mixer0_out_tcon_tv0 {
-+	remote-endpoint = <&tcon_tv0_in_tcon_top>;
-+};
-+
-+&tcon_tv0_in {
-+	tcon_tv0_in_tcon_top: endpoint {
-+		remote-endpoint = <&tcon_top_mixer0_out_tcon_tv0>;
-+	};
-+};
-+
-+&tcon_tv0_out {
-+	tcon_tv0_out_tcon_top: endpoint {
-+		remote-endpoint = <&tcon_top_hdmi_in_tcon_tv0>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pb_pins>;
--- 
-2.17.1
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
