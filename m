@@ -1,52 +1,39 @@
 Return-Path: <digetx@gmail.com>
 Return-Path: <digetx@gmail.com>
 From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
 	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
+	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/8] dt: bindings: tegra20-emc: Document clock property
-Date: Sun, 17 Jun 2018 17:55:33 +0300
-Message-Id: <20180617145539.4758-3-digetx@gmail.com>
-In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
-References: <20180617145539.4758-1-digetx@gmail.com>
+Subject: [PATCH v1] clk: tegra: Mark Memory Controller clock as critical
+Date: Mon,  4 Jun 2018 01:48:05 +0300
+Message-Id: <20180603224805.495-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Embedded memory controller has a corresponding clock, document the clock
-property.
+Memory Controller should be always-on. Currently the sibling EMC clock is
+marked as critical, let's mark MC clock too for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-divider.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index a6fe401d0d48..add95367640b 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -11,6 +11,7 @@ Properties:
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
- - interrupts : Should contain EMC General interrupt.
-+- clocks : Should contain EMC clock.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -22,6 +23,7 @@ Example:
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
- 		interrupts = <0 78 0x04>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 	}
- 
- 
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee14773..58874c1bbf5e 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -194,6 +194,7 @@ static const struct clk_div_table mc_div_table[] = {
+ struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+ 				  void __iomem *reg, spinlock_t *lock)
+ {
+-	return clk_register_divider_table(NULL, name, parent_name, 0, reg,
+-					  16, 1, 0, mc_div_table, lock);
++	return clk_register_divider_table(NULL, name, parent_name,
++					  CLK_IS_CRITICAL, reg, 16, 1, 0,
++					  mc_div_table, lock);
+ }
 -- 
-2.17.1
+2.17.0
