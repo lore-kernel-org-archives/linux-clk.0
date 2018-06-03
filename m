@@ -1,28 +1,69 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v2 03/13] clk: davinci: psc-dm644x: use two lookup entries
- for the aemif clock
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
- <20180626092537.6737-4-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <ab355923-89bf-c574-9f0a-2f7abd984762@lechnology.com>
-Date: Tue, 26 Jun 2018 11:17:04 -0500
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] clk: imx6sl: remove clks_init_on array
+Date: Sun,  3 Jun 2018 11:00:45 +0800
+Message-Id: <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180626092537.6737-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/26/2018 04:25 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We want to be able to get the clock both from the board file by its
-> con_id and from the aemif driver by dev_id.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+Clock framework will enable those clocks registered
+with CLK_IS_CRITICAL flag, so no need to have
+clks_init_on array during clock initialization now.
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sl.c | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 66b1dd1..eb6bcbf 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
+ static void __iomem *ccm_base;
+ static void __iomem *anatop_base;
+ 
+-static const u32 clks_init_on[] __initconst = {
+-	IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
+-};
+-
+ /*
+  * ERR005311 CCM: After exit from WAIT mode, unwanted interrupt(s) taken
+  *           during WAIT mode entry process could cause cache memory
+@@ -195,7 +191,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+ 	void __iomem *base;
+-	int i;
+ 	int ret;
+ 
+ 	clks[IMX6SL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+@@ -426,13 +421,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 		pr_warn("%s: failed to set AHB clock rate %d!\n",
+ 			__func__, ret);
+ 
+-	/*
+-	 * Make sure those always on clocks are enabled to maintain the correct
+-	 * usecount and enabling/disabling of parent PLLs.
+-	 */
+-	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+-		clk_prepare_enable(clks[clks_init_on[i]]);
+-
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY2_GATE]);
+-- 
+2.7.4
