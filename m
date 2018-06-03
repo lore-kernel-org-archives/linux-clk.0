@@ -1,58 +1,26 @@
-Return-Path: <thomas.petazzoni@bootlin.com>
-Date: Wed, 27 Jun 2018 17:16:27 +0200
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang
- <haojian.zhuang@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] ARM: dts: pxa: fix the rtc controller
-Message-ID: <20180627171627.592849b5@windsurf.home>
-In-Reply-To: <20180627150150.23951-2-robert.jarzmik@free.fr>
-References: <20180627150150.23951-1-robert.jarzmik@free.fr>
-	<20180627150150.23951-2-robert.jarzmik@free.fr>
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
+References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com> <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sun, 3 Jun 2018 09:54:00 -0300
+Message-ID: <CAOMZO5ANz-B-s93+R_xnF0LOux1zTY3E8Ky4KvrZ8EX1ZKmpAQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
+To: Anson Huang <anson.huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Anson,
 
-On Wed, 27 Jun 2018 17:01:50 +0200, Robert Jarzmik wrote:
-> The RTC controller is fed by an external fixed 32kHz clock. Yet the
-> driver wants to acquire this clock, even though it doesn't make any use
-> of it, ie. doesn't get the rate to make calculation.
-> 
-> Therefore, use the exported 32.768kHz clock in the PXA clock tree to
-> make the driver happy and working.
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
-> Since v1: change the dummy clock by the actual 32.768kHz
-> ---
->  arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
->  arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
-> index 95d59be97213..78a413ea0e88 100644
-> --- a/arch/arm/boot/dts/pxa25x.dtsi
-> +++ b/arch/arm/boot/dts/pxa25x.dtsi
-> @@ -80,6 +80,10 @@
->  			#pwm-cells = <1>;
->  			clocks = <&clks CLK_PWM1>;
->  		};
-> +
-> +		rtc@40900000 {
-> +			clocks = <&clks CLK_OSC32k768>>;
+On Sun, Jun 3, 2018 at 9:48 AM, Anson Huang <anson.huang@nxp.com> wrote:
 
-Double closing bracket, doesn't look good.
+> As I explain in previous mail, busy divider clk type already include the flag when registered.
 
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Ok, then please add this information in the commit log to make the
+review process easier.
