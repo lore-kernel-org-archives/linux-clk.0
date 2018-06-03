@@ -1,111 +1,93 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <d-gerlach@ti.com>, <j-keerthy@ti.com>
-Subject: [PATCH 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
-Date: Tue, 19 Jun 2018 09:58:25 +0530
-Message-ID: <1529382505-3069-5-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
-References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	michael@amarulasolutions.com,
+	matteo.lisi@engicam.com
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH V2 1/2] clk: imx6ul: add GPIO clock gates
+Date: Sun,  3 Jun 2018 09:44:04 +0800
+Message-Id: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Save/restore clk context based on enable_off_mode setting.
-The context needs to be saved at the very end of suspend path
-and restored at the beginning of resume path.
+i.MX6UL has GPIO clock gates in CCM CCGR,
+add them into clock tree for clock management.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
- drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
- include/linux/platform_data/pm33xx.h |  1 +
- 3 files changed, 29 insertions(+)
+changes since V1:
+	Move IMX6UL_CLK_GPIOx definition to end of clock table;
+	Based on Fabio's patch "[v2] dt-bindings: clock: imx6ul: Do not change the clock definition order".
+ drivers/clk/imx/clk-imx6ul.c             | 5 +++++
+ include/dt-bindings/clock/imx6ul-clock.h | 8 +++++++-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
-index 9b3755a..29f848f 100644
---- a/arch/arm/mach-omap2/pm33xx-core.c
-+++ b/arch/arm/mach-omap2/pm33xx-core.c
-@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
- 	return 0;
- }
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index ba563ba..3ea2d97 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -360,6 +360,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+ 	if (clk_on_imx6ull())
+ 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
++	clks[IMX6UL_CLK_GPIO2]		= imx_clk_gate2("gpio2",	"ipg",		base + 0x68,	30);
  
-+static int am43xx_check_off_mode_enable(void)
-+{
-+	/*
-+	 * Check for am437x-sk-evm which due to HW design cannot support
-+	 * this mode reliably.
-+	 */
-+	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
-+		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
-+		return 0;
-+	}
+ 	/* CCGR1 */
+ 	clks[IMX6UL_CLK_ECSPI1]		= imx_clk_gate2("ecspi1",	"ecspi_podf",	base + 0x6c,	0);
+@@ -376,6 +377,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT1_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk",	base + 0x6c,	22);
+ 	clks[IMX6UL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg",		base + 0x6c,	24);
+ 	clks[IMX6UL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serial",	"uart_podf",	base + 0x6c,	24);
++	clks[IMX6UL_CLK_GPIO1]		= imx_clk_gate2("gpio1",	"ipg",		base + 0x6c,	26);
++	clks[IMX6UL_CLK_GPIO5]		= imx_clk_gate2("gpio5",	"ipg",		base + 0x6c,	30);
+ 
+ 	/* CCGR2 */
+ 	if (clk_on_imx6ull()) {
+@@ -389,6 +392,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_I2C3]		= imx_clk_gate2("i2c3",		"perclk",	base + 0x70,	10);
+ 	clks[IMX6UL_CLK_OCOTP]		= imx_clk_gate2("ocotp",	"ipg",		base + 0x70,	12);
+ 	clks[IMX6UL_CLK_IOMUXC]		= imx_clk_gate2("iomuxc",	"lcdif_podf",	base + 0x70,	14);
++	clks[IMX6UL_CLK_GPIO3]		= imx_clk_gate2("gpio3",	"ipg",		base + 0x70,	26);
+ 	clks[IMX6UL_CLK_LCDIF_APB]	= imx_clk_gate2("lcdif_apb",	"axi",		base + 0x70,	28);
+ 	clks[IMX6UL_CLK_PXP]		= imx_clk_gate2("pxp",		"axi",		base + 0x70,	30);
+ 
+@@ -405,6 +409,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_UART6_IPG]	= imx_clk_gate2("uart6_ipg",	"ipg",		base + 0x74,	6);
+ 	clks[IMX6UL_CLK_UART6_SERIAL]	= imx_clk_gate2("uart6_serial",	"uart_podf",	base + 0x74,	6);
+ 	clks[IMX6UL_CLK_LCDIF_PIX]	= imx_clk_gate2("lcdif_pix",	"lcdif_podf",	base + 0x74,	10);
++	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
+ 	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
+ 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
+ 	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index 0aa1d9c..f8e0476 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -254,6 +254,12 @@
+ #define IMX6UL_CLK_CKO2_PODF		241
+ #define IMX6UL_CLK_CKO2			242
+ #define IMX6UL_CLK_CKO			243
+-#define IMX6UL_CLK_END			244
++#define IMX6UL_CLK_GPIO1		244
++#define IMX6UL_CLK_GPIO2		245
++#define IMX6UL_CLK_GPIO3		246
++#define IMX6UL_CLK_GPIO4		247
++#define IMX6UL_CLK_GPIO5		248
 +
-+	return enable_off_mode;
-+}
-+
- static int amx3_common_init(void)
- {
- 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
-@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
- 	.init = am43xx_suspend_init,
- 	.soc_suspend = am43xx_suspend,
- 	.get_sram_addrs = amx3_get_sram_addrs,
-+	.check_off_mode_enable = am43xx_check_off_mode_enable,
- };
++#define IMX6UL_CLK_END			249
  
- static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index 652739c..e749b8d 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -6,6 +6,7 @@
-  *	Vaibhav Bedia, Dave Gerlach
-  */
- 
-+#include <linux/clk.h>
- #include <linux/cpu.h>
- #include <linux/err.h>
- #include <linux/genalloc.h>
-@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- {
- 	int i, ret = 0;
- 
-+	/*
-+	 * For RTC only mode with DDR in selfresh we need to save
-+	 * clocks context at the very end
-+	 */
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_save_context();
-+
- 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
- 				  am33xx_do_wfi_sram);
- 
-@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- 		}
- 	}
- 
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_restore_context();
-+
- 	return ret;
- }
- 
-diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
-index f9bed2a..36f7007 100644
---- a/include/linux/platform_data/pm33xx.h
-+++ b/include/linux/platform_data/pm33xx.h
-@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
- 	int	(*init)(void);
- 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
- 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
-+	int (*check_off_mode_enable)(void);
- };
- 
- struct am33xx_pm_sram_data {
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
 -- 
-1.9.1
+2.7.4
