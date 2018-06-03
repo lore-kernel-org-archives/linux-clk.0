@@ -1,118 +1,83 @@
-Return-Path: <daniel@zonque.org>
-From: Daniel Mack <daniel@zonque.org>
-To: mturquette@baylibre.com,
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
 	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	robh@kernel.org,
-	devicetree@vger.kernel.org,
-	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v4 1/2] dts: clk: add devicetree bindings for MAX9485
-Date: Sun, 17 Jun 2018 14:05:34 +0200
-Message-Id: <20180617120535.2529-2-daniel@zonque.org>
-In-Reply-To: <20180617120535.2529-1-daniel@zonque.org>
-References: <20180617120535.2529-1-daniel@zonque.org>
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] clk: imx6q: remove clks_init_on array
+Date: Sun,  3 Jun 2018 11:00:44 +0800
+Message-Id: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds the devicetree bindings for MAX9485, a programmable audio
-clock generator.
+Clock framework will enable those clocks registered
+with CLK_IS_CRITICAL flag, so no need to have
+clks_init_on array during clock initialization now.
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- .../bindings/clock/maxim,max9485.txt          | 59 +++++++++++++++++++
- include/dt-bindings/clock/maxim,max9485.h     | 18 ++++++
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
- create mode 100644 include/dt-bindings/clock/maxim,max9485.h
+ drivers/clk/imx/clk-imx6q.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-new file mode 100644
-index 000000000000..61bec1100a94
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
-@@ -0,0 +1,59 @@
-+Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
-+
-+This device exposes 4 clocks in total:
-+
-+- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
-+- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
-+			frequencies
-+- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
-+
-+MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
-+requests.
-+
-+Required properties:
-+- compatible:	"maxim,max9485"
-+- clocks:	Input clock, must provice 27.000 MHz
-+- clock-names:	Must be set to "xclk"
-+- #clock-cells: From common clock binding; shall be set to 1
-+
-+Optional properties:
-+- reset-gpios:		GPIO descriptor connected to the #RESET input pin
-+- vdd-supply:		A regulator node for Vdd
-+- clock-output-names:	Name of output clocks, as defined in common clock
-+			bindings
-+
-+If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
-+and "clkout2".
-+
-+Clocks are defined as preprocessor macros in the dt-binding header.
-+
-+Example:
-+
-+	#include <dt-bindings/clock/maxim,max9485.h>
-+
-+	xo-27mhz: xo-27mhz {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <27000000>;
-+	};
-+
-+	&i2c0 {
-+		max9485: audio-clock@63 {
-+			reg = <0x63>;
-+			compatible = "maxim,max9485";
-+			clock-names = "xclk";
-+			clocks = <&xo-27mhz>;
-+			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
-+			vdd-supply = <&3v3-reg>;
-+			#clock-cells = <1>;
-+		};
-+	};
-+
-+	// Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "foo-input-clk";
-+		clocks = <&max9485 MAX9485_CLKOUT1>;
-+	};
-diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
-new file mode 100644
-index 000000000000..185b09ce1869
---- /dev/null
-+++ b/include/dt-bindings/clock/maxim,max9485.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2018 Daniel Mack
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_MAX9485_CLK_H
-+#define __DT_BINDINGS_MAX9485_CLK_H
-+
-+#define MAX9485_MCLKOUT	0
-+#define MAX9485_CLKOUT	1
-+#define MAX9485_CLKOUT1	2
-+#define MAX9485_CLKOUT2	3
-+
-+#endif /* __DT_BINDINGS_MAX9485_CLK_H */
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index b9ea703..8754c61 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
+ static struct clk *clk[IMX6QDL_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+-static unsigned int const clks_init_on[] __initconst = {
+-	IMX6QDL_CLK_MMDC_CH0_AXI,
+-	IMX6QDL_CLK_ROM,
+-	IMX6QDL_CLK_ARM,
+-};
+-
+ static struct clk_div_table clk_enet_ref_table[] = {
+ 	{ .val = 0, .div = 20, },
+ 	{ .val = 1, .div = 10, },
+@@ -417,7 +411,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+ 	void __iomem *anatop_base, *base;
+-	int i;
+ 	int ret;
+ 
+ 	clk[IMX6QDL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+@@ -794,7 +787,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "mlb_podf",   base + 0x74, 18);
+ 	else
+ 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "axi",               base + 0x74, 18);
+-	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20);
++	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2_flags("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20, CLK_IS_CRITICAL);
+ 	clk[IMX6QDL_CLK_MMDC_CH1_AXI] = imx_clk_gate2("mmdc_ch1_axi",  "mmdc_ch1_axi_podf", base + 0x74, 22);
+ 	clk[IMX6QDL_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ahb",               base + 0x74, 28);
+ 	clk[IMX6QDL_CLK_OPENVG_AXI]   = imx_clk_gate2("openvg_axi",    "axi",               base + 0x74, 30);
+@@ -808,7 +801,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	clk[IMX6QDL_CLK_GPMI_BCH]     = imx_clk_gate2("gpmi_bch",      "usdhc4",            base + 0x78, 26);
+ 	clk[IMX6QDL_CLK_GPMI_IO]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
+ 	clk[IMX6QDL_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
+-	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
++	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2_flags("rom",     "ahb",               base + 0x7c, 0, CLK_IS_CRITICAL);
+ 	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
+ 	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
+ 	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+@@ -878,9 +871,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 */
+ 	clk_set_parent(clk[IMX6QDL_CLK_ENFC_SEL], clk[IMX6QDL_CLK_PLL2_PFD2_396M]);
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+-		clk_prepare_enable(clk[clks_init_on[i]]);
+-
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY2_GATE]);
 -- 
-2.17.1
+2.7.4
