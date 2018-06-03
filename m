@@ -1,88 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41969 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750729AbeFBNxj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Jun 2018 09:53:39 -0400
-From: Fabio Estevam <festevam@gmail.com>
-To: sboyd@kernel.org
-Cc: michael@amarulasolutions.com, stefan.wahren@i2se.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH] dt-bindings: clock: imx6ul: Do not change the clock definition order
-Date: Sat,  2 Jun 2018 10:53:29 -0300
-Message-Id: <1527947609-30913-1-git-send-email-festevam@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/5] ARM: dts: tegra20: Add interrupt to External Memory Controller
+Date: Mon,  4 Jun 2018 01:36:51 +0300
+Message-Id: <20180603223654.23324-3-digetx@gmail.com>
+In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
+References: <20180603223654.23324-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+Add interrupt entry into the EMC DT node.
 
-Commit f5a4670de96678 ("clk: imx: Add new clo01 and clo2 controlled
-by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
-at the end of the list, which may cause dtb breakage when running an old
-dtb with a newer kernel.
-
-In order to avoid that, simply add the new CLK_CKO clock definitions
-at the end of the list.
-
-Fixes: f5a4670de96678 ("clk: imx: Add new clo01 and clo2 controlled by CCOSR")
-Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index 9564597..0aa1d9c 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -235,27 +235,25 @@
- #define IMX6UL_CLK_CSI_PODF		222
- #define IMX6UL_CLK_PLL3_120M		223
- #define IMX6UL_CLK_KPP			224
--#define IMX6UL_CLK_CKO1_SEL		225
--#define IMX6UL_CLK_CKO1_PODF		226
--#define IMX6UL_CLK_CKO1			227
--#define IMX6UL_CLK_CKO2_SEL		228
--#define IMX6UL_CLK_CKO2_PODF		229
--#define IMX6UL_CLK_CKO2			230
--#define IMX6UL_CLK_CKO			231
--
--/* For i.MX6ULL */
--#define IMX6ULL_CLK_ESAI_PRED		232
--#define IMX6ULL_CLK_ESAI_PODF		233
--#define IMX6ULL_CLK_ESAI_EXTAL		234
--#define IMX6ULL_CLK_ESAI_MEM		235
--#define IMX6ULL_CLK_ESAI_IPG		236
--#define IMX6ULL_CLK_DCP_CLK		237
--#define IMX6ULL_CLK_EPDC_PRE_SEL	238
--#define IMX6ULL_CLK_EPDC_SEL		239
--#define IMX6ULL_CLK_EPDC_PODF		240
--#define IMX6ULL_CLK_EPDC_ACLK		241
--#define IMX6ULL_CLK_EPDC_PIX		242
--#define IMX6ULL_CLK_ESAI_SEL		243
-+#define IMX6ULL_CLK_ESAI_PRED		225
-+#define IMX6ULL_CLK_ESAI_PODF		226
-+#define IMX6ULL_CLK_ESAI_EXTAL		227
-+#define IMX6ULL_CLK_ESAI_MEM		228
-+#define IMX6ULL_CLK_ESAI_IPG		229
-+#define IMX6ULL_CLK_DCP_CLK		230
-+#define IMX6ULL_CLK_EPDC_PRE_SEL	231
-+#define IMX6ULL_CLK_EPDC_SEL		232
-+#define IMX6ULL_CLK_EPDC_PODF		233
-+#define IMX6ULL_CLK_EPDC_ACLK		234
-+#define IMX6ULL_CLK_EPDC_PIX		235
-+#define IMX6ULL_CLK_ESAI_SEL		236
-+#define IMX6UL_CLK_CKO1_SEL		237
-+#define IMX6UL_CLK_CKO1_PODF		238
-+#define IMX6UL_CLK_CKO1			239
-+#define IMX6UL_CLK_CKO2_SEL		240
-+#define IMX6UL_CLK_CKO2_PODF		241
-+#define IMX6UL_CLK_CKO2			242
-+#define IMX6UL_CLK_CKO			243
- #define IMX6UL_CLK_END			244
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c14794..3cd3cb28cfd9 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -609,6 +609,7 @@
+ 	memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
-2.7.4
-
+2.17.0
