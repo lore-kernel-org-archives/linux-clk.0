@@ -1,90 +1,88 @@
 Return-Path: <anson.huang@nxp.com>
 From: Anson Huang <Anson.Huang@nxp.com>
 To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
 	kernel@pengutronix.de,
 	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	aisheng.dong@nxp.com,
-	ping.bai@nxp.com
+	sboyd@kernel.org
 Cc: Linux-imx@nxp.com,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
-Date: Fri, 22 Jun 2018 14:32:34 +0800
-Message-Id: <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 1/4] clk: imx6q: remove clks_init_on array
+Date: Mon,  4 Jun 2018 09:06:43 +0800
+Message-Id: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6SLL has GPIO clock gates in CCM CCGR, add
-clock property for GPIO driver to make sure all
-GPIO banks work as expected.
+Clock framework will enable those clocks registered
+with CLK_IS_CRITICAL flag, so no need to have
+clks_init_on array during clock initialization now.
+
+ARM clock is busy divider type which has the
+CLK_IS_CRITICAL flag set by default when registered.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- arch/arm/boot/dts/imx6sll.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+changes since V1:
+	improve commit log to explain why no need to add CLK_IS_CRITICAL flag for IMX6QDL_CLK_ARM.
+ drivers/clk/imx/clk-imx6q.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index c9b0ccc..116f561 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -375,6 +375,7 @@
- 				reg = <0x0209c000 0x4000>;
- 				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO1>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -386,6 +387,7 @@
- 				reg = <0x020a0000 0x4000>;
- 				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO2>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -397,6 +399,7 @@
- 				reg = <0x020a4000 0x4000>;
- 				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO3>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -408,6 +411,7 @@
- 				reg = <0x020a8000 0x4000>;
- 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO4>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -419,6 +423,7 @@
- 				reg = <0x020ac000 0x4000>;
- 				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO5>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -430,6 +435,7 @@
- 				reg = <0x020b0000 0x4000>;
- 				interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6SLL_CLK_GPIO6>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index b9ea703..8754c61 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
+ static struct clk *clk[IMX6QDL_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+-static unsigned int const clks_init_on[] __initconst = {
+-	IMX6QDL_CLK_MMDC_CH0_AXI,
+-	IMX6QDL_CLK_ROM,
+-	IMX6QDL_CLK_ARM,
+-};
+-
+ static struct clk_div_table clk_enet_ref_table[] = {
+ 	{ .val = 0, .div = 20, },
+ 	{ .val = 1, .div = 10, },
+@@ -417,7 +411,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+ 	void __iomem *anatop_base, *base;
+-	int i;
+ 	int ret;
+ 
+ 	clk[IMX6QDL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+@@ -794,7 +787,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "mlb_podf",   base + 0x74, 18);
+ 	else
+ 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "axi",               base + 0x74, 18);
+-	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20);
++	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2_flags("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20, CLK_IS_CRITICAL);
+ 	clk[IMX6QDL_CLK_MMDC_CH1_AXI] = imx_clk_gate2("mmdc_ch1_axi",  "mmdc_ch1_axi_podf", base + 0x74, 22);
+ 	clk[IMX6QDL_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ahb",               base + 0x74, 28);
+ 	clk[IMX6QDL_CLK_OPENVG_AXI]   = imx_clk_gate2("openvg_axi",    "axi",               base + 0x74, 30);
+@@ -808,7 +801,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	clk[IMX6QDL_CLK_GPMI_BCH]     = imx_clk_gate2("gpmi_bch",      "usdhc4",            base + 0x78, 26);
+ 	clk[IMX6QDL_CLK_GPMI_IO]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
+ 	clk[IMX6QDL_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
+-	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
++	clk[IMX6QDL_CLK_ROM]          = imx_clk_gate2_flags("rom",     "ahb",               base + 0x7c, 0, CLK_IS_CRITICAL);
+ 	clk[IMX6QDL_CLK_SATA]         = imx_clk_gate2("sata",          "ahb",               base + 0x7c, 4);
+ 	clk[IMX6QDL_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
+ 	clk[IMX6QDL_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
+@@ -878,9 +871,6 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 */
+ 	clk_set_parent(clk[IMX6QDL_CLK_ENFC_SEL], clk[IMX6QDL_CLK_PLL2_PFD2_396M]);
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+-		clk_prepare_enable(clk[clks_init_on[i]]);
+-
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clk[IMX6QDL_CLK_USBPHY2_GATE]);
 -- 
 2.7.4
