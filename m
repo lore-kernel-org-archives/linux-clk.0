@@ -1,28 +1,31 @@
 Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com> <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
+References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com> <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
 From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 23 Jun 2018 12:49:08 -0300
-Message-ID: <CAOMZO5Dnzk-pmFHNMXL8Zma_B2867F-tDgCO3A0uRqdbOPwUQA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
+Date: Sun, 3 Jun 2018 22:33:22 -0300
+Message-ID: <CAOMZO5BU-4O0K0z-ZiL7N9bCceQVeytsGT=5RvD=jRWZ0QfWmA@mail.gmail.com>
+Subject: Re: [PATCH V2 2/4] clk: imx6sl: remove clks_init_on array
 To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Ping Bai <ping.bai@nxp.com>,
-	NXP Linux Team <Linux-imx@nxp.com>,
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
 	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
+	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 22, 2018 at 3:32 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> i.MX6SLL has GPIO clock gates in CCM CCGR, add
-> clock property for GPIO driver to make sure all
-> GPIO banks work as expected.
+On Sun, Jun 3, 2018 at 10:06 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
+> Clock framework will enable those clocks registered
+> with CLK_IS_CRITICAL flag, so no need to have
+> clks_init_on array during clock initialization now.
+>
+> ARM clock is busy divider type which has the
+> CLK_IS_CRITICAL flag set by default when registered.
+>
+> IPG clock has no clock gate and its parent AHB clock
+> is busy divider type, so no need to add CLK_IS_CRITICAL
+> flag for IPG clock.
 >
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
