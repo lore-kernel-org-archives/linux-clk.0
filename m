@@ -1,77 +1,172 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:19 +0200
-Message-Id: <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <mike.looijmans@topic.nl>
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: [PATCH] clk-si514, clk-si544: Implement prepare/unprepare/is_prepared operations
+Date: Mon,  4 Jun 2018 07:34:39 +0200
+Message-Id: <1528090479-20861-1-git-send-email-mike.looijmans@topic.nl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+This adds prepare/unprepare/is_prepared functionality to the drivers for
+the SI544 and SI514 chips, allowing the clock output to be disabled when
+the clock is not in use.
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/clk/clk-si514.c | 38 +++++++++++++++++++++++++++++++++++++-
+ drivers/clk/clk-si544.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 75 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 49e510691eeeab07..f4b013e9352d9efc 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -258,8 +258,9 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index 09b6718..153b3a2 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -74,6 +74,33 @@ static int si514_enable_output(struct clk_si514 *data, bool enable)
+ 		SI514_CONTROL_OE, enable ? SI514_CONTROL_OE : 0);
  }
  
-@@ -326,7 +327,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
++static int si514_prepare(struct clk_hw *hw)
++{
++	struct clk_si514 *data = to_clk_si514(hw);
++
++	return si514_enable_output(data, true);
++}
++
++static void si514_unprepare(struct clk_hw *hw)
++{
++	struct clk_si514 *data = to_clk_si514(hw);
++
++	si514_enable_output(data, false);
++}
++
++static int si514_is_prepared(struct clk_hw *hw)
++{
++	struct clk_si514 *data = to_clk_si514(hw);
++	unsigned int val;
++	int err;
++
++	err = regmap_read(data->regmap, SI514_REG_CONTROL, &val);
++	if (err < 0)
++		return err;
++
++	return !!(val & SI514_CONTROL_OE);
++}
++
+ /* Retrieve clock multiplier and dividers from hardware */
+ static int si514_get_muldiv(struct clk_si514 *data,
+ 	struct clk_si514_muldiv *settings)
+@@ -235,12 +262,17 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_si514 *data = to_clk_si514(hw);
+ 	struct clk_si514_muldiv settings;
++	unsigned int old_oe_state;
+ 	int err;
  
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
+ 	err = si514_calc_muldiv(&settings, rate);
+ 	if (err)
+ 		return err;
  
-@@ -392,7 +393,7 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	if (IS_ERR(clk))
- 		goto fail;
++	err = regmap_read(data->regmap, SI514_REG_CONTROL, &old_oe_state);
++	if (err)
++		return err;
++
+ 	si514_enable_output(data, false);
  
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	priv->smstpcr_saved[clock->index / 32].mask |= BIT(clock->index % 32);
- 	return;
+ 	err = si514_set_muldiv(data, &settings);
+@@ -255,12 +287,16 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	/* Applying a new frequency can take up to 10ms */
+ 	usleep_range(10000, 12000);
+ 
+-	si514_enable_output(data, true);
++	if (old_oe_state & SI514_CONTROL_OE)
++		si514_enable_output(data, true);
+ 
+ 	return err;
+ }
+ 
+ static const struct clk_ops si514_clk_ops = {
++	.prepare = si514_prepare,
++	.unprepare = si514_unprepare,
++	.is_prepared = si514_is_prepared,
+ 	.recalc_rate = si514_recalc_rate,
+ 	.round_rate = si514_round_rate,
+ 	.set_rate = si514_set_rate,
+diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
+index e972ffb..f8ed9d9 100644
+--- a/drivers/clk/clk-si544.c
++++ b/drivers/clk/clk-si544.c
+@@ -86,6 +86,34 @@ static int si544_enable_output(struct clk_si544 *data, bool enable)
+ 		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
+ }
+ 
++static int si544_prepare(struct clk_hw *hw)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++
++	return si544_enable_output(data, true);
++}
++
++static void si544_unprepare(struct clk_hw *hw)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++
++	si544_enable_output(data, false);
++}
++
++static int si544_is_prepared(struct clk_hw *hw)
++{
++	struct clk_si544 *data = to_clk_si544(hw);
++	unsigned int val;
++	int err;
++
++	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &val);
++	if (err < 0)
++		return err;
++
++	return !!(val & SI544_OE_STATE_ODC_OE);
++}
++
++
+ /* Retrieve clock multiplier and dividers from hardware */
+ static int si544_get_muldiv(struct clk_si544 *data,
+ 	struct clk_si544_muldiv *settings)
+@@ -273,6 +301,7 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_si544 *data = to_clk_si544(hw);
+ 	struct clk_si544_muldiv settings;
++	unsigned int old_oe_state;
+ 	int err;
+ 
+ 	if (!is_valid_frequency(data, rate))
+@@ -282,6 +311,10 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (err)
+ 		return err;
+ 
++	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &old_oe_state);
++	if (err)
++		return err;
++
+ 	si544_enable_output(data, false);
+ 
+ 	/* Allow FCAL for this frequency update */
+@@ -303,12 +336,16 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	/* Applying a new frequency can take up to 10ms */
+ 	usleep_range(10000, 12000);
+ 
+-	si544_enable_output(data, true);
++	if (old_oe_state & SI544_OE_STATE_ODC_OE)
++		si544_enable_output(data, true);
+ 
+ 	return err;
+ }
+ 
+ static const struct clk_ops si544_clk_ops = {
++	.prepare = si544_prepare,
++	.unprepare = si544_unprepare,
++	.is_prepared = si544_is_prepared,
+ 	.recalc_rate = si544_recalc_rate,
+ 	.round_rate = si544_round_rate,
+ 	.set_rate = si544_set_rate,
 -- 
-2.7.4
+1.9.1
