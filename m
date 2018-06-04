@@ -1,55 +1,178 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Mon, 4 Jun 2018 14:32:25 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180604113225.GE5150@localhost.localdomain>
+References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180531030129.GA16122@rob-hp-laptop>
+ <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+ <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+ <20180601062540.GB5150@localhost.localdomain>
+ <CAL_JsqJNMxR=zdwR41iLfWU=u3J_=_VkxVL+g3a12_4vvNwBtw@mail.gmail.com>
 MIME-Version: 1.0
-To: Srinath Mannam <srinath.mannam@broadcom.com>,
- Sudeep Holla <sudeep.holla@arm.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <914341e7-ca94-054d-6127-522b745006b4@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
- <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
- <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
- <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
- <914341e7-ca94-054d-6127-522b745006b4@arm.com>
-Message-ID: <152996983664.143105.1441423217241075965@swboyd.mtv.corp.google.com>
-Subject: Re: ACPI support in common clock framework
-Date: Mon, 25 Jun 2018 16:37:16 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAL_JsqJNMxR=zdwR41iLfWU=u3J_=_VkxVL+g3a12_4vvNwBtw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sudeep Holla (2018-06-25 10:15:45)
-> =
-
-> =
-
-> On 25/06/18 17:37, Stephen Boyd wrote:
-> > Quoting Rafael J. Wysocki (2018-06-16 08:50:18)
-> >> On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> >>>
-> >>> Is this for clk_enable/disable? What about clk_set_rate() or
-> >>> clk_set_phase()? Is ACPI's AML taking care of that?
+On Fri, Jun 01, 2018 at 12:32:16PM -0500, Rob Herring wrote:
+> On Fri, Jun 1, 2018 at 1:25 AM, Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+> > On Thu, May 31, 2018 at 09:07:24AM -0500, Rob Herring wrote:
+> >> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+> >> <mazziesaccount@gmail.com> wrote:
+> >> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+> >> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+> >> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+> >> >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> >> >> > > + - interrupts            : The interrupt line the device is connected to.
+> >> >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
+> >> >> >
+> >> >> > What sub blocks have interrupts?
+> >> >>
+> >> >> The PMIC can generate interrupts from events which cause it to reset.
+> >> >> Eg, irq from watchdog line change, power button pushes, reset request
+> >> >> via register interface etc. I don't know any generic handling for these
+> >> >> interrupts. In "normal" use-case this PMIC is powering the processor
+> >> >> where driver is running and I do not see reasonable handling because
+> >> >> power-reset is going to follow the irq.
+> >> >>
+> >> >
+> >> > Oh, but when reading this I understand that the interrupt-controller
+> >> > property should at least be optional.
 > >>
-> >> That's for clk_enable/disable AFAICS.
-> >>
-> >> AML doesn't manage device performance states at all.
-> > =
+> >> I don't think it should. The h/w either has an interrupt controller or
+> >> it doesn't.
+> >
+> > I hope this explains why I did this interrupt controller - please tell
+> > me if this is legitimate use-case and what you think of following:
+> >
+> > +Optional properties:
+> > + - interrupt-controller        : Marks the device node as an interrupt controller.
+> > +                         BD71837MWV can report different power state change
+> > +                         events to other devices. Different events can be seen
+> > +                         as separate BD71837 domain interrupts.
+> 
+> To what other devices?
 
-> > Alright. We may need to add a better way for device drivers to get
-> > handles to clk pointers on ACPI firmware so they can change frequencies
-> > or phase, etc. =
+Would it be better if I wrote "other drivers" instead? I think I've seen
+examples where MFD driver is just providing the interrupts for other
+drivers - like power-button input driver. Currently I have no such "irq
+consumer" drivers written. Still I would like to expose these interrupts
+so that they are ready for using if any platform using PMIC needs them.
 
-> =
+I think there are other similar drivers in tree. For example TPS6591x
+driver seems to be doing this. (Has MFD driver exposing the interrupts
+but no driver handling those). Maybe explanation like this would help:
 
-> Is there any specific usecase/device needing this in the kernel ? SPI
-> slaves ?
+"The BD71837 driver only provides the infrastructure for the IRQs. The
+users can write his own driver to convert the IRQ into the event they
+wish. The IRQ can be used with the standard
+request_irq/enable_irq/disable_irq API inside the kernel." (I found this
+text from NXP forums and ruthlessly copied and modified it over here)
 
-Mark Brown has been pushing x86 folks to use clk framework for audio
-drivers in ASoC. I haven't seen other uses besides that really.
+If this is not feasible, then I will remove the irq handling from MFD
+(or leave code there but remove the binding information?) as I don't
+know what the irq handles should do in generic case.
+
+> 
+> > + - #interrupt-cells    : The number of cells to describe an IRQ should be 1.
+> > +                           The first cell is the IRQ number.
+> > +                           masks from ../interrupt-controller/interrupts.txt.
+
+Sorry this "masks from ../interrupt-controller/interrupts.txt." was
+accidentally pasted here. I should have deleted it.
+
+> I'm still not clear. Generally in a PMIC, you'd define an interrupt
+> controller when there's a common set of registers to manage sub-block
+> interrupts (typical mask/unmask, ack regs) and the subblocks
+> themselves have control of masking/unmasking interrupts. If there's
+> not a need to have these 2 levels of interrupt handling, then you
+> don't really need to define an interrupt controller.
+
+And to clarify - the PMIC can generate irq via one irq line. This is
+typical ACTIVE_LOW irq with 8 bit "write 1 to clear" status register and
+8 bit mask register. The role of interrupt-controller code here is just
+to allow these 8 irq reasons to be seen as individual BD71837 domain
+interrupts. I just don't have the driver(s) for handling these
+interrupts.
+
+> >> My concern is you added it but nothing uses it which tells
+> >> me your binding is incomplete. I'd rather see complete bindings even
+> >> if you don't have drivers.
+> >
+> > So this makes me wonder if my use-case for interrupt controller is
+> > valid. I thought making this PMIC as interrupt controller is a nice way
+> > of hiding the irq register and i2c access from other potential drivers
+> > using these interrupts. But as I don't know what could be the potential
+> > user for these irqs, I don't know how to complete binding. This is why I
+> > also thought of making this optional, so that the potential for using
+> > the interrupts would be there but it was not required when interrupts
+> > are not needed.
+> 
+> The only drivers getting these interrupts would be drivers for this
+> PMIC. Interrupts are handled by the driver owning the h/w that
+> generated the interrupt. I think that is the disconnect here.
+> 
+> Take a power button. We don't create a generic power button interrupt
+> and then have some generic power button interrupt handler. We have a
+> handler for specifically for that device and then it generates a power
+> button press event.
+
+I think I understand this. Here we also have a 'power button' interrupt
+from PMIC (as one of the interrupts) here. But what happens when button
+is pressed depends on PMIC configuration. I guess we might want a power
+button driver here - and this power button driver might be correct user
+for the irq. So are you stating that I should write the power button
+driver (or some other "IRQ consumer") before adding the
+interrupt-controller property to bindings for MFD? Or should I just
+somehow state that irq X in BD71837 is a "power button short push"
+event and power button driver should be the consumer for it? 
+
+Rest of the interrupts are not so obvious. I have no idea how I should
+handle rest of the interrupts. Those are interrupts which cause the PMIC
+to reset and cut the powers from most of the regulators too. I can
+easily think setup where one processor is controlling PMIC which powers
+for the other processor. And getting IRQ if for example watchdog reset
+the other processor would probably be very usefull. But doing any
+'de-facto' handler for this is hard. Only generally usefull thing would
+be notifying the user-space but I don't think I should invent any new
+kernelspace - userspace interfaces for this. I believe that when such
+are needed those should be implemented by ones knowing the platform.
+
+So please bear with me but do you mean I should
+a) document what conditions generate which IRQ
+   or
+b)  should I tell what kind of driver is needed for handling the IRQs
+   or
+c) should I first write code using IRQs before addinf MFD binding?
+
+a) I can do.
+b) I think I can't do this for most of the irqs as in normal use-case
+the processor won't catch these as it is going to be powered down.
+c) I might be able to do this for power button IRQ but it might not be
+what user wants in the end.
+
+> >> My concern is you added it but nothing uses it which tells
+> >> me your binding is incomplete. I'd rather see complete bindings even
+> >> if you don't have drivers.
+
+Can you please tell if I misunderstood this?
+
+Br,
+    Matti Vaittinen
