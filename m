@@ -1,44 +1,78 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 18/24] drm/sun4i: DW HDMI PHY: Add support for second PLL
-Date: Thu, 28 Jun 2018 06:56:30 +0200
-Message-ID: <52771065.UHJ1SZMy5a@jernej-laptop>
-In-Reply-To: <CAGb2v651RGegpAi-2efhBUkyFf1iC+zxOGTbRkmjuWcYSTgYJw@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-19-jernej.skrabec@siol.net> <CAGb2v651RGegpAi-2efhBUkyFf1iC+zxOGTbRkmjuWcYSTgYJw@mail.gmail.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 2/4] clk: imx6sl: remove clks_init_on array
+Date: Mon,  4 Jun 2018 09:06:44 +0800
+Message-Id: <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
+References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 28. junij 2018 ob 04:25:54 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
-> > between two clock parents.
-> > 
-> > Add code which reads second PLL from DT.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> This patch by itself does not do anything. It should be merged with the
-> next one.
+Clock framework will enable those clocks registered
+with CLK_IS_CRITICAL flag, so no need to have
+clks_init_on array during clock initialization now.
 
-Maxime said clock changes should be separated from DT changes.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/578775.html
+ARM clock is busy divider type which has the
+CLK_IS_CRITICAL flag set by default when registered.
 
-Best regards,
-Jernej
+IPG clock has no clock gate and its parent AHB clock
+is busy divider type, so no need to add CLK_IS_CRITICAL
+flag for IPG clock.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+changes since V1:
+	improve commit log to explain why no need to add CLK_IS_CRITICAL flag for ARM and IPG clocks.
+ drivers/clk/imx/clk-imx6sl.c | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 66b1dd1..eb6bcbf 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
+ static void __iomem *ccm_base;
+ static void __iomem *anatop_base;
+ 
+-static const u32 clks_init_on[] __initconst = {
+-	IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
+-};
+-
+ /*
+  * ERR005311 CCM: After exit from WAIT mode, unwanted interrupt(s) taken
+  *           during WAIT mode entry process could cause cache memory
+@@ -195,7 +191,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+ 	void __iomem *base;
+-	int i;
+ 	int ret;
+ 
+ 	clks[IMX6SL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+@@ -426,13 +421,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 		pr_warn("%s: failed to set AHB clock rate %d!\n",
+ 			__func__, ret);
+ 
+-	/*
+-	 * Make sure those always on clocks are enabled to maintain the correct
+-	 * usecount and enabling/disabling of parent PLLs.
+-	 */
+-	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+-		clk_prepare_enable(clks[clks_init_on[i]]);
+-
+ 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
+ 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY1_GATE]);
+ 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY2_GATE]);
+-- 
+2.7.4
