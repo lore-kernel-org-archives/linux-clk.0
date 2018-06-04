@@ -1,51 +1,104 @@
-Return-Path: <woods.technical@gmail.com>
-Return-Path: <woods.technical@gmail.com>
-Date: Sat, 23 Jun 2018 09:38:43 -0500
-From: "Derald D. Woods" <woods.technical@gmail.com>
-To: Adam Ford <aford173@gmail.com>
-Cc: t-kristo@ti.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-omap@vger.kernel.org,
-	tony@atomide.com, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: omap3: Fix am3517 mdio clock alias
-Message-ID: <20180623143824.GA14050@ethiopia>
-References: <20180623110912.20633-1-aford173@gmail.com>
+Return-Path: <RAJANV@xilinx.com>
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
+	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Date: Mon, 4 Jun 2018 03:41:27 +0000
+Message-ID: <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
+ <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
+In-Reply-To: <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180623110912.20633-1-aford173@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jun 23, 2018 at 06:09:12AM -0500, Adam Ford wrote:
-> A previous patch removed OMAP clock aliases that were perceived
-> to be unnecessary.  Unfortunately, it broke the ethernet on the
-> am3517-evm.  This patch renables the MDIO clock.
-> 
-> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-> Cc: stable@vger.kernel.org #4.16+
-> 
-
-On AM3517-EVM, you can add:
-
-Tested-by: Derald D. Woods <woods.technical@gmail.com>
-
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
-> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
-> index 8aa5f5793835..f84734bd0aa7 100644
-> --- a/drivers/clk/ti/clk-3xxx.c
-> +++ b/drivers/clk/ti/clk-3xxx.c
-> @@ -254,6 +254,8 @@ static struct ti_dt_clk omap36xx_am35xx_omap3430es2plus_clks[] = {
->  };
->  
->  static struct ti_dt_clk am35xx_clks[] = {
-> +	DT_CLK("davinci_emac.0", NULL, "emac_ick"),
-> +	DT_CLK("davinci_mdio.0", NULL, "emac_fck"),
->  	DT_CLK(NULL, "hsotgusb_ick", "hsotgusb_ick_am35xx"),
->  	DT_CLK(NULL, "hsotgusb_fck", "hsotgusb_fck_am35xx"),
->  	DT_CLK(NULL, "uart4_ick", "uart4_ick_am35xx"),
-> -- 
-> 2.17.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmVwbHkuIA0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
+cmddDQo+IFNlbnQ6IDAyIEp1bmUgMjAxOCAxMjoxMSBQTQ0KPiBUbzogUmFqYW4gVmFqYSA8UkFK
+QU5WQHhpbGlueC5jb20+DQo+IENjOiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKb2xseSBTaGFoDQo+IDxKT0xMWVNAeGlsaW54LmNvbT47
+IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJy
+ZS5jb20NCj4gU3ViamVjdDogUkU6IFtQQVRDSF0gY2xrOiBjbGstZml4ZWQtZmFjdG9yOiBVc2Ug
+bmV3IG1hY3JvDQo+IENMS19PRl9ERUNMQVJFX0RSSVZFUg0KPiANCj4gUXVvdGluZyBSYWphbiBW
+YWphICgyMDE4LTA1LTAzIDAyOjE4OjMwKQ0KPiA+IEhpIFN0ZXBoZW4sDQo+ID4NCj4gPiA+IC0t
+LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBSYWphbiBWYWphDQo+ID4gPiBT
+ZW50OiAxNiBNYXJjaCAyMDE4IDA1OjIwIFBNDQo+ID4gPiBUbzogJ1N0ZXBoZW4gQm95ZCcgPHNi
+b3lkQGtlcm5lbC5vcmc+DQo+ID4gPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgbGlu
+dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA+ID4gPEpPTExZU0B4aWxp
+bnguY29tPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+Ow0KPiA+ID4gbXR1cnF1
+ZXR0ZUBiYXlsaWJyZS5jb20NCj4gPiA+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIGNsazogY2xrLWZp
+eGVkLWZhY3RvcjogVXNlIG5ldyBtYWNybw0KPiA+ID4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSDQo+
+ID4gPg0KPiA+ID4gSGkgU3RlcGhlbiwNCj4gPiA+DQo+ID4gPiBUaGFua3MgZm9yIHRoZSBjb21t
+ZW50Lg0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+ID4g
+RnJvbTogU3RlcGhlbiBCb3lkIFttYWlsdG86c2JveWRAa2VybmVsLm9yZ10NCj4gPiA+ID4gU2Vu
+dDogMTYgTWFyY2ggMjAxOCAxMjoxNyBBTQ0KPiA+ID4gPiBUbzogUmFqYW4gVmFqYSA8UkFKQU5W
+QHhpbGlueC5jb20+DQo+ID4gPiA+IENjOiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKb2xseSBTaGFoDQo+ID4gPiA+IDxKT0xMWVNAeGls
+aW54LmNvbT47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gPiA+ID4gbXR1
+cnF1ZXR0ZUBiYXlsaWJyZS5jb20NCj4gPiA+ID4gU3ViamVjdDogUkU6IFtQQVRDSF0gY2xrOiBj
+bGstZml4ZWQtZmFjdG9yOiBVc2UgbmV3IG1hY3JvDQo+ID4gPiA+IENMS19PRl9ERUNMQVJFX0RS
+SVZFUg0KPiA+ID4gPg0KPiA+ID4gPiBRdW90aW5nIFJhamFuIFZhamEgKDIwMTgtMDMtMDkgMTE6
+Mjc6NDApDQo+ID4gPiA+ID4gPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJu
+ZWwub3JnXQ0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IElzIHRoZSBpbnRlbnQgdG8gcmVnaXN0
+ZXIgdGhlIGNsayB0d2ljZT8gSSBiZWxpZXZlIHRoaW5ncyBhcmUgd29ya2luZyBhcw0KPiA+ID4g
+PiA+ID4gaW50ZW5kZWQgd2l0aG91dCB0aGlzIHBhdGNoLCBzbyBtYXliZSB5b3UgY2FuIGV4cGxh
+aW4gYSBsaXR0bGUgbW9yZQ0KPiB3aGF0DQo+ID4gPiA+ID4gPiB5b3UncmUgdHJ5aW5nIHRvIGZp
+eC4NCj4gPiA+ID4gPiBbUmFqYW5dIFllcy4gRHVyaW5nIG9mX2Nsa19pbml0KCkgaWYgc29tZSBE
+VCBmaXhlZCBmYWN0b3IgY2xvY2sgaGFzDQo+ID4gPiA+ID4gcGFyZW50IHdoaWNoIGlzIG5laXRo
+ZXIgbWVudGlvbmVkIGluIG91dHB1dC1jbG9jay1uYW1lcyBvZiBjbG9jaw0KPiA+ID4gPiA+IGNv
+bnRyb2xsZXIgbm9yIHJlZ2lzdGVyZWQgYXMgY2xvY2sgcHJvdmlkZXIsIG9mX2Nsa19pbml0KCkg
+d2lsbCB0cnkgdG8NCj4gPiA+ID4gPiBmb3JjZWZ1bGx5IHJlZ2lzdGVyIGluIHNlY29uZCBsb29w
+Lg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGZvcmNl
+IHx8IHBhcmVudF9yZWFkeShjbGtfcHJvdmlkZXItPm5wKSkgew0KPiA+ID4gPiA+DQo+ID4gPiA+
+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0
+Zm9ybSBkZXZpY2VzICovDQo+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBvZl9ub2RlX3NldF9mbGFnKGNsa19wcm92aWRlci0+bnAsDQo+ID4gPiA+ID4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIE9GX1BPUFVMQVRFRCk7DQo+
+ID4gPiA+ID4NCj4gPiA+ID4gPiBTbyByZWdpc3RyYXRpb24gb2YgdGhpcyBEVCBmaXhlZC1mYWN0
+b3IgY2xvY2sgd291bGQgZmFpbCBhcyBwYXJlbnQNCj4gPiA+ID4gPiB3b3VsZCBiZSBOVUxMIGFz
+IGJlbG93IChjYWxsZWQgZnJvbSBfb2ZfZml4ZWRfZmFjdG9yX2Nsa19zZXR1cCgpKToNCj4gPiA+
+ID4gPiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25hbWUobm9kZSwgMCk7DQo+ID4g
+PiA+ID4NCj4gPiA+ID4gPiBPbiB0aGUgb3RoZXIgaGFuZCwgZXZlbiBpZiByZWdpc3RyYXRpb24g
+ZmFpbGVkLCB0aGF0IG5vZGUgd2lsbCBiZQ0KPiA+ID4gPiA+IG1hcmtlZCBhcyBPRl9QT1BVTEFU
+RUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+ID4gPiA+
+ID4gYmUgY2FsbGVkIGFuZCB0aGF0IERUIGZpeGVkLWZhY3RvciBjbG9jayB3b3VsZCBuZXZlciBi
+ZSByZWdpc3RlcmVkLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNz
+ZWQgYXQgIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiA+ID4gPg0KPiA+
+ID4gPiBPay4gSSBiZWxpZXZlIHRoZSBhbnN3ZXIgaXMgdG8gZml4IHRoZSBEVCB0byBkZXNjcmli
+ZSB0aGUgcGFyZW50IGNoYWluDQo+ID4gPiA+IHByb3Blcmx5IHdpdGggY2xvY2stb3V0cHV0LW5h
+bWVzLiBPdGhlcndpc2UsIHdlIGhhdmUgbm8gZ29vZCB3YXkgb2YNCj4gPiA+ID4gZmlndXJpbmcg
+b3V0IHdoYXQgdGhlIG5hbWUgc2hvdWxkIGJlLg0KPiA+ID4gW1JhamFuXSBjbG9jayBEVCBiaW5k
+aW5nIGRvYyBzYXlzIHRoYXQgY2xvY2stb3V0cHV0LW5hbWVzIHByb3BlcnR5DQo+ID4gPiBpcyBv
+cHRpb25hbCBhbmQgc29tZXRpbWVzIG5vdCByZWNvbW1lbmRlZC4NCj4gPiA+IEkgdGhpbmsgdGhp
+cyBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgd2UgaGF2ZSB3aGljaCBtYW5kYXRlcyB0byBhZGQgY2xv
+Y2stDQo+IG91dHB1dC0NCj4gPiA+IG5hbWVzDQo+ID4gPiBwcm9wZXJ0eSAoZm9yIHRoaXMgcGFy
+dGljdWxhciBjYXNlKS4gQWxzbywgSUlVQyBwbGF0Zm9ybSBkcml2ZXIgcHJvYmUgaW4gY2xrLQ0K
+PiBmaXhlZC0NCj4gPiA+IGZhY3Rvci5jDQo+ID4gPiB3aWxsIG5ldmVyIGJlIGNhbGxlZCB1bmxl
+c3Mgd2UgdXNlIENMS19PRl9ERUNMQVJFX0RSSVZFUi4NCj4gPiA+IEkgY29tcGxldGVseSBhZ3Jl
+ZSB0aGF0IHByb3BlciBzb2x1dGlvbiB3b3VsZCBiZSB0byBzdG9wIHVzaW5nIHN0cmluZ3MgdG8N
+Cj4gPiA+IGRlc2NyaWJlIGNsb2NrIHRvcG9sb2d5Lg0KPiA+IFtSYWphbl0gQW55IGNvbW1lbnRz
+IG9uIHRoaXM/DQo+ID4gVW5sZXNzIHdlIGhhdmUgcHJvcGVyIHNvbHV0aW9uIHJlYWR5LCB3ZSBu
+ZWVkIHRvIGhhdmUgc29tZSBtZWNoYW5pc20gdG8NCj4gaGFuZGxlIHRoaXMgc2NlbmFyaW8uDQo+
+ID4gY2xvY2stb3V0cHV0LW5hbWVzIGlzIG9wdGlvbmFsIGFuZCB3aXRob3V0IHRoaXMsIGl0IG1h
+bmRhdGVzIHRvIHVzZSBjbG9jay0NCj4gb3V0cHV0LW5hbWVzLg0KPiA+DQo+IA0KPiBJIGNvdWxk
+bid0IHJlYWQgeW91ciBvdXRsb29rIHNlbnQgZW1haWwgYW5kIEkgd2FzIHRvbyBidXN5IHRvIGdv
+DQo+IHRyYW5zbGF0ZSBpdC4gU29tZSBidWcgaW4gbXkgTVVBIGl0IHNlZW1zLg0KPiANCj4gQ2Fu
+IHlvdSBhZGQgdGhlIG91dHB1dC1uYW1lcyBwcm9wZXJ0eT8gSW4gdGhpcyBjYXNlIGl0J3MgcHJh
+Y3RpY2FsbHkNCj4gbWFuZGF0b3J5LCBzbyBpZiB5b3UgY2FuJ3QgZG8gaXQgSSdkIGxpa2UgdG8g
+aGVhciB3aHkgbm90Lg0KW1JhamFuXSBJbiBvdXIgY2FzZSwgd2UgYXJlIGZpcm13YXJlIG1haW50
+YWlucyBjbG9jayBkYXRhYmFzZSBhbmQgZHJpdmVyIHF1ZXJ5IGNsb2Nrcw0KZnJvbSBmaXJtd2Fy
+ZSBhbmQgcmVnaXN0ZXJzIGNsb2NrIGJhc2VkIG9uIGluZm9ybWF0aW9uIHJlY2VpdmVkIGZyb20g
+ZmlybXdhcmUuIFNvDQpvdXRwdXQgY2xvY2sgbmFtZXMgYXJlIG5vdCBmaXhlZC4gDQpodHRwczov
+L3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwNDM5ODkzLyAtIGR0LWJpbmRpbmdzOiBjbG9j
+azogQWRkIGJpbmRpbmdzIGZvciBaeW5xTVAgY2xvY2sgZHJpdmVyDQpodHRwczovL3BhdGNod29y
+ay5rZXJuZWwub3JnL3BhdGNoLzEwNDM5ODkxLyAtIGRyaXZlcnM6IGNsazogQWRkIFp5bnFNUCBj
+bG9jayBkcml2ZXINCg0K
