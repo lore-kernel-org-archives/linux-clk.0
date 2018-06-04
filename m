@@ -1,111 +1,192 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:60298 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752146AbeFYP6S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Jun 2018 11:58:18 -0400
-Date: Mon, 25 Jun 2018 17:58:05 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 3/7] bus: add bus driver for accessing Allwinner A64
- DE2
-Message-ID: <20180625155805.kds7bl3cburblwv6@flea>
-References: <20180622124540.56203-1-icenowy@aosc.io>
- <20180622124540.56203-2-icenowy@aosc.io>
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:45213 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeFDIVD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Jun 2018 04:21:03 -0400
+Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
+To: Stephen Boyd <sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <alsa-devel@alsa-project.org>, <boris.brezillon@bootlin.com>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <robh+dt@kernel.org>
+CC: <Cristian.Birsan@microchip.com>
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+ <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
+Date: Mon, 4 Jun 2018 11:20:29 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gl5ozc65ejgjb7yn"
-In-Reply-To: <20180622124540.56203-2-icenowy@aosc.io>
+In-Reply-To: <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On 31.05.2018 18:26, Stephen Boyd wrote:
+> Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
+>> This driver is a simple muxing driver that controls the
+>> I2S's clock input by using syscon/regmap to change the parrent.
+> 
+> s/parrent/parent/
 
---gl5ozc65ejgjb7yn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I will fix it.
 
-On Fri, Jun 22, 2018 at 08:45:36PM +0800, Icenowy Zheng wrote:
-> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
-> is different from the ones on other Allwinner SoCs. It requires a SRAM
-> region to be claimed, otherwise all DE2 subblocks won't be accessible.
->=20
-> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
-> region when probing.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> No changes since v1.
->=20
->  drivers/bus/Kconfig      | 10 ++++++++
->  drivers/bus/Makefile     |  1 +
->  drivers/bus/sun50i-de2.c | 49 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 60 insertions(+)
->  create mode 100644 drivers/bus/sun50i-de2.c
->=20
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index d1c0b60e9326..1851112ccc29 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -103,6 +103,16 @@ config SIMPLE_PM_BUS
->  	  Controller (BSC, sometimes called "LBSC within Bus Bridge", or
->  	  "External Bus Interface") as found on several Renesas ARM SoCs.
-> =20
-> +config SUN50I_DE2_BUS
-> +	bool "Allwinner A64 DE2 Bus Driver"
-> +	  default ARM64
-> +	  depends on ARCH_SUNXI
-> +	  select SUNXI_SRAM
-> +	  help
+> 
+>> The available inputs can be Peripheral clock and Generated clock.
+> 
+> Why capitalize peripheral and generated?
 
-The alignment here should be one tab.
+In DS, at I2S block these clocks appear defined with capital letters... 
+I will fix it.
 
-> +static int sun50i_de2_bus_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	int ret;
-> +
-> +	ret =3D sunxi_sram_claim(&pdev->dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
-> +		return ret;
-> +	}
-> +
-> +	if (np)
-> +		of_platform_populate(np, NULL, NULL, &pdev->dev);
+> 
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+>> diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+>> index 1254bf9..903f23c 100644
+>> --- a/arch/arm/mach-at91/Kconfig
+>> +++ b/arch/arm/mach-at91/Kconfig
+>> @@ -27,6 +27,7 @@ config SOC_SAMA5D2
+>>          select HAVE_AT91_H32MX
+>>          select HAVE_AT91_GENERATED_CLK
+>>          select HAVE_AT91_AUDIO_PLL
+>> +       select HAVE_AT91_I2S_MUX_CLK
+>>          select PINCTRL_AT91PIO4
+>>          help
+>>            Select this if ou are using one of Microchip's SAMA5D2 family SoC.
+>> @@ -129,6 +130,9 @@ config HAVE_AT91_GENERATED_CLK
+>>   config HAVE_AT91_AUDIO_PLL
+>>          bool
+>>   
+>> +config HAVE_AT91_I2S_MUX_CLK
+>> +       bool
+>> +
+>>   config SOC_SAM_V4_V5
+>>          bool
+>>   
+> 
+> I guess this is OK.
+> 
+>> diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+>> index 082596f..facc169 100644
+>> --- a/drivers/clk/at91/Makefile
+>> +++ b/drivers/clk/at91/Makefile
+>> @@ -13,3 +13,4 @@ obj-$(CONFIG_HAVE_AT91_USB_CLK)               += clk-usb.o
+>>   obj-$(CONFIG_HAVE_AT91_SMD)            += clk-smd.o
+>>   obj-$(CONFIG_HAVE_AT91_H32MX)          += clk-h32mx.o
+>>   obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)  += clk-generated.o
+>> +obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)    += clk-i2s-mux.o
+>> diff --git a/drivers/clk/at91/clk-i2s-mux.c b/drivers/clk/at91/clk-i2s-mux.c
+>> new file mode 100644
+>> index 0000000..2d56ded
+>> --- /dev/null
+>> +++ b/drivers/clk/at91/clk-i2s-mux.c
+>> @@ -0,0 +1,117 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + *  Copyright (C) 2018 Microchip Technology Inc,
+>> + *                     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> + *
+>> + *
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include <soc/at91/atmel-sfr.h>
+>> +
+>> +#define        I2S_BUS_NR      2
+>> +
+>> +struct clk_i2s_mux {
+>> +       struct clk_hw hw;
+>> +       struct regmap *regmap;
+>> +       u32 bus_id;
+> 
+> Can be a u8?
 
-Why do you need to test np here?
+I think so, I will cast out_value parameter of of_property_read_u32() to u8.
 
-Maxime
+> 
+>> +};
+>> +
+>> +#define to_clk_i2s_mux(hw) container_of(hw, struct clk_i2s_mux, hw)
+>> +
+>> +static u8 clk_i2s_mux_get_parent(struct clk_hw *hw)
+>> +{
+>> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+>> +       u32 val;
+>> +
+>> +       regmap_read(mux->regmap, AT91_SFR_I2SCLKSEL, &val);
+>> +
+>> +       return (val & BIT(mux->bus_id)) >> mux->bus_id;
+>> +}
+>> +
+>> +static int clk_i2s_mux_set_parent(struct clk_hw *hw, u8 index)
+>> +{
+>> +       struct clk_i2s_mux *mux = to_clk_i2s_mux(hw);
+>> +
+>> +       return regmap_update_bits(mux->regmap, AT91_SFR_I2SCLKSEL,
+>> +                                 BIT(mux->bus_id), index << mux->bus_id);
+>> +}
+>> +
+>> +const struct clk_ops clk_i2s_mux_ops = {
+> 
+> static?
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes, I will fix it.
 
---gl5ozc65ejgjb7yn
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+>> +       .get_parent = clk_i2s_mux_get_parent,
+>> +       .set_parent = clk_i2s_mux_set_parent,
+>> +       .determine_rate = __clk_mux_determine_rate,
+>> +};
+>> +
+>> +static struct clk_hw * __init
+>> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+>> +                         const char * const *parent_names,
+>> +                         unsigned int num_parents, u32 bus_id)
+>> +{
+>> +       struct clk_init_data init = {};
+>> +       struct clk_i2s_mux *i2s_ck;
+>> +       int ret;
+>> +
+>> +       i2s_ck = kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
+>> +       if (!i2s_ck)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = name;
+>> +       init.ops = &clk_i2s_mux_ops;
+>> +       init.parent_names = parent_names;
+>> +       init.num_parents = num_parents;
+>> +       init.flags = CLK_IGNORE_UNUSED;
+> 
+> Really? Why?
 
------BEGIN PGP SIGNATURE-----
+I am thinking that there is no need to gate this clock, since there is 
+no way to gate this clock in HW.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxEQ0ACgkQ0rTAlCFN
-r3Q7ghAAgafjNShKtVy1wF7ybhUEKPoF25teOrUO8ObOsgKgTaA+HeA0Iewg1w9c
-slPeaTq/WKnRrN3RKADWLA6oUnIOPctPVWraFxPgOeEVnETlMBSm7igtFUodoMk6
-W2qetFnSmWj7GgBVBCvX1G87qPyCHRHeyYgwWzvuAvApHedOjDZX1TFHoMuL9K+q
-grLOVyj6U+L9Yl38S0/wScGQ0qeiUYWYW+dUyE5tuFgso1tftQNHDj01U9m/Zavg
-+3cW6gbxQYBSzptkm0jaWxUJmCXGKZJYP2eNmnwkaT8HgmZMpq8AcxqKo6ES8jlq
-fhVKOTBOVl+kYaoGMpIxq5TI1GGlblo5LkKXsEnq+bE1BKYqSb3EY3npuzfbs8Px
-+JhITGKLpgYEytIj2rNf+5lyF4sueMizdVNIIpZuFlxI9BWW/gQ4OeOC5vdqI6ng
-fRocfixsnCsZoFsxCT3T/V0IUygTBiBDQRyOWx08sdaHTNg6fkfpwZI9TjH7urzm
-8PeNl+EA7STRUxEQchXwJZIwtt1ZA2EiY+U/eQVzbpXvcGKwwB0m3CxbGaUA8q82
-hVMBazQt9DMVak17XYFlU+dd/v5/+tibMb/z+qER4NiG0C3x/XEeqrB46gkyRloi
-HV7iUbhrb3D/jQAbVw81dwh01j2n1IYDpb/KAnJxyKxyAl87wug=
-=BUDh
------END PGP SIGNATURE-----
+> 
+>> +
+>> +       i2s_ck->hw.init = &init;
+>> +       i2s_ck->bus_id = bus_id;
+>> +       i2s_ck->regmap = regmap;
+>> +
+>> +       ret = clk_hw_register(NULL, &i2s_ck->hw);
+>> +       if (ret) {
+>> +               kfree(i2s_ck);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +
+>> +       return &i2s_ck->hw;
+>> +}
 
---gl5ozc65ejgjb7yn--
+Thank you for your review. I will wait a few more days for more comments 
+on this series and send a V5 afterwards.
+
+Best regards,
+Codrin
