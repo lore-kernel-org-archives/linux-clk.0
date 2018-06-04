@@ -1,76 +1,41 @@
-Return-Path: <rjwysocki@gmail.com>
-MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com> <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 16 Jun 2018 17:50:18 +0200
-Message-ID: <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Srinath Mannam <srinath.mannam@broadcom.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	robh@kernel.org
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/2] Add display clock controller driver for SDM845
+Date: Mon,  4 Jun 2018 13:26:23 +0530
+Message-Id: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
->> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->> > +Cc: Rafael, ACPI ML
->> >
->> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
->> > <srinath.mannam@broadcom.com> wrote:
->> >> Hi Michael, Stephen,
->> >>
->> >> We are adding ACPI support in our Linux based platform.
->> >> At present our clock hierarchy using common clock framework through DTS.
->> >> Now we required ACPI support in common clock framework to upgrade our platform.
->> >>
->> >> For example, clk_get API called in many drivers to get clock device is
->> >> tightly coupled with DT framework.
->> >>
->> >> Please let us know, if anybody in Open Source community have plans to
->> >> add ACPI support for common clock framework.
->>
->> There are no plans for doing that AFAICS.
->>
->> Moreover, it generally would not be consistent with ACPI power
->> management defined by the specification.
->
-> This matches my understanding.
->
->>
->> >> If not please suggest us alternative method to use common clock
->> >> framework in ACPI use case.
->>
->> The problem with using the clock framework on systems with ACPI is
->> that, in general, the clock manipulation is expected to be carried out
->> by ACPI power management and therefore it is "owned" by AML.
->> Currently, there are no defined methods for synchronizing the AML's
->> use of clocks for power management with what the OS may do with them
->> directly.
->>
->> In theory, that can be worked around to some extent by representing
->> clocks as power resources in ASL (even though the provider information
->> would be missing then) and manipulating those power resources directly
->> from the OS.  I'm not aware of anyone doing that successfully,
->> however.
->>
->> For simple power management it should be sufficient to let drivers
->> rely on the ACPI PM domain which should happen automatically in the
->> majority of cases anyway.
->>
->
-> Is this for clk_enable/disable? What about clk_set_rate() or
-> clk_set_phase()? Is ACPI's AML taking care of that?
+Add support for the display clock controller found on SDM845
+based devices. This would allow display drivers to probe and
+control their clocks.
 
-That's for clk_enable/disable AFAICS.
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM Display clock bindings
+  clk: qcom: Add display clock controller driver for SDM845
 
-AML doesn't manage device performance states at all.
+ .../devicetree/bindings/clock/qcom,dispcc.txt      |  18 +
+ drivers/clk/qcom/Kconfig                           |  10 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/dispcc-sdm845.c                   | 704 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     |  42 ++
+ 5 files changed, 775 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
