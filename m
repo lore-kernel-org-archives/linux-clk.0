@@ -1,60 +1,112 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-3-songjun.wu@linux.intel.com> <20180612223725.GC2197@rob-hp-laptop>
- <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 14 Jun 2018 08:09:14 -0600
-Message-ID: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
-To: yixin zhu <yixin.zhu@linux.intel.com>
-Cc: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
-	chuanhua.lei@linux.intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
-	qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	robh@kernel.org
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Display clock bindings
+Date: Mon,  4 Jun 2018 13:26:24 +0530
+Message-Id: <1528098985-3676-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
+References: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 2:40 AM, yixin zhu <yixin.zhu@linux.intel.com> wrote:
->
->
-> On 6/13/2018 6:37 AM, Rob Herring wrote:
->>
->> On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
->>>
->>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
->>>
->>> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
+Add device tree bindings for display clock controller for Qualcomm
+Technology Inc's SoCs.
 
-[...]
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
->>> +Example:
->>> +       clkgate0: clkgate0 {
->>> +               #clock-cells = <1>;
->>> +               compatible = "intel,grx500-gate0-clk";
->>> +               reg = <0x114>;
->>> +               clock-output-names = "gate_xbar0", "gate_xbar1",
->>> "gate_xbar2",
->>> +               "gate_xbar3", "gate_xbar6", "gate_xbar7";
->>> +       };
->>
->>
->> We generally don't do a clock node per clock or few clocks but rather 1
->> clock node per clock controller block. See any recent clock bindings.
->>
->> Rob
->
-> Do you mean only one example is needed per clock controller block?
-> cpuclk is not needed in the document?
-
-No, I mean generally we have 1 DT node for the h/w block with all the
-clock control registers rather than nodes with a single register and 1
-or a couple of clocks. Sometimes the clock registers are mixed with
-other functions which complicates things a bit. But I can't tell that
-here because you haven't documented what's in the rest of the register
-space.
-
-Rob
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.txt b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+new file mode 100644
+index 0000000..d639e18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+@@ -0,0 +1,19 @@
++Qualcomm Technologies, Inc. Display Clock Controller Binding
++------------------------------------------------------------
++
++Required properties :
++
++- compatible : shall contain "qcom,sdm845-dispcc"
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	dispcc: clock-controller@af00000 {
++		compatible = "qcom,sdm845-dispcc";
++		reg = <0xaf00000 0x100000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+new file mode 100644
+index 0000000..11eed4b
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++
++/* DISP_CC clock registers */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AXI_CLK					1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				4
++#define DISP_CC_MDSS_BYTE1_CLK					5
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				7
++#define DISP_CC_MDSS_ESC0_CLK					8
++#define DISP_CC_MDSS_ESC0_CLK_SRC				9
++#define DISP_CC_MDSS_ESC1_CLK					10
++#define DISP_CC_MDSS_ESC1_CLK_SRC				11
++#define DISP_CC_MDSS_MDP_CLK					12
++#define DISP_CC_MDSS_MDP_CLK_SRC				13
++#define DISP_CC_MDSS_MDP_LUT_CLK				14
++#define DISP_CC_MDSS_PCLK0_CLK					15
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				16
++#define DISP_CC_MDSS_PCLK1_CLK					17
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				18
++#define DISP_CC_MDSS_ROT_CLK					19
++#define DISP_CC_MDSS_ROT_CLK_SRC				20
++#define DISP_CC_MDSS_RSCC_AHB_CLK				21
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				22
++#define DISP_CC_MDSS_VSYNC_CLK					23
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				24
++#define DISP_CC_PLL0						25
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
++
++/* DISP_CC Reset */
++#define DISP_CC_MDSS_RSCC_BCR					0
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++
++#endif
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
