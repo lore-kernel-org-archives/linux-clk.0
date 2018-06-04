@@ -1,60 +1,73 @@
-Return-Path: <woods.technical@gmail.com>
-Return-Path: <woods.technical@gmail.com>
-Date: Mon, 25 Jun 2018 08:19:56 -0500
-From: "Derald D. Woods" <woods.technical@gmail.com>
-To: Adam Ford <aford173@gmail.com>
-Cc: adam.ford@logicpd.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-	mturquette@baylibre.com, linux-omap@vger.kernel.org,
-	tony@atomide.com, stable@vger.kernel.org
-Subject: Re: [PATCH V3] ARM: dts: omap3: Fix am3517 mdio and emac clock
- references
-Message-ID: <20180625131955.GA25402@ethiopia>
-References: <20180625124133.21839-1-aford173@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Mon, 4 Jun 2018 16:18:53 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v5 3/4] clk: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <da121dede6d79460c5653a5bc360d413cb988c74.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180625124133.21839-1-aford173@gmail.com>
+In-Reply-To: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 07:41:33AM -0500, Adam Ford wrote:
-> A previous patch removed OMAP clock aliases that were perceived
-> to be unnecessary.  Unfortunately, it broke the ethernet on the
-> am3517-evm.  This patch enables the MDIO clock and EMAC clock.
-> 
+Document devicetree bindings for ROHM BD71837 PMIC clock output.
 
-Tested-by: Derald D. Woods <woods.technical@gmail.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ .../bindings/clock/rohm,bd71837-clock.txt          | 38 ++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
 
-> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-> Cc: stable@vger.kernel.org #4.16+
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V3:  Fix subject heading since we're no longer modifying the clk driver
-> 
-> V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
->      to work like the original patch intended.
->      
-> diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
-> index ca294914bbb1..4b6062b631b1 100644
-> --- a/arch/arm/boot/dts/am3517.dtsi
-> +++ b/arch/arm/boot/dts/am3517.dtsi
-> @@ -39,6 +39,8 @@
->  			ti,davinci-ctrl-ram-size = <0x2000>;
->  			ti,davinci-rmii-en = /bits/ 8 <1>;
->  			local-mac-address = [ 00 00 00 00 00 00 ];
-> +			clocks = <&emac_ick>;
-> +			clock-names = "ick";
->  		};
->  
->  		davinci_mdio: ethernet@5c030000 {
-> @@ -49,6 +51,8 @@
->  			bus_freq = <1000000>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
-> +			clocks = <&emac_fck>;
-> +			clock-names = "fck";
->  		};
->  
->  		uart4: serial@4809e000 {
-> -- 
-> 2.17.1
-> 
+diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+new file mode 100644
+index 000000000000..771acfe34114
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+@@ -0,0 +1,38 @@
++ROHM BD71837 Power Management Integrated Circuit clock bindings
++
++This is a part of device tree bindings of ROHM BD71837 multi-function
++device. See generic BD71837 MFD bindings at:
++	Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++
++BD71837 contains one 32,768 KHz clock output which can be enabled and
++disabled via i2c.
++
++Following properties should be present in main device node of the MFD chip.
++
++Required properties:
++- clock-frequency	: Should be 32768
++- #clock-cells		: Should be 0
++
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
++
++Example:
++
++/* MFD node */
++
++pmic: pmic@4b {
++	compatible = "rohm,bd71837";
++	/* ... */
++	#clock-cells = <0>;
++	clock-frequency  = <32768>;
++	/* ... */
++};
++
++/* Clock consumer node */
++
++foo@0 {
++	compatible = "bar,foo";
++	/* ... */
++	clock-names = "my-clock";
++	clocks = <&pmic>;
++};
+-- 
+2.14.3
