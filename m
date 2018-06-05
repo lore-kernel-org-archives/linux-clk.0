@@ -1,189 +1,50 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 06/13] ARM: davinci: omapl138-hawk: add aemif & nand support
-Date: Tue, 26 Jun 2018 11:25:30 +0200
-Message-Id: <20180626092537.6737-7-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Tue, 5 Jun 2018 14:20:31 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] clk: tegra: Mark Memory Controller clock as critical
+Message-ID: <20180605112031.GE27696@tbergstrom-lnx.Nvidia.com>
+References: <20180603224805.495-1-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180603224805.495-1-digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jun 04, 2018 at 01:48:05AM +0300, Dmitry Osipenko wrote:
+> Memory Controller should be always-on. Currently the sibling EMC clock is
+> marked as critical, let's mark MC clock too for consistency.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-We now have support for aemif & nand from board files. As an example
-add support for nand to da850-hawk.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
- 1 file changed, 132 insertions(+)
-
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 466e87b24e9a..8d8e3165a45c 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -16,6 +16,11 @@
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
-+#include <linux/mtd/rawnand.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/platform_data/mtd-davinci.h>
-+#include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/regulator/machine.h>
- 
- #include <asm/mach-types.h>
-@@ -166,6 +171,129 @@ static __init void omapl138_hawk_mmc_init(void)
- 	gpiod_remove_lookup_table(&mmc_gpios_table);
- }
- 
-+static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
-+	{
-+		.name		= "u-boot env",
-+		.offset		= 0,
-+		.size		= SZ_128K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	 },
-+	{
-+		.name		= "u-boot",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= SZ_512K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	},
-+	{
-+		.name		= "free space",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= MTDPART_SIZ_FULL,
-+		.mask_flags	= 0,
-+	},
-+};
-+
-+static struct davinci_aemif_timing omapl138_hawk_nandflash_timing = {
-+	.wsetup		= 24,
-+	.wstrobe	= 21,
-+	.whold		= 14,
-+	.rsetup		= 19,
-+	.rstrobe	= 50,
-+	.rhold		= 0,
-+	.ta		= 20,
-+};
-+
-+static struct davinci_nand_pdata omapl138_hawk_nandflash_data = {
-+	.core_chipsel	= 1,
-+	.parts		= omapl138_hawk_nandflash_partition,
-+	.nr_parts	= ARRAY_SIZE(omapl138_hawk_nandflash_partition),
-+	.ecc_mode	= NAND_ECC_HW,
-+	.ecc_bits	= 4,
-+	.bbt_options	= NAND_BBT_USE_FLASH,
-+	.options	= NAND_BUSWIDTH_16,
-+	.timing		= &omapl138_hawk_nandflash_timing,
-+	.mask_chipsel	= 0,
-+	.mask_ale	= 0,
-+	.mask_cle	= 0,
-+};
-+
-+static struct resource omapl138_hawk_nandflash_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CS3_BASE,
-+		.end	= DA8XX_AEMIF_CS3_BASE + SZ_32M,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct resource omapl138_hawk_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	}
-+};
-+
-+static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
-+	}
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &omapl138_hawk_nandflash_data,
-+		},
-+		.resource	= omapl138_hawk_nandflash_resource,
-+		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
-+	}
-+};
-+
-+static struct aemif_platform_data omapl138_hawk_aemif_pdata = {
-+	.cs_offset = 2,
-+	.abus_data = omapl138_hawk_aemif_abus_data,
-+	.num_abus_data = ARRAY_SIZE(omapl138_hawk_aemif_abus_data),
-+	.sub_devices = omapl138_hawk_aemif_devices,
-+	.num_sub_devices = ARRAY_SIZE(omapl138_hawk_aemif_devices),
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &omapl138_hawk_aemif_pdata,
-+	},
-+	.resource	= omapl138_hawk_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(omapl138_hawk_aemif_resource),
-+};
-+
-+static const short omapl138_hawk_nand_pins[] = {
-+	DA850_EMA_WAIT_1, DA850_NEMA_OE, DA850_NEMA_WE, DA850_NEMA_CS_3,
-+	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
-+	DA850_EMA_D_4, DA850_EMA_D_5, DA850_EMA_D_6, DA850_EMA_D_7,
-+	DA850_EMA_D_8, DA850_EMA_D_9, DA850_EMA_D_10, DA850_EMA_D_11,
-+	DA850_EMA_D_12, DA850_EMA_D_13, DA850_EMA_D_14, DA850_EMA_D_15,
-+	DA850_EMA_A_1, DA850_EMA_A_2,
-+	-1
-+};
-+
-+static int omapl138_hawk_register_aemif(void)
-+{
-+	int ret;
-+
-+	ret = davinci_cfg_reg_list(omapl138_hawk_nand_pins);
-+	if (ret)
-+		pr_warn("%s: NAND mux setup failed: %d\n", __func__, ret);
-+
-+	return platform_device_register(&omapl138_hawk_aemif_device);
-+}
-+
- static irqreturn_t omapl138_hawk_usb_ocic_irq(int irq, void *dev_id);
- static da8xx_ocic_handler_t hawk_usb_ocic_handler;
- 
-@@ -298,6 +426,10 @@ static __init void omapl138_hawk_init(void)
- 
- 	omapl138_hawk_usb_init();
- 
-+	ret = omapl138_hawk_register_aemif();
-+	if (ret)
-+		pr_warn("%s: aemif registration failed: %d\n", __func__, ret);
-+
- 	ret = da8xx_register_watchdog();
- 	if (ret)
- 		pr_warn("%s: watchdog registration failed: %d\n",
--- 
-2.17.1
+> ---
+>  drivers/clk/tegra/clk-divider.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee14773..58874c1bbf5e 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -194,6 +194,7 @@ static const struct clk_div_table mc_div_table[] = {
+>  struct clk *tegra_clk_register_mc(const char *name, const char *parent_name,
+>  				  void __iomem *reg, spinlock_t *lock)
+>  {
+> -	return clk_register_divider_table(NULL, name, parent_name, 0, reg,
+> -					  16, 1, 0, mc_div_table, lock);
+> +	return clk_register_divider_table(NULL, name, parent_name,
+> +					  CLK_IS_CRITICAL, reg, 16, 1, 0,
+> +					  mc_div_table, lock);
+>  }
+> -- 
+> 2.17.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
