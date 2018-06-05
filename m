@@ -1,69 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:32746 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeFTGa7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jun 2018 02:30:59 -0400
-Subject: Re: dmtimer fclk regression in 4.16?
-To: David Rivshin <drivshin@awxrd.com>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-CC: Tony Lindgren <tony@atomide.com>, "J, Keerthy" <j-keerthy@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180619145339.08322293.drivshin@awxrd.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <1b9995a0-0a44-2896-4492-0d16e3fa2b53@ti.com>
-Date: Wed, 20 Jun 2018 09:30:40 +0300
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Tue, 5 Jun 2018 15:25:39 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 00/26] arm64: allwinner: Add A64 DE2
+ HDMI support
+Message-ID: <20180605132539.m54xwfzfs6btrmtc@flea>
+References: <20180518094536.17201-1-jagan@amarulasolutions.com>
+ <20180518095913.nzl3sr5wn6cg4ra5@flea>
+ <CAMty3ZC13J+bCWK_=9816Lu-5ctC0UfF4-XR3yNSpHdH8q8Faw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180619145339.08322293.drivshin@awxrd.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="b6opfkfolfd5hoil"
+In-Reply-To: <CAMty3ZC13J+bCWK_=9816Lu-5ctC0UfF4-XR3yNSpHdH8q8Faw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/06/18 21:53, David Rivshin wrote:
-> I think I've run across a regression in 4.16 that resulted from the TI clock
-> infrastructure changes. A bisect pointed to [1] as the first breaking commit.
-> 
-> Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented
-> by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with
-> 4.16 that parenting fails in omap_dm_timer_set_source(), called from
-> pwm_omap_dmtimer_probe, at this check:
-> 	if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
-> 		return 0;
-> because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent
-> is "timer7_fck".
-> 
-> It seemed to me that timer->fclk should instead be "timer7_fck" (which has
-> the desired set of possible parents). I tried following the lead set in [2]
-> and added "clocks" and "clock-names" properties on timer7. However, that
-> resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(),
-> failing when it tries to parent "timer7_fck" to itself.
-> 
-> The following change in omap_dm_timer_prepare() does seem to work:
-> -		timer->fclk = clk_get(&timer->pdev->dev, "fck");
-> +		timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));
 
-It seems omap_dm_timer_of_set_source() is actually completely broken and 
-isn't doing anything useful. Neil, what was this function supposed to be 
-doing, seeing you invented the initial patch for that (commit 
-31a7448f4fa8a528040e3df593e9781f55218183)?
+--b6opfkfolfd5hoil
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Tero
+On Tue, Jun 05, 2018 at 06:23:57PM +0530, Jagan Teki wrote:
+> On Fri, May 18, 2018 at 3:29 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Fri, May 18, 2018 at 03:15:10PM +0530, Jagan Teki wrote:
+> >> Allwinner A64 has display engine pipeline like other Allwinner SOC's A=
+83T/H3/H5.
+> >>
+> >> A64 behaviour similar to Allwinner A83T where
+> >> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
+> >> Mixer1 =3D> TCON1 =3D> HDMI
+> >> as per Display System Block DiagramAllwinner_A64_User_Manual_V1.1.pdf
+> >>
+> >> This is second patch-set followed with previous RFC[1] and first serie=
+s[2]
+> >> and merely concentrated on HDMI pipeline through TCON1 and rest will a=
+dd eventually.
+> >>
+> >> This series fixed previous version comments
+> >> - about documenting fallback compatibles
+> >> - adding new compatible for mixer1
+> >> - support for multiple DW HDMI PHY clock parents (thanks, to Jernej)
+> >>
+> >> Note:
+> >> Pine64 boards are unable to get edid by default like other A64 boards,
+> >> but forcing 'video=3DHDMI-A-1:1920x1080@60D' kernel command line can
+> >> create edid with display on penel.
+> >
+> > There's no point in trying to push this without the SRAM issue being
+> > solved. It is required, and won't be merged unless this is addressed.
+>=20
+> is SRAM issue resolved? if so may be I will try to test it on top.
 
-> but I'm very uncertain whether that's the right path.
-> Should omap_dm_timer know that the clock returned is actually a child of the
-> clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the
-> timerN_fck in the first place? Or is the problem something else entirely?
-> 
-> As I'm not sure how these pieces are all intended to fit together, any
-> pointers would be appreciated.
-> 
-> Thanks,
-> David Rivshin
-> 
-> [1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data")
-> https://www.spinics.net/lists/linux-omap/msg139798.html
-> [2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
-> https://www.spinics.net/lists/linux-omap/msg140605.html
-> 
+I'd expect the one working on this to push a solution to solve this.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--b6opfkfolfd5hoil
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsWj1IACgkQ0rTAlCFN
+r3SpSw/9GO1lW52OjlTpVPnGy+0vHIBUtqdF92P9tuQYHXeDDnhyqfXKRkFYj7iJ
+Dy+XDFFENnqUVM2GcqqHJmCbZUVjucrBWbLpyQvzQ78a3K3/8RSPeoYr0wgORJ89
+K3yynQW3AvUQCmADh1+DIlpi8eIsQ97yT9TBBc1cNamlE3QA44iqlqaXUI0d7JpY
+ZVC9jbqb+k3whtsYVFpbwIH0a+XYzSDcNX4sjixnQdASHb0kMO1CW2QWs5XQTEbR
+21W4fNXKZGK5zW1gMK+H2SbcwDz7zm7pLWM1JjkqnJDRqj8bJKJYJPtjhLnJDXlJ
+zfwsb0fKiGOLVqNmWgyfiY3QkOtyllEz/O1xG1lTI3X6YCTPsiHPtbch3X0jkyI9
+QNflDc8YXJ4CAt7z94HYTL3445UUXteZ8/5jGeMN8eV+/YHyiEGMZQdYBsPTA44S
+4oxKfSqQNZuHnuMG8U+spnqwGo2QmGMwLWbTjEqml6t/5LZA1M0+jm4V9LDrX3un
+PB6OIGhWItNrj5nZB19OGx8MfU2Ldx324Sam/dfS9JBtpRo5hZWXkAyMW7GzrECm
+pFknUKRLRLBI5+/8wk4GL6QvXPUufkX5IfEaGCzUvlITUc7nnZ0XpkpiOIkL7cP/
+RfoTSZI9obSdUSv2eIDm5xs9ld2TKmaZa4vrwlBKGcKj13LaGAA=
+=Obu0
+-----END PGP SIGNATURE-----
+
+--b6opfkfolfd5hoil--
