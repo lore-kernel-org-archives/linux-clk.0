@@ -1,79 +1,130 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44247 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933605AbeFRK71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jun 2018 06:59:27 -0400
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-2-songjun.wu@linux.intel.com> <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
- <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 18 Jun 2018 12:59:24 +0200
-Message-ID: <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-To: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
+In-Reply-To: <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com> <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 5 Jun 2018 16:58:43 +0300
+Message-ID: <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 18, 2018 at 11:42 AM, Wu, Songjun
-<songjun.wu@linux.intel.com> wrote:
-> On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
->>
->> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com>
->> wrote:
->>>
->>> Previous implementation uses a hard-coded register value to check if
->>> the current serial entity is the console entity.
->>> Now the lantiq serial driver uses the aliases for the index of the
->>> serial port.
->>> The lantiq danube serial dts are updated with aliases to support this.
->>>
->>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->>> ---
->>>
->>>   arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->>>   1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi
->>> b/arch/mips/boot/dts/lantiq/danube.dtsi
->>> index 2dd950181f8a..7a9e15da6bd0 100644
->>> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
->>> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
->>> @@ -4,6 +4,10 @@
->>>          #size-cells = <1>;
->>>          compatible = "lantiq,xway", "lantiq,danube";
->>>
->>> +       aliases {
->>> +               serial0 = &asc1;
->>> +       };
->>> +
->>
->> You generally want the aliases to be part of the board specific file,
->> not every board numbers their serial ports in the same way.
->>
->
-> In this chip only asc1 can be used as console,  so serial0 is defined in
-> chip specific file.
+On Tue, May 29, 2018 at 1:02 PM, Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+> Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
 
-This was a more general comment about 'aliases' being board specific
-in principle (though we've had exceptions in the past). Even if there
-is only one uart on the chip, I'd recommend following the same
-conventions as the other chips that have more than one uart.
+> +#include <linux/kernel.h>
 
-       Arnd
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+
+One of these is redundant.
+
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/machine.h>
+> +#include <linux/delay.h>
+> +#include <linux/slab.h>
+> +#include <linux/gpio.h>
+> +#include <linux/mfd/bd71837.h>
+> +#include <linux/regulator/of_regulator.h>
+
+Can you keep the list ordered?
+
+> +       dev_dbg(&(pmic->pdev->dev), "Buck[%d] Set Ramp = %d\n", id + 1,
+> +               ramp_delay);
+
+Redundant parens.
+
+> +static int bd71837_regulator_set_regmap(struct regulator_dev *rdev, int set)
+> +{
+
+> +       int ret = -EINVAL;
+
+Redundant assignment.
+
+> +       if (!set)
+> +               ret = regulator_disable_regmap(rdev);
+> +       else
+> +               ret = regulator_enable_regmap(rdev);
+
+> +       return ret;
+> +}
+
+> +static int bd71837_probe(struct platform_device *pdev)
+> +{
+
+> +       pmic = devm_kzalloc(&pdev->dev, sizeof(struct bd71837_pmic),
+> +                           GFP_KERNEL);
+
+sizeof(*pmic) and one line as result?
+
+> +       if (!pmic)
+> +               return -ENOMEM;
+
+> +       if (!pmic->mfd) {
+> +               dev_err(&pdev->dev, "No MFD driver data\n");
+
+> +               err = -EINVAL;
+> +               goto err;
+
+Plain return?
+
+> +       }
+
+> +               dev_dbg(&pmic->pdev->dev, "%s: Unlocked lock register 0x%x\n",
+> +                       __func__, BD71837_REG_REGLOCK);
+
+__func__ part is redundant.
+
+> +       for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
+
+> +
+
+Redundant blank line.
+
+> +               rdev = devm_regulator_register(&pdev->dev, desc, &config);
+> +               if (IS_ERR(rdev)) {
+> +                       dev_err(pmic->mfd->dev,
+> +                               "failed to register %s regulator\n",
+> +                               desc->name);
+
+> +                       err = PTR_ERR(rdev);
+> +                       goto err;
+
+Plain return ...
+
+> +err:
+> +       return err;
+
+Redundant.
+
+> +}
+
+> +static struct platform_driver bd71837_regulator = {
+> +       .driver = {
+> +                  .name = "bd71837-pmic",
+
+> +                  .owner = THIS_MODULE,
+
+This done by macro you are using below. Thus, redundant.
+
+> +                  },
+> +       .probe = bd71837_probe,
+> +};
+> +
+> +module_platform_driver(bd71837_regulator);
+
+-- 
+With Best Regards,
+Andy Shevchenko
