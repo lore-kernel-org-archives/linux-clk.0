@@ -1,39 +1,40 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 25 Jun 2018 11:20:52 +0200
-Message-ID: <CAMuHMdVtkxvpBjSy2+2MHvZ15t5ZTSq-4H+pfgsayOx+EHXnEg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/1] clk: renesas: Renesas R9A06G032 clock driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Mikko Perttunen <cyndis@kapsi.fi>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk: tegra: emc: Avoid out-of-bounds bug
+Date: Tue,  5 Jun 2018 15:12:32 +0300
+Message-Id: <20180605121232.7121-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Apparently there was an attempt to avoid out-of-bounds accesses when there
+is only one memory timing available, but there is a typo in the code that
+neglects that attempt.
 
-On Mon, Jun 25, 2018 at 10:29 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This provides a clock driver for the Renesas R09A06G032.
-> This uses a structure derived from both the RCAR gen2 driver as well as
-> the renesas-cpg-mssr driver.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-emc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks, updated.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index 5234acd30e89..0621a3a82ea6 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -132,7 +132,7 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ 		timing = tegra->timings + i;
+ 
+ 		if (timing->rate > req->max_rate) {
+-			i = min(i, 1);
++			i = max(i, 1);
+ 			req->rate = tegra->timings[i - 1].rate;
+ 			return 0;
+ 		}
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
