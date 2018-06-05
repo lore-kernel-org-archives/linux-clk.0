@@ -1,184 +1,70 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <d-gerlach@ti.com>, <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
-Subject: [PATCH 1/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Tue, 19 Jun 2018 09:58:22 +0530
-Message-ID: <1529382505-3069-2-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
-References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+Date: Tue,  5 Jun 2018 09:29:58 +0100
+Message-Id: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russ Dill <Russ.Dill@ti.com>
+The Renesas R9A06G032 SYSCTRL node description.
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
-
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- drivers/clk/clk.c            | 74 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  7 +++++
- include/linux/clk.h          | 25 +++++++++++++++
- 3 files changed, 106 insertions(+)
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a24a6af..7347e06 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,80 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+static int _clk_save_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+	int ret = 0;
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+new file mode 100644
+index 0000000..6aee360
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+@@ -0,0 +1,32 @@
++* Renesas R9A06G032 SYSCTRL
 +
-+	hlist_for_each_entry(child, &clk->children, child_node) {
-+		ret = _clk_save_context(child);
-+		if (ret < 0)
-+			return ret;
-+	}
++Required Properties:
 +
-+	if (clk->ops && clk->ops->save_context)
-+		ret = clk->ops->save_context(clk->hw);
++  - compatible: Must be:
++    - "renesas,r9a06g032-sysctrl"
++  - reg: Base address and length of the SYSCTRL IO block.
++  - #clock-cells: Must be 1
 +
-+	return ret;
-+}
++Examples
++--------
 +
-+static void _clk_restore_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
++  - SYSCTRL node:
 +
-+	if (clk->ops && clk->ops->restore_context)
-+		clk->ops->restore_context(clk->hw);
++	sysctrl: system-controller@4000c000 {
++		compatible = "renesas,r9a06g032-sysctrl";
++		reg = <0x4000c000 0x1000>;
++		#clock-cells = <1>;
++	};
 +
-+	hlist_for_each_entry(child, &clk->children, child_node)
-+		_clk_restore_context(child);
-+}
++  - Other nodes can use the clocks provided by SYSCTRL as in:
 +
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code.  Returns 0 on success.
-+ */
-+int clk_save_context(void)
-+{
-+	struct clk_core *clk;
-+	int ret;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(clk_save_context);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * Restore the saved clock context upon resume.
-+ *
-+ */
-+void clk_restore_context(void)
-+{
-+	struct clk_core *clk;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node)
-+		_clk_restore_context(clk);
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
-+		_clk_restore_context(clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_restore_context);
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b7cfa03..7f30d62 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -106,6 +106,11 @@ struct clk_rate_request {
-  *		Called with enable_lock held.  This function must not
-  *		sleep.
-  *
-+ * @save_context: Save the context of the clock in prepration for poweroff.
-+ *
-+ * @restore_context: Restore the context of the clock after a restoration
-+ *		of power.
-+ *
-  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-  *		ensure that the prepare_mutex is held across this call.
-@@ -201,6 +206,8 @@ struct clk_ops {
- 	void		(*disable)(struct clk_hw *hw);
- 	int		(*is_enabled)(struct clk_hw *hw);
- 	void		(*disable_unused)(struct clk_hw *hw);
-+	int		(*save_context)(struct clk_hw *hw);
-+	void		(*restore_context)(struct clk_hw *hw);
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
- 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..70a2662 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -596,6 +596,23 @@ int __must_check clk_bulk_enable(int num_clks,
-  */
- struct clk *clk_get_sys(const char *dev_id, const char *con_id);
- 
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code so locking is not necessary.
-+ */
-+int clk_save_context(void);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * This occurs with all clocks enabled. Occurs deep within the resume code
-+ * so locking is not necessary.
-+ */
-+void clk_restore_context(void);
-+
- #else /* !CONFIG_HAVE_CLK */
- 
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -695,6 +712,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
- 	return NULL;
- }
-+
-+static inline int clk_save_context(void)
-+{
-+	return 0;
-+}
-+
-+static inline void clk_restore_context(void) {}
-+
- #endif
- 
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
++	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
++	uart0: serial@40060000 {
++		compatible = "snps,dw-apb-uart";
++		reg = <0x40060000 0x400>;
++		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		clocks = <&sysctrl R9A06G032_CLK_UART0>;
++		clock-names = "baudclk";
++	};
 -- 
-1.9.1
+2.7.4
