@@ -1,57 +1,44 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:36227 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932671AbeFGIlh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:41:37 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 3/4] ARM: at91: fix USB clock detection handling
-Date: Thu,  7 Jun 2018 10:41:06 +0200
-Message-Id: <20180607084107.4461-4-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33002 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751619AbeFEVQn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Jun 2018 17:16:43 -0400
+Date: Tue, 5 Jun 2018 15:08:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: sboyd@kernel.org, michael@amarulasolutions.com,
+        stefan.wahren@i2se.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock
+ definition order
+Message-ID: <20180605210855.GA27408@rob-hp-laptop>
+References: <1527948122-32092-1-git-send-email-festevam@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1527948122-32092-1-git-send-email-festevam@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add more compatibles to be able to correct the USB clock detection.
+On Sat, Jun 02, 2018 at 11:02:02AM -0300, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Commit f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled
+> by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
+> at the end of the list, which may cause dtb breakage when running an old
+> dtb with a newer kernel.
+> 
+> In order to avoid that, simply add the new CLK_CKO clock definitions
+> at the end of the list.
+> 
+> Fixes: f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled by CCOSR")
+> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+> Changes since v1:
+> - Use 12 char for the commit id
+> 
+>  include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
+>  1 file changed, 19 insertions(+), 21 deletions(-)
 
-at91sam9261 and at91sam9263 have the same PMC_SCSR layout as at91sam9260.
-at91sam9rl doesn't have any USB clock.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/arm/mach-at91/pm.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 849014c01cf4..563f34d01ce4 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -559,15 +559,20 @@ static const struct pmc_info pmc_infos[] __initconst = {
- 	{ .uhp_udp_mask = AT91RM9200_PMC_UHP | AT91RM9200_PMC_UDP },
- 	{ .uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP },
- 	{ .uhp_udp_mask = AT91SAM926x_PMC_UHP },
-+	{ .uhp_udp_mask = 0 },
- };
- 
- static const struct of_device_id atmel_pmc_ids[] __initconst = {
- 	{ .compatible = "atmel,at91rm9200-pmc", .data = &pmc_infos[0] },
- 	{ .compatible = "atmel,at91sam9260-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "atmel,at91sam9261-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "atmel,at91sam9263-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,at91sam9g45-pmc", .data = &pmc_infos[2] },
- 	{ .compatible = "atmel,at91sam9n12-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "atmel,at91sam9rl-pmc", .data = &pmc_infos[3] },
- 	{ .compatible = "atmel,at91sam9x5-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d3-pmc", .data = &pmc_infos[1] },
-+	{ .compatible = "atmel,sama5d4-pmc", .data = &pmc_infos[1] },
- 	{ .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
- 	{ /* sentinel */ },
- };
--- 
-2.17.1
-
+Acked-by: Rob Herring <robh@kernel.org>
