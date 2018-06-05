@@ -1,71 +1,82 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 6/6] ARM: dts: dra76x: Add MCAN node
-Date: Wed, 6 Jun 2018 11:38:26 +0530
-Message-ID: <20180606060826.14671-7-faiz_abbas@ti.com>
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Tue,  5 Jun 2018 09:30:00 +0100
+Message-Id: <1528187462-47093-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Franklin S Cooper Jr <fcooper@ti.com>
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-Add support for the MCAN peripheral which supports both classic
-CAN messages along with the new CAN-FD message.
-
-Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
-
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/dra76-evm.dts |  6 ++++++
- arch/arm/boot/dts/dra76x.dtsi   | 13 +++++++++++++
- 2 files changed, 19 insertions(+)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
-index 2deb96405d06..b6ac2b6ffc6e 100644
---- a/arch/arm/boot/dts/dra76-evm.dts
-+++ b/arch/arm/boot/dts/dra76-evm.dts
-@@ -404,3 +404,9 @@
- 	phys = <&pcie1_phy>, <&pcie2_phy>;
- 	phy-names = "pcie-phy0", "pcie-phy1";
- };
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37a3de7..c07f077 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -819,6 +819,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..4e57ae2
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
 +
-+&m_can0 {
-+	can-transceiver {
-+		max-bitrate = <5000000>;
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
 +	};
 +};
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index 5157cc431574..613e4dc0ed3e 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -26,6 +26,19 @@
- 			ti,syss-mask = <1>;
- 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
- 			clock-names = "fck";
 +
-+			m_can0: mcan@1a00 {
-+				compatible = "bosch,m_can";
-+				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
-+				reg-names = "m_can", "message_ram";
-+				interrupt-parent = <&gic>;
-+				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names = "int0", "int1";
-+				clocks = <&mcan_clk>, <&l3_iclk_div>;
-+				clock-names = "cclk", "hclk";
-+				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
-+			};
- 		};
- 	};
- 
++&uart0 {
++	status = "okay";
++};
 -- 
-2.17.0
+2.7.4
