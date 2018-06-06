@@ -1,62 +1,71 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/8] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
-Date: Sun, 17 Jun 2018 17:55:38 +0300
-Message-Id: <20180617145539.4758-8-digetx@gmail.com>
-In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
-References: <20180617145539.4758-1-digetx@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v3 6/6] ARM: dts: dra76x: Add MCAN node
+Date: Wed, 6 Jun 2018 11:38:26 +0530
+Message-ID: <20180606060826.14671-7-faiz_abbas@ti.com>
+In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Ensure that direct PLLM sourcing is turned off for EMC as we don't support
-that configuration in the clk driver.
+From: Franklin S Cooper Jr <fcooper@ti.com>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Add support for the MCAN peripheral which supports both classic
+CAN messages along with the new CAN-FD message.
+
+Add MCAN node to evm and enable it with a maximum datarate of 5 mbps
+
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/dra76-evm.dts |  6 ++++++
+ arch/arm/boot/dts/dra76x.dtsi   | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 2bd35418716a..ca4eadb9520e 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 
- static void __init tegra20_emc_clk_init(void)
- {
-+	const u32 use_pllm_ud = BIT(29);
- 	struct clk *clk;
-+	u32 emc_reg;
- 
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
-@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
- 				    &emc_lock);
- 	clks[TEGRA20_CLK_MC] = clk;
- 
-+	/* un-divided pll_m_out0 is currently unsupported */
-+	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
-+	if (emc_reg & use_pllm_ud) {
-+		pr_err("%s: un-divided PllM_out0 used as clock source\n",
-+		       __func__);
-+		return;
-+	}
+diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
+index 2deb96405d06..b6ac2b6ffc6e 100644
+--- a/arch/arm/boot/dts/dra76-evm.dts
++++ b/arch/arm/boot/dts/dra76-evm.dts
+@@ -404,3 +404,9 @@
+ 	phys = <&pcie1_phy>, <&pcie2_phy>;
+ 	phy-names = "pcie-phy0", "pcie-phy1";
+ };
 +
- 	/*
- 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
- 	 * the same time due to a HW bug, this won't happen because we're
++&m_can0 {
++	can-transceiver {
++		max-bitrate = <5000000>;
++	};
++};
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index 5157cc431574..613e4dc0ed3e 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -26,6 +26,19 @@
+ 			ti,syss-mask = <1>;
+ 			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
+ 			clock-names = "fck";
++
++			m_can0: mcan@1a00 {
++				compatible = "bosch,m_can";
++				reg = <0x1a00 0x4000>, <0x0 0x18FC>;
++				reg-names = "m_can", "message_ram";
++				interrupt-parent = <&gic>;
++				interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
++				interrupt-names = "int0", "int1";
++				clocks = <&mcan_clk>, <&l3_iclk_div>;
++				clock-names = "cclk", "hclk";
++				bosch,mram-cfg = <0x0 0 0 32 0 0 1 1>;
++			};
+ 		};
+ 	};
+ 
 -- 
-2.17.1
+2.17.0
