@@ -1,103 +1,43 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-4-o.rempel@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
-Date: Tue, 12 Jun 2018 14:42:12 +0200
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Wed, 6 Jun 2018 08:14:36 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 2/4] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180606051436.GC20078@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180605154757.GA26812@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180605154757.GA26812@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
-Content-Type: multipart/mixed; boundary="d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
-Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-4-o.rempel@pengutronix.de>
-In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
+On Tue, Jun 05, 2018 at 09:47:57AM -0600, Rob Herring wrote:
+> On Mon, Jun 04, 2018 at 04:18:30PM +0300, Matti Vaittinen wrote:
+> > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 76 ++++++++++++++++++++++
+> >  1 file changed, 76 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> 
+> I've replied on the prior version discussion. Please don't send new 
+> versions if the last one is still under discussion.
 
---d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Allright. I thought this was a good way to suggest something which I
+thought might address your concerns. But you are correct, it is better
+to continue discussion in one emai thread. Sorry for adding this
+version. I'll write further replies in v4 thread untill we get some
+conclusion.
 
-Hi Rafael,
-
-Last version of this patch was send at 17.05.2018. No other comment was
-provided and this patch is a blocker for other patches in this serie.
-Can you please give some feedback on it.
-
-On 17.05.2018 07:50, Oleksij Rempel wrote:
-> Export pm_power_off_prepare. It is needed to implement power off on
-> Freescale/NXP iMX6 based boards with external power management
-> integrated circuit (PMIC).
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  kernel/reboot.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index e4ced883d8de..83810d726f3e 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -49,6 +49,7 @@ int reboot_force;
->   */
-> =20
->  void (*pm_power_off_prepare)(void);
-> +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
-> =20
->  /**
->   *	emergency_restart - reboot the system
->=20
-
-
---d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg--
-
---Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsfv6QACgkQdQOiSHVI
-77Qdywf/T0Izrw+e0Li53mUZBC1xxmYwoUcLfZawU2SQsO4BWC3bRpOycrT5AOIZ
-lrCTbNjBWl9a1AVF4FhiWj+u7WaOwo4QWQTFPUwHJ4mBii/IWfEcz+l6Ivu0SSlZ
-FrZ//lJlaG67yUWG23ZiGNVTpNrdIoy2Awe5fBCy27IBdRf0INY3mB+VxqdCOwUu
-Ch2emdFFSNOQSOEWQJDz9EObHLqf/7adzNgXuIUpSO33rXO9LJPxdY4VOdzhbfy7
-Vq6x+Zl54rwyW4stbtklrBnkjjbgbvzqOSIutUEMOMwheohpIcUa6r8jDZXpHnCE
-CVRJI4cEfYuMFRFR+SAhEDFuYEYwyQ==
-=0P0j
------END PGP SIGNATURE-----
-
---Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924--
+Br,
+	Matti Vaittinen
