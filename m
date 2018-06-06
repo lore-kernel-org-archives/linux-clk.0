@@ -1,120 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:37143 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932397AbeFUILZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:25 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v2 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
-Date: Thu, 21 Jun 2018 13:40:20 +0530
-Message-ID: <1529568620-19765-5-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 6 Jun 2018 12:45:50 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Tegra20 External Memory Controller driver
+Message-ID: <20180606104550.GK11810@ulmo>
+References: <20180603223654.23324-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RVlUGXxwBj5SDcM9"
+In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Save/restore clk context based on enable_off_mode setting.
-The context needs to be saved at the very end of suspend path
-and restored at the beginning of resume path.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+--RVlUGXxwBj5SDcM9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No Changes in v2
+On Mon, Jun 04, 2018 at 01:36:49AM +0300, Dmitry Osipenko wrote:
+> Hello,
+>=20
+> Couple years ago the Tegra20 EMC driver was removed from the kernel
+> due to incompatible changes in the Tegra's clock driver. This patchset
+> introduces a modernized EMC driver. Currently the sole purpose of the
+> driver is to initialize DRAM frequency to maximum rate during of the
+> kernels boot-up. Later we may consider implementing dynamic memory
+> frequency scaling, utilizing functionality provided by this driver.
+>=20
+> Changelog:
+>=20
+> v2:
+> 	- Minor code cleanups like consistent use of writel_relaxed instead
+> 	  of non-relaxed version, reworded error messages, etc.
+>=20
+> 	- Factored out use_pllm_ud bit checking into a standalone patch for
+> 	  consistency.
+>=20
+> Dmitry Osipenko (5):
+>   dt: bindings: tegra20-emc: Document interrupt property
+>   ARM: dts: tegra20: Add interrupt to External Memory Controller
+>   clk: tegra20: Turn EMC clock gate into divider
+>   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+>   memory: tegra: Introduce Tegra20 EMC driver
 
- arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
- drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
- include/linux/platform_data/pm33xx.h |  1 +
- 3 files changed, 29 insertions(+)
+I took a brief look and didn't spot any dependencies between the clk and
+memory patches. Is it correct that these can be applied separately?
 
-diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
-index 9b3755a..29f848f 100644
---- a/arch/arm/mach-omap2/pm33xx-core.c
-+++ b/arch/arm/mach-omap2/pm33xx-core.c
-@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
- 	return 0;
- }
- 
-+static int am43xx_check_off_mode_enable(void)
-+{
-+	/*
-+	 * Check for am437x-sk-evm which due to HW design cannot support
-+	 * this mode reliably.
-+	 */
-+	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
-+		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
-+		return 0;
-+	}
-+
-+	return enable_off_mode;
-+}
-+
- static int amx3_common_init(void)
- {
- 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
-@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
- 	.init = am43xx_suspend_init,
- 	.soc_suspend = am43xx_suspend,
- 	.get_sram_addrs = amx3_get_sram_addrs,
-+	.check_off_mode_enable = am43xx_check_off_mode_enable,
- };
- 
- static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index 652739c..e749b8d 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -6,6 +6,7 @@
-  *	Vaibhav Bedia, Dave Gerlach
-  */
- 
-+#include <linux/clk.h>
- #include <linux/cpu.h>
- #include <linux/err.h>
- #include <linux/genalloc.h>
-@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- {
- 	int i, ret = 0;
- 
-+	/*
-+	 * For RTC only mode with DDR in selfresh we need to save
-+	 * clocks context at the very end
-+	 */
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_save_context();
-+
- 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
- 				  am33xx_do_wfi_sram);
- 
-@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- 		}
- 	}
- 
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_restore_context();
-+
- 	return ret;
- }
- 
-diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
-index f9bed2a..36f7007 100644
---- a/include/linux/platform_data/pm33xx.h
-+++ b/include/linux/platform_data/pm33xx.h
-@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
- 	int	(*init)(void);
- 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
- 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
-+	int (*check_off_mode_enable)(void);
- };
- 
- struct am33xx_pm_sram_data {
--- 
-1.9.1
+Thierry
 
+--RVlUGXxwBj5SDcM9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsXu14ACgkQ3SOs138+
+s6ESmRAAgk7ByRH8GWRq1Ksk7cukW8gtj4BjXdmxXTZ3g3WpV48CSdZ96NemAfqw
+yZU3YzV/sb1D32i8hbCwrDWU5C1SmuKSkjnrBePyA+brHtzzuWI9KY149DjTi2Y3
+qzoh+5/hgQ0lAxbh18RqpyTzfUSFOdBAUhhDyhdWO7pirdB59tMuNidiPNmZFFKB
+9hDLaIjHWUOLDGFR3G48AgQDhwnN8xxgmNCpoCNUBsO5kkiQb/xDvOgzsQ+I8rjs
+m+x1iY6LxqfrB/oxyh1uUj/m5Gd0vJTnIqJ981bUhPSUezeQQ/6Up9mP/v6lPOzw
+dqIbIA7BG5vkOJ0mgi0CFeV6kdwmx8M6I3ZAAzvD1+FpcqgTqNpHSNNKTz1ro9iU
+Nr6KStV2Dhu/enRqDuhtcE/OanPV90Q8/R/W5+wkIaG3bMVYMhgcjJTiPZCObXiD
+pqQI+34TZj4M4EGQkRov/ZzBlSiknXGewsFdf0FD3sZIhLmDQfhm+9urApB8qmGt
+vcwff3HkejKtpe4RwT1gbiL/log9um3+U5/Jdua0AOer/cs4hH/i9qiV8LSmCKeg
+PKEBqnDkpNwuuHTgJEHR639jiqhnDCoR8kYDZOZYjv4Af9sfqmugQ4PpaiZXWyeU
+rNGIaIrmOBO+RPDKrEaBWx4aQqAElQp8Z30TQvBW6cWTSIlzRb0=
+=k4kO
+-----END PGP SIGNATURE-----
+
+--RVlUGXxwBj5SDcM9--
