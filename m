@@ -1,110 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:27635 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932131AbeFFGHv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 02:07:51 -0400
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 From: Faiz Abbas <faiz_abbas@ti.com>
 To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-Date: Wed, 6 Jun 2018 11:38:24 +0530
-Message-ID: <20180606060826.14671-5-faiz_abbas@ti.com>
+ <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v3 1/6] ARM: dts: dra762: Add MCAN clock support
+Date: Wed, 6 Jun 2018 11:38:21 +0530
+Message-ID: <20180606060826.14671-2-faiz_abbas@ti.com>
 In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
 References: <20180606060826.14671-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, paul@pwsan.com, tony@atomide.com, faiz_abbas@ti.com,
+ t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the software reset of a target interconnect
-module using its sysconfig and sysstatus registers.
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
+MCAN is clocked by H14 divider of DPLL_GMAC. Unlike other
+DPLL dividers this DPLL_GMAC H14 divider is controlled by
+control module. Adding support for these clocks.
+
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/bus/ti-sysc.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ arch/arm/boot/dts/dra76x.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 4a2244419b9b..74d716a7bd6e 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -22,11 +22,14 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/slab.h>
-+#include <linux/iopoll.h>
- 
- #include <linux/platform_data/ti-sysc.h>
- 
- #include <dt-bindings/bus/ti-sysc.h>
- 
-+#define MAX_MODULE_SOFTRESET_WAIT		10000
-+
- static const char * const reg_names[] = { "rev", "sysc", "syss", };
- 
- enum sysc_clocks {
-@@ -74,6 +77,11 @@ struct sysc {
- 	struct delayed_work idle_work;
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index 1c88c581ff18..bfc82636999c 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -17,3 +17,36 @@
+ &crossbar_mpu {
+ 	ti,irqs-skip = <10 67 68 133 139 140>;
  };
- 
-+void sysc_write(struct sysc *ddata, int offset, u32 value)
-+{
-+	writel_relaxed(value, ddata->module_va + offset);
-+}
 +
- static u32 sysc_read(struct sysc *ddata, int offset)
- {
- 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
-@@ -700,6 +708,26 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
- 	}
- }
- 
-+static int sysc_reset(struct sysc *ddata)
-+{
-+	int offset = ddata->offsets[SYSC_SYSCONFIG];
-+	int val = sysc_read(ddata, offset);
++&scm_conf_clocks {
++	dpll_gmac_h14x2_ctrl_ck: dpll_gmac_h14x2_ctrl_ck@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&dpll_gmac_x2_ck>;
++		ti,max-div = <63>;
++		reg = <0x03fc>;
++		ti,bit-shift=<20>;
++		ti,latch-bit=<26>;
++		assigned-clocks = <&dpll_gmac_h14x2_ctrl_ck>;
++		assigned-clock-rates = <80000000>;
++	};
 +
-+	val |= (0x1 << ddata->cap->regbits->srst_shift);
-+	sysc_write(ddata, offset, val);
++	dpll_gmac_h14x2_ctrl_mux_ck: dpll_gmac_h14x2_ctrl_mux_ck@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,mux-clock";
++		clocks = <&dpll_gmac_ck>, <&dpll_gmac_h14x2_ctrl_ck>;
++		reg = <0x3fc>;
++		ti,bit-shift = <29>;
++		ti,latch-bit=<26>;
++		assigned-clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
++		assigned-clock-parents = <&dpll_gmac_h14x2_ctrl_ck>;
++	};
 +
-+	/* Poll on reset status */
-+	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
-+		offset = ddata->offsets[SYSC_SYSSTATUS];
-+
-+		return readl_poll_timeout(ddata->module_va + offset, val,
-+				(val & ddata->cfg.syss_mask) == 0x0,
-+				100, MAX_MODULE_SOFTRESET_WAIT);
-+	}
-+
-+	return 0;
-+}
-+
- /* At this point the module is configured enough to read the revision */
- static int sysc_init_module(struct sysc *ddata)
- {
-@@ -716,6 +744,18 @@ static int sysc_init_module(struct sysc *ddata)
- 
- 		return 0;
- 	}
-+
-+	if (!(ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT) &&
-+	    !ddata->legacy_mode) {
-+		error = sysc_reset(ddata);
-+		if (error) {
-+			dev_err(ddata->dev, "Reset failed with %d\n", error);
-+			pm_runtime_put_sync(ddata->dev);
-+
-+			return error;
-+		}
-+	}
-+
- 	ddata->revision = sysc_read_revision(ddata);
- 	pm_runtime_put_sync(ddata->dev);
- 
++	mcan_clk: mcan_clk@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
++		ti,bit-shift = <27>;
++		reg = <0x3fc>;
++	};
++};
 -- 
 2.17.0
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
