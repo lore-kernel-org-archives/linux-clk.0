@@ -1,65 +1,290 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs13.siol.net ([185.57.226.204]:41313 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932723AbeF0U1G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 16:27:06 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Date: Wed, 27 Jun 2018 22:25:37 +0200
-Message-ID: <4275695.oLYl8XEDF6@jernej-laptop>
-In-Reply-To: <20180627195043.hfasvppfm2cbudx7@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180627180215.y5kvvdqeriadxwte@flea> <20180627195043.hfasvppfm2cbudx7@flea>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34062 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752142AbeFFVAK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 17:00:10 -0400
+Received: by mail-wm0-f66.google.com with SMTP id q4-v6so466000wmq.1
+        for <linux-clk@vger.kernel.org>; Wed, 06 Jun 2018 14:00:09 -0700 (PDT)
+From: Ray Jui <ray.jui@broadcom.com>
+References: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
+In-Reply-To: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Date: Wed, 6 Jun 2018 14:00:06 -0700
+Message-ID: <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
+Subject: RE: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
+ 'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function); did you
+ mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
+To: kbuild test robot <lkp@intel.com>,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sreda, 27. junij 2018 ob 21:50:43 CEST je Maxime Ripard napisal(a):
-> 1;5202;0c
-> 
-> On Wed, Jun 27, 2018 at 08:02:15PM +0200, Maxime Ripard wrote:
-> > On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> > > This series adds support for R40 HDMI pipeline. It is a bit special
-> > > than other already supported pipelines because it has additional unit
-> > > called TCON TOP responsible for relationship configuration between
-> > > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> > > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > > and TV encoders.
-> > > 
-> > > However, it seems that TCON TOP will become a norm, since newer
-> > > Allwinner SoCs like H6 also have this unit.
-> > > 
-> > > I tested different possible configurations:
-> > > - mixer0 <> TCON-TV0 <> HDMI
-> > > - mixer0 <> TCON-TV1 <> HDMI
-> > > - mixer1 <> TCON-TV0 <> HDMI
-> > > - mixer1 <> TCON-TV1 <> HDMI
-> > > 
-> > > Please review.
-> > 
-> > I just applied it. It didn't apply cleanly, so please make sure it
-> > does next time, or at least state what the dependencies are.
-> 
-> And it didn't compile either, because of the compile error that was
-> reported to the previous version by kbuild... Those shouldn't be
-> ignored and simply fixed.
+Hi Stephen,
 
-Sorry about that. I forgot to rebase and had same linux-next base for all 3 
-versions.
+I'd like to confirm this kbuild error is caused by changing of the defines
+in the header.
 
-I actually take a look at that kbuild message, but it just didn't make much 
-sense and it worked for me without issues. Merge conflicts would explain that.
+That is, kbuild test should pass with 2/2 patch.
 
-Best regards,
-Jernej
+If my understanding is incorrect and this requires any further action,
+please let me know.
 
+Thanks,
 
+Ray
 
+-----Original Message-----
+From: kbuild test robot [mailto:lkp@intel.com]
+Sent: Saturday, June 2, 2018 2:02 AM
+To: Pramod Kumar
+Cc: kbuild-all@01.org; linux-clk@vger.kernel.org;
+linux-arm-kernel@lists.infradead.org; Stephen Boyd; Ray Jui
+Subject: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
+'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function); did you
+mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+clk-bcm-stingray
+head:   5afa881c6635427e68c73861a2c22d8cac00b984
+commit: 48bf9a522c14449cc7c214c6062668ac54e4e88f [1/2] dt-bindings: clk:
+Update Stingray binding doc
+config: sh-allmodconfig (attached as .config)
+compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget
+https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+-O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        git checkout 48bf9a522c14449cc7c214c6062668ac54e4e88f
+        # save the attached .config to linux build tree
+        make.cross ARCH=sh
+
+Note: the clk/clk-bcm-stingray HEAD
+5afa881c6635427e68c73861a2c22d8cac00b984 builds fine.
+      It only hurts bisectibility.
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/bcm/clk-sr.c:59:3: error: 'BCM_SR_GENPLL0_SATA_CLK'
+undeclared here (not in a function); did you mean
+'BCM_SR_GENPLL0_SCR_CLK'?
+     [BCM_SR_GENPLL0_SATA_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_GENPLL0_SCR_CLK
+   drivers/clk/bcm/clk-sr.c:59:3: error: array index in initializer not of
+integer type
+   drivers/clk/bcm/clk-sr.c:59:3: note: (near initialization for
+'sr_genpll0_clk')
+   drivers/clk/bcm/clk-sr.c:184:3: error: 'BCM_SR_GENPLL5_FS_CLK'
+undeclared here (not in a function); did you mean
+'BCM_SR_GENPLL2_FS4_CLK'?
+     [BCM_SR_GENPLL5_FS_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_GENPLL2_FS4_CLK
+   drivers/clk/bcm/clk-sr.c:184:3: error: array index in initializer not
+of integer type
+   drivers/clk/bcm/clk-sr.c:184:3: note: (near initialization for
+'sr_genpll5_clk')
+   drivers/clk/bcm/clk-sr.c:185:14: warning: initialization makes integer
+from pointer without a cast [-Wint-conversion]
+      .channel = BCM_SR_GENPLL5_FS_CLK,
+                 ^~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/bcm/clk-sr.c:185:14: note: (near initialization for
+'sr_genpll5_clk[0].channel')
+   drivers/clk/bcm/clk-sr.c:185:14: error: initializer element is not
+constant
+   drivers/clk/bcm/clk-sr.c:185:14: note: (near initialization for
+'sr_genpll5_clk[0].channel')
+   drivers/clk/bcm/clk-sr.c:190:3: error: 'BCM_SR_GENPLL5_SPU_CLK'
+undeclared here (not in a function); did you mean 'BCM_SR_GENPLL5_FS_CLK'?
+     [BCM_SR_GENPLL5_SPU_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_GENPLL5_FS_CLK
+   drivers/clk/bcm/clk-sr.c:190:3: error: array index in initializer not
+of integer type
+   drivers/clk/bcm/clk-sr.c:190:3: note: (near initialization for
+'sr_genpll5_clk')
+   drivers/clk/bcm/clk-sr.c:191:14: warning: initialization makes integer
+from pointer without a cast [-Wint-conversion]
+      .channel = BCM_SR_GENPLL5_SPU_CLK,
+                 ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/bcm/clk-sr.c:191:14: note: (near initialization for
+'sr_genpll5_clk[1].channel')
+   drivers/clk/bcm/clk-sr.c:191:14: error: initializer element is not
+constant
+   drivers/clk/bcm/clk-sr.c:191:14: note: (near initialization for
+'sr_genpll5_clk[1].channel')
+>> drivers/clk/bcm/clk-sr.c:217:3: error: 'BCM_SR_LCPLL0_SATA_REF_CLK'
+undeclared here (not in a function); did you mean
+'BCM_SR_LCPLL0_SATA_REFN_CLK'?
+     [BCM_SR_LCPLL0_SATA_REF_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_LCPLL0_SATA_REFN_CLK
+   drivers/clk/bcm/clk-sr.c:217:3: error: array index in initializer not
+of integer type
+   drivers/clk/bcm/clk-sr.c:217:3: note: (near initialization for
+'sr_lcpll0_clk')
+   drivers/clk/bcm/clk-sr.c:218:14: warning: initialization makes integer
+from pointer without a cast [-Wint-conversion]
+      .channel = BCM_SR_LCPLL0_SATA_REF_CLK,
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/bcm/clk-sr.c:218:14: note: (near initialization for
+'sr_lcpll0_clk[0].channel')
+   drivers/clk/bcm/clk-sr.c:218:14: error: initializer element is not
+constant
+   drivers/clk/bcm/clk-sr.c:218:14: note: (near initialization for
+'sr_lcpll0_clk[0].channel')
+   drivers/clk/bcm/clk-sr.c:223:3: error: 'BCM_SR_LCPLL0_USB_REF_CLK'
+undeclared here (not in a function); did you mean
+'BCM_SR_LCPLL1_USB_REF_CLK'?
+     [BCM_SR_LCPLL0_USB_REF_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_LCPLL1_USB_REF_CLK
+   drivers/clk/bcm/clk-sr.c:223:3: error: array index in initializer not
+of integer type
+   drivers/clk/bcm/clk-sr.c:223:3: note: (near initialization for
+'sr_lcpll0_clk')
+   drivers/clk/bcm/clk-sr.c:224:14: warning: initialization makes integer
+from pointer without a cast [-Wint-conversion]
+      .channel = BCM_SR_LCPLL0_USB_REF_CLK,
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/bcm/clk-sr.c:224:14: note: (near initialization for
+'sr_lcpll0_clk[1].channel')
+   drivers/clk/bcm/clk-sr.c:224:14: error: initializer element is not
+constant
+   drivers/clk/bcm/clk-sr.c:224:14: note: (near initialization for
+'sr_lcpll0_clk[1].channel')
+>> drivers/clk/bcm/clk-sr.c:229:3: error: 'BCM_SR_LCPLL0_SATA_REFPN_CLK'
+undeclared here (not in a function); did you mean
+'BCM_SR_LCPLL0_SATA_REFN_CLK'?
+     [BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      BCM_SR_LCPLL0_SATA_REFN_CLK
+   drivers/clk/bcm/clk-sr.c:229:3: error: array index in initializer not
+of integer type
+   drivers/clk/bcm/clk-sr.c:229:3: note: (near initialization for
+'sr_lcpll0_clk')
+   drivers/clk/bcm/clk-sr.c:230:14: warning: initialization makes integer
+from pointer without a cast [-Wint-conversion]
+      .channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/bcm/clk-sr.c:230:14: note: (near initialization for
+'sr_lcpll0_clk[2].channel')
+   drivers/clk/bcm/clk-sr.c:230:14: error: initializer element is not
+constant
+   drivers/clk/bcm/clk-sr.c:230:14: note: (near initialization for
+'sr_lcpll0_clk[2].channel')
+
+vim +217 drivers/clk/bcm/clk-sr.c
+
+654cdd32 Sandeep Tripathy 2017-06-06  182
+654cdd32 Sandeep Tripathy 2017-06-06  183  static const struct
+iproc_clk_ctrl sr_genpll5_clk[] = {
+654cdd32 Sandeep Tripathy 2017-06-06  184  	[BCM_SR_GENPLL5_FS_CLK] =
+{
+654cdd32 Sandeep Tripathy 2017-06-06  185  		.channel =
+BCM_SR_GENPLL5_FS_CLK,
+654cdd32 Sandeep Tripathy 2017-06-06  186  		.flags =
+IPROC_CLK_AON,
+654cdd32 Sandeep Tripathy 2017-06-06  187  		.enable =
+ENABLE_VAL(0x4, 6, 0, 12),
+654cdd32 Sandeep Tripathy 2017-06-06  188  		.mdiv =
+REG_VAL(0x18, 0, 9),
+654cdd32 Sandeep Tripathy 2017-06-06  189  	},
+654cdd32 Sandeep Tripathy 2017-06-06 @190  	[BCM_SR_GENPLL5_SPU_CLK] =
+{
+654cdd32 Sandeep Tripathy 2017-06-06  191  		.channel =
+BCM_SR_GENPLL5_SPU_CLK,
+654cdd32 Sandeep Tripathy 2017-06-06  192  		.flags =
+IPROC_CLK_AON,
+654cdd32 Sandeep Tripathy 2017-06-06  193  		.enable =
+ENABLE_VAL(0x4, 6, 0, 12),
+654cdd32 Sandeep Tripathy 2017-06-06  194  		.mdiv =
+REG_VAL(0x18, 10, 9),
+654cdd32 Sandeep Tripathy 2017-06-06  195  	},
+654cdd32 Sandeep Tripathy 2017-06-06  196  };
+654cdd32 Sandeep Tripathy 2017-06-06  197
+654cdd32 Sandeep Tripathy 2017-06-06  198  static int
+sr_genpll5_clk_init(struct platform_device *pdev)
+654cdd32 Sandeep Tripathy 2017-06-06  199  {
+654cdd32 Sandeep Tripathy 2017-06-06  200
+iproc_pll_clk_setup(pdev->dev.of_node,
+654cdd32 Sandeep Tripathy 2017-06-06  201
+&sr_genpll5, NULL, 0, sr_genpll5_clk,
+654cdd32 Sandeep Tripathy 2017-06-06  202
+ARRAY_SIZE(sr_genpll5_clk));
+654cdd32 Sandeep Tripathy 2017-06-06  203  	return 0;
+654cdd32 Sandeep Tripathy 2017-06-06  204  }
+654cdd32 Sandeep Tripathy 2017-06-06  205
+654cdd32 Sandeep Tripathy 2017-06-06  206  static const struct
+iproc_pll_ctrl sr_lcpll0 = {
+654cdd32 Sandeep Tripathy 2017-06-06  207  	.flags = IPROC_CLK_AON |
+IPROC_CLK_PLL_NEEDS_SW_CFG,
+654cdd32 Sandeep Tripathy 2017-06-06  208  	.aon = AON_VAL(0x0, 2, 19,
+18),
+654cdd32 Sandeep Tripathy 2017-06-06  209  	.reset = RESET_VAL(0x0,
+31, 30),
+654cdd32 Sandeep Tripathy 2017-06-06  210  	.sw_ctrl =
+SW_CTRL_VAL(0x4, 31),
+654cdd32 Sandeep Tripathy 2017-06-06  211  	.ndiv_int = REG_VAL(0x4,
+16, 10),
+654cdd32 Sandeep Tripathy 2017-06-06  212  	.pdiv = REG_VAL(0x4, 26,
+4),
+654cdd32 Sandeep Tripathy 2017-06-06  213  	.status = REG_VAL(0x38,
+12, 1),
+654cdd32 Sandeep Tripathy 2017-06-06  214  };
+654cdd32 Sandeep Tripathy 2017-06-06  215
+654cdd32 Sandeep Tripathy 2017-06-06  216  static const struct
+iproc_clk_ctrl sr_lcpll0_clk[] = {
+654cdd32 Sandeep Tripathy 2017-06-06 @217
+[BCM_SR_LCPLL0_SATA_REF_CLK] = {
+654cdd32 Sandeep Tripathy 2017-06-06  218  		.channel =
+BCM_SR_LCPLL0_SATA_REF_CLK,
+654cdd32 Sandeep Tripathy 2017-06-06  219  		.flags =
+IPROC_CLK_AON,
+654cdd32 Sandeep Tripathy 2017-06-06  220  		.enable =
+ENABLE_VAL(0x0, 7, 1, 13),
+654cdd32 Sandeep Tripathy 2017-06-06  221  		.mdiv =
+REG_VAL(0x14, 0, 9),
+654cdd32 Sandeep Tripathy 2017-06-06  222  	},
+654cdd32 Sandeep Tripathy 2017-06-06 @223
+[BCM_SR_LCPLL0_USB_REF_CLK] = {
+654cdd32 Sandeep Tripathy 2017-06-06  224  		.channel =
+BCM_SR_LCPLL0_USB_REF_CLK,
+654cdd32 Sandeep Tripathy 2017-06-06  225  		.flags =
+IPROC_CLK_AON,
+654cdd32 Sandeep Tripathy 2017-06-06  226  		.enable =
+ENABLE_VAL(0x0, 8, 2, 14),
+654cdd32 Sandeep Tripathy 2017-06-06  227  		.mdiv =
+REG_VAL(0x14, 10, 9),
+654cdd32 Sandeep Tripathy 2017-06-06  228  	},
+654cdd32 Sandeep Tripathy 2017-06-06 @229
+[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
+654cdd32 Sandeep Tripathy 2017-06-06  230  		.channel =
+BCM_SR_LCPLL0_SATA_REFPN_CLK,
+654cdd32 Sandeep Tripathy 2017-06-06  231  		.flags =
+IPROC_CLK_AON,
+654cdd32 Sandeep Tripathy 2017-06-06  232  		.enable =
+ENABLE_VAL(0x0, 9, 3, 15),
+654cdd32 Sandeep Tripathy 2017-06-06  233  		.mdiv =
+REG_VAL(0x14, 20, 9),
+654cdd32 Sandeep Tripathy 2017-06-06  234  	},
+654cdd32 Sandeep Tripathy 2017-06-06  235  };
+654cdd32 Sandeep Tripathy 2017-06-06  236
+
+:::::: The code at line 217 was first introduced by commit
+:::::: 654cdd3229cd1d3f2bfb9df57baf88ba382a52be clk: bcm: Add clocks for
+Stingray SOC
+
+:::::: TO: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
+:::::: CC: Stephen Boyd <sboyd@codeaurora.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology
+Center
+https://lists.01.org/pipermail/kbuild-all                   Intel
+Corporation
