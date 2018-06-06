@@ -1,91 +1,39 @@
-Return-Path: <SRS0=QEbD=JA=linuxfoundation.org=gregkh@kernel.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Wed, 6 Jun 2018 10:44:34 +0300
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 19/30] serial: sh-sci: Stop using printk format %pCr
-Date: Thu, 14 Jun 2018 16:05:00 +0200
-Message-Id: <20180614132601.051398668@linuxfoundation.org>
-In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
-References: <20180614132600.255515394@linuxfoundation.org>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+	linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
+Message-ID: <20180606074434.GE20078@localhost.localdomain>
+References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+On Tue, Jun 05, 2018 at 04:58:43PM +0300, Andy Shevchenko wrote:
+> On Tue, May 29, 2018 at 1:02 PM, Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
+> 
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for the comments Andy. The regulator part of patch set v4 was
+already applied by Mark but I am going to do some further work on this
+afer I get the MFD and clk portions done. I'll store these comments and
+address issues in next set of patches.
 
-commit d63c16f8e1ab761775275adcf54f4bef7c330295 upstream.
-
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
-
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-4-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/tty/serial/sh-sci.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2626,8 +2626,8 @@ found:
- 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
- 				PTR_ERR(clk));
- 		else
--			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
--				clk, clk);
-+			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
-+				clk, clk_get_rate(clk));
- 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
- 	}
- 	return 0;
+Br,
+	Matti Vaittinen
