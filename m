@@ -1,215 +1,100 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 19 Jun 2018 13:56:44 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-	kstewart@linuxfoundation.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v7 3/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <1311b32f107c04a0471601b4bca036d763d92bfe.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kmu-office.ch ([178.209.48.109]:44278 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932111AbeFFQ1v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 12:27:51 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset=US-ASCII
+Date: Wed, 06 Jun 2018 18:27:48 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: sboyd@kernel.org, michael@amarulasolutions.com,
+        stefan.wahren@i2se.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        anson.huang@nxp.com, Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock
+ definition order
+In-Reply-To: <1527948122-32092-1-git-send-email-festevam@gmail.com>
+References: <1527948122-32092-1-git-send-email-festevam@gmail.com>
+Message-ID: <3be11aeea9cd0399837acb201f6226d9@agner.ch>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Support BD71837 gateable 32768 Hz clock.
+On 02.06.2018 16:02, Fabio Estevam wrote:
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Commit f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled
+> by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
+> at the end of the list, which may cause dtb breakage when running an old
+> dtb with a newer kernel.
+> 
+> In order to avoid that, simply add the new CLK_CKO clock definitions
+> at the end of the list.
+> 
+> Fixes: f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled by CCOSR")
+> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+> Changes since v1:
+> - Use 12 char for the commit id
+> 
+>  include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
+>  1 file changed, 19 insertions(+), 21 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/imx6ul-clock.h
+> b/include/dt-bindings/clock/imx6ul-clock.h
+> index 9564597..0aa1d9c 100644
+> --- a/include/dt-bindings/clock/imx6ul-clock.h
+> +++ b/include/dt-bindings/clock/imx6ul-clock.h
+> @@ -235,27 +235,25 @@
+>  #define IMX6UL_CLK_CSI_PODF		222
+>  #define IMX6UL_CLK_PLL3_120M		223
+>  #define IMX6UL_CLK_KPP			224
+> -#define IMX6UL_CLK_CKO1_SEL		225
+> -#define IMX6UL_CLK_CKO1_PODF		226
+> -#define IMX6UL_CLK_CKO1			227
+> -#define IMX6UL_CLK_CKO2_SEL		228
+> -#define IMX6UL_CLK_CKO2_PODF		229
+> -#define IMX6UL_CLK_CKO2			230
+> -#define IMX6UL_CLK_CKO			231
+> -
+> -/* For i.MX6ULL */
+> -#define IMX6ULL_CLK_ESAI_PRED		232
+> -#define IMX6ULL_CLK_ESAI_PODF		233
+> -#define IMX6ULL_CLK_ESAI_EXTAL		234
+> -#define IMX6ULL_CLK_ESAI_MEM		235
+> -#define IMX6ULL_CLK_ESAI_IPG		236
+> -#define IMX6ULL_CLK_DCP_CLK		237
+> -#define IMX6ULL_CLK_EPDC_PRE_SEL	238
+> -#define IMX6ULL_CLK_EPDC_SEL		239
+> -#define IMX6ULL_CLK_EPDC_PODF		240
+> -#define IMX6ULL_CLK_EPDC_ACLK		241
+> -#define IMX6ULL_CLK_EPDC_PIX		242
+> -#define IMX6ULL_CLK_ESAI_SEL		243
+> +#define IMX6ULL_CLK_ESAI_PRED		225
+> +#define IMX6ULL_CLK_ESAI_PODF		226
+> +#define IMX6ULL_CLK_ESAI_EXTAL		227
+> +#define IMX6ULL_CLK_ESAI_MEM		228
+> +#define IMX6ULL_CLK_ESAI_IPG		229
+> +#define IMX6ULL_CLK_DCP_CLK		230
+> +#define IMX6ULL_CLK_EPDC_PRE_SEL	231
+> +#define IMX6ULL_CLK_EPDC_SEL		232
+> +#define IMX6ULL_CLK_EPDC_PODF		233
+> +#define IMX6ULL_CLK_EPDC_ACLK		234
+> +#define IMX6ULL_CLK_EPDC_PIX		235
+> +#define IMX6ULL_CLK_ESAI_SEL		236
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |   6 ++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd71837.c | 146 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 153 insertions(+)
- create mode 100644 drivers/clk/clk-bd71837.c
+Nit: Add an empty line here?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e980ef4..065421a9eb22 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -279,6 +279,12 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD71837
-+	tristate "Clock driver for ROHM BD71837 PMIC MFD"
-+	depends on MFD_BD71837
-+	help
-+	  This driver supports ROHM BD71837 PMIC clock.
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..8393c4af7d5a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD71837)	+= clk-bd71837.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-new file mode 100644
-index 000000000000..f5768039b5c1
---- /dev/null
-+++ b/drivers/clk/clk-bd71837.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c  -- ROHM BD71837MWV clock driver
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/clk-provider.h>
-+
-+struct bd71837_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	unsigned long rate;
-+	struct platform_device *pdev;
-+	struct bd71837 *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	enabled = c->mask;
-+	enabled &= bd71837_reg_read(c->mfd, c->reg);
-+
-+	return enabled;
-+}
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->rate;
-+}
-+
-+static struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd71837 *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd71837-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (parent_clk) {
-+		init.num_parents = 1;
-+	} else {
-+		/* If parent is not given from DT we assume the typical
-+		 * use-case with 32.768 KHz oscillator for RTC (Maybe we
-+		 * should just error out here and require parent?)
-+		 */
-+		c->rate = BD71837_CLK_RATE;
-+		bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-+		dev_warn(&pdev->dev, "No parent clk found - assuming 32,768 KHz\n");
-+	}
-+
-+	c->reg = BD71837_REG_OUT32K;
-+	c->mask = BD71837_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+					      "clock-output-names", 0,
-+					      &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (!rval) {
-+		if (parent->of_node) {
-+			rval = of_clk_add_hw_provider(parent->of_node,
-+					     of_clk_hw_simple_get,
-+					     &c->hw);
-+			if (rval)
-+				dev_err(&pdev->dev,
-+					"adding clk provider failed\n");
-+		}
-+	} else {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+	}
-+
-+	return rval;
-+}
-+
-+static int bd71837_clk_remove(struct platform_device *pdev)
-+{
-+	if (pdev->dev.parent->of_node)
-+		of_clk_del_provider(pdev->dev.parent->of_node);
-+	return 0;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd71837-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+	.remove = bd71837_clk_remove,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+
+> +#define IMX6UL_CLK_CKO1_SEL		237
+> +#define IMX6UL_CLK_CKO1_PODF		238
+> +#define IMX6UL_CLK_CKO1			239
+> +#define IMX6UL_CLK_CKO2_SEL		240
+> +#define IMX6UL_CLK_CKO2_PODF		241
+> +#define IMX6UL_CLK_CKO2			242
+> +#define IMX6UL_CLK_CKO			243
+>  #define IMX6UL_CLK_END			244
+>  
+>  #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
