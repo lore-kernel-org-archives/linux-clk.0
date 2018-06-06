@@ -1,95 +1,110 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] clk: tegra20: Turn EMC clock gate into divider
-Date: Mon,  4 Jun 2018 01:36:52 +0300
-Message-Id: <20180603223654.23324-4-digetx@gmail.com>
-In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
-References: <20180603223654.23324-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:27635 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932131AbeFFGHv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 02:07:51 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+Date: Wed, 6 Jun 2018 11:38:24 +0530
+Message-ID: <20180606060826.14671-5-faiz_abbas@ti.com>
+In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Kernel should never gate the EMC clock as it causes immediate lockup, so
-removing clk-gate functionality doesn't affect anything. Turning EMC clk
-gate into divider allows to implement glitch-less EMC scaling, avoiding
-reparenting to a backup clock.
+Add support for the software reset of a target interconnect
+module using its sysconfig and sysstatus registers.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ drivers/bus/ti-sysc.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..2bd35418716a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
- 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index 4a2244419b9b..74d716a7bd6e 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -22,11 +22,14 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
++#include <linux/iopoll.h>
+ 
+ #include <linux/platform_data/ti-sysc.h>
+ 
+ #include <dt-bindings/bus/ti-sysc.h>
+ 
++#define MAX_MODULE_SOFTRESET_WAIT		10000
++
+ static const char * const reg_names[] = { "rev", "sysc", "syss", };
+ 
+ enum sysc_clocks {
+@@ -74,6 +77,11 @@ struct sysc {
+ 	struct delayed_work idle_work;
  };
  
- static unsigned long tegra20_clk_measure_input_freq(void)
-@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
- };
- 
-+static void __init tegra20_emc_clk_init(void)
++void sysc_write(struct sysc *ddata, int offset, u32 value)
 +{
-+	struct clk *clk;
-+
-+	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-+			       ARRAY_SIZE(mux_pllmcp_clkm),
-+			       CLK_SET_RATE_NO_REPARENT,
-+			       clk_base + CLK_SOURCE_EMC,
-+			       30, 2, 0, &emc_lock);
-+
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA20_CLK_MC] = clk;
-+
-+	/*
-+	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
-+	 * the same time due to a HW bug, this won't happen because we're
-+	 * defining 'emc_mux' and 'emc' as a distinct clocks.
-+	 */
-+	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
-+				   clk_base + CLK_SOURCE_EMC, 0, 7,
-+				   0, &emc_lock);
-+	clks[TEGRA20_CLK_EMC] = clk;
++	writel_relaxed(value, ddata->module_va + offset);
 +}
 +
- static void __init tegra20_periph_clk_init(void)
+ static u32 sysc_read(struct sysc *ddata, int offset)
  {
- 	struct tegra_periph_init_data *data;
-@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
- 	clks[TEGRA20_CLK_AC97] = clk;
+ 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
+@@ -700,6 +708,26 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
+ 	}
+ }
  
- 	/* emc */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
--			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA20_CLK_MC] = clk;
-+	tegra20_emc_clk_init();
++static int sysc_reset(struct sysc *ddata)
++{
++	int offset = ddata->offsets[SYSC_SYSCONFIG];
++	int val = sysc_read(ddata, offset);
++
++	val |= (0x1 << ddata->cap->regbits->srst_shift);
++	sysc_write(ddata, offset, val);
++
++	/* Poll on reset status */
++	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
++		offset = ddata->offsets[SYSC_SYSSTATUS];
++
++		return readl_poll_timeout(ddata->module_va + offset, val,
++				(val & ddata->cfg.syss_mask) == 0x0,
++				100, MAX_MODULE_SOFTRESET_WAIT);
++	}
++
++	return 0;
++}
++
+ /* At this point the module is configured enough to read the revision */
+ static int sysc_init_module(struct sysc *ddata)
+ {
+@@ -716,6 +744,18 @@ static int sysc_init_module(struct sysc *ddata)
  
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
+ 		return 0;
+ 	}
++
++	if (!(ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT) &&
++	    !ddata->legacy_mode) {
++		error = sysc_reset(ddata);
++		if (error) {
++			dev_err(ddata->dev, "Reset failed with %d\n", error);
++			pm_runtime_put_sync(ddata->dev);
++
++			return error;
++		}
++	}
++
+ 	ddata->revision = sysc_read_revision(ddata);
+ 	pm_runtime_put_sync(ddata->dev);
+ 
 -- 
 2.17.0
+
