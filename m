@@ -1,45 +1,48 @@
-Return-Path: <dinguyen@kernel.org>
-From: Dinh Nguyen <dinguyen@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: dinguyen@kernel.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com
-Subject: [PATCH 1/2] clk: socfpga: stratix10: fix the parents of mpu_free_clk
-Date: Tue, 26 Jun 2018 08:28:09 -0500
-Message-Id: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46158 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752074AbeFFKJl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Jun 2018 06:09:41 -0400
+Date: Wed, 6 Jun 2018 03:09:37 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
+        mark.rutland@arm.com
+Subject: Re: [PATCH v3 0/6] Add MCAN Support for dra76x
+Message-ID: <20180606100937.GF5738@atomide.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a clock mux that is used as a parent for the mpu_free_clk.
+* Faiz Abbas <faiz_abbas@ti.com> [180606 06:09]:
+> The following patches add dts and sysconfig support
+> for MCAN on TI's dra76 SOCs
+> 
+> The patches depend on the following series:
+> https://patchwork.kernel.org/patch/10221105/
+> 
+> Changes in v3:
+>  1. Added reset functionality to the ti-sysc
+>     driver. This enables me to drop the hwmod
+>     data patch as everything is being done in dt.
+>
+>  2. Dropped ti,hwmods from the dts nodes
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-s10.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Cool good to hear that works :)
 
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index 7271463..a15769f 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -37,6 +37,11 @@ static const char * const s2f_usr0_mux[] = {"f2s_free_clk", "boot_clk"};
- static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
- static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
- 
-+static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
-+					    "peri_mpu_base_clk",
-+					    "osc1", "cb_intosc_hs_div2_clk",
-+					    "f2s_free_clk"};
-+
- /* clocks in AO (always on) controller */
- static const struct stratix10_pll_clock s10_pll_clks[] = {
- 	{ STRATIX10_BOOT_CLK, "boot_clk", boot_mux, ARRAY_SIZE(boot_mux), 0,
-@@ -57,7 +62,7 @@ static const struct stratix10_perip_c_clock s10_main_perip_c_clks[] = {
- };
- 
- static const struct stratix10_perip_cnt_clock s10_main_perip_cnt_clks[] = {
--	{ STRATIX10_MPU_FREE_CLK, "mpu_free_clk", NULL, cntr_mux, ARRAY_SIZE(cntr_mux),
-+	{ STRATIX10_MPU_FREE_CLK, "mpu_free_clk", NULL, mpu_free_mux, ARRAY_SIZE(mpu_free_mux),
- 	   0, 0x48, 0, 0, 0},
- 	{ STRATIX10_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux, ARRAY_SIZE(noc_free_mux),
- 	  0, 0x4C, 0, 0, 0},
--- 
-2.7.4
+>  4. Removed the status="disabled" in dtsi
+>     followed by status="okay" in dts.
+
+Hmm okay is the default and is not needed. I did not notice
+okay in this set based on a quick glance so maybe you already
+dropped it?
+
+Regards,
+
+Tony
