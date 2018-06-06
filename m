@@ -1,115 +1,53 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 10/13] ARM: davinci: da830-evm: use aemif platform driver
-Date: Tue, 26 Jun 2018 11:25:34 +0200
-Message-Id: <20180626092537.6737-11-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH v2 0/5] Tegra20 External Memory Controller driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180603223654.23324-1-digetx@gmail.com>
+ <20180606104550.GK11810@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9ef678f2-2046-373f-5de4-dcfff5dfe6a6@gmail.com>
+Date: Wed, 6 Jun 2018 15:41:03 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180606104550.GK11810@ulmo>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 06.06.2018 13:45, Thierry Reding wrote:
+> On Mon, Jun 04, 2018 at 01:36:49AM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> Couple years ago the Tegra20 EMC driver was removed from the kernel
+>> due to incompatible changes in the Tegra's clock driver. This patchset
+>> introduces a modernized EMC driver. Currently the sole purpose of the
+>> driver is to initialize DRAM frequency to maximum rate during of the
+>> kernels boot-up. Later we may consider implementing dynamic memory
+>> frequency scaling, utilizing functionality provided by this driver.
+>>
+>> Changelog:
+>>
+>> v2:
+>> 	- Minor code cleanups like consistent use of writel_relaxed instead
+>> 	  of non-relaxed version, reworded error messages, etc.
+>>
+>> 	- Factored out use_pllm_ud bit checking into a standalone patch for
+>> 	  consistency.
+>>
+>> Dmitry Osipenko (5):
+>>   dt: bindings: tegra20-emc: Document interrupt property
+>>   ARM: dts: tegra20: Add interrupt to External Memory Controller
+>>   clk: tegra20: Turn EMC clock gate into divider
+>>   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+>>   memory: tegra: Introduce Tegra20 EMC driver
+> 
+> I took a brief look and didn't spot any dependencies between the clk and
+> memory patches. Is it correct that these can be applied separately?
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in da830-evm.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
- 1 file changed, 44 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index b2470141dba3..7d8ab36ff83d 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/platform_data/spi-davinci.h>
- #include <linux/platform_data/usb-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <linux/regulator/machine.h>
- 
- #include <asm/mach-types.h>
-@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device da830_evm_nand_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &da830_evm_nand_pdata,
-+static struct platform_device da830_evm_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &da830_evm_nand_pdata,
-+		},
-+		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
-+		.resource	= da830_evm_nand_resources,
-+	},
-+};
-+
-+static struct resource da830_evm_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
- 	},
--	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
--	.resource	= da830_evm_nand_resources,
-+};
-+
-+static struct aemif_platform_data da830_evm_aemif_pdata = {
-+	.abus_data		= da830_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
-+	.sub_devices		= da830_evm_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
-+	.cs_offset		= 2,
-+};
-+
-+static struct platform_device da830_evm_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data = &da830_evm_aemif_pdata,
-+	},
-+	.resource	= da830_evm_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
- };
- 
- /*
-@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
- 	if (ret)
- 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
- 
--	ret = platform_device_register(&da830_evm_nand_device);
-+	ret = platform_device_register(&da830_evm_aemif_device);
- 	if (ret)
--		pr_warn("%s: NAND device not registered\n", __func__);
--
--	if (davinci_aemif_setup(&da830_evm_nand_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+		pr_warn("%s: AEMIF device not registered\n", __func__);
- 
- 	gpio_direction_output(mux_mode, 1);
- }
--- 
-2.17.1
+Yes, it is correct.
