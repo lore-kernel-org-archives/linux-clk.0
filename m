@@ -1,10 +1,11 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs11.siol.net ([185.57.226.202]:57451 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753058AbeFFWb1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 18:31:27 -0400
 From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         devicetree <devicetree@vger.kernel.org>,
@@ -12,91 +13,364 @@ Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
-Date: Thu, 14 Jun 2018 16:34:45 +0200
-Message-ID: <2742773.k39D243pH3@jernej-laptop>
-In-Reply-To: <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
+Subject: Re: [PATCH 06/15] drm/sun4i: tcon: Add support for tcon-top
+Date: Thu, 07 Jun 2018 00:30:24 +0200
+Message-ID: <1557047.0h10P8OJYS@jernej-laptop>
+In-Reply-To: <20180604162357.rige4rcsiowdl725@flea>
+References: <20180519183127.2718-1-jernej.skrabec@siol.net> <8937075.mEvrCV6laa@jernej-laptop> <20180604162357.rige4rcsiowdl725@flea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 14. junij 2018 ob 09:12:41 CEST je Jagan Teki napisal(a):
-> On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > This series adds support for R40 HDMI pipeline. It is a bit special
-> > than other already supported pipelines because it has additional unit
-> > called TCON TOP responsible for relationship configuration between
-> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > and TV encoders.
+Dne ponedeljek, 04. junij 2018 ob 18:23:57 CEST je Maxime Ripard napisal(a):
+> On Mon, Jun 04, 2018 at 05:09:56PM +0200, Jernej Škrabec wrote:
+> > Dne ponedeljek, 04. junij 2018 ob 13:50:34 CEST je Maxime Ripard 
+napisal(a):
+> > > On Fri, Jun 01, 2018 at 09:19:43AM -0700, Chen-Yu Tsai wrote:
+> > > > On Fri, Jun 1, 2018 at 8:29 AM, Maxime Ripard
+> > > > <maxime.ripard@bootlin.com>
 > > 
-> > However, it seems that TCON TOP will become a norm, since newer
-> > Allwinner SoCs like H6 also have this unit.
+> > wrote:
+> > > > > On Thu, May 31, 2018 at 07:54:08PM +0200, Jernej Škrabec wrote:
+> > > > >> Dne četrtek, 31. maj 2018 ob 11:21:33 CEST je Maxime Ripard 
+napisal(a):
+> > > > >> > On Thu, May 24, 2018 at 03:01:09PM -0700, Chen-Yu Tsai wrote:
+> > > > >> > > >> > > + if (tcon->quirks->needs_tcon_top) {
+> > > > >> > > >> > > +         struct device_node *np;
+> > > > >> > > >> > > +
+> > > > >> > > >> > > +         np = of_parse_phandle(dev->of_node,
+> > > > >> > > >> > > "allwinner,tcon-top",
+> > > > >> > > >> > > 0);
+> > > > >> > > >> > > +         if (np) {
+> > > > >> > > >> > > +                 struct platform_device *pdev;
+> > > > >> > > >> > > +
+> > > > >> > > >> > > +                 pdev = of_find_device_by_node(np);
+> > > > >> > > >> > > +                 if (pdev)
+> > > > >> > > >> > > +                         tcon->tcon_top =
+> > > > >> > > >> > > platform_get_drvdata(pdev);
+> > > > >> > > >> > > +                 of_node_put(np);
+> > > > >> > > >> > > +
+> > > > >> > > >> > > +                 if (!tcon->tcon_top)
+> > > > >> > > >> > > +                         return -EPROBE_DEFER;
+> > > > >> > > >> > > +         }
+> > > > >> > > >> > > + }
+> > > > >> > > >> > > +
+> > > > >> > > >> > 
+> > > > >> > > >> > I might have missed it, but I've not seen the bindings
+> > > > >> > > >> > additions for
+> > > > >> > > >> > that property. This shouldn't really be done that way
+> > > > >> > > >> > anyway,
+> > > > >> > > >> > instead
+> > > > >> > > >> > of using a direct phandle, you should be using the
+> > > > >> > > >> > of-graph,
+> > > > >> > > >> > with the
+> > > > >> > > >> > TCON-top sitting where it belongs in the flow of data.
+> > > > >> > > >> 
+> > > > >> > > >> Just to answer to the first question, it did describe it in
+> > > > >> > > >> "[PATCH
+> > > > >> > > >> 07/15] dt- bindings: display: sun4i-drm: Add R40 HDMI
+> > > > >> > > >> pipeline".
+> > > > >> > > >> 
+> > > > >> > > >> As why I designed it that way - HW representation could be
+> > > > >> > > >> described
+> > > > >> > > >> that way> >>
+> > > > >> > > >> 
+> > > > >> > > >> (ASCII art makes sense when fixed width font is used to view
 > > 
-> > I tested different possible configurations:
-> > - mixer0 <> TCON-TV0 <> HDMI
-> > - mixer0 <> TCON-TV1 <> HDMI
-> > - mixer1 <> TCON-TV0 <> HDMI
-> > - mixer1 <> TCON-TV1 <> HDMI
+> > it):
+> > > > >> > > >>                             / LCD0/LVDS0
+> > > > >> > > >>                 
+> > > > >> > > >>                 / TCON-LCD0
+> > > > >> > > >>                 
+> > > > >> > > >>                 |           \ MIPI DSI
+> > > > >> > > >> 
+> > > > >> > > >> mixer0          |
+> > > > >> > > >> 
+> > > > >> > > >>        \        / TCON-LCD1 - LCD1/LVDS1
+> > > > >> > > >>        
+> > > > >> > > >>         TCON-TOP
+> > > > >> > > >>        
+> > > > >> > > >>        /        \ TCON-TV0 - TVE0/RGB
+> > > > >> > > >> 
+> > > > >> > > >> mixer1          |          \
+> > > > >> > > >> 
+> > > > >> > > >>                 |           TCON-TOP - HDMI
+> > > > >> > > >>                 |          
+> > > > >> > > >>                 |          /
+> > > > >> > > >>                 
+> > > > >> > > >>                 \ TCON-TV1 - TVE1/RGB
+> > > > >> > > >> 
+> > > > >> > > >> This is a bit simplified, since there is also TVE-TOP, which
+> > > > >> > > >> is
+> > > > >> > > >> responsible
+> > > > >> > > >> for sharing 4 DACs between both TVE encoders. You can have
+> > > > >> > > >> two
+> > > > >> > > >> TV outs
+> > > > >> > > >> (PAL/ NTSC) or TVE0 as TV out and TVE1 as RGB or vice versa.
+> > > > >> > > >> It
+> > > > >> > > >> even
+> > > > >> > > >> seems that you can arbitrarly choose which DAC is
+> > > > >> > > >> responsible
+> > > > >> > > >> for
+> > > > >> > > >> which signal, so there is a ton of possible end
+> > > > >> > > >> combinations,
+> > > > >> > > >> but I'm
+> > > > >> > > >> not 100% sure.
+> > > > >> > > >> 
+> > > > >> > > >> Even though I wrote TCON-TOP twice, this is same unit in HW.
+> > > > >> > > >> R40
+> > > > >> > > >> manual
+> > > > >> > > >> suggest more possibilities, although some of them seem
+> > > > >> > > >> wrong,
+> > > > >> > > >> like RGB
+> > > > >> > > >> feeding from LCD TCON. That is confirmed to be wrong when
+> > > > >> > > >> checking BSP
+> > > > >> > > >> code.
+> > > > >> > > >> 
+> > > > >> > > >> Additionally, TCON-TOP comes in the middle of TVE0 and LCD0,
+> > > > >> > > >> TVE1 and
+> > > > >> > > >> LCD1 for pin muxing, although I'm not sure why is that
+> > > > >> > > >> needed at
+> > > > >> > > >> all,
+> > > > >> > > >> since according to R40 datasheet, TVE0 and TVE1 pins are
+> > > > >> > > >> dedicated and
+> > > > >> > > >> not on PORT D and PORT H, respectively, as TCON-TOP
+> > > > >> > > >> documentation
+> > > > >> > > >> suggest. However, HSYNC and PSYNC lines might be shared
+> > > > >> > > >> between
+> > > > >> > > >> TVE
+> > > > >> > > >> (when it works in RGB mode) and LCD. But that is just my
+> > > > >> > > >> guess
+> > > > >> > > >> since
+> > > > >> > > >> I'm not really familiar with RGB and LCD interfaces.
+> > > > >> > > >> 
+> > > > >> > > >> I'm really not sure what would be the best representation in
+> > > > >> > > >> OF-graph.
+> > > > >> > > >> Can you suggest one?
+> > > > >> > > > 
+> > > > >> > > > Rob might disagree on this one, but I don't see anything
+> > > > >> > > > wrong
+> > > > >> > > > with
+> > > > >> > > > having loops in the graph. If the TCON-TOP can be both the
+> > > > >> > > > input
+> > > > >> > > > and
+> > > > >> > > > output of the TCONs, then so be it, and have it described
+> > > > >> > > > that
+> > > > >> > > > way in
+> > > > >> > > > the graph.
+> > > > >> > > > 
+> > > > >> > > > The code is already able to filter out nodes that have
+> > > > >> > > > already
+> > > > >> > > > been
+> > > > >> > > > added to the list of devices we need to wait for in the
+> > > > >> > > > component
+> > > > >> > > > framework, so that should work as well.
+> > > > >> > > > 
+> > > > >> > > > And we'd need to describe TVE-TOP as well, even though we
+> > > > >> > > > don't
+> > > > >> > > > have a
+> > > > >> > > > driver for it yet. That will simplify the backward
+> > > > >> > > > compatibility
+> > > > >> > > > later
+> > > > >> > > > on.
+> > > > >> > > 
+> > > > >> > > I'm getting the feeling that TCON-TOP / TVE-TOP is the glue
+> > > > >> > > layer
+> > > > >> > > that
+> > > > >> > > binds everything together, and provides signal routing, kind of
+> > > > >> > > like
+> > > > >> > > DE-TOP on A64. So the signal mux controls that were originally
+> > > > >> > > found
+> > > > >> > > in TCON0 and TVE0 were moved out.
+> > > > >> > > 
+> > > > >> > > The driver needs to know about that, but the graph about
+> > > > >> > > doesn't
+> > > > >> > > make
+> > > > >> > > much sense directly. Without looking at the manual, I
+> > > > >> > > understand it
+> > > > >> > > to
+> > > > >> > > likely be one mux between the mixers and TCONs, and one between
+> > > > >> > > the
+> > > > >> > > TCON-TVs and HDMI. Would it make more sense to just have the
+> > > > >> > > graph
+> > > > >> > > connections between the muxed components, and remove TCON-TOP
+> > > > >> > > from
+> > > > >> > > it, like we had in the past? A phandle could be used to
+> > > > >> > > reference
+> > > > >> > > the TCON-TOP for mux controls, in addition to the clocks and
+> > > > >> > > resets.
+> > > > >> > > 
+> > > > >> > > For TVE, we would need something to represent each of the
+> > > > >> > > output
+> > > > >> > > pins,
+> > > > >> > > so the device tree can actually describe what kind of signal,
+> > > > >> > > be it
+> > > > >> > > each component of RGB/YUV or composite video, is wanted on each
+> > > > >> > > pin,
+> > > > >> > > if any. This is also needed on the A20 for the Cubietruck, so
+> > > > >> > > we
+> > > > >> > > can
+> > > > >> > > describe which pins are tied to the VGA connector, and which
+> > > > >> > > one
+> > > > >> > > does
+> > > > >> > > R, G, or B.
+> > > > >> > 
+> > > > >> > I guess we'll see how the DT maintainers feel about this, but my
+> > > > >> > impression is that the OF graph should model the flow of data
+> > > > >> > between
+> > > > >> > the devices. If there's a mux somewhere, then the data is
+> > > > >> > definitely
+> > > > >> > going through it, and as such it should be part of the graph.
+> > > > >> 
+> > > > >> I concur, but I spent few days thinking how to represent this
+> > > > >> sanely in
+> > > > >> graph, but I didn't find any good solution. I'll represent here my
+> > > > >> idea and please tell your opinion before I start implementing it.
+> > > > >> 
+> > > > >> First, let me be clear that mixer0 and mixer1 don't have same
+> > > > >> capabilities
+> > > > >> (different number of planes, mixer0 supports writeback, mixer1 does
+> > > > >> not,
+> > > > >> etc.). Thus, it does matter which mixer is connected to which
+> > > > >> TCON/encoder.
+> > > > >> mixer0 is meant to be connected to main display and mixer1 to
+> > > > >> auxiliary. That obviously depends on end system.
+> > > > >> 
+> > > > >> So, TCON TOP has 3 muxes, which have to be represented in graph.
+> > > > >> Two of
+> > > > >> them are for mixer/TCON relationship (each of them 1 input and 4
+> > > > >> possible outputs) and one for TV TCON/HDMI pair selection (2
+> > > > >> possible
+> > > > >> inputs, 1 output).
+> > > > >> 
+> > > > >> According to current practice in sun4i-drm driver, graph has to
+> > > > >> have
+> > > > >> port 0, representing input and port 1, representing output. This
+> > > > >> would
+> > > > >> mean that graph looks something like that:
+> > > > >> 
+> > > > >> tcon_top: tcon-top@1c70000 {
+> > > > >> 
+> > > > >>       compatible = "allwinner,sun8i-r40-tcon-top";
+> > > > >>       ...
+> > > > >>       ports {
+> > > > >>       
+> > > > >>               #address-cells = <1>;
+> > > > >>               #size-cells = <0>;
+> > > > >>               
+> > > > >>               tcon_top_in: port@0 {
+> > > > >>               
+> > > > >>                       #address-cells = <1>;
+> > > > >>                       #size-cells = <0>;
+> > > > >>                       reg = <0>;
+> > > > >>                       
+> > > > >>                       tcon_top_in_mixer0: endpoint@0 {
+> > > > >>                       
+> > > > >>                               reg = <0>;
+> > > > >>                               remote-endpoint =
+> > > > >>                               <&mixer0_out_tcon_top>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>                       
+> > > > >>                       tcon_top_in_mixer1: endpoint@1 {
+> > > > >>                       
+> > > > >>                               reg = <1>;
+> > > > >>                               remote-endpoint =
+> > > > >>                               <&mixer1_out_tcon_top>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>                       
+> > > > >>                       tcon_top_in_tcon_tv: endpoint@2 {
+> > > > >>                       
+> > > > >>                               reg = <2>;
+> > > > >>                               // here is HDMI input connection,
+> > > > >>                               part of
+> > > > >>                               board DTS
+> > > > >>                               remote-endpoint = <board specific
+> > > > >>                               phandle
+> > > > >>                               to TV TCON output>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>               
+> > > > >>               };
+> > > > >>               
+> > > > >>               tcon_top_out: port@1 {
+> > > > >>               
+> > > > >>                       #address-cells = <1>;
+> > > > >>                       #size-cells = <0>;
+> > > > >>                       reg = <1>;
+> > > > >>                       
+> > > > >>                       tcon_top_out_tcon0: endpoint@0 {
+> > > > >>                       
+> > > > >>                               reg = <0>;
+> > > > >>                               // here is mixer0 output connection,
+> > > > >>                               part
+> > > > >>                               of board DTS
+> > > > >>                               remote-endpoint = <board specific
+> > > > >>                               phandle
+> > > > >>                               to TCON>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>                       
+> > > > >>                       tcon_top_out_tcon1: endpoint@1 {
+> > > > >>                       
+> > > > >>                               reg = <1>;
+> > > > >>                               // here is mixer1 output connection,
+> > > > >>                               part
+> > > > >>                               of board DTS
+> > > > >>                               remote-endpoint = <board specific
+> > > > >>                               phandle
+> > > > >>                               to TCON>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>                       
+> > > > >>                       tcon_top_out_hdmi: endpoint@2 {
+> > > > >>                       
+> > > > >>                               reg = <2>;
+> > > > >>                               remote-endpoint =
+> > > > >>                               <&hdmi_in_tcon_top>;
+> > > > >>                       
+> > > > >>                       };
+> > > > >>               
+> > > > >>               };
+> > > > >>       
+> > > > >>       };
+> > > > >> 
+> > > > >> };
+> > > > > 
+> > > > > IIRC, each port is supposed to be one route for the data, so we
+> > > > > would
+> > > > > have multiple ports, one for the mixers in input and for the tcon in
+> > > > > output, and one for the TCON in input and for the HDMI/TV in
+> > > > > output. Rob might correct me here.
 > > 
-> > Please review.
+> > Ok, that seems more clean approach. I'll have to extend graph traversing
+> > algorithm in sun4i_drv.c, but that's no problem.
 > > 
-> > Best regards,
-> > Jernej
-> > 
-> > Changes from v1:
-> > - Split DT bindings patch and updated description
-> > - Split HDMI PHY patch
-> > - Move header file from TCON TOP patch to dt bindings patch
-> > - Added Rob reviewed-by tag
-> > - Used clk_hw_register_gate() instead of custom gate registration code
-> > - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
-> > 
-> >   new patches were added.
-> > 
-> > - Droped mixer index quirk patch
-> > - Reworked TCON support for TCON TOP
-> > - Updated commit messages
-> > 
-> > Jernej Skrabec (27):
-> >   clk: sunxi-ng: r40: Add minimal rate for video PLLs
-> >   clk: sunxi-ng: r40: Allow setting parent rate to display related
-> >   
-> >     clocks
-> >   
-> >   clk: sunxi-ng: r40: Export video PLLs
-> >   dt-bindings: display: sunxi-drm: Add TCON TOP description
-> >   drm/sun4i: Add TCON TOP driver
-> >   drm/sun4i: Fix releasing node when enumerating enpoints
-> >   drm/sun4i: Split out code for enumerating endpoints in output port
-> >   drm/sun4i: Add support for traversing graph with TCON TOP
-> >   drm/sun4i: Don't skip TCONs if they don't have channel 0
-> >   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
-> >   drm/sun4i: tcon: Add support for tcon-top gate
-> >   drm/sun4i: tcon: Generalize engine search algorithm
-> >   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
-> >   drm/sun4i: Don't check for panel or bridge on TV TCONs
-> >   drm/sun4i: Add support for R40 TV TCON
-> >   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
-> >   drm/sun4i: Add support for R40 mixers
-> >   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
-> >   drm/sun4i: Enable DW HDMI PHY clock
-> >   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
-> >   drm/sun4i: DW HDMI PHY: Add support for second PLL
-> >   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
-> >   
-> >     driver
-> >   
-> >   drm/sun4i: Add support for A64 HDMI PHY
-> >   drm: of: Export drm_crtc_port_mask()
-> >   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
-> >   ARM: dts: sun8i: r40: Add HDMI pipeline
-> >   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
-> 
-> Tested whole series on top of linux-next.
-> 
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+> > Just to be clear, you have in mind 3 pairs of ports (0/1 for mixer0 mux,
+> > 2/3 for mixer1 and 4/5 for HDMI input), right? That way each mux is
+> > represented with one pair of ports, even numbered for input and odd
+> > numbered for output.
+> Yep, unless Rob feels otherwise.
 
-Thanks!
+I found an issue with this concept.
+
+HDMI driver (sun8i_dw_hdmi.c) uses drm_of_find_possible_crtcs() to find 
+connected crtcs (TCONs) to HDMI. This function assumes that crtc and encoder 
+are directly connected through of_graph, but that is not the case with TCON 
+TOP HDMI mux anymore. 
+I could give TCON TOP node as an input to this function, but that won't work, 
+since TCON TOP can have connections to other crtcs, not only that of HDMI and 
+they will also be picked up by drm_of_find_possible_crtcs().
+
+Any suggestion how to solve this nicely? I think creating my own version of 
+drm_of_find_possible_crtcs() which considers that case is one way, but not 
+very nice solution. Alternatively, we can fix possible_crtcs to BIT(0), since 
+it always has only one input. This is done in meson_dw_hdmi.c for example. 
+
+Best regards,
+Jernej
+
+
+
