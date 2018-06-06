@@ -1,42 +1,43 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	robh@kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <pp@emlix.com>
+From: Philipp Puschmann <pp@emlix.com>
+To: shawnguo@kernel.org
+Cc: s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	pp@emlix.com,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rohit Kumar <rohitkr@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 0/2] Add support for LPASS clock controller for SDM845
-Date: Thu, 14 Jun 2018 13:09:01 +0530
-Message-Id: <1528961943-12506-1-git-send-email-tdas@codeaurora.org>
+	fabio.estevam@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH] clk: imx6: fix video_27m parent for IMX6SX_CLK_CKO1_SEL
+Date: Wed,  6 Jun 2018 11:29:28 +0200
+Message-Id: <20180606092928.11724-1-pp@emlix.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the lpass clock controller found on SDM845 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
+q/dl datasheets list the 5th selection value for ck01_sel as
+video_27M_clk_root.
 
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM LPASS clock bindings
-  clk: qcom: Add lpass clock controller driver for SDM845
+By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
+as parent for IMX6QDL_CLK_CKO1_SEL.
 
- .../devicetree/bindings/clock/qcom,lpasscc.txt     |  46 ++++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/lpasscc-sdm845.c                  | 248 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,lpass-sdm845.h      |  18 ++
- 5 files changed, 322 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+Signed-off-by: Philipp Puschmann <pp@emlix.com>
+---
+ drivers/clk/imx/clk-imx6q.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..7e6a8f079634 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -65,7 +65,7 @@ static const char *ipg_per_sels[] = { "ipg", "osc", };
+ static const char *ecspi_sels[] = { "pll3_60m", "osc", };
+ static const char *can_sels[] = { "pll3_60m", "osc", "pll3_80m", };
+ static const char *cko1_sels[]	= { "pll3_usb_otg", "pll2_bus", "pll1_sys", "pll5_video_div",
+-				    "dummy", "axi", "enfc", "ipu1_di0", "ipu1_di1", "ipu2_di0",
++				    "video_27m", "axi", "enfc", "ipu1_di0", "ipu1_di1", "ipu2_di0",
+ 				    "ipu2_di1", "ahb", "ipg", "ipg_per", "ckil", "pll4_audio_div", };
+ static const char *cko2_sels[] = {
+ 	"mmdc_ch0_axi", "mmdc_ch1_axi", "usdhc4", "usdhc1",
+-- 
+2.17.0
