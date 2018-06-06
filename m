@@ -1,42 +1,53 @@
-Return-Path: <lkp@intel.com>
-Date: Thu, 14 Jun 2018 18:38:11 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: kbuild-all@01.org, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, robh@kernel.org,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Rohit Kumar <rohitkr@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [RFC PATCH] clk: qcom: gcc_lpass_sway_clk can be static
-Message-ID: <20180614103811.GA29920@lkp-sb05>
-References: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
+        <mark.rutland@arm.com>
+Subject: [PATCH v3 2/6] clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+Date: Wed, 6 Jun 2018 11:38:22 +0530
+Message-ID: <20180606060826.14671-3-faiz_abbas@ti.com>
+In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add clkctrl data for the m_can clocks and register it within the
+clkctrl driver
 
-Fixes: 035d2520712d ("clk: qcom: Add lpass clock controller driver for SDM845")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+CC: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- lpasscc-sdm845.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/clk-7xx.c         | 1 +
+ include/dt-bindings/clock/dra7.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
-index d04a4c8..5b9ad76 100644
---- a/drivers/clk/qcom/lpasscc-sdm845.c
-+++ b/drivers/clk/qcom/lpasscc-sdm845.c
-@@ -29,7 +29,7 @@ static struct clk_branch gcc_lpass_q6_axi_clk = {
- 	},
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index fb249a1637a5..71a122b2dc67 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -708,6 +708,7 @@ static const struct omap_clkctrl_reg_data dra7_wkupaon_clkctrl_regs[] __initcons
+ 	{ DRA7_COUNTER_32K_CLKCTRL, NULL, 0, "wkupaon_iclk_mux" },
+ 	{ DRA7_UART10_CLKCTRL, dra7_uart10_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0060:24" },
+ 	{ DRA7_DCAN1_CLKCTRL, dra7_dcan1_bit_data, CLKF_SW_SUP, "wkupaon_cm:clk:0068:24" },
++	{ DRA7_ADC_CLKCTRL, NULL, CLKF_SW_SUP, "mcan_clk"},
+ 	{ 0 },
  };
  
--struct clk_branch gcc_lpass_sway_clk = {
-+static struct clk_branch gcc_lpass_sway_clk = {
- 	.halt_reg = 0x8,
- 	.halt_check = BRANCH_HALT,
- 	.clkr = {
+diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+index 5e1061b15aed..d7549c57cac3 100644
+--- a/include/dt-bindings/clock/dra7.h
++++ b/include/dt-bindings/clock/dra7.h
+@@ -168,5 +168,6 @@
+ #define DRA7_COUNTER_32K_CLKCTRL	DRA7_CLKCTRL_INDEX(0x50)
+ #define DRA7_UART10_CLKCTRL	DRA7_CLKCTRL_INDEX(0x80)
+ #define DRA7_DCAN1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x88)
++#define DRA7_ADC_CLKCTRL	DRA7_CLKCTRL_INDEX(0xa0)
+ 
+ #endif
+-- 
+2.17.0
