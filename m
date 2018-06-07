@@ -1,131 +1,263 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 13 Jun 2018 11:11:09 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-Message-ID: <20180613091109.pu66on7v7ga3bmqf@flea>
-References: <20180521115947.wqrnv2hczate65lz@flea>
- <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
- <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
- <20180613072649.dzbusalsfqlgymew@flea>
- <CAK7LNAR0TZEp9JfJAf3gmE1v6ig04TZ-NCiXm5_zYdpsQwhuRw@mail.gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Thu, 7 Jun 2018 14:12:18 +0300
+To: Rob Herring <robh@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180607111218.GF20078@localhost.localdomain>
+References: <20180531030129.GA16122@rob-hp-laptop>
+ <20180531071717.GG13528@localhost.localdomain>
+ <20180531102315.GA5150@localhost.localdomain>
+ <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
+ <20180601062540.GB5150@localhost.localdomain>
+ <CAL_JsqJNMxR=zdwR41iLfWU=u3J_=_VkxVL+g3a12_4vvNwBtw@mail.gmail.com>
+ <20180604113225.GE5150@localhost.localdomain>
+ <CAL_JsqL3Z_o2CFeYDvb3PqgiskTSHuOVqwdUP+gFymLDTKhn2g@mail.gmail.com>
+ <20180606073449.GD20078@localhost.localdomain>
+ <CAL_JsqKjwtq+7CSDKiaWGa011oqdsrc-XjOyfuBPOQ9UB=EtWQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m7amzhixil55ixut"
-In-Reply-To: <CAK7LNAR0TZEp9JfJAf3gmE1v6ig04TZ-NCiXm5_zYdpsQwhuRw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAL_JsqKjwtq+7CSDKiaWGa011oqdsrc-XjOyfuBPOQ9UB=EtWQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Jun 06, 2018 at 10:16:37AM -0500, Rob Herring wrote:
+> On Wed, Jun 6, 2018 at 2:34 AM, Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+> > On Tue, Jun 05, 2018 at 10:46:14AM -0500, Rob Herring wrote:
+> >> On Mon, Jun 4, 2018 at 6:32 AM, Matti Vaittinen
+> >> <mazziesaccount@gmail.com> wrote:
+> >> > On Fri, Jun 01, 2018 at 12:32:16PM -0500, Rob Herring wrote:
+> >> >> On Fri, Jun 1, 2018 at 1:25 AM, Matti Vaittinen
+> >> >> <mazziesaccount@gmail.com> wrote:
+> >> >> > On Thu, May 31, 2018 at 09:07:24AM -0500, Rob Herring wrote:
+> >> >> >> On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
+> >> >> >> <mazziesaccount@gmail.com> wrote:
+> >> >> >> > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
+> >> >> >> >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
+> >> >> >> >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
+> > Datasheet:
+> > https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> > (Would it be good idea to add this link to comments in MFD driver or to
+> > binding document(s)?)
+> 
+> Yes, it would.
 
---m7amzhixil55ixut
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I will add this then. I don't really like adding links like this as urls
+tend to change and links become dead - but I guess this is something we
+just must live with.
 
-On Wed, Jun 13, 2018 at 05:16:30PM +0900, Masahiro Yamada wrote:
-> Hi.
->=20
-> 2018-06-13 16:26 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> > On Mon, Jun 11, 2018 at 03:53:41PM +0800, Chen-Yu Tsai wrote:
-> >> Hi,
-> >>
-> >> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
-> >> <yamada.masahiro@socionext.com> wrote:
-> >> > Hi Maxime,
-> >> >
-> >> >
-> >> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> >> >> Hi Mike, Stephen,
-> >> >>
-> >> >> Please merge the following changes for the next merge window, thank=
-s!
-> >> >>
-> >> >> Maxime
-> >> >>
-> >> >> The following changes since commit 60cc43fc888428bb2f18f08997432d42=
-6a243338:
-> >> >>
-> >> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> >> >>
-> >> >> are available in the Git repository at:
-> >> >>
-> >> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git t=
-ags/sunxi-clk-for-4.18
-> >> >>
-> >> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61d=
-c044:
-> >> >>
-> >> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (=
-2018-05-17 14:02:07 +0800)
-> >> >>
-> >> >> ----------------------------------------------------------------
-> >> >> Allwinner clock changes for 4.18
-> >> >>
-> >> >> Not a lot of changes for this release, but two quite important feat=
-ures
-> >> >> were added: the H6 PRCM clock support, and the needed changes to th=
-e R40
-> >> >> clock driver to allow for the EMAC to operate.
-> >> >>
-> >> >> ----------------------------------------------------------------
-> >> >> Icenowy Zheng (3):
-> >> >>       clk: sunxi-ng: add support for H6 PRCM CCU
-> >> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
-> >> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC regist=
-er
-> >> >>
-> >> >
-> >> >
-> >> >
-> >> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
-> >> > not included in the pull request?
-> >> >
-> >> >
-> >> > You said "I've picked it up"
-> >> > https://patchwork.kernel.org/patch/10348031/
-> >>
-> >> It looks like it was accidentally dropped after a rebase.
-> >> Not quite sure what happened there. Maxime?
+> >                     +--------------------------------------------------+
+> >                     |                                                  |
+> > VSYS           +-----------------+                    +-----------+    |
+> >                     |            |                    |           |    |
+> >                     |  +-------+ |                    | BUCKS 1-4 +-------->
+> >                     |  |       | |                    |           |    |
+> > I2C IF         +------->   H   | +--------------------+  DVS      +-------->
+> >                     |  |   O   | |                    |  Support  |    |
+> > PWRON_B        +------->   S   | |                    |           +-------->
+> >                     |  |   T   | |                    |           |    |
+> > PMIC_STBY_REQ  +------->       | |                    |           +-------->
+
+Do you think this ASCII art picture in MFD or regulator driver comments would
+be an overkill?
+
+> > On the left we see input lines to PMIC. PWRON_B intended to be connected
+> > to power button. PMIC_STBY_REQ and PMIC_ON_REQ lines for controlling HW
+> > state machine PMIC has. And WDOG_B from watch dog.
 > >
-> > I'm not quite sure what happened, sorry, but this should have
-> > definitely been part of that PR :/
+> > PMIC has control register for controlling what happens to BUCK/LDO
+> > outputs when input line states change. PMIC reports change in input
+> > lines via the IRQ_OUT line and IRQ status register.
+> 
+> So it looks like this is just regulators with a few other signals to handle.
+
+Yes. Regulators and the HW state machine which is currently mostly
+bypassed by drivers. And while we are at it - is there some standard
+device-tree properties for describing the voltages for different PMIC states
+(idle, run, standby) so that the driver could configure voltages the
+bucks should use when PMIC state is changed. Or do you think I should
+use custom ones like:
+
+bd71837,pmic-buck1-dvs-voltage = <900000>, <850000>, <800000>; /* VDD_SOC: Run-Idle-Suspend */
+bd71837,pmic-buck2-dvs-voltage = <1000000>, <900000>, <0>; /* VDD_ARM: Run-Idle */
+bd71837,pmic-buck3-dvs-voltage = <1000000>, <0>, <0>; /* VDD_GPU: Run */
+bd71837,pmic-buck4-dvs-voltage = <1000000>, <0>, <0>; /* VDD_VPU: Run */
+
+I think this is not the only PMIC with configurable voltages for
+different states so someone has probably already invented a way to
+provide this information - is the DT correct place to search for this?
+
+> 
+> > So HW mapping for interrup(s) from PMIC would be:
 > >
->=20
-> Stephen offered to pick it up directly for -rc2.
-> Is that OK with you?
->=20
-> I am fine if it is well-organized between you and Stephen.
+> > (HW) event => BD71837 domain IRQ
+> >
+> > PMIC_STBY_REQ line level change         => 0
+> > PMIC_ON_REQ line level change           => 1
+> 
+> I'm not really clear how these would have s/w handling. They look like
+> handshake signals for the processor to enter and exit standby/suspend.
+> H/w designers don't always know what to do with things and may have
+> just said lets have an interrupt for every input signal.
 
-Yep, that definitely works for me.
-Sorry again,
-Maxime
+The PMIC_ON_REQ can be used to switch the PMIC from 'READY' to 'SNVS'
+and from 'SNVS' to 'RUN' states. But same transitions can be configured
+to be done by power button presses too.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I think I in some earlier mail said that I can't think how to handle
+other but power button interrupts - when PMIC is used to power the
+processor controlling PMIC. But I also mentioned another use case
+which I can think of - but I am not sure if it is relevant or not. In
+this other use case we have a 'slave processor' powered by PMIC doing
+some specific tasks - and a 'control processor' which is not powered by
+this PMIC - but which may be controlling it (and thus also controls power
+for the slave). In such setup all these interrupts mmight become
+meaningfull - but handling should be platform specific then. (The
+control processor could for example detect slave processor resets or
+wake-ups via these interrupts and initiate any platform specific
+activities based on this). I have no system design experience so I don't
+know if this sounds reasonable or not - but thats why I liked the idea
+of providing access to all interrupts via this interrupt-controller.
 
---m7amzhixil55ixut
-Content-Type: application/pgp-signature; name="signature.asc"
+> I'd think you
+> would just want DT properties to configure what action to take (and
+> perhaps polarity?).
 
------BEGIN PGP SIGNATURE-----
+Currently the driver is not configuring what happens when state of these
+signals change. But it could as you say. And it would be nice to get the
+configuration from DT. I think the polarity is fixed.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsg36wACgkQ0rTAlCFN
-r3SPRw//YcclKsD4CZFVfRyF+lfbLt8sScLmsc+7qJ/z6uq2pIBtvy+s37s8kcMk
-dHzDjmMNFA7NdOO02BPw+6/ffTdORwv/mipB+q8uAmQEdtCeDV9xo3wWTMw6Nqfy
-pgg3uwWCTWpDzbAfmE8UcmyYfVoWSaa6qSJQRDyxbE4mzXB+AcQbOyFZIXInNPzK
-ieZ2d4Ief53gH7XgOWHbrhAjdx9Fw2r3e7C1LCsqwNbKRrWtoghvPe0OV6cq3geC
-Vsc7cIkrScRp3E5tslbfh+/oaEX5ItRjChOfM4wg3B83m+SDJkkNlHLYa3MY1H/v
-vm5RpFbvpndmkLLJe0Emzm7U6sVfjBYXnWdTyn8peFGUtSh7Ru7IzGUhBOo+vTJL
-fzKYddPdNlmwanNTdKgvWHJi6Qpujnr3WH2s6aysX548xrcnOvoZLDubBwBQdXWE
-XnmzAdtPE21CLFvqLlHNvkkrIcp91/8n2RwrpfzQQhLyBkvCS831PysPUDJtefvH
-nNWjVB9wwBjKFZmukhIEVfsDOSe2Figo1bSn/HTV3VLXM0S4vIT1Pj3Q/8HEcJDm
-FA1UiExRYhid4IYXB5sRxJc7B2OACwjJd9Ev2nSM3CscuHMLs2OhbagAmSFU0Q6Y
-43Xot6SXgCK3ucsYQED6AY0zHJKYGK6ZCaRDDuysJlvX3ISTZxI=
-=CWFV
------END PGP SIGNATURE-----
 
---m7amzhixil55ixut--
+> > PMIC_WDOG_B line level change           => 2
+> 
+> Ah, this is an input signal, not a watchdog block within the PMIC. I
+> think this should just be handled by the core driver. If you need to
+> configure what this does, then we can add a property to handle that.
+
+Action taken when WDOG_B is asserted is indeed configurable. PMIC can do
+cold reset, warm reset of take no action. But here I again fail to think
+how this should be handled - especially because HW default for action is
+cold reset. But as I said abowe - it may be there is use case for this
+interrupt even though I can't provide generic one. ...and this is why I
+liked the idea of having it available via DT... :)
+
+> 
+> > PMIC_PWRON_B line level change          => 3
+> > PMIC_PWRON_B line/long push detected    => 4
+> > PMIC_PWRON_B line/short push detected   => 5
+> 
+> So you need a power button driver (or maybe not even a separate
+> driver) for this, but I don't think that warrants a child node. I
+> think some PMIC drivers just generate a power key press (which just
+> gets punted to userspace), but some will do an actual power down. Or
+> maybe a combination of those based on short/long press.
+
+I agree with you on this. A power button driver could consume these
+IRQs. And yes, (input?) event to user-space sounds reasonable. Maybe
+also a power-off handler if "system-power-controller" property is given.
+
+Whether this is something crying for own DT node is not my decision. I
+just know that having own sub nodes and relying on irq-controller xlate
+callbacks eould make driver side really simple.
+
+> 
+> I think there's already some DT properties defined to control the
+> behavior as well.
+> 
+> > SWRESET register on PMIC written        => 6
+> 
+> Probably this can be handled within the core driver. Seems like you'd
+> only use this if you have separate entities that write and read this.
+> If you don't know, then just ignore it for now.
+
+Yep. My plan was not to implement handling for any of these interrupts
+for now. I just wanted to make them easily available for any future use.
+
+> > Hence I liked the idea of hiding the irq register
+> > details in MFD driver by declaring it as interrupt controller - and
+> > leaving the interrupts to be used by what ever drivers need the change
+> > information is system the PMIC is used.
+> 
+> This can still be done but doesn't have to be in DT.
+
+I think this is my weak spot. I don't know how to do this easily without
+DT. How do I bring the irq to power-button driver or to WDOG
+irq handler (or XXX-driver invented by one who needs these IRQs) without
+DT. Options I can think of are:
+
+1. getting the GPIO irq (from MFD parent) and making the IRQ registers
+   visible to power button/XXX drivers. Possibly ending up with shared
+   IRQ hanlder.
+2. Keeping the IRQ register accesses in MFD driver and providing some
+   handler callback registration interface from MFD driver to power
+   button/XXX drivers
+3. Using this interrupt-controller approach.
+
+I dislike option 1 because all drivers using IRQs need to be aware of
+IRQ registers.
+
+I dislike option 2 because inventing such IRQ callbacks just feel wrong.
+There must be better way - I just don't know it =)
+
+I would like to use option 3 - but I don't know how to do it without DT?
+Specifically I don't know how to provide the irq number and interrupt
+parent to power-button/XXX drivers if they are not brought from DT. And
+why to invent some parallel mechanism for this when DT usage already
+provides this. I would be really gratefull for any tips how to do this
+correctly if DT is not used.
+
+> > So what do you think of this:
+> >
+> > +Optional properties:
+> > + - interrupt-controller        : Marks the device node as an interrupt controller.
+> > +                         BD71837MWV can report input line state change and SW
+> > +                         reset events via interrupts. Different events can be seen
+> > +                         as separate BD71837 domain interrupts.
+> > + - #interrupt-cells    : The number of cells to describe an IRQ should be 1.
+> > +                         The value in cell is the IRQ number.
+> > +                           Meaningfull numbers are:
+> > +                             0 => PMIC_STBY_REQ level change
+> > +                             1 => PMIC_ON_REQ level change
+> > +                             2 => WDOG_B level change
+> > +                             3 => Power Button level change
+> > +                             4 => Power Button Long Push
+> > +                             5 => Power Button Short Push
+> > +                             6 => SWRESET register is written 1
+> >
+> > Would this be getting closer to what is needed from binding document?
+> 
+> I don't think any of this needs to live in DT. All you really need a
+> separate driver (and hence irq) for is really just the power button.
+> You can just define the interrupts within the kernel.
+
+So I tried to argue that all of the IRQs should be usable and we should
+not limit the HW capabilities by design (I like the idea of exposing all
+HW functionality because I only rarely know what should be usable better
+than the user). Are you sure my dual processor use-case is not
+convincing you we should provide these interrupts via DT?
+
+If so - as I already said, I would be gratefull for any suggestions on
+how to provide access to irqs without DT. I just can't help feeling that
+DT would have been the best way for cleanest and most
+understandable/usable end result.
+
+Meanwhile I will prepare a patch where the interrupt handling is
+completely ripped from MFD and binding documents as I don't have power
+button driver tested (I drafted something though). Maybe such a patch
+could be acceptable in order to enable regulator usage (and
+compilation). Is that Ok?
+
+Best Regards
+    Matti Vaittinen
