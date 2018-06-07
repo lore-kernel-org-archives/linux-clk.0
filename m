@@ -1,42 +1,53 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 16/27] dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
-Date: Tue, 12 Jun 2018 22:00:25 +0200
-Message-Id: <20180612200036.21483-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46244 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752336AbeFGHfe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Jun 2018 03:35:34 -0400
+Date: Thu, 7 Jun 2018 00:35:30 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
+        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+Message-ID: <20180607073530.GH5738@atomide.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180606060826.14671-5-faiz_abbas@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-R40 DE2 mixers are similar to those found in A83T, except it needs
-different clock settings.
+* Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
+> +static int sysc_reset(struct sysc *ddata)
+> +{
+> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+> +	int val = sysc_read(ddata, offset);
+> +
+> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
+> +	sysc_write(ddata, offset, val);
+> +
+> +	/* Poll on reset status */
+> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
+> +		offset = ddata->offsets[SYSC_SYSSTATUS];
+> +
+> +		return readl_poll_timeout(ddata->module_va + offset, val,
+> +				(val & ddata->cfg.syss_mask) == 0x0,
+> +				100, MAX_MODULE_SOFTRESET_WAIT);
+> +	}
+> +
+> +	return 0;
+> +}
 
-Add a compatibles for them.
+I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
+addition to SYSC_QUIRK_RESET status to make it easy to
+read the right register?
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Then we can add support for SYSC_QUIRK_RESET_STATUS later on
+when tested and return error for now.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 68c4b2995624..d84df6d808c2 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -358,6 +358,8 @@ Required properties:
-     * allwinner,sun8i-a83t-de2-mixer-0
-     * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-h3-de2-mixer-0
-+    * allwinner,sun8i-r40-de2-mixer-0
-+    * allwinner,sun8i-r40-de2-mixer-1
-     * allwinner,sun8i-v3s-de2-mixer
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
--- 
-2.17.1
+Regards,
+
+Tony
