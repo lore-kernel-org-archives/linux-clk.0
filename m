@@ -1,29 +1,46 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <joel.stan@gmail.com>
+Return-Path: <joel.stan@gmail.com>
+Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
 To: Michael Turquette <mturquette@baylibre.com>,
- Paul Cercueil <paul@crapouillou.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180520163117.14125-4-paul@crapouillou.net>
-Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-References: <20180520163117.14125-1-paul@crapouillou.net>
- <20180520163117.14125-4-paul@crapouillou.net>
-Message-ID: <152792063068.225090.10800582299950564415@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 4/6] clk: ingenic: jz4770: Modify C1CLK clock to disable CPU
- clock stop on idle
-Date: Fri, 01 Jun 2018 23:23:50 -0700
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>,
+	linux-clk@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+Date: Thu,  7 Jun 2018 16:39:59 +0930
+Message-Id: <20180607070959.31995-1-joel@jms.id.au>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-05-20 09:31:15)
-> When the main processor goes idle, by default its clock is stopped.
-> However, this also stops the clock of the co-processor.
-> =
+This is used by the host to talk to the BMC's PCIe slave device. The BMC
+is not involved, but the clock needs to be enabled so the host can use
+the device.
 
-> Here, if the C1CLK clock is enabled, we disable this functionality.
-> =
+Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+Cc: stable@vger.kernel.org # 4.15
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
+Tested-by: Lei YU <mine260309@gmail.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/clk/clk-aspeed.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-
-Applied to clk-next
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 4d425594999d..c17032bc853a 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -91,8 +91,8 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+ 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
+ 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
+ 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
+-	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
+-	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
++	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	CLK_IS_CRITICAL }, /* PCIe/PCI */
++	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	CLK_IS_CRITICAL }, /* DAC */
+ 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
+ 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
+ 	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
+-- 
+2.17.1
