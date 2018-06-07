@@ -1,51 +1,40 @@
-Return-Path: <pmladek@suse.com>
-Date: Fri, 1 Jun 2018 13:47:38 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, baijiaju1990@gmail.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for
- printk format %pCr
-Message-ID: <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
- <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
+Subject: Re: [PATCH v1 2/4] clk: rockchip: add dt-binding header for px30
+Date: Thu, 07 Jun 2018 09:56:58 +0200
+Message-ID: <2233320.o0OUWNYjTa@diego>
+In-Reply-To: <1528340786-462-3-git-send-email-zhangqing@rock-chips.com>
+References: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com> <1528340786-462-3-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
-> On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> >
-> > This patch series:
-> >   - Changes all existing users of "%pCr" to print the result of
-> >     clk_get_rate() directly, which is safe as they all do this in task
-> >     context only,
-> >   - Removes support for the "%pCr" printk format.
+Am Donnerstag, 7. Juni 2018, 05:06:24 CEST schrieb Elaine Zhang:
+> Add the dt-bindings header for the px30, that gets shared between
+> the clock controller and the clock references in the dts.
+> Add softreset ID for px30.
 > 
-> Looks good to me.
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  include/dt-bindings/clock/px30-cru.h | 402
+> +++++++++++++++++++++++++++++++++++ 1 file changed, 402 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/px30-cru.h
 > 
-> What tree will this go through? The normal printk one? Just checking
-> that this doesn't end up falling through the cracks because nobody
-> knows who would take it...
+> diff --git a/include/dt-bindings/clock/px30-cru.h
+> b/include/dt-bindings/clock/px30-cru.h new file mode 100644
+> index 000000000000..db9fc2a0bb21
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/px30-cru.h
+> @@ -0,0 +1,402 @@
+> +/*
+> + * Copyright (c) 2017 Rockchip Electronics Co. Ltd.
+> + * Author: Elaine <zhangqing@rock-chips.com>
 
-I will take it via printk.git. There already is bunch of vsprintf
-changes for-4.18.
+				^^ full name maybe?
 
-Best Regards,
-Petr
+Otherwise looks good.
+
+
+Heiko
