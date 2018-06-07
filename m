@@ -1,57 +1,97 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: [PATCH 4/4] ARM: dts: fix PMC compatible
+Date: Thu,  7 Jun 2018 10:41:07 +0200
+Message-Id: <20180607084107.4461-5-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
- <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com> <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
- <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 26 Jun 2018 10:27:21 +0200
-Message-ID: <CAMRc=MfDmQxiy+jX4kW1A8vvP4xVXjKDo8VpgRZ-2AsTNik-0A@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To: David Lechner <david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-25 18:06 GMT+02:00 David Lechner <david@lechnology.com>:
-> On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
->>
->> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
->>>
->>> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> We want to be able to get the clock both from the board file by its
->>>> con_id and from the aemif driver by dev_id.
->>>
->>>
->>>
->>> What about the other SoCs? Don't they need this change as well?
->>>
->>
->> So I double checked and turns out I missed one other board that's
->> affected by this series and calls clk_get() from machine code:
->> dm644x-evm.
->>
->> I'll fix it in v2.
->
->
-> The ti-aemif platform driver also does clk_get(). Don't you need
-> lookups to make that work as well? For example, DA830 doesn't have
-> a clock lookup for aemif at all.
->
+Make each SoC dtsi use its soc specific PMc compatible string. This solves
+a potential issue on at91sam9261 and at91sam9263 when using suspend to RAM
 
-This seems like a bug: in arch/arm/mach-davinci/aemif.c in current
-mainline we do call clk_get() for 'aemif' and it's called indirectly
-from board-da830-evm.c via davinci_aemif_setup().
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ arch/arm/boot/dts/at91sam9261.dtsi | 2 +-
+ arch/arm/boot/dts/at91sam9263.dtsi | 2 +-
+ arch/arm/boot/dts/at91sam9rl.dtsi  | 2 +-
+ arch/arm/boot/dts/sama5d4.dtsi     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-I'll address this too in v2.
+diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sam9261.dtsi
+index 53c63d0a418a..33f09d5ea020 100644
+--- a/arch/arm/boot/dts/at91sam9261.dtsi
++++ b/arch/arm/boot/dts/at91sam9261.dtsi
+@@ -590,7 +590,7 @@
+ 			};
+ 
+ 			pmc: pmc@fffffc00 {
+-				compatible = "atmel,at91rm9200-pmc", "syscon";
++				compatible = "atmel,at91sam9261-pmc", "syscon";
+ 				reg = <0xfffffc00 0x100>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+ 				interrupt-controller;
+diff --git a/arch/arm/boot/dts/at91sam9263.dtsi b/arch/arm/boot/dts/at91sam9263.dtsi
+index 87fb0660ab5d..af68a86c9973 100644
+--- a/arch/arm/boot/dts/at91sam9263.dtsi
++++ b/arch/arm/boot/dts/at91sam9263.dtsi
+@@ -93,7 +93,7 @@
+ 			};
+ 
+ 			pmc: pmc@fffffc00 {
+-				compatible = "atmel,at91rm9200-pmc", "syscon";
++				compatible = "atmel,at91sam9263-pmc", "syscon";
+ 				reg = <0xfffffc00 0x100>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+ 				interrupt-controller;
+diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
+index bd001cca25a4..8fb22030f00b 100644
+--- a/arch/arm/boot/dts/at91sam9rl.dtsi
++++ b/arch/arm/boot/dts/at91sam9rl.dtsi
+@@ -832,7 +832,7 @@
+ 			};
+ 
+ 			pmc: pmc@fffffc00 {
+-				compatible = "atmel,at91sam9g45-pmc", "syscon";
++				compatible = "atmel,at91sam9rl-pmc", "syscon";
+ 				reg = <0xfffffc00 0x100>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+ 				interrupt-controller;
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index 0cf9beddd556..92a35a1942b6 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -392,7 +392,7 @@
+ 			};
+ 
+ 			pmc: pmc@f0018000 {
+-				compatible = "atmel,sama5d3-pmc", "syscon";
++				compatible = "atmel,sama5d4-pmc", "syscon";
+ 				reg = <0xf0018000 0x120>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+ 				interrupt-controller;
+-- 
+2.17.1
 
-Bart
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
