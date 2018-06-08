@@ -1,73 +1,69 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 4 Jun 2018 16:18:53 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v5 3/4] clk: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <da121dede6d79460c5653a5bc360d413cb988c74.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46294 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750837AbeFHGWC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Jun 2018 02:22:02 -0400
+Date: Thu, 7 Jun 2018 23:21:58 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
+        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+Message-ID: <20180608062158.GI5738@atomide.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC clock output.
+* Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
+> Hi,
+> 
+> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
+> > * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
+> >> +static int sysc_reset(struct sysc *ddata)
+> >> +{
+> >> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+> >> +	int val = sysc_read(ddata, offset);
+> >> +
+> >> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
+> >> +	sysc_write(ddata, offset, val);
+> >> +
+> >> +	/* Poll on reset status */
+> >> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
+> >> +		offset = ddata->offsets[SYSC_SYSSTATUS];
+> >> +
+> >> +		return readl_poll_timeout(ddata->module_va + offset, val,
+> >> +				(val & ddata->cfg.syss_mask) == 0x0,
+> >> +				100, MAX_MODULE_SOFTRESET_WAIT);
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> > 
+> > I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
+> > addition to SYSC_QUIRK_RESET status to make it easy to
+> > read the right register?
+> 
+> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
+> the register. Are there layouts in which the reset status bit is in the
+> sysconfig register rather than the sysstatus register?
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../bindings/clock/rohm,bd71837-clock.txt          | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
+Yes we can have reset status bit in either syss or syssconfig register.
+We detect that in sysc_init_syss_mask() but we should also set something
+at that point to make it clear which reset to use. But as we don't need
+the quirk flag, it's probably set a function pointer after the detection.
+So how about let's have two functions sysc_reset() and sysc_syss_reset()
+and then we can implement sysc_syss_reset() in a separate patch after
+testing it when we have a non-platform data using example for
+sysc_syss_reset().
 
-diff --git a/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-new file mode 100644
-index 000000000000..771acfe34114
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
-@@ -0,0 +1,38 @@
-+ROHM BD71837 Power Management Integrated Circuit clock bindings
-+
-+This is a part of device tree bindings of ROHM BD71837 multi-function
-+device. See generic BD71837 MFD bindings at:
-+	Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-+
-+BD71837 contains one 32,768 KHz clock output which can be enabled and
-+disabled via i2c.
-+
-+Following properties should be present in main device node of the MFD chip.
-+
-+Required properties:
-+- clock-frequency	: Should be 32768
-+- #clock-cells		: Should be 0
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+/* MFD node */
-+
-+pmic: pmic@4b {
-+	compatible = "rohm,bd71837";
-+	/* ... */
-+	#clock-cells = <0>;
-+	clock-frequency  = <32768>;
-+	/* ... */
-+};
-+
-+/* Clock consumer node */
-+
-+foo@0 {
-+	compatible = "bar,foo";
-+	/* ... */
-+	clock-names = "my-clock";
-+	clocks = <&pmic>;
-+};
--- 
-2.14.3
+Regards,
+
+Tony
