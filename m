@@ -1,43 +1,108 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933550AbeFLIIK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:08:10 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Pramod Kumar <pramod.kumar@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        kbuild test robot <lkp@intel.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
-Cc: kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
- <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
-Message-ID: <152879088933.16708.2618330114850661561@swboyd.mtv.corp.google.com>
-Subject: RE: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
- 'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function);
- did you mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
-Date: Tue, 12 Jun 2018 01:08:09 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	cl@rock-chips.com,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v2 1/4] dt-bindings: add bindings for px30 clock controller
+Date: Fri,  8 Jun 2018 14:31:56 +0800
+Message-Id: <1528439519-30135-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ray Jui (2018-06-06 14:00:06)
-> Hi Stephen,
-> =
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-> I'd like to confirm this kbuild error is caused by changing of the defines
-> in the header.
-> =
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 
-> That is, kbuild test should pass with 2/2 patch.
-> =
-
-> If my understanding is incorrect and this requires any further action,
-> please let me know.
-
-Don't think so. Linus merged clk-next over the weekend. Either I applied
-the patches in the wrong order, or you sent them in the wrong order. In
-the future, please compile test each patch in isolation. I do that
-sometimes, but not always as it's still a manual process for me. I need
-to update my scripts to make that better, which I'll do shortly.
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+new file mode 100644
+index 000000000000..af5a45b680d0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+@@ -0,0 +1,67 @@
++* Rockchip PX30 Clock and Reset Unit
++
++The PX30 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
++- compatible: CRU should be "rockchip,px30-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "i2sx_clkin" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++
++Example: Clock controller node:
++
++	pmucru: pmu-clock-controller@ff2bc000 {
++		compatible = "rockchip,px30-pmucru";
++		reg = <0x0 0xff2bc000 0x0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	cru: clock-controller@ff2b0000 {
++		compatible = "rockchip,px30-cru";
++		reg = <0x0 0xff2b0000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff030000 {
++		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
++		reg = <0x0 0xff030000 0x0 0x100>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
++		clock-names = "baudclk", "apb_pclk";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++		status = "disabled";
++	};
++
+-- 
+1.9.1
