@@ -1,60 +1,42 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <pp@emlix.com>
+Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6SX_CLK_CKO1_SEL
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+ Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+References: <20180606092928.11724-1-pp@emlix.com>
+ <CAOMZO5B-T2UWdv-tf5vsCuRQ6f_o1gw1pAn-b6h9zfmi5ng4Ug@mail.gmail.com>
+From: Philipp Puschmann <pp@emlix.com>
+Message-ID: <5cd0f6eb-9c90-f89c-7fc4-7b2bfae99809@emlix.com>
+Date: Fri, 8 Jun 2018 12:21:56 +0200
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
-References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
- <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
- <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com> <152791486506.225090.5983323218999937025@swboyd.mtv.corp.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 2 Jun 2018 11:41:43 +0200
-Message-ID: <CAMuHMdVEGpYCjycdoYkaMjnPQ9dL33yPAm0EUoTtEZxkaup7XA@mail.gmail.com>
-Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAOMZO5B-T2UWdv-tf5vsCuRQ6f_o1gw1pAn-b6h9zfmi5ng4Ug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+I screwed up the title: IMX6SX_CLK_CKO1_SEL instead of IMX6QDL_CLK_CKO1_SEL
 
-On Sat, Jun 2, 2018 at 6:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-06-01 12:22:33)
->> On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
->> > Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
->> >> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
->> >> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
->> >> counting number of phandles in a property").
->> >>
->> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> ---
->> >> Commit bd69f73f2c81eed9 is in v3.9.
->> >
->> > Did you send this to Russell's patch tracker? Otherwise I can pick it up
+I have resent the patch with correct title. Sorry for the inconvenience.
+
+Am 06.06.2018 um 15:07 schrieb Fabio Estevam:
+> On Wed, Jun 6, 2018 at 6:29 AM, Philipp Puschmann <pp@emlix.com> wrote:
+>> q/dl datasheets list the 5th selection value for ck01_sel as
+>> video_27M_clk_root.
 >>
->> Not yet. The patch tracker is for reviewed patches, AFAIK.
+>> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
+>> as parent for IMX6QDL_CLK_CKO1_SEL.
 >>
->> > to clk-next.
->>
->> Thanks!
->>
->
-> Ok. If you need my reviewed-by to add it to the tracker feel free to
-> have:
->
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-Thanks, but it's much easier if you would take it, and I can avoid looking
-up again how to submit it properly to the patch tracker.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+> 
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
