@@ -1,97 +1,50 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Wed, 13 Jun 2018 16:03:38 +0300
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	broonie@kernel.org, lee.jones@linaro.org, lgirdwood@gmail.com,
-	mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180613130338.GH20078@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Make vde a child of pll_c3
+Date: Mon, 11 Jun 2018 17:17:31 +0300
+Message-ID: <5479310.ZEnOGiWBp7@dimapc>
+In-Reply-To: <20180611082037.31796-1-thierry.reding@gmail.com>
+References: <20180611082037.31796-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180612082354.GG20078@localhost.localdomain>
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
-> Hello Stephen,
+On Monday, 11 June 2018 11:20:37 MSK Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Thanks again for the review. I'll do new patch which fixes these issues.
+> The current default is to leave the VDE clock's parent at the default,
+> which is clk_m. However, that is not a configuration that will allow the
+> VDE to function. Reparent it to pll_c3 instead to make sure the hardware
+> can actually decode video content.
 > 
-> On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
-> > Quoting Matti Vaittinen (2018-06-04 06:19:13)
-> > > +}
-> > > +
-> > > +static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-> > > +                                            unsigned long parent_rate)
-> > > +{
-> > > +       struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-> > > +
-> > > +       return c->rate;
-> > > +}
-> > > +
-> > > +static const struct clk_ops bd71837_clk_ops = {
-> > > +       .recalc_rate = &bd71837_clk_recalc_rate,
-> > > +       .prepare = &bd71837_clk_enable,
-> > > +       .unprepare = &bd71837_clk_disable,
-> > > +       .is_prepared = &bd71837_clk_is_enabled,
-> > > +};
-> > > +
-> > > +static int bd71837_clk_probe(struct platform_device *pdev)
-> > > +{
-> > > +       struct bd71837_clk *c;
-> > > +       int rval = -ENOMEM;
-> > > +       struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
-> > > +       struct clk_init_data init = {
-> > > +               .name = "bd71837-32k-out",
-> > > +               .ops = &bd71837_clk_ops,
-> > > +       };
-> > > +
-> > > +       c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-> > > +       if (!c)
-> > > +               goto err_out;
-> > > +
-> > > +       c->reg = BD71837_REG_OUT32K;
-> > > +       c->mask = BD71837_OUT32K_EN;
-> > > +       c->rate = BD71837_CLK_RATE;
-> > 
-> > The PMIC has an 'XIN' pin that would be the clk input for this chip, and
-> > the output clk, this driver, would specify that xin clock as the parent.
-> > The 'xin' clock would then be listed in DT as a fixed-rate clock. That
-> > way this driver doesn't hardcode the frequency.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra124.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I see. This makes sense. I need to verify from HW colleagues whether
-> this chip has internal oscillator or not. I originally thought we have
-> on-chip oscillator - but as you say, we do have XIN pin in documentation.
-> So now I am not sure if the test board I have contains oscillator driving
-> the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
+> diff --git a/drivers/clk/tegra/clk-tegra124.c
+> b/drivers/clk/tegra/clk-tegra124.c index f5048f82c0b9..b6cf28ca2ed2 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_table[]
+> __initdata = { { TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+>  	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+>  	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
+> -	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
+> +	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_C3, 600000000, 0 },
+>  	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
+>  	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+>  	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
 
-It really turned out that the PMIC just acts as a clock buffer. So I do
-as you suggested and add lookup for parent clock to the driver. I
-planned to do it so that if no parent is found from DT - then we assume
-the 32.768KHz clock (as described in documentation). Eg, something along
-the lines:
+If clk_m isn't a valid configuration, why VDE could select it? At least TRM 
+lists clk_m as a valid source and clk_m is running on a safe 120 MHz, VDE HW 
+should work fine. Sounds like a clock driver bug to me.
 
-        init.parent_names = of_clk_get_parent_name(pdev->dev.parent->of_node, 0);
-        if (init.parent_names) {
-                init.num_parents = 1;
-        } else {
-                /* If parent is not given from DT we assume the typical use-case with
-                 * 32.768 KHz oscillator for RTC (Maybe we could just error out here?)
-                 */
-                c->rate = BD71837_CLK_RATE;
-                bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-        }
+Seems VDE clock on should be ~366 MHz according to the T40/T124 TRM. See 
+"5.3.8 PLLC, PLLC2, PLLC3, and PLLC4" of the T124 TRM.
 
-Does this make sense?
-
-Br,
-    Matti Vaittinen 
+Would be nice if you could adjust the VDE clock rate / parent-clock on all 
+Tegra's, i.e. explicitly set the parent clock and the rate to 300-400 MHz.
