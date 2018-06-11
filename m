@@ -1,40 +1,51 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
-Subject: Re: [PATCH v1 2/4] clk: rockchip: add dt-binding header for px30
-Date: Thu, 07 Jun 2018 09:56:58 +0200
-Message-ID: <2233320.o0OUWNYjTa@diego>
-In-Reply-To: <1528340786-462-3-git-send-email-zhangqing@rock-chips.com>
-References: <1528340786-462-1-git-send-email-zhangqing@rock-chips.com> <1528340786-462-3-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mx1.emlix.com ([46.4.235.150]:56754 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933646AbeFKONA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Jun 2018 10:13:00 -0400
+Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20180608101924.31195-1-pp@emlix.com>
+ <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
+From: Philipp Puschmann <pp@emlix.com>
+Message-ID: <40261c5f-285f-66f3-41dc-7107c487a47e@emlix.com>
+Date: Mon, 11 Jun 2018 16:12:58 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am Donnerstag, 7. Juni 2018, 05:06:24 CEST schrieb Elaine Zhang:
-> Add the dt-bindings header for the px30, that gets shared between
-> the clock controller and the clock references in the dts.
-> Add softreset ID for px30.
+> Hi Philipp,
 > 
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> ---
->  include/dt-bindings/clock/px30-cru.h | 402
-> +++++++++++++++++++++++++++++++++++ 1 file changed, 402 insertions(+)
->  create mode 100644 include/dt-bindings/clock/px30-cru.h
+> On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
+>> q/dl datasheets list the 5th selection value for ck01_sel as
+>> video_27M_clk_root.
+>>
+>> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
+>> as parent for IMX6QDL_CLK_CKO1_SEL.
+>>
+>> Signed-off-by: Philipp Puschmann <pp@emlix.com>
 > 
-> diff --git a/include/dt-bindings/clock/px30-cru.h
-> b/include/dt-bindings/clock/px30-cru.h new file mode 100644
-> index 000000000000..db9fc2a0bb21
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/px30-cru.h
-> @@ -0,0 +1,402 @@
-> +/*
-> + * Copyright (c) 2017 Rockchip Electronics Co. Ltd.
-> + * Author: Elaine <zhangqing@rock-chips.com>
+> You could still have added my Reviewed-by tag that I sent previously :-)
+> 
+> Here it goes:
+> 
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> 
+> Also in the future, when posting a new version of a patch, please mark
+> it as such:
+> 
+> [PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
+> 
+> and write below the --- line what are the changes in this new version.
+> 
+> Thanks
+> 
 
-				^^ full name maybe?
+Hi Fabio,
 
-Otherwise looks good.
-
-
-Heiko
+thank you for your hints, next time i will do it that way
