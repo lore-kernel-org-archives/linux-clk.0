@@ -1,44 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:34226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966434AbeF2S0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Jun 2018 14:26:38 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Fabio Estevam <festevam@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527948122-32092-1-git-send-email-festevam@gmail.com>
-Cc: michael@amarulasolutions.com, stefan.wahren@i2se.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
-        Fabio Estevam <fabio.estevam@nxp.com>
-References: <1527948122-32092-1-git-send-email-festevam@gmail.com>
-Message-ID: <153029679730.143105.4116951376524374351@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock
- definition order
-Date: Fri, 29 Jun 2018 11:26:37 -0700
-Sender: linux-clk-owner@vger.kernel.org
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com> <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Jun 2018 12:00:39 +0200
+Message-ID: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
+Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Fabio Estevam (2018-06-02 07:02:02)
-> From: Fabio Estevam <fabio.estevam@nxp.com>
-> =
+Hi Michel,
 
-> Commit f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled
-> by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
-> at the end of the list, which may cause dtb breakage when running an old
-> dtb with a newer kernel.
-> =
+On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas R9A06G032 SYSCTRL node description.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-> In order to avoid that, simply add the new CLK_CKO clock definitions
-> at the end of the list.
-> =
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> @@ -0,0 +1,32 @@
+> +* Renesas R9A06G032 SYSCTRL
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be:
+> +    - "renesas,r9a06g032-sysctrl"
+> +  - reg: Base address and length of the SYSCTRL IO block.
+> +  - #clock-cells: Must be 1
 
-> Fixes: f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled by CCOS=
-R")
-> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
+(repeating myself) No clocks/clock-names for the external clock inputs?
 
-Applied to clk-fixes
+"RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
+ reference clock outputs for RMII/MII."
 
+The rest looks fine to me.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
