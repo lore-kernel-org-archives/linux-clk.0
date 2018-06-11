@@ -1,42 +1,80 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Sun, 10 Jun 2018 23:09:57 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
+        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+Message-ID: <20180611060957.GN5738@atomide.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
 MIME-Version: 1.0
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Srinath Mannam <srinath.mannam@broadcom.com>,
- "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
- <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
- <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
-Message-ID: <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
-Subject: Re: ACPI support in common clock framework
-Date: Mon, 25 Jun 2018 09:37:48 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rafael J. Wysocki (2018-06-16 08:50:18)
-> On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Is this for clk_enable/disable? What about clk_set_rate() or
-> > clk_set_phase()? Is ACPI's AML taking care of that?
-> =
+* Faiz Abbas <faiz_abbas@ti.com> [180611 06:09]:
+> Hi Tony,
+> 
+> On Friday 08 June 2018 11:51 AM, Tony Lindgren wrote:
+> > * Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
+> >> Hi,
+> >>
+> >> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
+> >>> * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
+> >>>> +static int sysc_reset(struct sysc *ddata)
+> >>>> +{
+> >>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+> >>>> +	int val = sysc_read(ddata, offset);
+> >>>> +
+> >>>> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
+> >>>> +	sysc_write(ddata, offset, val);
+> >>>> +
+> >>>> +	/* Poll on reset status */
+> >>>> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
+> >>>> +		offset = ddata->offsets[SYSC_SYSSTATUS];
+> >>>> +
+> >>>> +		return readl_poll_timeout(ddata->module_va + offset, val,
+> >>>> +				(val & ddata->cfg.syss_mask) == 0x0,
+> >>>> +				100, MAX_MODULE_SOFTRESET_WAIT);
+> >>>> +	}
+> >>>> +
+> >>>> +	return 0;
+> >>>> +}
+> >>>
+> >>> I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
+> >>> addition to SYSC_QUIRK_RESET status to make it easy to
+> >>> read the right register?
+> >>
+> >> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
+> >> the register. Are there layouts in which the reset status bit is in the
+> >> sysconfig register rather than the sysstatus register?
+> > 
+> > Yes we can have reset status bit in either syss or syssconfig register.
+> 
+> You mean sysstatus and sysconfig right?
 
-> That's for clk_enable/disable AFAICS.
-> =
+Yup.
 
-> AML doesn't manage device performance states at all.
+> > We detect that in sysc_init_syss_mask() but we should also set something
+> > at that point to make it clear which reset to use. But as we don't need
+> > the quirk flag, it's probably set a function pointer after the detection.
+> > So how about let's have two functions sysc_reset() and sysc_syss_reset()
+> > and then we can implement sysc_syss_reset() in a separate patch after
+> > testing it when we have a non-platform data using example for
+> > sysc_syss_reset().
+> > 
+> 
+> Shouldn't the function I add be called sysc_syss_reset()? The reset
+> status bit is in the sysstatus.
 
-Alright. We may need to add a better way for device drivers to get
-handles to clk pointers on ACPI firmware so they can change frequencies
-or phase, etc. Right now it's all through clkdev and it looks to be
-mostly based on string matching of connection names instead of
-associating clks with devices.
+Yes
+
+Tony
