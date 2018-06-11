@@ -1,32 +1,39 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:46568 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753913AbeFKG3I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Jun 2018 02:29:08 -0400
+Date: Sun, 10 Jun 2018 23:29:04 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Faiz Abbas <faiz_abbas@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mark.rutland@arm.com, paul@pwsan.com,
+        t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+Message-ID: <20180611062904.GO5738@atomide.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+ <20180611060957.GN5738@atomide.com>
+ <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com> <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 3 Jun 2018 22:33:50 -0300
-Message-ID: <CAOMZO5Cr4C0BPS0zTymCm_M02=JXdxskntKXEMN6p9H9k28Z7A@mail.gmail.com>
-Subject: Re: [PATCH V2 3/4] clk: imx6sx: remove clks_init_on array
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 3, 2018 at 10:06 PM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Clock framework will enable those clocks registered
-> with CLK_IS_CRITICAL flag, so no need to have
-> clks_init_on array during clock initialization now.
->
-> ARM clock is busy divider type which has the
-> CLK_IS_CRITICAL flag set by default when registered.
->
-> IPG clock has no clock gate and its parent AHB clock
-> is busy divider type, so no need to add CLK_IS_CRITICAL
-> flag for IPG clock.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+* Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
+> Great. I thought I completely misunderstood you. But I don't see what
+> adding another function will accomplish. A QUIRK flag used in the same
+> function would work well enough.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Fine with me as long as the function stays simple for both
+syss and sysc reset.
+
+Regards,
+
+Tony
