@@ -1,47 +1,70 @@
-Return-Path: <thierry.escande@linaro.org>
-Return-Path: <thierry.escande@linaro.org>
-Subject: Re: [PATCH v10 00/14] Krait clocks + Krait CPUfreq
-To: Sricharan R <sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
- andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux@arm.linux.org.uk, ctatlor97@gmail.com
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
-Date: Wed, 27 Jun 2018 11:31:46 +0200
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
+References: <20180521115947.wqrnv2hczate65lz@flea> <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 11 Jun 2018 15:53:41 +0800
+Message-ID: <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sricharan,
+Hi,
 
-On 19/06/2018 15:45, Sricharan R wrote:
-> Sricharan R (2):
->    clk: qcom: Add safe switch hook for krait mux clocks
->    dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
-> 
-> Stephen Boyd (12):
->    ARM: Add Krait L2 register accessor functions
->    clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
->    clk: qcom: Add HFPLL driver
->    dt-bindings: clock: Document qcom,hfpll
->    clk: qcom: Add MSM8960/APQ8064's HFPLLs
->    clk: qcom: Add IPQ806X's HFPLLs
->    clk: qcom: Add support for Krait clocks
->    clk: qcom: Add KPSS ACC/GCC driver
->    dt-bindings: arm: Document qcom,kpss-gcc
->    clk: qcom: Add Krait clock controller driver
->    dt-bindings: clock: Document qcom,krait-cc
->    cpufreq: Add module to register cpufreq on Krait CPUs
+On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Hi Maxime,
+>
+>
+> 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
+>> Hi Mike, Stephen,
+>>
+>> Please merge the following changes for the next merge window, thanks!
+>>
+>> Maxime
+>>
+>> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+>>
+>>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
+>>
+>> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
+>>
+>>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
+>>
+>> ----------------------------------------------------------------
+>> Allwinner clock changes for 4.18
+>>
+>> Not a lot of changes for this release, but two quite important features
+>> were added: the H6 PRCM clock support, and the needed changes to the R40
+>> clock driver to allow for the EMAC to operate.
+>>
+>> ----------------------------------------------------------------
+>> Icenowy Zheng (3):
+>>       clk: sunxi-ng: add support for H6 PRCM CCU
+>>       clk: sunxi-ng: r40: rewrite init code to a platform driver
+>>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
+>>
+>
+>
+>
+> Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
+> not included in the pull request?
+>
+>
+> You said "I've picked it up"
+> https://patchwork.kernel.org/patch/10348031/
 
-Tested on apq8064 (db600c).
+It looks like it was accidentally dropped after a rebase.
+Not quite sure what happened there. Maxime?
 
-Tested-By: Thierry Escande <thierry.escande@linaro.org>
-
-Best regards,
-Thierry
+ChenYu
