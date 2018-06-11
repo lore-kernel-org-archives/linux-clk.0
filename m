@@ -1,57 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:38236 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753974AbeFKGqK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jun 2018 02:46:10 -0400
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
- <20180606060826.14671-5-faiz_abbas@ti.com>
- <20180607073530.GH5738@atomide.com>
- <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
- <20180608062158.GI5738@atomide.com>
- <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
- <20180611060957.GN5738@atomide.com>
- <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
- <20180611062904.GO5738@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
-Date: Mon, 11 Jun 2018 12:17:10 +0530
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180611062904.GO5738@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Mon, 11 Jun 2018 11:43:14 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
+ Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+ Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: Enable clocks which needs to be always on
+ for SDM845
+In-Reply-To: <152787098620.144038.15158473245010154723@swboyd.mtv.corp.google.com>
+References: <1527574066-27237-1-git-send-email-anischal@codeaurora.org>
+ <152787098620.144038.15158473245010154723@swboyd.mtv.corp.google.com>
+Message-ID: <4e8c1a6f04a54634cb6718b0c59dc59e@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On 2018-06-01 22:06, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-05-28 23:07:46)
+>> There are certain clocks which needs to be always enabled for system
+>> operation. Remove support for such clocks from the clock driver and
+>> enable them explicitly gcc driver probe. Also fix the target name in
+>> kernel configuration description for SDM845 gcc driver.
+> 
+> This is why we have CLK_IS_CRITICAL.
+> 
+>> 
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index fc3edd1..79e9144 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -231,7 +231,7 @@ config SDM_GCC_845
+>>         select QCOM_GDSC
+>>         depends on COMMON_CLK_QCOM
+>>         help
+>> -         Support for the global clock controller on msm8998 devices.
+>> +         Support for the global clock controller on SDM845 devices.
+>>           Say Y if you want to use peripheral devices such as UART, 
+>> SPI,
+>>           I2C, USB, UFS, SDDC, PCIe, etc.
+>> 
+> 
+> This can be its own patch.
+> 
 
-On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
->> Great. I thought I completely misunderstood you. But I don't see what
->> adding another function will accomplish. A QUIRK flag used in the same
->> function would work well enough>
-> Fine with me as long as the function stays simple for both
-> syss and sysc reset.
->
+Thanks for fixing above as this is already in the clk-next branch
+under commit "77122d".
 
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c 
+>> b/drivers/clk/qcom/gcc-sdm845.c
+>> index e78e6f5..b40aafc 100644
+>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -3433,9 +3327,16 @@ static int gcc_sdm845_probe(struct 
+>> platform_device *pdev)
+>>         regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+>>         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+>> 
+>> -       /* Enable CPUSS clocks */
+>> -       regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
+>> -       regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
+>> +       /* Enable clocks which are required to be always ON */
+>> +       regmap_update_bits(regmap, 0xb004, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0xb008, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0xb00c, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0xb028, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0xb02c, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0xb030, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0x48190, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0x52004, BIT(22), BIT(22));
+>> +       regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+> 
+> Let's do CLK_IS_CRITICAL flag instead. That has the added benefit of
+> checking to make sure the halt bit toggles correctly so the clks are
+> verified to be enabled.
+> 
 
-In general a reset status bit being in sysstatus is the norm and it
-being in sysconfig should be the "quirk" for which a flag needs to be
-added. What do you think?
+I will submit the next patch for all above-listed clocks with
+CLK_IS_CRITICAL flag.
 
-As an aside, naming bitshifts by the name of the platform they were
-originally added in seems weird. There should be some generic mask
-saying "soft reset is the 0th bit". Currently I am using
-SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
-different sysconfig types we have.
-
-Thanks,
-Faiz
-
-
+>> 
+>>         return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>>  }
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h 
+>> b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> index aca6126..6330c3f 100644
+>> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> @@ -13,185 +13,178 @@
+>>  #define GCC_AGGRE_USB3_PRIM_AXI_CLK                            3
+>>  #define GCC_AGGRE_USB3_SEC_AXI_CLK                             4
+>>  #define GCC_BOOT_ROM_AHB_CLK                                   5
+>> -#define GCC_CAMERA_AHB_CLK                                     6
+> 
+> Don't do this. Things should only be added to here, not removed or
+> reshuffled.
+> 
+>> -#define GCC_CAMERA_AXI_CLK                                     7
+>> -#define GCC_CAMERA_XO_CLK                                      8
+>> -#define GCC_CE1_AHB_CLK                                               
+>>  9
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
