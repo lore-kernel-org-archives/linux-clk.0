@@ -1,72 +1,57 @@
-Return-Path: <marc.zyngier@arm.com>
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- Simon Horman <horms@verge.net.au>, Phil Edworthy
- <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-clk <linux-clk@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Message-ID: <e90e0670-3cf5-4430-3b4a-8f7ad520938d@arm.com>
-Date: Fri, 22 Jun 2018 13:25:56 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:38236 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753974AbeFKGqK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jun 2018 02:46:10 -0400
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+ <20180611060957.GN5738@atomide.com>
+ <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
+ <20180611062904.GO5738@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
+Date: Mon, 11 Jun 2018 12:17:10 +0530
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180611062904.GO5738@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 22/06/18 13:14, Geert Uytterhoeven wrote:
-> Hi Michel,
-> 
-> CC MarcZ
-> 
-> On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
->> This adds the Renesas R9A06G032 bare bone support.
->>
->> This currently only handles the SYSCTRL block note,
->> generic parts (gic, architected timer) and a UART.
->>
->> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> 
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> 
->> +       timer {
->> +               compatible = "arm,cortex-a7-timer",
-> 
-> Checkpatch says:
-> WARNING: DT compatible string "arm,cortex-a7-timer" appears
-> un-documented -- check ./Documentation/devicetree/bindings/
-> 
->> +                            "arm,armv7-timer";
-> 
-> Documentation/devicetree/bindings/arm/arch_timer.txt says:
-> 
->     compatible should at least contain "arm,armv7-timer"
-> 
-> but fails to list other possible values?
+Hi,
 
-The idea is that you could add something useful that matches your CPU.
-Adding new CPU types in the binding seems to be a never ending battle...
+On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
+>> Great. I thought I completely misunderstood you. But I don't see what
+>> adding another function will accomplish. A QUIRK flag used in the same
+>> function would work well enough>
+> Fine with me as long as the function stays simple for both
+> syss and sysc reset.
+>
 
-> 
->> +               interrupt-parent = <&gic>;
->> +               arm,cpu-registers-not-fw-configured;
 
-Really? :-(
+In general a reset status bit being in sysstatus is the norm and it
+being in sysconfig should be the "quirk" for which a flag needs to be
+added. What do you think?
+
+As an aside, naming bitshifts by the name of the platform they were
+originally added in seems weird. There should be some generic mask
+saying "soft reset is the 0th bit". Currently I am using
+SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
+different sysconfig types we have.
 
 Thanks,
+Faiz
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+
