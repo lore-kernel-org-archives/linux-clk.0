@@ -1,37 +1,82 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 12 Jun 2018 14:59:07 -0600
-From: Rob Herring <robh@kernel.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Display clock
- bindings
-Message-ID: <20180612205907.GA12993@rob-hp-laptop>
-References: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
- <1528098985-3676-2-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:20695 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753899AbeFKGHc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jun 2018 02:07:32 -0400
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <20180606060826.14671-1-faiz_abbas@ti.com>
+ <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+Date: Mon, 11 Jun 2018 11:38:44 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1528098985-3676-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <20180608062158.GI5738@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 04, 2018 at 01:26:24PM +0530, Taniya Das wrote:
-> Add device tree bindings for display clock controller for Qualcomm
-> Technology Inc's SoCs.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
->  include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
->  2 files changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
+Hi Tony,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Friday 08 June 2018 11:51 AM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
+>> Hi,
+>>
+>> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
+>>> * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
+>>>> +static int sysc_reset(struct sysc *ddata)
+>>>> +{
+>>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+>>>> +	int val = sysc_read(ddata, offset);
+>>>> +
+>>>> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
+>>>> +	sysc_write(ddata, offset, val);
+>>>> +
+>>>> +	/* Poll on reset status */
+>>>> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
+>>>> +		offset = ddata->offsets[SYSC_SYSSTATUS];
+>>>> +
+>>>> +		return readl_poll_timeout(ddata->module_va + offset, val,
+>>>> +				(val & ddata->cfg.syss_mask) == 0x0,
+>>>> +				100, MAX_MODULE_SOFTRESET_WAIT);
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>
+>>> I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
+>>> addition to SYSC_QUIRK_RESET status to make it easy to
+>>> read the right register?
+>>
+>> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
+>> the register. Are there layouts in which the reset status bit is in the
+>> sysconfig register rather than the sysstatus register?
+> 
+> Yes we can have reset status bit in either syss or syssconfig register.
+
+You mean sysstatus and sysconfig right?
+
+> We detect that in sysc_init_syss_mask() but we should also set something
+> at that point to make it clear which reset to use. But as we don't need
+> the quirk flag, it's probably set a function pointer after the detection.
+> So how about let's have two functions sysc_reset() and sysc_syss_reset()
+> and then we can implement sysc_syss_reset() in a separate patch after
+> testing it when we have a non-platform data using example for
+> sysc_syss_reset().
+> 
+
+Shouldn't the function I add be called sysc_syss_reset()? The reset
+status bit is in the sysstatus.
+
+Thanks,
+Faiz
+
