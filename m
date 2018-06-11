@@ -1,148 +1,445 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59673 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935205AbeFML7c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 07:59:32 -0400
-Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox
- documentation
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180601065821.28234-1-o.rempel@pengutronix.de>
- <20180601065821.28234-3-o.rempel@pengutronix.de>
- <20180612194142.GA16521@rob-hp-laptop>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <034f77a2-88b5-716b-d9c8-10d73beec9d4@pengutronix.de>
-Date: Wed, 13 Jun 2018 13:59:30 +0200
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 11 Jun 2018 13:35:03 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] memory: tegra: Introduce Tegra20 EMC driver
+Message-ID: <20180611113503.GC31977@ulmo>
+References: <20180603223654.23324-1-digetx@gmail.com>
+ <20180603223654.23324-6-digetx@gmail.com>
+ <20180606110258.GL11810@ulmo>
+ <c17a1edf-f87d-e5f6-b446-34505a2bbc07@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180612194142.GA16521@rob-hp-laptop>
 Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="xuj5q6BFURq7uLv6iHKz5G9mUEdcWpaMa"
-Sender: linux-clk-owner@vger.kernel.org
+	protocol="application/pgp-signature"; boundary="Bu8it7iiRSEf40bY"
+In-Reply-To: <c17a1edf-f87d-e5f6-b446-34505a2bbc07@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---xuj5q6BFURq7uLv6iHKz5G9mUEdcWpaMa
-Content-Type: multipart/mixed; boundary="UARG5G5UM8s9o4uOrIrWHpGcmIMxuDahX";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <034f77a2-88b5-716b-d9c8-10d73beec9d4@pengutronix.de>
-Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox
- documentation
-References: <20180601065821.28234-1-o.rempel@pengutronix.de>
- <20180601065821.28234-3-o.rempel@pengutronix.de>
- <20180612194142.GA16521@rob-hp-laptop>
-In-Reply-To: <20180612194142.GA16521@rob-hp-laptop>
 
---UARG5G5UM8s9o4uOrIrWHpGcmIMxuDahX
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+--Bu8it7iiRSEf40bY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 06, 2018 at 04:42:01PM +0300, Dmitry Osipenko wrote:
+> On 06.06.2018 14:02, Thierry Reding wrote:
+> > On Mon, Jun 04, 2018 at 01:36:54AM +0300, Dmitry Osipenko wrote:
+[...]
+> >> +struct tegra_emc {
+> >> +	struct device *dev;
+> >> +	struct notifier_block clk_nb;
+> >> +	struct clk *backup_clk;
+> >> +	struct clk *emc_mux;
+> >> +	struct clk *pll_m;
+> >> +	struct clk *clk;
+> >> +	void __iomem *regs;
+> >> +
+> >> +	struct completion clk_handshake_complete;
+> >> +	int irq;
+> >> +
+> >> +	struct emc_timing *timings;
+> >> +	unsigned int num_timings;
+> >> +};
+> >> +
+> >> +static irqreturn_t tegra_emc_isr(int irq, void *data)
+> >> +{
+> >> +	struct tegra_emc *emc =3D data;
+> >> +	u32 intmask =3D EMC_CLKCHANGE_COMPLETE_INT;
+> >> +	u32 status;
+> >> +
+> >> +	status =3D readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
+> >> +	if (!status)
+> >> +		return IRQ_NONE;
+> >> +
+> >> +	/* clear interrupts */
+> >> +	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
+> >=20
+> > Do we really want to just clear the handshake complete interrupt or do
+> > we want to clear all of them? Perhaps we should also warn if there are
+> > other interrupts that we're not handling? Currently we'd only get some
+> > warning if another interrupt triggered without the handshake complete
+> > one triggering at the same time, but couldn't there be others asserted
+> > along with the handshake complete interrupt? In which case we'd just
+> > be ignoring them. Or perhaps not clearing it would get the ISR run
+> > immediately again and produce the "nobody cared" warning?
+> >=20
+>=20
+> Yes, we really want to just clear the handshake-complete interrupt. No, we
+> shouldn't warn about other interrupts because IRQ subsys does it for us. =
+Other
+> interrupts shouldn't be asserted because we disabled them with the interr=
+upts
+> masking in emc_setup_hw(). Other interrupts can only be asserted in a cas=
+e of a
+> bug, there will be a "nobody cared" warning and interrupt will be disable=
+d, this
+> is exactly what we want in that case.
 
+Okay, that's what I was suspecting might happen. Seems fine, then.
 
-On 12.06.2018 21:41, Rob Herring wrote:
-> On Fri, Jun 01, 2018 at 08:58:19AM +0200, Oleksij Rempel wrote:
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  .../bindings/mailbox/imx-mailbox.txt          | 35 ++++++++++++++++++=
-+
->>  1 file changed, 35 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mail=
-box.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt=
- b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
->> new file mode 100644
->> index 000000000000..a45604b33039
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
->> @@ -0,0 +1,35 @@
->> +i.MX Messaging Unit
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +
->> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B".=
- In most cases
->> +they are accessible from all Processor Units. On one hand, at least f=
-or mailbox functionality,
->> +it makes no difference which application or processor is using which =
-set of the MU. On
+> >> +static int cmp_timings(const void *_a, const void *_b)
+> >> +{
+> >> +	const struct emc_timing *a =3D _a;
+> >> +	const struct emc_timing *b =3D _b;
+> >> +
+> >> +	if (a->rate < b->rate)
+> >> +		return -1;
+> >> +	else if (a->rate =3D=3D b->rate)
+> >> +		return 0;
+> >> +	else
+> >> +		return 1;
+> >=20
+> > Nit, I tend to=20
+> >=20
 >=20
-> Please wrap lines correctly (<80).
->=20
->> +other hand, the register sets for each of the MU parts are not identi=
-cal.
->> +
->> +Required properties:
->> +- compatible :	Shell be one of:
->> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S =
-or i.MX7D
->> +- reg : 	physical base address of the mailbox and length of
->=20
-> Mix of space and tab.
->=20
->> +		memory mapped region.
->> +- #mbox-cells:	Common mailbox binding property to identify the number=
+> Tend to..?
 
->> +		of cells required for the mailbox specifier. Should be 1.
->> +- interrupts :	interrupt number. The interrupt specifier format
->> +		depends on the interrupt controller parent.
->=20
-> Just need to say how many interrupts and what they are if more than 1.
->=20
->> +- clocks     :  phandle to the input clock.
->> +
->> +Example:
->> +	mu0a: mu@30aa0000 {
->=20
-> mailbox@...
->=20
->> +		compatible =3D "fsl,imx7s-mu-a";
->> +		reg =3D <0x30aa0000 0x28>;
->> +		interrupts =3D <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
->> +		#mbox-cells =3D <1>;
->> +	};
->> +
->> +	mu0b: mu@30ab0000 {
->=20
-> mailbox@...
->=20
->> +		compatible =3D "fsl,imx7s-mu-b";
->> +		reg =3D <0x30ab0000 0x28>;
->> +		interrupts =3D <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
->> +		#mbox-cells =3D <1>;
->> +	};
+Looks like I got distracted at this point. =3D) What I meant to say is
+that I tend to not use if ... else if ... else for things that do
+immediately return. The above is equivalent to the below, which I think
+is much easier to read:
 
-thx. will fix it.
+	if (a->rate < b->rate)
+		return -1;
 
+	if (a->rate > b->rate)
+		return 1;
 
---UARG5G5UM8s9o4uOrIrWHpGcmIMxuDahX--
+	return 0;
 
---xuj5q6BFURq7uLv6iHKz5G9mUEdcWpaMa
+> >> +}
+> >> +
+> >> +static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
+> >> +					  struct device_node *node)
+> >> +{
+> >> +	struct device_node *child;
+> >> +	struct emc_timing *timing;
+> >> +	int child_count;
+> >> +	int err;
+> >> +
+> >> +	child_count =3D of_get_child_count(node);
+> >=20
+> > It's unfortunate that of_get_child_count() doesn't return unsigned int,
+> > there's no reason why this would have to be signed.
+> >=20
+>=20
+> Patches are welcome ;)
+
+Yeah, just a random drive-by comment. Please ignore. =3D)
+
+>=20
+> >> +	if (!child_count) {
+> >> +		dev_err(emc->dev, "no memory timings in DT node\n");
+> >> +		return -ENOENT;
+> >> +	}
+> >> +
+> >> +	emc->timings =3D devm_kcalloc(emc->dev, child_count, sizeof(*timing),
+> >> +				    GFP_KERNEL);
+> >> +	if (!emc->timings)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	emc->num_timings =3D child_count;
+> >> +	timing =3D emc->timings;
+> >> +
+> >> +	for_each_child_of_node(node, child) {
+> >> +		err =3D load_one_timing_from_dt(emc, timing++, child);
+> >> +		if (err) {
+> >> +			of_node_put(child);
+> >> +			return err;
+> >> +		}
+> >> +	}
+> >> +
+> >> +	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
+> >> +	     NULL);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static struct device_node *
+> >> +tegra_emc_find_node_by_ram_code(struct tegra_emc *emc, u32 ram_code)
+> >> +{
+> >> +	struct device_node *np;
+> >> +	int err;
+> >> +
+> >> +	for_each_child_of_node(emc->dev->of_node, np) {
+> >> +		u32 value;
+> >> +
+> >> +		err =3D of_property_read_u32(np, "nvidia,ram-code", &value);
+> >> +		if (err || value !=3D ram_code)
+> >> +			continue;
+> >> +
+> >> +		return np;
+> >> +	}
+> >> +
+> >> +	dev_info(emc->dev, "no memory timings for RAM code %u found in DT\n",
+> >> +		 ram_code);
+> >=20
+> > This seems like it should be dev_warn() or perhaps even dev_err() given
+> > that the result of it is the driver failing to probe. dev_info() may go
+> > unnoticed.
+> >=20
+>=20
+> Absence of memory timings is a valid case, hence dev_info() suit well her=
+e.
+>=20
+> I can't see anything wrong with returning a errno if driver has nothing t=
+o do
+> and prefer to keep it because in that case managed resources would be fre=
+e'd by
+> the driver core, though returning '0' also would work.
+
+I disagree. A driver failing to probe will show up as a kernel log entry
+and is something that people will have to whitelist if they're filtering
+for error messages in the boot log.
+
+I think it's more user-friendly to just let the driver succeed the probe
+in an expected case, even if that means there's really nothing to do. If
+you're really concerned about the managed resources staying around, I
+think you could probably get rid of them explicitly. By the looks of it
+devres_release_all() isn't an exported symbol, so it can't be called
+=66rom driver code, but perhaps that's something that we can change.
+
+>=20
+> >> +
+> >> +	return NULL;
+> >> +}
+> >> +
+> >> +static int tegra_emc_clk_change_notify(struct notifier_block *nb,
+> >> +				       unsigned long msg, void *data)
+> >> +{
+> >> +	struct tegra_emc *emc =3D container_of(nb, struct tegra_emc, clk_nb);
+> >> +	struct clk_notifier_data *cnd =3D data;
+> >> +	int err;
+> >> +
+> >> +	switch (msg) {
+> >> +	case PRE_RATE_CHANGE:
+> >> +		err =3D emc_prepare_timing_change(emc, cnd->new_rate);
+> >> +		break;
+> >> +
+> >> +	case ABORT_RATE_CHANGE:
+> >> +		err =3D emc_prepare_timing_change(emc, cnd->old_rate);
+> >> +		if (err)
+> >> +			break;
+> >> +
+> >> +		err =3D emc_complete_timing_change(emc, true);
+> >> +		break;
+> >> +
+> >> +	case POST_RATE_CHANGE:
+> >> +		err =3D emc_complete_timing_change(emc, false);
+> >> +		break;
+> >> +
+> >> +	default:
+> >> +		return NOTIFY_DONE;
+> >> +	}
+> >> +
+> >> +	return notifier_from_errno(err);
+> >> +}
+> >> +
+> >> +static int emc_setup_hw(struct tegra_emc *emc)
+> >> +{
+> >> +	u32 emc_cfg;
+> >> +
+> >> +	emc_cfg =3D readl_relaxed(emc->regs + EMC_CFG_2);
+> >> +
+> >> +	/*
+> >> +	 * Depending on a memory type, DRAM should enter either self-refresh
+> >> +	 * or power-down state on EMC clock change.
+> >> +	 */
+> >> +	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
+> >> +	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE))
+> >> +	{
+> >> +		dev_err(emc->dev,
+> >> +			"bootloader didn't specify DRAM auto-suspend mode\n");
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	/* allow EMC and CAR to handshake on PLL divider/source changes */
+> >> +	emc_cfg |=3D EMC_CLKCHANGE_REQ_ENABLE;
+> >> +	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
+> >> +
+> >> +	/* initialize interrupt */
+> >> +	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTMASK);
+> >> +	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTSTATUS=
+);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int emc_init(struct tegra_emc *emc, unsigned long rate)
+> >> +{
+> >> +	int err;
+> >> +
+> >> +	err =3D clk_set_parent(emc->emc_mux, emc->backup_clk);
+> >> +	if (err) {
+> >> +		dev_err(emc->dev,
+> >> +			"failed to reparent to backup source: %d\n", err);
+> >> +		return err;
+> >> +	}
+> >> +
+> >> +	err =3D clk_set_rate(emc->pll_m, rate);
+> >> +	if (err)
+> >> +		dev_err(emc->dev,
+> >> +			"failed to change pll_m rate: %d\n", err);
+> >> +
+> >> +	err =3D clk_set_parent(emc->emc_mux, emc->pll_m);
+> >> +	if (err) {
+> >> +		dev_err(emc->dev,
+> >> +			"failed to reparent to pll_m: %d\n", err);
+> >> +		return err;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int tegra_emc_probe(struct platform_device *pdev)
+> >> +{
+> >> +	struct device_node *np;
+> >> +	struct tegra_emc *emc;
+> >> +	struct resource *res;
+> >> +	u32 ram_code;
+> >> +	int err;
+> >> +
+> >> +	emc =3D devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
+> >> +	if (!emc)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	emc->dev =3D &pdev->dev;
+> >> +
+> >> +	ram_code =3D tegra_read_ram_code();
+> >> +
+> >> +	np =3D tegra_emc_find_node_by_ram_code(emc, ram_code);
+> >> +	if (!np)
+> >> +		return -ENOENT;
+> >> +
+> >> +	err =3D tegra_emc_load_timings_from_dt(emc, np);
+> >> +	of_node_put(np);
+> >> +	if (err)
+> >> +		return err;
+> >> +
+> >> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> +	emc->regs =3D devm_ioremap_resource(&pdev->dev, res);
+> >> +	if (IS_ERR(emc->regs))
+> >> +		return PTR_ERR(emc->regs);
+> >> +
+> >> +	err =3D emc_setup_hw(emc);
+> >> +	if (err)
+> >> +		return err;
+> >> +
+> >> +	emc->irq =3D platform_get_irq(pdev, 0);
+> >> +	if (emc->irq < 0) {
+> >> +		dev_warn(&pdev->dev, "interrupt not specified\n");
+> >> +		dev_warn(&pdev->dev, "continuing, but please update your DT\n");
+> >=20
+> > Do we really need this? I think this is a case where we don't have to
+> > keep backwards-compatibility because this driver hasn't "worked" in a
+> > very long time (because it was absent). Therefore, if we error out in
+> > the absence of an interrupt we don't break anything.
+> >=20
+> > There's a few places in this driver that are awkward just because the
+> > interrupt isn't mandatory. I don't think it's warranted in this case.
+> >=20
+>=20
+> Backwards compatibility is always nice to have, but I don't really mind d=
+ropping it.
+
+So the Tegra20 EMC driver was removed in commit a7cbe92cef27 ("ARM:
+tegra: remove tegra EMC scaling driver"), which is dated August 20,
+2013. So it's been almost 5 years since EMC frequency scaling has
+worked on Tegra20 (that is, it hasn't worked since v3.15). I very
+much doubt that anyone is still running a kernel or DTB from that
+time, given how little used to be supported and how much they'd be
+missing out on if they stuck to that DTB.
+
+I don't think backwards compatibility will hold up as an argument
+in this case.
+
+>=20
+> >> +	} else {
+> >> +		init_completion(&emc->clk_handshake_complete);
+> >> +
+> >> +		err =3D devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
+> >> +				       dev_name(&pdev->dev), emc);
+> >> +		if (err < 0) {
+> >> +			dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n",
+> >> +				emc->irq, err);
+> >> +			return err;
+> >> +		}
+> >> +	}
+> >> +
+> >> +	emc->pll_m =3D clk_get_sys(NULL, "pll_m");
+> >> +	if (IS_ERR(emc->pll_m)) {
+> >> +		err =3D PTR_ERR(emc->pll_m);
+> >> +		dev_err(&pdev->dev, "failed to get pll_m: %d\n", err);
+> >> +		return err;
+> >> +	}
+> >> +
+> >> +	emc->backup_clk =3D clk_get_sys(NULL, "pll_p");
+> >> +	if (IS_ERR(emc->backup_clk)) {
+> >> +		err =3D PTR_ERR(emc->backup_clk);
+> >> +		dev_err(&pdev->dev, "failed to get pll_p: %d\n", err);
+> >> +		goto put_pll_m;
+> >> +	}
+> >> +
+> >> +	emc->clk =3D clk_get_sys(NULL, "emc");
+> >> +	if (IS_ERR(emc->clk)) {
+> >> +		err =3D PTR_ERR(emc->clk);
+> >> +		dev_err(&pdev->dev, "failed to get emc: %d\n", err);
+> >> +		goto put_backup;
+> >> +	}
+> >=20
+> > Instead of using clk_get_sys(), why not specify these in the DT with
+> > proper names for context ("emc", "pll", "backup")? Again, I don't think
+> > we have to worry about backwards-compatibility here since there can be
+> > no regression.
+> >=20
+>=20
+> I don't think that "pll" and "backup" could be placed in DT because it is=
+ a pure
+> software-driver description.
+>=20
+> "emc" could be retrieved from DT if we don't care about backwards compati=
+bility.
+
+I think both PLL and backup clocks would be appropriate to describe in
+DT. There are other cases, like for display, where we list clocks in the
+DT that aren't strictly inputs to a hardware block. But they are related
+to the functionality of the block, so I think it makes sense to list
+them as well.
+
+In this particular case, the PLL is what drives the memory banks, which
+is the think that the EMC controls, right? So that itself is reason
+enough, in my opinion, to list it in DT. Much the same goes for the
+backup clock, which is really just the PLL for some transient state
+where the normal PLL is being reconfigured.
+
+Thierry
+
+--Bu8it7iiRSEf40bY
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlshByIACgkQdQOiSHVI
-77TSrAf/ZVVYcY2pqsC4A1YzKZkWOHH6zki7Wfw6McNGevfuZRCOmfseQdpvONOr
-ILtjM6xjDNt8MhDYiijzf6nWOuBbLFqOgrXIp/pMDamDJLqfwy5hjFyq7L5GjXN4
-s9sgRxfQiZyMQO2/XFRzUvMFz6pxI20a6lgtm67jTJ9relCtijG6VtooVdOZHrKC
-xuSo+60nUIiPRWlrlqF02bTWy/uF25Z4NCDxKe+PFa37P/MLhyBy6Ecx/fVMalo9
-0slZXPkQ0e0aPyHHriLZaMEyYZKRBWgJJFg1NtGCvpfPNiUxbAnkA9RX07BmImFi
-HtSwtFD94Y2K8KXD/flzVnBywrkS6A==
-=tuHO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlseXmQACgkQ3SOs138+
+s6G8HhAAtKI8dZsAbkX/SO8JQypdJmqW2HBbn+DzLz4JBgsLS9ByBw+e9HkrjTf9
+L512P5Ckmu+WJmDDZqGTuDZ+Djj1PjBtSXpW8ey/VKD5DYStpGR5pcoXdZCaT7Aa
+MOaFsy1QwP9Swc9iwBX2uw1G89jgDLXFhihkXXjFawCXgW38QVchtHMuZFYr2WnT
+jHic6/0r005Od4GdwB7ZdVgYjyr+HPY/FG+Sz5UH5yC04ELg132a06DhYCEaWKd+
+UyM3TmPIqgxbNYHI81PUN9tZPjcrRy1beWmTL9l3Qob7f3mvikhVhZdxo0+3hmHf
+Ml2Iyv58OQsBZ4IF9RI30wBGhFymwZLk28PLTAn+YgpVFnPvjpKHYUJ5p1dVNM3r
+n5H4wS7puspnPu46tR9FCH/fvfjOGinrjCYGF5LhQxBb0Zsn4itjjZ5Dbc+hHLzx
+1k1QBXEyybsmWHNQ/RyZt8wOlkbpTOgtz3104RcyN7j5lWwAQf9KOxKiq6hSqgsP
+eWw95I5Hr6HX2n/16dHuX77n+RpgkqACl0j/WV40jkcg4/dgITn8mmAQClUPIjyv
+GEfkIzq5Rr5BLObBz5XM38IOtKCOwLddpJd2lEFYxrTcKXwfcDEwAnG1Nc3mqLv0
+fwMtJfX1UeiPoDlw8bU9dqQEidQi0MrNVrU1cVumzBmkvXKcTk0=
+=ZQoW
 -----END PGP SIGNATURE-----
 
---xuj5q6BFURq7uLv6iHKz5G9mUEdcWpaMa--
+--Bu8it7iiRSEf40bY--
