@@ -1,69 +1,34 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 11 Jun 2018 12:26:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 00/13] ARM: davinci: remove duplicate aemif support
-Date: Tue, 26 Jun 2018 11:25:24 +0200
-Message-Id: <20180626092537.6737-1-brgl@bgdev.pl>
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt: bindings: tegra20-emc: Document interrupt
+ property
+Message-ID: <20180611182646.GA16835@rob-hp-laptop>
+References: <20180603223654.23324-1-digetx@gmail.com>
+ <20180603223654.23324-2-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180603223654.23324-2-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jun 04, 2018 at 01:36:50AM +0300, Dmitry Osipenko wrote:
+> EMC has a dedicated interrupt that is used to notify about completion of
+> HW operations. Document the interrupt property.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
+>  1 file changed, 2 insertions(+)
 
-This series moves all aemif/nand users to using the ti-aemif platform
-driver located in drivers/memory instead of the older API located in
-mach-davinci.
-
-First five patches add necessary changes to the clock driver. Next
-seven convert the board files to using the ti-aemif driver. Last patch
-removes now dead code.
-
-v1 -> v2:
-- added missing clock lookups for ti-aemif where needed
-- removed an unnecessary davinci_nand clock lookup from psc-da850
-- moved the .id field initialization of aemif platform devices next to .name
-- tweaked the commit message for the last patch
-
-Bartosz Golaszewski (13):
-  clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
-  clk: davinci: psc-dm365: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-  clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-  clk: davinci: psc-da830: add a lookup entry for aemif clock
-  ARM: davinci: omapl138-hawk: add aemif & nand support
-  ARM: davinci: da850-evm: use aemif platform driver in legacy mode
-  ARM: davinci: dm365-evm: use the ti-aemif soc driver
-  ARM: davinci: dm644x-evm: use aemif platform driver
-  ARM: davinci: da830-evm: use aemif platform driver
-  ARM: davinci: dm646x-evm: use aemif platform driver
-  ARM: davinci: mityomapl138: use aemif platform driver
-  ARM: davinci: unduplicate aemif support
-
- arch/arm/mach-davinci/Makefile                |   2 +-
- arch/arm/mach-davinci/aemif.c                 | 218 ------------------
- arch/arm/mach-davinci/board-da830-evm.c       |  56 ++++-
- arch/arm/mach-davinci/board-da850-evm.c       |  93 ++++----
- arch/arm/mach-davinci/board-dm365-evm.c       |  59 +++--
- arch/arm/mach-davinci/board-dm644x-evm.c      |  55 +++--
- arch/arm/mach-davinci/board-dm646x-evm.c      |  52 ++++-
- arch/arm/mach-davinci/board-mityomapl138.c    |  55 +++--
- arch/arm/mach-davinci/board-omapl138-hawk.c   | 132 +++++++++++
- drivers/clk/davinci/psc-da830.c               |   3 +-
- drivers/clk/davinci/psc-da850.c               |   3 +-
- drivers/clk/davinci/psc-dm365.c               |   3 +-
- drivers/clk/davinci/psc-dm644x.c              |   3 +-
- drivers/clk/davinci/psc-dm646x.c              |   3 +-
- .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
- 15 files changed, 407 insertions(+), 331 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/aemif.c
-
--- 
-2.17.1
+Acked-by: Rob Herring <robh@kernel.org>
