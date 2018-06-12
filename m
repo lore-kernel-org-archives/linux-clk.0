@@ -1,94 +1,220 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-he1eur01on0042.outbound.protection.outlook.com ([104.47.0.42]:28112
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933732AbeFMJgn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:36:43 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Robert Schwebel <r.schwebel@pengutronix.de>,
-        Oleksij Rempel <o.rempel@pengutronix.de>
-CC: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v1 0/4] add mailbox support for i.MX7D
-Date: Wed, 13 Jun 2018 09:36:39 +0000
-Message-ID: <AM0PR04MB4211ABBDBEE2982312E15F6F807E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20180601065821.28234-1-o.rempel@pengutronix.de>
- <20180601083411.s35c2floqdas6qni@pengutronix.de>
-In-Reply-To: <20180601083411.s35c2floqdas6qni@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, broonie@kernel.org,
+ lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+ mazziesaccount@gmail.com, mturquette@baylibre.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+ heikki.haikola@fi.rohmeurope.com
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Date: Tue, 12 Jun 2018 00:44:11 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Robert,
+Quoting Matti Vaittinen (2018-06-04 06:19:13)
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 41492e980ef4..e693496f202a 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -279,6 +279,13 @@ config COMMON_CLK_STM32H7
+>         ---help---
+>           Support for stm32h7 SoC family clocks
+>  =
 
-Thanks for the forwarding.
+> +config COMMON_CLK_BD71837
+> +       tristate "Clock driver for ROHM BD71837 PMIC MFD"
+> +       depends on MFD_BD71837
+> +       help
+> +         This driver supports ROHM BD71837 PMIC clock.
+> +
+> +
 
-> -----Original Message-----
-> From: Robert Schwebel [mailto:r.schwebel@pengutronix.de]
-> Sent: Friday, June 1, 2018 4:34 PM
-> To: Oleksij Rempel <o.rempel@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> Rutland <mark.rutland@arm.com>; linux-clk@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; kernel@pengutronix.de;
-> devicetree@vger.kernel.org; A.s. Dong <aisheng.dong@nxp.com>; dl-linux-
-> imx <linux-imx@nxp.com>
-> Subject: Re: [PATCH v1 0/4] add mailbox support for i.MX7D
->=20
-> On Fri, Jun 01, 2018 at 08:58:17AM +0200, Oleksij Rempel wrote:
-> > This patches are providing support for mailbox (Messaging Unit) for
-> > i.MX7D. Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
-> > Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
-> >
+Drop one newline above.
 
-Thanks for the patch.
+>  source "drivers/clk/bcm/Kconfig"
+>  source "drivers/clk/hisilicon/Kconfig"
+>  source "drivers/clk/imgtec/Kconfig"
+> diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
+> new file mode 100644
+> index 000000000000..5ba6c05c5a98
+> --- /dev/null
+> +++ b/drivers/clk/clk-bd71837.c
+> @@ -0,0 +1,146 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd71837.c  -- ROHM BD71837MWV clock driver
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/bd71837.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+> +
+> +
 
-> > Both parts of i.MX messaging Unit are visible for all CPUs available
-> > on i.MX7D. Communication worked independent of MU side in
-> combination
-> > with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on
-> ARM
-> > Cortex-M4 or other ways around.
-> >
-> > The question to NXP developers: are there are limitations or
-> > recommendations about MU vs CPU combination? The i.MX7D
-> documentation
-> > talks about "Processor A" and "Processor B". It is not quite clear
-> > what processor it actually is (A7 or M4).
+Drop one newline above.
 
-The MU vs CPU combination usually are defined by HW design.
-It, MU Side A/B,  can either be used by both CPU (A core and M core)
-or fixed to one side.
-For MX7D case, both side memory map can be accessed by both CPU
-Including Interrupt signals. But the recommendation is A core using
-MU side A and M core using MU side B.
+> +struct bd71837_clk {
+> +       struct clk_hw hw;
+> +       uint8_t reg;
+> +       uint8_t mask;
 
-Regards
-Dong Aisheng
+Use u8 instead of uint8_t.
 
->=20
-> Adding Dong Aisheng and NXP linux team to Cc:.
->=20
-> rsc
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 |
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fww
-> w.pengutronix.de%2F&data=3D02%7C01%7Caisheng.dong%40nxp.com%7Cf53
-> d9c9cdd744878740f08d5c79a7a1e%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
-> C0%7C0%7C636634388645464924&sdata=3D2ehh92tNbfwf3fJTp%2Fx7IUOgGSU
-> h6pyrc2XsdRJkTw4%3D&reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+> +       unsigned long rate;
+> +       struct platform_device *pdev;
+> +       struct bd71837 *mfd;
+> +};
+> +
+> +static int bd71837_clk_set(struct clk_hw *hw, int status)
+> +{
+> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
+);
+> +
+> +       return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
+
+Any reason we can't use a regmap?
+
+> +}
+> +
+> +static void bd71837_clk_disable(struct clk_hw *hw)
+> +{
+> +       int rv;
+> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
+);
+> +
+> +       rv =3D bd71837_clk_set(hw, 0);
+> +       if (rv)
+> +               dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n"=
+, rv);
+> +}
+> +
+> +static int bd71837_clk_enable(struct clk_hw *hw)
+> +{
+> +       return bd71837_clk_set(hw, 1);
+> +}
+> +
+> +static int bd71837_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
+);
+> +
+> +       return c->mask & bd71837_reg_read(c->mfd, c->reg);
+
+Didn't I ask for local variable for reg_read result?
+
+> +}
+> +
+> +static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
+> +                                            unsigned long parent_rate)
+> +{
+> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
+);
+> +
+> +       return c->rate;
+> +}
+> +
+> +static const struct clk_ops bd71837_clk_ops =3D {
+> +       .recalc_rate =3D &bd71837_clk_recalc_rate,
+> +       .prepare =3D &bd71837_clk_enable,
+> +       .unprepare =3D &bd71837_clk_disable,
+> +       .is_prepared =3D &bd71837_clk_is_enabled,
+> +};
+> +
+> +static int bd71837_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct bd71837_clk *c;
+> +       int rval =3D -ENOMEM;
+> +       struct bd71837 *mfd =3D dev_get_drvdata(pdev->dev.parent);
+> +       struct clk_init_data init =3D {
+> +               .name =3D "bd71837-32k-out",
+> +               .ops =3D &bd71837_clk_ops,
+> +       };
+> +
+> +       c =3D devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> +       if (!c)
+> +               goto err_out;
+> +
+> +       c->reg =3D BD71837_REG_OUT32K;
+> +       c->mask =3D BD71837_OUT32K_EN;
+> +       c->rate =3D BD71837_CLK_RATE;
+
+The PMIC has an 'XIN' pin that would be the clk input for this chip, and
+the output clk, this driver, would specify that xin clock as the parent.
+The 'xin' clock would then be listed in DT as a fixed-rate clock. That
+way this driver doesn't hardcode the frequency.
+
+> +       c->mfd =3D mfd;
+> +       c->pdev =3D pdev;
+> +
+> +       of_property_read_string_index(pdev->dev.parent->of_node,
+> +                                             "clock-output-names", 0,
+> +                                             &init.name);
+> +
+> +       c->hw.init =3D &init;
+
+Do this next to all the other c-> things?
+
+> +
+> +       rval =3D devm_clk_hw_register(&pdev->dev, &c->hw);
+> +       if (rval) {
+> +               dev_err(&pdev->dev, "failed to register 32K clk");
+> +               goto err_out;
+> +       }
+> +
+> +       if (pdev->dev.parent->of_node) {
+> +               rval =3D of_clk_add_hw_provider(pdev->dev.parent->of_node,
+> +                                            of_clk_hw_simple_get,
+> +                                            &c->hw);
+> +               if (rval) {
+> +                       dev_err(&pdev->dev, "adding clk provider failed\n=
+");
+> +                       goto err_out;
+
+Just return rval instead of goto and then remove err_out label.
+
+> +               }
+> +       }
+> +
+> +       rval =3D clk_hw_register_clkdev(&c->hw, init.name, NULL);
+
+This leaks a clkdev lookup. Sad we don't have a devm version. Maybe it
+should be added. But I really doubt this chip will be used with clkdev
+lookups so please remove clkdev until you have a user who needs it.
+
+> +       if (rval) {
+> +               dev_err(&pdev->dev, "failed to register clkdev for bd7183=
+7");
+> +               goto err_clean_provider;
+> +       }
+> +
+> +       platform_set_drvdata(pdev, c);
+> +
+> +       return 0;
+> +
+> +err_clean_provider:
+> +       of_clk_del_provider(pdev->dev.parent->of_node);
+> +err_out:
+> +       return rval;
+> +}
+> +
+> +static int bd71837_clk_remove(struct platform_device *pdev)
+> +{
+> +       if (pdev->dev.parent->of_node)
+> +               of_clk_del_provider(pdev->dev.parent->of_node);
+
+Use devm so this can go away. Or is devm not used because the parent
+of_node is the provider? That's annoying.
+
+> +       return 0;
+> +}
+> +
