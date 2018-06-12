@@ -1,60 +1,104 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH V2] clk: ti: omap3: Fix am3517 mdio clock alias
-To: Adam Ford <aford173@gmail.com>, <adam.ford@logicpd.com>
-CC: <woods.technical@gmail.com>, <linux-clk@vger.kernel.org>,
-        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <tony@atomide.com>,
-        <stable@vger.kernel.org>
-References: <20180625105313.4201-1-aford173@gmail.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <60e56097-0c57-2352-d1f0-76740a5b75f1@ti.com>
-Date: Mon, 25 Jun 2018 15:16:57 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180625105313.4201-1-aford173@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 27/27] ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+Date: Tue, 12 Jun 2018 22:00:36 +0200
+Message-Id: <20180612200036.21483-28-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/06/18 13:53, Adam Ford wrote:
+Since HDMI can be considered as main output, most capable mixer is
+connected to it (mixer0).
 
-Subject line should be: "ARM: dts: omap3:" etc.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
--Tero
-
-> A previous patch removed OMAP clock aliases that were perceived
-> to be unnecessary.  Unfortunately, it broke the ethernet on the
-> am3517-evm.  This patch enables the MDIO clock and EMAC clock.
-> 
-> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-> Cc: stable@vger.kernel.org #4.16+
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
->       to work like the original patch intended.
-> 
-> diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
-> index ca294914bbb1..4b6062b631b1 100644
-> --- a/arch/arm/boot/dts/am3517.dtsi
-> +++ b/arch/arm/boot/dts/am3517.dtsi
-> @@ -39,6 +39,8 @@
->   			ti,davinci-ctrl-ram-size = <0x2000>;
->   			ti,davinci-rmii-en = /bits/ 8 <1>;
->   			local-mac-address = [ 00 00 00 00 00 00 ];
-> +			clocks = <&emac_ick>;
-> +			clock-names = "ick";
->   		};
->   
->   		davinci_mdio: ethernet@5c030000 {
-> @@ -49,6 +51,8 @@
->   			bus_freq = <1000000>;
->   			#address-cells = <1>;
->   			#size-cells = <0>;
-> +			clocks = <&emac_fck>;
-> +			clock-names = "fck";
->   		};
->   
->   		uart4: serial@4809e000 {
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index 27d9ccd0ef2f..0ebc2f9a980e 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -58,6 +58,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -93,6 +104,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -101,6 +116,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -195,6 +220,26 @@
+ 	status = "okay";
+ };
+ 
++&tcon_top_hdmi_in_tcon_tv0 {
++	remote-endpoint = <&tcon_tv0_out_tcon_top>;
++};
++
++&tcon_top_mixer0_out_tcon_tv0 {
++	remote-endpoint = <&tcon_tv0_in_tcon_top>;
++};
++
++&tcon_tv0_in {
++	tcon_tv0_in_tcon_top: endpoint {
++		remote-endpoint = <&tcon_top_mixer0_out_tcon_tv0>;
++	};
++};
++
++&tcon_tv0_out {
++	tcon_tv0_out_tcon_top: endpoint {
++		remote-endpoint = <&tcon_top_hdmi_in_tcon_tv0>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
+-- 
+2.17.1
