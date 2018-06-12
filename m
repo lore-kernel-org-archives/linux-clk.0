@@ -7,103 +7,36 @@ Cc: airlied@linux.ie, gustavo@padovan.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have channel 0
-Date: Mon, 25 Jun 2018 14:02:49 +0200
-Message-Id: <20180625120304.7543-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Subject: [PATCH v2 16/27] dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+Date: Tue, 12 Jun 2018 22:00:25 +0200
+Message-Id: <20180612200036.21483-17-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
-Because of that, all output endpoints on such TCON node will point to a
-encoder which is part of component framework.
+R40 DE2 mixers are similar to those found in A83T, except it needs
+different clock settings.
 
-Correct current graph traversing algorithm in such way that it doesn't
-skip output enpoints with id 0 on TV TCONs.
+Add a compatibles for them.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 52 +++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index e6c62c079146..6ddf4eaccb40 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -198,6 +198,22 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return !!of_match_node(sun4i_tcon_of_table, node);
- }
- 
-+static bool sun4i_drv_node_is_tcon_with_ch0(struct device_node *node)
-+{
-+	const struct of_device_id *match;
-+
-+	match = of_match_node(sun4i_tcon_of_table, node);
-+	if (match) {
-+		struct sun4i_tcon_quirks *quirks;
-+
-+		quirks = (struct sun4i_tcon_quirks *)match->data;
-+
-+		return quirks->has_channel_0;
-+	}
-+
-+	return false;
-+}
-+
- static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
- {
- 	return !!of_match_node(sun8i_tcon_top_of_table, node);
-@@ -256,14 +272,7 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
- 			continue;
- 		}
- 
--		/*
--		 * If the node is our TCON, the first port is used for
--		 * panel or bridges, and will not be part of the
--		 * component framework.
--		 */
- 		if (sun4i_drv_node_is_tcon(node)) {
--			struct of_endpoint endpoint;
--
- 			/*
- 			 * TCON TOP is always probed before TCON. However, TCON
- 			 * points back to TCON TOP when it is source for HDMI.
-@@ -276,16 +285,25 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
- 				continue;
- 			}
- 
--			if (of_graph_parse_endpoint(ep, &endpoint)) {
--				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
--				of_node_put(remote);
--				continue;
--			}
--
--			if (!endpoint.id) {
--				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
--				of_node_put(remote);
--				continue;
-+			/*
-+			 * If the node is our TCON with channel 0, the first
-+			 * port is used for panel or bridges, and will not be
-+			 * part of the component framework.
-+			 */
-+			if (sun4i_drv_node_is_tcon_with_ch0(node)) {
-+				struct of_endpoint endpoint;
-+
-+				if (of_graph_parse_endpoint(ep, &endpoint)) {
-+					DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+					of_node_put(remote);
-+					continue;
-+				}
-+
-+				if (!endpoint.id) {
-+					DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+					of_node_put(remote);
-+					continue;
-+				}
- 			}
- 		}
- 
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 68c4b2995624..d84df6d808c2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -358,6 +358,8 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-1
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
 -- 
-2.18.0
+2.17.1
