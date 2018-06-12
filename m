@@ -1,50 +1,104 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Make vde a child of pll_c3
-Date: Mon, 11 Jun 2018 17:17:31 +0300
-Message-ID: <5479310.ZEnOGiWBp7@dimapc>
-In-Reply-To: <20180611082037.31796-1-thierry.reding@gmail.com>
-References: <20180611082037.31796-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs61.siol.net ([185.57.226.252]:38753 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934506AbeFLUCo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:44 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 21/27] drm/sun4i: DW HDMI PHY: Add support for second PLL
+Date: Tue, 12 Jun 2018 22:00:30 +0200
+Message-Id: <20180612200036.21483-22-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, 11 June 2018 11:20:37 MSK Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The current default is to leave the VDE clock's parent at the default,
-> which is clk_m. However, that is not a configuration that will allow the
-> VDE to function. Reparent it to pll_c3 instead to make sure the hardware
-> can actually decode video content.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra124.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra124.c
-> b/drivers/clk/tegra/clk-tegra124.c index f5048f82c0b9..b6cf28ca2ed2 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_table[]
-> __initdata = { { TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
->  	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
->  	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-> -	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
-> +	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_C3, 600000000, 0 },
->  	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
->  	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
->  	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
+between two clock parents.
 
-If clk_m isn't a valid configuration, why VDE could select it? At least TRM 
-lists clk_m as a valid source and clk_m is running on a safe 120 MHz, VDE HW 
-should work fine. Sounds like a clock driver bug to me.
+Add code which reads second PLL from DT.
 
-Seems VDE clock on should be ~366 MHz according to the T40/T124 TRM. See 
-"5.3.8 PLLC, PLLC2, PLLC3, and PLLC4" of the T124 TRM.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 ++
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 20 +++++++++++++++-----
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
-Would be nice if you could adjust the VDE clock rate / parent-clock on all 
-Tegra's, i.e. explicitly set the parent clock and the rate to 300-400 MHz.
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 3ba71aff92fc..46a3aa6a53a9 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -147,6 +147,7 @@ struct sun8i_hdmi_phy;
+ 
+ struct sun8i_hdmi_phy_variant {
+ 	bool has_phy_clk;
++	bool has_second_pll;
+ 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
+ 	void (*phy_disable)(struct dw_hdmi *hdmi,
+ 			    struct sun8i_hdmi_phy *phy);
+@@ -160,6 +161,7 @@ struct sun8i_hdmi_phy {
+ 	struct clk			*clk_mod;
+ 	struct clk			*clk_phy;
+ 	struct clk			*clk_pll0;
++	struct clk			*clk_pll1;
+ 	unsigned int			rcal;
+ 	struct regmap			*regs;
+ 	struct reset_control		*rst_phy;
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index cd07ceb71601..f50072ae054a 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -482,10 +482,19 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			goto err_put_clk_mod;
+ 		}
+ 
++		if (phy->variant->has_second_pll) {
++			phy->clk_pll1 = of_clk_get_by_name(node, "pll-1");
++			if (IS_ERR(phy->clk_pll1)) {
++				dev_err(dev, "Could not get pll-1 clock\n");
++				ret = PTR_ERR(phy->clk_pll1);
++				goto err_put_clk_pll0;
++			}
++		}
++
+ 		ret = sun8i_phy_clk_create(phy, dev);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+-			goto err_put_clk_pll0;
++			goto err_put_clk_pll1;
+ 		}
+ 
+ 		clk_prepare_enable(phy->clk_phy);
+@@ -528,9 +537,10 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	reset_control_put(phy->rst_phy);
+ err_disable_clk_phy:
+ 	clk_disable_unprepare(phy->clk_phy);
++err_put_clk_pll1:
++	clk_put(phy->clk_pll1);
+ err_put_clk_pll0:
+-	if (phy->variant->has_phy_clk)
+-		clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll0);
+ err_put_clk_mod:
+ 	clk_put(phy->clk_mod);
+ err_put_clk_bus:
+@@ -551,8 +561,8 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
+ 
+ 	reset_control_put(phy->rst_phy);
+ 
+-	if (phy->variant->has_phy_clk)
+-		clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll0);
++	clk_put(phy->clk_pll1);
+ 	clk_put(phy->clk_mod);
+ 	clk_put(phy->clk_bus);
+ }
+-- 
+2.17.1
+
