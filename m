@@ -1,151 +1,352 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] clk: imx6sx: remove clks_init_on array
-Date: Sun,  3 Jun 2018 11:00:46 +0800
-Message-Id: <1527994847-2363-3-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752853AbeFLLXx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Jun 2018 07:23:53 -0400
+Date: Tue, 12 Jun 2018 12:23:48 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com, linux-mips@linux-mips.org,
+        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 3/7] MIPS: intel: Add initial support for Intel MIPS SoCs
+Message-ID: <20180612112346.GA8748@jamesdev>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-4-songjun.wu@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+In-Reply-To: <20180612054034.4969-4-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx6sx.c | 40 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 26 deletions(-)
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 10c771b..aed4391 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -92,14 +92,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
- static struct clk *clks[IMX6SX_CLK_CLK_END];
- static struct clk_onecell_data clk_data;
- 
--static int const clks_init_on[] __initconst = {
--	IMX6SX_CLK_AIPS_TZ1, IMX6SX_CLK_AIPS_TZ2, IMX6SX_CLK_AIPS_TZ3,
--	IMX6SX_CLK_IPMUX1, IMX6SX_CLK_IPMUX2, IMX6SX_CLK_IPMUX3,
--	IMX6SX_CLK_WAKEUP, IMX6SX_CLK_MMDC_P0_FAST, IMX6SX_CLK_MMDC_P0_IPG,
--	IMX6SX_CLK_ROM, IMX6SX_CLK_ARM, IMX6SX_CLK_IPG, IMX6SX_CLK_OCRAM,
--	IMX6SX_CLK_PER2_MAIN, IMX6SX_CLK_PERCLK, IMX6SX_CLK_TZASC1,
--};
--
- static const struct clk_div_table clk_enet_ref_table[] = {
- 	{ .val = 0, .div = 20, },
- 	{ .val = 1, .div = 10, },
-@@ -142,7 +134,6 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
--	int i;
- 
- 	clks[IMX6SX_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
- 
-@@ -332,7 +323,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_QSPI1_PODF]         = imx_clk_divider("qspi1_podf",     "qspi1_sel",         base + 0x1c, 26,   3);
- 	clks[IMX6SX_CLK_EIM_SLOW_PODF]      = imx_clk_divider("eim_slow_podf",  "eim_slow_sel",      base + 0x1c, 23,   3);
- 	clks[IMX6SX_CLK_LCDIF2_PODF]        = imx_clk_divider("lcdif2_podf",    "lcdif2_pred",       base + 0x1c, 20,   3);
--	clks[IMX6SX_CLK_PERCLK]             = imx_clk_divider("perclk",         "perclk_sel",        base + 0x1c, 0,    6);
-+	clks[IMX6SX_CLK_PERCLK]             = imx_clk_divider_flags("perclk", "perclk_sel", base + 0x1c, 0, 6, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_VID_PODF]           = imx_clk_divider("vid_podf",       "vid_sel",           base + 0x20, 24,   2);
- 	clks[IMX6SX_CLK_CAN_PODF]           = imx_clk_divider("can_podf",       "can_sel",           base + 0x20, 2,    6);
- 	clks[IMX6SX_CLK_USDHC4_PODF]        = imx_clk_divider("usdhc4_podf",    "usdhc4_sel",        base + 0x24, 22,   3);
-@@ -380,8 +371,8 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 
- 	/*                                            name             parent_name          reg         shift */
- 	/* CCGR0 */
--	clks[IMX6SX_CLK_AIPS_TZ1]     = imx_clk_gate2("aips_tz1",      "ahb",               base + 0x68, 0);
--	clks[IMX6SX_CLK_AIPS_TZ2]     = imx_clk_gate2("aips_tz2",      "ahb",               base + 0x68, 2);
-+	clks[IMX6SX_CLK_AIPS_TZ1]     = imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_AIPS_TZ2]     = imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_APBH_DMA]     = imx_clk_gate2("apbh_dma",      "usdhc3",            base + 0x68, 4);
- 	clks[IMX6SX_CLK_ASRC_MEM]     = imx_clk_gate2_shared("asrc_mem", "ahb",             base + 0x68, 6, &share_count_asrc);
- 	clks[IMX6SX_CLK_ASRC_IPG]     = imx_clk_gate2_shared("asrc_ipg", "ahb",             base + 0x68, 6, &share_count_asrc);
-@@ -394,7 +385,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_CAN2_SERIAL]  = imx_clk_gate2("can2_serial",   "can_podf",          base + 0x68, 20);
- 	clks[IMX6SX_CLK_DCIC1]        = imx_clk_gate2("dcic1",         "display_podf",      base + 0x68, 24);
- 	clks[IMX6SX_CLK_DCIC2]        = imx_clk_gate2("dcic2",         "display_podf",      base + 0x68, 26);
--	clks[IMX6SX_CLK_AIPS_TZ3]     = imx_clk_gate2("aips_tz3",      "ahb",               base + 0x68, 30);
-+	clks[IMX6SX_CLK_AIPS_TZ3]     = imx_clk_gate2_flags("aips_tz3", "ahb", base + 0x68, 30, CLK_IS_CRITICAL);
- 
- 	/* CCGR1 */
- 	clks[IMX6SX_CLK_ECSPI1]       = imx_clk_gate2("ecspi1",        "ecspi_podf",        base + 0x6c, 0);
-@@ -407,7 +398,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_ESAI_EXTAL]   = imx_clk_gate2_shared("esai_extal", "esai_podf",     base + 0x6c, 16, &share_count_esai);
- 	clks[IMX6SX_CLK_ESAI_IPG]     = imx_clk_gate2_shared("esai_ipg",   "ahb",           base + 0x6c, 16, &share_count_esai);
- 	clks[IMX6SX_CLK_ESAI_MEM]     = imx_clk_gate2_shared("esai_mem",   "ahb",           base + 0x6c, 16, &share_count_esai);
--	clks[IMX6SX_CLK_WAKEUP]       = imx_clk_gate2("wakeup",        "ipg",               base + 0x6c, 18);
-+	clks[IMX6SX_CLK_WAKEUP]       = imx_clk_gate2_flags("wakeup", "ipg", base + 0x6c, 18, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_GPT_BUS]      = imx_clk_gate2("gpt_bus",       "perclk",            base + 0x6c, 20);
- 	clks[IMX6SX_CLK_GPT_SERIAL]   = imx_clk_gate2("gpt_serial",    "perclk",            base + 0x6c, 22);
- 	clks[IMX6SX_CLK_GPU]          = imx_clk_gate2("gpu",           "gpu_core_podf",     base + 0x6c, 26);
-@@ -420,10 +411,10 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_I2C3]         = imx_clk_gate2("i2c3",          "perclk",            base + 0x70, 10);
- 	clks[IMX6SX_CLK_OCOTP]        = imx_clk_gate2("ocotp",         "ipg",               base + 0x70, 12);
- 	clks[IMX6SX_CLK_IOMUXC]       = imx_clk_gate2("iomuxc",        "lcdif1_podf",       base + 0x70, 14);
--	clks[IMX6SX_CLK_IPMUX1]       = imx_clk_gate2("ipmux1",        "ahb",               base + 0x70, 16);
--	clks[IMX6SX_CLK_IPMUX2]       = imx_clk_gate2("ipmux2",        "ahb",               base + 0x70, 18);
--	clks[IMX6SX_CLK_IPMUX3]       = imx_clk_gate2("ipmux3",        "ahb",               base + 0x70, 20);
--	clks[IMX6SX_CLK_TZASC1]       = imx_clk_gate2("tzasc1",        "mmdc_podf",         base + 0x70, 22);
-+	clks[IMX6SX_CLK_IPMUX1]       = imx_clk_gate2_flags("ipmux1", "ahb", base + 0x70, 16, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_IPMUX2]       = imx_clk_gate2_flags("ipmux2", "ahb", base + 0x70, 18, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_IPMUX3]       = imx_clk_gate2_flags("ipmux3", "ahb", base + 0x70, 20, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_TZASC1]       = imx_clk_gate2_flags("tzasc1", "mmdc_podf", base + 0x70, 22, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_LCDIF_APB]    = imx_clk_gate2("lcdif_apb",     "display_podf",      base + 0x70, 28);
- 	clks[IMX6SX_CLK_PXP_AXI]      = imx_clk_gate2("pxp_axi",       "display_podf",      base + 0x70, 30);
- 
-@@ -437,15 +428,15 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_LDB_DI0]      = imx_clk_gate2("ldb_di0",       "ldb_di0_div_sel",   base + 0x74, 12);
- 	clks[IMX6SX_CLK_QSPI1]        = imx_clk_gate2("qspi1",         "qspi1_podf",        base + 0x74, 14);
- 	clks[IMX6SX_CLK_MLB]          = imx_clk_gate2("mlb",           "ahb",               base + 0x74, 18);
--	clks[IMX6SX_CLK_MMDC_P0_FAST] = imx_clk_gate2("mmdc_p0_fast",  "mmdc_podf",         base + 0x74, 20);
--	clks[IMX6SX_CLK_MMDC_P0_IPG]  = imx_clk_gate2("mmdc_p0_ipg",   "ipg",               base + 0x74, 24);
--	clks[IMX6SX_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ocram_podf",        base + 0x74, 28);
-+	clks[IMX6SX_CLK_MMDC_P0_FAST] = imx_clk_gate2_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74, 20, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_MMDC_P0_IPG]  = imx_clk_gate2_flags("mmdc_p0_ipg", "ipg", base + 0x74, 24, CLK_IS_CRITICAL);
-+	clks[IMX6SX_CLK_OCRAM]        = imx_clk_gate2_flags("ocram", "ocram_podf", base + 0x74, 28, CLK_IS_CRITICAL);
- 
- 	/* CCGR4 */
- 	clks[IMX6SX_CLK_PCIE_AXI]     = imx_clk_gate2("pcie_axi",      "display_podf",      base + 0x78, 0);
- 	clks[IMX6SX_CLK_QSPI2]        = imx_clk_gate2("qspi2",         "qspi2_podf",        base + 0x78, 10);
- 	clks[IMX6SX_CLK_PER1_BCH]     = imx_clk_gate2("per1_bch",      "usdhc3",            base + 0x78, 12);
--	clks[IMX6SX_CLK_PER2_MAIN]    = imx_clk_gate2("per2_main",     "ahb",               base + 0x78, 14);
-+	clks[IMX6SX_CLK_PER2_MAIN]    = imx_clk_gate2_flags("per2_main", "ahb", base + 0x78, 14, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_PWM1]         = imx_clk_gate2("pwm1",          "perclk",            base + 0x78, 16);
- 	clks[IMX6SX_CLK_PWM2]         = imx_clk_gate2("pwm2",          "perclk",            base + 0x78, 18);
- 	clks[IMX6SX_CLK_PWM3]         = imx_clk_gate2("pwm3",          "perclk",            base + 0x78, 20);
-@@ -456,7 +447,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SX_CLK_GPMI_APB]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
- 
- 	/* CCGR5 */
--	clks[IMX6SX_CLK_ROM]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
-+	clks[IMX6SX_CLK_ROM]          = imx_clk_gate2_flags("rom", "ahb", base + 0x7c, 0, CLK_IS_CRITICAL);
- 	clks[IMX6SX_CLK_SDMA]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
- 	clks[IMX6SX_CLK_SPBA]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
- 	clks[IMX6SX_CLK_AUDIO]        = imx_clk_gate2_shared("audio",  "audio_podf",        base + 0x7c, 14, &share_count_audio);
-@@ -502,9 +493,6 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clk_data.clk_num = ARRAY_SIZE(clks);
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clks[clks_init_on[i]]);
--
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6SX_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6SX_CLK_USBPHY2_GATE]);
--- 
-2.7.4
+Hi,
+
+Good to see this patch!
+
+On Tue, Jun 12, 2018 at 01:40:30PM +0800, Songjun Wu wrote:
+> diff --git a/arch/mips/Kbuild.platforms b/arch/mips/Kbuild.platforms
+> index ac7ad54f984f..bcd647060f3e 100644
+> --- a/arch/mips/Kbuild.platforms
+> +++ b/arch/mips/Kbuild.platforms
+> @@ -12,6 +12,7 @@ platforms += cobalt
+>  platforms += dec
+>  platforms += emma
+>  platforms += generic
+> +platforms += intel-mips
+
+What are the main things preventing this from moving to the generic
+platform? Is it mainly the use of EVA (which generic doesn't yet
+support)?
+
+> diff --git a/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h b/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+> new file mode 100644
+> index 000000000000..3893855b60c6
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+...
+> +	/*
+> +	 * Get Config.K0 value and use it to program
+> +	 * the segmentation registers
+
+Please can you describe (maybe with a table) the segment layout in human
+readable terms so the reader doesn't need to decode the SegCtl registers
+to understand where everything is in the virtual address space?
+
+> diff --git a/arch/mips/boot/dts/intel-mips/Makefile b/arch/mips/boot/dts/intel-mips/Makefile
+> new file mode 100644
+> index 000000000000..b16c0081639c
+> --- /dev/null
+> +++ b/arch/mips/boot/dts/intel-mips/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_DTB_INTEL_MIPS_GRX500)	+= easy350_anywan.dtb
+> +obj-y	+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+
+This needs updating to obj-$(CONFIG_BUILTIN_DTB) as per commit
+fca3aa166422 ("MIPS: dts: Avoid unneeded built-in.a in DTS dirs") in
+linux-next.
+
+> diff --git a/arch/mips/intel-mips/Makefile b/arch/mips/intel-mips/Makefile
+> new file mode 100644
+> index 000000000000..9f272d06eecd
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_INTEL_MIPS)	+= prom.o irq.o time.o
+
+You can use obj-y, since this Makefile is only included if
+CONFIG_INTEL_MIPS=y (i.e. via the platform-$(CONFIG_INTEL_MIPS) below).
+
+Also please split each file onto separate "obj-y += whatever.o" lines.
+
+> diff --git a/arch/mips/intel-mips/Platform b/arch/mips/intel-mips/Platform
+> new file mode 100644
+> index 000000000000..b34750eeaeb0
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/Platform
+> @@ -0,0 +1,11 @@
+> +#
+> +# MIPs SoC platform
+> +#
+> +
+> +platform-$(CONFIG_INTEL_MIPS)			+= intel-mips/
+
+^^^ (this is what ensures the Makefile is only included for this
+platform)
+
+> diff --git a/arch/mips/intel-mips/irq.c b/arch/mips/intel-mips/irq.c
+> new file mode 100644
+> index 000000000000..00637a5cdd20
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/irq.c
+> @@ -0,0 +1,36 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 Intel Corporation.
+> + */
+> +#include <linux/init.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/of_irq.h>
+> +#include <asm/irq.h>
+> +
+> +#include <asm/irq_cpu.h>
+> +
+> +void __init arch_init_irq(void)
+> +{
+> +	struct device_node *intc_node;
+> +
+> +	pr_info("EIC is %s\n", cpu_has_veic ? "on" : "off");
+> +	pr_info("VINT is %s\n", cpu_has_vint ? "on" : "off");
+> +
+> +	intc_node = of_find_compatible_node(NULL, NULL,
+> +					    "mti,cpu-interrupt-controller");
+> +	if (!cpu_has_veic && !intc_node)
+> +		mips_cpu_irq_init();
+> +
+> +	irqchip_init();
+> +}
+> +
+> +int get_c0_perfcount_int(void)
+> +{
+> +	return gic_get_c0_perfcount_int();
+> +}
+> +EXPORT_SYMBOL_GPL(get_c0_perfcount_int);
+> +
+> +unsigned int get_c0_compare_int(void)
+> +{
+> +	return gic_get_c0_compare_int();
+> +}
+
+Worth having get_c0_fdc_int() too for the "Fast Debug Channel"?
+
+> diff --git a/arch/mips/intel-mips/prom.c b/arch/mips/intel-mips/prom.c
+> new file mode 100644
+> index 000000000000..9407858ddc94
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/prom.c
+> @@ -0,0 +1,184 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
+> + * Copyright (C) 2016 Intel Corporation.
+> + */
+> +#include <linux/init.h>
+> +#include <linux/export.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_fdt.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <asm/mips-cps.h>
+> +#include <asm/smp-ops.h>
+> +#include <asm/dma-coherence.h>
+> +#include <asm/prom.h>
+> +
+> +#define IOPORT_RESOURCE_START   0x10000000
+> +#define IOPORT_RESOURCE_END     0xffffffff
+> +#define IOMEM_RESOURCE_START    0x10000000
+> +#define IOMEM_RESOURCE_END      0xffffffff
+
+The _END ones seem to be unused?
+
+> +static void __init prom_init_cmdline(void)
+> +{
+> +	int i;
+> +	int argc;
+> +	char **argv;
+> +
+> +	/*
+> +	 * If u-boot pass parameters, it is ok, however, if without u-boot
+> +	 * JTAG or other tool has to reset all register value before it goes
+> +	 * emulation most likely belongs to this category
+> +	 */
+> +	if (fw_arg0 == 0 || fw_arg1 == 0)
+> +		return;
+> +
+> +	argc = fw_arg0;
+> +	argv = (char **)KSEG1ADDR(fw_arg1);
+> +
+> +	arcs_cmdline[0] = '\0';
+> +
+> +	for (i = 0; i < argc; i++) {
+> +		char *p = (char *)KSEG1ADDR(argv[i]);
+> +
+> +		if (argv[i] && *p) {
+> +			strlcat(arcs_cmdline, p, sizeof(arcs_cmdline));
+> +			strlcat(arcs_cmdline, " ", sizeof(arcs_cmdline));
+> +		}
+> +	}
+
+Please describe the boot register protocol in the commit message and/or
+a comment in this function.
+
+Is it compatible with the UHI boot protocol, such that this could
+potentially be converted to use the generic platform in future?
+
+> +}
+> +
+> +static int __init plat_enable_iocoherency(void)
+> +{
+> +	int supported = 0;
+> +
+> +	if (mips_cps_numiocu(0) != 0) {
+> +		/* Nothing special needs to be done to enable coherency */
+> +		pr_info("Coherence Manager IOCU detected\n");
+> +		/* Second IOCU for MPE or other master access register */
+> +		write_gcr_reg0_base(0xa0000000);
+> +		write_gcr_reg0_mask(0xf8000000 | CM_GCR_REGn_MASK_CMTGT_IOCU1);
+> +		supported = 1;
+> +	}
+> +
+> +	/* hw_coherentio = supported; */
+> +
+> +	return supported;
+> +}
+> +
+> +static void __init plat_setup_iocoherency(void)
+> +{
+> +#ifdef CONFIG_DMA_NONCOHERENT
+> +	/*
+> +	 * Kernel has been configured with software coherency
+> +	 * but we might choose to turn it off and use hardware
+> +	 * coherency instead.
+
+That sounds a big risky. Software coherency will I think perform cache
+line invalidation when syncing buffers from device to CPU (see
+__dma_sync_virtual), so that the underlying RAM written by the
+supposedly incoherent DMA is visible. If its coherent afterall then it
+may be sat in a dirty line in the cache, and not have been written back
+to RAM yet before it gets invalidated?
+
+> +	 */
+> +	if (plat_enable_iocoherency()) {
+> +		if (coherentio == IO_COHERENCE_DISABLED)
+> +			pr_info("Hardware DMA cache coherency disabled\n");
+> +		else
+> +			pr_info("Hardware DMA cache coherency enabled\n");
+> +	} else {
+> +		if (coherentio == IO_COHERENCE_ENABLED)
+> +			pr_info("Hardware DMA cache coherency unsupported, but enabled from command line!\n");
+> +		else
+> +			pr_info("Software DMA cache coherency enabled\n");
+> +	}
+> +#else
+> +	if (!plat_enable_iocoherency())
+> +		panic("Hardware DMA cache coherency not supported!");
+> +#endif
+> +}
+
+
+> +void __init device_tree_init(void)
+> +{
+> +	if (!initial_boot_params)
+> +		return;
+
+Redundant check. unflatten_and_copy_device_tree() now handles that and
+emits a message.
+
+> +
+> +	unflatten_and_copy_device_tree();
+> +}
+> +
+> +#define CPC_BASE_ADDR		0x12310000
+
+Please put this at the top of the file with other #defines.
+
+> +
+> +phys_addr_t mips_cpc_default_phys_base(void)
+> +{
+> +	return CPC_BASE_ADDR;
+> +}
+
+> diff --git a/arch/mips/intel-mips/time.c b/arch/mips/intel-mips/time.c
+> new file mode 100644
+> index 000000000000..77ad4014fe9d
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/time.c
+> @@ -0,0 +1,56 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 Intel Corporation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clocksource.h>
+> +#include <linux/of.h>
+> +
+> +#include <asm/time.h>
+> +
+> +static inline u32 get_counter_resolution(void)
+> +{
+> +	u32 res;
+> +
+> +	__asm__ __volatile__(".set	push\n"
+
+Preferably each line of asm should end \n\t and the final line doesn't
+need \n or \t. Look at the .s compiler output to see the difference.
+
+> +			     ".set	mips32r2\n"
+> +			     "rdhwr	%0, $3\n"
+
+Hmm, it'd be nice to abstract this in mipsregs.h, but that can always
+wait. You could use MIPS_HWR_CCRES though (i.e. off top of my head
+something like "%0, $%1\n" and have a "i" (MIPS_HWR_CCRES) input.
+
+> +			     ".set pop\n"
+> +			     : "=&r" (res)
+
+I don't think you strictly need an early clobber there since there are
+no register inputs, "=r" should do fine.
+
+> +			     : /* no input */
+> +			     : "memory");
+
+I don't think that operation clobbers any memory?
+
+Thanks
+James
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWx+tQQAKCRA1zuSGKxAj
+8mCmAP0YcFeLhdWqRmrKx1Kj4nfiSw+n/mHL8icm7Xm3VueBfQD7Biu4QqJeSQjd
+BFlbigIdSVe9+Xuw1j0TVLxMMvws7Q4=
+=Em5k
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
