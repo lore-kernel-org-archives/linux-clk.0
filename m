@@ -1,83 +1,90 @@
-Return-Path: <miquel.raynal@bootlin.com>
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-clk@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
-Date: Tue, 26 Jun 2018 11:29:25 +0200
-Message-Id: <20180626092926.26361-1-miquel.raynal@bootlin.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44583 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932768AbeFLTlq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 15:41:46 -0400
+Date: Tue, 12 Jun 2018 13:41:42 -0600
+From: Rob Herring <robh@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox
+ documentation
+Message-ID: <20180612194142.GA16521@rob-hp-laptop>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601065821.28234-3-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180601065821.28234-3-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the introduction of suspend/resume hooks by having an easy way
-to access all the registers in one go just from a device: add the IP
-base address in the driver data.
+On Fri, Jun 01, 2018 at 08:58:19AM +0200, Oleksij Rempel wrote:
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../bindings/mailbox/imx-mailbox.txt          | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+> new file mode 100644
+> index 000000000000..a45604b33039
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+> @@ -0,0 +1,35 @@
+> +i.MX Messaging Unit
+> +===================
+> +
+> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B". In most cases
+> +they are accessible from all Processor Units. On one hand, at least for mailbox functionality,
+> +it makes no difference which application or processor is using which set of the MU. On
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
+Please wrap lines correctly (<80).
 
-Changes since v1:
-=================
-* None
+> +other hand, the register sets for each of the MU parts are not identical.
+> +
+> +Required properties:
+> +- compatible :	Shell be one of:
+> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S or i.MX7D
+> +- reg : 	physical base address of the mailbox and length of
 
-drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Mix of space and tab.
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 6860bd5a37c5..a9e3dcc50a7b 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -58,6 +58,7 @@
- struct clk_periph_driver_data {
- 	struct clk_hw_onecell_data *hw_data;
- 	spinlock_t lock;
-+	void __iomem *reg;
- };
- 
- struct clk_double_div {
-@@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int num_periph = 0, i, ret;
- 	struct resource *res;
--	void __iomem *reg;
- 
- 	data = of_device_get_match_data(dev);
- 	if (!data)
-@@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	while (data[num_periph].name)
- 		num_periph++;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	reg = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg))
--		return PTR_ERR(reg);
--
- 	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
- 	if (!driver_data)
- 		return -ENOMEM;
-@@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	driver_data->hw_data->num = num_periph;
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	driver_data->reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(driver_data->reg))
-+		return PTR_ERR(driver_data->reg);
-+
- 	spin_lock_init(&driver_data->lock);
- 
- 	for (i = 0; i < num_periph; i++) {
- 		struct clk_hw **hw = &driver_data->hw_data->hws[i];
--
--		if (armada_3700_add_composite_clk(&data[i], reg,
-+		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
- 						  &driver_data->lock, dev, hw))
- 			dev_err(dev, "Can't register periph clock %s\n",
- 				data[i].name);
--- 
-2.14.1
+> +		memory mapped region.
+> +- #mbox-cells:	Common mailbox binding property to identify the number
+> +		of cells required for the mailbox specifier. Should be 1.
+> +- interrupts :	interrupt number. The interrupt specifier format
+> +		depends on the interrupt controller parent.
+
+Just need to say how many interrupts and what they are if more than 1.
+
+> +- clocks     :  phandle to the input clock.
+> +
+> +Example:
+> +	mu0a: mu@30aa0000 {
+
+mailbox@...
+
+> +		compatible = "fsl,imx7s-mu-a";
+> +		reg = <0x30aa0000 0x28>;
+> +		interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clks IMX7D_MU_ROOT_CLK>;
+> +		#mbox-cells = <1>;
+> +	};
+> +
+> +	mu0b: mu@30ab0000 {
+
+mailbox@...
+
+> +		compatible = "fsl,imx7s-mu-b";
+> +		reg = <0x30ab0000 0x28>;
+> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clks IMX7D_MU_ROOT_CLK>;
+> +		#mbox-cells = <1>;
+> +	};
+> -- 
+> 2.17.1
+> 
