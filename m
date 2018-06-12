@@ -1,68 +1,88 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v4 2/2] ARM: dts: pxa: fix the rtc controller
-Date: Wed, 27 Jun 2018 21:41:24 +0200
-Message-Id: <20180627194124.26366-2-robert.jarzmik@free.fr>
-In-Reply-To: <20180627194124.26366-1-robert.jarzmik@free.fr>
-References: <20180627194124.26366-1-robert.jarzmik@free.fr>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v2 03/27] clk: sunxi-ng: r40: Export video PLLs
+Date: Tue, 12 Jun 2018 22:00:12 +0200
+Message-Id: <20180612200036.21483-4-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The RTC controller is fed by an external fixed 32kHz clock. Yet the
-driver wants to acquire this clock, even though it doesn't make any use
-of it, ie. doesn't get the rate to make calculation.
+Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
 
-Therefore, use the exported 32.768kHz clock in the PXA clock tree to
-make the driver happy and working.
+Export them.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
-Since v1: change the dummy clock by the actual 32.768kHz
-Since v3: remove spurious bracket
----
- arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
- arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
+ include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
-index 95d59be97213..8494b5787170 100644
---- a/arch/arm/boot/dts/pxa25x.dtsi
-+++ b/arch/arm/boot/dts/pxa25x.dtsi
-@@ -80,6 +80,10 @@
- 			#pwm-cells = <1>;
- 			clocks = <&clks CLK_PWM1>;
- 		};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+index 0db8e1e97af8..db2a1243f9ff 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+@@ -25,7 +25,9 @@
+ #define CLK_PLL_AUDIO_2X	4
+ #define CLK_PLL_AUDIO_4X	5
+ #define CLK_PLL_AUDIO_8X	6
+-#define CLK_PLL_VIDEO0		7
 +
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>;
-+		};
- 	};
- 
- 	timer@40a00000 {
-diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
-index 747f750f675d..2ab6986433c8 100644
---- a/arch/arm/boot/dts/pxa27x.dtsi
-+++ b/arch/arm/boot/dts/pxa27x.dtsi
-@@ -113,6 +113,10 @@
- 
- 			status = "disabled";
- 		};
++/* PLL_VIDEO0 is exported */
 +
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>;
-+		};
- 	};
+ #define CLK_PLL_VIDEO0_2X	8
+ #define CLK_PLL_VE		9
+ #define CLK_PLL_DDR0		10
+@@ -34,7 +36,9 @@
+ #define CLK_PLL_PERIPH0_2X	13
+ #define CLK_PLL_PERIPH1		14
+ #define CLK_PLL_PERIPH1_2X	15
+-#define CLK_PLL_VIDEO1		16
++
++/* PLL_VIDEO1 is exported */
++
+ #define CLK_PLL_VIDEO1_2X	17
+ #define CLK_PLL_SATA		18
+ #define CLK_PLL_SATA_OUT	19
+diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+index 4fa5f69fc297..f9e15a235626 100644
+--- a/include/dt-bindings/clock/sun8i-r40-ccu.h
++++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
+@@ -43,6 +43,10 @@
+ #ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
+ #define _DT_BINDINGS_CLK_SUN8I_R40_H_
  
- 	clocks {
++#define CLK_PLL_VIDEO0		7
++
++#define CLK_PLL_VIDEO1		16
++
+ #define CLK_CPU			24
+ 
+ #define CLK_BUS_MIPI_DSI	29
 -- 
-2.11.0
+2.17.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
