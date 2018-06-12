@@ -1,110 +1,110 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v2 01/27] clk: sunxi-ng: r40: Add minimal rate for video PLLs
-Date: Tue, 12 Jun 2018 22:00:10 +0200
-Message-Id: <20180612200036.21483-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:5546 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932619AbeFLFlG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:41:06 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com
+Cc: linux-mips@linux-mips.org, qi-ming.wu@intel.com,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        James Hogan <jhogan@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 0/7] MIPS: intel: add initial support for Intel MIPS SoCs
+Date: Tue, 12 Jun 2018 13:40:27 +0800
+Message-Id: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
+This patch series is for adding the support for Intel MIPS interAptiv SoC GRX500 family.
+It includes CCF support, serial driver optimization and DTS modification.
 
-Because of that, set minimal rate to both R40 video PLLs to 192 MHz.
+This patch series is applied on top of v4.17.1. Basic verification is performed on GRX500 board.
+Any comments on this would be appreciated.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 46 +++++++++++++++-------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+We propose merging this patch series into MIPS Linux tree.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 933f2e68f42a..c16a62a7bdbd 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -65,17 +65,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   CLK_SET_RATE_UNGATE);
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x0010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x0010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
-@@ -151,17 +152,18 @@ static struct ccu_nk pll_periph1_clk = {
- };
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static struct ccu_nkm pll_sata_clk = {
- 	.enable		= BIT(31),
+
+Hua Ma (1):
+  MIPS: intel: Add initial support for Intel MIPS SoCs
+
+Songjun Wu (5):
+  MIPS: dts: Add aliases node for lantiq danube serial
+  tty: serial: lantiq: Always use readl()/writel()
+  tty: serial: lantiq: Convert global lock to per device lock
+  tty: serial: lantiq: Remove unneeded header includes and macros
+  tty: serial: lantiq: Add CCF support
+
+Yixin Zhu (1):
+  clk: intel: Add clock driver for GRX500 SoC
+
+ .../devicetree/bindings/clock/intel,grx500-clk.txt |  46 ++
+ .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +
+ arch/mips/Kbuild.platforms                         |   1 +
+ arch/mips/Kconfig                                  |  37 +-
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/intel-mips/Makefile             |   3 +
+ arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +
+ arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 ++++++
+ arch/mips/boot/dts/lantiq/danube.dtsi              |   6 +-
+ arch/mips/configs/grx500_defconfig                 | 165 +++++
+ .../asm/mach-intel-mips/cpu-feature-overrides.h    |  61 ++
+ arch/mips/include/asm/mach-intel-mips/ioremap.h    |  39 ++
+ arch/mips/include/asm/mach-intel-mips/irq.h        |  17 +
+ .../asm/mach-intel-mips/kernel-entry-init.h        |  76 +++
+ arch/mips/include/asm/mach-intel-mips/spaces.h     |  29 +
+ arch/mips/include/asm/mach-intel-mips/war.h        |  18 +
+ arch/mips/intel-mips/Kconfig                       |  22 +
+ arch/mips/intel-mips/Makefile                      |   3 +
+ arch/mips/intel-mips/Platform                      |  11 +
+ arch/mips/intel-mips/irq.c                         |  36 ++
+ arch/mips/intel-mips/prom.c                        | 184 ++++++
+ arch/mips/intel-mips/time.c                        |  56 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/intel/Kconfig                          |  21 +
+ drivers/clk/intel/Makefile                         |   7 +
+ drivers/clk/intel/clk-cgu-api.c                    | 676 +++++++++++++++++++++
+ drivers/clk/intel/clk-cgu-api.h                    | 120 ++++
+ drivers/clk/intel/clk-grx500.c                     | 236 +++++++
+ drivers/tty/serial/Kconfig                         |   2 +-
+ drivers/tty/serial/lantiq.c                        | 415 ++++++++-----
+ include/dt-bindings/clock/intel,grx500-clk.h       |  61 ++
+ 32 files changed, 2418 insertions(+), 164 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+ create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+ create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+ create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+ create mode 100644 arch/mips/configs/grx500_defconfig
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/ioremap.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/irq.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/spaces.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/war.h
+ create mode 100644 arch/mips/intel-mips/Kconfig
+ create mode 100644 arch/mips/intel-mips/Makefile
+ create mode 100644 arch/mips/intel-mips/Platform
+ create mode 100644 arch/mips/intel-mips/irq.c
+ create mode 100644 arch/mips/intel-mips/prom.c
+ create mode 100644 arch/mips/intel-mips/time.c
+ create mode 100644 drivers/clk/intel/Kconfig
+ create mode 100644 drivers/clk/intel/Makefile
+ create mode 100644 drivers/clk/intel/clk-cgu-api.c
+ create mode 100644 drivers/clk/intel/clk-cgu-api.h
+ create mode 100644 drivers/clk/intel/clk-grx500.c
+ create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+
 -- 
-2.17.1
+2.11.0
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
