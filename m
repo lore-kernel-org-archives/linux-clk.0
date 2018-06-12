@@ -1,107 +1,87 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	cl@rock-chips.com,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 1/4] dt-bindings: add bindings for px30 clock controller
-Date: Fri, 15 Jun 2018 10:16:48 +0800
-Message-Id: <1529029011-15021-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
-References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
+References: <20180521115947.wqrnv2hczate65lz@flea> <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
+ <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com> <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 12 Jun 2018 16:38:55 +0800
+Message-ID: <CAGb2v66MkLLqL=Ei5kMb_CzpgUANpkNN3E52mSHKrZ0L7rXAog@mail.gmail.com>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Maxime Ripard <maxime.ripard@bootlin.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+On Tue, Jun 12, 2018 at 4:00 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Chen-Yu Tsai (2018-06-11 00:53:41)
+>> Hi,
+>>
+>> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>> > Hi Maxime,
+>> >
+>> >
+>> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
+>> >> Hi Mike, Stephen,
+>> >>
+>> >> Please merge the following changes for the next merge window, thanks!
+>> >>
+>> >> Maxime
+>> >>
+>> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+>> >>
+>> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+>> >>
+>> >> are available in the Git repository at:
+>> >>
+>> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
+>> >>
+>> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
+>> >>
+>> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
+>> >>
+>> >> ----------------------------------------------------------------
+>> >> Allwinner clock changes for 4.18
+>> >>
+>> >> Not a lot of changes for this release, but two quite important features
+>> >> were added: the H6 PRCM clock support, and the needed changes to the R40
+>> >> clock driver to allow for the EMAC to operate.
+>> >>
+>> >> ----------------------------------------------------------------
+>> >> Icenowy Zheng (3):
+>> >>       clk: sunxi-ng: add support for H6 PRCM CCU
+>> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
+>> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
+>> >>
+>> >
+>> >
+>> >
+>> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
+>> > not included in the pull request?
+>> >
+>> >
+>> > You said "I've picked it up"
+>> > https://patchwork.kernel.org/patch/10348031/
+>>
+>> It looks like it was accidentally dropped after a rebase.
+>> Not quite sure what happened there. Maxime?
+>>
+>
+> I can directly pick and send as fix for clk-fixes targeting rc2.
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- .../bindings/clock/rockchip,px30-cru.txt           | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+The patch can still be found in the sunxi/for-next branch of the
+sunxi repo on kernel.org:
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-new file mode 100644
-index 000000000000..1077692d6489
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-@@ -0,0 +1,66 @@
-+* Rockchip PX30 Clock and Reset Unit
-+
-+The PX30 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
-+- compatible: CRU should be "rockchip,px30-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing, pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "xin32k" - rtc clock - optional,
-+ - "i2sx_clkin" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
-+
-+Example: Clock controller node:
-+
-+	pmucru: clock-controller@ff2bc000 {
-+		compatible = "rockchip,px30-pmucru";
-+		reg = <0x0 0xff2bc000 0x0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	cru: clock-controller@ff2b0000 {
-+		compatible = "rockchip,px30-cru";
-+		reg = <0x0 0xff2b0000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@ff030000 {
-+		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
-+		reg = <0x0 0xff030000 0x0 0x100>;
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
-+		clock-names = "baudclk", "apb_pclk";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+	};
-+
--- 
-1.9.1
+https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/commit/?h=sunxi/for-next&id=d4a1496286b0c29fcace4e10c0047cca7cc79b25
+
+Or the original on patchwork:
+
+https://patchwork.kernel.org/patch/10348027/
+
+Thanks
+ChenYu
