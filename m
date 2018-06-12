@@ -1,41 +1,50 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] clk: tegra: Make vde a child of pll_c3
-Date: Mon, 11 Jun 2018 10:20:37 +0200
-Message-Id: <20180611082037.31796-1-thierry.reding@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 0/4] Fix suspend resume on at91sam9261 and at91sam9263
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Message-ID: <fb9ed9bf-52b9-4a46-cd70-469d933deefd@microchip.com>
+Date: Tue, 12 Jun 2018 12:24:08 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Thierry Reding <treding@nvidia.com>
+On 07/06/2018 at 10:41, Alexandre Belloni wrote:
+> USB clock detection may not work properly on at91sam9261 and at91sam9263
+> because they currently use the same bit mask as at91rm9200 instead of
+> the one for at91sam9260.
+> 
+> Take the opportunity to also change the PMC compatible strings for all
+> the other SoCs in preparation for the new clock bindings.
+> 
+> Alexandre Belloni (4):
+>    dt-bindings: arm: remove PMC bindings
+>    dt-bindings: clk: at91: Document all the PMC compatibles
+>    ARM: at91: fix USB clock detection handling
+>    ARM: dts: fix PMC compatible
 
-The current default is to leave the VDE clock's parent at the default,
-which is clk_m. However, that is not a configuration that will allow the
-VDE to function. Reparent it to pll_c3 instead to make sure the hardware
-can actually decode video content.
+To the whole series:
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/clk/tegra/clk-tegra124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, best regards.
 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index f5048f82c0b9..b6cf28ca2ed2 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
--	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_C3, 600000000, 0 },
- 	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
- 	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
- 	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
+>   .../devicetree/bindings/arm/atmel-pmc.txt          | 14 --------------
+>   .../devicetree/bindings/clock/at91-clock.txt       |  9 ++++-----
+>   arch/arm/boot/dts/at91sam9261.dtsi                 |  2 +-
+>   arch/arm/boot/dts/at91sam9263.dtsi                 |  2 +-
+>   arch/arm/boot/dts/at91sam9rl.dtsi                  |  2 +-
+>   arch/arm/boot/dts/sama5d4.dtsi                     |  2 +-
+>   arch/arm/mach-at91/pm.c                            |  5 +++++
+>   7 files changed, 13 insertions(+), 23 deletions(-)
+>   delete mode 100644 Documentation/devicetree/bindings/arm/atmel-pmc.txt
+> 
+
+
 -- 
-2.17.0
+Nicolas Ferre
