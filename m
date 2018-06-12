@@ -1,102 +1,75 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <CAGb2v66MkLLqL=Ei5kMb_CzpgUANpkNN3E52mSHKrZ0L7rXAog@mail.gmail.com>
-References: <20180521115947.wqrnv2hczate65lz@flea> <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
- <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
- <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com> <CAGb2v66MkLLqL=Ei5kMb_CzpgUANpkNN3E52mSHKrZ0L7rXAog@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 20 Jun 2018 10:14:26 +0800
-Message-ID: <CAGb2v67gL8m+XorkC78PwcaDA9cz69acsMkOrcLc9dgBY7m1eQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Maxime Ripard <maxime.ripard@bootlin.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs53.siol.net ([185.57.226.244]:38861 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932927AbeFLUCw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:52 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 24/27] drm: of: Export drm_crtc_port_mask()
+Date: Tue, 12 Jun 2018 22:00:33 +0200
+Message-Id: <20180612200036.21483-25-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+Function is useful when drm_of_find_possible_crtcs() can't be used and
+custom parsing is needed. This can happen for example when there is a
+node with multiple muxes between crtc and encoder.
 
-On Tue, Jun 12, 2018 at 4:38 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> On Tue, Jun 12, 2018 at 4:00 PM, Stephen Boyd <sboyd@kernel.org> wrote:
->> Quoting Chen-Yu Tsai (2018-06-11 00:53:41)
->>> Hi,
->>>
->>> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>> > Hi Maxime,
->>> >
->>> >
->>> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
->>> >> Hi Mike, Stephen,
->>> >>
->>> >> Please merge the following changes for the next merge window, thanks!
->>> >>
->>> >> Maxime
->>> >>
->>> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
->>> >>
->>> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
->>> >>
->>> >> are available in the Git repository at:
->>> >>
->>> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
->>> >>
->>> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
->>> >>
->>> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> Allwinner clock changes for 4.18
->>> >>
->>> >> Not a lot of changes for this release, but two quite important features
->>> >> were added: the H6 PRCM clock support, and the needed changes to the R40
->>> >> clock driver to allow for the EMAC to operate.
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> Icenowy Zheng (3):
->>> >>       clk: sunxi-ng: add support for H6 PRCM CCU
->>> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
->>> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
->>> >>
->>> >
->>> >
->>> >
->>> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
->>> > not included in the pull request?
->>> >
->>> >
->>> > You said "I've picked it up"
->>> > https://patchwork.kernel.org/patch/10348031/
->>>
->>> It looks like it was accidentally dropped after a rebase.
->>> Not quite sure what happened there. Maxime?
->>>
->>
->> I can directly pick and send as fix for clk-fixes targeting rc2.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/drm_of.c | 4 ++--
+ include/drm/drm_of.h     | 8 ++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-This is a friendly reminder to pick up this patch for -rc2.
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 1fe122461298..2e9cea3287b2 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -22,8 +22,8 @@ static void drm_release_of(struct device *dev, void *data)
+  * Given a port OF node, return the possible mask of the corresponding
+  * CRTC within a device's list of CRTCs.  Returns zero if not found.
+  */
+-static uint32_t drm_crtc_port_mask(struct drm_device *dev,
+-				   struct device_node *port)
++uint32_t drm_crtc_port_mask(struct drm_device *dev,
++			    struct device_node *port)
+ {
+ 	unsigned int index = 0;
+ 	struct drm_crtc *tmp;
+diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
+index b93c239afb60..a61fd77e46ba 100644
+--- a/include/drm/drm_of.h
++++ b/include/drm/drm_of.h
+@@ -17,6 +17,8 @@ struct drm_bridge;
+ struct device_node;
+ 
+ #ifdef CONFIG_OF
++uint32_t drm_crtc_port_mask(struct drm_device *dev,
++			    struct device_node *port);
+ uint32_t drm_of_find_possible_crtcs(struct drm_device *dev,
+ 				    struct device_node *port);
+ void drm_of_component_match_add(struct device *master,
+@@ -34,6 +36,12 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				struct drm_panel **panel,
+ 				struct drm_bridge **bridge);
+ #else
++static inline uint32_t drm_crtc_port_mask(struct drm_device *dev,
++					  struct device_node *port)
++{
++	return 0;
++}
++
+ static inline uint32_t drm_of_find_possible_crtcs(struct drm_device *dev,
+ 						  struct device_node *port)
+ {
+-- 
+2.17.1
 
-> The patch can still be found in the sunxi/for-next branch of the
-> sunxi repo on kernel.org:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/commit/?h=sunxi/for-next&id=d4a1496286b0c29fcace4e10c0047cca7cc79b25
-
-This is still available, but no longer referenced in any branch,
-as we've updated our sunxi/for-next branch for 4.19 stuff.
-
-> Or the original on patchwork:
->
-> https://patchwork.kernel.org/patch/10348027/
-
-And
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
-if you pick directly from patchwork.
-
-Thanks
-ChenYu
