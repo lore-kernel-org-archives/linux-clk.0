@@ -1,58 +1,66 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	sboyd@kernel.org
-Cc: pn@denx.de,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	manivannan.sadhasivam@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH v2 0/3] Add clock driver for Actions S700 SoC 
-Date: Thu, 28 Jun 2018 21:18:02 +0200
-Message-Id: <20180628191805.3722-1-sravanhome@gmail.com>
-In-Reply-To: <20180626192820.28237-3-sravanhome@gmail.com>
-References: <20180626192820.28237-3-sravanhome@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933658AbeFLQdZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:33:25 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
+        boris.brezillon@bootlin.com, broonie@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh+dt@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
+Cc: Cristian.Birsan@microchip.com
+References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
+ <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
+ <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
+ <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
+Message-ID: <152882120419.16708.16947882037246176868@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
+Date: Tue, 12 Jun 2018 09:33:24 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
+Quoting Codrin Ciubotariu (2018-06-04 01:20:29)
+> On 31.05.2018 18:26, Stephen Boyd wrote:
+> > Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
+> > =
 
-This patchset adds clock support for Actions Semi OWL series S700 SoC
-with relevant clock bindings and device tree info. 
+> >> +       .get_parent =3D clk_i2s_mux_get_parent,
+> >> +       .set_parent =3D clk_i2s_mux_set_parent,
+> >> +       .determine_rate =3D __clk_mux_determine_rate,
+> >> +};
+> >> +
+> >> +static struct clk_hw * __init
+> >> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
+> >> +                         const char * const *parent_names,
+> >> +                         unsigned int num_parents, u32 bus_id)
+> >> +{
+> >> +       struct clk_init_data init =3D {};
+> >> +       struct clk_i2s_mux *i2s_ck;
+> >> +       int ret;
+> >> +
+> >> +       i2s_ck =3D kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
+> >> +       if (!i2s_ck)
+> >> +               return ERR_PTR(-ENOMEM);
+> >> +
+> >> +       init.name =3D name;
+> >> +       init.ops =3D &clk_i2s_mux_ops;
+> >> +       init.parent_names =3D parent_names;
+> >> +       init.num_parents =3D num_parents;
+> >> +       init.flags =3D CLK_IGNORE_UNUSED;
+> > =
 
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
+> > Really? Why?
+> =
 
-Thanks and regards,
-Saravanan,
-Parthiban
+> I am thinking that there is no need to gate this clock, since there is =
 
-Saravanan Sekar (3):
-  arm64: dts: actions: Enable clock controller for S700
-  clk: actions: Add S700 SoC clock support
-  dt-bindings: clock: Modify Actions Soc clock bindings
+> no way to gate this clock in HW.
 
- ...ions,s900-cmu.txt => actions,sx00-cmu.txt} |  18 +-
- .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
- arch/arm64/boot/dts/actions/s700.dtsi         |   8 +
- drivers/clk/actions/Kconfig                   |   7 +
- drivers/clk/actions/Makefile                  |   1 +
- drivers/clk/actions/owl-s700.c                | 614 ++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++
- 7 files changed, 768 insertions(+), 15 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+This flag is not necessary if the clk can't be gated via hardware
+control registers. Please remove the flag.
 
--- 
-2.18.0
