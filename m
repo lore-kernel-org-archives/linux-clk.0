@@ -1,43 +1,84 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-clk
-	<linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-Date: Mon, 4 Jun 2018 01:11:29 +0000
-Message-ID: 
- <AM3PR04MB1315DA5AC8F4F2AC5425A47BF5670@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
- <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
- <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
- <CAOMZO5ANz-B-s93+R_xnF0LOux1zTY3E8Ky4KvrZ8EX1ZKmpAQ@mail.gmail.com>
-In-Reply-To: 
- <CAOMZO5ANz-B-s93+R_xnF0LOux1zTY3E8Ky4KvrZ8EX1ZKmpAQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v2 02/27] clk: sunxi-ng: r40: Allow setting parent rate to
+ display related clocks
+Date: Tue, 12 Jun 2018 22:00:11 +0200
+Message-Id: <20180612200036.21483-3-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGksIEZhYmlvDQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2YW1A
-Z21haWwuY29tXQ0KPiBTZW50OiBTdW5kYXksIEp1bmUgMywgMjAxOCA4OjU0IFBNDQo+IFRvOiBB
-bnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gQ2M6IFNoYXduIEd1byA8c2hhd25n
-dW9Aa2VybmVsLm9yZz47IFNhc2NoYSBIYXVlcg0KPiA8a2VybmVsQHBlbmd1dHJvbml4LmRlPjsg
-RmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgTWljaGFlbA0KPiBUdXJxdWV0
-dGUgPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3RlcGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwu
-b3JnPjsNCj4gZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IG1vZGVyYXRlZCBsaXN0
-OkFSTS9GUkVFU0NBTEUgSU1YIC8gTVhDDQo+IEFSTSBBUkNISVRFQ1RVUkUgPGxpbnV4LWFybS1r
-ZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IGxpbnV4LWNsaw0KPiA8bGludXgtY2xrQHZnZXIu
-a2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4N
-Cj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzRdIGNsazogaW14NnE6IHJlbW92ZSBjbGtzX2luaXRf
-b24gYXJyYXkNCj4gDQo+IEhpIEFuc29uLA0KPiANCj4gT24gU3VuLCBKdW4gMywgMjAxOCBhdCA5
-OjQ4IEFNLCBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4NCj4gd3JvdGU6DQo+IA0K
-PiA+IEFzIEkgZXhwbGFpbiBpbiBwcmV2aW91cyBtYWlsLCBidXN5IGRpdmlkZXIgY2xrIHR5cGUg
-YWxyZWFkeSBpbmNsdWRlIHRoZSBmbGFnDQo+IHdoZW4gcmVnaXN0ZXJlZC4NCj4gDQo+IE9rLCB0
-aGVuIHBsZWFzZSBhZGQgdGhpcyBpbmZvcm1hdGlvbiBpbiB0aGUgY29tbWl0IGxvZyB0byBtYWtl
-IHRoZSByZXZpZXcNCj4gcHJvY2VzcyBlYXNpZXIuDQogDQpUaGFua3MgZm9yIHRoZSBjb21tZW50
-cywgSSBpbXByb3ZlZCB0aGUgY29tbWl0IGxvZyBpbiBWMiBwYXRjaCBzZXQuDQoNCkFuc29uLg0K
-DQo=
+Display related peripherals need precise clocks to operate correctly.
+
+Allow DE2, TCONs and HDMI to set parent clock.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index c16a62a7bdbd..fa5317719684 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -655,7 +655,8 @@ static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
+ 
+ static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
+-				 0x104, 0, 4, 24, 3, BIT(31), 0);
++				 0x104, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(mp_clk, "mp", de_parents,
+ 				 0x108, 0, 4, 24, 3, BIT(31), 0);
+ 
+@@ -667,9 +668,11 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
+ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
+ 			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
+-				 0x118, 0, 4, 24, 3, BIT(31), 0);
++				 0x118, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
+-				 0x11c, 0, 4, 24, 3, BIT(31), 0);
++				 0x11c, 0, 4, 24, 3, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static const char * const deinterlace_parents[] = { "pll-periph0",
+ 						    "pll-periph1" };
+@@ -699,7 +702,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 
+ static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
+ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
+-				 0x150, 0, 4, 24, 2, BIT(31), 0);
++				 0x150, 0, 4, 24, 2, BIT(31),
++				 CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
+ 		      0x154, BIT(31), 0);
+-- 
+2.17.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
