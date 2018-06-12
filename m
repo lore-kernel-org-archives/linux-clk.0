@@ -1,246 +1,104 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 07/14] clk: qcom: Add support for Krait clocks
-Date: Tue, 19 Jun 2018 19:15:18 +0530
-Message-Id: <1529415925-28915-8-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v2 08/27] drm/sun4i: Add support for traversing graph with
+ TCON TOP
+Date: Tue, 12 Jun 2018 22:00:17 +0200
+Message-Id: <20180612200036.21483-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+TCON TOP is different from other nodes in graph by having 3 input and 3
+output ports. Additionally, connection to TV TCON might lead back to
+HDMI mux input port, creating loops.
 
-The Krait clocks are made up of a series of muxes and a divider
-that choose between a fixed rate clock and dedicated HFPLLs for
-each CPU. Instead of using mmio accesses to remux parents, the
-Krait implementation exposes the remux control via cp15
-registers. Support these clocks.
+Add support for traversing such graph.
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/qcom/Kconfig     |   4 ++
- drivers/clk/qcom/Makefile    |   1 +
- drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-krait.h |  37 +++++++++++++
- 4 files changed, 166 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-krait.c
- create mode 100644 drivers/clk/qcom/clk-krait.h
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 95f9980..66894d2 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -261,3 +261,7 @@ config QCOM_HFPLL
- 	  Support for the high-frequency PLLs present on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as MSM8974, APQ8084, etc.
-+
-+config KRAIT_CLOCKS
-+	bool
-+	select KRAIT_L2_ACCESSORS
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index d486aa3..82615ed 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += clk-regmap-mux-div.o
-+clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
- clk-qcom-y += clk-hfpll.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-new file mode 100644
-index 0000000..2e41767
---- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+
-+#include <asm/krait-l2-accessors.h>
-+
-+#include "clk-krait.h"
-+
-+/* Secondary and primary muxes share the same cp15 register */
-+static DEFINE_SPINLOCK(krait_clock_reg_lock);
-+
-+#define LPL_SHIFT	8
-+static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 20193d6f33ba..e6c62c079146 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -26,6 +26,7 @@
+ #include "sun4i_frontend.h"
+ #include "sun4i_framebuffer.h"
+ #include "sun4i_tcon.h"
++#include "sun8i_tcon_top.h"
+ 
+ DEFINE_DRM_GEM_CMA_FOPS(sun4i_drv_fops);
+ 
+@@ -197,6 +198,11 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return !!of_match_node(sun4i_tcon_of_table, node);
+ }
+ 
++static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
 +{
-+	unsigned long flags;
-+	u32 regval;
++	return !!of_match_node(sun8i_tcon_top_of_table, node);
++}
 +
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	regval = krait_get_l2_indirect_reg(mux->offset);
-+	regval &= ~(mux->mask << mux->shift);
-+	regval |= (sel & mux->mask) << mux->shift;
-+	if (mux->lpl) {
-+		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
-+		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
+ static int compare_of(struct device *dev, void *data)
+ {
+ 	DRM_DEBUG_DRIVER("Comparing of node %pOF with %pOF\n",
+@@ -258,6 +264,18 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
+ 		if (sun4i_drv_node_is_tcon(node)) {
+ 			struct of_endpoint endpoint;
+ 
++			/*
++			 * TCON TOP is always probed before TCON. However, TCON
++			 * points back to TCON TOP when it is source for HDMI.
++			 * We have to skip it here to prevent infinite looping
++			 * between TCON TOP and TCON.
++			 */
++			if (sun4i_drv_node_is_tcon_top(remote)) {
++				DRM_DEBUG_DRIVER("TCON output endpoint is TCON TOP... skipping\n");
++				of_node_put(remote);
++				continue;
++			}
++
+ 			if (of_graph_parse_endpoint(ep, &endpoint)) {
+ 				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+ 				of_node_put(remote);
+@@ -318,6 +336,12 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 	/* each node has at least one output */
+ 	sun4i_drv_traverse_endpoints(list, node, 1);
+ 
++	/* TCON TOP has second and third output */
++	if (sun4i_drv_node_is_tcon_top(node)) {
++		sun4i_drv_traverse_endpoints(list, node, 3);
++		sun4i_drv_traverse_endpoints(list, node, 5);
 +	}
-+	krait_set_l2_indirect_reg(mux->offset, regval);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
 +
-+	/* Wait for switch to complete. */
-+	mb();
-+	udelay(1);
-+}
-+
-+static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = clk_mux_reindex(index, mux->parent_map, 0);
-+	mux->en_mask = sel;
-+	/* Don't touch mux if CPU is off as it won't work */
-+	if (__clk_is_enabled(hw->clk))
-+		__krait_mux_set_sel(mux, sel);
-+
-+	return 0;
-+}
-+
-+static u8 krait_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+	u32 sel;
-+
-+	sel = krait_get_l2_indirect_reg(mux->offset);
-+	sel >>= mux->shift;
-+	sel &= mux->mask;
-+	mux->en_mask = sel;
-+
-+	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
-+}
-+
-+const struct clk_ops krait_mux_clk_ops = {
-+	.set_parent = krait_mux_set_parent,
-+	.get_parent = krait_mux_get_parent,
-+	.determine_rate = __clk_mux_determine_rate_closest,
-+};
-+EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
-+
-+/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
-+static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				  unsigned long *parent_rate)
-+{
-+	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
-+	return DIV_ROUND_UP(*parent_rate, 2);
-+}
-+
-+static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	unsigned long flags;
-+	u32 val;
-+	u32 mask = BIT(d->width) - 1;
-+
-+	if (d->lpl)
-+		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
-+
-+	spin_lock_irqsave(&krait_clock_reg_lock, flags);
-+	val = krait_get_l2_indirect_reg(d->offset);
-+	val &= ~mask;
-+	krait_set_l2_indirect_reg(d->offset, val);
-+	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
-+
-+	return 0;
-+}
-+
-+static unsigned long
-+krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct krait_div2_clk *d = to_krait_div2_clk(hw);
-+	u32 mask = BIT(d->width) - 1;
-+	u32 div;
-+
-+	div = krait_get_l2_indirect_reg(d->offset);
-+	div >>= d->shift;
-+	div &= mask;
-+	div = (div + 1) * 2;
-+
-+	return DIV_ROUND_UP(parent_rate, div);
-+}
-+
-+const struct clk_ops krait_div2_clk_ops = {
-+	.round_rate = krait_div2_round_rate,
-+	.set_rate = krait_div2_set_rate,
-+	.recalc_rate = krait_div2_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
-diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-new file mode 100644
-index 0000000..441ba1e
---- /dev/null
-+++ b/drivers/clk/qcom/clk-krait.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __QCOM_CLK_KRAIT_H
-+#define __QCOM_CLK_KRAIT_H
-+
-+#include <linux/clk-provider.h>
-+
-+struct krait_mux_clk {
-+	unsigned int	*parent_map;
-+	u32		offset;
-+	u32		mask;
-+	u32		shift;
-+	u32		en_mask;
-+	bool		lpl;
-+
-+	struct clk_hw	hw;
-+	struct notifier_block   clk_nb;
-+};
-+
-+#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
-+
-+extern const struct clk_ops krait_mux_clk_ops;
-+
-+struct krait_div2_clk {
-+	u32		offset;
-+	u8		width;
-+	u32		shift;
-+	bool		lpl;
-+
-+	struct clk_hw	hw;
-+};
-+
-+#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
-+
-+extern const struct clk_ops krait_div2_clk_ops;
-+
-+#endif
+ 	return count;
+ }
+ 
 -- 
-1.9.1
+2.17.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
