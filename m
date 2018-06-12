@@ -1,119 +1,62 @@
-Return-Path: <ilia.lin@gmail.com>
-Return-Path: <ilia.lin@gmail.com>
-From: ilia.lin@gmail.com
-To: ilia.lin@gmail.com
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Ilia Lin <ilialin@codeaurora.org>,
-	Amit Kucheria <amit.kucheria@linaro.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v13 0/8] Clock for CPU scaling support for msm8996
-Date: Thu, 14 Jun 2018 23:53:47 +0200
-Message-Id: <20180614215358.11264-1-ilia.lin@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs61.siol.net ([185.57.226.252]:38563 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934332AbeFLUC0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:26 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
+Date: Tue, 12 Jun 2018 22:00:23 +0200
+Message-Id: <20180612200036.21483-15-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ilia Lin <ilia.lin@gmail.com>
+TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
+sense to check if panel or bridge is connected to them.
 
-[v13]
- * Rebased
+Check if TCON has channel 0 and only then check for connected panel or
+bridges.
 
-[v12]
- * Addressed the kbuild fail on arm architecture
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-[v11]
- * Split the series into domains
-
-[v9]
- * Addressed comments from Viresh and Russel about the error handling
-
-[v8]
- * Reordered the patch series into 4 groups
- * Addressed comments from Amit about the comments and commit messages
- * Addressed comments from Amit and Viresh about the resourses deallocation
-
-[v7]
- * Addressed comments from Viresh about resourses deallocation and DT compatible
-
-[v6]
- * Addressed comments from Viresh about:
-  ** Comments style
-  ** Kconfig bool instead of tristate
-  ** DT and documentation style
-  ** Resourses deallocation on an error
-  ** Typos
-
-[v5]
- * Rebased
- * Addressed comments from Bjorn about SPDX style, functions and parameters naming
- * Addressed comments from Viresh DT properties and style, comments style, resourses deallocation, documentation placement
- * Addressed comments from Sricharan about unnessesary include
- * Addressed comments from Nicolas
- * Addressed comments from Rob about the commit messages and acks
- * Addressed comments from Mark
-
-[v4]
- * Adressed all comments from Stephen
- * Added CPU regulator support
- * Added qcom-cpufreq-kryo driver
-
-[v3]
- * Rebased on top of the latest PLL driver changes
- * Addressed comment from Rob Herring for bindings
-
-[v2]
- * Addressed comments from Rob Herring for bindings
- * Addressed comments from Mark Rutland for memory barrier
- * Addressed comments from Julien Thierry for clock reenabling condition
- * Tuned the HW configuration for clock frequencies below 600MHz
-
-SOC (1/15):
-Extracts the kryo l2 accessors driver from the QCOM PMU driver
-
-Clocks (2/15-9/15):
-This series adds support for the CPU clocks on msm8996 devices.
-The driver uses the existing PLL drivers and is required to control
-the CPU frequency scaling on the MSM8996.
-
-Ilia Lin (5):
-soc: qcom: Separate kryo l2 accessors from PMU driver
-clk: Use devm_ in the register fixed factor clock
-clk: qcom: Add CPU clock driver for msm8996
-dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-clk: qcom: Add ACD path to CPU clock driver for msm8996
-
-Rajendra Nayak (3):
-clk: qcom: Make clk_alpha_pll_configure available to modules
-clk: qcom: cpu-8996: Add support to switch to alternate PLL
-clk: qcom: cpu-8996: Add support to switch below 600Mhz
-
-.../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
-drivers/clk/clk-fixed-factor.c                     |   2 +-
-drivers/clk/qcom/Kconfig                           |  10 +
-drivers/clk/qcom/Makefile                          |   1 +
-drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
-drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
-drivers/clk/qcom/clk-cpu-8996.c                    | 510 +++++++++++++++++++++
-drivers/perf/Kconfig                               |   1 +
-drivers/perf/qcom_l2_pmu.c                         |  90 +---
-drivers/soc/qcom/Kconfig                           |   3 +
-drivers/soc/qcom/Makefile                          |   1 +
-drivers/soc/qcom/kryo-l2-accessors.c               |  56 +++
-include/soc/qcom/kryo-l2-accessors.h               |  12 +
-13 files changed, 643 insertions(+), 67 deletions(-)
-create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
-create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
-create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
-create mode 100644 include/soc/qcom/kryo-l2-accessors.h
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index b1205a7bc20f..c9ffa5381185 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops = {
+ static int sun4i_tcon_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
++	const struct sun4i_tcon_quirks *quirks;
+ 	struct drm_bridge *bridge;
+ 	struct drm_panel *panel;
+ 	int ret;
+ 
+-	ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
+-	if (ret == -EPROBE_DEFER)
+-		return ret;
++	quirks = of_device_get_match_data(&pdev->dev);
++
++	/* panels and bridges are present only on TCONs with channel 0 */
++	if (quirks->has_channel_0) {
++		ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
++		if (ret == -EPROBE_DEFER)
++			return ret;
++	}
+ 
+ 	return component_add(&pdev->dev, &sun4i_tcon_ops);
+ }
 -- 
-2.11.0
+2.17.1
+
