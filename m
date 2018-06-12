@@ -1,54 +1,37 @@
-Return-Path: <daniel@zonque.org>
-From: Daniel Mack <daniel@zonque.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	robh@kernel.org,
-	devicetree@vger.kernel.org,
-	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v3 0/2] clk: Add driver for MAX9485
-Date: Sat,  2 Jun 2018 13:15:29 +0200
-Message-Id: <20180602111531.32143-1-daniel@zonque.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 12 Jun 2018 14:59:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Display clock
+ bindings
+Message-ID: <20180612205907.GA12993@rob-hp-laptop>
+References: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
+ <1528098985-3676-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528098985-3676-2-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is v3 of the driver for Maxim's MAX9485 programmable audio clock
-generator.
+On Mon, Jun 04, 2018 at 01:26:24PM +0530, Taniya Das wrote:
+> Add device tree bindings for display clock controller for Qualcomm
+> Technology Inc's SoCs.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
+>  include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
-v2 → v3:
-
-* Addressed a lot of issues pointed out by Stephen Boyd:
-  * Dropped local register caching
-  * Implement own OF clk_hw getter in favor of the onecell helper
-  * Implemented recalc_rate() properly by reading from the hardware
-  * Dropped input clock frequency validation
-  * Style issues
-
-* Fixed a gpio line handling bug in resume
-* Added Rob's Revied-by to 1/2
-
-v1 → v2:
-
-* Now served as two patches, one for the DT bits, and one for the actual
-  implementation. The DT bits are put in the 1st patch because the
-  implementation depends on the shared header file.
-
-* Added support for suspend/resume
-
-Daniel Mack (2):
-  dts: clk: add devicetree bindings for MAX9485
-  clk: Add driver for MAX9485
-
- .../devicetree/bindings/clock/maxim,max9485.txt    |  59 +++
- drivers/clk/Kconfig                                |   6 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-max9485.c                          | 402 +++++++++++++++++++++
- include/dt-bindings/clock/maxim,max9485.h          |  18 +
- 5 files changed, 486 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
- create mode 100644 drivers/clk/clk-max9485.c
- create mode 100644 include/dt-bindings/clock/maxim,max9485.h
-
--- 
-2.14.3
+Reviewed-by: Rob Herring <robh@kernel.org>
