@@ -1,56 +1,251 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Tue, 12 Jun 2018 11:23:54 +0300
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, broonie@kernel.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+	mazziesaccount@gmail.com, mturquette@baylibre.com,
+	robh+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180612082354.GG20078@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <3131254.YlICBQirlu@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-17-jernej.skrabec@siol.net> <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
- <3131254.YlICBQirlu@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 30 Jun 2018 09:11:20 +0800
-Message-ID: <CAGb2v64UY9t9oKPQiEJkFsTyxJOJTG9dvJMNJYoHy7CKQ4Ap2Q@mail.gmail.com>
-Subject: Re: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jun 30, 2018 at 3:19 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 04:22:36 CEST je Chen-Yu Tsai napisal(a):
->> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
->> > Current DW HDMI PHY code never prepares and enables PHY clock after it is
->> > created. It's just used as it is. This may work in some cases, but it's
->> > clearly wrong. Fix it by adding proper calls to enable/disable PHY
->> > clock.
->> >
->> > Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
->> >
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->>
->> So why does it work on the H3? Because there's only one PLL that the whole
->> display pipeline uses?
->>
->> We should probably tag this for stable. So,
->>
->> Cc: <stable@vger.kernel.org>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->
-> Same question as before, how this should be handled? Can I send separate patch
-> with same content to stable ML only?
+Hello Stephen,
 
-Yes, including the hash of the commit which is already in Linus' tree. So
-you have to send it after the next -rc1.
+Thanks again for the review. I'll do new patch which fixes these issues.
 
-ChenYu
+On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-06-04 06:19:13)
+> > +config COMMON_CLK_BD71837
+> > +       tristate "Clock driver for ROHM BD71837 PMIC MFD"
+> > +       depends on MFD_BD71837
+> > +       help
+> > +         This driver supports ROHM BD71837 PMIC clock.
+> > +
+> > +
+> 
+> Drop one newline above.
+Right.
+
+> 
+> > +++ b/drivers/clk/clk-bd71837.c
+> > +#include <linux/mfd/bd71837.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+> > +
+> > +
+> 
+> Drop one newline above.
+Right.
+
+> 
+> > +struct bd71837_clk {
+> > +       struct clk_hw hw;
+> > +       uint8_t reg;
+> > +       uint8_t mask;
+> 
+> Use u8 instead of uint8_t.
+I can do that but I am afraid I have missed the reason for this. Why u8
+is preferred? I would have assumed the standard uint8_t would be
+preferred - can you please educate me as to what is this reason?
+
+> > +       unsigned long rate;
+> > +       struct platform_device *pdev;
+> > +       struct bd71837 *mfd;
+> > +};
+> > +
+> > +static int bd71837_clk_set(struct clk_hw *hw, int status)
+> > +{
+> > +       struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
+> > +
+> > +       return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
+> 
+> Any reason we can't use a regmap?
+
+Not really. These wrappers might become handy if the next chip in series
+requires some quirks for access but at the moment I see no reason for
+the wrappers. I could switch to direct regmap calls but that change
+should then be done to all subdevices and not just for clk one. This
+means I should rework also the already applied regulator part. I have
+some other changes pending for regulators (adding support for next chip,
+renaming bd71837 to bd718x7 or bd718xx, and few comments from  Andy
+Shevchenko and Rob Herring). I would rather switch to direct regmap usage
+for all subdevices at the same time. So if it is acceptable to keep the
+wrappers for now (and then create own patch set to remove them from all
+subdevices and the header) I would like to do so.
+
+> 
+> > +}
+> > +
+> > +static void bd71837_clk_disable(struct clk_hw *hw)
+> > +{
+> > +       int rv;
+> > +       struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
+> > +
+> > +       rv = bd71837_clk_set(hw, 0);
+> > +       if (rv)
+> > +               dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
+> > +}
+> > +
+> > +static int bd71837_clk_enable(struct clk_hw *hw)
+> > +{
+> > +       return bd71837_clk_set(hw, 1);
+> > +}
+> > +
+> > +static int bd71837_clk_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
+> > +
+> > +       return c->mask & bd71837_reg_read(c->mfd, c->reg);
+> 
+> Didn't I ask for local variable for reg_read result?
+
+Yes! Sorry! And thanks for pointing this out again. It seems I missed
+this one.
+
+> 
+> > +}
+> > +
+> > +static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
+> > +                                            unsigned long parent_rate)
+> > +{
+> > +       struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
+> > +
+> > +       return c->rate;
+> > +}
+> > +
+> > +static const struct clk_ops bd71837_clk_ops = {
+> > +       .recalc_rate = &bd71837_clk_recalc_rate,
+> > +       .prepare = &bd71837_clk_enable,
+> > +       .unprepare = &bd71837_clk_disable,
+> > +       .is_prepared = &bd71837_clk_is_enabled,
+> > +};
+> > +
+> > +static int bd71837_clk_probe(struct platform_device *pdev)
+> > +{
+> > +       struct bd71837_clk *c;
+> > +       int rval = -ENOMEM;
+> > +       struct bd71837 *mfd = dev_get_drvdata(pdev->dev.parent);
+> > +       struct clk_init_data init = {
+> > +               .name = "bd71837-32k-out",
+> > +               .ops = &bd71837_clk_ops,
+> > +       };
+> > +
+> > +       c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> > +       if (!c)
+> > +               goto err_out;
+> > +
+> > +       c->reg = BD71837_REG_OUT32K;
+> > +       c->mask = BD71837_OUT32K_EN;
+> > +       c->rate = BD71837_CLK_RATE;
+> 
+> The PMIC has an 'XIN' pin that would be the clk input for this chip, and
+> the output clk, this driver, would specify that xin clock as the parent.
+> The 'xin' clock would then be listed in DT as a fixed-rate clock. That
+> way this driver doesn't hardcode the frequency.
+
+I see. This makes sense. I need to verify from HW colleagues whether
+this chip has internal oscillator or not. I originally thought we have
+on-chip oscillator - but as you say, we do have XIN pin in documentation.
+So now I am not sure if the test board I have contains oscillator driving
+the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
+
+> > +       c->mfd = mfd;
+> > +       c->pdev = pdev;
+> > +
+> > +       of_property_read_string_index(pdev->dev.parent->of_node,
+> > +                                             "clock-output-names", 0,
+> > +                                             &init.name);
+> > +
+> > +       c->hw.init = &init;
+> 
+> Do this next to all the other c-> things?
+
+I can do so. I just like the idea of assigning pointers to objects only
+after the objects have been initialized. Eg, in this case I add pointer
+to init only after I have filled the init.name (if it is given).
+
+> 
+> > +
+> > +       rval = devm_clk_hw_register(&pdev->dev, &c->hw);
+> > +       if (rval) {
+> > +               dev_err(&pdev->dev, "failed to register 32K clk");
+> > +               goto err_out;
+> > +       }
+> > +
+> > +       if (pdev->dev.parent->of_node) {
+> > +               rval = of_clk_add_hw_provider(pdev->dev.parent->of_node,
+> > +                                            of_clk_hw_simple_get,
+> > +                                            &c->hw);
+> > +               if (rval) {
+> > +                       dev_err(&pdev->dev, "adding clk provider failed\n");
+> > +                       goto err_out;
+> 
+> Just return rval instead of goto and then remove err_out label.
+
+Is this 'hard requirement'? I prefer single point of exit from functions
+(when easily doable) because I have done so many errors with locks /
+resources being reserved when exiting from some error branch. For my
+personal taste maintaining the one nice cleanup sequence is easier. But
+if this is 'hard requirement' this can of course be changed.
+
+> 
+> > +               }
+> > +       }
+> > +
+> > +       rval = clk_hw_register_clkdev(&c->hw, init.name, NULL);
+> 
+> This leaks a clkdev lookup. Sad we don't have a devm version. Maybe it
+> should be added. But I really doubt this chip will be used with clkdev
+> lookups so please remove clkdev until you have a user who needs it.
+
+Yep. It leaks. I tried to look for an example where the clkdev was
+nicely freed at remove - but I didn't find any. Every example I spotted
+did leak the clkdev in same way as this does :( And I agree, devm
+variant for freeing would be nice - or freeing routines based on hw.
+
+As the leaked clkdev can cause oops at module unload/reload/use your
+suggestion about removing it for now makes sense. I'll drop it.
+
+> 
+> > +       if (rval) {
+> > +               dev_err(&pdev->dev, "failed to register clkdev for bd71837");
+> > +               goto err_clean_provider;
+> > +       }
+> > +
+> > +       platform_set_drvdata(pdev, c);
+> > +
+> > +       return 0;
+> > +
+> > +err_clean_provider:
+> > +       of_clk_del_provider(pdev->dev.parent->of_node);
+> > +err_out:
+> > +       return rval;
+> > +}
+> > +
+> > +static int bd71837_clk_remove(struct platform_device *pdev)
+> > +{
+> > +       if (pdev->dev.parent->of_node)
+> > +               of_clk_del_provider(pdev->dev.parent->of_node);
+> 
+> Use devm so this can go away. Or is devm not used because the parent
+> of_node is the provider? That's annoying.
+
+What would be the correct workaround for this?
+
+> 
+> > +       return 0;
+> > +}
+> > +
+
+Br,
+    Matti Vaittinen
