@@ -1,68 +1,207 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 27 Jun 2018 11:40:00 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, robh+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180627084000.GE2118@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
- <20180613130338.GH20078@localhost.localdomain>
- <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs63.siol.net ([185.57.226.254]:38805 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934398AbeFLUCr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:47 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 22/27] drm/sun4i: Add support for second clock parent to DW HDMI PHY clk driver
+Date: Tue, 12 Jun 2018 22:00:31 +0200
+Message-Id: <20180612200036.21483-23-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Expand HDMI PHY clock driver to support second clock parent.
 
-On Mon, Jun 25, 2018 at 04:46:24PM -0700, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-06-13 06:03:38)
-> > On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
-> > > 
-> > > I see. This makes sense. I need to verify from HW colleagues whether
-> > > this chip has internal oscillator or not. I originally thought we have
-> > > on-chip oscillator - but as you say, we do have XIN pin in documentation.
-> > > So now I am not sure if the test board I have contains oscillator driving
-> > > the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
-> > 
-> > It really turned out that the PMIC just acts as a clock buffer. So I do
-> > as you suggested and add lookup for parent clock to the driver. I
-> > planned to do it so that if no parent is found from DT - then we assume
-> > the 32.768KHz clock (as described in documentation). Eg, something along
-> > the lines:
-> > 
-> >         init.parent_names = of_clk_get_parent_name(pdev->dev.parent->of_node, 0);
-> >         if (init.parent_names) {
-> >                 init.num_parents = 1;
-> >         } else {
-> >                 /* If parent is not given from DT we assume the typical use-case with
-> >                  * 32.768 KHz oscillator for RTC (Maybe we could just error out here?)
-> >                  */
-> >                 c->rate = BD71837_CLK_RATE;
-> >                 bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-> >         }
-> 
-> You can also add a clk directly in this driver in that case there isn't
-> one in DT with the rate and name of your choosing. Then the logic is the
-> same and we don't need a c->rate variable.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h      |  4 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c     |  3 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c | 90 ++++++++++++++++------
+ 3 files changed, 73 insertions(+), 24 deletions(-)
 
-So you mean that I should use clk_hw_register_fixed_rate and create new
-clk if parent is not found? Isn't this a bit of an overkill? Downside is
-that then we do need remove/cleanup functionality for deleting this
-parent clock - and I didn't find devm support for fixed clock. Furthermore
-I guess that since it is parent, it can't be removed before child is removed.
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 46a3aa6a53a9..aadbe0a10b0c 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -99,6 +99,7 @@
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT	26
+ #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
+@@ -190,6 +191,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
+ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
+ const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
+ 
+-int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev);
++int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
++			 bool second_parent);
+ 
+ #endif /* _SUN8I_DW_HDMI_H_ */
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index f50072ae054a..e1b7196d4587 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -491,7 +491,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			}
+ 		}
+ 
+-		ret = sun8i_phy_clk_create(phy, dev);
++		ret = sun8i_phy_clk_create(phy, dev,
++					   phy->variant->has_second_pll);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+ 			goto err_put_clk_pll1;
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+index faea449812f8..a4d31fe3abff 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy_clk.c
+@@ -22,35 +22,45 @@ static int sun8i_phy_clk_determine_rate(struct clk_hw *hw,
+ {
+ 	unsigned long rate = req->rate;
+ 	unsigned long best_rate = 0;
++	struct clk_hw *best_parent = NULL;
+ 	struct clk_hw *parent;
+ 	int best_div = 1;
+-	int i;
++	int i, p;
+ 
+-	parent = clk_hw_get_parent(hw);
+-
+-	for (i = 1; i <= 16; i++) {
+-		unsigned long ideal = rate * i;
+-		unsigned long rounded;
+-
+-		rounded = clk_hw_round_rate(parent, ideal);
++	for (p = 0; p < clk_hw_get_num_parents(hw); p++) {
++		parent = clk_hw_get_parent_by_index(hw, p);
++		if (!parent)
++			continue;
+ 
+-		if (rounded == ideal) {
+-			best_rate = rounded;
+-			best_div = i;
+-			break;
++		for (i = 1; i <= 16; i++) {
++			unsigned long ideal = rate * i;
++			unsigned long rounded;
++
++			rounded = clk_hw_round_rate(parent, ideal);
++
++			if (rounded == ideal) {
++				best_rate = rounded;
++				best_div = i;
++				best_parent = parent;
++				break;
++			}
++
++			if (!best_rate ||
++			    abs(rate - rounded / i) <
++			    abs(rate - best_rate / best_div)) {
++				best_rate = rounded;
++				best_div = i;
++				best_parent = parent;
++			}
+ 		}
+ 
+-		if (!best_rate ||
+-		    abs(rate - rounded / i) <
+-		    abs(rate - best_rate / best_div)) {
+-			best_rate = rounded;
+-			best_div = i;
+-		}
++		if (best_rate / best_div == rate)
++			break;
+ 	}
+ 
+ 	req->rate = best_rate / best_div;
+ 	req->best_parent_rate = best_rate;
+-	req->best_parent_hw = parent;
++	req->best_parent_hw = best_parent;
+ 
+ 	return 0;
+ }
+@@ -95,22 +105,58 @@ static int sun8i_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++static u8 sun8i_phy_clk_get_parent(struct clk_hw *hw)
++{
++	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
++	u32 reg;
++
++	regmap_read(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, &reg);
++	reg = (reg & SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK) >>
++	      SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT;
++
++	return reg;
++}
++
++static int sun8i_phy_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct sun8i_phy_clk *priv = hw_to_phy_clk(hw);
++
++	if (index > 1)
++		return -EINVAL;
++
++	regmap_update_bits(priv->phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
++			   SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
++			   index << SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_SHIFT);
++
++	return 0;
++}
++
+ static const struct clk_ops sun8i_phy_clk_ops = {
+ 	.determine_rate	= sun8i_phy_clk_determine_rate,
+ 	.recalc_rate	= sun8i_phy_clk_recalc_rate,
+ 	.set_rate	= sun8i_phy_clk_set_rate,
++
++	.get_parent	= sun8i_phy_clk_get_parent,
++	.set_parent	= sun8i_phy_clk_set_parent,
+ };
+ 
+-int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
++int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
++			 bool second_parent)
+ {
+ 	struct clk_init_data init;
+ 	struct sun8i_phy_clk *priv;
+-	const char *parents[1];
++	const char *parents[2];
+ 
+ 	parents[0] = __clk_get_name(phy->clk_pll0);
+ 	if (!parents[0])
+ 		return -ENODEV;
+ 
++	if (second_parent) {
++		parents[1] = __clk_get_name(phy->clk_pll1);
++		if (!parents[1])
++			return -ENODEV;
++	}
++
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+@@ -118,7 +164,7 @@ int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev)
+ 	init.name = "hdmi-phy-clk";
+ 	init.ops = &sun8i_phy_clk_ops;
+ 	init.parent_names = parents;
+-	init.num_parents = 1;
++	init.num_parents = second_parent ? 2 : 1;
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 
+ 	priv->phy = phy;
+-- 
+2.17.1
 
-Or did you mean something else but creating a fixed rate clock as parent
-here?
-
-Best Regards
-    Matti Vaittinen
