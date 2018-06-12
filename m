@@ -1,108 +1,72 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44841 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934418AbeFLWY2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 18:24:28 -0400
+Date: Tue, 12 Jun 2018 16:24:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com, linux-mips@linux-mips.org,
+        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 15/24] dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
-Date: Fri, 29 Jun 2018 21:32:59 +0200
-Message-ID: <1814959.07NGAI1aoU@jernej-laptop>
-In-Reply-To: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <1669385.k4L9lni8DF@jernej-laptop> <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
+Message-ID: <20180612222424.GA2197@rob-hp-laptop>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-2-songjun.wu@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180612054034.4969-2-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 28. junij 2018 ob 09:00:32 CEST je Chen-Yu Tsai napisal(a):
-> On Thu, Jun 28, 2018 at 12:51 PM, Jernej Škrabec
+On Tue, Jun 12, 2018 at 01:40:28PM +0800, Songjun Wu wrote:
+> Previous implementation uses a hard-coded register value to check if
+> the current serial entity is the console entity.
+> Now the lantiq serial driver uses the aliases for the index of the
+> serial port.
+> The lantiq danube serial dts are updated with aliases to support this.
 > 
-> <jernej.skrabec@siol.net> wrote:
-> > Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
-> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
-> > 
-> > wrote:
-> >> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
-> >> > clock parents. It is compatible to other HDMI PHYs, like that found in
-> >> > R40.
-> >> > 
-> >> > Acked-by: Rob Herring <robh@kernel.org>
-> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> > ---
-> >> > 
-> >> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
-> >> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >> > 
-> >> > diff --git
-> >> > a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> >> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
-> >> > 84fe38dbb900..dc83f21ef188 100644
-> >> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> >> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> >> > @@ -101,6 +101,7 @@ DWC HDMI PHY
-> >> > 
-> >> >  Required properties:
-> >> >    - compatible: value must be one of:
-> >> > +    * allwinner,sun50i-a64-hdmi-phy
-> >> > 
-> >> >      * allwinner,sun8i-a83t-hdmi-phy
-> >> >      * allwinner,sun8i-h3-hdmi-phy
-> >> 
-> >> Nit: the list is sorted by family first, then SoC name, so it should
-> >> be the last on the list.
-> > 
-> > I went alphabetically, since "5" is before "8"...
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
 > 
-> I see. I think version sort applies here, given that sun50i is newer
-> than sun8i.
+>  arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+> index 2dd950181f8a..7a9e15da6bd0 100644
+> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
+> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+> @@ -4,6 +4,10 @@
+>  	#size-cells = <1>;
+>  	compatible = "lantiq,xway", "lantiq,danube";
+>  
+> +	aliases {
+> +		serial0 = &asc1;
+> +	};
+> +
+>  	cpus {
+>  		cpu@0 {
+>  			compatible = "mips,mips24Kc";
+> @@ -74,7 +78,7 @@
+>  			reg = <0xE100A00 0x100>;
+>  		};
+>  
+> -		serial@E100C00 {
+> +		asc1: serial@E100C00 {
 
-Should I make a patch for that?
+Fix this to be lower case hex while you are at it.
 
-Best regards,
-Jernej
-
+>  			compatible = "lantiq,asc";
+>  			reg = <0xE100C00 0x400>;
+>  			interrupt-parent = <&icu0>;
+> -- 
+> 2.11.0
 > 
-> ChenYu
-> 
-> > Best regards,
-> > Jernej
-> > 
-> >> Otherwise,
-> >> 
-> >> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> >> 
-> >> >    - reg: base address and size of memory-mapped region
-> >> > 
-> >> > @@ -111,8 +112,9 @@ Required properties:
-> >> >    - resets: phandle to the reset controller driving the PHY
-> >> >    - reset-names: must be "phy"
-> >> > 
-> >> > -H3 HDMI PHY requires additional clock:
-> >> > 
-> >> > +H3 and A64 HDMI PHY require additional clocks:
-> >> >    - pll-0: parent of phy clock
-> >> > 
-> >> > +  - pll-1: second possible phy clock parent (A64 only)
-> >> > 
-> >> >  TV Encoder
-> >> >  ----------
-> >> > 
-> >> > --
-> >> > 2.18.0
-> > 
-> > --
-> > You received this message because you are subscribed to the Google Groups
-> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
-> > emails from it, send an email to
-> > linux-sunxi+unsubscribe@googlegroups.com. For more options, visit
-> > https://groups.google.com/d/optout.
