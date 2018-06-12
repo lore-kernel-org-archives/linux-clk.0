@@ -1,143 +1,62 @@
-Return-Path: <ilia.lin@gmail.com>
-Return-Path: <ilia.lin@gmail.com>
-From: ilia.lin@gmail.com
-To: ilia.lin@gmail.com
-Cc: Rajendra Nayak <rnayak@codeaurora.org>,
-	Ilia Lin <ilialin@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Amit Kucheria <amit.kucheria@linaro.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v13 7/8] clk: qcom: cpu-8996: Add support to switch below 600Mhz
-Date: Thu, 14 Jun 2018 23:53:54 +0200
-Message-Id: <20180614215358.11264-8-ilia.lin@gmail.com>
-In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
-References: <20180614215358.11264-1-ilia.lin@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com
+Cc: linux-mips@linux-mips.org, qi-ming.wu@intel.com,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
+Date: Tue, 12 Jun 2018 13:40:28 +0800
+Message-Id: <20180612054034.4969-2-songjun.wu@linux.intel.com>
+In-Reply-To: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Previous implementation uses a hard-coded register value to check if
+the current serial entity is the console entity.
+Now the lantiq serial driver uses the aliases for the index of the
+serial port.
+The lantiq danube serial dts are updated with aliases to support this.
 
-The CPU clock controller's primary PLL operates on a single VCO range,
-between 600MHz and 3GHz. However the CPUs do support OPPs with
-frequencies between 300MHz and 600MHz. In order to support running the
-CPUs at those frequencies we end up having to lock the PLL at twice the
-rate and drive the CPU clk via the PLL/2 output and SMUX.
-
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
- drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-index 620fdc2266ba..ff5c0a5740d2 100644
---- a/drivers/clk/qcom/clk-cpu-8996.c
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -68,6 +68,8 @@ enum _pmux_input {
- 	NUM_OF_PMUX_INPUTS
- };
+ arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 2dd950181f8a..7a9e15da6bd0 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -4,6 +4,10 @@
+ 	#size-cells = <1>;
+ 	compatible = "lantiq,xway", "lantiq,danube";
  
-+#define DIV_2_THRESHOLD		600000000
++	aliases {
++		serial0 = &asc1;
++	};
 +
- static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-        [PLL_OFF_L_VAL] = 0x04,
-        [PLL_OFF_ALPHA_VAL] = 0x08,
-@@ -95,10 +97,11 @@ static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
+ 	cpus {
+ 		cpu@0 {
+ 			compatible = "mips,mips24Kc";
+@@ -74,7 +78,7 @@
+ 			reg = <0xE100A00 0x100>;
+ 		};
  
- static const struct alpha_pll_config hfpll_config = {
- 	.l = 60,
--	.config_ctl_val = 0x200d4828,
-+	.config_ctl_val = 0x200d4aa8,
- 	.config_ctl_hi_val = 0x006,
- 	.pre_div_mask = BIT(12),
- 	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -140,7 +143,7 @@ static const struct alpha_pll_config altpll_config = {
- 	.vco_mask = 0x3 << 20,
- 	.config_ctl_val = 0x4001051b,
- 	.post_div_mask = 0x3 << 8,
--	.post_div_val = 0x1,
-+	.post_div_val = 0x1 << 8,
- 	.main_output_mask = BIT(0),
- 	.early_output_mask = BIT(3),
- };
-@@ -181,6 +184,7 @@ struct clk_cpu_8996_mux {
- 	u8	width;
- 	struct notifier_block nb;
- 	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
- 	struct clk_regmap clkr;
- };
- 
-@@ -226,6 +230,13 @@ clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
- 	struct clk_hw *parent = cpuclk->pll;
- 
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
-+
-+		parent = cpuclk->pll_div_2;
-+	}
-+
- 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
- 	req->best_parent_hw = parent;
- 
-@@ -237,13 +248,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
- {
- 	int ret;
- 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
- 
- 	switch (event) {
- 	case PRE_RATE_CHANGE:
- 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
- 		break;
- 	case POST_RATE_CHANGE:
--		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  PLL_INDEX);
- 		break;
- 	default:
- 		ret = 0;
-@@ -295,6 +312,7 @@ static struct clk_cpu_8996_mux pwrcl_pmux = {
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "pwrcl_pmux",
-@@ -315,6 +333,7 @@ static struct clk_cpu_8996_mux perfcl_pmux = {
- 	.shift = 0,
- 	.width = 2,
- 	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
- 	.nb.notifier_call = cpu_clk_notifier_cb,
- 	.clkr.hw.init = &(struct clk_init_data) {
- 		.name = "perfcl_pmux",
+-		serial@E100C00 {
++		asc1: serial@E100C00 {
+ 			compatible = "lantiq,asc";
+ 			reg = <0xE100C00 0x400>;
+ 			interrupt-parent = <&icu0>;
 -- 
 2.11.0
