@@ -1,69 +1,69 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: jbrunet@baylibre.com,  sboyd@kernel.org,  mturquette@baylibre.com,  linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
-Date: Wed, 13 Jun 2018 15:42:28 -0700
-In-Reply-To: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com> (Neil
-	Armstrong's message of "Wed, 13 Jun 2018 14:20:21 +0200")
-Message-ID: <7hsh5qwbor.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 19/27] drm/sun4i: Enable DW HDMI PHY clock
+Date: Tue, 12 Jun 2018 22:00:28 +0200
+Message-Id: <20180612200036.21483-20-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+Current DW HDMI PHY code never prepares and enables PHY clock after it is
+created. It's just used as it is. This may work in some cases, but it's
+clearly wrong. Fix it by adding proper calls to enable/disable PHY
+clock.
 
-> On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
-> seems to be dependent on the FCLK_DIV2 to be operationnal.
->
-> The issue occured since v4.17-rc1 by freezing the kernel boot when
-> the 'schedutil' cpufreq governor was selected as default :
->
->   [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
->   domain-0 init dvfs: 4
->   [   12.087757] hctosys: unable to open rtc device (rtc0)
->   [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
->   [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
->
-> But when disabling the MMC driver, the boot finished but cpufreq failed to
-> change the CPU frequency :
->
->   [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
->
-> A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
-> the first bad commit.
-> This commit added support for the missing clock gates before the fixed PLL
-> fixed dividers (FCLK_DIVx) and the clock framework basically disabled
-> all the unused fixed dividers, thus disabled a critical clock path for
-> the SCPI Co-Processor.
->
-> This patch simply sets the FCLK_DIV2 gate as critical to ensure
-> nobody can disable it.
->
-> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
 
-Nice!  this also fixes the boot hang I had noticed on gxm-nexbox-a1
-(though MMC still needs to be disabled to fully boot.)
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-
-Kevin
-
-> ---
->  drivers/clk/meson/gxbb.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index b1e4d95..0e053c1 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_names = (const char *[]){ "fclk_div2_div" },
->  		.num_parents = 1,
-> +		.flags = CLK_IS_CRITICAL,
->  	},
->  };
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 5a52fc489a9d..966688f04741 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -477,13 +477,15 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+ 			goto err_put_clk_pll0;
+ 		}
++
++		clk_prepare_enable(phy->clk_phy);
+ 	}
+ 
+ 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
+ 	if (IS_ERR(phy->rst_phy)) {
+ 		dev_err(dev, "Could not get phy reset control\n");
+ 		ret = PTR_ERR(phy->rst_phy);
+-		goto err_put_clk_pll0;
++		goto err_disable_clk_phy;
+ 	}
+ 
+ 	ret = reset_control_deassert(phy->rst_phy);
+@@ -514,6 +516,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	reset_control_assert(phy->rst_phy);
+ err_put_rst_phy:
+ 	reset_control_put(phy->rst_phy);
++err_disable_clk_phy:
++	clk_disable_unprepare(phy->clk_phy);
+ err_put_clk_pll0:
+ 	if (phy->variant->has_phy_clk)
+ 		clk_put(phy->clk_pll0);
+@@ -531,6 +535,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
+ 
+ 	clk_disable_unprepare(phy->clk_mod);
+ 	clk_disable_unprepare(phy->clk_bus);
++	clk_disable_unprepare(phy->clk_phy);
+ 
+ 	reset_control_assert(phy->rst_phy);
+ 
+-- 
+2.17.1
