@@ -1,61 +1,90 @@
-Return-Path: <david@lechnology.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: Sekhar Nori <nsekhar@ti.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>,
- Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-References: <20180518164829.27052-1-david@lechnology.com>
- <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <89b599d3-c43a-255f-8da6-9bea6cf53a5d@lechnology.com>
-Date: Sun, 17 Jun 2018 10:48:47 -0500
-MIME-Version: 1.0
-In-Reply-To: <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs51.siol.net ([185.57.226.242]:38513 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934283AbeFLUCV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:21 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 12/27] drm/sun4i: tcon: Generalize engine search algorithm
+Date: Tue, 12 Jun 2018 22:00:21 +0200
+Message-Id: <20180612200036.21483-13-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sekhar,
+Current "old" method to find engine worked pretty well for DE2. However,
+it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
+TOP has multiple input ports, but current engine search algorithm
+expects only one.
 
-On 05/22/2018 04:38 AM, Sekhar Nori wrote:
-> Hi David,
-> 
-> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
->> This series converts mach-davinci to use the common clock framework.
->>
->> The series works like this, the first 3 patches fix some issues with the clock
->> drivers that have already been accepted into the mainline kernel.
->>
->> Then, starting with "ARM: davinci: pass clock as parameter to
->> davinci_timer_init()", we get the mach code ready for the switch by adding the
->> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
->> around the legacy clocks so that we can switch easily between the old and the
->> new.
->>
->> "ARM: davinci: switch to common clock framework" actually flips the switch
->> to start using the new clock drivers. Then the next 8 patches remove all
->> of the old clock code.
->>
->> The final four patches add device tree clock support to the one SoC that
->> supports it.
->>
->> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
->> board file).
-> 
-> If you do end up sending a v12, you can leave out the mach-davinci
-> portions unless there are any changes you need to make. I will pick them
-> up from this series once the driver dependencies are merged.
-> 
-> I do hope the drivers/clk/* changes can be merged from v4.18.
-> 
-> Thanks,
-> Sekhar
-> 
+This can be fixed by first looking for output port id and selecting
+matching input by subtracting 1 for the next round. This work even if
+there is only one input and output.
 
-Are you going to pick up the arch patches from this series now that
-the 4.18 merge window is closed?
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-All of the clk patches landed in 4.18.
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0afb5a94a414..5dae623968f7 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -802,12 +802,14 @@ static int sun4i_tcon_init_regmap(struct device *dev,
+  */
+ static struct sunxi_engine *
+ sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+-				struct device_node *node)
++				struct device_node *node,
++				u32 port_id)
+ {
+ 	struct device_node *port, *ep, *remote;
+ 	struct sunxi_engine *engine = ERR_PTR(-EINVAL);
++	u32 reg = 0;
+ 
+-	port = of_graph_get_port_by_id(node, 0);
++	port = of_graph_get_port_by_id(node, port_id);
+ 	if (!port)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -837,8 +839,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+ 		if (remote == engine->node)
+ 			goto out_put_remote;
+ 
++	/*
++	 * According to device tree binding input ports have even id
++	 * number and output ports have odd id. Since component with
++	 * more than one input and one output (TCON TOP) exits, correct
++	 * remote input id has to be calculated by subtracting 1 from
++	 * remote output id. If this for some reason can't be done, 0
++	 * is used as input port id.
++	 */
++	port = of_graph_get_remote_port(ep);
++	if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
++		reg -= 1;
++
+ 	/* keep looking through upstream ports */
+-	engine = sun4i_tcon_find_engine_traverse(drv, remote);
++	engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
+ 
+ out_put_remote:
+ 	of_node_put(remote);
+@@ -961,7 +975,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
+ 
+ 	/* Fallback to old method by traversing input endpoints */
+ 	of_node_put(port);
+-	return sun4i_tcon_find_engine_traverse(drv, node);
++	return sun4i_tcon_find_engine_traverse(drv, node, 0);
+ }
+ 
+ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+-- 
+2.17.1
+
