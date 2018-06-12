@@ -1,101 +1,33 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: "shawnguo@kernel.org" <shawnguo@kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, "michael@amarulasolutions.com"
-	<michael@amarulasolutions.com>, "matteo.lisi@engicam.com"
-	<matteo.lisi@engicam.com>
-CC: dl-linux-imx <linux-imx@nxp.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Date: Mon, 25 Jun 2018 03:14:39 +0000
-Message-ID: 
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:44318 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933793AbeFLVy0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 17:54:26 -0400
+Date: Tue, 12 Jun 2018 15:54:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/4] dt-bindings: clk: at91: Document all the PMC
+ compatibles
+Message-ID: <20180612215422.GA7376@rob-hp-laptop>
+References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
+ <20180607084107.4461-3-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180607084107.4461-3-alexandre.belloni@bootlin.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Gentle Ping...
-
-Anson Huang
-Best Regards!
-
-
-> -----Original Message-----
-> From: Anson Huang
-> Sent: Sunday, June 3, 2018 9:44 AM
-> To: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
-> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
-> mturquette@baylibre.com; sboyd@kernel.org;
-> michael@amarulasolutions.com; matteo.lisi@engicam.com
-> Cc: dl-linux-imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.or=
-g;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-clk@vger.kernel.org
-> Subject: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
->=20
-> i.MX6UL has GPIO clock gates in CCM CCGR, add clock property for GPIO dri=
-ver
-> to make sure all GPIO banks work as expected.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Thu, Jun 07, 2018 at 10:41:05AM +0200, Alexandre Belloni wrote:
+> Add missing PMC compatibles to the list of available compatibles.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
-> 	no changes since V1.
->  arch/arm/boot/dts/imx6ul.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dts=
-i
-> index 1241972..405e068 100644
-> --- a/arch/arm/boot/dts/imx6ul.dtsi
-> +++ b/arch/arm/boot/dts/imx6ul.dtsi
-> @@ -437,6 +437,7 @@
->  				reg =3D <0x0209c000 0x4000>;
->  				interrupts =3D <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
->  					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks =3D <&clks IMX6UL_CLK_GPIO1>;
->  				gpio-controller;
->  				#gpio-cells =3D <2>;
->  				interrupt-controller;
-> @@ -450,6 +451,7 @@
->  				reg =3D <0x020a0000 0x4000>;
->  				interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
->  					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks =3D <&clks IMX6UL_CLK_GPIO2>;
->  				gpio-controller;
->  				#gpio-cells =3D <2>;
->  				interrupt-controller;
-> @@ -462,6 +464,7 @@
->  				reg =3D <0x020a4000 0x4000>;
->  				interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
->  					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks =3D <&clks IMX6UL_CLK_GPIO3>;
->  				gpio-controller;
->  				#gpio-cells =3D <2>;
->  				interrupt-controller;
-> @@ -474,6 +477,7 @@
->  				reg =3D <0x020a8000 0x4000>;
->  				interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
->  					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks =3D <&clks IMX6UL_CLK_GPIO4>;
->  				gpio-controller;
->  				#gpio-cells =3D <2>;
->  				interrupt-controller;
-> @@ -486,6 +490,7 @@
->  				reg =3D <0x020ac000 0x4000>;
->  				interrupts =3D <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
->  					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-> +				clocks =3D <&clks IMX6UL_CLK_GPIO5>;
->  				gpio-controller;
->  				#gpio-cells =3D <2>;
->  				interrupt-controller;
-> --
-> 2.7.4
+>  Documentation/devicetree/bindings/clock/at91-clock.txt | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
