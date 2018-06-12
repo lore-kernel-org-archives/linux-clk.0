@@ -1,77 +1,27 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs60.siol.net ([185.57.226.251]:38716 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934398AbeFLUCl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:41 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 20/27] drm/sun4i: Don't change clock bits in DW HDMI PHY driver
-Date: Tue, 12 Jun 2018 22:00:29 +0200
-Message-Id: <20180612200036.21483-21-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dmitry Osipenko <digetx@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Mikko Perttunen <cyndis@kapsi.fi>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180605121232.7121-1-digetx@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180605121232.7121-1-digetx@gmail.com>
+Message-ID: <152878956397.16708.14349666570210193783@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1] clk: tegra: emc: Avoid out-of-bounds bug
+Date: Tue, 12 Jun 2018 00:46:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-DW HDMI PHY driver and PHY clock driver share same registers. Make sure
-that DW HDMI PHY setup code doesn't change any clock related bits and
-set them to 0 during initialization.
+Quoting Dmitry Osipenko (2018-06-05 05:12:32)
+> Apparently there was an attempt to avoid out-of-bounds accesses when there
+> is only one memory timing available, but there is a typo in the code that
+> neglects that attempt.
+> =
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 +-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 79154f0f674a..3ba71aff92fc 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -98,7 +98,7 @@
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
- #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
--#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
-+#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
- #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
- #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 966688f04741..cd07ceb71601 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *hdmi,
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
- 			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
- 
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
-+	/*
-+	 * NOTE: We have to be careful not to overwrite PHY parent
-+	 * clock selection bit and clock divider.
-+	 */
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-+			   (u32)~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
-+			   pll_cfg1_init);
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
- 			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
- 			   pll_cfg2_init);
-@@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
- 			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
- 			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
- 
-+	/* reset PLL clock configuration */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, 0);
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG, 0);
-+
- 	/* set HW control of CEC pins */
- 	regmap_write(phy->regs, SUN8I_HDMI_PHY_CEC_REG, 0);
- 
--- 
-2.17.1
-
+Fixes: tag?
