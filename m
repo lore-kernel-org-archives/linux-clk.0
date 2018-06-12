@@ -1,65 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:56618 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751307AbeFVM1C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:27:02 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 0/7] Allwinner A64 DE2 CCU support with dedicated DE2 bus driver
-Date: Fri, 22 Jun 2018 20:26:08 +0800
-Message-Id: <20180622122615.55836-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v2 04/27] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Date: Tue, 12 Jun 2018 22:00:13 +0200
+Message-Id: <20180612200036.21483-5-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset tries to implement the Allwinner A64 DE2 as a bus driver,
-in order to model the fact that the SRAM claim controls the access to
-the whole DE2 memory space.
+TCON TOP main purpose is to configure whole display pipeline. It
+determines relationships between mixers and TCONs, selects source TCON
+for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+clock source and contains additional TV TCON and DSI gates.
 
-PATCH 1 and PATCH 4 are for the CCU part.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ .../bindings/display/sunxi/sun4i-drm.txt      | 45 +++++++++++++++++++
+ include/dt-bindings/clock/sun8i-tcon-top.h    | 11 +++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
-PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
-implements the bus driver.
-
-PATCH 5 adds the DE2 CCU device tree node, with the DE2 bus node.
-
-PATCH 6 and 7 are HDMI simplefb patches for A64. They're present as a
-test to this patchset.
-
-Icenowy Zheng (7):
-  dt-bindings: add compatible string for the A64 DE2 CCU
-  dt-bindings: add binding for the Allwinner A64 DE2 bus
-  bus: add bus driver for accessing Allwinner A64 DE2
-  clk: sunxi-ng: add A64 compatible string
-  arm64: allwinner: a64: add necessary device tree nodes for DE2 CCU
-  arm64: allwinner: a64: add device tree node for HDMI simplefb
-  arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
-
- .../bindings/bus/sun50i-de2-bus.txt           | 37 ++++++++++++++
- .../devicetree/bindings/clock/sun8i-de2.txt   |  1 +
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  4 ++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  4 ++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    |  4 ++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts |  4 ++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  4 ++
- .../dts/allwinner/sun50i-a64-pinebook.dts     |  4 ++
- .../allwinner/sun50i-a64-sopine-baseboard.dts |  4 ++
- .../boot/dts/allwinner/sun50i-a64-teres-i.dts |  4 ++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 39 ++++++++++++---
- drivers/bus/Kconfig                           | 10 ++++
- drivers/bus/Makefile                          |  1 +
- drivers/bus/sun50i-de2.c                      | 49 +++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c          | 11 ++---
- 15 files changed, 167 insertions(+), 13 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
- create mode 100644 drivers/bus/sun50i-de2.c
-
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3346c1e2a7a0..ef64c589a4b3 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -187,6 +187,51 @@ And on the A23, A31, A31s and A33, you need one more clock line:
+    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
+                  clock, that can be used to drive the LVDS clock
+ 
++TCON TOP
++--------
++
++TCON TOPs main purpose is to configure whole display pipeline. It determines
++relationships between mixers and TCONs, selects source TCON for HDMI, muxes
++LCD and TV encoder GPIO output, selects TV encoder clock source and contains
++additional TV TCON and DSI gates.
++
++It allows display pipeline to be configured in very different ways:
++
++                             / LCD0/LVDS0
++                 / TCON-LCD0
++                 |           \ MIPI DSI
++ mixer0          |
++        \        / TCON-LCD1 - LCD1/LVDS1
++         TCON-TOP
++        /        \ TCON-TV0 - TVE0/RGB
++ mixer1          |          \
++                 |           TCON-TOP - HDMI
++                 |          /
++                 \ TCON-TV1 - TVE1/RGB
++
++Note that both TCON TOP references same physical unit.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-r40-tcon-top
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandle to the clocks feeding the TCON TOP
++    * bus: TCON TOP interface clock
++  - clock-names: clock name mentioned above
++  - resets: phandle to the reset line driving the DRC
++    * rst: TCON TOP reset line
++  - reset-names: reset name mentioned above
++  - #clock-cells : must contain 1
++
++- ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The first port
++    should be the input for mixer0 mux. The second should be the output for that
++    mux. Third port should be input for mixer1 mux. Fourth port should be output
++    for mixer1 mux. Fifth port should be input for HDMI mux. Sixth port should
++    be output for it. All output endpoints should have reg property with the id
++    of the target TCON. All ports should have only one enpoint connected to
++    remote endpoint.
++
+ DRC
+ ---
+ 
+diff --git a/include/dt-bindings/clock/sun8i-tcon-top.h b/include/dt-bindings/clock/sun8i-tcon-top.h
+new file mode 100644
+index 000000000000..c05e92770402
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-tcon-top.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/* Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++
++#define CLK_BUS_TCON_TOP_DSI	0
++#define CLK_BUS_TCON_TOP_TV0	1
++#define CLK_BUS_TCON_TOP_TV1	2
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_ */
 -- 
 2.17.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
