@@ -1,91 +1,127 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:44719 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750740AbeFBOCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Jun 2018 10:02:12 -0400
-From: Fabio Estevam <festevam@gmail.com>
-To: sboyd@kernel.org
-Cc: michael@amarulasolutions.com, stefan.wahren@i2se.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock definition order
-Date: Sat,  2 Jun 2018 11:02:02 -0300
-Message-Id: <1527948122-32092-1-git-send-email-festevam@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v2 09/27] drm/sun4i: Don't skip TCONs if they don't have
+ channel 0
+Date: Tue, 12 Jun 2018 22:00:18 +0200
+Message-Id: <20180612200036.21483-10-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
+Because of that, all output endpoints on such TCON node will point to a
+encoder which is part of component framework.
 
-Commit f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled
-by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
-at the end of the list, which may cause dtb breakage when running an old
-dtb with a newer kernel.
+Correct current graph traversing algorithm in such way that it doesn't
+skip output enpoints with id 0 on TV TCONs.
 
-In order to avoid that, simply add the new CLK_CKO clock definitions
-at the end of the list.
-
-Fixes: f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled by CCOSR")
-Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
-Changes since v1:
-- Use 12 char for the commit id
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 52 +++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
 
- include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
-
-diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
-index 9564597..0aa1d9c 100644
---- a/include/dt-bindings/clock/imx6ul-clock.h
-+++ b/include/dt-bindings/clock/imx6ul-clock.h
-@@ -235,27 +235,25 @@
- #define IMX6UL_CLK_CSI_PODF		222
- #define IMX6UL_CLK_PLL3_120M		223
- #define IMX6UL_CLK_KPP			224
--#define IMX6UL_CLK_CKO1_SEL		225
--#define IMX6UL_CLK_CKO1_PODF		226
--#define IMX6UL_CLK_CKO1			227
--#define IMX6UL_CLK_CKO2_SEL		228
--#define IMX6UL_CLK_CKO2_PODF		229
--#define IMX6UL_CLK_CKO2			230
--#define IMX6UL_CLK_CKO			231
--
--/* For i.MX6ULL */
--#define IMX6ULL_CLK_ESAI_PRED		232
--#define IMX6ULL_CLK_ESAI_PODF		233
--#define IMX6ULL_CLK_ESAI_EXTAL		234
--#define IMX6ULL_CLK_ESAI_MEM		235
--#define IMX6ULL_CLK_ESAI_IPG		236
--#define IMX6ULL_CLK_DCP_CLK		237
--#define IMX6ULL_CLK_EPDC_PRE_SEL	238
--#define IMX6ULL_CLK_EPDC_SEL		239
--#define IMX6ULL_CLK_EPDC_PODF		240
--#define IMX6ULL_CLK_EPDC_ACLK		241
--#define IMX6ULL_CLK_EPDC_PIX		242
--#define IMX6ULL_CLK_ESAI_SEL		243
-+#define IMX6ULL_CLK_ESAI_PRED		225
-+#define IMX6ULL_CLK_ESAI_PODF		226
-+#define IMX6ULL_CLK_ESAI_EXTAL		227
-+#define IMX6ULL_CLK_ESAI_MEM		228
-+#define IMX6ULL_CLK_ESAI_IPG		229
-+#define IMX6ULL_CLK_DCP_CLK		230
-+#define IMX6ULL_CLK_EPDC_PRE_SEL	231
-+#define IMX6ULL_CLK_EPDC_SEL		232
-+#define IMX6ULL_CLK_EPDC_PODF		233
-+#define IMX6ULL_CLK_EPDC_ACLK		234
-+#define IMX6ULL_CLK_EPDC_PIX		235
-+#define IMX6ULL_CLK_ESAI_SEL		236
-+#define IMX6UL_CLK_CKO1_SEL		237
-+#define IMX6UL_CLK_CKO1_PODF		238
-+#define IMX6UL_CLK_CKO1			239
-+#define IMX6UL_CLK_CKO2_SEL		240
-+#define IMX6UL_CLK_CKO2_PODF		241
-+#define IMX6UL_CLK_CKO2			242
-+#define IMX6UL_CLK_CKO			243
- #define IMX6UL_CLK_END			244
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index e6c62c079146..6ddf4eaccb40 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -198,6 +198,22 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return !!of_match_node(sun4i_tcon_of_table, node);
+ }
  
- #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
++static bool sun4i_drv_node_is_tcon_with_ch0(struct device_node *node)
++{
++	const struct of_device_id *match;
++
++	match = of_match_node(sun4i_tcon_of_table, node);
++	if (match) {
++		struct sun4i_tcon_quirks *quirks;
++
++		quirks = (struct sun4i_tcon_quirks *)match->data;
++
++		return quirks->has_channel_0;
++	}
++
++	return false;
++}
++
+ static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
+ {
+ 	return !!of_match_node(sun8i_tcon_top_of_table, node);
+@@ -256,14 +272,7 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
+ 			continue;
+ 		}
+ 
+-		/*
+-		 * If the node is our TCON, the first port is used for
+-		 * panel or bridges, and will not be part of the
+-		 * component framework.
+-		 */
+ 		if (sun4i_drv_node_is_tcon(node)) {
+-			struct of_endpoint endpoint;
+-
+ 			/*
+ 			 * TCON TOP is always probed before TCON. However, TCON
+ 			 * points back to TCON TOP when it is source for HDMI.
+@@ -276,16 +285,25 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
+ 				continue;
+ 			}
+ 
+-			if (of_graph_parse_endpoint(ep, &endpoint)) {
+-				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+-				of_node_put(remote);
+-				continue;
+-			}
+-
+-			if (!endpoint.id) {
+-				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
+-				of_node_put(remote);
+-				continue;
++			/*
++			 * If the node is our TCON with channel 0, the first
++			 * port is used for panel or bridges, and will not be
++			 * part of the component framework.
++			 */
++			if (sun4i_drv_node_is_tcon_with_ch0(node)) {
++				struct of_endpoint endpoint;
++
++				if (of_graph_parse_endpoint(ep, &endpoint)) {
++					DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
++					of_node_put(remote);
++					continue;
++				}
++
++				if (!endpoint.id) {
++					DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
++					of_node_put(remote);
++					continue;
++				}
+ 			}
+ 		}
+ 
 -- 
-2.7.4
+2.17.1
 
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
