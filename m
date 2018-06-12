@@ -1,61 +1,91 @@
-Return-Path: <michael@amarulasolutions.com>
+Return-Path: <rjw@rjwysocki.net>
+Return-Path: <rjw@rjwysocki.net>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>, kernel@pengutronix.de, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Tue, 12 Jun 2018 16:33:05 +0200
+Message-ID: <2307533.g32PyNi9fl@aspire.rjw.lan>
+In-Reply-To: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de> <20180517055014.6607-4-o.rempel@pengutronix.de> <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
-References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
- <1439344955.9677.1526991935718@email.1und1.de> <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Sat, 2 Jun 2018 16:04:13 +0200
-Message-ID: <CAOf5uwneWyjNpD-tGGL7CgL2_jJFvDtzbi+NBg7wqGMGR4qGCw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Rob Herring <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-	Anson Huang <Anson.Huang@nxp.com>, Matteo Lisi <matteo.lisi@engicam.com>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi
+On Tuesday, June 12, 2018 2:42:12 PM CEST Oleksij Rempel wrote:
+>  This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
+> Content-Type: multipart/mixed; boundary="d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg";
+>  protected-headers="v1"
+> From: Oleksij Rempel <o.rempel@pengutronix.de>
+> To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+>  "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+>  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+>  linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+>  Liam Girdwood <lgirdwood@gmail.com>,
+>  Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+>  Mark Rutland <mark.rutland@arm.com>,
+>  Michael Turquette <mturquette@baylibre.com>,
+>  Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+>  Russell King <linux@armlinux.org.uk>
+> Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
+> Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
+> References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+>  <20180517055014.6607-4-o.rempel@pengutronix.de>
+> In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
+> 
+> --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg
+> Content-Type: text/plain; charset=utf-8
+> Content-Language: en-US
+> Content-Transfer-Encoding: quoted-printable
+> 
+> Hi Rafael,
+> 
+> Last version of this patch was send at 17.05.2018. No other comment was
+> provided and this patch is a blocker for other patches in this serie.
+> Can you please give some feedback on it.
 
-On Sat, Jun 2, 2018 at 3:48 PM, Fabio Estevam <festevam@gmail.com> wrote:
-> Hi Stefan,
->
-> On Tue, May 22, 2018 at 9:25 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
->
->>> --- a/include/dt-bindings/clock/imx6ul-clock.h
->>> +++ b/include/dt-bindings/clock/imx6ul-clock.h
->>> @@ -242,20 +242,25 @@
->>>  #define IMX6UL_CLK_CKO2_PODF         229
->>>  #define IMX6UL_CLK_CKO2                      230
->>>  #define IMX6UL_CLK_CKO                       231
->>> +#define IMX6UL_CLK_GPIO1             232
->>> +#define IMX6UL_CLK_GPIO2             233
->>> +#define IMX6UL_CLK_GPIO3             234
->>> +#define IMX6UL_CLK_GPIO4             235
->>> +#define IMX6UL_CLK_GPIO5             236
->>
->> this change looks like a breakage of devicetree ABI. You are changing the mean of the existing clock IDs on i.MX6ULL, which probably regress the combination of older DTBs with newer kernel.
->
-> Good point! I will send a fix for f5a4670de96678 ("clk: imx: Add new
-> clo01 and clo2 controlled
-> by CCOSR") which did the same reordering.
->
+I would have done that had I not missed the patch.
 
-ull is a preatty new platform so one board was listed. Are you sure
-that we need?
+Which probably wouldn't have happened had you CCed it to linux-pm.
 
-Michael
+Anyway, I have no particular problems with exporting pm_power_off_prepare via
+EXPORT_SYMBOL_GPL().
 
-> Thanks
-
-
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+> 
+> On 17.05.2018 07:50, Oleksij Rempel wrote:
+> > Export pm_power_off_prepare. It is needed to implement power off on
+> > Freescale/NXP iMX6 based boards with external power management
+> > integrated circuit (PMIC).
+> >=20
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  kernel/reboot.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/kernel/reboot.c b/kernel/reboot.c
+> > index e4ced883d8de..83810d726f3e 100644
+> > --- a/kernel/reboot.c
+> > +++ b/kernel/reboot.c
+> > @@ -49,6 +49,7 @@ int reboot_force;
+> >   */
+> > =20
+> >  void (*pm_power_off_prepare)(void);
+> > +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
+> > =20
+> >  /**
+> >   *	emergency_restart - reboot the system
+> >=20
+> 
+> 
+> --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg--
+> 
+> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
+> Content-Type: application/pgp-signature; name="signature.asc"
+> Content-Description: OpenPGP digital signature
+> Content-Disposition: attachment; filename="signature.asc"
+> 
+> 
+> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924--
+> 
