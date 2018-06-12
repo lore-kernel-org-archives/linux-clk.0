@@ -1,69 +1,62 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
- <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
- <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz> <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jun 2018 17:28:06 +0200
-Message-ID: <CAMuHMdX6ACCiEs=EEbQV3=Ah7BZT1RJ1G0kZKeYKi_KzWoKZgQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
- format %pCr
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux PM <linux-pm@vger.kernel.org>, linux-serial <linux-serial@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs3.siol.net ([185.57.226.194]:38828 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934556AbeFLUCt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Jun 2018 16:02:49 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 23/27] drm/sun4i: Add support for A64 HDMI PHY
+Date: Tue, 12 Jun 2018 22:00:32 +0200
+Message-Id: <20180612200036.21483-24-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Petr,
+PHY is the same as in H3, except it can switch between two clock
+parents.
 
-On Fri, Jun 1, 2018 at 5:19 PM, Petr Mladek <pmladek@suse.com> wrote:
-> On Fri 2018-06-01 13:47:38, Petr Mladek wrote:
->> On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
->> > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
->> > <geert+renesas@glider.be> wrote:
->> > >
->> > > This patch series:
->> > >   - Changes all existing users of "%pCr" to print the result of
->> > >     clk_get_rate() directly, which is safe as they all do this in task
->> > >     context only,
->> > >   - Removes support for the "%pCr" printk format.
->> >
->> > Looks good to me.
->> >
->> > What tree will this go through? The normal printk one? Just checking
->> > that this doesn't end up falling through the cracks because nobody
->> > knows who would take it...
->>
->> I will take it via printk.git. There already is bunch of vsprintf
->> changes for-4.18.
->
-> It is in printk.git, branch for-4.18-vsprintf-pcr-removal now.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thank you.
-
-> Also I have added Cc: stable@vger.kernel.org into the commit messages.
-
-I can confirm all stable version references ("v4.x+") match.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index e1b7196d4587..457f0a121684 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -396,6 +396,14 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+ 	.name		= "phy"
+ };
+ 
++static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
++	.has_phy_clk = true,
++	.has_second_pll = true,
++	.phy_init = &sun8i_hdmi_phy_init_h3,
++	.phy_disable = &sun8i_hdmi_phy_disable_h3,
++	.phy_config = &sun8i_hdmi_phy_config_h3,
++};
++
+ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
+ 	.phy_init = &sun8i_hdmi_phy_init_a83t,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
+@@ -410,6 +418,10 @@ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
+ };
+ 
+ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
++	{
++		.compatible = "allwinner,sun50i-a64-hdmi-phy",
++		.data = &sun50i_a64_hdmi_phy,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
+ 		.data = &sun8i_a83t_hdmi_phy,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
