@@ -1,56 +1,43 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932448AbeFLIGH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:06:07 -0400
+        id S933550AbeFLIIK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Jun 2018 04:08:10 -0400
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>
+To: Pramod Kumar <pramod.kumar@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        kbuild test robot <lkp@intel.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <18f6871e-794d-3ea2-487e-32399a8b89b4@microchip.com>
-Cc: devicetree@vger.kernel.org,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Cristian.Birsan@microchip.com
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop>
- <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
- <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
- <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
- <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
- <18f6871e-794d-3ea2-487e-32399a8b89b4@microchip.com>
-Message-ID: <152879076578.16708.6230985334183790836@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-Date: Tue, 12 Jun 2018 01:06:05 -0700
+In-Reply-To: <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
+Cc: kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
+ <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
+Message-ID: <152879088933.16708.2618330114850661561@swboyd.mtv.corp.google.com>
+Subject: RE: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
+ 'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function);
+ did you mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
+Date: Tue, 12 Jun 2018 01:08:09 -0700
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Codrin Ciubotariu (2018-06-07 03:30:14)
-> > =
-
-> > Seems to me that clock additions could use a new binding and we start
-> > with a new driver that handles these few clocks initially. But I
-> > haven't looked whether both can coexist.
+Quoting Ray Jui (2018-06-06 14:00:06)
+> Hi Stephen,
 > =
 
-> Mark already applied to broonie/sound.git the I2S bindings that have a =
-
-> phandle to this clock. If I am to change #clock-cells to 1, I will have =
-
-> to change the bindings to include the clock-id.
-> Which approach should I take now?
+> I'd like to confirm this kbuild error is caused by changing of the defines
+> in the header.
 > =
 
+> That is, kbuild test should pass with 2/2 patch.
+> =
 
-You're talking about changing the example in the binding doc? That
-doesn't really matter. Consumer side of the provider has to match the
-cell count from the provider so it doesn't really need to be 'fixed' in
-the example at all.
+> If my understanding is incorrect and this requires any further action,
+> please let me know.
 
+Don't think so. Linus merged clk-next over the weekend. Either I applied
+the patches in the wrong order, or you sent them in the wrong order. In
+the future, please compile test each patch in isolation. I do that
+sometimes, but not always as it's still a manual process for me. I need
+to update my scripts to make that better, which I'll do shortly.
