@@ -1,107 +1,80 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2 4/4] clk: imx6ul: remove clks_init_on array
-Date: Mon,  4 Jun 2018 09:06:46 +0800
-Message-Id: <1528074406-11735-4-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs20.siol.net ([185.57.226.211]:38540 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933611AbeFLUCX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:23 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v2 13/27] drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+Date: Tue, 12 Jun 2018 22:00:22 +0200
+Message-Id: <20180612200036.21483-14-jernej.skrabec@siol.net>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
+LVDS and RGB interfaces are always connected to TCONs which have channel
+0. It doesn't make sense to try to init them on TV TCONs.
 
-ARM clock is busy divider type which has the
-CLK_IS_CRITICAL flag set by default when registered.
+Add a check if TCON has channel 0 before trying to init LVDS or RGB
+interface.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
-	This patch is based on "[V2,1/2] clk: imx6ul: add GPIO clock gates".
-changes since V1:
-	improve commit log to explain why no need to add CLK_IS_CRITICAL flag for ARM clock.
- drivers/clk/imx/clk-imx6ul.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 32 ++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 3ea2d97..d3f7f4d 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -79,12 +79,6 @@ static const char *cko_sels[] = { "cko1", "cko2", };
- static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 5dae623968f7..b1205a7bc20f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1117,23 +1117,25 @@ static int sun4i_tcon_bind(struct device *dev, struct device *master,
+ 		goto err_free_dotclock;
+ 	}
  
--static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
--	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
--	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
--};
--
- static const struct clk_div_table clk_enet_ref_table[] = {
- 	{ .val = 0, .div = 20, },
- 	{ .val = 1, .div = 10, },
-@@ -129,7 +123,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
--	int i;
+-	/*
+-	 * If we have an LVDS panel connected to the TCON, we should
+-	 * just probe the LVDS connector. Otherwise, just probe RGB as
+-	 * we used to.
+-	 */
+-	remote = of_graph_get_remote_node(dev->of_node, 1, 0);
+-	if (of_device_is_compatible(remote, "panel-lvds"))
+-		if (can_lvds)
+-			ret = sun4i_lvds_init(drm, tcon);
++	if (tcon->quirks->has_channel_0) {
++		/*
++		 * If we have an LVDS panel connected to the TCON, we should
++		 * just probe the LVDS connector. Otherwise, just probe RGB as
++		 * we used to.
++		 */
++		remote = of_graph_get_remote_node(dev->of_node, 1, 0);
++		if (of_device_is_compatible(remote, "panel-lvds"))
++			if (can_lvds)
++				ret = sun4i_lvds_init(drm, tcon);
++			else
++				ret = -EINVAL;
+ 		else
+-			ret = -EINVAL;
+-	else
+-		ret = sun4i_rgb_init(drm, tcon);
+-	of_node_put(remote);
++			ret = sun4i_rgb_init(drm, tcon);
++		of_node_put(remote);
  
- 	clks[IMX6UL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+-	if (ret < 0)
+-		goto err_free_dotclock;
++		if (ret < 0)
++			goto err_free_dotclock;
++	}
  
-@@ -336,8 +329,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_AHB]		= imx_clk_busy_divider("ahb",	    "periph",	base +  0x14, 10, 3,  base + 0x48, 1);
- 
- 	/* CCGR0 */
--	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2("aips_tz1",	"ahb",		base + 0x68,	0);
--	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2("aips_tz2",	"ahb",		base + 0x68,	2);
-+	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_APBHDMA]	= imx_clk_gate2("apbh_dma",	"bch_podf",	base + 0x68,	4);
- 	clks[IMX6UL_CLK_ASRC_IPG]	= imx_clk_gate2_shared("asrc_ipg",	"ahb",	base + 0x68,	6, &share_count_asrc);
- 	clks[IMX6UL_CLK_ASRC_MEM]	= imx_clk_gate2_shared("asrc_mem",	"ahb",	base + 0x68,	6, &share_count_asrc);
-@@ -412,9 +405,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
- 	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
- 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
--	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
--	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2("mmdc_p0_ipg",	"ipg",		base + 0x74,	24);
--	clks[IMX6UL_CLK_AXI]		= imx_clk_gate("axi",	"axi_podf",	base + 0x74,	28);
-+	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg",	"ipg",		base + 0x74,	24, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AXI]		= imx_clk_gate_flags("axi",	"axi_podf",	base + 0x74,	28, CLK_IS_CRITICAL);
- 
- 	/* CCGR4 */
- 	clks[IMX6UL_CLK_PER_BCH]	= imx_clk_gate2("per_bch",	"bch_podf",	base + 0x78,	12);
-@@ -428,7 +421,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPMI_APB]	= imx_clk_gate2("gpmi_apb",	"bch_podf",	base + 0x78,	30);
- 
- 	/* CCGR5 */
--	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
-+	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2_flags("rom",	"ahb",		base + 0x7c,	0,	CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
- 	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
- 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
-@@ -502,10 +495,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(clks[IMX6UL_CLK_ENET2_REF], 50000000);
- 	clk_set_rate(clks[IMX6UL_CLK_CSI], 24000000);
- 
--	/* keep all the clks on just for bringup */
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clks[clks_init_on[i]]);
--
- 	if (clk_on_imx6ull())
- 		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
- 
+ 	if (tcon->quirks->needs_de_be_mux) {
+ 		/*
 -- 
-2.7.4
+2.17.1
+
