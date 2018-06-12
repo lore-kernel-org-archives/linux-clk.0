@@ -1,47 +1,114 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Tue, 5 Jun 2018 14:19:11 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	<linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/5] Tegra20 External Memory Controller driver
-Message-ID: <20180605111911.GD27696@tbergstrom-lnx.Nvidia.com>
-References: <20180603223654.23324-1-digetx@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 12 Jun 2018 13:12:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, sboyd@kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: add bindings for px30 clock
+ controller
+Message-ID: <20180612191220.GA27984@rob-hp-laptop>
+References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+ <1528439519-30135-2-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528439519-30135-2-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 04, 2018 at 01:36:49AM +0300, Dmitry Osipenko wrote:
-> Hello,
+On Fri, Jun 08, 2018 at 02:31:56PM +0800, Elaine Zhang wrote:
+> Add devicetree bindings for Rockchip cru which found on
+> Rockchip SoCs.
 > 
-> Couple years ago the Tegra20 EMC driver was removed from the kernel
-> due to incompatible changes in the Tegra's clock driver. This patchset
-> introduces a modernized EMC driver. Currently the sole purpose of the
-> driver is to initialize DRAM frequency to maximum rate during of the
-> kernels boot-up. Later we may consider implementing dynamic memory
-> frequency scaling, utilizing functionality provided by this driver.
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 > 
-> Changelog:
-> 
-> v2:
-> 	- Minor code cleanups like consistent use of writel_relaxed instead
-> 	  of non-relaxed version, reworded error messages, etc.
-> 
-> 	- Factored out use_pllm_ud bit checking into a standalone patch for
-> 	  consistency.
-> 
-> Dmitry Osipenko (5):
->   dt: bindings: tegra20-emc: Document interrupt property
->   ARM: dts: tegra20: Add interrupt to External Memory Controller
->   clk: tegra20: Turn EMC clock gate into divider
->   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
->   memory: tegra: Introduce Tegra20 EMC driver
-> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+> new file mode 100644
+> index 000000000000..af5a45b680d0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+> @@ -0,0 +1,67 @@
+> +* Rockchip PX30 Clock and Reset Unit
+> +
+> +The PX30 clock controller generates and supplies clock to various
+> +controllers within the SoC and also implements a reset controller for SoC
+> +peripherals.
+> +
+> +Required Properties:
+> +
+> +- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
+> +- compatible: CRU should be "rockchip,px30-cru"
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +- #clock-cells: should be 1.
+> +- #reset-cells: should be 1.
+> +
+> +Optional Properties:
+> +
+> +- rockchip,grf: phandle to the syscon managing the "general register files"
+> +  If missing, pll rates are not changeable, due to the missing pll lock status.
+> +
+> +Each clock is assigned an identifier and client nodes can use this identifier
+> +to specify the clock which they consume. All available clocks are defined as
+> +preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
+> +used in device tree sources. Similar macros exist for the reset sources in
+> +these files.
+> +
+> +External clocks:
+> +
+> +There are several clocks that are generated outside the SoC. It is expected
+> +that they are defined using standard clock bindings with following
+> +clock-output-names:
+> + - "xin24m" - crystal input - required,
+> + - "xin32k" - rtc clock - optional,
+> + - "i2sx_clkin" - external I2S clock - optional,
+> + - "gmac_clkin" - external GMAC clock - optional
+> +
+> +Example: Clock controller node:
+> +
+> +	pmucru: pmu-clock-controller@ff2bc000 {
 
-Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+s/pmu-clock-controller/clock-controller/
+
+> +		compatible = "rockchip,px30-pmucru";
+> +		reg = <0x0 0xff2bc000 0x0 0x1000>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +	};
+> +
+> +	cru: clock-controller@ff2b0000 {
+> +		compatible = "rockchip,px30-cru";
+> +		reg = <0x0 0xff2b0000 0x0 0x1000>;
+> +		rockchip,grf = <&grf>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +	};
+> +
+> +Example: UART controller node that consumes the clock generated by the clock
+> +  controller:
+> +
+> +	uart0: serial@ff030000 {
+> +		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
+> +		reg = <0x0 0xff030000 0x0 0x100>;
+> +		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
+> +		clock-names = "baudclk", "apb_pclk";
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		status = "disabled";
+
+Don't show status in examples.
+
+> +	};
+> +
+> -- 
+> 1.9.1
+> 
+> 
