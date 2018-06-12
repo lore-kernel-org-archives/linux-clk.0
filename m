@@ -1,81 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:35538 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932707AbeFUILR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:17 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v2 2/4] clk: clk: Add clk_gate_restore_context function
-Date: Thu, 21 Jun 2018 13:40:18 +0530
-Message-ID: <1529568620-19765-3-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com
+Cc: linux-mips@linux-mips.org, qi-ming.wu@intel.com,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 6/7] tty: serial: lantiq: Remove unneeded header includes and macros
+Date: Tue, 12 Jun 2018 13:40:33 +0800
+Message-Id: <20180612054034.4969-7-songjun.wu@linux.intel.com>
+In-Reply-To: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock gate restore context function enables or disables
-the gate clocks based on the enable_count. This is done in cases
-where the clock context is lost and based on the enable_count
-the clock either needs to be enabled/disabled.
+Update the author list with Intel Corporation.
+Sort the header includes in alphabetical orders.
+Remove unneeded header includes and macros.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
 
-Changes in v2:
+ drivers/tty/serial/lantiq.c | 29 +++++++++++------------------
+ 1 file changed, 11 insertions(+), 18 deletions(-)
 
-	* Renamed clk_dflt_restore to clk_gate_restore_context
-
- drivers/clk/clk.c            | 19 +++++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7347e06..c201b8b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 72aab1b05265..cc33208c93ac 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -6,24 +6,23 @@
+  * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
+  * Copyright (C) 2007 John Crispin <john@phrozen.org>
+  * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
++ * Copyright (C) 2017 Intel Corporation.
+  */
  
-+/**
-+ * clk_gate_restore_context - restore context for poweroff
-+ * @hw: the clk_hw pointer of clock whose state is to be restored
-+ *
-+ * The clock gate restore context function enables or disables
-+ * the gate clocks based on the enable_count. This is done in cases
-+ * where the clock context is lost and based on the enable_count
-+ * the clock either needs to be enabled/disabled. This
-+ * helps restore the state of gate clocks.
-+ */
-+void clk_gate_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_gate_restore_context);
-+
- static int _clk_save_context(struct clk_core *clk)
- {
- 	struct clk_core *child;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7f30d62..3e0c61a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+-#include <linux/slab.h>
+-#include <linux/ioport.h>
+-#include <linux/init.h>
++#include <linux/clk.h>
+ #include <linux/console.h>
+-#include <linux/sysrq.h>
+ #include <linux/device.h>
+-#include <linux/tty.h>
+-#include <linux/tty_flip.h>
+-#include <linux/serial_core.h>
+-#include <linux/serial.h>
++#include <linux/init.h>
++#include <linux/ioport.h>
++#include <linux/io.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+-#include <linux/io.h>
+-#include <linux/clk.h>
+-#include <linux/gpio.h>
++#include <linux/serial_core.h>
++#include <linux/serial.h>
++#include <linux/sysrq.h>
++#include <linux/tty.h>
++#include <linux/tty_flip.h>
  
- #endif	/* platform dependent I/O accessors */
+ #include <lantiq_soc.h>
  
-+void clk_gate_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
+@@ -43,7 +42,6 @@
+ #define LTQ_ASC_STATE		0x0014
+ #define LTQ_ASC_IRNCR		0x00F8
+ #define LTQ_ASC_CLC		0x0000
+-#define LTQ_ASC_ID		0x0008
+ #define LTQ_ASC_PISEL		0x0004
+ #define LTQ_ASC_TXFCON		0x0044
+ #define LTQ_ASC_RXFCON		0x0040
+@@ -51,16 +49,12 @@
+ #define LTQ_ASC_BG		0x0050
+ #define LTQ_ASC_FDV		0x0058
+ #define LTQ_ASC_IRNEN		0x00F4
+-
+ #define ASC_IRNREN_TX		0x1
+ #define ASC_IRNREN_RX		0x2
+ #define ASC_IRNREN_ERR		0x4
+-#define ASC_IRNREN_TX_BUF	0x8
+ #define ASC_IRNCR_TIR		0x1
+ #define ASC_IRNCR_RIR		0x2
+ #define ASC_IRNCR_EIR		0x4
+-
+-#define ASCOPT_CSIZE		0x3
+ #define TXFIFO_FL		1
+ #define RXFIFO_FL		1
+ #define ASCCLC_DISR		0x1
+@@ -71,7 +65,6 @@
+ #define ASCCON_M_7ASYNC		0x2
+ #define ASCCON_ODD		0x00000020
+ #define ASCCON_STP		0x00000080
+-#define ASCCON_BRS		0x00000100
+ #define ASCCON_FDE		0x00000200
+ #define ASCCON_R		0x00008000
+ #define ASCCON_FEN		0x00020000
+@@ -80,7 +73,7 @@
+ #define ASCSTATE_PE		0x00010000
+ #define ASCSTATE_FE		0x00020000
+ #define ASCSTATE_ROE		0x00080000
+-#define ASCSTATE_ANY		(ASCSTATE_ROE|ASCSTATE_PE|ASCSTATE_FE)
++#define ASCSTATE_ANY		(ASCSTATE_ROE | ASCSTATE_PE | ASCSTATE_FE)
+ #define ASCWHBSTATE_CLRREN	0x00000001
+ #define ASCWHBSTATE_SETREN	0x00000002
+ #define ASCWHBSTATE_CLRPE	0x00000004
 -- 
-1.9.1
-
+2.11.0
