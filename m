@@ -1,100 +1,256 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:43064 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933986AbeFOIpy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:45:54 -0400
-Date: Fri, 15 Jun 2018 10:45:42 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: linux-sunxi@googlegroups.com, wens@csie.org, robh+dt@kernel.org,
-        airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v2 04/27] dt-bindings: display:
- sunxi-drm: Add TCON TOP description
-Message-ID: <20180615084542.slp3ma4krrj744do@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-5-jernej.skrabec@siol.net>
- <20180613073456.jk72zw4rt4ysjco7@flea>
- <2481282.yoIGH2ksVh@jernej-laptop>
+Return-Path: <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v7 5/6] regulator: pfuze100-regulator: provide
+ pm_power_off_prepare handler
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+ <20180517055014.6607-6-o.rempel@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <503b7af3-6a6a-1ed9-e2b6-609da537c855@pengutronix.de>
+Date: Wed, 13 Jun 2018 14:03:01 +0200
 MIME-Version: 1.0
+In-Reply-To: <20180517055014.6607-6-o.rempel@pengutronix.de>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uehqhgocot3w3pij"
-In-Reply-To: <2481282.yoIGH2ksVh@jernej-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+ protocol="application/pgp-signature";
+ boundary="PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP"
 List-ID: <linux-clk.vger.kernel.org>
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP
+Content-Type: multipart/mixed; boundary="ebaSKat60fCA9TqMPHx77ey6XsIur2bCf";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>
+Message-ID: <503b7af3-6a6a-1ed9-e2b6-609da537c855@pengutronix.de>
+Subject: Re: [PATCH v7 5/6] regulator: pfuze100-regulator: provide
+ pm_power_off_prepare handler
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+ <20180517055014.6607-6-o.rempel@pengutronix.de>
+In-Reply-To: <20180517055014.6607-6-o.rempel@pengutronix.de>
 
---uehqhgocot3w3pij
+--ebaSKat60fCA9TqMPHx77ey6XsIur2bCf
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 13, 2018 at 06:03:21PM +0200, Jernej =C5=A0krabec wrote:
-> > > +Required properties:
-> > > +  - compatible: value must be one of:
-> > > +    * allwinner,sun8i-r40-tcon-top
-> > > +  - reg: base address and size of the memory-mapped region.
-> > > +  - clocks: phandle to the clocks feeding the TCON TOP
-> > > +    * bus: TCON TOP interface clock
-> > > +  - clock-names: clock name mentioned above
-> > > +  - resets: phandle to the reset line driving the DRC
-> >=20
-> > s/DRC/TCON TOP/ ?
+Hi Mark,
+
+Rob ACKed DT bindings, Rafael ACKed export of pm_power_off_prepare. I
+need your OK for regulator patch.
+
+On 17.05.2018 07:50, Oleksij Rempel wrote:
+> On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMI=
+C
+> about state changes. In this case internal state of PMIC must be
+> preconfigured for upcomming state change.
+> It works fine with the current regulator framework, except with the
+> power-off case.
 >=20
-> Yes, copy & paste issue
+> This patch is providing an optional pm_power_off_prepare handler
+> which will configure standby state of the PMIC to disable all power lin=
+es.
 >=20
-> >=20
-> > > +    * rst: TCON TOP reset line
-> >=20
-> > Remaining consistent with the clock name would be great
+> In my power consumption test on RIoTBoard, I got the following results:=
+
+> power off without this patch:	320 mA
+> power off with this patch:	2   mA
+> suspend to ram:			40  mA
 >=20
-> You mean "ahb"? I noticed that most other nodes with reset lines don't ha=
-ve a=20
-> name associated. Maybe I could just drop it and use first specified reset?
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++=
 
-It's called bus in the binding, but yes. And yeah, we can drop the
-name as well.
-
-> >=20
-> > > +  - reset-names: reset name mentioned above
-> > > +  - #clock-cells : must contain 1
-> >=20
-> > An example would be nice here
+>  1 file changed, 92 insertions(+)
 >=20
-> You mean node example? with ports? In the past, Rob was against examples=
-=20
-> unless really necessary. Node from R40 DTSI can serve as an example.
+> diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator=
+/pfuze100-regulator.c
+> index 63922a2167e5..f6c276ed91d8 100644
+> --- a/drivers/regulator/pfuze100-regulator.c
+> +++ b/drivers/regulator/pfuze100-regulator.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/regulator/pfuze100.h>
+>  #include <linux/i2c.h>
+>  #include <linux/slab.h>
+> +#include <linux/kallsyms.h>
+>  #include <linux/regmap.h>
+> =20
+>  #define PFUZE_NUMREGS		128
+> @@ -42,11 +43,17 @@
+> =20
+>  #define PFUZE100_COINVOL	0x1a
+>  #define PFUZE100_SW1ABVOL	0x20
+> +#define PFUZE100_SW1ABMODE	0x23
+>  #define PFUZE100_SW1CVOL	0x2e
+> +#define PFUZE100_SW1CMODE	0x31
+>  #define PFUZE100_SW2VOL		0x35
+> +#define PFUZE100_SW2MODE	0x38
+>  #define PFUZE100_SW3AVOL	0x3c
+> +#define PFUZE100_SW3AMODE	0x3f
+>  #define PFUZE100_SW3BVOL	0x43
+> +#define PFUZE100_SW3BMODE	0x46
+>  #define PFUZE100_SW4VOL		0x4a
+> +#define PFUZE100_SW4MODE	0x4d
+>  #define PFUZE100_SWBSTCON1	0x66
+>  #define PFUZE100_VREFDDRCON	0x6a
+>  #define PFUZE100_VSNVSVOL	0x6b
+> @@ -57,6 +64,13 @@
+>  #define PFUZE100_VGEN5VOL	0x70
+>  #define PFUZE100_VGEN6VOL	0x71
+> =20
+> +#define PFUZE100_SWxMODE_MASK	0xf
+> +#define PFUZE100_SWxMODE_APS_APS	0x8
+> +#define PFUZE100_SWxMODE_APS_OFF	0x4
+> +
+> +#define PFUZE100_VGENxLPWR	BIT(6)
+> +#define PFUZE100_VGENxSTBY	BIT(5)
+> +
+>  enum chips { PFUZE100, PFUZE200, PFUZE3000 =3D 3 };
+> =20
+>  struct pfuze_regulator {
+> @@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(in=
+t index)
+>  }
+>  #endif
+> =20
+> +static struct pfuze_chip *syspm_pfuze_chip;
+> +
+> +static void pfuze_power_off_prepare(void)
+> +{
+> +	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off"=
+);
+> +
+> +	/* Switch from default mode: APS/APS to APS/Off */
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
+> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
+> +
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
+> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
+> +			   PFUZE100_VGENxSTBY);
+> +}
+> +
+> +static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)=
 
-Ok.
+> +{
+> +	if (pfuze_chip->chip_id !=3D PFUZE100) {
+> +		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler fo=
+r not supported chip\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (pm_power_off_prepare) {
+> +		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registere=
+d.\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	if (syspm_pfuze_chip) {
+> +		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	syspm_pfuze_chip =3D pfuze_chip;
+> +	pm_power_off_prepare =3D pfuze_power_off_prepare;
+> +
+> +	return 0;
+> +}
+> +
+>  static int pfuze_identify(struct pfuze_chip *pfuze_chip)
+>  {
+>  	unsigned int value;
+> @@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_cli=
+ent *client,
+>  		}
+>  	}
+> =20
+> +	if (of_property_read_bool(client->dev.of_node,
+> +				  "fsl,pmic-stby-poweroff"))
+> +		return pfuze_power_off_prepare_init(pfuze_chip);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pfuze100_regulator_remove(struct i2c_client *client)
+> +{
+> +	if (syspm_pfuze_chip) {
+> +		syspm_pfuze_chip =3D NULL;
+> +		pm_power_off_prepare =3D NULL;
+> +	}
+> +
+>  	return 0;
+>  }
+> =20
+> @@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver =3D {
+>  		.of_match_table =3D pfuze_dt_ids,
+>  	},
+>  	.probe =3D pfuze100_regulator_probe,
+> +	.remove =3D pfuze100_regulator_remove,
+>  };
+>  module_i2c_driver(pfuze_driver);
+> =20
+>=20
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--ebaSKat60fCA9TqMPHx77ey6XsIur2bCf--
 
---uehqhgocot3w3pij
+--PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsjfLUACgkQ0rTAlCFN
-r3Q+JQ/8C12cz1mDx1+BF4O9IZ2xfHWa/0ZHDDOVTxwRujGMDvmwMT7fUaJJTtl6
-dBLUQAyGq/reCzTyHu2LgpduQ4BcGADTybfdOXAa9uED0I0/dfm6YjK4XlOFt8vs
-q2KgSWCs0xddgw7/L/KzoN71E9IMv93sEd/f9HAxv6bfysrROJbtB5itaEvT+NcL
-VbFd2lb5E6W3FJOxaVsjQFI1wT7fBP1pL3E796oY2ZSJWoiHTXiQ2tbRkfTM1PQz
-KPv0XT2RD8A6/x+lUDo6RaQQJpZeFIwcZQJ1V4cJRXJLh20s0XtRga53Bcph2V8O
-uRHQ/uPK4nG7ReT17ld6ofFF7PUDqh6ilJEf/RFd2mjVb/ob36iS2JCd2BORuhu+
-C6ZX9SO73CSqVPJQmgfMiI9yUZ8WHg4LCletyN97SQijhMPiSE/AD73Xj9XVRaBD
-2xVtUW3S7O1CDRambj7HxpfDWzxuShs0leTev46fBuzrHZTmJ4kLd50zSJIr0+cD
-MD9ccJdOiK8cF8tDUYJlY81fI9j3ZtoEvbMZv3/yndSfHvm1ops97GGo2oCTGkMO
-W6hA78jPMrWd/tDIJHEuWQu5AlTw6ZuZ0elcfHeXIThSS8SeeR52xfvb2s0/w+Wf
-NXZdaeqei7Wg3hucgDsPcWt4BXSbkgHAlF7Xx4nOvr/9RHjmyF0=
-=74NE
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlshB/UACgkQdQOiSHVI
+77TuZAgAtvxSvuq8V8Sv8A3kPzH5oxmZVqSxDGgjskOHCS4rZ6AAcw7zCxBC8xcH
+wrtXLKhetE1PmBn3qP78U3gS/VMdVdXuGV7qItRrprlmgO45cJ4EJ2fYVIMijHb2
+K4q3GPZZJhgwRd3s/Fs3JVZneWYWnPtqEbQeAxro+iJ1oPSr1foHmqQAJpkaWhN0
+CnSyDGHD9JER8p+KFg8BsUb3c5ypw/C0WPD0gjQLlPhID2fkgylpFuuFpWzngl4B
+v34Uh9Z51aKoXxLpOcVaSnp7UFX5ME7HVQjFsAkqi2Xq08oq3nFg1zc+e+9Jz8t3
+v79GIIzFPLIsasLHTd0vWCT0veApLQ==
+=yIkj
 -----END PGP SIGNATURE-----
 
---uehqhgocot3w3pij--
+--PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP--
