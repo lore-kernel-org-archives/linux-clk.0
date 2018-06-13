@@ -1,115 +1,94 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 10/13] ARM: davinci: da830-evm: use aemif platform driver
-Date: Thu, 28 Jun 2018 11:57:45 +0200
-Message-Id: <20180628095748.4462-11-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-he1eur01on0042.outbound.protection.outlook.com ([104.47.0.42]:28112
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933732AbeFMJgn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Jun 2018 05:36:43 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Robert Schwebel <r.schwebel@pengutronix.de>,
+        Oleksij Rempel <o.rempel@pengutronix.de>
+CC: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v1 0/4] add mailbox support for i.MX7D
+Date: Wed, 13 Jun 2018 09:36:39 +0000
+Message-ID: <AM0PR04MB4211ABBDBEE2982312E15F6F807E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601083411.s35c2floqdas6qni@pengutronix.de>
+In-Reply-To: <20180601083411.s35c2floqdas6qni@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Robert,
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in da830-evm.
+Thanks for the forwarding.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
- 1 file changed, 44 insertions(+), 12 deletions(-)
+> -----Original Message-----
+> From: Robert Schwebel [mailto:r.schwebel@pengutronix.de]
+> Sent: Friday, June 1, 2018 4:34 PM
+> To: Oleksij Rempel <o.rempel@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
+> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
+> Rutland <mark.rutland@arm.com>; linux-clk@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; kernel@pengutronix.de;
+> devicetree@vger.kernel.org; A.s. Dong <aisheng.dong@nxp.com>; dl-linux-
+> imx <linux-imx@nxp.com>
+> Subject: Re: [PATCH v1 0/4] add mailbox support for i.MX7D
+>=20
+> On Fri, Jun 01, 2018 at 08:58:17AM +0200, Oleksij Rempel wrote:
+> > This patches are providing support for mailbox (Messaging Unit) for
+> > i.MX7D. Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
+> > Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
+> >
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index b2470141dba3..7d8ab36ff83d 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/platform_data/spi-davinci.h>
- #include <linux/platform_data/usb-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <linux/regulator/machine.h>
- 
- #include <asm/mach-types.h>
-@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device da830_evm_nand_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &da830_evm_nand_pdata,
-+static struct platform_device da830_evm_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &da830_evm_nand_pdata,
-+		},
-+		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
-+		.resource	= da830_evm_nand_resources,
-+	},
-+};
-+
-+static struct resource da830_evm_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
- 	},
--	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
--	.resource	= da830_evm_nand_resources,
-+};
-+
-+static struct aemif_platform_data da830_evm_aemif_pdata = {
-+	.abus_data		= da830_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
-+	.sub_devices		= da830_evm_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
-+	.cs_offset		= 2,
-+};
-+
-+static struct platform_device da830_evm_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data = &da830_evm_aemif_pdata,
-+	},
-+	.resource	= da830_evm_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
- };
- 
- /*
-@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
- 	if (ret)
- 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
- 
--	ret = platform_device_register(&da830_evm_nand_device);
-+	ret = platform_device_register(&da830_evm_aemif_device);
- 	if (ret)
--		pr_warn("%s: NAND device not registered\n", __func__);
--
--	if (davinci_aemif_setup(&da830_evm_nand_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+		pr_warn("%s: AEMIF device not registered\n", __func__);
- 
- 	gpio_direction_output(mux_mode, 1);
- }
--- 
-2.17.1
+Thanks for the patch.
+
+> > Both parts of i.MX messaging Unit are visible for all CPUs available
+> > on i.MX7D. Communication worked independent of MU side in
+> combination
+> > with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on
+> ARM
+> > Cortex-M4 or other ways around.
+> >
+> > The question to NXP developers: are there are limitations or
+> > recommendations about MU vs CPU combination? The i.MX7D
+> documentation
+> > talks about "Processor A" and "Processor B". It is not quite clear
+> > what processor it actually is (A7 or M4).
+
+The MU vs CPU combination usually are defined by HW design.
+It, MU Side A/B,  can either be used by both CPU (A core and M core)
+or fixed to one side.
+For MX7D case, both side memory map can be accessed by both CPU
+Including Interrupt signals. But the recommendation is A core using
+MU side A and M core using MU side B.
+
+Regards
+Dong Aisheng
+
+>=20
+> Adding Dong Aisheng and NXP linux team to Cc:.
+>=20
+> rsc
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Industrial Linux Solutions                 |
+> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fww
+> w.pengutronix.de%2F&data=3D02%7C01%7Caisheng.dong%40nxp.com%7Cf53
+> d9c9cdd744878740f08d5c79a7a1e%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
+> C0%7C0%7C636634388645464924&sdata=3D2ehh92tNbfwf3fJTp%2Fx7IUOgGSU
+> h6pyrc2XsdRJkTw4%3D&reserved=3D0  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
