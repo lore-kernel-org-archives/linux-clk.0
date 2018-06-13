@@ -1,61 +1,29 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
-Date: Mon,  4 Jun 2018 01:36:53 +0300
-Message-Id: <20180603223654.23324-5-digetx@gmail.com>
-In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
-References: <20180603223654.23324-1-digetx@gmail.com>
+Return-Path: <srinath.mannam@broadcom.com>
+MIME-Version: 1.0
+From: Srinath Mannam <srinath.mannam@broadcom.com>
+Date: Wed, 13 Jun 2018 09:44:45 +0530
+Message-ID: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+Subject: ACPI support in common clock framework
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Ensure that direct PLLM sourcing is turned off for EMC as we don't support
-that configuration in the clk driver.
+Hi Michael, Stephen,
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+We are adding ACPI support in our Linux based platform.
+At present our clock hierarchy using common clock framework through DTS.
+Now we required ACPI support in common clock framework to upgrade our platform.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 2bd35418716a..ca4eadb9520e 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 
- static void __init tegra20_emc_clk_init(void)
- {
-+	const u32 use_pllm_ud = BIT(29);
- 	struct clk *clk;
-+	u32 emc_reg;
- 
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
-@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
- 				    &emc_lock);
- 	clks[TEGRA20_CLK_MC] = clk;
- 
-+	/* un-divided pll_m_out0 is currently unsupported */
-+	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
-+	if (emc_reg & use_pllm_ud) {
-+		pr_err("%s: un-divided PllM_out0 used as clock source\n",
-+		       __func__);
-+		return;
-+	}
-+
- 	/*
- 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
- 	 * the same time due to a HW bug, this won't happen because we're
--- 
-2.17.0
+For example, clk_get API called in many drivers to get clock device is
+tightly coupled with DT framework.
+
+Please let us know, if anybody in Open Source community have plans to
+add ACPI support for common clock framework.
+If not please suggest us alternative method to use common clock
+framework in ACPI use case.
+
+Thanks in advance.
+
+Regards,
+Srinath.
