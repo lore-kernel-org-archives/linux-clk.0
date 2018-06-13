@@ -1,335 +1,155 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:37570 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755542AbeFYN7V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 09:59:21 -0400
-Subject: Re: [PATCH] clk: meson-axg: add clocks required by pcie driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180621122620.13195-1-yixun.lan@amlogic.com>
- <1529919130.2900.22.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Qin <jianxin.qin@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <19816376-c4c8-8373-1d32-152447b743d9@amlogic.com>
-Date: Mon, 25 Jun 2018 21:59:13 +0800
+Received: from mail.bootlin.com ([62.4.15.54]:41794 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933759AbeFMHe6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:34:58 -0400
+Date: Wed, 13 Jun 2018 09:34:56 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 04/27] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Message-ID: <20180613073456.jk72zw4rt4ysjco7@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-5-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <1529919130.2900.22.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uzd22rhmxyob4kzr"
+In-Reply-To: <20180612200036.21483-5-jernej.skrabec@siol.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome
 
-see my comments below
+--uzd22rhmxyob4kzr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/25/2018 05:32 PM, Jerome Brunet wrote:
-> On Thu, 2018-06-21 at 12:26 +0000, Yixun Lan wrote:
->> Adding clocks for pcie driver, due to the ASIC design,
-> Adding clocks for the pcie driver. Due to the ASIC design,
-> 
-Ok, I will adjust these in v2
+Hi,
 
->> the pcie controller re-use part of the mipi clock logic,
->> so the mipi clock is also required.
->>
->> Tested-by: Jianxin Qin <jianxin.qin@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  drivers/clk/meson/axg.c              | 145 +++++++++++++++++++++++++++
->>  drivers/clk/meson/axg.h              |   6 +-
->>  include/dt-bindings/clock/axg-clkc.h |   3 +
->>  3 files changed, 153 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
->> index bd4dbc696b88..f1dc5433b69d 100644
->> --- a/drivers/clk/meson/axg.c
->> +++ b/drivers/clk/meson/axg.c
->> @@ -626,6 +626,137 @@ static struct clk_regmap axg_mpll3 = {
->>  	},
->>  };
->>  
->> +static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
->> +	{
->> +		.rate	= 100000000,
->> +		.m	= 200,
->> +		.n	= 3,
->> +		.od	= 1,
->> +		.od2	= 3,
->> +	},
->> +	{ /* sentinel */ },
->> +};
->> +
->> +static const struct reg_sequence axg_pcie_init_regs[] = {
->> +	{ .reg = HHI_PCIE_PLL_CNTL,	.def = 0x400106c8 },
->> +	{ .reg = HHI_PCIE_PLL_CNTL1,	.def = 0x0084a2aa },
->> +	{ .reg = HHI_PCIE_PLL_CNTL2,	.def = 0xb75020be },
->> +	{ .reg = HHI_PCIE_PLL_CNTL3,	.def = 0x0a47488e },
->> +	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0xc000004d },
->> +	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x00078000 },
->> +	{ .reg = HHI_PCIE_PLL_CNTL6,	.def = 0x002323c6 },
->> +};
->> +
->> +static struct clk_regmap axg_pcie_pll = {
->> +	.data = &(struct meson_clk_pll_data){
->> +		.m = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL,
->> +			.shift   = 0,
->> +			.width   = 9,
->> +		},
->> +		.n = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL,
->> +			.shift   = 9,
->> +			.width   = 5,
->> +		},
->> +		.od = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL,
->> +			.shift   = 16,
->> +			.width   = 2,
->> +		},
->> +		.od2 = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL6,
->> +			.shift   = 6,
->> +			.width   = 2,
->> +		},
->> +		.frac = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL1,
->> +			.shift   = 0,
->> +			.width   = 12,
->> +		},
->> +		.l = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL,
->> +			.shift   = 31,
->> +			.width   = 1,
->> +		},
->> +		.rst = {
->> +			.reg_off = HHI_PCIE_PLL_CNTL,
->> +			.shift   = 29,
->> +			.width   = 1,
->> +		},
->> +		.table = axg_pcie_pll_rate_table,
->> +		.init_regs = axg_pcie_init_regs,
->> +		.init_count = ARRAY_SIZE(axg_pcie_init_regs),
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "pcie_pll",
->> +		.ops = &meson_clk_pll_ops,
->> +		.parent_names = (const char *[]){ "xtal" },
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_pcie_mux = {
->> +	.data = &(struct clk_regmap_mux_data){
->> +		.offset = HHI_PCIE_PLL_CNTL6,
->> +		.mask = 0x1,
->> +		.shift = 2,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "pcie_mux",
->> +		.ops = &clk_regmap_mux_ops,
->> +		.parent_names = (const char *[]){ "mpll3", "pcie_pll" },
->> +		.num_parents = 2,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_pcie_ref = {
->> +	.data = &(struct clk_regmap_mux_data){
->> +		.offset = HHI_PCIE_PLL_CNTL6,
->> +		.mask = 0x1,
->> +		.shift = 1,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "pcie_ref",
->> +		.ops = &clk_regmap_mux_ops,
->> +		/* do not select the first partent, debug only */
->> +		.parent_names = (const char *[]){ "",
->> +			"pcie_mux" },
-> 
-> A) No declaring a clock name "" is not the way to do it.
-> 
-> Either declare a mux with just one parent and provide a table with the index of
-> the said parent (have a look around, other clocks mux are using table), OR just
-> declare what parent 0 is.
-> 
-Ok, in this case, I will go as the first way - using table with only one
-parent
+Thanks for working on this!
 
-the parent 0 is a debug clock which should been feed directly from
-outside (via crystal or somthing), and in the normal cases we don't do this.
+On Tue, Jun 12, 2018 at 10:00:13PM +0200, Jernej Skrabec wrote:
+> TCON TOP main purpose is to configure whole display pipeline. It
+> determines relationships between mixers and TCONs, selects source TCON
+> for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+> clock source and contains additional TV TCON and DSI gates.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt      | 45 +++++++++++++++++++
+>  include/dt-bindings/clock/sun8i-tcon-top.h    | 11 +++++
+>  2 files changed, 56 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 3346c1e2a7a0..ef64c589a4b3 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -187,6 +187,51 @@ And on the A23, A31, A31s and A33, you need one more=
+ clock line:
+>     - 'lvds-alt': An alternative clock source, separate from the TCON cha=
+nnel 0
+>                   clock, that can be used to drive the LVDS clock
+> =20
+> +TCON TOP
+> +--------
+> +
+> +TCON TOPs main purpose is to configure whole display pipeline. It determ=
+ines
+> +relationships between mixers and TCONs, selects source TCON for HDMI, mu=
+xes
+> +LCD and TV encoder GPIO output, selects TV encoder clock source and cont=
+ains
+> +additional TV TCON and DSI gates.
+> +
+> +It allows display pipeline to be configured in very different ways:
+> +
+> +                             / LCD0/LVDS0
+> +                 / TCON-LCD0
+> +                 |           \ MIPI DSI
+> + mixer0          |
+> +        \        / TCON-LCD1 - LCD1/LVDS1
+> +         TCON-TOP
+> +        /        \ TCON-TV0 - TVE0/RGB
+> + mixer1          |          \
+> +                 |           TCON-TOP - HDMI
+> +                 |          /
+> +                 \ TCON-TV1 - TVE1/RGB
+> +
+> +Note that both TCON TOP references same physical unit.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun8i-r40-tcon-top
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandle to the clocks feeding the TCON TOP
+> +    * bus: TCON TOP interface clock
+> +  - clock-names: clock name mentioned above
+> +  - resets: phandle to the reset line driving the DRC
 
-> Looking at your clock, the pcie driver will have to call
-> clk_set_rate(clk, 100000000) to make sure everything is setup properly,
-> including this mux - otherwise you are relying on the setting provided by the
-> bootloader, which should be avoided whenever possible.
-> 
-yes, we will call clk_set_rate(clk, 100000000), and let CCF propagate
-upside.. we definitely want to avoid relying on bootloader to setup this
-clock.
+s/DRC/TCON TOP/ ?
 
-> In this case, CCF should pick the right parent anyway, so there should be no
-> harm describing what your clock tree is.
-if we want to describe debug clock (the parent 0), which I think the
-debug clock should be also 100MHz, then it will be equal to parent 1,
-then no difference between these two clocks, the pcie driver may wrongly
-choose the parent 0 which doesn't exist in the real case if let CCF
-choose freely.
+> +    * rst: TCON TOP reset line
 
-to fix this, one solution come to my mind that is to manually select
-parent of the mux clock -  but it's kind of tedious/un-necessary ..
+Remaining consistent with the clock name would be great
 
-> 
-> B) Please fix the indentation.
-> 
-> C) This mux deal with bit "CML_INPUT_SEL0". there is also a "CML_INPUT_SEL1"
-> which seems to hint that there is a mux each CML_EN clock. Are you sure your
-> description of the tree is accurate ?
-> 
-we already describe these two mux, see
+> +  - reset-names: reset name mentioned above
+> +  - #clock-cells : must contain 1
 
-"CML_INPUT_SEL1" -> bit[2]
-static struct clk_regmap axg_pcie_mux
+An example would be nice here
 
-"CML_INPUT_SEL0" -> bit[1]
-static struct clk_regmap axg_pcie_ref
+> +- ports: A ports node with endpoint definitions as defined in
+> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The fi=
+rst port
+> +    should be the input for mixer0 mux. The second should be the output =
+for that
+> +    mux. Third port should be input for mixer1 mux. Fourth port should b=
+e output
+> +    for mixer1 mux. Fifth port should be input for HDMI mux. Sixth port =
+should
+> +    be output for it. All output endpoints should have reg property with=
+ the id
+> +    of the target TCON. All ports should have only one enpoint connected=
+ to
 
+                                                          ^ endpoint
 
+I guess it would me more readable if you were to make it a bullet
+list, but this works for me otherwise.
 
-the clock map is something like this:
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-                        "debug" ->|            | -> pcie_cml_en0
-xtal -> pcie_pll ->|              | pcie_ref ->|
-                   | pcie_mux   ->|            | -> pcie_cml_en1
-                   |
-        mpll3    ->|
-		
+--uzd22rhmxyob4kzr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->> +		.num_parents = 2,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_pcie_cml_en0 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = HHI_PCIE_PLL_CNTL6,
->> +		.bit_idx = 4,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "pcie_cml_en0",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_names = (const char *[]){ "pcie_ref" },
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_pcie_cml_en1 = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = HHI_PCIE_PLL_CNTL6,
->> +		.bit_idx = 3,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "pcie_cml_en1",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_names = (const char *[]){ "pcie_ref" },
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->>  static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
->>  static const char * const clk81_parent_names[] = {
->>  	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
->> @@ -821,6 +952,7 @@ static MESON_GATE(axg_mmc_pclk, HHI_GCLK_MPEG2, 11);
->>  static MESON_GATE(axg_vpu_intr, HHI_GCLK_MPEG2, 25);
->>  static MESON_GATE(axg_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
->>  static MESON_GATE(axg_gic, HHI_GCLK_MPEG2, 30);
->> +static MESON_GATE(axg_mipi_enable, HHI_MIPI_CNTL0, 29);
->>  
->>  /* Always On (AO) domain gates */
->>  
->> @@ -910,6 +1042,13 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
->>  		[CLKID_FCLK_DIV4_DIV]		= &axg_fclk_div4_div.hw,
->>  		[CLKID_FCLK_DIV5_DIV]		= &axg_fclk_div5_div.hw,
->>  		[CLKID_FCLK_DIV7_DIV]		= &axg_fclk_div7_div.hw,
->> +		[CLKID_PCIE_PLL]		= &axg_pcie_pll.hw,
->> +		[CLKID_PCIE_MUX]		= &axg_pcie_mux.hw,
->> +		[CLKID_PCIE_REF]		= &axg_pcie_ref.hw,
->> +		[CLKID_PCIE_CML_EN0]		= &axg_pcie_cml_en0.hw,
->> +		[CLKID_PCIE_CML_EN1]		= &axg_pcie_cml_en1.hw,
->> +		[CLKID_MIPI_ENABLE]		= &axg_mipi_enable.hw,
->> +
->>  		[NR_CLKS]			= NULL,
->>  	},
->>  	.num = NR_CLKS,
->> @@ -988,6 +1127,12 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
->>  	&axg_fclk_div4,
->>  	&axg_fclk_div5,
->>  	&axg_fclk_div7,
->> +	&axg_pcie_pll,
->> +	&axg_pcie_mux,
->> +	&axg_pcie_ref,
->> +	&axg_pcie_cml_en0,
->> +	&axg_pcie_cml_en1,
->> +	&axg_mipi_enable,
->>  };
->>  
->>  static const struct of_device_id clkc_match_table[] = {
->> diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
->> index b421df6a7ea0..6e55ebd6c77d 100644
->> --- a/drivers/clk/meson/axg.h
->> +++ b/drivers/clk/meson/axg.h
->> @@ -16,6 +16,7 @@
->>   * Register offsets from the data sheet must be multiplied by 4 before
->>   * adding them to the base address to get the right value.
->>   */
->> +#define HHI_MIPI_CNTL0			0x00
->>  #define HHI_GP0_PLL_CNTL		0x40
->>  #define HHI_GP0_PLL_CNTL2		0x44
->>  #define HHI_GP0_PLL_CNTL3		0x48
->> @@ -127,8 +128,11 @@
->>  #define CLKID_FCLK_DIV4_DIV			73
->>  #define CLKID_FCLK_DIV5_DIV			74
->>  #define CLKID_FCLK_DIV7_DIV			75
->> +#define CLKID_PCIE_PLL				76
->> +#define CLKID_PCIE_MUX				77
->> +#define CLKID_PCIE_REF				78
->>  
->> -#define NR_CLKS					76
->> +#define NR_CLKS					82
->>  
->>  /* include the CLKIDs that have been made part of the DT binding */
->>  #include <dt-bindings/clock/axg-clkc.h>
->> diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
->> index 555937a25504..70371228b7e0 100644
->> --- a/include/dt-bindings/clock/axg-clkc.h
->> +++ b/include/dt-bindings/clock/axg-clkc.h
-> 
-> As usual, please put dt bindings changes in a separate patch.
-> 
-ok, will do
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgyR8ACgkQ0rTAlCFN
+r3QN5w//bI6wGq8N0eSl7T8E11SnbC71KgWyFoknB2TB1nWsvRnt7GVBFcz+lUe2
+PqZZHDnzL9J2Wd8M+Q4BEsRIO0m5uCvqZ2ce/8iRggqz8U8OUfmChJW1kY3kfcw4
+TAL7OxScdSeRZnyyALlbMr5kSDsZLmUa+kbCeS3YSQm6wiVu6V+I5kYyQylHqgnL
+E0DKcNY49zMwHs1UB6g7ena5EUGMUgoptkbGpdVntnQKoTXOdv0/BJf8TYYHuTNL
+dX97904/ocljZF0hnVKCGAyk+H+gNKgZXMVq1JVVYA9co2w59c9rvAX7LWuFpBiw
+B+xsyxxdH3qdOBvyxcvwQztF+2UCqkcAEGrthJHq3yUnaGsMrdGMt8615+ZjW56S
+HIsUKJ3Lx48xnz2qGlRzjaUfds/R7T39Nz4rQBJ5622pw2RzaJQjxMUqgpP44e5W
+bgoxh3v8OMAaZYDSfFiSEElMhEKHmO75gx8J9eNRyB3YvG6uzWiB3TNior1byu0G
+5DCm0UhsKkKFAa+o698qKMUvkrhzu1z5hQIAfxQY1dePp2mIfZ02fpAvfiLBwyud
+atb++whW+WVRCdP0PmEk5/VOjdPVNOXsLDU1NmaxIkUpCcwTz/6okIOSzMnxQe7u
+67x76Ux9bHdKjSAjb1HcbTyMaCoCn6Ad6miOISU03d9hFQumZRs=
+=oyTu
+-----END PGP SIGNATURE-----
 
->> @@ -68,5 +68,8 @@
->>  #define CLKID_SD_EMMC_B_CLK0			59
->>  #define CLKID_SD_EMMC_C_CLK0			60
->>  #define CLKID_HIFI_PLL				69
->> +#define CLKID_PCIE_CML_EN0			79
->> +#define CLKID_PCIE_CML_EN1			80
->> +#define CLKID_MIPI_ENABLE			81
->>  
->>  #endif /* __AXG_CLKC_H */
-> 
-> .
-> 
-
+--uzd22rhmxyob4kzr--
