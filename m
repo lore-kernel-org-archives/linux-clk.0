@@ -1,111 +1,57 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 4 Jun 2018 16:18:30 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v5 2/4] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>, Michel
+ Pollet <buserror+upstream@gmail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>, "open
+ list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl:
+ documentation
+Date: Wed, 13 Jun 2018 06:38:25 +0000
+Message-ID: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 76 ++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..ac2b66181f17
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,76 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+ - clock:		: Please see ../clock/rohm,bd71837-clock.txt
-+
-+Optional properties:
-+ - interrupt-controller	: Marks the device node as an interrupt controller.
-+			  BD71837MWV can report different power state change
-+			  events to other drivers. Different events can be seen
-+			  as separate BD71837 domain interrupts.
-+			  The BD71837 driver only provides the infrastructure
-+			  for the IRQs. The users should write own driver to
-+			  convert the IRQ into the event they wish. The IRQ can
-+			  be used with the standard
-+			  request_irq/enable_irq/disable_irq API inside the
-+			  kernel.
-+ - #interrupt-cells	: The number of cells to describe an IRQ should be 1.
-+			    The value in cell is the IRQ number.
-+			    Meaningfull numbers are:
-+			      0 => PMIC_STBY_REQ level change
-+			      1 => PMIC_ON_REQ level change
-+			      2 => WDOG_B level change
-+			      3 => Power Button level change
-+			      4 => Power Button Long Push
-+			      5 => Power Button Short Push
-+			      6 => SWRESET register is written 1
-+
-+Example:
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#interrupt-cells = <1>;
-+		interrupt-controller;
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			/* ... */
-+		};
-+	};
-+
-+	/* driver consuming PMIC interrupts */
-+
-+	my-power-button: power-button {
-+		compatible = "foo";
-+		interrupt-parent = <&pmic>;
-+		interrupts = <3>, <4>, <5>;
-+		interrupt-names = "pwrb", "pwrb-l", "pwrb-s";
-+		/* ... */
-+	};
-+
--- 
-2.14.3
+SGkgR2VlcnQsDQoNCk9uIDExIEp1bmUgMjAxOCAxMTowMSwgR2VlcnQgd3JvdGU6DQo+IEhpIE1p
+Y2hlbCwNCj4NCj4gT24gVHVlLCBKdW4gNSwgMjAxOCBhdCAxMDozNiBBTSBNaWNoZWwgUG9sbGV0
+DQo+IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBUaGUgUmVuZXNh
+cyBSOUEwNkcwMzIgU1lTQ1RSTCBub2RlIGRlc2NyaXB0aW9uLg0KPiA+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogTWljaGVsIFBvbGxldCA8bWljaGVsLnBvbGxldEBicC5yZW5lc2FzLmNvbT4NCj4NCj4g
+PiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
+bmdzL2Nsb2NrL3JlbmVzYXMscjlhMDZnMDMyLQ0KPiBzeXNjdHINCj4gPiArKysgbC50eHQNCj4g
+PiBAQCAtMCwwICsxLDMyIEBADQo+ID4gKyogUmVuZXNhcyBSOUEwNkcwMzIgU1lTQ1RSTA0KPiA+
+ICsNCj4gPiArUmVxdWlyZWQgUHJvcGVydGllczoNCj4gPiArDQo+ID4gKyAgLSBjb21wYXRpYmxl
+OiBNdXN0IGJlOg0KPiA+ICsgICAgLSAicmVuZXNhcyxyOWEwNmcwMzItc3lzY3RybCINCj4gPiAr
+ICAtIHJlZzogQmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIFNZU0NUUkwgSU8gYmxvY2su
+DQo+ID4gKyAgLSAjY2xvY2stY2VsbHM6IE11c3QgYmUgMQ0KPg0KPiAocmVwZWF0aW5nIG15c2Vs
+ZikgTm8gY2xvY2tzL2Nsb2NrLW5hbWVzIGZvciB0aGUgZXh0ZXJuYWwgY2xvY2sgaW5wdXRzPw0K
+Pg0KPiAiUlovTjEgaGFzIDMgY2xvY2sgc291cmNlcywgMSByZWZlcmVuY2UgY2xvY2sgaW5wdXRz
+IGZvciBSR01JSSwgYW5kIDINCj4gcmVmZXJlbmNlIGNsb2NrIG91dHB1dHMgZm9yIFJNSUkvTUlJ
+LiINCg0KV2VsbCwgSSdtIHRyeWluZyB0byBrZWVwIHRoZSBiaW5kaW5nIGFzIHNpbXBsZSBhcyBw
+b3NzaWJsZSwgdG8gZG9kZ2UgYW55DQpmdXJ0aGVyIGRpc2N1c3Npb24uIEFkZGluZyB0aGVzZSB3
+aWxsIGJlIHBvc3NpYmxlIGxhdGVyLCBJIGRvbid0IG5lZWQgdGhlbQ0KZm9yIHRoZSBtb21lbnQg
+YW55d2F5Lg0KDQo+DQo+IFRoZSByZXN0IGxvb2tzIGZpbmUgdG8gbWUuDQo+IFRoYW5rcyENCg0K
+RGlkIHlvdSBoYXZlIGEgY2hhbmNlIHRvIHJldmlldyB0aGUgY2xvY2sgZHJpdmVyIHByb3Blcj8g
+SSdtIHBvbmRlcmluZw0Kc2VuZGluZyBhIHY5IHNpbmNlIGl0J3MgYmVlbiBhIHdlZWsgKHdpdGgg
+dmVyeSBtaW5vciBjaGFuZ2VzKSAtLSBidXQgSQ0KZG9uJ3Qgd2FudCB0byBpbnRlcnJ1cHQgaWYg
+eW91IHdlcmUgaW4gdGhlIHByb2Nlc3Mgb2YgcmV2aWV3aW5nLi4uDQoNCkNoZWVycywNCk1pY2hl
+bA0KDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAg
+ICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9m
+IExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBw
+ZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2Vs
+ZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0
+IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVj
+dHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUg
+RW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQg
+JiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
