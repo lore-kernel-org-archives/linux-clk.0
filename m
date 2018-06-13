@@ -1,220 +1,90 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 13 Jun 2018 09:46:21 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on
+ TV TCONs
+Message-ID: <20180613074621.5phumovcyymbkfbn@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-15-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, broonie@kernel.org,
- lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
- mazziesaccount@gmail.com, mturquette@baylibre.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
- heikki.haikola@fi.rohmeurope.com
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-Message-ID: <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Date: Tue, 12 Jun 2018 00:44:11 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="on6p3lb7ylr4gu64"
+In-Reply-To: <20180612200036.21483-15-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Matti Vaittinen (2018-06-04 06:19:13)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 41492e980ef4..e693496f202a 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -279,6 +279,13 @@ config COMMON_CLK_STM32H7
->         ---help---
->           Support for stm32h7 SoC family clocks
->  =
 
-> +config COMMON_CLK_BD71837
-> +       tristate "Clock driver for ROHM BD71837 PMIC MFD"
-> +       depends on MFD_BD71837
-> +       help
-> +         This driver supports ROHM BD71837 PMIC clock.
-> +
-> +
+--on6p3lb7ylr4gu64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Drop one newline above.
+On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
+> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
+> sense to check if panel or bridge is connected to them.
+>=20
+> Check if TCON has channel 0 and only then check for connected panel or
+> bridges.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+> index b1205a7bc20f..c9ffa5381185 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops =
+=3D {
+>  static int sun4i_tcon_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *node =3D pdev->dev.of_node;
+> +	const struct sun4i_tcon_quirks *quirks;
+>  	struct drm_bridge *bridge;
+>  	struct drm_panel *panel;
+>  	int ret;
+> =20
+> -	ret =3D drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
+> -	if (ret =3D=3D -EPROBE_DEFER)
+> -		return ret;
+> +	quirks =3D of_device_get_match_data(&pdev->dev);
 
->  source "drivers/clk/bcm/Kconfig"
->  source "drivers/clk/hisilicon/Kconfig"
->  source "drivers/clk/imgtec/Kconfig"
-> diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-> new file mode 100644
-> index 000000000000..5ba6c05c5a98
-> --- /dev/null
-> +++ b/drivers/clk/clk-bd71837.c
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 ROHM Semiconductors
-> +// bd71837.c  -- ROHM BD71837MWV clock driver
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/init.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/bd71837.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clkdev.h>
-> +
-> +
+We should probably check ofr the pointer value before dereferencing it.
 
-Drop one newline above.
+Maxime
 
-> +struct bd71837_clk {
-> +       struct clk_hw hw;
-> +       uint8_t reg;
-> +       uint8_t mask;
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Use u8 instead of uint8_t.
+--on6p3lb7ylr4gu64
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +       unsigned long rate;
-> +       struct platform_device *pdev;
-> +       struct bd71837 *mfd;
-> +};
-> +
-> +static int bd71837_clk_set(struct clk_hw *hw, int status)
-> +{
-> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
-);
-> +
-> +       return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
+-----BEGIN PGP SIGNATURE-----
 
-Any reason we can't use a regmap?
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgy8wACgkQ0rTAlCFN
+r3TKsxAAiMdTHSYwfXld6lYjllJDZDxQke3ipIpcBxmX3te3cqIKX5GX25YtR6EK
+M3XrUPsCgfGoVGnifxdC+Ew5CxKaPdGOrgYAHFtbBlPcI1/sX14eVqm628kRWa+Q
+z6GPHG3c8w+ze97sOmJ/pgh30OV9Ugk4rO5/DLJvK65Yqz6JAvbr3wUVteFGM7tf
+Qo5SLUPvtA0dbUa4IsmweBjkAcSRqJXtv+HS3UZB/1u4/skoIS+TRW2YuDwLfRgq
+M14nEOMT/UpsLoG+N+OBksRAgNunN3YFbKWamml/2rJGBXYzhCqNuk3z1AElJb2b
+1fSnahf2iR5Zg2vo4Mzvu+kNHgy7IOh3u5rUnhuQ0666gGFHTqUC7ZS/eHuFFF+C
+SR2HcY9ct/wXan45S/h+OJmtciqXP95kVUZfTyzckdCpuQ9uZTCrx45cbpRRfggx
+7NSqyUmw9E5U76ycqxQTFlCCJaY5dcaCHoP0+DPjrrs9lYicKlCVB8Um85bXaJbP
+/RDrCmBR2+J4c/O5m3namnPbdTJS1nlM2/VakwVK8KF9/WZJT9c7yuk7UwXj8ZAS
+w7slUbXq6JsGH1z03hrDe2NoPPsdfupRaM5jv04+QKpW8aVSPvDihXcqwR80/5hB
+5VURE7lyKbgtf9So5TLG35HgiF3UYsKaQz9tWdyYg1zlOzTtYL4=
+=7udD
+-----END PGP SIGNATURE-----
 
-> +}
-> +
-> +static void bd71837_clk_disable(struct clk_hw *hw)
-> +{
-> +       int rv;
-> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
-);
-> +
-> +       rv =3D bd71837_clk_set(hw, 0);
-> +       if (rv)
-> +               dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n"=
-, rv);
-> +}
-> +
-> +static int bd71837_clk_enable(struct clk_hw *hw)
-> +{
-> +       return bd71837_clk_set(hw, 1);
-> +}
-> +
-> +static int bd71837_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
-);
-> +
-> +       return c->mask & bd71837_reg_read(c->mfd, c->reg);
-
-Didn't I ask for local variable for reg_read result?
-
-> +}
-> +
-> +static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-> +                                            unsigned long parent_rate)
-> +{
-> +       struct bd71837_clk *c =3D container_of(hw, struct bd71837_clk, hw=
-);
-> +
-> +       return c->rate;
-> +}
-> +
-> +static const struct clk_ops bd71837_clk_ops =3D {
-> +       .recalc_rate =3D &bd71837_clk_recalc_rate,
-> +       .prepare =3D &bd71837_clk_enable,
-> +       .unprepare =3D &bd71837_clk_disable,
-> +       .is_prepared =3D &bd71837_clk_is_enabled,
-> +};
-> +
-> +static int bd71837_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct bd71837_clk *c;
-> +       int rval =3D -ENOMEM;
-> +       struct bd71837 *mfd =3D dev_get_drvdata(pdev->dev.parent);
-> +       struct clk_init_data init =3D {
-> +               .name =3D "bd71837-32k-out",
-> +               .ops =3D &bd71837_clk_ops,
-> +       };
-> +
-> +       c =3D devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-> +       if (!c)
-> +               goto err_out;
-> +
-> +       c->reg =3D BD71837_REG_OUT32K;
-> +       c->mask =3D BD71837_OUT32K_EN;
-> +       c->rate =3D BD71837_CLK_RATE;
-
-The PMIC has an 'XIN' pin that would be the clk input for this chip, and
-the output clk, this driver, would specify that xin clock as the parent.
-The 'xin' clock would then be listed in DT as a fixed-rate clock. That
-way this driver doesn't hardcode the frequency.
-
-> +       c->mfd =3D mfd;
-> +       c->pdev =3D pdev;
-> +
-> +       of_property_read_string_index(pdev->dev.parent->of_node,
-> +                                             "clock-output-names", 0,
-> +                                             &init.name);
-> +
-> +       c->hw.init =3D &init;
-
-Do this next to all the other c-> things?
-
-> +
-> +       rval =3D devm_clk_hw_register(&pdev->dev, &c->hw);
-> +       if (rval) {
-> +               dev_err(&pdev->dev, "failed to register 32K clk");
-> +               goto err_out;
-> +       }
-> +
-> +       if (pdev->dev.parent->of_node) {
-> +               rval =3D of_clk_add_hw_provider(pdev->dev.parent->of_node,
-> +                                            of_clk_hw_simple_get,
-> +                                            &c->hw);
-> +               if (rval) {
-> +                       dev_err(&pdev->dev, "adding clk provider failed\n=
-");
-> +                       goto err_out;
-
-Just return rval instead of goto and then remove err_out label.
-
-> +               }
-> +       }
-> +
-> +       rval =3D clk_hw_register_clkdev(&c->hw, init.name, NULL);
-
-This leaks a clkdev lookup. Sad we don't have a devm version. Maybe it
-should be added. But I really doubt this chip will be used with clkdev
-lookups so please remove clkdev until you have a user who needs it.
-
-> +       if (rval) {
-> +               dev_err(&pdev->dev, "failed to register clkdev for bd7183=
-7");
-> +               goto err_clean_provider;
-> +       }
-> +
-> +       platform_set_drvdata(pdev, c);
-> +
-> +       return 0;
-> +
-> +err_clean_provider:
-> +       of_clk_del_provider(pdev->dev.parent->of_node);
-> +err_out:
-> +       return rval;
-> +}
-> +
-> +static int bd71837_clk_remove(struct platform_device *pdev)
-> +{
-> +       if (pdev->dev.parent->of_node)
-> +               of_clk_del_provider(pdev->dev.parent->of_node);
-
-Use devm so this can go away. Or is devm not used because the parent
-of_node is the provider? That's annoying.
-
-> +       return 0;
-> +}
-> +
+--on6p3lb7ylr4gu64--
