@@ -1,91 +1,68 @@
-Return-Path: <rjw@rjwysocki.net>
-Return-Path: <rjw@rjwysocki.net>
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>, kernel@pengutronix.de, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Tue, 12 Jun 2018 16:33:05 +0200
-Message-ID: <2307533.g32PyNi9fl@aspire.rjw.lan>
-In-Reply-To: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de> <20180517055014.6607-4-o.rempel@pengutronix.de> <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180613074621.5phumovcyymbkfbn@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-15-jernej.skrabec@siol.net> <20180613074621.5phumovcyymbkfbn@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 13 Jun 2018 16:04:20 +0800
+Message-ID: <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
+Subject: Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tuesday, June 12, 2018 2:42:12 PM CEST Oleksij Rempel wrote:
->  This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
-> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
-> Content-Type: multipart/mixed; boundary="d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg";
->  protected-headers="v1"
-> From: Oleksij Rempel <o.rempel@pengutronix.de>
-> To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
->  "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
->  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
->  linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
->  Liam Girdwood <lgirdwood@gmail.com>,
->  Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
->  Mark Rutland <mark.rutland@arm.com>,
->  Michael Turquette <mturquette@baylibre.com>,
->  Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
->  Russell King <linux@armlinux.org.uk>
-> Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
-> Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-> References: <20180517055014.6607-1-o.rempel@pengutronix.de>
->  <20180517055014.6607-4-o.rempel@pengutronix.de>
-> In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
-> 
-> --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg
-> Content-Type: text/plain; charset=utf-8
-> Content-Language: en-US
-> Content-Transfer-Encoding: quoted-printable
-> 
-> Hi Rafael,
-> 
-> Last version of this patch was send at 17.05.2018. No other comment was
-> provided and this patch is a blocker for other patches in this serie.
-> Can you please give some feedback on it.
+On Wed, Jun 13, 2018 at 3:46 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
+>> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
+>> sense to check if panel or bridge is connected to them.
+>>
+>> Check if TCON has channel 0 and only then check for connected panel or
+>> bridges.
+>>
+>> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> ---
+>>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
+>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> index b1205a7bc20f..c9ffa5381185 100644
+>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops = {
+>>  static int sun4i_tcon_probe(struct platform_device *pdev)
+>>  {
+>>       struct device_node *node = pdev->dev.of_node;
+>> +     const struct sun4i_tcon_quirks *quirks;
+>>       struct drm_bridge *bridge;
+>>       struct drm_panel *panel;
+>>       int ret;
+>>
+>> -     ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
+>> -     if (ret == -EPROBE_DEFER)
+>> -             return ret;
+>> +     quirks = of_device_get_match_data(&pdev->dev);
+>
+> We should probably check ofr the pointer value before dereferencing it.
 
-I would have done that had I not missed the patch.
+I think we've discussed this before. If the driver has data structures
+for all the supported compatible strings, and it is device tree only,
+then we should just let it blow up in the user's face, since they are
+obviously doing something they shouldn't be doing to get the driver
+to probe without a compatible string match.
 
-Which probably wouldn't have happened had you CCed it to linux-pm.
-
-Anyway, I have no particular problems with exporting pm_power_off_prepare via
-EXPORT_SYMBOL_GPL().
-
-> 
-> On 17.05.2018 07:50, Oleksij Rempel wrote:
-> > Export pm_power_off_prepare. It is needed to implement power off on
-> > Freescale/NXP iMX6 based boards with external power management
-> > integrated circuit (PMIC).
-> >=20
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  kernel/reboot.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > index e4ced883d8de..83810d726f3e 100644
-> > --- a/kernel/reboot.c
-> > +++ b/kernel/reboot.c
-> > @@ -49,6 +49,7 @@ int reboot_force;
-> >   */
-> > =20
-> >  void (*pm_power_off_prepare)(void);
-> > +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
-> > =20
-> >  /**
-> >   *	emergency_restart - reboot the system
-> >=20
-> 
-> 
-> --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg--
-> 
-> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
-> Content-Type: application/pgp-signature; name="signature.asc"
-> Content-Description: OpenPGP digital signature
-> Content-Disposition: attachment; filename="signature.asc"
-> 
-> 
-> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924--
-> 
+ChenYu
