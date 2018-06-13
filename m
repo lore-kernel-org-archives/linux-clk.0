@@ -1,39 +1,63 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Wed, 6 Jun 2018 10:44:34 +0300
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
-	linux-clk@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v3 6/6] regulator: bd71837: BD71837 PMIC regulator driver
-Message-ID: <20180606074434.GE20078@localhost.localdomain>
-References: <cover.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <68b0cf2c7ab5578eef2f71a33315bc8ab9a68a39.1527587295.git.matti.vaittinen@fi.rohmeurope.com>
- <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAHp75VeVSbZd12vXew9f0z2m1=BFz+cOKomga3SZEzg=kx9CFw@mail.gmail.com>
+Return-Path: <narmstrong@baylibre.com>
+Return-Path: <narmstrong@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com,
+	sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+Date: Wed, 13 Jun 2018 14:20:21 +0200
+Message-Id: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+seems to be dependent on the FCLK_DIV2 to be operationnal.
 
-On Tue, Jun 05, 2018 at 04:58:43PM +0300, Andy Shevchenko wrote:
-> On Tue, May 29, 2018 at 1:02 PM, Matti Vaittinen
-> <matti.vaittinen@fi.rohmeurope.com> wrote:
-> > Support for controlling the 8 bucks and 7 LDOs the PMIC contains.
-> 
+The issue occured since v4.17-rc1 by freezing the kernel boot when
+the 'schedutil' cpufreq governor was selected as default :
 
-Thanks for the comments Andy. The regulator part of patch set v4 was
-already applied by Mark but I am going to do some further work on this
-afer I get the MFD and clk portions done. I'll store these comments and
-address issues in next set of patches.
+  [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+  domain-0 init dvfs: 4
+  [   12.087757] hctosys: unable to open rtc device (rtc0)
+  [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+  [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
 
-Br,
-	Matti Vaittinen
+But when disabling the MMC driver, the boot finished but cpufreq failed to
+change the CPU frequency :
+
+  [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+
+A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
+the first bad commit.
+This commit added support for the missing clock gates before the fixed PLL
+fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+all the unused fixed dividers, thus disabled a critical clock path for
+the SCPI Co-Processor.
+
+This patch simply sets the FCLK_DIV2 gate as critical to ensure
+nobody can disable it.
+
+Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index b1e4d95..0e053c1 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div2_div" },
+ 		.num_parents = 1,
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.7.4
