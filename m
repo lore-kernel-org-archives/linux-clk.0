@@ -1,32 +1,84 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, Ray Jui <ray.jui@broadcom.com>,
- Rob Herring <robh+dt@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527900968-12017-3-git-send-email-ray.jui@broadcom.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Pramod Kumar <pramod.kumar@broadcom.com>, Ray Jui <ray.jui@broadcom.com>
-References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
- <1527900968-12017-3-git-send-email-ray.jui@broadcom.com>
-Message-ID: <152792081593.225090.1906170414614206197@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 2/3] clk: bcm: Update and add Stingray clock entries
-Date: Fri, 01 Jun 2018 23:26:55 -0700
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com> <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Jun 2018 09:17:24 +0200
+Message-ID: <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com>
+Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ray Jui (2018-06-01 17:56:07)
-> From: Pramod Kumar <pramod.kumar@broadcom.com>
-> =
+Hi Michel,
 
-> Update and add Stingray clock definitions and tables so they match the
-> binding document and the latest ASIC datasheet
-> =
+On Wed, Jun 13, 2018 at 8:38 AM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> On 11 June 2018 11:01, Geert wrote:
+> > On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
+> > > The Renesas R9A06G032 SYSCTRL node description.
+> > >
+> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> >
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-
+> > sysctr
+> > > +++ l.txt
+> > > @@ -0,0 +1,32 @@
+> > > +* Renesas R9A06G032 SYSCTRL
+> > > +
+> > > +Required Properties:
+> > > +
+> > > +  - compatible: Must be:
+> > > +    - "renesas,r9a06g032-sysctrl"
+> > > +  - reg: Base address and length of the SYSCTRL IO block.
+> > > +  - #clock-cells: Must be 1
+> >
+> > (repeating myself) No clocks/clock-names for the external clock inputs?
+> >
+> > "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
+> > reference clock outputs for RMII/MII."
+>
+> Well, I'm trying to keep the binding as simple as possible, to dodge any
+> further discussion. Adding these will be possible later, I don't need them
+> for the moment anyway.
 
-> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-> ---
+Don't you? The external clock inputs are at the root of the clock tree, so I'd
+say you need them. Bolting them on later may become complicated, especially
+if you care about DTB backwards compatibility.
 
-Applied to clk-next
+The reset controller subsystem is optional anyway, and used only by a small
+number of drivers, so support for resets can definitely be postponed.
+
+> Did you have a chance to review the clock driver proper? I'm pondering
+> sending a v9 since it's been a week (with very minor changes) -- but I
+> don't want to interrupt if you were in the process of reviewing...
+
+I had a quick glance. Looks OK mostly, so it's definitely heading for the right
+direction!
+One remaining question: do you need CLK_OF_DECLARE()?
+Is there any reason your clock driver cannot be a platform driver, which is
+the recommended way?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
