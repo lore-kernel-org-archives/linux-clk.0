@@ -1,152 +1,137 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50628 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753750AbeFPFtC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Jun 2018 01:49:02 -0400
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3871160.F3Km1rQkUz@jernej-laptop>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <2948115.KggauuSURZ@jernej-laptop> <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
- <3871160.F3Km1rQkUz@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 16 Jun 2018 13:48:38 +0800
-Message-ID: <CAGb2v66Tv7876_heSve0zb+vWfz9kbwbrU8NjnpTwUHm6xOKJQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support
- for tcon-top gate
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
+ <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
+ <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
+ <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com> <CAMMfpEwhpoBvO+JGPFYeNznns9W=+6iZoUec5Ffk-ppUH_9BFg@mail.gmail.com>
+In-Reply-To: <CAMMfpEwhpoBvO+JGPFYeNznns9W=+6iZoUec5Ffk-ppUH_9BFg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 13 Jun 2018 13:48:23 +0200
+Message-ID: <CAMuHMdXfpafLbtZ_btcPmLO7j5B2Ue3OhFdfKdEYX=pFdGY0Sg@mail.gmail.com>
+Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: M P <buserror@gmail.com>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jun 16, 2018 at 1:33 AM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai napisal(a):
->> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
->>
->> <jernej.skrabec@siol.net> wrote:
->> > Hi,
->> >
->> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
->> >> Hi,
->> >>
->> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
->> >> > TV TCONs connected to TCON TOP have to enable additional gate in order
->> >> > to work.
->> >> >
->> >> > Add support for such TCONs.
->> >> >
->> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >> > ---
->> >> >
->> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
->> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
->> >> >  2 files changed, 15 insertions(+)
->> >> >
->> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
->> >> > 100644
->> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device
->> >> > *dev,
->> >> >
->> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
->> >> >             return PTR_ERR(tcon->clk);
->> >> >
->> >> >     }
->> >> >
->> >> > +
->> >> > +   if (tcon->quirks->has_tcon_top_gate) {
->> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
->> >> > +           if (IS_ERR(tcon->top_clk)) {
->> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
->> >> > clock\n");
->> >> > +                   return PTR_ERR(tcon->top_clk);
->> >> > +           }
->> >> > +           clk_prepare_enable(tcon->top_clk);
->> >> > +   }
->> >> > +
->> >>
->> >> Is it required for the TCON itself to operate, or does the TCON
->> >> requires the TCON TOP, which in turn requires that clock to be
->> >> functional?
->> >>
->> >> I find it quite odd to have a clock that isn't meant for a particular
->> >> device to actually be wired to another device. I'm not saying this
->> >> isn't the case, but it would be a first.
->> >
->> > Documentation doesn't say much about that gate. I did few tests and TCON
->> > registers can be read and written even if TCON TOP TV TCON gate is
->> > disabled. However, there is no image, as expected.
->>
->> The R40 manual does include it in the diagram, on page 504. There's also a
->> mux to select whether the clock comes directly from the CCU or the TV
->> encoder (a feedback mode?). I assume this is the gate you are referring to
->> here, in which case it is not a bus clock, but rather the TCON module or
->> channel clock, strangely routed.
->>
->> > More interestingly, I enabled test pattern directly in TCON to eliminate
->> > influence of the mixer. As soon as I disabled that gate, test pattern on
->> > HDMI screen was gone, which suggest that this gate influences something
->> > inside TCON.
->> >
->> > Another test I did was that I moved enable/disable gate code to
->> > sun4i_tcon_channel_set_status() and it worked just as well.
->> >
->> > I'll ask AW engineer what that gate actually does, but from what I saw, I
->> > would say that most appropriate location to enable/disable TCON TOP TV
->> > TCON
->> > gate is TCON driver. Alternatively, TCON TOP driver could check if any TV
->> > TCON is in use and enable appropriate gate. However, that doesn't sound
->> > right to me for some reason.
->>
->> If what I said above it true, then yes, the appropriate location to enable
->> it is the TCON driver, but moreover, the representation of the clock tree
->> should be fixed such that the TCON takes the clock from the TCON TOP as its
->> channel/ module clock instead. That way you don't need this patch, but
->> you'd add another for all the clock routing.
+Hi Michel,
+
+On Wed, Jun 13, 2018 at 10:53 AM M P <buserror@gmail.com> wrote:
+> On Wed, 13 Jun 2018 at 08:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, Jun 13, 2018 at 8:38 AM Michel Pollet
+> > <michel.pollet@bp.renesas.com> wrote:
+> > > On 11 June 2018 11:01, Geert wrote:
+> > > > On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
+> > > > <michel.pollet@bp.renesas.com> wrote:
+> > > > > The Renesas R9A06G032 SYSCTRL node description.
+> > > > >
+> > > > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > >
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-
+> > > > sysctr
+> > > > > +++ l.txt
+> > > > > @@ -0,0 +1,32 @@
+> > > > > +* Renesas R9A06G032 SYSCTRL
+> > > > > +
+> > > > > +Required Properties:
+> > > > > +
+> > > > > +  - compatible: Must be:
+> > > > > +    - "renesas,r9a06g032-sysctrl"
+> > > > > +  - reg: Base address and length of the SYSCTRL IO block.
+> > > > > +  - #clock-cells: Must be 1
+> > > >
+> > > > (repeating myself) No clocks/clock-names for the external clock inputs?
+> > > >
+> > > > "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
+> > > > reference clock outputs for RMII/MII."
+> > >
+> > > Well, I'm trying to keep the binding as simple as possible, to dodge any
+> > > further discussion. Adding these will be possible later, I don't need them
+> > > for the moment anyway.
+> >
+> > Don't you? The external clock inputs are at the root of the clock tree, so I'd
+> > say you need them. Bolting them on later may become complicated, especially
+> > if you care about DTB backwards compatibility.
 >
-> Can you be more specific? I not sure what you mean here.
+> Well the input is fixed frequency -- and there is a clock (gate)
+> created for it in the driver
+> (CLK_RGMII_REF) so you can turn it on/off if you like...
+>
+> The only configurable bit is a *nightmare* as the selection bit for
+> whether it is coming
+> from CLKOUT_D8 or from an external input is in a *completely different
+> IP block*. I'd
+> need another iomap() and all that stuff, and a custom driver for it.
+>
+> If I were to implement it, I'd have to add a custom driver for that
+> clock, use the current
+> gate as a parent, iomap the selection bit register etc -- basically.
+> All of that for a use
+> case of *none ever* as most people would probably tweak that bit in
+> the bootloader
+> anyway -- also, I'd have zero capability for testing it.
+>
+> As far as the output, they also have their own gates (already
+> created). They are also fixed
+> frequency and the only thing that matters to them is the pinmux
+> settings. So (soon) with the
+> pinmux driver, you can enable that clock properly without a special
+> driver, just by adding
+> that gate to your ethernet, and add the pinmux config for it.
+>
+> So what do I go with that?
 
-For clock related properties in the device tree:
+IC.
 
-&tcon_top {
-    clocks = <&ccu CLK_BUS_TCON_TOP>,
-             <&ccu CLK_TCON_TV0>,
-             <&tve0>,
-             <&ccu CLK_TCON_TV1>,
-             <&tve1>;
-    clock-names = "bus", "tcon-tv0", "tve0", "tcon-tv1", "tve1";
-    clock-output-names = "tcon-top-tv0", "tcon-top-tv1";
-};
+Still, DT describes the hardware, not (the limitations of) the software
+implementation.  So you can have the external clock inputs in the DT
+bindings and in the DTS, but ignore complicated routing and source
+selection in the driver.
 
-&tcon_tv0 {
-    clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>'
-    clock-names = "ahb", "tcon-ch1";
-};
+> > > Did you have a chance to review the clock driver proper? I'm pondering
+> > > sending a v9 since it's been a week (with very minor changes) -- but I
+> > > don't want to interrupt if you were in the process of reviewing...
+> >
+> > I had a quick glance. Looks OK mostly, so it's definitely heading for the right
+> > direction!
+> > One remaining question: do you need CLK_OF_DECLARE()?
+> > Is there any reason your clock driver cannot be a platform driver, which is
+> > the recommended way?
+>
+> I copied it straight out of clk-rcar-gen2.c -- I don't 'need' anything more than
+> instantiating my driver; does it make a difference? ie a one liner macro vs
+> adding an extra struct, 2 functions to do the same thing?
 
-A diagram would look like:
+clk-rcar-gen2.c is an old (early DT CCF) driver.
+Please check out renesas-cpg-mssr.c for something newer.
+Having a platform_driver means you're also having a struct device,
+and can do power management, if needed.
 
-                   | This part is TCON TOP |
-                   v                       v
-CCU CLK_TCON_TV0 --|----\                  |
-                   |     mux ---- gate ----|-- TCON_TV0
-TVE0 --------------|----/                  |
+> Just curious, sometime I lose track of that the goalpost is -- for
+> years I understood
+> that having OF was simpler and better all around?
 
-And the same goes for TCON_TV1 and TVE1.
+"having OF" does not mean CLK_OF_DECLARE().
+Those *_OF_DECLARE() macros impose a very strict initialization
+order, which is not always suitable. Hence the trend to move to plain
+platform drivers.
 
-The user manual is a bit lacking on how TVE outputs a clock though.
+Gr{oetje,eeting}s,
 
-ChenYu
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
