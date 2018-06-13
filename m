@@ -1,62 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs61.siol.net ([185.57.226.252]:38563 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934332AbeFLUC0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:26 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
-Date: Tue, 12 Jun 2018 22:00:23 +0200
-Message-Id: <20180612200036.21483-15-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180612200036.21483-2-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-2-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 13 Jun 2018 11:18:45 +0800
+Message-ID: <CAGb2v66rUqqUrqmq09hHcGHF1buZieYmu1zOkUXZyyQPtyUZew@mail.gmail.com>
+Subject: Re: [PATCH v2 01/27] clk: sunxi-ng: r40: Add minimal rate for video PLLs
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
-sense to check if panel or bridge is connected to them.
+On Wed, Jun 13, 2018 at 4:00 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> According to documentation and experience with other similar SoCs, video
+> PLLs don't work stable if their output frequency is set below 192 MHz.
+>
+> Because of that, set minimal rate to both R40 video PLLs to 192 MHz.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Check if TCON has channel 0 and only then check for connected panel or
-bridges.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index b1205a7bc20f..c9ffa5381185 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops = {
- static int sun4i_tcon_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
-+	const struct sun4i_tcon_quirks *quirks;
- 	struct drm_bridge *bridge;
- 	struct drm_panel *panel;
- 	int ret;
- 
--	ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
--	if (ret == -EPROBE_DEFER)
--		return ret;
-+	quirks = of_device_get_match_data(&pdev->dev);
-+
-+	/* panels and bridges are present only on TCONs with channel 0 */
-+	if (quirks->has_channel_0) {
-+		ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+	}
- 
- 	return component_add(&pdev->dev, &sun4i_tcon_ops);
- }
--- 
-2.17.1
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
