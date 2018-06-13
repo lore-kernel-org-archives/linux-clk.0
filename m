@@ -1,52 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:37822 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933643AbeFLINb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 04:13:31 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180612054034.4969-5-songjun.wu@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com> <20180612054034.4969-5-songjun.wu@linux.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 12 Jun 2018 11:13:29 +0300
-Message-ID: <CAHp75Vc_EVgfj1MpuA_hKHgy6SiQdU7JQDdtVHfOT1sZ_K-nRQ@mail.gmail.com>
-Subject: Re: [PATCH 4/7] tty: serial: lantiq: Always use readl()/writel()
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1528892771.2292.2.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 13 Jun 2018 14:26:11 +0200
+In-Reply-To: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
+References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 8:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> Previous implementation uses platform-dependent functions
-> ltq_w32()/ltq_r32() to access registers. Those functions are not
-> available for other SoC which uses the same IP.
-> Change to OS provided readl()/writel() and readb()/writeb(), so
-> that different SoCs can use the same driver.
+On Wed, 2018-06-13 at 14:20 +0200, Neil Armstrong wrote:
+> On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+> seems to be dependent on the FCLK_DIV2 to be operationnal.
+> 
+> The issue occured since v4.17-rc1 by freezing the kernel boot when
+> the 'schedutil' cpufreq governor was selected as default :
+> 
+>   [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+>   domain-0 init dvfs: 4
+>   [   12.087757] hctosys: unable to open rtc device (rtc0)
+>   [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+>   [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+> 
+> But when disabling the MMC driver, the boot finished but cpufreq failed to
+> change the CPU frequency :
+> 
+>   [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+> 
+> A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
+> the first bad commit.
+> This commit added support for the missing clock gates before the fixed PLL
+> fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+> all the unused fixed dividers, thus disabled a critical clock path for
+> the SCPI Co-Processor.
+> 
+> This patch simply sets the FCLK_DIV2 gate as critical to ensure
+> nobody can disable it.
+> 
+> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-This patch consists 2 or even 3 ones:
-- whitespace shuffling (indentation fixes, blank lines), I dunno if
-it's needed at all
-- some new registers / bits
-- actual switch to readl() / writel()
+Good catch !
+We'll probably have to check the axg family as well
 
-Please, split.
-
-> +#define asc_w32_mask(clear, set, reg)  \
-> +       ({ typeof(reg) reg_ = (reg);    \
-> +       writel((readl(reg_) & ~(clear)) | (set), reg_); })
-
-This would be better as a static inline helper, and name is completely
-misleading, it doesn't mask the register bits, it _updates_ them.
-
--- 
-With Best Regards,
-Andy Shevchenko
+> ---
+>  drivers/clk/meson/gxbb.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index b1e4d95..0e053c1 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -511,6 +511,7 @@ static struct clk_regmap gxbb_fclk_div2 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_names = (const char *[]){ "fclk_div2_div" },
+>  		.num_parents = 1,
+> +		.flags = CLK_IS_CRITICAL,
+>  	},
+>  };
+>  
