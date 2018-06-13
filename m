@@ -1,366 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46257 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752384AbeF1Cuc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:50:32 -0400
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Wed, 13 Jun 2018 15:17:52 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Make vic03 a child of pll_c3
+Message-ID: <20180613131752.GA17445@ulmo>
+References: <20180611081853.31474-1-thierry.reding@gmail.com>
+ <20180611082244.GA31882@ulmo>
+ <20180612154025.GW27696@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-24-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-24-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 10:50:09 +0800
-Message-ID: <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
-Subject: Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+In-Reply-To: <20180612154025.GW27696@tbergstrom-lnx.Nvidia.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Add all entries needed for HDMI to function properly.
->
-> Since R40 has highly configurable pipeline, both mixers and both TCON
-> TVs are added. Board specific DT should then connect them together
-> trough TCON TOP muxers to best fit the purpose of the board.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  arch/arm/boot/dts/sun8i-r40.dtsi | 269 +++++++++++++++++++++++++++++++
->  1 file changed, 269 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-> index 173dcc1652d2..a2a75fb04caf 100644
-> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
-> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-> @@ -42,8 +42,11 @@
->   */
->
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/sun8i-de2.h>
->  #include <dt-bindings/clock/sun8i-r40-ccu.h>
-> +#include <dt-bindings/clock/sun8i-tcon-top.h>
->  #include <dt-bindings/reset/sun8i-r40-ccu.h>
-> +#include <dt-bindings/reset/sun8i-de2.h>
->
->  / {
->         #address-cells = <1>;
-> @@ -99,12 +102,76 @@
->                 };
->         };
->
-> +       de: display-engine {
-> +               compatible = "allwinner,sun8i-r40-display-engine",
-> +                            "allwinner,sun8i-h3-display-engine";
 
-Given that the display pipeline looks different, they should not be
-compatible.
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +               allwinner,pipelines = <&mixer0>, <&mixer1>;
-> +               status = "disabled";
-> +       };
-> +
->         soc {
->                 compatible = "simple-bus";
->                 #address-cells = <1>;
->                 #size-cells = <1>;
->                 ranges;
->
-> +               display_clocks: clock@1000000 {
-> +                       compatible = "allwinner,sun8i-r40-de2-clk",
-> +                                    "allwinner,sun8i-h3-de2-clk";
-> +                       reg = <0x01000000 0x100000>;
-> +                       clocks = <&ccu CLK_DE>,
-> +                                <&ccu CLK_BUS_DE>;
-> +                       clock-names = "mod",
-> +                                     "bus";
-> +                       resets = <&ccu RST_BUS_DE>;
-> +                       #clock-cells = <1>;
-> +                       #reset-cells = <1>;
-> +               };
-> +
-> +               mixer0: mixer@1100000 {
-> +                       compatible = "allwinner,sun8i-r40-de2-mixer-0";
-> +                       reg = <0x01100000 0x100000>;
-> +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
-> +                                <&display_clocks CLK_MIXER0>;
-> +                       clock-names = "bus",
-> +                                     "mod";
-> +                       resets = <&display_clocks RST_MIXER0>;
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               mixer0_out: port@1 {
-> +                                       reg = <1>;
-> +                                       mixer0_out_tcon_top: endpoint {
-> +                                               remote-endpoint = <&tcon_top_mixer0_in_mixer0>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               mixer1: mixer@1200000 {
-> +                       compatible = "allwinner,sun8i-r40-de2-mixer-1";
-> +                       reg = <0x01200000 0x100000>;
-> +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
-> +                                <&display_clocks CLK_MIXER1>;
-> +                       clock-names = "bus",
-> +                                     "mod";
-> +                       resets = <&display_clocks RST_WB>;
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               mixer1_out: port@1 {
-> +                                       reg = <1>;
-> +                                       mixer1_out_tcon_top: endpoint {
-> +                                               remote-endpoint = <&tcon_top_mixer1_in_mixer1>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
->                 nmi_intc: interrupt-controller@1c00030 {
->                         compatible = "allwinner,sun7i-a20-sc-nmi";
->                         interrupt-controller;
-> @@ -451,6 +518,163 @@
->                         #size-cells = <0>;
->                 };
->
-> +               tcon_top: tcon-top@1c70000 {
-> +                       compatible = "allwinner,sun8i-r40-tcon-top";
-> +                       reg = <0x01c70000 0x1000>;
-> +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
-> +                                <&ccu CLK_TCON_TV0>,
-> +                                <&ccu CLK_TVE0>,
-> +                                <&ccu CLK_TCON_TV1>,
-> +                                <&ccu CLK_TVE1>,
-> +                                <&ccu CLK_DSI_DPHY>;
-> +                       clock-names = "bus",
-> +                                     "tcon-tv0",
-> +                                     "tve0",
-> +                                     "tcon-tv1",
-> +                                     "tve1",
-> +                                     "dsi";
-> +                       clock-output-names = "tcon-top-tv0",
-> +                                            "tcon-top-tv1",
-> +                                            "tcon-top-dsi";
-> +                       resets = <&ccu RST_BUS_TCON_TOP>;
-> +                       #clock-cells = <1>;
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tcon_top_mixer0_in: port@0 {
-> +                                       reg = <0>;
-> +
-> +                                       tcon_top_mixer0_in_mixer0: endpoint {
-> +                                               remote-endpoint = <&mixer0_out_tcon_top>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon_top_mixer0_out: port@1 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <1>;
-> +
-> +                                       tcon_top_mixer0_out_tcon_lcd0: endpoint@0 {
-> +                                               reg = <0>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer0_out_tcon_lcd1: endpoint@1 {
-> +                                               reg = <1>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer0_out_tcon_tv0: endpoint@2 {
-> +                                               reg = <2>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer0_out_tcon_tv1: endpoint@3 {
-> +                                               reg = <3>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon_top_mixer1_in: port@2 {
-> +                                       reg = <2>;
-> +
-> +                                       tcon_top_mixer1_in_mixer1: endpoint {
-> +                                               remote-endpoint = <&mixer1_out_tcon_top>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon_top_mixer1_out: port@3 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <3>;
-> +
-> +                                       tcon_top_mixer1_out_tcon_lcd0: endpoint@0 {
-> +                                               reg = <0>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer1_out_tcon_lcd1: endpoint@1 {
-> +                                               reg = <1>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer1_out_tcon_tv0: endpoint@2 {
-> +                                               reg = <2>;
-> +                                       };
-> +
-> +                                       tcon_top_mixer1_out_tcon_tv1: endpoint@3 {
-> +                                               reg = <3>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon_top_hdmi_in: port@4 {
-> +                                       #address-cells = <1>;
-> +                                       #size-cells = <0>;
-> +                                       reg = <4>;
-> +
-> +                                       tcon_top_hdmi_in_tcon_tv0: endpoint@0 {
-> +                                               reg = <0>;
-> +                                       };
-> +
-> +                                       tcon_top_hdmi_in_tcon_tv1: endpoint@1 {
-> +                                               reg = <1>;
-> +                                       };
-> +                               };
-> +
-> +                               tcon_top_hdmi_out: port@5 {
-> +                                       reg = <5>;
-> +
-> +                                       tcon_top_hdmi_out_hdmi: endpoint {
-> +                                               remote-endpoint = <&hdmi_in_tcon_top>;
-> +                                       };
-> +                               };
-> +                       };
-> +               };
-> +
-> +               tcon_tv0: lcd-controller@1c73000 {
-> +                       compatible = "allwinner,sun8i-r40-tcon-tv",
-> +                                    "allwinner,sun8i-a83t-tcon-tv";
-> +                       reg = <0x01c73000 0x1000>;
-> +                       interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>;
-> +                       clock-names = "ahb", "tcon-ch1";
-> +                       resets = <&ccu RST_BUS_TCON_TV0>;
-> +                       reset-names = "lcd";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tcon_tv0_in: port@0 {
-> +                                       reg = <0>;
-> +                               };
-> +
-> +                               tcon_tv0_out: port@1 {
-> +                                       reg = <1>;
-> +                               };
-> +                       };
-> +               };
-> +
-> +               tcon_tv1: lcd-controller@1c74000 {
-> +                       compatible = "allwinner,sun8i-r40-tcon-tv",
-> +                                    "allwinner,sun8i-a83t-tcon-tv";
-> +                       reg = <0x01c74000 0x1000>;
-> +                       interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top 1>;
-> +                       clock-names = "ahb", "tcon-ch1";
-> +                       resets = <&ccu RST_BUS_TCON_TV1>;
-> +                       reset-names = "lcd";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               tcon_tv1_in: port@0 {
-> +                                       reg = <0>;
-> +                               };
-> +
-> +                               tcon_tv1_out: port@1 {
-> +                                       reg = <1>;
+On Tue, Jun 12, 2018 at 06:40:25PM +0300, Peter De Schrijver wrote:
+> On Mon, Jun 11, 2018 at 10:22:44AM +0200, Thierry Reding wrote:
+> > On Mon, Jun 11, 2018 at 10:18:53AM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > By default, the vic03 clock is a child of pll_m but that runs at 924 =
+MHz
+> > > which is too fast for VIC. Make vic03 a child of pll_c3 by default so=
+ it
+> > > will run at a supported frequency.
+> > >=20
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra124.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk=
+-tegra124.c
+> > > index 0c69c7970950..f5048f82c0b9 100644
+> > > --- a/drivers/clk/tegra/clk-tegra124.c
+> > > +++ b/drivers/clk/tegra/clk-tegra124.c
+> > > @@ -1290,6 +1290,7 @@ static struct tegra_clk_init_table common_init_=
+table[] __initdata =3D {
+> > >  	{ TEGRA124_CLK_MSELECT, TEGRA124_CLK_CLK_MAX, 0, 1 },
+> > >  	{ TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1 },
+> > >  	{ TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 400000, 0 },
+> > > +	{ TEGRA124_CLK_VIC03, TEGRA124_CLK_PLL_C3, 0, 0 },
+> > >  	/* must be the last entry */
+> > >  	{ TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
+> > >  };
+> >=20
+> > Adding Peter for visibility.
+>=20
+> I think we should consider using the Assigned clock parents and rate feat=
+ure
+> of the DT clock binding.
 
-You are missing the remote-endpoints for all the TCON-TOP <-> TCON connections.
-Also, on the driver side, there's no code to handle dynamically mapping mixers
-to the TCONs that are being used. In the past we had simple 1:1 mappings. This
-is no longer the case, and it needs to be dealt with.
+I'm sure we could do that, but it'd also be completely inconsistent with
+what we've done so far. These init tables effectively do the same thing
+as the assigned parents and rate bindings, only they predate them and we
+have done it this way essentially forever.
 
-ChenYu
+I think there's some benefit in moving to the new bindings, but perhaps
+it'd make more sense to do it for Tegra186 and later because we don't
+have any of these initialization tables there yet and we don't even have
+a custom driver like this.
 
-> +                               };
-> +                       };
-> +               };
-> +
->                 gic: interrupt-controller@1c81000 {
->                         compatible = "arm,gic-400";
->                         reg = <0x01c81000 0x1000>,
-> @@ -461,6 +685,51 @@
->                         #interrupt-cells = <3>;
->                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
->                 };
-> +
-> +               hdmi: hdmi@1ee0000 {
-> +                       compatible = "allwinner,sun8i-r40-dw-hdmi",
-> +                                    "allwinner,sun8i-a83t-dw-hdmi";
-> +                       reg = <0x01ee0000 0x10000>;
-> +                       reg-io-width = <1>;
-> +                       interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_HDMI0>, <&ccu CLK_HDMI_SLOW>,
-> +                                <&ccu CLK_HDMI>;
-> +                       clock-names = "iahb", "isfr", "tmds";
-> +                       resets = <&ccu RST_BUS_HDMI1>;
-> +                       reset-names = "ctrl";
-> +                       phys = <&hdmi_phy>;
-> +                       phy-names = "hdmi-phy";
-> +                       status = "disabled";
-> +
-> +                       ports {
-> +                               #address-cells = <1>;
-> +                               #size-cells = <0>;
-> +
-> +                               hdmi_in: port@0 {
-> +                                       reg = <0>;
-> +
-> +                                       hdmi_in_tcon_top: endpoint {
-> +                                               remote-endpoint = <&tcon_top_hdmi_out_hdmi>;
-> +                                       };
-> +                               };
-> +
-> +                               hdmi_out: port@1 {
-> +                                       reg = <1>;
-> +                               };
-> +                       };
-> +               };
-> +
-> +               hdmi_phy: hdmi-phy@1ef0000 {
-> +                       compatible = "allwinner,sun8i-r40-hdmi-phy",
-> +                                    "allwinner,sun50i-a64-hdmi-phy";
-> +                       reg = <0x01ef0000 0x10000>;
-> +                       clocks = <&ccu CLK_BUS_HDMI1>, <&ccu CLK_HDMI_SLOW>,
-> +                                <&ccu 7>, <&ccu 16>;
-> +                       clock-names = "bus", "mod", "pll-0", "pll-1";
-> +                       resets = <&ccu RST_BUS_HDMI0>;
-> +                       reset-names = "phy";
-> +                       #phy-cells = <0>;
-> +               };
->         };
->
->         timer {
-> --
-> 2.18.0
->
+Thierry
+
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlshGX0ACgkQ3SOs138+
+s6FFgQ//QEbajano7jhIxKDUKb6c2qGWVmQzBMNIeai/8114T4slymX1sdwb5LKb
+TtIPiGDG+1Ag0Anik4zgRaE+kA7fgY+p3wSN5GklMWe5TisPwW6qgMFm7iV3biIY
+xBqHcpwZ70fC6lUASyXCOkifE5nP1GoETPSI7FFuDRJWembHUBQN9Q+Z1y9rkh0H
+e1kO50f2LpV8pFOT8m8XGAEy2+9kYE42hqLuIAlBjIHQZ+sx+RWvoWJgJNVLSWsB
+4Jk3HpTpLkXYrXdibCYltUbdrAPl7GhZ3IwwY+0rbYZCFUJL1+Y9HKYd4u531A38
+/SFPnfZJE9pmQGILGbyk+e9OuKLEY+zwpXhmsUpsvXH3NmD3LKjEAByr5lp9ulmW
+EGhWz1ERYHGz2OLpYLXL+EAhfRyj7u38QwoTjTKGXOqffeAQU7jTt1kM6/oS6Uas
+/ycVYms7Q0BRbXCr82HYxxDLQNBXceklv5NmqEtoi9tVe/FJZ5kuuKcb8VxcdLst
+e0UPBmKqS9hQk469IwkOCWd6SReFWPKtIom5bsPAF4oykZd+UZ73dLxXR4qkyJ/V
+VUydplQ9I5Dj1OWpBUZBTTm5sias6egbzLdK388L23I4kgKOR1wKciD4g3tU+G86
+Bkh0U3luVR6EIZV26viFKGLVzuiDyZeqKw9lwQ331ZmjgfIzpdE=
+=AlbF
+-----END PGP SIGNATURE-----
+
+--YZ5djTAD1cGYuMQK--
