@@ -1,58 +1,86 @@
-Return-Path: <mine260309@gmail.com>
-Return-Path: <mine260309@gmail.com>
-From: Lei YU <mine260309@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lei YU <mine260309@gmail.com>,
-	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Fix SDCLK name
-Date: Tue, 26 Jun 2018 09:55:25 +0800
-Message-Id: <1529978125-28712-1-git-send-email-mine260309@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs39.siol.net ([185.57.226.230]:45095 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754498AbeFMQVN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 12:21:13 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, wens@csie.org
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
+Date: Wed, 13 Jun 2018 18:20:07 +0200
+Message-ID: <2662622.yHSNrIAaJ9@jernej-laptop>
+In-Reply-To: <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180613074621.5phumovcyymbkfbn@flea> <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The SDCLK was named SDCLKCLK, and no one has used this yet.
-Fix it.
+Dne sreda, 13. junij 2018 ob 10:04:20 CEST je Chen-Yu Tsai napisal(a):
+> On Wed, Jun 13, 2018 at 3:46 PM, Maxime Ripard
+> 
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
+> >> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
+> >> sense to check if panel or bridge is connected to them.
+> >> 
+> >> Check if TCON has channel 0 and only then check for connected panel or
+> >> bridges.
+> >> 
+> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> ---
+> >> 
+> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
+> >>  1 file changed, 9 insertions(+), 3 deletions(-)
+> >> 
+> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index b1205a7bc20f..c9ffa5381185
+> >> 100644
+> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops
+> >> = {>> 
+> >>  static int sun4i_tcon_probe(struct platform_device *pdev)
+> >>  {
+> >>  
+> >>       struct device_node *node = pdev->dev.of_node;
+> >> 
+> >> +     const struct sun4i_tcon_quirks *quirks;
+> >> 
+> >>       struct drm_bridge *bridge;
+> >>       struct drm_panel *panel;
+> >>       int ret;
+> >> 
+> >> -     ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
+> >> -     if (ret == -EPROBE_DEFER)
+> >> -             return ret;
+> >> +     quirks = of_device_get_match_data(&pdev->dev);
+> > 
+> > We should probably check ofr the pointer value before dereferencing it.
+> 
+> I think we've discussed this before. If the driver has data structures
+> for all the supported compatible strings, and it is device tree only,
+> then we should just let it blow up in the user's face, since they are
+> obviously doing something they shouldn't be doing to get the driver
+> to probe without a compatible string match.
 
-Signed-off-by: Lei YU <mine260309@gmail.com>
----
- drivers/clk/clk-aspeed.c                 | 2 +-
- include/dt-bindings/clock/aspeed-clock.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+TCON can't work with no quirks specified, since that would mean that neither 
+channels are present. Additionally, sun4i_tcon_bind() also doesn't check if 
+quirks are NULL or not. So I concur with Chen-Yu here.
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 38b366b..f49c684 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -109,7 +109,7 @@ struct aspeed_clk_gate {
- 	[ASPEED_CLK_GATE_RSACLK] =	{ 24, -1, "rsaclk-gate",	NULL,	0 }, /* RSA */
- 	[ASPEED_CLK_GATE_UART3CLK] =	{ 25, -1, "uart3clk-gate",	"uart",	0 }, /* UART3 */
- 	[ASPEED_CLK_GATE_UART4CLK] =	{ 26, -1, "uart4clk-gate",	"uart",	0 }, /* UART4 */
--	[ASPEED_CLK_GATE_SDCLKCLK] =	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* SDIO/SD */
-+	[ASPEED_CLK_GATE_SDCLK] =	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* SDIO/SD */
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index 4476184..f437386 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -25,7 +25,7 @@
- #define ASPEED_CLK_GATE_RSACLK		19
- #define ASPEED_CLK_GATE_UART3CLK	20
- #define ASPEED_CLK_GATE_UART4CLK	21
--#define ASPEED_CLK_GATE_SDCLKCLK	22
-+#define ASPEED_CLK_GATE_SDCLK		22
- #define ASPEED_CLK_GATE_LHCCLK		23
- #define ASPEED_CLK_HPLL			24
- #define ASPEED_CLK_AHB			25
--- 
-1.9.1
+Best regards,
+Jernej
+
+
+
