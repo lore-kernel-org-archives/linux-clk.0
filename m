@@ -1,60 +1,102 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Randy Dunlap <rdunlap@infradead.org>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "sudeep.holla@arm.com"
-	<sudeep.holla@arm.com>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"keescook@chromium.org" <keescook@chromium.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"michal.simek@xilinx.com" <michal.simek@xilinx.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Tejas Patel <TEJASP@xilinx.com>, Shubhrajyoti
- Datta <shubhraj@xilinx.com>
-Subject: RE: [PATCH v7 10/10] drivers: clk: Add ZynqMP clock driver
-Date: Thu, 14 Jun 2018 18:30:03 +0000
-Message-ID: 
- <SN1PR02MB3758971F60A9800642B16F95B87D0@SN1PR02MB3758.namprd02.prod.outlook.com>
-References: <1527713725-1086-1-git-send-email-jollys@xilinx.com>
- <1527713725-1086-11-git-send-email-jollys@xilinx.com>
- <c042fd9b-85cb-f0d3-101c-f78f3dc4fc44@infradead.org>
-In-Reply-To: <c042fd9b-85cb-f0d3-101c-f78f3dc4fc44@infradead.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55974 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935337AbeFMLF1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 07:05:27 -0400
 MIME-Version: 1.0
+In-Reply-To: <20180601065821.28234-3-o.rempel@pengutronix.de>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de> <20180601065821.28234-3-o.rempel@pengutronix.de>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Wed, 13 Jun 2018 19:05:25 +0800
+Message-ID: <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox documentation
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgUmFuZHksDQoNClRoYW5rcyBmb3IgcmV2aWV3LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
-ZS0tLS0tDQo+IEZyb206IFJhbmR5IER1bmxhcCBbbWFpbHRvOnJkdW5sYXBAaW5mcmFkZWFkLm9y
-Z10NCj4gU2VudDogV2VkbmVzZGF5LCBNYXkgMzAsIDIwMTggMjoxOCBQTQ0KPiBUbzogSm9sbHkg
-U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+OyBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOw0KPiBt
-aW5nb0BrZXJuZWwub3JnOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgbWF0dEBjb2RlYmx1
-ZXByaW50LmNvLnVrOw0KPiBzdWRlZXAuaG9sbGFAYXJtLmNvbTsgaGthbGx3ZWl0MUBnbWFpbC5j
-b207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gZG1pdHJ5LnRvcm9raG92QGdtYWlsLmNvbTsg
-bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGNvZGVhdXJvcmEub3JnOyBtaWNoYWwu
-c2ltZWtAeGlsaW54LmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJrLnJ1dGxhbmRAYXJt
-LmNvbTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogUmFqYW4gVmFqYSA8UkFKQU5W
-QHhpbGlueC5jb20+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBU
-ZWphcyBQYXRlbA0KPiA8VEVKQVNQQHhpbGlueC5jb20+OyBTaHViaHJhanlvdGkgRGF0dGEgPHNo
-dWJocmFqQHhpbGlueC5jb20+OyBKb2xseSBTaGFoDQo+IDxKT0xMWVNAeGlsaW54LmNvbT4NCj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2NyAxMC8xMF0gZHJpdmVyczogY2xrOiBBZGQgWnlucU1QIGNs
-b2NrIGRyaXZlcg0KPiANCj4gT24gMDUvMzAvMjAxOCAwMTo1NSBQTSwgSm9sbHkgU2hhaCB3cm90
-ZToNCj4gPiBGcm9tOiBKb2xseSBTaGFoIDxqb2xseS5zaGFoQHhpbGlueC5jb20+DQo+IA0KPiAN
-Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvenlucW1wL0tjb25maWcgYi9kcml2ZXJzL2Ns
-ay96eW5xbXAvS2NvbmZpZw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0IGluZGV4IDAwMDAwMDAu
-LmZlODE1ZjcNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvenlucW1w
-L0tjb25maWcNCj4gPiBAQCAtMCwwICsxLDExIEBADQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50
-aWZpZXI6IEdQTC0yLjANCj4gPiArDQo+ID4gK2NvbmZpZyBDT01NT05fQ0xLX1pZTlFNUA0KPiA+
-ICsJYm9vbCAiU3VwcG9ydCBmb3IgWGlsaW54IFp5bnFNUCBVbHRyYXNjYWxlKyBjbG9jayBjb250
-cm9sbGVycyINCj4gPiArCWRlcGVuZHMgb24gT0YNCj4gPiArCWRlcGVuZHMgb24gQVJDSF9aWU5R
-TVAgfHwgQ09NUElMRV9URVNUDQo+ID4gKwlkZXBlbmRzIG9uIFpZTlFNUF9GSVJNV0FSRQ0KPiA+
-ICsJaGVscA0KPiA+ICsJICBTdXBwb3J0IGZvciB0aGUgWnlucW1wIFVsdHJhc2NhbGUgY2xvY2sg
-Y29udHJvbGxlci4NCj4gPiArCSAgSXQgaGFzIGEgZGVwZW5kZW5jeSBvbiB0aGUgUE1VIGZpcm13
-YXJlLg0KPiA+ICsJICBTYXkgWSBpZiB5b3Ugd2FudCB0byBzdXBwb3J0IGNsb2NrIHN1cHBvcnQN
-Cj4gDQo+IAkgIFNheSBZIGlmIHlvdSB3YW50IHRvIGluY2x1ZGUgY2xvY2sgc3VwcG9ydC4NCj4g
-DQoJRml4ZWQgaW4gdjgNCg0KPiANCj4gLS0NCj4gflJhbmR5DQo=
+Hi Oleksij,
+
+Some more comments besides Rob's:
+
+On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../bindings/mailbox/imx-mailbox.txt          | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+>
+> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+> new file mode 100644
+> index 000000000000..a45604b33039
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+> @@ -0,0 +1,35 @@
+> +i.MX Messaging Unit
+> +===================
+> +
+> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B". In most cases
+> +they are accessible from all Processor Units. On one hand, at least for mailbox functionality,
+> +it makes no difference which application or processor is using which set of the MU. On
+> +other hand, the register sets for each of the MU parts are not identical.
+> +
+> +Required properties:
+> +- compatible : Shell be one of:
+> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S or i.MX7D
+
+What's current requirement to distinguish Side A and B?
+I see current code, side A only does extra clear of xCR register but none for B.
+Is this a generic approach or something customized?
+
+BTW can we name it more generically?e.g. fsl,imx7s-mu.
+And using a property to indicate whether it's side A or B if really required.
+
+Furthermore, AFAIK MX7 MU is derived from MX6SX.
+Should we add and use fsl,imx6sx-mu instead?
+e.g.
+ - compatible : Shell be one of:
+                       "fsl,imx6sx-mu" and "fsl,imx7s-mu".
+
+Regards
+Dong Aisheng
+
+> +- reg :        physical base address of the mailbox and length of
+> +               memory mapped region.
+> +- #mbox-cells: Common mailbox binding property to identify the number
+> +               of cells required for the mailbox specifier. Should be 1.
+> +- interrupts : interrupt number. The interrupt specifier format
+> +               depends on the interrupt controller parent.
+> +- clocks     :  phandle to the input clock.
+> +
+> +Example:
+> +       mu0a: mu@30aa0000 {
+> +               compatible = "fsl,imx7s-mu-a";
+> +               reg = <0x30aa0000 0x28>;
+> +               interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&clks IMX7D_MU_ROOT_CLK>;
+> +               #mbox-cells = <1>;
+> +       };
+> +
+> +       mu0b: mu@30ab0000 {
+> +               compatible = "fsl,imx7s-mu-b";
+> +               reg = <0x30ab0000 0x28>;
+> +               interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&clks IMX7D_MU_ROOT_CLK>;
+> +               #mbox-cells = <1>;
+> +       };
+> --
+> 2.17.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
