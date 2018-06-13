@@ -1,227 +1,120 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	sboyd@kernel.org
-Cc: pn@denx.de,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	manivannan.sadhasivam@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH 1/2] arm64: dts: actions: Enable clock controller for S700
-Date: Tue, 26 Jun 2018 21:28:19 +0200
-Message-Id: <20180626192820.28237-2-sravanhome@gmail.com>
-In-Reply-To: <20180626192820.28237-1-sravanhome@gmail.com>
-References: <20180626192820.28237-1-sravanhome@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:41305 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754478AbeFMH0v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:26:51 -0400
+Date: Wed, 13 Jun 2018 09:26:49 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
+Message-ID: <20180613072649.dzbusalsfqlgymew@flea>
+References: <20180521115947.wqrnv2hczate65lz@flea>
+ <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
+ <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3252dj2fdjvd3pij"
+In-Reply-To: <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Added clock management controller for S700
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
- arch/arm64/boot/dts/actions/s700.dtsi         |   8 ++
- include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++++++++++++++++
- 3 files changed, 136 insertions(+), 7 deletions(-)
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+--3252dj2fdjvd3pij
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-index ef79d7905f44..28f3f4a0f7f0 100644
---- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-+++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-@@ -28,12 +28,6 @@
- 		device_type = "memory";
- 		reg = <0x1 0xe0000000 0x0 0x0>;
- 	};
--
--	uart3_clk: uart3-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
- 
- &timer {
-@@ -42,5 +36,4 @@
- 
- &uart3 {
- 	status = "okay";
--	clocks = <&uart3_clk>;
- };
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index 66dd5309f0a2..3530b705df90 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/actions,s700-cmu.h>
- 
- / {
- 	compatible = "actions,s700";
-@@ -44,6 +45,12 @@
- 		};
- 	};
- 
-+	clock: clock-controller@e0168000 {
-+		compatible = "actions,s700-cmu";
-+		reg = <0 0xe0168000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
- 	reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -129,6 +136,7 @@
- 			compatible = "actions,s900-uart", "actions,owl-uart";
- 			reg = <0x0 0xe0126000 0x0 0x2000>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clock CLK_UART3>;
- 			status = "disabled";
- 		};
- 
-diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
-new file mode 100644
-index 000000000000..e5b4ea130953
---- /dev/null
-+++ b/include/dt-bindings/clock/actions,s700-cmu.h
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Actions S700 clock driver
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Author: David Liu <liuwei@actions-semi.com>
-+ *
-+ * Author: Pathiban Nallathambi <pn@denx.de>
-+ * Author: Saravanan Sekar <sravanhome@gmail.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_S700_H
-+#define __DT_BINDINGS_CLOCK_S700_H
-+
-+#define CLK_NONE			0
-+
-+/* fixed rate clocks */
-+#define CLK_LOSC			1
-+#define CLK_HOSC			2
-+
-+/* pll clocks */
-+#define CLK_CORE_PLL			3
-+#define CLK_DEV_PLL			4
-+#define CLK_DDR_PLL			5
-+#define CLK_NAND_PLL			6
-+#define CLK_DISPLAY_PLL			7
-+#define CLK_TVOUT_PLL			8
-+#define CLK_CVBS_PLL			9
-+#define CLK_AUDIO_PLL			10
-+#define CLK_ETHERNET_PLL		11
-+
-+
-+/* system clock */
-+#define CLK_SYS_BASE			12
-+#define CLK_CPU				CLK_SYS_BASE
-+#define CLK_DEV				(CLK_SYS_BASE+1)
-+#define CLK_AHB				(CLK_SYS_BASE+2)
-+#define CLK_APB				(CLK_SYS_BASE+3)
-+#define CLK_DMAC			(CLK_SYS_BASE+4)
-+#define CLK_NOC0_CLK_MUX		(CLK_SYS_BASE+5)
-+#define CLK_NOC1_CLK_MUX		(CLK_SYS_BASE+6)
-+#define CLK_HP_CLK_MUX			(CLK_SYS_BASE+7)
-+#define CLK_HP_CLK_DIV			(CLK_SYS_BASE+8)
-+#define CLK_NOC1_CLK_DIV		(CLK_SYS_BASE+9)
-+#define CLK_NOC0			(CLK_SYS_BASE+10)
-+#define CLK_NOC1			(CLK_SYS_BASE+11)
-+#define CLK_SENOR_SRC			(CLK_SYS_BASE+12)
-+
-+/* peripheral device clock */
-+#define CLK_PERIP_BASE			25
-+#define CLK_GPIO			(CLK_PERIP_BASE)
-+#define CLK_TIMER			(CLK_PERIP_BASE+1)
-+#define CLK_DSI				(CLK_PERIP_BASE+2)
-+#define CLK_CSI				(CLK_PERIP_BASE+3)
-+#define CLK_SI				(CLK_PERIP_BASE+4)
-+#define CLK_DE				(CLK_PERIP_BASE+5)
-+#define CLK_HDE				(CLK_PERIP_BASE+6)
-+#define CLK_VDE				(CLK_PERIP_BASE+7)
-+#define CLK_VCE				(CLK_PERIP_BASE+8)
-+#define CLK_NAND			(CLK_PERIP_BASE+9)
-+#define CLK_SD0				(CLK_PERIP_BASE+10)
-+#define CLK_SD1				(CLK_PERIP_BASE+11)
-+#define CLK_SD2				(CLK_PERIP_BASE+12)
-+
-+#define CLK_UART0			(CLK_PERIP_BASE+13)
-+#define CLK_UART1			(CLK_PERIP_BASE+14)
-+#define CLK_UART2			(CLK_PERIP_BASE+15)
-+#define CLK_UART3			(CLK_PERIP_BASE+16)
-+#define CLK_UART4			(CLK_PERIP_BASE+17)
-+#define CLK_UART5			(CLK_PERIP_BASE+18)
-+#define CLK_UART6			(CLK_PERIP_BASE+19)
-+
-+#define CLK_PWM0			(CLK_PERIP_BASE+20)
-+#define CLK_PWM1			(CLK_PERIP_BASE+21)
-+#define CLK_PWM2			(CLK_PERIP_BASE+22)
-+#define CLK_PWM3			(CLK_PERIP_BASE+23)
-+#define CLK_PWM4			(CLK_PERIP_BASE+24)
-+#define CLK_PWM5			(CLK_PERIP_BASE+25)
-+#define CLK_GPU3D			(CLK_PERIP_BASE+26)
-+
-+#define CLK_I2C0			(CLK_PERIP_BASE+27)
-+#define CLK_I2C1			(CLK_PERIP_BASE+28)
-+#define CLK_I2C2			(CLK_PERIP_BASE+29)
-+#define CLK_I2C3			(CLK_PERIP_BASE+30)
-+
-+
-+#define CLK_SPI0			(CLK_PERIP_BASE+31)
-+#define CLK_SPI1			(CLK_PERIP_BASE+32)
-+#define CLK_SPI2			(CLK_PERIP_BASE+33)
-+#define CLK_SPI3			(CLK_PERIP_BASE+34)
-+
-+#define CLK_USB3_480MPLL0		(CLK_PERIP_BASE+35)
-+#define CLK_USB3_480MPHY0		(CLK_PERIP_BASE+36)
-+#define CLK_USB3_5GPHY			(CLK_PERIP_BASE+37)
-+#define CLK_USB3_CCE			(CLK_PERIP_BASE+48)
-+#define CLK_USB3_MAC			(CLK_PERIP_BASE+49)
-+
-+
-+#define CLK_LCD				(CLK_PERIP_BASE+50)
-+#define CLK_HDMI_AUDIO			(CLK_PERIP_BASE+51)
-+#define CLK_I2SRX			(CLK_PERIP_BASE+52)
-+#define CLK_I2STX			(CLK_PERIP_BASE+53)
-+
-+#define CLK_SENSOR0			(CLK_PERIP_BASE+54)
-+#define CLK_SENSOR1			(CLK_PERIP_BASE+55)
-+
-+#define CLK_HDMI_DEV			(CLK_PERIP_BASE+56)
-+
-+#define CLK_ETHERNET			(CLK_PERIP_BASE+59)
-+#define CLK_RMII_REF			(CLK_PERIP_BASE+60)
-+
-+#define CLK_USB2H0_PLLEN		(CLK_PERIP_BASE+61)
-+#define CLK_USB2H0_PHY			(CLK_PERIP_BASE+62)
-+#define CLK_USB2H0_CCE			(CLK_PERIP_BASE+63)
-+#define CLK_USB2H1_PLLEN		(CLK_PERIP_BASE+64)
-+#define CLK_USB2H1_PHY			(CLK_PERIP_BASE+65)
-+#define CLK_USB2H1_CCE			(CLK_PERIP_BASE+66)
-+
-+
-+#define CLK_TVOUT			(CLK_PERIP_BASE+67)
-+
-+#define CLK_THERMAL_SENSOR		(CLK_PERIP_BASE+68)
-+
-+#define CLK_IRC_SWITCH			(CLK_PERIP_BASE+69)
-+#define CLK_PCM1			(CLK_PERIP_BASE+70)
-+#define CLK_NR_CLKS			(CLK_PCM1) /* update on adding new clk */
-+
-+#endif /* __DT_BINDINGS_CLOCK_S700_H */
--- 
-2.18.0
+On Mon, Jun 11, 2018 at 03:53:41PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+>=20
+> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> > Hi Maxime,
+> >
+> >
+> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
+> >> Hi Mike, Stephen,
+> >>
+> >> Please merge the following changes for the next merge window, thanks!
+> >>
+> >> Maxime
+> >>
+> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2=
+43338:
+> >>
+> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> >>
+> >> are available in the Git repository at:
+> >>
+> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags=
+/sunxi-clk-for-4.18
+> >>
+> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc04=
+4:
+> >>
+> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (201=
+8-05-17 14:02:07 +0800)
+> >>
+> >> ----------------------------------------------------------------
+> >> Allwinner clock changes for 4.18
+> >>
+> >> Not a lot of changes for this release, but two quite important features
+> >> were added: the H6 PRCM clock support, and the needed changes to the R=
+40
+> >> clock driver to allow for the EMAC to operate.
+> >>
+> >> ----------------------------------------------------------------
+> >> Icenowy Zheng (3):
+> >>       clk: sunxi-ng: add support for H6 PRCM CCU
+> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
+> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
+> >>
+> >
+> >
+> >
+> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
+> > not included in the pull request?
+> >
+> >
+> > You said "I've picked it up"
+> > https://patchwork.kernel.org/patch/10348031/
+>=20
+> It looks like it was accidentally dropped after a rebase.
+> Not quite sure what happened there. Maxime?
+
+I'm not quite sure what happened, sorry, but this should have
+definitely been part of that PR :/
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--3252dj2fdjvd3pij
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgxzgACgkQ0rTAlCFN
+r3R09w//XjFWXIoi6LpYnsFVg9jsX2X0t+vK+Js1xVWP8Ojhp6F8lMaz/wD0d9KW
+nrHEPX+NqkXsQtPVXU+cTsDteVxv1sHL6CnsPYaIR+lp1qFgBevBcK2kxO9+uido
+O5qUyBdUZqt7SjoC/uTasXle/XDzM0KOBA2dr6Yu2oVtmVIFLoV97tVN0uUC5YZi
+yXANgioe6YDYncNXQiCFpGrCyzHPmH87OAMNN94RwewaqIQxA3jvqmj0q6c79hcu
+AL+7POrlX35fvwiSuk7Hqj7+LHgaAw3r2tAZ8m0eMeCwUiEwIJDX85zKtQohELFd
+jviTWjp9ovH0d3QE8QROLmzSaV3BnXJKBTcm3VO4/HSmIEm/t7wsxljbKxTLqN0b
+0ReYyZpQbwCMx3vEXZIaQWVBD6Sji2ThrisoA4fFI0Z/X7CJi8jnLR4ywumkkWPR
+63E2kVrh81l3xRw05QlQzX/B3wv0Ia9OPYNSCTvAfL78iES8lm4N/TmMg6vu/yNr
+mXZbM2sqRzggkOvtmc1SoxwQCn9HMWxhsQGX4/WsJGVSRJof1kAKkfdBL6pjotpO
+mtfd79iZMeyEvROQYsGdrsMFyLalC+fb8jKf45dmmAOWoqkEycCoI2SIQrD2bnPH
+ZwVlG+8d8zH3UhvManRZlskx837JmoK6znWzLlgEFw/kck/62j4=
+=n5DE
+-----END PGP SIGNATURE-----
+
+--3252dj2fdjvd3pij--
