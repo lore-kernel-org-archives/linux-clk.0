@@ -1,77 +1,43 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <0e4bc2fb-15fc-6422-a4a3-0918adf0b1b3@lechnology.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-7-brgl@bgdev.pl>
- <0e4bc2fb-15fc-6422-a4a3-0918adf0b1b3@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 25 Jun 2018 18:23:32 +0200
-Message-ID: <CAMpxmJXtH9ibXS55iP-aFGTgd19hSafZdb+hFhPyA8u9arOSfg@mail.gmail.com>
-Subject: Re: [PATCH 6/9] ARM: davinci: da830-evm: use aemif platform driver
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+In-Reply-To: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 13 Jun 2018 11:13:28 +0300
+Message-ID: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To: Srinath Mannam <srinath.mannam@broadcom.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-25 18:20 GMT+02:00 David Lechner <david@lechnology.com>:
-> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We now support board files in the aemif driver. Register a platform
->> device instead of using the handcrafted API in da830-evm.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>   arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
->>   1 file changed, 44 insertions(+), 12 deletions(-)
->>
->> diff --git a/arch/arm/mach-davinci/board-da830-evm.c
->> b/arch/arm/mach-davinci/board-da830-evm.c
->> index b2470141dba3..666db3cee08a 100644
->> --- a/arch/arm/mach-davinci/board-da830-evm.c
->> +++ b/arch/arm/mach-davinci/board-da830-evm.c
->> @@ -28,6 +28,7 @@
->>   #include <linux/platform_data/mtd-davinci-aemif.h>
->>   #include <linux/platform_data/spi-davinci.h>
->>   #include <linux/platform_data/usb-davinci.h>
->> +#include <linux/platform_data/ti-aemif.h>
->>   #include <linux/regulator/machine.h>
->>     #include <asm/mach-types.h>
->> @@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] =
->> {
->>         },
->>   };
->>   -static struct platform_device da830_evm_nand_device = {
->> -       .name           = "davinci_nand",
->> -       .id             = 1,
->> -       .dev            = {
->> -               .platform_data  = &da830_evm_nand_pdata,
->> +static struct platform_device da830_evm_aemif_devices[] = {
->> +       {
->> +               .name           = "davinci_nand",
->> +               .id             = 1,
->
->
-> Actually, now that I've thought about it some more. It probably
-> makes more sense to make all of the "davinci_nand" devices in this
-> series use id = -1 since there is only one per board. It looks like
-> da850 is the only one that has a lookup for "davinic_nand.0" already.
->
-> I think that we are going to have to add clock lookups for the
-> "davinci_nand" devices as well. Although the driver doesn't do
-> clk_get() explicitly, I think some function it calls does get a
-> clock. I remember that we had to add a clock-ranges property to
-> device tree to get the davinci_nand driver working, which is why
-> I think we are going to need a clock lookup for these devices
-> as well.
->
++Cc: Rafael, ACPI ML
 
-Seems like ever since commit a8e3923ab571 ("mtd: rawnand: davinci:
-don't acquire and enable clock") we no longer need to worry about the
-clock entries for nand.
+On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+<srinath.mannam@broadcom.com> wrote:
+> Hi Michael, Stephen,
+>
+> We are adding ACPI support in our Linux based platform.
+> At present our clock hierarchy using common clock framework through DTS.
+> Now we required ACPI support in common clock framework to upgrade our platform.
+>
+> For example, clk_get API called in many drivers to get clock device is
+> tightly coupled with DT framework.
+>
+> Please let us know, if anybody in Open Source community have plans to
+> add ACPI support for common clock framework.
+> If not please suggest us alternative method to use common clock
+> framework in ACPI use case.
+>
+> Thanks in advance.
+>
+> Regards,
+> Srinath.
 
-Thanks,
-Bart
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
