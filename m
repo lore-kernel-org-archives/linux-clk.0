@@ -1,172 +1,182 @@
-Return-Path: <mike.looijmans@topic.nl>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH] clk-si514, clk-si544: Implement prepare/unprepare/is_prepared operations
-Date: Mon,  4 Jun 2018 07:34:39 +0200
-Message-Id: <1528090479-20861-1-git-send-email-mike.looijmans@topic.nl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36549 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935242AbeFML6u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 07:58:50 -0400
+Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox
+ documentation
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601065821.28234-3-o.rempel@pengutronix.de>
+ <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <32ca8af2-7df7-4006-fbe1-f26077cbf455@pengutronix.de>
+Date: Wed, 13 Jun 2018 13:58:41 +0200
+MIME-Version: 1.0
+In-Reply-To: <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="xIWBH9obsaz5Nsz0wwFXtUBp4fLMreZ6J"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds prepare/unprepare/is_prepared functionality to the drivers for
-the SI544 and SI514 chips, allowing the clock output to be disabled when
-the clock is not in use.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--xIWBH9obsaz5Nsz0wwFXtUBp4fLMreZ6J
+Content-Type: multipart/mixed; boundary="cPogkKUzPMxRC0RZKKqKp3IbcJFoIJf2v";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ devicetree <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>
+Message-ID: <32ca8af2-7df7-4006-fbe1-f26077cbf455@pengutronix.de>
+Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox
+ documentation
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601065821.28234-3-o.rempel@pengutronix.de>
+ <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
+In-Reply-To: <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
- drivers/clk/clk-si514.c | 38 +++++++++++++++++++++++++++++++++++++-
- drivers/clk/clk-si544.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 75 insertions(+), 2 deletions(-)
+--cPogkKUzPMxRC0RZKKqKp3IbcJFoIJf2v
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 09b6718..153b3a2 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -74,6 +74,33 @@ static int si514_enable_output(struct clk_si514 *data, bool enable)
- 		SI514_CONTROL_OE, enable ? SI514_CONTROL_OE : 0);
- }
- 
-+static int si514_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
+
+
+On 13.06.2018 13:05, Dong Aisheng wrote:
+> Hi Oleksij,
+>=20
+> Some more comments besides Rob's:
+>=20
+> On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de=
+> wrote:
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> ---
+>>  .../bindings/mailbox/imx-mailbox.txt          | 35 ++++++++++++++++++=
 +
-+	return si514_enable_output(data, true);
-+}
-+
-+static void si514_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+
-+	si514_enable_output(data, false);
-+}
-+
-+static int si514_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_si514 *data = to_clk_si514(hw);
-+	unsigned int val;
-+	int err;
-+
-+	err = regmap_read(data->regmap, SI514_REG_CONTROL, &val);
-+	if (err < 0)
-+		return err;
-+
-+	return !!(val & SI514_CONTROL_OE);
-+}
-+
- /* Retrieve clock multiplier and dividers from hardware */
- static int si514_get_muldiv(struct clk_si514 *data,
- 	struct clk_si514_muldiv *settings)
-@@ -235,12 +262,17 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_si514 *data = to_clk_si514(hw);
- 	struct clk_si514_muldiv settings;
-+	unsigned int old_oe_state;
- 	int err;
- 
- 	err = si514_calc_muldiv(&settings, rate);
- 	if (err)
- 		return err;
- 
-+	err = regmap_read(data->regmap, SI514_REG_CONTROL, &old_oe_state);
-+	if (err)
-+		return err;
-+
- 	si514_enable_output(data, false);
- 
- 	err = si514_set_muldiv(data, &settings);
-@@ -255,12 +287,16 @@ static int si514_set_rate(struct clk_hw *hw, unsigned long rate,
- 	/* Applying a new frequency can take up to 10ms */
- 	usleep_range(10000, 12000);
- 
--	si514_enable_output(data, true);
-+	if (old_oe_state & SI514_CONTROL_OE)
-+		si514_enable_output(data, true);
- 
- 	return err;
- }
- 
- static const struct clk_ops si514_clk_ops = {
-+	.prepare = si514_prepare,
-+	.unprepare = si514_unprepare,
-+	.is_prepared = si514_is_prepared,
- 	.recalc_rate = si514_recalc_rate,
- 	.round_rate = si514_round_rate,
- 	.set_rate = si514_set_rate,
-diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
-index e972ffb..f8ed9d9 100644
---- a/drivers/clk/clk-si544.c
-+++ b/drivers/clk/clk-si544.c
-@@ -86,6 +86,34 @@ static int si544_enable_output(struct clk_si544 *data, bool enable)
- 		SI544_OE_STATE_ODC_OE, enable ? SI544_OE_STATE_ODC_OE : 0);
- }
- 
-+static int si544_prepare(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+
-+	return si544_enable_output(data, true);
-+}
-+
-+static void si544_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+
-+	si544_enable_output(data, false);
-+}
-+
-+static int si544_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_si544 *data = to_clk_si544(hw);
-+	unsigned int val;
-+	int err;
-+
-+	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &val);
-+	if (err < 0)
-+		return err;
-+
-+	return !!(val & SI544_OE_STATE_ODC_OE);
-+}
-+
-+
- /* Retrieve clock multiplier and dividers from hardware */
- static int si544_get_muldiv(struct clk_si544 *data,
- 	struct clk_si544_muldiv *settings)
-@@ -273,6 +301,7 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_si544 *data = to_clk_si544(hw);
- 	struct clk_si544_muldiv settings;
-+	unsigned int old_oe_state;
- 	int err;
- 
- 	if (!is_valid_frequency(data, rate))
-@@ -282,6 +311,10 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (err)
- 		return err;
- 
-+	err = regmap_read(data->regmap, SI544_REG_OE_STATE, &old_oe_state);
-+	if (err)
-+		return err;
-+
- 	si544_enable_output(data, false);
- 
- 	/* Allow FCAL for this frequency update */
-@@ -303,12 +336,16 @@ static int si544_set_rate(struct clk_hw *hw, unsigned long rate,
- 	/* Applying a new frequency can take up to 10ms */
- 	usleep_range(10000, 12000);
- 
--	si544_enable_output(data, true);
-+	if (old_oe_state & SI544_OE_STATE_ODC_OE)
-+		si544_enable_output(data, true);
- 
- 	return err;
- }
- 
- static const struct clk_ops si544_clk_ops = {
-+	.prepare = si544_prepare,
-+	.unprepare = si544_unprepare,
-+	.is_prepared = si544_is_prepared,
- 	.recalc_rate = si544_recalc_rate,
- 	.round_rate = si544_round_rate,
- 	.set_rate = si544_set_rate,
--- 
-1.9.1
+>>  1 file changed, 35 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mail=
+box.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt=
+ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+>> new file mode 100644
+>> index 000000000000..a45604b33039
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+>> @@ -0,0 +1,35 @@
+>> +i.MX Messaging Unit
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B".=
+ In most cases
+>> +they are accessible from all Processor Units. On one hand, at least f=
+or mailbox functionality,
+>> +it makes no difference which application or processor is using which =
+set of the MU. On
+>> +other hand, the register sets for each of the MU parts are not identi=
+cal.
+>> +
+>> +Required properties:
+>> +- compatible : Shell be one of:
+>> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S =
+or i.MX7D
+>=20
+> What's current requirement to distinguish Side A and B?
+> I see current code, side A only does extra clear of xCR register but no=
+ne for B.
+> Is this a generic approach or something customized?
+
+A and B side have more then one BIT difference, and there is no way to
+see the difference by software. Current driver do not make use of it,
+but in devicetree we describe HW not SW. If HW is different, it should
+have different compatibles.
+
+> BTW can we name it more generically?e.g. fsl,imx7s-mu.
+> And using a property to indicate whether it's side A or B if really req=
+uired.
+>=20
+> Furthermore, AFAIK MX7 MU is derived from MX6SX.
+> Should we add and use fsl,imx6sx-mu instead?
+
+As soon as some one will test this driver on imx6sx and confirm it
+working, i'll add fsl,imx6sx-mu-a/b as well.
+
+> e.g.
+>  - compatible : Shell be one of:
+>                        "fsl,imx6sx-mu" and "fsl,imx7s-mu".
+>=20
+> Regards
+> Dong Aisheng
+>=20
+>> +- reg :        physical base address of the mailbox and length of
+>> +               memory mapped region.
+>> +- #mbox-cells: Common mailbox binding property to identify the number=
+
+>> +               of cells required for the mailbox specifier. Should be=
+ 1.
+>> +- interrupts : interrupt number. The interrupt specifier format
+>> +               depends on the interrupt controller parent.
+>> +- clocks     :  phandle to the input clock.
+>> +
+>> +Example:
+>> +       mu0a: mu@30aa0000 {
+>> +               compatible =3D "fsl,imx7s-mu-a";
+>> +               reg =3D <0x30aa0000 0x28>;
+>> +               interrupts =3D <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+>> +               clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
+>> +               #mbox-cells =3D <1>;
+>> +       };
+>> +
+>> +       mu0b: mu@30ab0000 {
+>> +               compatible =3D "fsl,imx7s-mu-b";
+>> +               reg =3D <0x30ab0000 0x28>;
+>> +               interrupts =3D <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+>> +               clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
+>> +               #mbox-cells =3D <1>;
+>> +       };
+>> --
+>> 2.17.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-clk" i=
+n
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+
+
+--cPogkKUzPMxRC0RZKKqKp3IbcJFoIJf2v--
+
+--xIWBH9obsaz5Nsz0wwFXtUBp4fLMreZ6J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlshBvEACgkQdQOiSHVI
+77SEfwf/em5HZ7s6wF5iMgbnr8eFO/rQZIMQkNTzwgYieysTXqZSj8gDLkaLNIWg
+0JwER1s6r/hweawGxKyCXtNUayKlLjhsk7BNkIVU9ZKWM7warLF6KijXaD321M6y
+5Vwoajj8c6gIvp0V7XhLDrk941pZmk0D0Q/vSO/iAsIz41/HsLyIGPZslu7IPARI
+lYo9jni+/5ZKe9h+9I3sKwjzbuLQzlMXmzfJSO+tl6XguXJ3GPNkLrD7MEO9t/o7
+ddxYI/2IQZh+0y+Q46N1v0b2S6KQFiGFLhMhtfj9jjC7iG/t7TEQOO3bZy33D5ml
+QhP3XNPpIE3lrOprKmAKlKmtGEkseQ==
+=EqbU
+-----END PGP SIGNATURE-----
+
+--xIWBH9obsaz5Nsz0wwFXtUBp4fLMreZ6J--
