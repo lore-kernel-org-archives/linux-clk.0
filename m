@@ -1,61 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44735 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756038AbeFOJvQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 05:51:16 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v2 0/4] add mailbox support for i.MX7D
-Date: Fri, 15 Jun 2018 11:51:03 +0200
-Message-Id: <20180615095107.24610-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 04/10] firmware: xilinx: Add query data API
+Date: Thu, 14 Jun 2018 11:27:36 -0700
+Message-ID: <1529000862-11510-5-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-20180615 changes v2:
-- DT: use mailbox@ instead of mu@
-- DT: change interrupts description
-- clk: use imx_clk_gate4 instead of imx_clk_gate2
-- imx-mailbox: remove last_tx_done support
-- imx-mailbox: fix module description 
+From: Rajan Vaja <rajanv@xilinx.com>
 
-This patches are providing support for mailbox (Messaging Unit)
-for i.MX7D.
-Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
-Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
+Add ZynqMP firmware query data API to query platform
+specific information(clocks, pins) from firmware.
 
-Both parts of i.MX messaging Unit are visible for all CPUs available
-on i.MX7D. Communication worked independent of MU side in combination
-with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on ARM Cortex-M4
-or other ways around.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-The question to NXP developers: are there are limitations or
-recommendations about MU vs CPU combination? The i.MX7D documentation
-talks about "Processor A" and "Processor B". It is not quite clear what
-processor it actually is (A7 or M4).
-
-Oleksij Rempel (4):
-  clk: imx7d: add IMX7D_MU_ROOT_CLK
-  dt-bindings: mailbox: provide imx-mailbox documentation
-  ARM: dts: imx7s: add i.MX7 messaging unit support
-  mailbox: Add support for i.MX7D messaging unit
-
- .../bindings/mailbox/imx-mailbox.txt          |  35 +++
- arch/arm/boot/dts/imx7s.dtsi                  |  18 ++
- drivers/clk/imx/clk-imx7d.c                   |   1 +
- drivers/mailbox/Kconfig                       |   6 +
- drivers/mailbox/Makefile                      |   2 +
- drivers/mailbox/imx-mailbox.c                 | 288 ++++++++++++++++++
- 6 files changed, 350 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
- create mode 100644 drivers/mailbox/imx-mailbox.c
-
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 34c5ad5..86d9bb8 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
+ 
++/**
++ * zynqmp_pm_query_data() - Get query data from firmware
++ * @qdata:	Variable to the zynqmp_pm_query_data structure
++ * @out:	Returned output value
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				   qdata.arg2, qdata.arg3, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.query_data = zynqmp_pm_query_data,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 2eec6e7..354385d 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -35,6 +35,7 @@
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_IOCTL = 34,
++	PM_QUERY_DATA,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -48,9 +49,28 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
+ 
++enum pm_query_id {
++	PM_QID_INVALID,
++};
++
++/**
++ * struct zynqmp_pm_query_data - PM query data structure
++ * @qid:	query ID
++ * @arg1:	Argument 1 of query data
++ * @arg2:	Argument 2 of query data
++ * @arg3:	Argument 3 of query data
++ */
++struct zynqmp_pm_query_data {
++	u32 qid;
++	u32 arg1;
++	u32 arg2;
++	u32 arg3;
++};
++
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
-2.17.1
-
+2.7.4
