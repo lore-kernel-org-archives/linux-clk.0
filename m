@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 13 Jun 2018 09:46:21 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on
- TV TCONs
-Message-ID: <20180613074621.5phumovcyymbkfbn@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-15-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34623 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754673AbeFNHMm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jun 2018 03:12:42 -0400
+Received: by mail-io0-f194.google.com with SMTP id e15-v6so6157197iog.1
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jun 2018 00:12:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="on6p3lb7ylr4gu64"
-In-Reply-To: <20180612200036.21483-15-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Thu, 14 Jun 2018 12:42:41 +0530
+Message-ID: <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> This series adds support for R40 HDMI pipeline. It is a bit special
+> than other already supported pipelines because it has additional unit
+> called TCON TOP responsible for relationship configuration between
+> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+> and TV TCONs, TV encoder clock settings and pin muxing between LCD
+> and TV encoders.
+>
+> However, it seems that TCON TOP will become a norm, since newer
+> Allwinner SoCs like H6 also have this unit.
+>
+> I tested different possible configurations:
+> - mixer0 <> TCON-TV0 <> HDMI
+> - mixer0 <> TCON-TV1 <> HDMI
+> - mixer1 <> TCON-TV0 <> HDMI
+> - mixer1 <> TCON-TV1 <> HDMI
+>
+> Please review.
+>
+> Best regards,
+> Jernej
+>
+> Changes from v1:
+> - Split DT bindings patch and updated description
+> - Split HDMI PHY patch
+> - Move header file from TCON TOP patch to dt bindings patch
+> - Added Rob reviewed-by tag
+> - Used clk_hw_register_gate() instead of custom gate registration code
+> - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
+>   new patches were added.
+> - Droped mixer index quirk patch
+> - Reworked TCON support for TCON TOP
+> - Updated commit messages
+>
+> Jernej Skrabec (27):
+>   clk: sunxi-ng: r40: Add minimal rate for video PLLs
+>   clk: sunxi-ng: r40: Allow setting parent rate to display related
+>     clocks
+>   clk: sunxi-ng: r40: Export video PLLs
+>   dt-bindings: display: sunxi-drm: Add TCON TOP description
+>   drm/sun4i: Add TCON TOP driver
+>   drm/sun4i: Fix releasing node when enumerating enpoints
+>   drm/sun4i: Split out code for enumerating endpoints in output port
+>   drm/sun4i: Add support for traversing graph with TCON TOP
+>   drm/sun4i: Don't skip TCONs if they don't have channel 0
+>   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
+>   drm/sun4i: tcon: Add support for tcon-top gate
+>   drm/sun4i: tcon: Generalize engine search algorithm
+>   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+>   drm/sun4i: Don't check for panel or bridge on TV TCONs
+>   drm/sun4i: Add support for R40 TV TCON
+>   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+>   drm/sun4i: Add support for R40 mixers
+>   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+>   drm/sun4i: Enable DW HDMI PHY clock
+>   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+>   drm/sun4i: DW HDMI PHY: Add support for second PLL
+>   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+>     driver
+>   drm/sun4i: Add support for A64 HDMI PHY
+>   drm: of: Export drm_crtc_port_mask()
+>   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
+>   ARM: dts: sun8i: r40: Add HDMI pipeline
+>   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
 
---on6p3lb7ylr4gu64
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested whole series on top of linux-next.
 
-On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
-> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
-> sense to check if panel or bridge is connected to them.
->=20
-> Check if TCON has channel 0 and only then check for connected panel or
-> bridges.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index b1205a7bc20f..c9ffa5381185 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops =
-=3D {
->  static int sun4i_tcon_probe(struct platform_device *pdev)
->  {
->  	struct device_node *node =3D pdev->dev.of_node;
-> +	const struct sun4i_tcon_quirks *quirks;
->  	struct drm_bridge *bridge;
->  	struct drm_panel *panel;
->  	int ret;
-> =20
-> -	ret =3D drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
-> -	if (ret =3D=3D -EPROBE_DEFER)
-> -		return ret;
-> +	quirks =3D of_device_get_match_data(&pdev->dev);
-
-We should probably check ofr the pointer value before dereferencing it.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---on6p3lb7ylr4gu64
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgy8wACgkQ0rTAlCFN
-r3TKsxAAiMdTHSYwfXld6lYjllJDZDxQke3ipIpcBxmX3te3cqIKX5GX25YtR6EK
-M3XrUPsCgfGoVGnifxdC+Ew5CxKaPdGOrgYAHFtbBlPcI1/sX14eVqm628kRWa+Q
-z6GPHG3c8w+ze97sOmJ/pgh30OV9Ugk4rO5/DLJvK65Yqz6JAvbr3wUVteFGM7tf
-Qo5SLUPvtA0dbUa4IsmweBjkAcSRqJXtv+HS3UZB/1u4/skoIS+TRW2YuDwLfRgq
-M14nEOMT/UpsLoG+N+OBksRAgNunN3YFbKWamml/2rJGBXYzhCqNuk3z1AElJb2b
-1fSnahf2iR5Zg2vo4Mzvu+kNHgy7IOh3u5rUnhuQ0666gGFHTqUC7ZS/eHuFFF+C
-SR2HcY9ct/wXan45S/h+OJmtciqXP95kVUZfTyzckdCpuQ9uZTCrx45cbpRRfggx
-7NSqyUmw9E5U76ycqxQTFlCCJaY5dcaCHoP0+DPjrrs9lYicKlCVB8Um85bXaJbP
-/RDrCmBR2+J4c/O5m3namnPbdTJS1nlM2/VakwVK8KF9/WZJT9c7yuk7UwXj8ZAS
-w7slUbXq6JsGH1z03hrDe2NoPPsdfupRaM5jv04+QKpW8aVSPvDihXcqwR80/5hB
-5VURE7lyKbgtf9So5TLG35HgiF3UYsKaQz9tWdyYg1zlOzTtYL4=
-=7udD
------END PGP SIGNATURE-----
-
---on6p3lb7ylr4gu64--
+Tested-by: Jagan Teki <jagan@amarulasolutions.com>
