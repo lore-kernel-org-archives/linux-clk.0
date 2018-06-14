@@ -1,43 +1,79 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 08/10] firmware: xilinx: Add debugfs for query data API
+Date: Thu, 14 Jun 2018 11:27:40 -0700
+Message-ID: <1529000862-11510-9-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 13 Jun 2018 11:13:28 +0300
-Message-ID: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To: Srinath Mannam <srinath.mannam@broadcom.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-+Cc: Rafael, ACPI ML
+From: Rajan Vaja <rajanv@xilinx.com>
 
-On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
-<srinath.mannam@broadcom.com> wrote:
-> Hi Michael, Stephen,
->
-> We are adding ACPI support in our Linux based platform.
-> At present our clock hierarchy using common clock framework through DTS.
-> Now we required ACPI support in common clock framework to upgrade our platform.
->
-> For example, clk_get API called in many drivers to get clock device is
-> tightly coupled with DT framework.
->
-> Please let us know, if anybody in Open Source community have plans to
-> add ACPI support for common clock framework.
-> If not please suggest us alternative method to use common clock
-> framework in ACPI use case.
->
-> Thanks in advance.
->
-> Regards,
-> Srinath.
+Add debugfs file to query platform specific data from firmware
+using debugfs interface.
 
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index 148dbff..1cb69f7 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
+ static struct pm_api_info pm_api_list[] = {
+ 	PM_API(PM_GET_API_VERSION),
+ 	PM_API(PM_IOCTL),
++	PM_API(PM_QUERY_DATA),
+ };
+ 
+ /**
+@@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 			sprintf(debugfs_buf, "IOCTL return value: %u\n",
+ 				pm_api_ret[1]);
+ 		break;
++	case PM_QUERY_DATA:
++	{
++		struct zynqmp_pm_query_data qdata = {0};
++
++		qdata.qid = pm_api_arg[0];
++		qdata.arg1 = pm_api_arg[1];
++		qdata.arg2 = pm_api_arg[2];
++		qdata.arg3 = pm_api_arg[3];
++
++		ret = eemi_ops->query_data(qdata, pm_api_ret);
++		if (ret)
++			break;
++
++		if (qdata.qid == PM_QID_CLOCK_GET_NAME)
++			sprintf(debugfs_buf, "Clock name = %s\n",
++				(char *)pm_api_ret);
++		else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
++			sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
++				pm_api_ret[1], pm_api_ret[2]);
++		else
++			sprintf(debugfs_buf,
++				"data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
++				pm_api_ret[0], pm_api_ret[1],
++				pm_api_ret[2], pm_api_ret[3]);
++		break;
++	}
+ 	default:
+ 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
+ 		ret = -EINVAL;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
