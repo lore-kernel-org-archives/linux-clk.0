@@ -1,72 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 17/24] drm/sun4i: Don't change clock bits in DW HDMI PHY driver
-Date: Mon, 25 Jun 2018 14:02:57 +0200
-Message-Id: <20180625120304.7543-18-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <srinath.mannam@broadcom.com>
+MIME-Version: 1.0
+In-Reply-To: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+From: Srinath Mannam <srinath.mannam@broadcom.com>
+Date: Thu, 14 Jun 2018 16:28:12 +0530
+Message-ID: <CABe79T5i8zUcBJnFmM-pAvzXf2CZXesh4NqxSGFj8f0Z-c8m1g@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-DW HDMI PHY driver and PHY clock driver share same registers. Make sure
-that DW HDMI PHY setup code doesn't change any clock related bits.
-During initialization, set PHY PLL parent bit to 0.
+Thank you Andy,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 +-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+Regards,
+Srinath.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 79154f0f674a..3ba71aff92fc 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -98,7 +98,7 @@
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
- #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
--#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
-+#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
- #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
- #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
- #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 966688f04741..e56b9e5b1c42 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *hdmi,
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
- 			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
- 
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
-+	/*
-+	 * NOTE: We have to be careful not to overwrite PHY parent
-+	 * clock selection bit and clock divider.
-+	 */
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-+			   (u32)~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
-+			   pll_cfg1_init);
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
- 			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
- 			   pll_cfg2_init);
-@@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
- 			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
- 			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
- 
-+	/* reset PHY PLL clock parent */
-+	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
-+			   SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK, 0);
-+
- 	/* set HW control of CEC pins */
- 	regmap_write(phy->regs, SUN8I_HDMI_PHY_CEC_REG, 0);
- 
--- 
-2.18.0
+On Wed, Jun 13, 2018 at 1:43 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> +Cc: Rafael, ACPI ML
+>
+> On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+> <srinath.mannam@broadcom.com> wrote:
+>> Hi Michael, Stephen,
+>>
+>> We are adding ACPI support in our Linux based platform.
+>> At present our clock hierarchy using common clock framework through DTS.
+>> Now we required ACPI support in common clock framework to upgrade our platform.
+>>
+>> For example, clk_get API called in many drivers to get clock device is
+>> tightly coupled with DT framework.
+>>
+>> Please let us know, if anybody in Open Source community have plans to
+>> add ACPI support for common clock framework.
+>> If not please suggest us alternative method to use common clock
+>> framework in ACPI use case.
+>>
+>> Thanks in advance.
+>>
+>> Regards,
+>> Srinath.
+>
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
