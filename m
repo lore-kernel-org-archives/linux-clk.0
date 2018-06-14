@@ -1,220 +1,348 @@
-Return-Path: <horms@verge.net.au>
-Date: Thu, 28 Jun 2018 14:16:10 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Message-ID: <20180628121609.jf4dp4azeowte7pb@verge.net.au>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 06/10] firmware: xilinx: Add debugfs interface
+Date: Thu, 14 Jun 2018 11:27:38 -0700
+Message-ID: <1529000862-11510-7-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180628120031.eq2yuysz4re2olwn@verge.net.au>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
-> On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
-> > This adds the Renesas R9A06G032 bare bone support.
-> > 
-> > This currently only handles the SYSCTRL block note,
-> > generic parts (gic, architected timer) and a UART.
-> > 
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Thanks, applied with the following appended:
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9d5eeff51b5f..4c85ac04872d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1969,6 +1969,7 @@ S:	Supported
->  F:	arch/arm/boot/dts/emev2*
->  F:	arch/arm/boot/dts/r7s*
->  F:	arch/arm/boot/dts/r8a*
-> +F:	arch/arm/boot/dts/r9a*
->  F:	arch/arm/boot/dts/sh*
->  F:	arch/arm/configs/shmobile_defconfig
->  F:	arch/arm/include/debug/renesas-scif.S
+From: Rajan Vaja <rajanv@xilinx.com>
 
-One more update.
+Firmware-debug provides debugfs interface to all APIs.
+Debugfs can be used to call firmware APIs with required
+parameters.
 
-dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
-current base of the renesas tree and likely base for the rest of the v4.19
-development cycle.
+Usage:
+* Calling firmware API through debugfs:
+  # echo "<api-name> <arg1> .. <argn>" > /sys/.../zynqmp-firmware/pm
 
-Accordingly I have removed the include of that header and replaced
-the use of symbols it defines with numeric constants. The result is below.
+* Read output of last called firmware API:
+  # cat /sys/.../zynqmp-firmware/pm
 
-Please:
-1) Check that this is correct and
-2) Post a follow-up patch to include r9a06g032-sysctrl.h and use its
-   symbols once the renesas tree includes that file. This is likely
-   to occur shortly after v4.19-rc1 is released.
+Refer ug1200 for more information on these APIs:
+  * https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pdf
 
+Add basic debugfs file to get API version.
 
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
-
-This adds the Renesas R9A06G032 bare bone support.
-
-This currently only handles the SYSCTRL block note,
-generic parts (gic, architected timer) and a UART.
-
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[simon: updated MAINTAINERS file
-[simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-
-fixes
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- MAINTAINERS                      |   1 +
- arch/arm/boot/dts/r9a06g032.dtsi | 113 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 114 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ drivers/firmware/xilinx/Kconfig        |   7 ++
+ drivers/firmware/xilinx/Makefile       |   1 +
+ drivers/firmware/xilinx/zynqmp-debug.c | 212 +++++++++++++++++++++++++++++++++
+ drivers/firmware/xilinx/zynqmp-debug.h |  22 ++++
+ drivers/firmware/xilinx/zynqmp.c       |   9 ++
+ 5 files changed, 251 insertions(+)
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff51b5f..4c85ac04872d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1969,6 +1969,7 @@ S:	Supported
- F:	arch/arm/boot/dts/emev2*
- F:	arch/arm/boot/dts/r7s*
- F:	arch/arm/boot/dts/r8a*
-+F:	arch/arm/boot/dts/r9a*
- F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+diff --git a/drivers/firmware/xilinx/Kconfig b/drivers/firmware/xilinx/Kconfig
+index cce4e4f..10faa10 100644
+--- a/drivers/firmware/xilinx/Kconfig
++++ b/drivers/firmware/xilinx/Kconfig
+@@ -13,4 +13,11 @@ config ZYNQMP_FIRMWARE
+ 	  Say yes to enable ZynqMP firmware interface driver.
+ 	  In doubt, say N
+ 
++config ZYNQMP_FIRMWARE_DEBUG
++	bool "Enable Xilinx Zynq MPSoC firmware debug APIs"
++	depends on ZYNQMP_FIRMWARE && DEBUG_FS
++	help
++	  Say yes to enable ZynqMP firmware interface debug APIs.
++	  In doubt, say N
++
+ endmenu
+diff --git a/drivers/firmware/xilinx/Makefile b/drivers/firmware/xilinx/Makefile
+index 29f7bf2..875a537 100644
+--- a/drivers/firmware/xilinx/Makefile
++++ b/drivers/firmware/xilinx/Makefile
+@@ -2,3 +2,4 @@
+ # Makefile for Xilinx firmwares
+ 
+ obj-$(CONFIG_ZYNQMP_FIRMWARE) += zynqmp.o
++obj-$(CONFIG_ZYNQMP_FIRMWARE_DEBUG) += zynqmp-debug.o
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
 new file mode 100644
-index 000000000000..339d0958011e
+index 0000000..4800366
 --- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -0,0 +1,113 @@
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -0,0 +1,212 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Base Device Tree Source for the Renesas RZ/N1D (R9A06G032)
++ * Xilinx Zynq MPSoC Firmware layer for debugfs APIs
 + *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *  Copyright (C) 2014-2018 Xilinx, Inc.
 + *
++ *  Michal Simek <michal.simek@xilinx.com>
++ *  Davorin Mista <davorin.mista@aggios.com>
++ *  Jolly Shah <jollys@xilinx.com>
++ *  Rajan Vaja <rajanv@xilinx.com>
 + */
 +
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <linux/compiler.h>
++#include <linux/module.h>
++#include <linux/slab.h>
++#include <linux/debugfs.h>
++#include <linux/uaccess.h>
 +
-+/ {
-+	compatible = "renesas,r9a06g032";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
++#include <linux/firmware/xlnx-zynqmp.h>
++#include "zynqmp-debug.h"
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++#define PM_API_NAME_LEN			50
 +
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0>;
-+			clocks = <&sysctrl 84>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <1>;
-+			clocks = <&sysctrl 84>;
-+		};
-+	};
-+
-+	ext_jtag_clk: extjtagclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	ext_mclk: extmclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <40000000>;
-+	};
-+
-+	ext_rgmii_ref: extrgmiiref {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	ext_rtc_clk: extrtcclk {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		sysctrl: system-controller@4000c000 {
-+			compatible = "renesas,r9a06g032-sysctrl";
-+			reg = <0x4000c000 0x1000>;
-+			status = "okay";
-+			#clock-cells = <1>;
-+
-+			clocks = <&ext_mclk>, <&ext_rtc_clk>,
-+					<&ext_jtag_clk>, <&ext_rgmii_ref>;
-+			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+		};
-+
-+		uart0: serial@40060000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x40060000 0x400>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&sysctrl 146>;
-+			clock-names = "baudclk";
-+			status = "disabled";
-+		};
-+
-+		gic: gic@44101000 {
-+			compatible = "arm,cortex-a7-gic", "arm,gic-400";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x44101000 0x1000>, /* Distributer */
-+			      <0x44102000 0x2000>, /* CPU interface */
-+			      <0x44104000 0x2000>, /* Virt interface control */
-+			      <0x44106000 0x2000>; /* Virt CPU interface */
-+			interrupts =
-+				<GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,cortex-a7-timer",
-+			     "arm,armv7-timer";
-+		interrupt-parent = <&gic>;
-+		arm,cpu-registers-not-fw-configured;
-+		always-on;
-+		interrupts =
-+			<GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
++struct pm_api_info {
++	u32 api_id;
++	char api_name[PM_API_NAME_LEN];
++	char api_name_len;
 +};
++
++static char debugfs_buf[PAGE_SIZE];
++
++#define PM_API(id)		 {id, #id, strlen(#id)}
++static struct pm_api_info pm_api_list[] = {
++	PM_API(PM_GET_API_VERSION),
++};
++
++/**
++ * zynqmp_pm_argument_value() - Extract argument value from a PM-API request
++ * @arg:	Entered PM-API argument in string format
++ *
++ * Return: Argument value in unsigned integer format on success
++ *	   0 otherwise
++ */
++static u64 zynqmp_pm_argument_value(char *arg)
++{
++	u64 value;
++
++	if (!arg)
++		return 0;
++
++	if (!kstrtou64(arg, 0, &value))
++		return value;
++
++	return 0;
++}
++
++/**
++ * get_pm_api_id() - Extract API-ID from a PM-API request
++ * @pm_api_req:		Entered PM-API argument in string format
++ * @pm_id:		API-ID
++ *
++ * Return: 0 on success else error code
++ */
++static int get_pm_api_id(char *pm_api_req, u32 *pm_id)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(pm_api_list) ; i++) {
++		if (!strncasecmp(pm_api_req, pm_api_list[i].api_name,
++				 pm_api_list[i].api_name_len)) {
++			*pm_id = pm_api_list[i].api_id;
++			break;
++		}
++	}
++
++	/* If no name was entered look for PM-API ID instead */
++	if (i == ARRAY_SIZE(pm_api_list) && kstrtouint(pm_api_req, 10, pm_id))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
++{
++	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
++	u32 pm_api_version;
++	int ret;
++
++	if (!eemi_ops)
++		return -ENXIO;
++
++	switch (pm_id) {
++	case PM_GET_API_VERSION:
++		ret = eemi_ops->get_api_version(&pm_api_version);
++		sprintf(debugfs_buf, "PM-API Version = %d.%d\n",
++			pm_api_version >> 16, pm_api_version & 0xffff);
++		break;
++	default:
++		sprintf(debugfs_buf, "Unsupported PM-API request\n");
++		ret = -EINVAL;
++	}
++
++	return ret;
++}
++
++/**
++ * zynqmp_pm_debugfs_api_write() - debugfs write function
++ * @file:	User file structure
++ * @ptr:	User entered PM-API string
++ * @len:	Length of the userspace buffer
++ * @off:	Offset within the file
++ *
++ * Used for triggering pm api functions by writing
++ * echo <pm_api_id>	> /sys/kernel/debug/zynqmp_pm/power or
++ * echo <pm_api_name>	> /sys/kernel/debug/zynqmp_pm/power
++ *
++ * Return: Number of bytes copied if PM-API request succeeds,
++ *	   the corresponding error code otherwise
++ */
++static ssize_t zynqmp_pm_debugfs_api_write(struct file *file,
++					   const char __user *ptr, size_t len,
++					   loff_t *off)
++{
++	char *kern_buff, *tmp_buff;
++	char *pm_api_req;
++	u32 pm_id = 0;
++	u64 pm_api_arg[4] = {0, 0, 0, 0};
++	/* Return values from PM APIs calls */
++	u32 pm_api_ret[4] = {0, 0, 0, 0};
++
++	int ret;
++	int i = 0;
++
++	strcpy(debugfs_buf, "");
++
++	if (*off != 0 || len == 0)
++		return -EINVAL;
++
++	kern_buff = kzalloc(len, GFP_KERNEL);
++	if (!kern_buff)
++		return -ENOMEM;
++
++	tmp_buff = kern_buff;
++
++	ret = strncpy_from_user(kern_buff, ptr, len);
++	if (ret < 0) {
++		ret = -EFAULT;
++		goto err;
++	}
++
++	/* Read the API name from a user request */
++	pm_api_req = strsep(&kern_buff, " ");
++
++	ret = get_pm_api_id(pm_api_req, &pm_id);
++	if (ret < 0)
++		goto err;
++
++	/* Read node_id and arguments from the PM-API request */
++	pm_api_req = strsep(&kern_buff, " ");
++	while ((i < ARRAY_SIZE(pm_api_arg)) && pm_api_req) {
++		pm_api_arg[i++] = zynqmp_pm_argument_value(pm_api_req);
++		pm_api_req = strsep(&kern_buff, " ");
++	}
++
++	ret = process_api_request(pm_id, pm_api_arg, pm_api_ret);
++
++err:
++	kfree(tmp_buff);
++	if (ret)
++		return ret;
++
++	return len;
++}
++
++/**
++ * zynqmp_pm_debugfs_api_read() - debugfs read function
++ * @file:	User file structure
++ * @ptr:	Requested pm_api_version string
++ * @len:	Length of the userspace buffer
++ * @off:	Offset within the file
++ *
++ * Return: Length of the version string on success
++ *	   else error code
++ */
++static ssize_t zynqmp_pm_debugfs_api_read(struct file *file, char __user *ptr,
++					  size_t len, loff_t *off)
++{
++	return simple_read_from_buffer(ptr, len, off, debugfs_buf,
++				       strlen(debugfs_buf));
++}
++
++/* Setup debugfs fops */
++static const struct file_operations fops_zynqmp_pm_dbgfs = {
++	.owner = THIS_MODULE,
++	.write = zynqmp_pm_debugfs_api_write,
++	.read = zynqmp_pm_debugfs_api_read,
++};
++
++/**
++ * zynqmp_pm_api_debugfs_init - Initialize debugfs interface
++ *
++ * Return:	None
++ */
++void zynqmp_pm_api_debugfs_init(void)
++{
++	struct dentry *root_dir;
++
++	/* Initialize debugfs interface */
++	root_dir = debugfs_create_dir("zynqmp-firmware", NULL);
++	debugfs_create_file("pm", 0660, root_dir, NULL,
++			    &fops_zynqmp_pm_dbgfs);
++}
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.h b/drivers/firmware/xilinx/zynqmp-debug.h
+new file mode 100644
+index 0000000..3303b37
+--- /dev/null
++++ b/drivers/firmware/xilinx/zynqmp-debug.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Xilinx Zynq MPSoC Firmware layer
++ *
++ *  Copyright (C) 2014-2018 Xilinx
++ *
++ *  Michal Simek <michal.simek@xilinx.com>
++ *  Davorin Mista <davorin.mista@aggios.com>
++ *  Jolly Shah <jollys@xilinx.com>
++ *  Rajan Vaja <rajanv@xilinx.com>
++ */
++
++#ifndef __FIRMWARE_ZYNQMP_DEBUG_H__
++#define __FIRMWARE_ZYNQMP_DEBUG_H__
++
++#if IS_REACHABLE(CONFIG_ZYNQMP_FIRMWARE_DEBUG)
++void zynqmp_pm_api_debugfs_init(void);
++#else
++static inline void zynqmp_pm_api_debugfs_init(void) { }
++#endif
++
++#endif /* __FIRMWARE_ZYNQMP_DEBUG_H__ */
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index c764d6e..83d2699 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -21,6 +21,7 @@
+ #include <linux/uaccess.h>
+ 
+ #include <linux/firmware/xlnx-zynqmp.h>
++#include "zynqmp-debug.h"
+ 
+ /**
+  * zynqmp_pm_ret_code() - Convert PMU-FW error codes to Linux error codes
+@@ -551,3 +552,11 @@ static int __init zynqmp_plat_init(void)
+ 	return ret;
+ }
+ early_initcall(zynqmp_plat_init);
++
++static int zynqmp_firmware_init(void)
++{
++	zynqmp_pm_api_debugfs_init();
++
++	return 0;
++}
++device_initcall(zynqmp_firmware_init);
 -- 
-2.11.0
+2.7.4
