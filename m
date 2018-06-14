@@ -1,67 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga07.intel.com ([134.134.136.100]:60351 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935884AbeFRJmT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:42:19 -0400
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-2-songjun.wu@linux.intel.com>
- <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
-From: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
-Date: Mon, 18 Jun 2018 17:42:14 +0800
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 01/10] dt-bindings: firmware: Add bindings for ZynqMP firmware
+Date: Thu, 14 Jun 2018 11:27:33 -0700
+Message-ID: <1529000862-11510-2-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Rajan Vaja <rajanv@xilinx.com>
 
+Add documentation to describe Xilinx ZynqMP firmware driver
+bindings. Firmware driver provides an interface to firmware
+APIs. Interface APIs can be used by any driver to communicate
+to PMUFW (Platform Management Unit).
 
-On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
-> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
->> Previous implementation uses a hard-coded register value to check if
->> the current serial entity is the console entity.
->> Now the lantiq serial driver uses the aliases for the index of the
->> serial port.
->> The lantiq danube serial dts are updated with aliases to support this.
->>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->>   arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
->> index 2dd950181f8a..7a9e15da6bd0 100644
->> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
->> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
->> @@ -4,6 +4,10 @@
->>          #size-cells = <1>;
->>          compatible = "lantiq,xway", "lantiq,danube";
->>
->> +       aliases {
->> +               serial0 = &asc1;
->> +       };
->> +
-> You generally want the aliases to be part of the board specific file,
-> not every board numbers their serial ports in the same way.
->
->         Arnd
-In this chip only asc1 can be used as console,  so serial0 is defined in 
-chip specific file.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+new file mode 100644
+index 0000000..1b431d9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -0,0 +1,29 @@
++-----------------------------------------------------------------
++Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
++-----------------------------------------------------------------
++
++The zynqmp-firmware node describes the interface to platform firmware.
++ZynqMP has an interface to communicate with secure firmware. Firmware
++driver provides an interface to firmware APIs. Interface APIs can be
++used by any driver to communicate to PMUFW(Platform Management Unit).
++These requests include clock management, pin control, device control,
++power management service, FPGA service and other platform management
++services.
++
++Required properties:
++ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
++ - method:	The method of calling the PM-API firmware layer.
++		Permitted values are:
++		  - "smc" : SMC #0, following the SMCCC
++		  - "hvc" : HVC #0, following the SMCCC
++
++-------
++Example
++-------
++
++firmware {
++	zynqmp_firmware: zynqmp-firmware {
++		compatible = "xlnx,zynqmp-firmware";
++		method = "smc";
++	};
++};
+-- 
+2.7.4
