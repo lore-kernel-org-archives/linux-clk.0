@@ -1,580 +1,370 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, Russell King <linux@armlinux.org.uk>,
- Stephen Boyd <sboyd@kernel.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20180619144141.8506-1-jbrunet@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180619144141.8506-1-jbrunet@baylibre.com>
-Message-ID: <20180619170737.33232.41279@harbor.lan>
-Subject: Re: [PATCH v4] clk: add duty cycle support
-Date: Tue, 19 Jun 2018 10:07:37 -0700
+Return-Path: <ilia.lin@gmail.com>
+Return-Path: <ilia.lin@gmail.com>
+From: ilia.lin@gmail.com
+To: ilia.lin@gmail.com
+Cc: Ilia Lin <ilialin@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Amit Kucheria <amit.kucheria@linaro.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v13 1/8] soc: qcom: Separate kryo l2 accessors from PMU driver
+Date: Thu, 14 Jun 2018 23:53:48 +0200
+Message-Id: <20180614215358.11264-2-ilia.lin@gmail.com>
+In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
+References: <20180614215358.11264-1-ilia.lin@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-06-19 07:41:41)
-> Add the possibility to apply and query the clock signal duty cycle ratio.
-> =
+From: Ilia Lin <ilialin@codeaurora.org>
 
-> This is useful when the duty cycle of the clock signal depends on some
-> other parameters controlled by the clock framework.
-> =
+The driver provides kernel level API for other drivers
+to access the MSM8996 L2 cache registers.
+Separating the L2 access code from the PMU driver and
+making it public to allow other drivers use it.
+The accesses must be separated with a single spinlock,
+maintained in this driver.
 
-> For example, the duty cycle of a divider may depends on the raw divider
-> setting (ratio =3D N / div) , which is controlled by the CCF. In such cas=
-e,
-> going through the pwm framework to control the duty cycle ratio of this
-> clock would be a burden.
-> =
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/perf/Kconfig                 |  1 +
+ drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
+ drivers/soc/qcom/Kconfig             |  3 ++
+ drivers/soc/qcom/Makefile            |  1 +
+ drivers/soc/qcom/kryo-l2-accessors.c | 56 ++++++++++++++++++++++
+ include/soc/qcom/kryo-l2-accessors.h | 12 +++++
+ 6 files changed, 97 insertions(+), 66 deletions(-)
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
 
-> A clock provider is not required to implement the operation to set and get
-> the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
-> assumed to be 50%.
-> =
-
-> This change also adds a new flag, CLK_DUTY_CYCLE_PARENT. This flag should
-> be used to indicate that a clock, such as gates and muxes, may inherit
-> the duty cycle ratio of its parent clock. If a clock does not provide a
-> get_duty_cycle() callback and has CLK_DUTY_CYCLE_PARENT, then the call
-> will be directly forwarded to its parent clock, if any. For
-> set_duty_cycle(), the clock should also have CLK_SET_RATE_PARENT for the
-> call to be forwarded
-> =
-
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-
-Applied to clk-core-duty-cycle.
-
-Regards,
-Mike
-
-> ---
-> =
-
-> The series has been developed to handled the sample clocks provided by
-> audio clock controller of amlogic's A113 SoC. To support i2s modes, this
-> clock need to have a 50% duty cycle ratio, while it should be just one
-> pulse of the parent clock in dsp modes.
-> =
-
-> Changes since v3 [2]:
->  - rebased on top of v4.18-rc1
-> =
-
-> Changes since v2 [1]:
->  - Fix kbuild robot issue with the trace file (imcomplete change related
->    to clk_duty structure)
-> =
-
-> Changes since v1 [0]:
->  - Use a structure to hold the duty cycle ratio
->  - Change the way parent traversal is done, so the core framework is
->    more aware of what is going on. Pass-through ops dropped as a result
->  - Only one debugfs entry for the duty cycle ratio, instead of 2
->  - Minor fixes as pointed out by Stephen
-> =
-
-> [0]: https://lkml.kernel.org/r/20180416175743.20826-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20180420153431.13003-1-jbrunet@baylibre.com
-> [2]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
-> =
-
->  drivers/clk/clk.c            | 199 +++++++++++++++++++++++++++++++++++++=
-++++--
->  include/linux/clk-provider.h |  26 ++++++
->  include/linux/clk.h          |  33 +++++++
->  include/trace/events/clk.h   |  36 ++++++++
->  4 files changed, 289 insertions(+), 5 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 97c09243fb21..e108f591d84a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -68,6 +68,7 @@ struct clk_core {
->         unsigned long           max_rate;
->         unsigned long           accuracy;
->         int                     phase;
-> +       struct clk_duty         duty;
->         struct hlist_head       children;
->         struct hlist_node       child_node;
->         struct hlist_head       clks;
-> @@ -2412,6 +2413,172 @@ int clk_get_phase(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_get_phase);
->  =
-
-> +static void clk_core_reset_duty_cycle_nolock(struct clk_core *core)
-> +{
-> +       /* Assume a default value of 50% */
-> +       core->duty.num =3D 1;
-> +       core->duty.den =3D 2;
-> +}
-> +
-> +static int clk_core_update_duty_cycle_parent_nolock(struct clk_core *cor=
-e);
-> +
-> +static int clk_core_update_duty_cycle_nolock(struct clk_core *core)
-> +{
-> +       struct clk_duty *duty =3D &core->duty;
-> +       int ret =3D 0;
-> +
-> +       if (!core->ops->get_duty_cycle)
-> +               return clk_core_update_duty_cycle_parent_nolock(core);
-> +
-> +       ret =3D core->ops->get_duty_cycle(core->hw, duty);
-> +       if (ret)
-> +               goto reset;
-> +
-> +       /* Don't trust the clock provider too much */
-> +       if (duty->den =3D=3D 0 || duty->num > duty->den) {
-> +               ret =3D -EINVAL;
-> +               goto reset;
-> +       }
-> +
-> +       return 0;
-> +
-> +reset:
-> +       clk_core_reset_duty_cycle_nolock(core);
-> +       return ret;
-> +}
-> +
-> +static int clk_core_update_duty_cycle_parent_nolock(struct clk_core *cor=
-e)
-> +{
-> +       int ret =3D 0;
-> +
-> +       if (core->parent &&
-> +           core->flags & CLK_DUTY_CYCLE_PARENT) {
-> +               ret =3D clk_core_update_duty_cycle_nolock(core->parent);
-> +               memcpy(&core->duty, &core->parent->duty, sizeof(core->dut=
-y));
-> +       } else {
-> +               clk_core_reset_duty_cycle_nolock(core);
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int clk_core_set_duty_cycle_parent_nolock(struct clk_core *core,
-> +                                                struct clk_duty *duty);
-> +
-> +static int clk_core_set_duty_cycle_nolock(struct clk_core *core,
-> +                                         struct clk_duty *duty)
-> +{
-> +       int ret;
-> +
-> +       lockdep_assert_held(&prepare_lock);
-> +
-> +       if (clk_core_rate_is_protected(core))
-> +               return -EBUSY;
-> +
-> +       trace_clk_set_duty_cycle(core, duty);
-> +
-> +       if (!core->ops->set_duty_cycle)
-> +               return clk_core_set_duty_cycle_parent_nolock(core, duty);
-> +
-> +       ret =3D core->ops->set_duty_cycle(core->hw, duty);
-> +       if (!ret)
-> +               memcpy(&core->duty, duty, sizeof(*duty));
-> +
-> +       trace_clk_set_duty_cycle_complete(core, duty);
-> +
-> +       return ret;
-> +}
-> +
-> +static int clk_core_set_duty_cycle_parent_nolock(struct clk_core *core,
-> +                                                struct clk_duty *duty)
-> +{
-> +       int ret =3D 0;
-> +
-> +       if (core->parent &&
-> +           core->flags & (CLK_DUTY_CYCLE_PARENT | CLK_SET_RATE_PARENT)) {
-> +               ret =3D clk_core_set_duty_cycle_nolock(core->parent, duty=
-);
-> +               memcpy(&core->duty, &core->parent->duty, sizeof(core->dut=
-y));
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +/**
-> + * clk_set_duty_cycle - adjust the duty cycle ratio of a clock signal
-> + * @clk: clock signal source
-> + * @num: numerator of the duty cycle ratio to be applied
-> + * @den: denominator of the duty cycle ratio to be applied
-> + *
-> + * Apply the duty cycle ratio if the ratio is valid and the clock can
-> + * perform this operation
-> + *
-> + * Returns (0) on success, a negative errno otherwise.
-> + */
-> +int clk_set_duty_cycle(struct clk *clk, unsigned int num, unsigned int d=
-en)
-> +{
-> +       int ret;
-> +       struct clk_duty duty;
-> +
-> +       if (!clk)
-> +               return 0;
-> +
-> +       /* sanity check the ratio */
-> +       if (den =3D=3D 0 || num > den)
-> +               return -EINVAL;
-> +
-> +       duty.num =3D num;
-> +       duty.den =3D den;
-> +
-> +       clk_prepare_lock();
-> +
-> +       if (clk->exclusive_count)
-> +               clk_core_rate_unprotect(clk->core);
-> +
-> +       ret =3D clk_core_set_duty_cycle_nolock(clk->core, &duty);
-> +
-> +       if (clk->exclusive_count)
-> +               clk_core_rate_protect(clk->core);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_set_duty_cycle);
-> +
-> +static int clk_core_get_scaled_duty_cycle(struct clk_core *core,
-> +                                         unsigned int scale)
-> +{
-> +       struct clk_duty *duty =3D &core->duty;
-> +       int ret;
-> +
-> +       clk_prepare_lock();
-> +
-> +       ret =3D clk_core_update_duty_cycle_nolock(core);
-> +       if (!ret)
-> +               ret =3D mult_frac(scale, duty->num, duty->den);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return ret;
-> +}
-> +
-> +/**
-> + * clk_get_scaled_duty_cycle - return the duty cycle ratio of a clock si=
-gnal
-> + * @clk: clock signal source
-> + * @scale: scaling factor to be applied to represent the ratio as an int=
-eger
-> + *
-> + * Returns the duty cycle ratio of a clock node multiplied by the provid=
-ed
-> + * scaling factor, or negative errno on error.
-> + */
-> +int clk_get_scaled_duty_cycle(struct clk *clk, unsigned int scale)
-> +{
-> +       if (!clk)
-> +               return 0;
-> +
-> +       return clk_core_get_scaled_duty_cycle(clk->core, scale);
-> +}
-> +EXPORT_SYMBOL_GPL(clk_get_scaled_duty_cycle);
-> +
->  /**
->   * clk_is_match - check if two clk's point to the same hardware clock
->   * @p: clk compared against q
-> @@ -2465,12 +2632,13 @@ static void clk_summary_show_one(struct seq_file =
-*s, struct clk_core *c,
->         if (!c)
->                 return;
->  =
-
-> -       seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %-3d\n",
-> +       seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
->                    level * 3 + 1, "",
->                    30 - level * 3, c->name,
->                    c->enable_count, c->prepare_count, c->protect_count,
->                    clk_core_get_rate(c), clk_core_get_accuracy(c),
-> -                  clk_core_get_phase(c));
-> +                  clk_core_get_phase(c),
-> +                  clk_core_get_scaled_duty_cycle(c, 100000));
->  }
->  =
-
->  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core=
- *c,
-> @@ -2492,9 +2660,9 @@ static int clk_summary_show(struct seq_file *s, voi=
-d *data)
->         struct clk_core *c;
->         struct hlist_head **lists =3D (struct hlist_head **)s->private;
->  =
-
-> -       seq_puts(s, "                                 enable  prepare  pr=
-otect                               \n");
-> -       seq_puts(s, "   clock                          count    count    =
-count        rate   accuracy   phase\n");
-> -       seq_puts(s, "----------------------------------------------------=
-------------------------------------\n");
-> +       seq_puts(s, "                                 enable  prepare  pr=
-otect                                duty\n");
-> +       seq_puts(s, "   clock                          count    count    =
-count        rate   accuracy phase  cycle\n");
-> +       seq_puts(s, "----------------------------------------------------=
------------------------------------------\n");
->  =
-
->         clk_prepare_lock();
->  =
-
-> @@ -2521,6 +2689,8 @@ static void clk_dump_one(struct seq_file *s, struct=
- clk_core *c, int level)
->         seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
->         seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
->         seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
-> +       seq_printf(s, "\"duty_cycle\": %u",
-> +                  clk_core_get_scaled_duty_cycle(c, 100000));
->  }
->  =
-
->  static void clk_dump_subtree(struct seq_file *s, struct clk_core *c, int=
- level)
-> @@ -2582,6 +2752,7 @@ static const struct {
->         ENTRY(CLK_SET_RATE_UNGATE),
->         ENTRY(CLK_IS_CRITICAL),
->         ENTRY(CLK_OPS_PARENT_ENABLE),
-> +       ENTRY(CLK_DUTY_CYCLE_PARENT),
->  #undef ENTRY
->  };
->  =
-
-> @@ -2620,6 +2791,17 @@ static int possible_parents_show(struct seq_file *=
-s, void *data)
->  }
->  DEFINE_SHOW_ATTRIBUTE(possible_parents);
->  =
-
-> +static int clk_duty_cycle_show(struct seq_file *s, void *data)
-> +{
-> +       struct clk_core *core =3D s->private;
-> +       struct clk_duty *duty =3D &core->duty;
-> +
-> +       seq_printf(s, "%u/%u\n", duty->num, duty->den);
-> +
-> +       return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(clk_duty_cycle);
-> +
->  static void clk_debug_create_one(struct clk_core *core, struct dentry *p=
-dentry)
->  {
->         struct dentry *root;
-> @@ -2638,6 +2820,8 @@ static void clk_debug_create_one(struct clk_core *c=
-ore, struct dentry *pdentry)
->         debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_=
-count);
->         debugfs_create_u32("clk_protect_count", 0444, root, &core->protec=
-t_count);
->         debugfs_create_u32("clk_notifier_count", 0444, root, &core->notif=
-ier_count);
-> +       debugfs_create_file("clk_duty_cycle", 0444, root, core,
-> +                           &clk_duty_cycle_fops);
->  =
-
->         if (core->num_parents > 1)
->                 debugfs_create_file("clk_possible_parents", 0444, root, c=
-ore,
-> @@ -2855,6 +3039,11 @@ static int __clk_core_init(struct clk_core *core)
->         else
->                 core->phase =3D 0;
->  =
-
-> +       /*
-> +        * Set clk's duty cycle.
-> +        */
-> +       clk_core_update_duty_cycle_nolock(core);
-> +
->         /*
->          * Set clk's rate.  The preferred method is to use .recalc_rate. =
- For
->          * simple clocks and lazy developers the default fallback is to u=
-se the
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index b7cfa037e593..08b1aa70a38d 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -38,6 +38,8 @@
->  #define CLK_IS_CRITICAL                BIT(11) /* do not gate, ever */
->  /* parents need enable during gate/ungate, set rate and re-parent */
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
-> +/* duty cycle call may be forwarded to the parent clock */
-> +#define CLK_DUTY_CYCLE_PARENT  BIT(13)
->  =
-
->  struct clk;
->  struct clk_hw;
-> @@ -66,6 +68,17 @@ struct clk_rate_request {
->         struct clk_hw *best_parent_hw;
->  };
->  =
-
-> +/**
-> + * struct clk_duty - Struture encoding the duty cycle ratio of a clock
-> + *
-> + * @num:       Numerator of the duty cycle ratio
-> + * @den:       Denominator of the duty cycle ratio
-> + */
-> +struct clk_duty {
-> +       unsigned int num;
-> +       unsigned int den;
-> +};
-> +
->  /**
->   * struct clk_ops -  Callback operations for hardware clocks; these are =
-to
->   * be provided by the clock implementation, and will be called by drivers
-> @@ -169,6 +182,15 @@ struct clk_rate_request {
->   *             by the second argument. Valid values for degrees are
->   *             0-359. Return 0 on success, otherwise -EERROR.
->   *
-> + * @get_duty_cycle: Queries the hardware to get the current duty cycle r=
-atio
-> + *              of a clock. Returned values denominator cannot be 0 and =
-must be
-> + *              superior or equal to the numerator.
-> + *
-> + * @set_duty_cycle: Apply the duty cycle ratio to this clock signal spec=
-ified by
-> + *              the numerator (2nd argurment) and denominator (3rd  argu=
-ment).
-> + *              Argument must be a valid ratio (denominator > 0
-> + *              and >=3D numerator) Return 0 on success, otherwise -EERR=
-OR.
-> + *
->   * @init:      Perform platform-specific initialization magic.
->   *             This is not not used by any of the basic clock types.
->   *             Please consider other ways of solving initialization prob=
-lems
-> @@ -218,6 +240,10 @@ struct clk_ops {
->                                            unsigned long parent_accuracy);
->         int             (*get_phase)(struct clk_hw *hw);
->         int             (*set_phase)(struct clk_hw *hw, int degrees);
-> +       int             (*get_duty_cycle)(struct clk_hw *hw,
-> +                                         struct clk_duty *duty);
-> +       int             (*set_duty_cycle)(struct clk_hw *hw,
-> +                                         struct clk_duty *duty);
->         void            (*init)(struct clk_hw *hw);
->         void            (*debug_init)(struct clk_hw *hw, struct dentry *d=
-entry);
->  };
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 0dbd0885b2c2..4f750c481b82 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -141,6 +141,27 @@ int clk_set_phase(struct clk *clk, int degrees);
->   */
->  int clk_get_phase(struct clk *clk);
->  =
-
-> +/**
-> + * clk_set_duty_cycle - adjust the duty cycle ratio of a clock signal
-> + * @clk: clock signal source
-> + * @num: numerator of the duty cycle ratio to be applied
-> + * @den: denominator of the duty cycle ratio to be applied
-> + *
-> + * Adjust the duty cycle of a clock signal by the specified ratio. Retur=
-ns 0 on
-> + * success, -EERROR otherwise.
-> + */
-> +int clk_set_duty_cycle(struct clk *clk, unsigned int num, unsigned int d=
-en);
-> +
-> +/**
-> + * clk_get_duty_cycle - return the duty cycle ratio of a clock signal
-> + * @clk: clock signal source
-> + * @scale: scaling factor to be applied to represent the ratio as an int=
-eger
-> + *
-> + * Returns the duty cycle ratio multiplied by the scale provided, otherw=
-ise
-> + * returns -EERROR.
-> + */
-> +int clk_get_scaled_duty_cycle(struct clk *clk, unsigned int scale);
-> +
->  /**
->   * clk_is_match - check if two clk's point to the same hardware clock
->   * @p: clk compared against q
-> @@ -183,6 +204,18 @@ static inline long clk_get_phase(struct clk *clk)
->         return -ENOTSUPP;
->  }
->  =
-
-> +static inline int clk_set_duty_cycle(struct clk *clk, unsigned int num,
-> +                                    unsigned int den)
-> +{
-> +       return -ENOTSUPP;
-> +}
-> +
-> +static inline unsigned int clk_get_scaled_duty_cycle(struct clk *clk,
-> +                                                    unsigned int scale)
-> +{
-> +       return 0;
-> +}
-> +
->  static inline bool clk_is_match(const struct clk *p, const struct clk *q)
->  {
->         return p =3D=3D q;
-> diff --git a/include/trace/events/clk.h b/include/trace/events/clk.h
-> index 2cd449328aee..9004ffff7f32 100644
-> --- a/include/trace/events/clk.h
-> +++ b/include/trace/events/clk.h
-> @@ -192,6 +192,42 @@ DEFINE_EVENT(clk_phase, clk_set_phase_complete,
->         TP_ARGS(core, phase)
->  );
->  =
-
-> +DECLARE_EVENT_CLASS(clk_duty_cycle,
-> +
-> +       TP_PROTO(struct clk_core *core, struct clk_duty *duty),
-> +
-> +       TP_ARGS(core, duty),
-> +
-> +       TP_STRUCT__entry(
-> +               __string(        name,           core->name              )
-> +               __field( unsigned int,           num                     )
-> +               __field( unsigned int,           den                     )
-> +       ),
-> +
-> +       TP_fast_assign(
-> +               __assign_str(name, core->name);
-> +               __entry->num =3D duty->num;
-> +               __entry->den =3D duty->den;
-> +       ),
-> +
-> +       TP_printk("%s %u/%u", __get_str(name), (unsigned int)__entry->num,
-> +                 (unsigned int)__entry->den)
-> +);
-> +
-> +DEFINE_EVENT(clk_duty_cycle, clk_set_duty_cycle,
-> +
-> +       TP_PROTO(struct clk_core *core, struct clk_duty *duty),
-> +
-> +       TP_ARGS(core, duty)
-> +);
-> +
-> +DEFINE_EVENT(clk_duty_cycle, clk_set_duty_cycle_complete,
-> +
-> +       TP_PROTO(struct clk_core *core, struct clk_duty *duty),
-> +
-> +       TP_ARGS(core, duty)
-> +);
-> +
->  #endif /* _TRACE_CLK_H */
->  =
-
->  /* This part must be outside protection */
-> -- =
-
-> 2.14.3
->=20
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 08ebaf7cca8b..5c3f07cd79f4 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -71,6 +71,7 @@ config HISI_PMU
+ config QCOM_L2_PMU
+ 	bool "Qualcomm Technologies L2-cache PMU"
+ 	depends on ARCH_QCOM && ARM64 && ACPI
++	select QCOM_KRYO_L2_ACCESSORS
+ 	  help
+ 	  Provides support for the L2 cache performance monitor unit (PMU)
+ 	  in Qualcomm Technologies processors.
+diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+index 842135cf35a3..cc31f5162942 100644
+--- a/drivers/perf/qcom_l2_pmu.c
++++ b/drivers/perf/qcom_l2_pmu.c
+@@ -31,6 +31,7 @@
+ #include <asm/barrier.h>
+ #include <asm/local64.h>
+ #include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
+ 
+ #define MAX_L2_CTRS             9
+ 
+@@ -87,8 +88,6 @@
+ #define L2_COUNTER_RELOAD       BIT_ULL(31)
+ #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
+ 
+-#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
+-#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
+ 
+ #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
+ 
+@@ -107,48 +106,7 @@
+ #define L2_EVENT_STREX                     0x421
+ #define L2_EVENT_CLREX                     0x422
+ 
+-static DEFINE_RAW_SPINLOCK(l2_access_lock);
+ 
+-/**
+- * set_l2_indirect_reg: write value to an L2 register
+- * @reg: Address of L2 register.
+- * @value: Value to be written to register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static void set_l2_indirect_reg(u64 reg, u64 val)
+-{
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	write_sysreg_s(val, L2CPUSRDR_EL1);
+-	isb();
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-}
+-
+-/**
+- * get_l2_indirect_reg: read an L2 register value
+- * @reg: Address of L2 register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static u64 get_l2_indirect_reg(u64 reg)
+-{
+-	u64 val;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	val = read_sysreg_s(L2CPUSRDR_EL1);
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-
+-	return val;
+-}
+ 
+ struct cluster_pmu;
+ 
+@@ -219,28 +177,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
+ static void cluster_pmu_reset(void)
+ {
+ 	/* Reset all counters */
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
+-	set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
+ }
+ 
+ static inline void cluster_pmu_enable(void)
+ {
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
+ }
+ 
+ static inline void cluster_pmu_disable(void)
+ {
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
+ }
+ 
+ static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
+ {
+ 	if (idx == l2_cycle_ctr_idx)
+-		set_l2_indirect_reg(L2PMCCNTR, value);
++		kryo_l2_set_indirect_reg(L2PMCCNTR, value);
+ 	else
+-		set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
++		kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
+ }
+ 
+ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+@@ -248,46 +206,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+ 	u64 value;
+ 
+ 	if (idx == l2_cycle_ctr_idx)
+-		value = get_l2_indirect_reg(L2PMCCNTR);
++		value = kryo_l2_get_indirect_reg(L2PMCCNTR);
+ 	else
+-		value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
++		value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
+ 
+ 	return value;
+ }
+ 
+ static inline void cluster_pmu_counter_enable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_disable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_set_evccntcr(u32 val)
+ {
+-	set_l2_indirect_reg(L2PMCCNTCR, val);
++	kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
+ }
+ 
+ static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
+ }
+ 
+ static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
+ }
+ 
+ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+@@ -303,11 +261,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+ 
+ 	spin_lock_irqsave(&cluster->pmu_lock, flags);
+ 
+-	resr_val = get_l2_indirect_reg(L2PMRESR);
++	resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
+ 	resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
+ 	resr_val |= field;
+ 	resr_val |= L2PMRESR_EN;
+-	set_l2_indirect_reg(L2PMRESR, resr_val);
++	kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
+ 
+ 	spin_unlock_irqrestore(&cluster->pmu_lock, flags);
+ }
+@@ -323,14 +281,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
+ 		   L2PMXEVFILTER_ORGFILTER_IDINDEP |
+ 		   L2PMXEVFILTER_ORGFILTER_ALL;
+ 
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
+ }
+ 
+ static inline u32 cluster_pmu_getreset_ovsr(void)
+ {
+-	u32 result = get_l2_indirect_reg(L2PMOVSSET);
++	u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
+ 
+-	set_l2_indirect_reg(L2PMOVSCLR, result);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
+ 	return result;
+ }
+ 
+@@ -783,7 +741,7 @@ static int get_num_counters(void)
+ {
+ 	int val;
+ 
+-	val = get_l2_indirect_reg(L2PMCR);
++	val = kryo_l2_get_indirect_reg(L2PMCR);
+ 
+ 	/*
+ 	 * Read number of counters from L2PMCR and add 1
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 9dc02f390ba3..e97a9e6d4232 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -39,6 +39,9 @@ config QCOM_GSBI
+           functions for connecting the underlying serial UART, SPI, and I2C
+           devices to the output pins.
+ 
++config QCOM_KRYO_L2_ACCESSORS
++       bool
++
+ config QCOM_MDT_LOADER
+ 	tristate
+ 	select QCOM_SCM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 19dcf957cb3a..18545b1dd161 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+ obj-$(CONFIG_QCOM_APR) += apr.o
++obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
+diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
+new file mode 100644
+index 000000000000..75fd07a5a886
+--- /dev/null
++++ b/drivers/soc/qcom/kryo-l2-accessors.c
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/spinlock.h>
++#include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
++
++#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
++#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
++
++static DEFINE_RAW_SPINLOCK(l2_access_lock);
++
++/**
++ * kryo_l2_set_indirect_reg() - write value to an L2 register
++ * @reg: Address of L2 register.
++ * @value: Value to be written to register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++void kryo_l2_set_indirect_reg(u64 reg, u64 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	write_sysreg_s(val, L2CPUSRDR_EL1);
++	isb();
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++}
++EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
++
++/**
++ * kryo_l2_get_indirect_reg() - read an L2 register value
++ * @reg: Address of L2 register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++u64 kryo_l2_get_indirect_reg(u64 reg)
++{
++	u64 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	val = read_sysreg_s(L2CPUSRDR_EL1);
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
+diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
+new file mode 100644
+index 000000000000..673c5344afe3
+--- /dev/null
++++ b/include/soc/qcom/kryo-l2-accessors.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++
++void kryo_l2_set_indirect_reg(u64 reg, u64 val);
++u64 kryo_l2_get_indirect_reg(u64 reg);
++
++#endif
+-- 
+2.11.0
