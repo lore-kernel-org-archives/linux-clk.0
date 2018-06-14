@@ -1,97 +1,68 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:41583 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752759AbeFNIBh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:01:37 -0400
-Subject: Re: [PATCH 3/7] MIPS: intel: Add initial support for Intel MIPS SoCs
-To: Rob Herring <robh@kernel.org>,
-        Songjun Wu <songjun.wu@linux.intel.com>
-Cc: yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        linux-mips@linux-mips.org, qi-ming.wu@intel.com,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-4-songjun.wu@linux.intel.com>
- <20180612223153.GB2197@rob-hp-laptop>
-From: Hua Ma <hua.ma@linux.intel.com>
-Message-ID: <821a2d72-da13-4dbe-4413-edc25f01e9fb@linux.intel.com>
-Date: Thu, 14 Jun 2018 16:01:31 +0800
+Received: from mail-it0-f49.google.com ([209.85.214.49]:52656 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752876AbeFNIXh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jun 2018 04:23:37 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180612223153.GB2197@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180613124850.w3bzerkpkbql6ite@pengutronix.de>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601065821.28234-5-o.rempel@pengutronix.de> <CAA+hA=RpoRXUK+jB18F4OeYE9PG73SDa_NLYeN5Q2G3B1bC-JA@mail.gmail.com>
+ <20180613124850.w3bzerkpkbql6ite@pengutronix.de>
+From: Dong Aisheng <dongas86@gmail.com>
+Date: Thu, 14 Jun 2018 16:23:36 +0800
+Message-ID: <CAA+hA=TjExQ7B3Px2HBHSejexBcXE_b93=8h8uihUkKDD9fpFw@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] mailbox: Add support for i.MX7D messaging unit
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Sascha,
 
-On 6/13/2018 6:31 AM, Rob Herring wrote:
-> On Tue, Jun 12, 2018 at 01:40:30PM +0800, Songjun Wu wrote:
->> From: Hua Ma <hua.ma@linux.intel.com>
+On Wed, Jun 13, 2018 at 8:48 PM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> On Wed, Jun 13, 2018 at 08:21:10PM +0800, Dong Aisheng wrote:
+>> Hi Oleksij,
 >>
->> Add initial support for Intel MIPS interAptiv SoCs made by Intel.
->> This series will add support for the GRX500 family.
+>> On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>> > The Mailbox controller is able to send messages (up to 4 32 bit words)
+>> > between the endpoints.
 >>
->> The series allows booting a minimal system using a initramfs.
+>> Could we really be able to send up to 4 42bit words with this driver?
 >>
->> Signed-off-by: Hua ma <hua.ma@linux.intel.com>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->>   arch/mips/Kbuild.platforms                         |   1 +
->>   arch/mips/Kconfig                                  |  36 ++++
->>   arch/mips/boot/dts/Makefile                        |   1 +
->>   arch/mips/boot/dts/intel-mips/Makefile             |   3 +
->>   arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +++
->>   arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 +++++++++++++++++++++
-> Please split dts files to separate patch.
-Thanks,
-it will be split into separate patches: one for dts, one for mips codes 
-and one for the document.
->> diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> new file mode 100644
->> index 000000000000..40177f6cee1e
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> @@ -0,0 +1,20 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/interrupt-controller/mips-gic.h>
->> +#include <dt-bindings/clock/intel,grx500-clk.h>
->> +
->> +#include "xrx500.dtsi"
->> +
->> +/ {
->> +	model = "EASY350 ANYWAN (GRX350) Main model";
-> A board should have a board specific compatible, too.
-The board compatible will be added.
+>> It looks to me the current Mailbox framework is more designed for share mem
+>> transfer which does not fit i.MX MU well.
 >
->> +	chosen {
->> +		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
->> +		stdout-path = "serial0";
->> +	};
->> +
->> +	memory@0 {
-> memory@20000000
-The memory address will be changed to @20000000.
+> The mailbox framework just defines channels and messages. A message is a
+> void * which may contain arbitrary data or even no data at all; some
+> drivers simply ignore the message pointer, so in fact they act as a
+> doorbell unit only.
 >
->> +		device_type = "memory";
->> +		reg = <0x20000000 0x0e000000>;
->> +	};
->> +};
->> diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
->> new file mode 100644
->> index 000000000000..04a068d6d96b
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
->> @@ -0,0 +1,196 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/ {
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +	compatible = "intel,xrx500";
-> This needs to be documented.
-The compatible will be updated in the document.
+> There's nothing about shared memory in the mailbox framework, but of
+> course you can combine a mailbox driver and shared memory to a remote
+> message mechanism. That could be done with the i.MX MU aswell and would
+> indeed be a good match for the hardware.
+>
 
+Yes, you're right. My earlier reply is less accurate.
+It seems the actual data type is interpreted by the underlying MU driver.
+
+Regards
+Dong Aisheng
+
+> Sascha
+>
+> --
+> Pengutronix e.K.                           |                             |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
