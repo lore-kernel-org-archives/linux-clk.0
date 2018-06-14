@@ -1,127 +1,60 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v2 09/27] drm/sun4i: Don't skip TCONs if they don't have
- channel 0
-Date: Tue, 12 Jun 2018 22:00:18 +0200
-Message-Id: <20180612200036.21483-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-3-songjun.wu@linux.intel.com> <20180612223725.GC2197@rob-hp-laptop>
+ <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 14 Jun 2018 08:09:14 -0600
+Message-ID: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
+To: yixin zhu <yixin.zhu@linux.intel.com>
+Cc: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+	chuanhua.lei@linux.intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
+	qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
-Because of that, all output endpoints on such TCON node will point to a
-encoder which is part of component framework.
+On Thu, Jun 14, 2018 at 2:40 AM, yixin zhu <yixin.zhu@linux.intel.com> wrote:
+>
+>
+> On 6/13/2018 6:37 AM, Rob Herring wrote:
+>>
+>> On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
+>>>
+>>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>>
+>>> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
 
-Correct current graph traversing algorithm in such way that it doesn't
-skip output enpoints with id 0 on TV TCONs.
+[...]
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 52 +++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+>>> +Example:
+>>> +       clkgate0: clkgate0 {
+>>> +               #clock-cells = <1>;
+>>> +               compatible = "intel,grx500-gate0-clk";
+>>> +               reg = <0x114>;
+>>> +               clock-output-names = "gate_xbar0", "gate_xbar1",
+>>> "gate_xbar2",
+>>> +               "gate_xbar3", "gate_xbar6", "gate_xbar7";
+>>> +       };
+>>
+>>
+>> We generally don't do a clock node per clock or few clocks but rather 1
+>> clock node per clock controller block. See any recent clock bindings.
+>>
+>> Rob
+>
+> Do you mean only one example is needed per clock controller block?
+> cpuclk is not needed in the document?
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index e6c62c079146..6ddf4eaccb40 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -198,6 +198,22 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
- 	return !!of_match_node(sun4i_tcon_of_table, node);
- }
- 
-+static bool sun4i_drv_node_is_tcon_with_ch0(struct device_node *node)
-+{
-+	const struct of_device_id *match;
-+
-+	match = of_match_node(sun4i_tcon_of_table, node);
-+	if (match) {
-+		struct sun4i_tcon_quirks *quirks;
-+
-+		quirks = (struct sun4i_tcon_quirks *)match->data;
-+
-+		return quirks->has_channel_0;
-+	}
-+
-+	return false;
-+}
-+
- static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
- {
- 	return !!of_match_node(sun8i_tcon_top_of_table, node);
-@@ -256,14 +272,7 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
- 			continue;
- 		}
- 
--		/*
--		 * If the node is our TCON, the first port is used for
--		 * panel or bridges, and will not be part of the
--		 * component framework.
--		 */
- 		if (sun4i_drv_node_is_tcon(node)) {
--			struct of_endpoint endpoint;
--
- 			/*
- 			 * TCON TOP is always probed before TCON. However, TCON
- 			 * points back to TCON TOP when it is source for HDMI.
-@@ -276,16 +285,25 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
- 				continue;
- 			}
- 
--			if (of_graph_parse_endpoint(ep, &endpoint)) {
--				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
--				of_node_put(remote);
--				continue;
--			}
--
--			if (!endpoint.id) {
--				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
--				of_node_put(remote);
--				continue;
-+			/*
-+			 * If the node is our TCON with channel 0, the first
-+			 * port is used for panel or bridges, and will not be
-+			 * part of the component framework.
-+			 */
-+			if (sun4i_drv_node_is_tcon_with_ch0(node)) {
-+				struct of_endpoint endpoint;
-+
-+				if (of_graph_parse_endpoint(ep, &endpoint)) {
-+					DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+					of_node_put(remote);
-+					continue;
-+				}
-+
-+				if (!endpoint.id) {
-+					DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+					of_node_put(remote);
-+					continue;
-+				}
- 			}
- 		}
- 
--- 
-2.17.1
+No, I mean generally we have 1 DT node for the h/w block with all the
+clock control registers rather than nodes with a single register and 1
+or a couple of clocks. Sometimes the clock registers are mixed with
+other functions which complicates things a bit. But I can't tell that
+here because you haven't documented what's in the rest of the register
+space.
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Rob
