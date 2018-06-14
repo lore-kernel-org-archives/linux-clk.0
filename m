@@ -1,97 +1,115 @@
-Return-Path: <ctatlor97@gmail.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
+Date: Thu, 14 Jun 2018 11:27:32 -0700
+Message-ID: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
- <1529415925-28915-14-git-send-email-sricharan@codeaurora.org> <f195e30e-bef3-9352-9584-fec35631ec5e@arm.com>
-In-Reply-To: <f195e30e-bef3-9352-9584-fec35631ec5e@arm.com>
-From: Craig Tatlor <ctatlor97@gmail.com>
-Date: Tue, 19 Jun 2018 15:49:03 +0100
-Message-ID: <CAALoacqzwcZjfDENwATsaDC87UmLnksfbYsj6EZTz2t8L-=YiQ@mail.gmail.com>
-Subject: Re: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on
- Krait CPUs
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Sricharan R <sricharan@codeaurora.org>, Rob Herring <robh@kernel.org>, viresh.kumar@linaro.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-	rjw@rjwysocki.net, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
-	thierry.escande@linaro.org
-Content-Type: multipart/alternative; boundary="000000000000342194056effc973"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
---000000000000342194056effc973
-Content-Type: text/plain; charset="UTF-8"
+v8:
+ - corrected typo in clk Kconfig
+ 
+v7:
+ - Removed xilinx specific clock debugfs API support
+ - Added reviewed-by tags for FW and clock bindings
+ - Updated clock node name to clock-controller
 
-The pvs refuse check is incorrect... With downstream it says it isn't blown
-and that it is 11, which also happens on upstream if I import it's efuse
-reading code from an older revision, or comment out the check.
+v6:
+ - Broke patch series to have base FW driver and Clock driver user
+ - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10230759/
+	https://patchwork.kernel.org/patch/10250047/
 
-Also, I'm still getting my issue about clocks above 2,147,483,647hz however
-I think this may be related to the division in the hfpll driver so I'll
-have a debug around there.
+v5:
+ - Added ATF version check support
+ - Updated some functions to be static 
+ - Minor function name corrections
 
-On Tue, 19 Jun 2018, 14:56 Sudeep Holla, <sudeep.holla@arm.com> wrote:
+v4:
+ - Changed clock setrate/getrate API prototype to support 64 bit rate
+ - Defined macros for get_node_status return values
+ - Moved DT node as a child of firmware
+ - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
+ - Minor changes to incorporate other review comments from v3 patch series
 
->
->
-> On 19/06/18 14:45, Sricharan R wrote:
-> > From: Stephen Boyd <sboyd@codeaurora.org>
-> >
-> > Register a cpufreq-generic device whenever we detect that a
-> > "qcom,krait" compatible CPU is present in DT.
-> >
->
-> Just curious to know how different is this from qcom kryo driver
-> that was added recently. IIRC even that gets the speedbin from nvmem.
-> Can they be merged ? I don't see need to have different driver for Krait
-> and Kryo CPUs when the code is not even remotely related to CPU type.
->
-> Sorry if I have missed anything from previous versions, I just happen
-> to open and looked at this series first time today.
->
-> --
-> Regards,
-> Sudeep
->
+v3:
+ - added some fixes to firmware-ggs.c
+ - updated pinmux get/set function argument names to specify function id instead of node id
+ - added new pinctrl query macros
+ - incorporated review comments from v2 patch series
 
---000000000000342194056effc973
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+v2:
+ - change SPDX-License-Identifier license text style
+ - split patch into multiple patches
+ - Updated copyrights
+ - Added ABI documentation
+ - incorporated logical review comments from previuos patch. Discussed below:
+	https://patchwork.kernel.org/patch/10150665/
 
-<div dir=3D"auto"><div>The pvs refuse check is incorrect... With downstream=
- it says it isn&#39;t blown and that it is 11, which also happens on upstre=
-am if I import it&#39;s efuse reading code from an older revision, or comme=
-nt out the check.</div><div dir=3D"auto"><br></div><div dir=3D"auto">Also, =
-I&#39;m still getting my issue about clocks above=C2=A02,147,483,647hz howe=
-ver I think this may be related to the division in the hfpll driver so I&#3=
-9;ll have a debug around there.</div><div dir=3D"auto"><br></div><div dir=
-=3D"auto"><div class=3D"gmail_quote" dir=3D"auto"><div dir=3D"ltr">On Tue, =
-19 Jun 2018, 14:56 Sudeep Holla, &lt;<a href=3D"mailto:sudeep.holla@arm.com=
-">sudeep.holla@arm.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_q=
-uote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1e=
-x"><br>
-<br>
-On 19/06/18 14:45, Sricharan R wrote:<br>
-&gt; From: Stephen Boyd &lt;<a href=3D"mailto:sboyd@codeaurora.org" target=
-=3D"_blank" rel=3D"noreferrer">sboyd@codeaurora.org</a>&gt;<br>
-&gt; <br>
-&gt; Register a cpufreq-generic device whenever we detect that a<br>
-&gt; &quot;qcom,krait&quot; compatible CPU is present in DT.<br>
-&gt; <br>
-<br>
-Just curious to know how different is this from qcom kryo driver<br>
-that was added recently. IIRC even that gets the speedbin from nvmem.<br>
-Can they be merged ? I don&#39;t see need to have different driver for Krai=
-t<br>
-and Kryo CPUs when the code is not even remotely related to CPU type.<br>
-<br>
-Sorry if I have missed anything from previous versions, I just happen<br>
-to open and looked at this series first time today.<br>
-<br>
--- <br>
-Regards,<br>
-Sudeep<br>
-</blockquote></div></div></div>
 
---000000000000342194056effc973--
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (9):
+  dt-bindings: firmware: Add bindings for ZynqMP firmware
+  firmware: xilinx: Add Zynqmp firmware driver
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  firmware: xilinx: Add query data API
+  firmware: xilinx: Add clock APIs
+  firmware: xilinx: Add debugfs interface
+  firmware: xilinx: Add debugfs for IOCTL API
+  firmware: xilinx: Add debugfs for query data API
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
+ arch/arm64/Kconfig.platforms                       |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  11 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 146 ++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 150 +++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  53 ++
+ drivers/clk/zynqmp/clkc.c                          | 737 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 219 ++++++
+ drivers/clk/zynqmp/pll.c                           | 345 ++++++++++
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/xilinx/Kconfig                    |  23 +
+ drivers/firmware/xilinx/Makefile                   |   5 +
+ drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
+ drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
+ drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               | 115 ++++
+ 21 files changed, 2844 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 drivers/firmware/xilinx/Kconfig
+ create mode 100644 drivers/firmware/xilinx/Makefile
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+ create mode 100644 drivers/firmware/xilinx/zynqmp.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+ create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+
+-- 
+2.7.4
