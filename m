@@ -1,290 +1,229 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34062 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbeFFVAK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 17:00:10 -0400
-Received: by mail-wm0-f66.google.com with SMTP id q4-v6so466000wmq.1
-        for <linux-clk@vger.kernel.org>; Wed, 06 Jun 2018 14:00:09 -0700 (PDT)
-From: Ray Jui <ray.jui@broadcom.com>
-References: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
-In-Reply-To: <201806021742.e6HPCQOb%fengguang.wu@intel.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v8 09/10] dt-bindings: clock: Add bindings for ZynqMP clock driver
+Date: Thu, 14 Jun 2018 11:27:41 -0700
+Message-ID: <1529000862-11510-10-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Date: Wed, 6 Jun 2018 14:00:06 -0700
-Message-ID: <016e740bcf20db8fa753c6686812ce76@mail.gmail.com>
-Subject: RE: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
- 'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function); did you
- mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
-To: kbuild test robot <lkp@intel.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+From: Rajan Vaja <rajanv@xilinx.com>
 
-I'd like to confirm this kbuild error is caused by changing of the defines
-in the header.
+Add documentation to describe Xilinx ZynqMP clock driver
+bindings.
 
-That is, kbuild test should pass with 2/2 patch.
-
-If my understanding is incorrect and this requires any further action,
-please let me know.
-
-Thanks,
-
-Ray
-
------Original Message-----
-From: kbuild test robot [mailto:lkp@intel.com]
-Sent: Saturday, June 2, 2018 2:02 AM
-To: Pramod Kumar
-Cc: kbuild-all@01.org; linux-clk@vger.kernel.org;
-linux-arm-kernel@lists.infradead.org; Stephen Boyd; Ray Jui
-Subject: [clk:clk-bcm-stingray 1/2] drivers/clk/bcm/clk-sr.c:217:3: error:
-'BCM_SR_LCPLL0_SATA_REF_CLK' undeclared here (not in a function); did you
-mean 'BCM_SR_LCPLL0_SATA_REFN_CLK'?
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-clk-bcm-stingray
-head:   5afa881c6635427e68c73861a2c22d8cac00b984
-commit: 48bf9a522c14449cc7c214c6062668ac54e4e88f [1/2] dt-bindings: clk:
-Update Stingray binding doc
-config: sh-allmodconfig (attached as .config)
-compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget
-https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
--O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout 48bf9a522c14449cc7c214c6062668ac54e4e88f
-        # save the attached .config to linux build tree
-        make.cross ARCH=sh
-
-Note: the clk/clk-bcm-stingray HEAD
-5afa881c6635427e68c73861a2c22d8cac00b984 builds fine.
-      It only hurts bisectibility.
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/bcm/clk-sr.c:59:3: error: 'BCM_SR_GENPLL0_SATA_CLK'
-undeclared here (not in a function); did you mean
-'BCM_SR_GENPLL0_SCR_CLK'?
-     [BCM_SR_GENPLL0_SATA_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_GENPLL0_SCR_CLK
-   drivers/clk/bcm/clk-sr.c:59:3: error: array index in initializer not of
-integer type
-   drivers/clk/bcm/clk-sr.c:59:3: note: (near initialization for
-'sr_genpll0_clk')
-   drivers/clk/bcm/clk-sr.c:184:3: error: 'BCM_SR_GENPLL5_FS_CLK'
-undeclared here (not in a function); did you mean
-'BCM_SR_GENPLL2_FS4_CLK'?
-     [BCM_SR_GENPLL5_FS_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_GENPLL2_FS4_CLK
-   drivers/clk/bcm/clk-sr.c:184:3: error: array index in initializer not
-of integer type
-   drivers/clk/bcm/clk-sr.c:184:3: note: (near initialization for
-'sr_genpll5_clk')
-   drivers/clk/bcm/clk-sr.c:185:14: warning: initialization makes integer
-from pointer without a cast [-Wint-conversion]
-      .channel = BCM_SR_GENPLL5_FS_CLK,
-                 ^~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/bcm/clk-sr.c:185:14: note: (near initialization for
-'sr_genpll5_clk[0].channel')
-   drivers/clk/bcm/clk-sr.c:185:14: error: initializer element is not
-constant
-   drivers/clk/bcm/clk-sr.c:185:14: note: (near initialization for
-'sr_genpll5_clk[0].channel')
-   drivers/clk/bcm/clk-sr.c:190:3: error: 'BCM_SR_GENPLL5_SPU_CLK'
-undeclared here (not in a function); did you mean 'BCM_SR_GENPLL5_FS_CLK'?
-     [BCM_SR_GENPLL5_SPU_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_GENPLL5_FS_CLK
-   drivers/clk/bcm/clk-sr.c:190:3: error: array index in initializer not
-of integer type
-   drivers/clk/bcm/clk-sr.c:190:3: note: (near initialization for
-'sr_genpll5_clk')
-   drivers/clk/bcm/clk-sr.c:191:14: warning: initialization makes integer
-from pointer without a cast [-Wint-conversion]
-      .channel = BCM_SR_GENPLL5_SPU_CLK,
-                 ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/bcm/clk-sr.c:191:14: note: (near initialization for
-'sr_genpll5_clk[1].channel')
-   drivers/clk/bcm/clk-sr.c:191:14: error: initializer element is not
-constant
-   drivers/clk/bcm/clk-sr.c:191:14: note: (near initialization for
-'sr_genpll5_clk[1].channel')
->> drivers/clk/bcm/clk-sr.c:217:3: error: 'BCM_SR_LCPLL0_SATA_REF_CLK'
-undeclared here (not in a function); did you mean
-'BCM_SR_LCPLL0_SATA_REFN_CLK'?
-     [BCM_SR_LCPLL0_SATA_REF_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_LCPLL0_SATA_REFN_CLK
-   drivers/clk/bcm/clk-sr.c:217:3: error: array index in initializer not
-of integer type
-   drivers/clk/bcm/clk-sr.c:217:3: note: (near initialization for
-'sr_lcpll0_clk')
-   drivers/clk/bcm/clk-sr.c:218:14: warning: initialization makes integer
-from pointer without a cast [-Wint-conversion]
-      .channel = BCM_SR_LCPLL0_SATA_REF_CLK,
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/bcm/clk-sr.c:218:14: note: (near initialization for
-'sr_lcpll0_clk[0].channel')
-   drivers/clk/bcm/clk-sr.c:218:14: error: initializer element is not
-constant
-   drivers/clk/bcm/clk-sr.c:218:14: note: (near initialization for
-'sr_lcpll0_clk[0].channel')
-   drivers/clk/bcm/clk-sr.c:223:3: error: 'BCM_SR_LCPLL0_USB_REF_CLK'
-undeclared here (not in a function); did you mean
-'BCM_SR_LCPLL1_USB_REF_CLK'?
-     [BCM_SR_LCPLL0_USB_REF_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_LCPLL1_USB_REF_CLK
-   drivers/clk/bcm/clk-sr.c:223:3: error: array index in initializer not
-of integer type
-   drivers/clk/bcm/clk-sr.c:223:3: note: (near initialization for
-'sr_lcpll0_clk')
-   drivers/clk/bcm/clk-sr.c:224:14: warning: initialization makes integer
-from pointer without a cast [-Wint-conversion]
-      .channel = BCM_SR_LCPLL0_USB_REF_CLK,
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/bcm/clk-sr.c:224:14: note: (near initialization for
-'sr_lcpll0_clk[1].channel')
-   drivers/clk/bcm/clk-sr.c:224:14: error: initializer element is not
-constant
-   drivers/clk/bcm/clk-sr.c:224:14: note: (near initialization for
-'sr_lcpll0_clk[1].channel')
->> drivers/clk/bcm/clk-sr.c:229:3: error: 'BCM_SR_LCPLL0_SATA_REFPN_CLK'
-undeclared here (not in a function); did you mean
-'BCM_SR_LCPLL0_SATA_REFN_CLK'?
-     [BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      BCM_SR_LCPLL0_SATA_REFN_CLK
-   drivers/clk/bcm/clk-sr.c:229:3: error: array index in initializer not
-of integer type
-   drivers/clk/bcm/clk-sr.c:229:3: note: (near initialization for
-'sr_lcpll0_clk')
-   drivers/clk/bcm/clk-sr.c:230:14: warning: initialization makes integer
-from pointer without a cast [-Wint-conversion]
-      .channel = BCM_SR_LCPLL0_SATA_REFPN_CLK,
-                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clk/bcm/clk-sr.c:230:14: note: (near initialization for
-'sr_lcpll0_clk[2].channel')
-   drivers/clk/bcm/clk-sr.c:230:14: error: initializer element is not
-constant
-   drivers/clk/bcm/clk-sr.c:230:14: note: (near initialization for
-'sr_lcpll0_clk[2].channel')
-
-vim +217 drivers/clk/bcm/clk-sr.c
-
-654cdd32 Sandeep Tripathy 2017-06-06  182
-654cdd32 Sandeep Tripathy 2017-06-06  183  static const struct
-iproc_clk_ctrl sr_genpll5_clk[] = {
-654cdd32 Sandeep Tripathy 2017-06-06  184  	[BCM_SR_GENPLL5_FS_CLK] =
-{
-654cdd32 Sandeep Tripathy 2017-06-06  185  		.channel =
-BCM_SR_GENPLL5_FS_CLK,
-654cdd32 Sandeep Tripathy 2017-06-06  186  		.flags =
-IPROC_CLK_AON,
-654cdd32 Sandeep Tripathy 2017-06-06  187  		.enable =
-ENABLE_VAL(0x4, 6, 0, 12),
-654cdd32 Sandeep Tripathy 2017-06-06  188  		.mdiv =
-REG_VAL(0x18, 0, 9),
-654cdd32 Sandeep Tripathy 2017-06-06  189  	},
-654cdd32 Sandeep Tripathy 2017-06-06 @190  	[BCM_SR_GENPLL5_SPU_CLK] =
-{
-654cdd32 Sandeep Tripathy 2017-06-06  191  		.channel =
-BCM_SR_GENPLL5_SPU_CLK,
-654cdd32 Sandeep Tripathy 2017-06-06  192  		.flags =
-IPROC_CLK_AON,
-654cdd32 Sandeep Tripathy 2017-06-06  193  		.enable =
-ENABLE_VAL(0x4, 6, 0, 12),
-654cdd32 Sandeep Tripathy 2017-06-06  194  		.mdiv =
-REG_VAL(0x18, 10, 9),
-654cdd32 Sandeep Tripathy 2017-06-06  195  	},
-654cdd32 Sandeep Tripathy 2017-06-06  196  };
-654cdd32 Sandeep Tripathy 2017-06-06  197
-654cdd32 Sandeep Tripathy 2017-06-06  198  static int
-sr_genpll5_clk_init(struct platform_device *pdev)
-654cdd32 Sandeep Tripathy 2017-06-06  199  {
-654cdd32 Sandeep Tripathy 2017-06-06  200
-iproc_pll_clk_setup(pdev->dev.of_node,
-654cdd32 Sandeep Tripathy 2017-06-06  201
-&sr_genpll5, NULL, 0, sr_genpll5_clk,
-654cdd32 Sandeep Tripathy 2017-06-06  202
-ARRAY_SIZE(sr_genpll5_clk));
-654cdd32 Sandeep Tripathy 2017-06-06  203  	return 0;
-654cdd32 Sandeep Tripathy 2017-06-06  204  }
-654cdd32 Sandeep Tripathy 2017-06-06  205
-654cdd32 Sandeep Tripathy 2017-06-06  206  static const struct
-iproc_pll_ctrl sr_lcpll0 = {
-654cdd32 Sandeep Tripathy 2017-06-06  207  	.flags = IPROC_CLK_AON |
-IPROC_CLK_PLL_NEEDS_SW_CFG,
-654cdd32 Sandeep Tripathy 2017-06-06  208  	.aon = AON_VAL(0x0, 2, 19,
-18),
-654cdd32 Sandeep Tripathy 2017-06-06  209  	.reset = RESET_VAL(0x0,
-31, 30),
-654cdd32 Sandeep Tripathy 2017-06-06  210  	.sw_ctrl =
-SW_CTRL_VAL(0x4, 31),
-654cdd32 Sandeep Tripathy 2017-06-06  211  	.ndiv_int = REG_VAL(0x4,
-16, 10),
-654cdd32 Sandeep Tripathy 2017-06-06  212  	.pdiv = REG_VAL(0x4, 26,
-4),
-654cdd32 Sandeep Tripathy 2017-06-06  213  	.status = REG_VAL(0x38,
-12, 1),
-654cdd32 Sandeep Tripathy 2017-06-06  214  };
-654cdd32 Sandeep Tripathy 2017-06-06  215
-654cdd32 Sandeep Tripathy 2017-06-06  216  static const struct
-iproc_clk_ctrl sr_lcpll0_clk[] = {
-654cdd32 Sandeep Tripathy 2017-06-06 @217
-[BCM_SR_LCPLL0_SATA_REF_CLK] = {
-654cdd32 Sandeep Tripathy 2017-06-06  218  		.channel =
-BCM_SR_LCPLL0_SATA_REF_CLK,
-654cdd32 Sandeep Tripathy 2017-06-06  219  		.flags =
-IPROC_CLK_AON,
-654cdd32 Sandeep Tripathy 2017-06-06  220  		.enable =
-ENABLE_VAL(0x0, 7, 1, 13),
-654cdd32 Sandeep Tripathy 2017-06-06  221  		.mdiv =
-REG_VAL(0x14, 0, 9),
-654cdd32 Sandeep Tripathy 2017-06-06  222  	},
-654cdd32 Sandeep Tripathy 2017-06-06 @223
-[BCM_SR_LCPLL0_USB_REF_CLK] = {
-654cdd32 Sandeep Tripathy 2017-06-06  224  		.channel =
-BCM_SR_LCPLL0_USB_REF_CLK,
-654cdd32 Sandeep Tripathy 2017-06-06  225  		.flags =
-IPROC_CLK_AON,
-654cdd32 Sandeep Tripathy 2017-06-06  226  		.enable =
-ENABLE_VAL(0x0, 8, 2, 14),
-654cdd32 Sandeep Tripathy 2017-06-06  227  		.mdiv =
-REG_VAL(0x14, 10, 9),
-654cdd32 Sandeep Tripathy 2017-06-06  228  	},
-654cdd32 Sandeep Tripathy 2017-06-06 @229
-[BCM_SR_LCPLL0_SATA_REFPN_CLK] = {
-654cdd32 Sandeep Tripathy 2017-06-06  230  		.channel =
-BCM_SR_LCPLL0_SATA_REFPN_CLK,
-654cdd32 Sandeep Tripathy 2017-06-06  231  		.flags =
-IPROC_CLK_AON,
-654cdd32 Sandeep Tripathy 2017-06-06  232  		.enable =
-ENABLE_VAL(0x0, 9, 3, 15),
-654cdd32 Sandeep Tripathy 2017-06-06  233  		.mdiv =
-REG_VAL(0x14, 20, 9),
-654cdd32 Sandeep Tripathy 2017-06-06  234  	},
-654cdd32 Sandeep Tripathy 2017-06-06  235  };
-654cdd32 Sandeep Tripathy 2017-06-06  236
-
-:::::: The code at line 217 was first introduced by commit
-:::::: 654cdd3229cd1d3f2bfb9df57baf88ba382a52be clk: bcm: Add clocks for
-Stingray SOC
-
-:::::: TO: Sandeep Tripathy <sandeep.tripathy@broadcom.com>
-:::::: CC: Stephen Boyd <sboyd@codeaurora.org>
-
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology
-Center
-https://lists.01.org/pipermail/kbuild-all                   Intel
-Corporation
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 +++++++++++++++++++++
+ 2 files changed, 169 insertions(+)
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+index 1b431d9..d215d15 100644
+--- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -17,6 +17,53 @@ Required properties:
+ 		  - "smc" : SMC #0, following the SMCCC
+ 		  - "hvc" : HVC #0, following the SMCCC
+ 
++--------------------------------------------------------------------------
++Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
++Zynq MPSoC firmware interface
++--------------------------------------------------------------------------
++The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
++tree. It reads required input clock frequencies from the devicetree and acts
++as clock provider for all clock consumers of PS clocks.
++
++See clock_bindings.txt for more information on the generic clock bindings.
++
++Required properties:
++ - #clock-cells:	Must be 1
++ - compatible:		Must contain:	"xlnx,zynqmp-clk"
++ - clocks:		List of clock specifiers which are external input
++			clocks to the given clock controller. Please refer
++			the next section to find the input clocks for a
++			given controller.
++ - clock-names:		List of clock names which are exteral input clocks
++			to the given clock controller. Please refer to the
++			clock bindings for more details.
++
++Input clocks for zynqmp Ultrascale+ clock controller:
++
++The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
++inputs. These required clock inputs are:
++ - pss_ref_clk (PS reference clock)
++ - video_clk (reference clock for video system )
++ - pss_alt_ref_clk (alternative PS reference clock)
++ - aux_ref_clk
++ - gt_crx_ref_clk (transceiver reference clock)
++
++The following strings are optional parameters to the 'clock-names' property in
++order to provide an optional (E)MIO clock source:
++ - swdt0_ext_clk
++ - swdt1_ext_clk
++ - gem0_emio_clk
++ - gem1_emio_clk
++ - gem2_emio_clk
++ - gem3_emio_clk
++ - mio_clk_XX		# with XX = 00..77
++ - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
++
++
++Output clocks are registered based on clock information received
++from firmware. Output clocks indexes are mentioned in
++include/dt-bindings/clock/xlnx,zynqmp-clk.h.
++
+ -------
+ Example
+ -------
+@@ -25,5 +72,11 @@ firmware {
+ 	zynqmp_firmware: zynqmp-firmware {
+ 		compatible = "xlnx,zynqmp-firmware";
+ 		method = "smc";
++		zynqmp_clk : clock-controller {
++			#clock-cells = <1>;
++			compatible = "xlnx,zynqmp-clk";
++			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
++			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
++		};
+ 	};
+ };
+diff --git a/include/dt-bindings/clock/xlnx,zynqmp-clk.h b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+new file mode 100644
+index 0000000..4aebe6e
+--- /dev/null
++++ b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Xilinx Zynq MPSoC Firmware layer
++ *
++ *  Copyright (C) 2014-2018 Xilinx, Inc.
++ *
++ */
++
++#ifndef _DT_BINDINGS_CLK_ZYNQMP_H
++#define _DT_BINDINGS_CLK_ZYNQMP_H
++
++#define IOPLL			0
++#define RPLL			1
++#define APLL			2
++#define DPLL			3
++#define VPLL			4
++#define IOPLL_TO_FPD		5
++#define RPLL_TO_FPD		6
++#define APLL_TO_LPD		7
++#define DPLL_TO_LPD		8
++#define VPLL_TO_LPD		9
++#define ACPU			10
++#define ACPU_HALF		11
++#define DBF_FPD			12
++#define DBF_LPD			13
++#define DBG_TRACE		14
++#define DBG_TSTMP		15
++#define DP_VIDEO_REF		16
++#define DP_AUDIO_REF		17
++#define DP_STC_REF		18
++#define GDMA_REF		19
++#define DPDMA_REF		20
++#define DDR_REF			21
++#define SATA_REF		22
++#define PCIE_REF		23
++#define GPU_REF			24
++#define GPU_PP0_REF		25
++#define GPU_PP1_REF		26
++#define TOPSW_MAIN		27
++#define TOPSW_LSBUS		28
++#define GTGREF0_REF		29
++#define LPD_SWITCH		30
++#define LPD_LSBUS		31
++#define USB0_BUS_REF		32
++#define USB1_BUS_REF		33
++#define USB3_DUAL_REF		34
++#define USB0			35
++#define USB1			36
++#define CPU_R5			37
++#define CPU_R5_CORE		38
++#define CSU_SPB			39
++#define CSU_PLL			40
++#define PCAP			41
++#define IOU_SWITCH		42
++#define GEM_TSU_REF		43
++#define GEM_TSU			44
++#define GEM0_REF		45
++#define GEM1_REF		46
++#define GEM2_REF		47
++#define GEM3_REF		48
++#define GEM0_TX			49
++#define GEM1_TX			50
++#define GEM2_TX			51
++#define GEM3_TX			52
++#define QSPI_REF		53
++#define SDIO0_REF		54
++#define SDIO1_REF		55
++#define UART0_REF		56
++#define UART1_REF		57
++#define SPI0_REF		58
++#define SPI1_REF		59
++#define NAND_REF		60
++#define I2C0_REF		61
++#define I2C1_REF		62
++#define CAN0_REF		63
++#define CAN1_REF		64
++#define CAN0			65
++#define CAN1			66
++#define DLL_REF			67
++#define ADMA_REF		68
++#define TIMESTAMP_REF		69
++#define AMS_REF			70
++#define PL0_REF			71
++#define PL1_REF			72
++#define PL2_REF			73
++#define PL3_REF			74
++#define WDT			75
++#define IOPLL_INT		76
++#define IOPLL_PRE_SRC		77
++#define IOPLL_HALF		78
++#define IOPLL_INT_MUX		79
++#define IOPLL_POST_SRC		80
++#define RPLL_INT		81
++#define RPLL_PRE_SRC		82
++#define RPLL_HALF		83
++#define RPLL_INT_MUX		84
++#define RPLL_POST_SRC		85
++#define APLL_INT		86
++#define APLL_PRE_SRC		87
++#define APLL_HALF		88
++#define APLL_INT_MUX		89
++#define APLL_POST_SRC		90
++#define DPLL_INT		91
++#define DPLL_PRE_SRC		92
++#define DPLL_HALF		93
++#define DPLL_INT_MUX		94
++#define DPLL_POST_SRC		95
++#define VPLL_INT		96
++#define VPLL_PRE_SRC		97
++#define VPLL_HALF		98
++#define VPLL_INT_MUX		99
++#define VPLL_POST_SRC		100
++#define CAN0_MIO		101
++#define CAN1_MIO		102
++
++#endif
+-- 
+2.7.4
