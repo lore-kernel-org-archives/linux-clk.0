@@ -1,42 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:52775 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932394AbeFFIoy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 04:44:54 -0400
-Date: Wed, 6 Jun 2018 10:44:50 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Message-ID: <20180606084450.vcyqwervf5ya2djh@verge.net.au>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-4-git-send-email-michel.pollet@bp.renesas.com>
+Return-Path: <okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1528187462-47093-4-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 14 Jun 2018 07:07:47 -0400
+From: okaya@codeaurora.org
+To: Srinath Mannam <srinath.mannam@broadcom.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, "Rafael J. Wysocki"
+ <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-clk@vger.kernel.org, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, linux-acpi-owner@vger.kernel.org
+Subject: Re: ACPI support in common clock framework
+In-Reply-To: <CABe79T5i8zUcBJnFmM-pAvzXf2CZXesh4NqxSGFj8f0Z-c8m1g@mail.gmail.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CABe79T5i8zUcBJnFmM-pAvzXf2CZXesh4NqxSGFj8f0Z-c8m1g@mail.gmail.com>
+Message-ID: <977a6d1c83b4084b949162258bb1007a@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 05, 2018 at 09:29:59AM +0100, Michel Pollet wrote:
-> This adds the Renesas R9A06G032 bare bone support.
+On 2018-06-14 06:58, Srinath Mannam wrote:
+> Thank you Andy,
 > 
-> This currently only handles the SYSCTRL block node,
-> generic parts (gic, architected timer) and a UART.
+> Regards,
+> Srinath.
 > 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Wed, Jun 13, 2018 at 1:43 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> +Cc: Rafael, ACPI ML
+>> 
+>> On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+>> <srinath.mannam@broadcom.com> wrote:
+>>> Hi Michael, Stephen,
+>>> 
+>>> We are adding ACPI support in our Linux based platform.
+>>> At present our clock hierarchy using common clock framework through 
+>>> DTS.
+>>> Now we required ACPI support in common clock framework to upgrade our 
+>>> platform.
+>>> 
+>>> For example, clk_get API called in many drivers to get clock device 
+>>> is
+>>> tightly coupled with DT framework.
+>>> 
+>>> Please let us know, if anybody in Open Source community have plans to
+>>> add ACPI support for common clock framework.
+>>> If not please suggest us alternative method to use common clock
+>>> framework in ACPI use case.
 
-Hi,
+Are you hooking up clk apis to PS0/PS3 calls?
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+Clk api didn't play nice with acpi until now.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>>> 
+>>> Thanks in advance.
+>>> 
+>>> Regards,
+>>> Srinath.
+>> 
+>> 
+>> 
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" 
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
