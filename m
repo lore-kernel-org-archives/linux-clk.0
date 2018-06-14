@@ -1,112 +1,83 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
+Return-Path: <michel.pollet@bp.renesas.com>
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 11/13] ARM: davinci: dm646x-evm: use aemif platform driver
-Date: Thu, 28 Jun 2018 11:57:46 +0200
-Message-Id: <20180628095748.4462-12-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v9 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Date: Thu, 14 Jun 2018 11:56:33 +0100
+Message-Id: <1528973829-25493-5-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This adds a base device tree file for the RZN1-DB board, with only the
+basic support allowing the system to boot to a prompt. Only one UART is
+used, with only a single CPU running.
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm646x-evm.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-davinci/board-dm646x-evm.c | 52 +++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/Makefile                  |  1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 867ab2fa6cfd..3e5ee09ee717 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/platform_data/at24.h>
- #include <linux/platform_data/pcf857x.h>
-+#include <linux/platform_data/ti-aemif.h>
- 
- #include <media/i2c/tvp514x.h>
- #include <media/i2c/adv7343.h>
-@@ -106,16 +107,47 @@ static struct resource davinci_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
-+static struct platform_device davinci_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
-+		.dev		= {
-+			.platform_data	= &davinci_nand_data,
-+		},
-+	},
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37a3de7..c07f077 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -819,6 +819,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7793-gose.dtb \
+ 	r8a7794-alt.dtb \
+ 	r8a7794-silk.dtb \
++	r9a06g032-rzn1d400-db.dtb \
+ 	sh73a0-kzm9g.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rv1108-evb.dtb \
+diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+new file mode 100644
+index 0000000..4e57ae2
+--- /dev/null
++++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZN1D-DB Board
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ */
++
++/dts-v1/;
++
++#include "r9a06g032.dtsi"
++
++/ {
++	model = "RZN1D-DB Board";
++	compatible = "renesas,rzn1d400-db", "renesas,r9a06g032";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	aliases {
++		serial0 = &uart0;
++	};
 +};
 +
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start	= DM646X_ASYNC_EMIF_CONTROL_BASE,
-+		.end	= DM646X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
++&uart0 {
++	status = "okay";
 +};
- 
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
-+static struct aemif_abus_data davinci_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
- 
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= davinci_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(davinci_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
-+};
-+
-+static struct platform_device davinci_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource	= davinci_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
- };
- 
- #define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
-@@ -793,10 +825,8 @@ static __init void evm_init(void)
- 	if (machine_is_davinci_dm6467tevm())
- 		davinci_nand_data.timing = &dm6467tevm_nandflash_timing;
- 
--	platform_device_register(&davinci_nand_device);
--
--	if (davinci_aemif_setup(&davinci_nand_device))
--		pr_warn("%s: Cannot configure AEMIF.\n", __func__);
-+	if (platform_device_register(&davinci_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device.\n", __func__);
- 
- 	dm646x_init_edma(dm646x_edma_rsv);
- 
 -- 
-2.17.1
+2.7.4
