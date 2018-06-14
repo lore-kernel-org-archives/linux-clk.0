@@ -1,53 +1,50 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 15/27] drm/sun4i: Add support for R40 TV TCON
-Date: Tue, 12 Jun 2018 22:00:24 +0200
-Message-Id: <20180612200036.21483-16-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:45756 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755272AbeFNUp3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jun 2018 16:45:29 -0400
+Subject: Re: [PATCH v8 03/10] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+        mingo@kernel.org, gregkh@linuxfoundation.org,
+        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
+        hkallweit1@gmail.com, keescook@chromium.org,
+        dmitry.torokhov@gmail.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, michal.simek@xilinx.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org
+Cc: rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jolly Shah <jollys@xilinx.com>
+References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+ <1529000862-11510-4-git-send-email-jollys@xilinx.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <3044c2b9-2268-dfcb-2d45-0117c6f91a8d@infradead.org>
+Date: Thu, 14 Jun 2018 13:45:20 -0700
+MIME-Version: 1.0
+In-Reply-To: <1529000862-11510-4-git-send-email-jollys@xilinx.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-R40 TV TCON is similar to the A83T TV TCON, except that it needs
-additional gate to be enabled.
+On 06/14/2018 11:27 AM, Jolly Shah wrote:
+> From: Rajan Vaja <rajanv@xilinx.com>
+> 
+> Add ZynqMP firmware IOCTL API to control and configure
+> devices like PLLs, SD, Gem, etc.
+> 
+> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h |  2 ++
+>  2 files changed, 22 insertions(+)
 
-Add support for it.
+Hi,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Does this driver claim (implement) some specific ioctl code or ID?
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index c9ffa5381185..f20da2aa2165 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -1326,6 +1326,11 @@ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks = {
- 	.has_channel_1		= true,
- };
- 
-+static const struct sun4i_tcon_quirks sun8i_r40_tv_quirks = {
-+	.has_channel_1		= true,
-+	.has_tcon_top_gate	= true,
-+};
-+
- static const struct sun4i_tcon_quirks sun8i_v3s_quirks = {
- 	.has_channel_0		= true,
- };
-@@ -1350,6 +1355,7 @@ const struct of_device_id sun4i_tcon_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
- 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
-+	{ .compatible = "allwinner,sun8i-r40-tcon-tv", .data = &sun8i_r40_tv_quirks },
- 	{ .compatible = "allwinner,sun8i-v3s-tcon", .data = &sun8i_v3s_quirks },
- 	{ .compatible = "allwinner,sun9i-a80-tcon-lcd", .data = &sun9i_a80_tcon_lcd_quirks },
- 	{ .compatible = "allwinner,sun9i-a80-tcon-tv", .data = &sun9i_a80_tcon_tv_quirks },
+If so, its ioctl numbers should be documented in Documentation/ioctl/ioctl-number.txt.
+
+thanks,
 -- 
-2.17.1
+~Randy
