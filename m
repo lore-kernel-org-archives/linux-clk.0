@@ -1,94 +1,99 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 20 Jun 2018 09:43:44 -0600
-From: Rob Herring <robh@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-	phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
+Return-Path: <ilia.lin@gmail.com>
+Return-Path: <ilia.lin@gmail.com>
+From: ilia.lin@gmail.com
+To: ilia.lin@gmail.com
+Cc: Ilia Lin <ilialin@codeaurora.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl:
- documentation
-Message-ID: <20180620154344.GA32205@rob-hp-laptop>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com>
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Amit Kucheria <amit.kucheria@linaro.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v13 5/8] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+Date: Thu, 14 Jun 2018 23:53:52 +0200
+Message-Id: <20180614215358.11264-6-ilia.lin@gmail.com>
+In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
+References: <20180614215358.11264-1-ilia.lin@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 11:56:31AM +0100, Michel Pollet wrote:
-> The Renesas R9A06G032 SYSCTRL node description.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+From: Ilia Lin <ilialin@codeaurora.org>
 
-One nit, otherwise:
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
+
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
+
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,kryocc.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
 
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> new file mode 100644
-> index 0000000..f6cb5e3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> @@ -0,0 +1,44 @@
-> +* Renesas R9A06G032 SYSCTRL
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be:
-> +    - "renesas,r9a06g032-sysctrl"
-> +  - reg: Base address and length of the SYSCTRL IO block.
-> +  - #clock-cells: Must be 1
-> +  - clocks: References to the parent clocks:
-> +	- external 40mhz crystal.
-> +	- external (optional) 32.768khz
-> +	- external (optional) jtag input
-> +	- external (optional) RGMII_REFCLK
-> +  - clock-names: Must be:
-> +        clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-> +
-> +Examples
-> +--------
-> +
-> +  - SYSCTRL node:
-> +
-> +	sysctrl: system-controller@4000c000 {
-> +		compatible = "renesas,r9a06g032-sysctrl";
-> +		reg = <0x4000c000 0x1000>;
-> +		status = "okay";
-
-Don't show status in examples.
-
-> +		#clock-cells = <1>;
-> +
-> +		clocks = <&ext_mclk>, <&ext_rtc_clk>,
-> +				<&ext_jtag_clk>, <&ext_rgmii_ref>;
-> +		clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-> +	};
-> +
-> +  - Other nodes can use the clocks provided by SYSCTRL as in:
-> +
-> +	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
-> +	uart0: serial@40060000 {
-> +		compatible = "snps,dw-apb-uart";
-> +		reg = <0x40060000 0x400>;
-> +		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +		reg-shift = <2>;
-> +		reg-io-width = <4>;
-> +		clocks = <&sysctrl R9A06G032_CLK_UART0>;
-> +		clock-names = "baudclk";
-> +	};
-> -- 
-> 2.7.4
-> 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+new file mode 100644
+index 000000000000..8458783c5a1a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+@@ -0,0 +1,17 @@
++Qualcomm CPUSS clock controller for Kryo CPUs
++----------------------------------------------------
++
++Required properties :
++- compatible : shall contain only one of the following:
++
++			"qcom,msm8996-apcc"
++
++- reg : shall contain base register location and length
++- #clock-cells : shall contain 1
++
++Example:
++	kryocc: clock-controller@6400000 {
++		compatible = "qcom,msm8996-apcc";
++		reg = <0x6400000 0x90000>;
++		#clock-cells = <1>;
++	};
+-- 
+2.11.0
