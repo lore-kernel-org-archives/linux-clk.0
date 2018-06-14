@@ -1,118 +1,136 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 20 Jun 2018 09:43:16 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
- power button
-Message-ID: <20180620064316.GB28784@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <20180619175028.GA71788@dtor-ws>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51949 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754616AbeFNRQs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jun 2018 13:16:48 -0400
+Received: by mail-it0-f67.google.com with SMTP id n7-v6so9333169itn.1
+        for <linux-clk@vger.kernel.org>; Thu, 14 Jun 2018 10:16:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180619175028.GA71788@dtor-ws>
+In-Reply-To: <2742773.k39D243pH3@jernej-laptop>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com> <2742773.k39D243pH3@jernej-laptop>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Thu, 14 Jun 2018 22:46:46 +0530
+Message-ID: <CAMty3ZBt33q9HWm7n3SrON_Y51g+bsQNfoHajCCVzuKZLGHkjw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Dmitry,
+On Thu, Jun 14, 2018 at 8:04 PM, Jernej =C5=A0krabec <jernej.skrabec@siol.n=
+et> wrote:
+> Dne =C4=8Detrtek, 14. junij 2018 ob 09:12:41 CEST je Jagan Teki napisal(a=
+):
+>> On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net=
+>
+> wrote:
+>> > This series adds support for R40 HDMI pipeline. It is a bit special
+>> > than other already supported pipelines because it has additional unit
+>> > called TCON TOP responsible for relationship configuration between
+>> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+>> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
+>> > and TV encoders.
+>> >
+>> > However, it seems that TCON TOP will become a norm, since newer
+>> > Allwinner SoCs like H6 also have this unit.
+>> >
+>> > I tested different possible configurations:
+>> > - mixer0 <> TCON-TV0 <> HDMI
+>> > - mixer0 <> TCON-TV1 <> HDMI
+>> > - mixer1 <> TCON-TV0 <> HDMI
+>> > - mixer1 <> TCON-TV1 <> HDMI
+>> >
+>> > Please review.
+>> >
+>> > Best regards,
+>> > Jernej
+>> >
+>> > Changes from v1:
+>> > - Split DT bindings patch and updated description
+>> > - Split HDMI PHY patch
+>> > - Move header file from TCON TOP patch to dt bindings patch
+>> > - Added Rob reviewed-by tag
+>> > - Used clk_hw_register_gate() instead of custom gate registration code
+>> > - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
+>> >
+>> >   new patches were added.
+>> >
+>> > - Droped mixer index quirk patch
+>> > - Reworked TCON support for TCON TOP
+>> > - Updated commit messages
+>> >
+>> > Jernej Skrabec (27):
+>> >   clk: sunxi-ng: r40: Add minimal rate for video PLLs
+>> >   clk: sunxi-ng: r40: Allow setting parent rate to display related
+>> >
+>> >     clocks
+>> >
+>> >   clk: sunxi-ng: r40: Export video PLLs
+>> >   dt-bindings: display: sunxi-drm: Add TCON TOP description
+>> >   drm/sun4i: Add TCON TOP driver
+>> >   drm/sun4i: Fix releasing node when enumerating enpoints
+>> >   drm/sun4i: Split out code for enumerating endpoints in output port
+>> >   drm/sun4i: Add support for traversing graph with TCON TOP
+>> >   drm/sun4i: Don't skip TCONs if they don't have channel 0
+>> >   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
+>> >   drm/sun4i: tcon: Add support for tcon-top gate
+>> >   drm/sun4i: tcon: Generalize engine search algorithm
+>> >   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+>> >   drm/sun4i: Don't check for panel or bridge on TV TCONs
+>> >   drm/sun4i: Add support for R40 TV TCON
+>> >   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+>> >   drm/sun4i: Add support for R40 mixers
+>> >   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+>> >   drm/sun4i: Enable DW HDMI PHY clock
+>> >   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+>> >   drm/sun4i: DW HDMI PHY: Add support for second PLL
+>> >   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+>> >
+>> >     driver
+>> >
+>> >   drm/sun4i: Add support for A64 HDMI PHY
+>> >   drm: of: Export drm_crtc_port_mask()
+>> >   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
+>> >   ARM: dts: sun8i: r40: Add HDMI pipeline
+>> >   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+>>
+>> Tested whole series on top of linux-next.
+>>
+>> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Thanks!
 
-First of all -  thanks for taking the time to review the patch =)
+I've V40 board, which is same as R40. I'm able to detect the HDMI but
+seems edid not detecting properly.
 
-On Tue, Jun 19, 2018 at 10:50:28AM -0700, Dmitry Torokhov wrote:
-> Hi Matti,
-> 
-> On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
-> > ROHM BD71837 PMIC power button driver providing power-key press
-> > information to user-space.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/input/misc/Kconfig          | 10 +++++
-> >  drivers/input/misc/Makefile         |  1 +
-> >  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 101 insertions(+)
-> >  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
-> > 
-> > +	platform_set_drvdata(pdev, pk);
-> > +	err = regmap_update_bits(pk->mfd->regmap,
-> > +				 BD71837_REG_PWRONCONFIG0,
-> > +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
-> > +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> 
-> This seems to be the only custom bit of set up in the driver, the rest I
-> think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
-> we could move this into MFD piece and drop this driver?
-
-I looked at the gpio_keys.c (for first time so please bear with me if I
-ask something you consider as obvious). This is also the first time I am
-dealing with input subsystem drivers. So this patch was kind of "RFC"
-because I am unsure if this is the best way...
-
-HW we are dealing with is a PMIC which can hace a power-button attached.
-HW can generate 3 different types of interrupts for power button
-presses:
-
-1. interrupt when button is pressed or released. (Eg. if someone just
-hits the button we get two interrupts of this type). We get no 'position
-information' from PMIC - just the irqs. Hence it is difficult to know if
-buttown was pressed or released. This is the reason why I decided not to
-use this IRQ (at least not for now).
-
-2. interrupt when button is pressed for 'short time'. Short time is
-configurable and IRQ is generated when button is released based on the
-duration it was held down. The limit for 'short time' can be configured.
-By default if button is pressed longer than 3 seconds but less than 10
-seconds the the PMIC detects 'short push'.
-
-3. interrupt when button is pressed for 'long time'. Mechanism is same
-as with short push. Default time is button held over 10 seconds. This
-interrupt is not handled if PMIC provides power to processor as PMIC
-will cut the power when long push is detected.
-
-So the custom piece is setting the 'short push detection' time from
-t > 3 sec to t > 10 msec. Driver is then using short push irq.
-
-This means that we don't detect button press if it is shorter than 10ms.
-But we don't need any button state information in driver either. This is
-why I decided to use the short push irq - is it Ok?
-
-After this explanation - the gpio_keys_irq_isr seems to be doing exactly
-what is needed for short push handling (as far as I can tell). Now it
-boils down to question how we should bundle the MFD and gpio_keys
-together?
-
-Should I just fill the gpio_keys_platform_data for gpio_keys in MFD
-driver? After my short browsing of existing MFD drivers I did not see
-any other drivers doing that. This is why I wonder if this is a correct
-approach?
-
-Still if MFD is configuring the button presses the gpio_keys for this chip
-should only be used if MFD is used, right? Hence the gpio_keys driver
-should be instantiaed from MFD, right?
-
-Another option would be using DT and adding gpio_keys node to MFD node
-or to simple-bus node. But I have an idea that this would make Rob
-unhappy :) I had lenghty discussion with him about declaring the PMIC
-as interrupt-controller in device-tree - and I was kindly educated that
-it was not the way to go :) I'd rather not started this discussion
-again.
-
-Finally, there may be cases when power button is not attached to PMIC
-or is needing different configuration for 'short push'. This is why I
-would prefer having own Kconfig option for this power-key driver. I am
-not sure if it is easily doable if we use gpio_keys?
-
-Can you please give me some further pointer on how I could use the
-gpio_keys from MFD?
-
-Best Regards
-    Matti Vaittinen
+[    0.983007] sun4i-drm display-engine: bound 1100000.mixer (ops 0xc074a80=
+c)
+[    0.999043] sun4i-drm display-engine: bound 1200000.mixer (ops 0xc074a80=
+c)
+[    1.006229] sun4i-drm display-engine: bound 1c70000.tcon-top (ops 0xc074=
+e2ac)
+[    1.013609] sun4i-drm display-engine: bound 1c73000.lcd-controller
+(ops 0xc0747a28)
+[    1.053988] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller
+v1.32a with HDCP (sun8i_dw_hdmi_phy)
+[    1.063913] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI
+I2C bus driver
+[    1.071683] sun4i-drm display-engine: bound 1ee0000.hdmi (ops 0xc074a298=
+)
+[    1.078484] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    1.085098] [drm] No driver support for vblank timestamp query.
+[    1.091055] [drm] Cannot find any crtc or sizes
+[    1.095995] [drm] Initialized sun4i-drm 1.0.0 20150629 for
+display-engine on minor 0
