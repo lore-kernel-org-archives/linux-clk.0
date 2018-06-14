@@ -1,68 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20180613074621.5phumovcyymbkfbn@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-15-jernej.skrabec@siol.net> <20180613074621.5phumovcyymbkfbn@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 13 Jun 2018 16:04:20 +0800
-Message-ID: <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
-Subject: Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+Subject: Re: [PATCH 4/7] tty: serial: lantiq: Always use readl()/writel()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        James Hogan <jhogan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ralf Baechle <ralf@linux-mips.org>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-5-songjun.wu@linux.intel.com>
+ <CAHp75Vc_EVgfj1MpuA_hKHgy6SiQdU7JQDdtVHfOT1sZ_K-nRQ@mail.gmail.com>
+From: "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <4d2482dc-a77c-6a1f-5e71-f7f14d66bf80@linux.intel.com>
+Date: Thu, 14 Jun 2018 15:05:25 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAHp75Vc_EVgfj1MpuA_hKHgy6SiQdU7JQDdtVHfOT1sZ_K-nRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 13, 2018 at 3:46 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
->> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
->> sense to check if panel or bridge is connected to them.
->>
->> Check if TCON has channel 0 and only then check for connected panel or
->> bridges.
->>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> ---
->>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
->>  1 file changed, 9 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> index b1205a7bc20f..c9ffa5381185 100644
->> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops = {
->>  static int sun4i_tcon_probe(struct platform_device *pdev)
->>  {
->>       struct device_node *node = pdev->dev.of_node;
->> +     const struct sun4i_tcon_quirks *quirks;
->>       struct drm_bridge *bridge;
->>       struct drm_panel *panel;
->>       int ret;
->>
->> -     ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
->> -     if (ret == -EPROBE_DEFER)
->> -             return ret;
->> +     quirks = of_device_get_match_data(&pdev->dev);
+
+
+On 6/12/2018 4:13 PM, Andy Shevchenko wrote:
+> On Tue, Jun 12, 2018 at 8:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>> Previous implementation uses platform-dependent functions
+>> ltq_w32()/ltq_r32() to access registers. Those functions are not
+>> available for other SoC which uses the same IP.
+>> Change to OS provided readl()/writel() and readb()/writeb(), so
+>> that different SoCs can use the same driver.
+> This patch consists 2 or even 3 ones:
+> - whitespace shuffling (indentation fixes, blank lines), I dunno if
+> it's needed at all
+> - some new registers / bits
+> - actual switch to readl() / writel()
 >
-> We should probably check ofr the pointer value before dereferencing it.
-
-I think we've discussed this before. If the driver has data structures
-for all the supported compatible strings, and it is device tree only,
-then we should just let it blow up in the user's face, since they are
-obviously doing something they shouldn't be doing to get the driver
-to probe without a compatible string match.
-
-ChenYu
+> Please, split.
+It will be split to four patches, coding style, new registers, 
+readl()/writel() and asc_update_bits.
+>> +#define asc_w32_mask(clear, set, reg)  \
+>> +       ({ typeof(reg) reg_ = (reg);    \
+>> +       writel((readl(reg_) & ~(clear)) | (set), reg_); })
+> This would be better as a static inline helper, and name is completely
+> misleading, it doesn't mask the register bits, it _updates_ them.
+It will be changed to asc_update_bits.
