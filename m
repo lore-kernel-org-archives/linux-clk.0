@@ -1,47 +1,54 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH] clk: davinci: fix a typo (which leads to build failures)
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>, stable@vger.kernel.org
-References: <20180625172550.17379-1-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <28163c26-152b-9188-9c13-7a906809e0f1@lechnology.com>
-Date: Mon, 25 Jun 2018 18:18:28 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180625172550.17379-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <ilia.lin@gmail.com>
+Return-Path: <ilia.lin@gmail.com>
+From: ilia.lin@gmail.com
+To: ilia.lin@gmail.com
+Cc: Ilia Lin <ilialin@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Amit Kucheria <amit.kucheria@linaro.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v13 3/8] clk: Use devm_ in the register fixed factor clock
+Date: Thu, 14 Jun 2018 23:53:50 +0200
+Message-Id: <20180614215358.11264-4-ilia.lin@gmail.com>
+In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
+References: <20180614215358.11264-1-ilia.lin@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 12:25 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This should have been DM365, not DM356.
-> 
-> Fixes: 4eff0bebf4ed5 ("clk: davinci: Fix link errors when not all SoCs are enabled")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/clk/davinci/psc.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-> index 6a42529d31a9..cc5614567a70 100644
-> --- a/drivers/clk/davinci/psc.h
-> +++ b/drivers/clk/davinci/psc.h
-> @@ -107,7 +107,7 @@ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
->   #ifdef CONFIG_ARCH_DAVINCI_DM355
->   extern const struct davinci_psc_init_data dm355_psc_init_data;
->   #endif
-> -#ifdef CONFIG_ARCH_DAVINCI_DM356
-> +#ifdef CONFIG_ARCH_DAVINCI_DM365
->   extern const struct davinci_psc_init_data dm365_psc_init_data;
->   #endif
->   #ifdef CONFIG_ARCH_DAVINCI_DM644x
-> 
+From: Ilia Lin <ilialin@codeaurora.org>
 
+Use devm_clk_hw_register instead of clk_hw_register
+to simplify the usage of this API. This way drivers that call
+the clk_hw_register_fixed_factor won't need to maintain
+a data structure for further cleanup.
 
-Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/clk/clk-fixed-factor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index a5d402de5584..8e39bda8e596 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 	init.num_parents = 1;
+ 
+ 	hw = &fix->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret) {
+ 		kfree(fix);
+ 		hw = ERR_PTR(ret);
+-- 
+2.11.0
