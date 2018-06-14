@@ -1,41 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45437 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752223AbeF1B5e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 21:57:34 -0400
+Return-Path: <lkp@intel.com>
+Date: Thu, 14 Jun 2018 18:38:10 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: kbuild-all@01.org, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, robh@kernel.org,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Rohit Kumar <rohitkr@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+Message-ID: <201806141715.reXn15om%fengguang.wu@intel.com>
+References: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-9-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-9-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 09:57:10 +0800
-Message-ID: <CAGb2v65+L9rTFZ4+zNXvCX4=Ni8mHzkFYCPK2GcBmTELh34Ojw@mail.gmail.com>
-Subject: Re: [PATCH v3 08/24] drm/sun4i: Add support for traversing graph with
- TCON TOP
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> TCON TOP is different from other nodes in graph by having 3 input and 3
-> output ports. Additionally, connection to TV TCON might lead back to
-> HDMI mux input port, creating loops.
->
-> Add support for traversing such graph.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Hi Taniya,
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on next-20180614]
+[cannot apply to v4.17]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Taniya-Das/Add-support-for-LPASS-clock-controller-for-SDM845/20180614-155144
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/qcom/lpasscc-sdm845.c:32:19: sparse: symbol 'gcc_lpass_sway_clk' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
