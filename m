@@ -1,26 +1,42 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180529160804.1982-5-gregkh@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
- <20180529160804.1982-5-gregkh@linuxfoundation.org>
-Message-ID: <152790646472.225090.14051710612236908948@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 5/5] clk: remove clk_debugfs_add_file()
-Date: Fri, 01 Jun 2018 19:27:44 -0700
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	robh@kernel.org
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rohit Kumar <rohitkr@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/2] Add support for LPASS clock controller for SDM845
+Date: Thu, 14 Jun 2018 13:09:01 +0530
+Message-Id: <1528961943-12506-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Greg Kroah-Hartman (2018-05-29 09:08:04)
-> No one was using this api call, so remove it.  If it is ever needed in
-> the future, a "raw" debugfs call can be used.
-> =
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
 
-Applied to clk-next
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  46 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 248 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  18 ++
+ 5 files changed, 322 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
