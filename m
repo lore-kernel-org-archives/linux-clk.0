@@ -1,64 +1,36 @@
-Return-Path: <rjwysocki@gmail.com>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 13 Jun 2018 10:27:39 +0200
-Message-ID: <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Srinath Mannam <srinath.mannam@broadcom.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
+In-Reply-To: <baedcf46084db730e4db94e714632399a568b255.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com> <baedcf46084db730e4db94e714632399a568b255.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 15 Jun 2018 15:59:03 -0600
+Message-ID: <CAL_JsqJ6nfqDpG9g_Wk-X2DsKpD+xAzFTEmkRmGBEAkLaayEnw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>,
+	Jianhong Chen <chenjh@rock-chips.com>, Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>, Kate Stewart <kstewart@linuxfoundation.org>,
+	"heiko@sntech.de" <heiko@sntech.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> +Cc: Rafael, ACPI ML
+On Fri, Jun 15, 2018 at 7:30 AM, Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
 >
-> On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
-> <srinath.mannam@broadcom.com> wrote:
->> Hi Michael, Stephen,
->>
->> We are adding ACPI support in our Linux based platform.
->> At present our clock hierarchy using common clock framework through DTS.
->> Now we required ACPI support in common clock framework to upgrade our platform.
->>
->> For example, clk_get API called in many drivers to get clock device is
->> tightly coupled with DT framework.
->>
->> Please let us know, if anybody in Open Source community have plans to
->> add ACPI support for common clock framework.
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-There are no plans for doing that AFAICS.
+Looks good now. :)
 
-Moreover, it generally would not be consistent with ACPI power
-management defined by the specification.
-
->> If not please suggest us alternative method to use common clock
->> framework in ACPI use case.
-
-The problem with using the clock framework on systems with ACPI is
-that, in general, the clock manipulation is expected to be carried out
-by ACPI power management and therefore it is "owned" by AML.
-Currently, there are no defined methods for synchronizing the AML's
-use of clocks for power management with what the OS may do with them
-directly.
-
-In theory, that can be worked around to some extent by representing
-clocks as power resources in ASL (even though the provider information
-would be missing then) and manipulating those power resources directly
-from the OS.  I'm not aware of anyone doing that successfully,
-however.
-
-For simple power management it should be sufficient to let drivers
-rely on the ACPI PM domain which should happen automatically in the
-majority of cases anyway.
-
-Thanks,
-Rafael
+Reviewed-by: Rob Herring <robh@kernel.org>
