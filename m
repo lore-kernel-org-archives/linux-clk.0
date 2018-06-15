@@ -1,105 +1,485 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v9 01/15] ARM: Add Krait L2 register accessor functions
-To: Stephen Boyd <sboyd@kernel.org>,
- Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
- mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
- andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-References: <1520347148-27852-1-git-send-email-sricharan@codeaurora.org>
- <1520347148-27852-2-git-send-email-sricharan@codeaurora.org>
- <20180524173926.GC14924@minitux>
- <664089d4-b30d-99bb-2021-12128b2895ba@codeaurora.org>
- <152769571081.144038.4314499217001219157@swboyd.mtv.corp.google.com>
- <9f2e1aa8-21c1-10b0-6193-e6bc16993a0d@codeaurora.org>
- <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <9ca51832-6095-c8a5-1347-f57abf99e8f9@codeaurora.org>
-Date: Fri, 1 Jun 2018 18:50:37 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43363 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755727AbeFOGXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 02:23:13 -0400
+Date: Fri, 15 Jun 2018 08:23:01 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Dong Aisheng <dongas86@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v1 4/4] mailbox: Add support for i.MX7D messaging unit
+Message-ID: <20180615062301.vn34vdj53d6jx6as@pengutronix.de>
+References: <20180601065821.28234-1-o.rempel@pengutronix.de>
+ <20180601065821.28234-5-o.rempel@pengutronix.de>
+ <CAA+hA=RpoRXUK+jB18F4OeYE9PG73SDa_NLYeN5Q2G3B1bC-JA@mail.gmail.com>
+ <CAA+hA=Q-vJ8MyYpUFeZasCFnzOcgFG6+gY8VCVPfWH6ChvSbFw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <152775249799.144038.9269415086304305030@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tcapg4szkm7n24bz"
+In-Reply-To: <CAA+hA=Q-vJ8MyYpUFeZasCFnzOcgFG6+gY8VCVPfWH6ChvSbFw@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-On 5/31/2018 1:11 PM, Stephen Boyd wrote:
-> Quoting Sricharan R (2018-05-30 21:57:20)
->> Hi Stephen,
->>
->> On 5/30/2018 9:25 PM, Stephen Boyd wrote:
->>> Quoting Sricharan R (2018-05-24 22:40:11)
->>>> Hi Bjorn,
->>>>
->>>> On 5/24/2018 11:09 PM, Bjorn Andersson wrote:
->>>>> On Tue 06 Mar 06:38 PST 2018, Sricharan R wrote:
->>>>>
->>>>>> From: Stephen Boyd <sboyd@codeaurora.org>
->>>>>>
->>>>>> Krait CPUs have a handful of L2 cache controller registers that
->>>>>> live behind a cp15 based indirection register. First you program
->>>>>> the indirection register (l2cpselr) to point the L2 'window'
->>>>>> register (l2cpdr) at what you want to read/write.  Then you
->>>>>> read/write the 'window' register to do what you want. The
->>>>>> l2cpselr register is not banked per-cpu so we must lock around
->>>>>> accesses to it to prevent other CPUs from re-pointing l2cpdr
->>>>>> underneath us.
->>>>>>
->>>>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>>>> Cc: Russell King <linux@arm.linux.org.uk>
->>>>>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->>>>>
->>>>> This should have your signed-off-by here as well.
->>>>>
->>>>
->>>>  ok.
->>>>
->>>>> Apart from that:
->>>>>
->>>>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>>>
->>>>
->>>
->>> Will these patches come around again? I'll do a quick sweep on them
->>> today but I expect them to be resent.
->>
->> Sure, i will have to resend them again, fixing couple of Bjorn's
->> minor comments. Will address your comments that you would give
->> as well along with that.
->>
-> 
-> Ok. One general comment is that it would be nice if the bindings for all
-> the nodes that are introduced included 'clocks' properties and also
-> maybe 'clock-names' properties for the clocks that are consumed by each
-> node. Right now, we hide those details from DT and rely on the string
-> names to hook the clk tree up for us. That sort of prevents us from
-> moving away from string easily, so I would just throw the clocks into
-> the binding right now and always have them there just in case we want to
-> use the binding to figure out the hierarchy in the future.
-> 
+--tcapg4szkm7n24bz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- ok, understand that mostly. So will try to revamp those patches with
- the 'clocks' property in the binding added, reading them in the driver
- from DT.
+As promised, here are the sources.
 
-> I've been thinking we need to do something similar for the gcc and other
-> nodes for any clks they use, but I haven't gotten around to it.
-> 
-> Otherwise the patches look mostly ok to me. Not sure I'll have any other
-> comments.
-> 
+I run Linux on Cortex M4 and A7 side. Here is my BSP:
+git://git.pengutronix.de/ore/OSELAS.BSP-Pengutronix-DualKit
+This BSP will create two images, for cortex m4, then make firmware image su=
+itable
+for rproc. Then it will create image for master system which will include r=
+proc firmware.
 
- Thanks, will respin.
+and here is kernel source with all needed changes to run linux on both side=
+s:
+git://git.pengutronix.de/ore/linux
 
-Regards,
- Sricharan
+On Wed, Jun 13, 2018 at 08:24:09PM +0800, Dong Aisheng wrote:
+> Copy linux-imx@nxp.com and more related guys to comment
+>=20
+> On Wed, Jun 13, 2018 at 8:21 PM, Dong Aisheng <dongas86@gmail.com> wrote:
+> > Hi Oleksij,
+> >
+> > On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de=
+> wrote:
+> >> The Mailbox controller is able to send messages (up to 4 32 bit words)
+> >> between the endpoints.
+> >
+> > Could we really be able to send up to 4 42bit words with this driver?
+> >
+> > It looks to me the current Mailbox framework is more designed for share=
+ mem
+> > transfer which does not fit i.MX MU well.
+> >
+> >>
+> >> This driver was tested using the mailbox-test driver sending messages
+> >> between the Cortex-A7 and the Cortex-M4.
+> >
+> > Would you please provide a guide on how to test it quickly?
+> > I may want to give a test.
+> >
+> >>
+> >> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> >> ---
+> >>  drivers/mailbox/Kconfig       |   6 +
+> >>  drivers/mailbox/Makefile      |   2 +
+> >>  drivers/mailbox/imx-mailbox.c | 289 ++++++++++++++++++++++++++++++++++
+> >>  3 files changed, 297 insertions(+)
+> >>  create mode 100644 drivers/mailbox/imx-mailbox.c
+> >>
+> >> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> >> index a2bb27446dce..e1d2738a2e4c 100644
+> >> --- a/drivers/mailbox/Kconfig
+> >> +++ b/drivers/mailbox/Kconfig
+> >> @@ -15,6 +15,12 @@ config ARM_MHU
+> >>           The controller has 3 mailbox channels, the last of which can=
+ be
+> >>           used in Secure mode only.
+> >>
+> >> +config IMX_MBOX
+> >> +       tristate "iMX Mailbox"
+> >> +       depends on SOC_IMX7D || COMPILE_TEST
+> >> +       help
+> >> +         Mailbox implementation for iMX7D Messaging Unit (MU).
+> >> +
+> >>  config PLATFORM_MHU
+> >>         tristate "Platform MHU Mailbox"
+> >>         depends on OF
+> >> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> >> index cc23c3a43fcd..ba2fe1b6dd62 100644
+> >> --- a/drivers/mailbox/Makefile
+> >> +++ b/drivers/mailbox/Makefile
+> >> @@ -7,6 +7,8 @@ obj-$(CONFIG_MAILBOX_TEST)      +=3D mailbox-test.o
+> >>
+> >>  obj-$(CONFIG_ARM_MHU)  +=3D arm_mhu.o
+> >>
+> >> +obj-$(CONFIG_IMX_MBOX) +=3D imx-mailbox.o
+> >> +
+> >>  obj-$(CONFIG_PLATFORM_MHU)     +=3D platform_mhu.o
+> >>
+> >>  obj-$(CONFIG_PL320_MBOX)       +=3D pl320-ipc.o
+> >> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailb=
+ox.c
+> >> new file mode 100644
+> >> index 000000000000..2bc9f11393b1
+> >> --- /dev/null
+> >> +++ b/drivers/mailbox/imx-mailbox.c
+> >> @@ -0,0 +1,289 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2018 Pengutronix, Oleksij Rempel <o.rempel@pengutron=
+ix.de>
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> >> +#include <linux/interrupt.h>
+> >> +#include <linux/io.h>
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/mailbox_controller.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of_device.h>
+> >> +
+> >> +/* Transmit Register */
+> >> +#define IMX_MU_xTRn(x)         (0x00 + 4 * (x))
+> >> +/* Receive Register */
+> >> +#define IMX_MU_xRRn(x)         (0x10 + 4 * (x))
+> >> +/* Status Register */
+> >> +#define IMX_MU_xSR             0x20
+> >> +#define IMX_MU_xSR_TEn(x)      BIT(20 + (x))
+> >> +#define IMX_MU_xSR_RFn(x)      BIT(24 + (x))
+> >> +#define IMX_MU_xSR_BRDIP       BIT(9)
+> >> +
+> >> +/* Control Register */
+> >> +#define IMX_MU_xCR             0x24
+> >> +/* Transmit Interrupt Enable */
+> >> +#define IMX_MU_xCR_TIEn(x)     BIT(20 + (x))
+> >> +/* Receive Interrupt Enable */
+> >> +#define IMX_MU_xCR_RIEn(x)     BIT(24 + (x))
+> >> +
+> >> +#define IMX_MU_MAX_CHANS       4u
+> >> +
+> >> +struct imx_mu_priv;
+> >> +
+> >> +struct imx_mu_cfg {
+> >> +       unsigned int            chans;
+> >> +       void (*init_hw)(struct imx_mu_priv *priv);
+> >> +};
+> >> +
+> >> +struct imx_mu_con_priv {
+> >> +       int                     irq;
+> >> +       unsigned int            bidx;
+> >> +       unsigned int            idx;
+> >> +};
+> >> +
+> >> +struct imx_mu_priv {
+> >> +       struct device           *dev;
+> >> +       const struct imx_mu_cfg *dcfg;
+> >> +       void __iomem            *base;
+> >> +
+> >> +       struct mbox_controller  mbox;
+> >> +       struct mbox_chan        mbox_chans[IMX_MU_MAX_CHANS];
+> >> +
+> >> +       struct imx_mu_con_priv  con_priv[IMX_MU_MAX_CHANS];
+> >> +       struct clk              *clk;
+> >> +};
+> >> +
+> >> +static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller *mbo=
+x)
+> >> +{
+> >> +       return container_of(mbox, struct imx_mu_priv, mbox);
+> >> +}
+> >> +
+> >> +static void imx_mu_write(struct imx_mu_priv *priv, u32 val, u32 offs)
+> >> +{
+> >> +       iowrite32(val, priv->base + offs);
+> >> +}
+> >> +
+> >> +static u32 imx_mu_read(struct imx_mu_priv *priv, u32 offs)
+> >> +{
+> >> +       return ioread32(priv->base + offs);
+> >> +}
+> >> +
+> >> +static u32 imx_mu_rmw(struct imx_mu_priv *priv, u32 offs, u32 set, u3=
+2 clr)
+> >> +{
+> >> +       u32 val;
+> >> +
+> >> +       val =3D imx_mu_read(priv, offs);
+> >> +       val &=3D ~clr;
+> >> +       val |=3D set;
+> >> +       imx_mu_write(priv, val, offs);
+> >> +
+> >> +       return val;
+> >> +}
+> >> +
+> >> +static irqreturn_t imx_mu_isr(int irq, void *p)
+> >> +{
+> >> +       struct mbox_chan *chan =3D p;
+> >> +       struct imx_mu_con_priv *cp =3D chan->con_priv;
+> >> +       struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> >
+> > Please do in reversed order from long to short
+> >
+> >> +
+> >> +       u32 val, dat;
+> >> +
+> >> +       val =3D imx_mu_read(priv, IMX_MU_xSR);
+> >> +       val &=3D IMX_MU_xSR_TEn(cp->bidx) | IMX_MU_xSR_RFn(cp->bidx);
+> >> +       if (!val)
+> >> +               return IRQ_NONE;
+> >> +
+> >> +       if (val & IMX_MU_xSR_TEn(cp->bidx)) {
+> >> +               imx_mu_rmw(priv, IMX_MU_xCR, 0, IMX_MU_xCR_TIEn(cp->bi=
+dx));
+> >> +               mbox_chan_txdone(chan, 0);
+> >> +       }
+> >> +
+> >> +       if (val & IMX_MU_xSR_RFn(cp->bidx)) {
+> >> +               dat =3D imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
+> >> +               mbox_chan_received_data(chan, (void *)&dat);
+> >> +       }
+> >> +
+> >> +       return IRQ_HANDLED;
+> >> +}
+> >> +
+> >> +static bool imx_mu_last_tx_done(struct mbox_chan *chan)
+> >> +{
+> >> +       struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> >> +       struct imx_mu_con_priv *cp =3D chan->con_priv;
+> >> +       u32 val;
+> >> +
+> >> +       val =3D imx_mu_read(priv, IMX_MU_xSR);
+> >> +       /* test if transmit register is empty */
+> >> +       return (!(val & IMX_MU_xSR_TEn(cp->bidx)));
+> >> +}
+> >> +
+> >> +static int imx_mu_send_data(struct mbox_chan *chan, void *data)
+> >> +{
+> >> +       struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> >> +       struct imx_mu_con_priv *cp =3D chan->con_priv;
+> >> +       u32 *arg =3D data;
+> >> +
+> >> +       if (imx_mu_last_tx_done(chan))
+> >
+> > return true for tx_done?
+> > Or maybe better imx_mu_is_busy?
+> >
+> >> +               return -EBUSY;
+> >> +
+> >> +       imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
+> >> +       imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static int imx_mu_startup(struct mbox_chan *chan)
+> >> +{
+> >> +       struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> >> +       struct imx_mu_con_priv *cp =3D chan->con_priv;
+> >> +       int ret;
+> >> +
+> >> +       ret =3D request_irq(cp->irq, imx_mu_isr,
+> >> +                         IRQF_SHARED, "imx_mu_chan", chan);
+> >
+> > This looks me to a bit strange as all virtual channels interrupts
+> > line actually are the same. And we request that same irq line
+> > repeatedly here with the same irq handler.
+> >
+> >> +       if (ret) {
+> >> +               dev_err(chan->mbox->dev,
+> >> +                       "Unable to acquire IRQ %d\n", cp->irq);
+> >> +               return ret;
+> >> +       }
+> >> +
+> >> +       imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xCR_RIEn(cp->bidx), 0);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +static void imx_mu_shutdown(struct mbox_chan *chan)
+> >> +{
+> >> +       struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> >> +       struct imx_mu_con_priv *cp =3D chan->con_priv;
+> >> +
+> >> +       imx_mu_rmw(priv, IMX_MU_xCR, 0,
+> >> +                  IMX_MU_xCR_TIEn(cp->bidx) | IMX_MU_xCR_RIEn(cp->bid=
+x));
+> >> +
+> >> +       free_irq(cp->irq, chan);
+> >> +}
+> >> +
+> >> +static const struct mbox_chan_ops imx_mu_ops =3D {
+> >> +       .send_data =3D imx_mu_send_data,
+> >> +       .startup =3D imx_mu_startup,
+> >> +       .shutdown =3D imx_mu_shutdown,
+> >> +       .last_tx_done =3D imx_mu_last_tx_done,
+> >
+> > Do we really need this?
+> > Looking at the code, it seems .last_tx_done() is only called for pollin=
+g mode.
+> > But what you set below is:
+> > priv->mbox.txdone_irq =3D true;
+> >
+> > Or am i missed something?
+> >
+> >> +};
+> >> +
+> >> +static int imx_mu_probe(struct platform_device *pdev)
+> >> +{
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       struct resource *iomem;
+> >> +       struct imx_mu_priv *priv;
+> >> +       const struct imx_mu_cfg *dcfg;
+> >> +       unsigned int i, chans;
+> >> +       int irq, ret;
+> >> +
+> >> +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> >> +       if (!priv)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       dcfg =3D of_device_get_match_data(dev);
+> >> +       if (!dcfg)
+> >> +               return -EINVAL;
+> >> +
+> >> +       priv->dcfg =3D dcfg;
+> >> +       priv->dev =3D dev;
+> >> +
+> >> +       iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >> +       priv->base =3D devm_ioremap_resource(&pdev->dev, iomem);
+> >> +       if (IS_ERR(priv->base))
+> >> +               return PTR_ERR(priv->base);
+> >> +
+> >> +       irq =3D platform_get_irq(pdev, 0);
+> >> +       if (irq <=3D 0)
+> >> +               return irq < 0 ? irq : -EINVAL;
+> >
+> > Is it possible =3D=3D 0?
+> >
+> >> +
+> >> +       priv->clk =3D devm_clk_get(dev, NULL);
+> >> +       if (IS_ERR(priv->clk)) {
+> >> +               if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
+> >> +                       priv->clk =3D NULL;
+> >> +               } else {
+> >> +                       dev_err(dev, "Failed to get clock\n");
+> >
+> > The line looks not be quite meaningful as it may be defer probe.
+> >
+> >> +                       return PTR_ERR(priv->clk);
+> >> +               }
+> >> +       }
+> >> +
+> >> +       ret =3D clk_prepare_enable(priv->clk);
+> >> +       if (ret) {
+> >> +               dev_err(dev, "Failed to enable clock\n");
+> >> +               return ret;
+> >> +       }
+> >> +
+> >> +       chans =3D min(dcfg->chans, IMX_MU_MAX_CHANS);
+> >> +       /* Initialize channel identifiers */
+> >> +       for (i =3D 0; i < chans; i++) {
+> >> +               struct imx_mu_con_priv *cp =3D &priv->con_priv[i];
+> >> +
+> >> +               cp->bidx =3D 3 - i;
+> >> +               cp->idx =3D i;
+> >> +               cp->irq =3D irq;
+> >> +               priv->mbox_chans[i].con_priv =3D cp;
+> >> +       }
+> >> +
+> >> +       priv->mbox.dev =3D dev;
+> >> +       priv->mbox.ops =3D &imx_mu_ops;
+> >> +       priv->mbox.chans =3D priv->mbox_chans;
+> >> +       priv->mbox.num_chans =3D chans;
+> >> +       priv->mbox.txdone_irq =3D true;
+> >> +
+> >> +       platform_set_drvdata(pdev, priv);
+> >> +
+> >> +       if (priv->dcfg->init_hw)
+> >> +               priv->dcfg->init_hw(priv);
+> >> +
+> >> +       return mbox_controller_register(&priv->mbox);
+> >> +}
+> >> +
+> >> +static int imx_mu_remove(struct platform_device *pdev)
+> >> +{
+> >> +       struct imx_mu_priv *priv =3D platform_get_drvdata(pdev);
+> >> +
+> >> +       mbox_controller_unregister(&priv->mbox);
+> >> +       clk_disable_unprepare(priv->clk);
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >> +
+> >> +static void imx_mu_init_imx7d_a(struct imx_mu_priv *priv)
+> >> +{
+> >> +       /* Set default config */
+> >> +       imx_mu_write(priv, 0, IMX_MU_xCR);
+> >> +}
+> >> +
+> >> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_a =3D {
+> >> +       .chans =3D IMX_MU_MAX_CHANS,
+> >> +       .init_hw =3D imx_mu_init_imx7d_a,
+> >> +};
+> >> +
+> >> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_b =3D {
+> >> +       .chans =3D IMX_MU_MAX_CHANS,
+> >> +};
+> >> +
+> >> +static const struct of_device_id imx_mu_dt_ids[] =3D {
+> >> +       { .compatible =3D "fsl,imx7s-mu-a", .data =3D &imx_mu_cfg_imx7=
+d_a },
+> >> +       { .compatible =3D "fsl,imx7s-mu-b", .data =3D &imx_mu_cfg_imx7=
+d_b },
+> >> +       { },
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, imx_mu_dt_ids);
+> >> +
+> >> +static struct platform_driver imx_mu_driver =3D {
+> >> +       .probe          =3D imx_mu_probe,
+> >> +       .remove         =3D imx_mu_remove,
+> >> +       .driver =3D {
+> >> +               .name   =3D "imx_mu",
+> >> +               .of_match_table =3D imx_mu_dt_ids,
+> >> +       },
+> >> +};
+> >> +module_platform_driver(imx_mu_driver);
+> >> +
+> >> +MODULE_AUTHOR("Oleksij Rempel <o.rempel@pengutronix.de>");
+> >> +MODULE_DESCRIPTION("Message Unit driver for i.MX7");
+> >
+> > s/i.MX7/i.MX
+> >
+> > Regards
+> > Dong Aisheng
+> >
+> >> +MODULE_LICENSE("GPL v2");
+> >> --
+> >> 2.17.1
+> >>
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+--=20
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+--tcapg4szkm7n24bz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsjW0UACgkQdQOiSHVI
+77S+lAgAhyVvH+IPdvPHAzCyjpGh4DOKuFG8skgc9ICrtG7VQuHerWK0vhvv7BX3
+CWB0Egkdervt44Ha1Ksg/SS/DSq7WKA6JQg+QClqBzjZOxi1zoy99dwug3jetkrl
+TrSJoJh8b1rL8Bx+k5dJoUJyYYynxtzK7mukateXlv9eIpP0WGPStEbqJHJr2Xbr
+CBFujV7pqU2ALVRzRfecLAjS1cNjxw0G3T0/Khbzhx+3dWatxI1vv6uHdNOiROMX
+H3K+lbYQsE+ffpsfSwIAtkqQt3uUwD5EvvtUFXf4E1dO8daJw+acjKzrrj9NKruz
+VClhoE7kO6Y8o4MJ9HIkDiyNasemHA==
+=t3ZP
+-----END PGP SIGNATURE-----
+
+--tcapg4szkm7n24bz--
