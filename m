@@ -1,86 +1,61 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs63.siol.net ([185.57.226.254]:38482 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934236AbeFLUCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:18 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
-Date: Tue, 12 Jun 2018 22:00:20 +0200
-Message-Id: <20180612200036.21483-12-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44735 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756038AbeFOJvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 05:51:16 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v2 0/4] add mailbox support for i.MX7D
+Date: Fri, 15 Jun 2018 11:51:03 +0200
+Message-Id: <20180615095107.24610-1-o.rempel@pengutronix.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-TV TCONs connected to TCON TOP have to enable additional gate in order
-to work.
+20180615 changes v2:
+- DT: use mailbox@ instead of mu@
+- DT: change interrupts description
+- clk: use imx_clk_gate4 instead of imx_clk_gate2
+- imx-mailbox: remove last_tx_done support
+- imx-mailbox: fix module description 
 
-Add support for such TCONs.
+This patches are providing support for mailbox (Messaging Unit)
+for i.MX7D.
+Functionality was tested on PHYTEC phyBOARD-Zeta i.MX7D with
+Linux running on all cores: ARM Cortex-A7 and ARM Cortex-M4.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
- drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
- 2 files changed, 15 insertions(+)
+Both parts of i.MX messaging Unit are visible for all CPUs available
+on i.MX7D. Communication worked independent of MU side in combination
+with CPU. For example MU-A used on ARM Cortex-A7 and MU-B used on ARM Cortex-M4
+or other ways around.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 08747fc3ee71..0afb5a94a414 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- 		dev_err(dev, "Couldn't get the TCON bus clock\n");
- 		return PTR_ERR(tcon->clk);
- 	}
-+
-+	if (tcon->quirks->has_tcon_top_gate) {
-+		tcon->top_clk = devm_clk_get(dev, "tcon-top");
-+		if (IS_ERR(tcon->top_clk)) {
-+			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
-+			return PTR_ERR(tcon->top_clk);
-+		}
-+		clk_prepare_enable(tcon->top_clk);
-+	}
-+
- 	clk_prepare_enable(tcon->clk);
- 
- 	if (tcon->quirks->has_channel_0) {
-@@ -712,6 +722,7 @@ static int sun4i_tcon_init_clocks(struct device *dev,
- static void sun4i_tcon_free_clocks(struct sun4i_tcon *tcon)
- {
- 	clk_disable_unprepare(tcon->clk);
-+	clk_disable_unprepare(tcon->top_clk);
- }
- 
- static int sun4i_tcon_init_irq(struct device *dev,
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index f6a071cd5a6f..652d5c37d7b4 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -224,6 +224,7 @@ struct sun4i_tcon_quirks {
- 	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
- 	bool    needs_edp_reset; /* a80 edp reset needed for tcon0 access */
- 	bool	supports_lvds;   /* Does the TCON support an LVDS output? */
-+	bool	has_tcon_top_gate;  /* TCON TOP holds additional gate to enable */
- 
- 	/* callback to handle tcon muxing options */
- 	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
-@@ -249,6 +250,9 @@ struct sun4i_tcon {
- 	u8				dclk_max_div;
- 	u8				dclk_min_div;
- 
-+	/* TCON TOP clock */
-+	struct clk			*top_clk;
-+
- 	/* Reset control */
- 	struct reset_control		*lcd_rst;
- 	struct reset_control		*lvds_rst;
+The question to NXP developers: are there are limitations or
+recommendations about MU vs CPU combination? The i.MX7D documentation
+talks about "Processor A" and "Processor B". It is not quite clear what
+processor it actually is (A7 or M4).
+
+Oleksij Rempel (4):
+  clk: imx7d: add IMX7D_MU_ROOT_CLK
+  dt-bindings: mailbox: provide imx-mailbox documentation
+  ARM: dts: imx7s: add i.MX7 messaging unit support
+  mailbox: Add support for i.MX7D messaging unit
+
+ .../bindings/mailbox/imx-mailbox.txt          |  35 +++
+ arch/arm/boot/dts/imx7s.dtsi                  |  18 ++
+ drivers/clk/imx/clk-imx7d.c                   |   1 +
+ drivers/mailbox/Kconfig                       |   6 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/imx-mailbox.c                 | 288 ++++++++++++++++++
+ 6 files changed, 350 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
+ create mode 100644 drivers/mailbox/imx-mailbox.c
+
 -- 
 2.17.1
 
