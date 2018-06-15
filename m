@@ -1,45 +1,107 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33040 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966661AbeFSPr7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jun 2018 11:47:59 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z6-v6so19389386wma.0
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jun 2018 08:47:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: audio-divider is one based
-Date: Tue, 19 Jun 2018 17:47:53 +0200
-Message-Id: <20180619154753.12788-1-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <zhangqing@rock-chips.com>
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de
+Cc: sboyd@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	cl@rock-chips.com,
+	xxx@rock-chips.com,
+	xf@rock-chips.com,
+	huangtao@rock-chips.com,
+	Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 1/4] dt-bindings: add bindings for px30 clock controller
+Date: Fri, 15 Jun 2018 10:16:48 +0800
+Message-Id: <1529029011-15021-2-git-send-email-zhangqing@rock-chips.com>
+In-Reply-To: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
+References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The audio divider is one based. This offset was mistakenly dropped from
-recalc_rate() when migrating to clk_regmap.
+Add devicetree bindings for Rockchip cru which found on
+Rockchip SoCs.
 
-Fixes: 88a4e1283681 ("clk: meson: migrate the audio divider clock to clk_regmap")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/meson/clk-audio-divider.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/rockchip,px30-cru.txt           | 66 ++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index 58f546e04807..e4cf96ba704e 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -51,7 +51,7 @@ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
- 	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
- 	unsigned long divider;
- 
--	divider = meson_parm_read(clk->map, &adiv->div);
-+	divider = meson_parm_read(clk->map, &adiv->div) + 1;
- 
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
- }
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+new file mode 100644
+index 000000000000..1077692d6489
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+@@ -0,0 +1,66 @@
++* Rockchip PX30 Clock and Reset Unit
++
++The PX30 clock controller generates and supplies clock to various
++controllers within the SoC and also implements a reset controller for SoC
++peripherals.
++
++Required Properties:
++
++- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
++- compatible: CRU should be "rockchip,px30-cru"
++- reg: physical base address of the controller and length of memory mapped
++  region.
++- #clock-cells: should be 1.
++- #reset-cells: should be 1.
++
++Optional Properties:
++
++- rockchip,grf: phandle to the syscon managing the "general register files"
++  If missing, pll rates are not changeable, due to the missing pll lock status.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. All available clocks are defined as
++preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
++used in device tree sources. Similar macros exist for the reset sources in
++these files.
++
++External clocks:
++
++There are several clocks that are generated outside the SoC. It is expected
++that they are defined using standard clock bindings with following
++clock-output-names:
++ - "xin24m" - crystal input - required,
++ - "xin32k" - rtc clock - optional,
++ - "i2sx_clkin" - external I2S clock - optional,
++ - "gmac_clkin" - external GMAC clock - optional
++
++Example: Clock controller node:
++
++	pmucru: clock-controller@ff2bc000 {
++		compatible = "rockchip,px30-pmucru";
++		reg = <0x0 0xff2bc000 0x0 0x1000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++	cru: clock-controller@ff2b0000 {
++		compatible = "rockchip,px30-cru";
++		reg = <0x0 0xff2b0000 0x0 0x1000>;
++		rockchip,grf = <&grf>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++	};
++
++Example: UART controller node that consumes the clock generated by the clock
++  controller:
++
++	uart0: serial@ff030000 {
++		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
++		reg = <0x0 0xff030000 0x0 0x100>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
++		clock-names = "baudclk", "apb_pclk";
++		reg-shift = <2>;
++		reg-io-width = <4>;
++	};
++
 -- 
-2.14.3
-
+1.9.1
