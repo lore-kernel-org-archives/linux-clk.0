@@ -1,112 +1,81 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 11/13] ARM: davinci: dm646x-evm: use aemif platform driver
-Date: Tue, 26 Jun 2018 11:25:35 +0200
-Message-Id: <20180626092537.6737-12-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Srinath Mannam <srinath.mannam@broadcom.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
+Message-ID: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+Subject: Re: ACPI support in common clock framework
+Date: Fri, 15 Jun 2018 10:43:11 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
+> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > +Cc: Rafael, ACPI ML
+> >
+> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+> > <srinath.mannam@broadcom.com> wrote:
+> >> Hi Michael, Stephen,
+> >>
+> >> We are adding ACPI support in our Linux based platform.
+> >> At present our clock hierarchy using common clock framework through DT=
+S.
+> >> Now we required ACPI support in common clock framework to upgrade our =
+platform.
+> >>
+> >> For example, clk_get API called in many drivers to get clock device is
+> >> tightly coupled with DT framework.
+> >>
+> >> Please let us know, if anybody in Open Source community have plans to
+> >> add ACPI support for common clock framework.
+> =
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm646x-evm.
+> There are no plans for doing that AFAICS.
+> =
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-dm646x-evm.c | 52 +++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 11 deletions(-)
+> Moreover, it generally would not be consistent with ACPI power
+> management defined by the specification.
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 867ab2fa6cfd..3e5ee09ee717 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/platform_data/at24.h>
- #include <linux/platform_data/pcf857x.h>
-+#include <linux/platform_data/ti-aemif.h>
- 
- #include <media/i2c/tvp514x.h>
- #include <media/i2c/adv7343.h>
-@@ -106,16 +107,47 @@ static struct resource davinci_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
-+static struct platform_device davinci_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
-+		.dev		= {
-+			.platform_data	= &davinci_nand_data,
-+		},
-+	},
-+};
-+
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start	= DM646X_ASYNC_EMIF_CONTROL_BASE,
-+		.end	= DM646X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
- 
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
-+static struct aemif_abus_data davinci_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
- 
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= davinci_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(davinci_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
-+};
-+
-+static struct platform_device davinci_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource	= davinci_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(davinci_aemif_resources),
- };
- 
- #define HAS_ATA		(IS_ENABLED(CONFIG_BLK_DEV_PALMCHIP_BK3710) || \
-@@ -793,10 +825,8 @@ static __init void evm_init(void)
- 	if (machine_is_davinci_dm6467tevm())
- 		davinci_nand_data.timing = &dm6467tevm_nandflash_timing;
- 
--	platform_device_register(&davinci_nand_device);
--
--	if (davinci_aemif_setup(&davinci_nand_device))
--		pr_warn("%s: Cannot configure AEMIF.\n", __func__);
-+	if (platform_device_register(&davinci_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device.\n", __func__);
- 
- 	dm646x_init_edma(dm646x_edma_rsv);
- 
--- 
-2.17.1
+This matches my understanding.
+
+> =
+
+> >> If not please suggest us alternative method to use common clock
+> >> framework in ACPI use case.
+> =
+
+> The problem with using the clock framework on systems with ACPI is
+> that, in general, the clock manipulation is expected to be carried out
+> by ACPI power management and therefore it is "owned" by AML.
+> Currently, there are no defined methods for synchronizing the AML's
+> use of clocks for power management with what the OS may do with them
+> directly.
+> =
+
+> In theory, that can be worked around to some extent by representing
+> clocks as power resources in ASL (even though the provider information
+> would be missing then) and manipulating those power resources directly
+> from the OS.  I'm not aware of anyone doing that successfully,
+> however.
+> =
+
+> For simple power management it should be sufficient to let drivers
+> rely on the ACPI PM domain which should happen automatically in the
+> majority of cases anyway.
+> =
+
+
+Is this for clk_enable/disable? What about clk_set_rate() or
+clk_set_phase()? Is ACPI's AML taking care of that?
