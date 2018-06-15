@@ -1,160 +1,122 @@
-Return-Path: <marek.vasut@gmail.com>
-Return-Path: <marek.vasut@gmail.com>
-Subject: Re: [PATCH] clk: vc5: Fix div-by-0 when rounding a rate of zero
-To: Steve Longerbeam <slongerbeam@gmail.com>,
- Steve Longerbeam <steve_longerbeam@mentor.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>
-References: <1527791036-11251-1-git-send-email-steve_longerbeam@mentor.com>
- <1084deae-ca55-aba1-ec08-7e1d976de7b7@gmail.com>
- <e6d84bd1-5ad9-1a01-1cdf-0356fea82c16@gmail.com>
- <f7a05f4b-35c4-4900-24bd-44aab1c669cb@gmail.com>
- <59591484-b76d-6764-73c3-637bb4e5178f@mentor.com>
- <06fd7d17-5c31-4ac5-d923-276afee056b3@gmail.com>
- <4f4f8a11-9239-3c24-f136-1ad0617a992a@gmail.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <ff0d61f5-e6a3-dfb9-4cf0-370cb5b7dd9e@gmail.com>
-Date: Fri, 1 Jun 2018 08:36:30 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs20.siol.net ([185.57.226.211]:33264 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965916AbeFORfD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 13:35:03 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
+Date: Fri, 15 Jun 2018 19:33:53 +0200
+Message-ID: <3871160.F3Km1rQkUz@jernej-laptop>
+In-Reply-To: <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <2948115.KggauuSURZ@jernej-laptop> <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4f4f8a11-9239-3c24-f136-1ad0617a992a@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2018 03:46 AM, Steve Longerbeam wrote:
+Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai napisal(a):
+> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
 > 
+> <jernej.skrabec@siol.net> wrote:
+> > Hi,
+> > 
+> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
+> >> Hi,
+> >> 
+> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+> >> > TV TCONs connected to TCON TOP have to enable additional gate in order
+> >> > to work.
+> >> > 
+> >> > Add support for such TCONs.
+> >> > 
+> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> > ---
+> >> > 
+> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+> >> >  2 files changed, 15 insertions(+)
+> >> > 
+> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
+> >> > 100644
+> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device
+> >> > *dev,
+> >> > 
+> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
+> >> >             return PTR_ERR(tcon->clk);
+> >> >     
+> >> >     }
+> >> > 
+> >> > +
+> >> > +   if (tcon->quirks->has_tcon_top_gate) {
+> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
+> >> > +           if (IS_ERR(tcon->top_clk)) {
+> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
+> >> > clock\n");
+> >> > +                   return PTR_ERR(tcon->top_clk);
+> >> > +           }
+> >> > +           clk_prepare_enable(tcon->top_clk);
+> >> > +   }
+> >> > +
+> >> 
+> >> Is it required for the TCON itself to operate, or does the TCON
+> >> requires the TCON TOP, which in turn requires that clock to be
+> >> functional?
+> >> 
+> >> I find it quite odd to have a clock that isn't meant for a particular
+> >> device to actually be wired to another device. I'm not saying this
+> >> isn't the case, but it would be a first.
+> > 
+> > Documentation doesn't say much about that gate. I did few tests and TCON
+> > registers can be read and written even if TCON TOP TV TCON gate is
+> > disabled. However, there is no image, as expected.
 > 
-> On 05/31/2018 12:37 PM, Marek Vasut wrote:
->> On 05/31/2018 08:52 PM, Steve Longerbeam wrote:
->>>
->>> On 05/31/2018 11:35 AM, Marek Vasut wrote:
->>>> On 05/31/2018 08:32 PM, Steve Longerbeam wrote:
->>>>> Hi Marek,
->>>>>
->>>>>
->>>>> On 05/31/2018 11:25 AM, Marek Vasut wrote:
->>>>>> On 05/31/2018 08:23 PM, Steve Longerbeam wrote:
->>>>>>> Just return zero for a rounded rate if requested rate is zero.
->>>>>>>
->>>>>>> This was caught by CONFIG_UBSAN:
->>>>>>>
->>>>>>> [  192.266748] UBSAN: Undefined behaviour in
->>>>>>> drivers/clk/clk-versaclock5.c:513:17
->>>>>>> [  192.274050] division by zero
->>>>>>> [  192.276976] CPU: 0 PID: 2579 Comm: vsp-unit-test-0 Tainted: G
->>>>>>> B   WC      4.14.17-02752-g13fb96f #1
->>>>>>> [  192.286378] Hardware name: Renesas Salvator-X board based on
->>>>>>> r8a7795 ES2.0+ (DT)
->>>>>>> [  192.293852] Call trace:
->>>>>>> [  192.296343] [<ffff2000080900dc>] dump_backtrace+0x0/0x390
->>>>>>> [  192.301807] [<ffff200008090480>] show_stack+0x14/0x1c
->>>>>>> [  192.306920] [<ffff200008f66574>] dump_stack+0x134/0x1a8
->>>>>>> [  192.312213] [<ffff2000087aaa30>] ubsan_epilogue+0x14/0x60
->>>>>>> [  192.317677] [<ffff2000087ab4d0>]
->>>>>>> __ubsan_handle_divrem_overflow+0x11c/0x170
->>>>>>> [  192.324720] [<ffff200008852120>] vc5_fod_round_rate+0x68/0x148
->>>>>>> [  192.330620] [<ffff20000884567c>] clk_calc_new_rates+0x238/0x3fc
->>>>>>> [  192.336607] [<ffff2000088456e0>] clk_calc_new_rates+0x29c/0x3fc
->>>>>>> [  192.342595] [<ffff2000088483ac>]
->>>>>>> clk_core_set_rate_nolock+0x48/0x11c
->>>>>>> [  192.349019] [<ffff2000088484b4>] clk_set_rate+0x34/0x4c
->>>>>>> [  192.354307] [<ffff20000895e304>] rcar_du_pm_suspend+0x274/0x2f4
->>>>>>> [  192.360297] [<ffff20000898feac>] platform_pm_suspend+0x78/0xb8
->>>>>>> [  192.366198] [<ffff2000089a5604>] dpm_run_callback+0x584/0xa18
->>>>>>> [  192.372010] [<ffff2000089a69e0>] __device_suspend+0x1a8/0x534
->>>>>>> [  192.377822] [<ffff2000089adc48>] dpm_suspend+0x130/0xea0
->>>>>>> [  192.383197] [<ffff2000089b0344>] dpm_suspend_start+0x130/0x138
->>>>>>> [  192.389099] [<ffff20000817f584>]
->>>>>>> suspend_devices_and_enter+0xf0/0x1778
->>>>>>> [  192.395700] [<ffff200008183014>] pm_suspend+0x2408/0x245c
->>>>>>> [  192.401162] [<ffff20000817c0a4>] state_store+0xf0/0x130
->>>>>>> [  192.406451] [<ffff200008f6f19c>] kobj_attr_store+0x5c/0x6c
->>>>>>> [  192.412002] [<ffff2000084f4c94>] sysfs_kf_write+0xe8/0xfc
->>>>>>> [  192.417466] [<ffff2000084f30b0>] kernfs_fop_write+0x22c/0x2e4
->>>>>>> [  192.423281] [<ffff2000083e46d4>] __vfs_write+0x104/0x34c
->>>>>>> [  192.428656] [<ffff2000083e4cc4>] vfs_write+0x134/0x2d8
->>>>>>> [  192.433857] [<ffff2000083e5150>] SyS_write+0xbc/0x12c
->>>>>>> [  192.438967] Exception stack(0xffff8006cd1cfec0 to
->>>>>>> 0xffff8006cd1d0000)
->>>>>>> [  192.445480] fec0: 0000000000000001 000000001e303f00
->>>>>>> 0000000000000004 0000ffff959a5000
->>>>>>> [  192.453397] fee0: 0000000000000000 0000000155510004
->>>>>>> 0000000000000003 000000000000006d
->>>>>>> [  192.461314] ff00: 0000000000000040 0000000000000000
->>>>>>> 0000ffffcc304800 0000000000000020
->>>>>>> [  192.469230] ff20: 0000000000000000 0000000000000000
->>>>>>> 0000000000000001 0000000000000008
->>>>>>> [  192.477148] ff40: 00000000004eb3b8 0000ffff958bb840
->>>>>>> 000000000000003d 0000000000000001
->>>>>>> [  192.485065] ff60: 000000001e303f00 0000ffff959a1508
->>>>>>> 0000000000000004 000000001e303f00
->>>>>>> [  192.492982] ff80: 0000000000000004 00000000004d4c68
->>>>>>> 0000000000000001 0000000000000000
->>>>>>> [  192.500899] ffa0: 000000001e30d5c0 0000ffffcc304820
->>>>>>> 0000ffff958bec64 0000ffffcc304820
->>>>>>> [  192.508816] ffc0: 0000ffff95912898 0000000020000000
->>>>>>> 0000000000000001 0000000000000040
->>>>>>> [  192.516733] ffe0: 0000000000000000 0000000000000000
->>>>>>> 0000000000000000 0000000000000000
->>>>>>> [  192.524650] [<ffff200008083ef0>] el0_svc_naked+0x24/0x28
->>>>>>>
->>>>>>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
->>>>>>> ---
->>>>>>>     drivers/clk/clk-versaclock5.c | 4 ++++
->>>>>>>     1 file changed, 4 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/clk/clk-versaclock5.c
->>>>>>> b/drivers/clk/clk-versaclock5.c
->>>>>>> index decffb3..113523d 100644
->>>>>>> --- a/drivers/clk/clk-versaclock5.c
->>>>>>> +++ b/drivers/clk/clk-versaclock5.c
->>>>>>> @@ -509,6 +509,10 @@ static long vc5_fod_round_rate(struct clk_hw
->>>>>>> *hw, unsigned long rate,
->>>>>>>         u32 div_int;
->>>>>>>         u64 div_frc;
->>>>>>>     +    /* prevent div-by-0 */
->>>>>>> +    if (rate == 0)
->>>>>>> +        return 0;
->>>>>>> +
->>>>>>>         /* Determine integer part, which is 12 bit wide */
->>>>>>>         div_int = f_in / rate;
->>>>>>>         /*
->>>>>>>
->>>>>> Can this actually happen ?
->>>>> We caught this using the Renesas 3.6.0 BSP release, when performing
->>>>> a suspend of rcar-du driver. The rcar_du_pm_suspend() in 3.6.0 BSP is
->>>>> modified
->>>>> from mainline version, including calling clk_set_rate() on the crtc
->>>>> clocks with a
->>>>> rate of zero. So this is not actually reproducible (yet) in mainline.
->>>> So it sets clock to 0 ?
->>> Yep, see
->>>
->>> https://kernel.googlesource.com/pub/scm/linux/kernel/git/horms/renesas-bsp/+/rcar-3.6.0/drivers/gpu/drm/rcar-du/rcar_du_drv.c#359
->>>
->>>
->>>
->>>>    Anyway, this looks sane, although maybe the
->>>> whole driver could use a once-over to see if there could be more of
->>>> this.
->>> Actually I do see more potential divide-by-zeros due to a passed rate
->>> of zero, including vc5_pfd_round_rate() and vc5_pfd_set_rate().
->>>
->>> I can resubmit this patch fixing all cases in clk-versaclock5.c if you
->>> like (and probably remove the misleading backtrace in the commit
->>> message since it is a Renesas 3.6.0 kernel backtrace not a mainline
->>> backtrace).
->>>
->>> Or perhaps just treat this as a heads-up, I'll leave it up to you.
->> It'd be nice if you resubmitted it fixing all the cases.
->>
+> The R40 manual does include it in the diagram, on page 504. There's also a
+> mux to select whether the clock comes directly from the CCU or the TV
+> encoder (a feedback mode?). I assume this is the gate you are referring to
+> here, in which case it is not a bus clock, but rather the TCON module or
+> channel clock, strangely routed.
 > 
-> Ok. Please disregard this patch since there won't be a v2, the
-> new patch will have a different title.
+> > More interestingly, I enabled test pattern directly in TCON to eliminate
+> > influence of the mixer. As soon as I disabled that gate, test pattern on
+> > HDMI screen was gone, which suggest that this gate influences something
+> > inside TCON.
+> > 
+> > Another test I did was that I moved enable/disable gate code to
+> > sun4i_tcon_channel_set_status() and it worked just as well.
+> > 
+> > I'll ask AW engineer what that gate actually does, but from what I saw, I
+> > would say that most appropriate location to enable/disable TCON TOP TV
+> > TCON
+> > gate is TCON driver. Alternatively, TCON TOP driver could check if any TV
+> > TCON is in use and enable appropriate gate. However, that doesn't sound
+> > right to me for some reason.
+> 
+> If what I said above it true, then yes, the appropriate location to enable
+> it is the TCON driver, but moreover, the representation of the clock tree
+> should be fixed such that the TCON takes the clock from the TCON TOP as its
+> channel/ module clock instead. That way you don't need this patch, but
+> you'd add another for all the clock routing.
 
-Thanks!
+Can you be more specific? I not sure what you mean here.
 
--- 
 Best regards,
-Marek Vasut
+Jernej
+
+
