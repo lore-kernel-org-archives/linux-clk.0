@@ -1,48 +1,94 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 01/13] clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
-Date: Tue, 26 Jun 2018 11:25:25 +0200
-Message-Id: <20180626092537.6737-2-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs40.siol.net ([185.57.226.231]:45580 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965985AbeFOQm0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 12:42:26 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
+Date: Fri, 15 Jun 2018 18:41:16 +0200
+Message-ID: <2948115.KggauuSURZ@jernej-laptop>
+In-Reply-To: <20180615083110.laruycabvyjmesmo@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi,
 
-Since commit a8e3923ab571 ("mtd: rawnand: davinci: don't acquire and
-enable clock") we no longer acquire the aemif clock from the davinci
-nand driver - we only do it from the ti-aemif driver. Remove the nand
-entry from the psc lookup table.
+Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
+> Hi,
+> 
+> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+> > TV TCONs connected to TCON TOP have to enable additional gate in order
+> > to work.
+> > 
+> > Add support for such TCONs.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+> >  2 files changed, 15 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+> > 
+> >  		dev_err(dev, "Couldn't get the TCON bus clock\n");
+> >  		return PTR_ERR(tcon->clk);
+> >  	
+> >  	}
+> > 
+> > +
+> > +	if (tcon->quirks->has_tcon_top_gate) {
+> > +		tcon->top_clk = devm_clk_get(dev, "tcon-top");
+> > +		if (IS_ERR(tcon->top_clk)) {
+> > +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+> > +			return PTR_ERR(tcon->top_clk);
+> > +		}
+> > +		clk_prepare_enable(tcon->top_clk);
+> > +	}
+> > +
+> 
+> Is it required for the TCON itself to operate, or does the TCON
+> requires the TCON TOP, which in turn requires that clock to be
+> functional?
+> 
+> I find it quite odd to have a clock that isn't meant for a particular
+> device to actually be wired to another device. I'm not saying this
+> isn't the case, but it would be a first.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc-da850.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Documentation doesn't say much about that gate. I did few tests and TCON 
+registers can be read and written even if TCON TOP TV TCON gate is disabled. 
+However, there is no image, as expected.
 
-diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-index d196dcbed560..5a18bca464cd 100644
---- a/drivers/clk/davinci/psc-da850.c
-+++ b/drivers/clk/davinci/psc-da850.c
-@@ -16,8 +16,7 @@
- 
- #include "psc.h"
- 
--LPSC_CLKDEV2(emifa_clkdev,	NULL,		"ti-aemif",
--				"aemif",	"davinci_nand.0");
-+LPSC_CLKDEV1(emifa_clkdev,	NULL,		"ti-aemif");
- LPSC_CLKDEV1(spi0_clkdev,	NULL,		"spi_davinci.0");
- LPSC_CLKDEV1(mmcsd0_clkdev,	NULL,		"da830-mmc.0");
- LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
--- 
-2.17.1
+More interestingly, I enabled test pattern directly in TCON to eliminate 
+influence of the mixer. As soon as I disabled that gate, test pattern on HDMI 
+screen was gone, which suggest that this gate influences something inside 
+TCON.
+
+Another test I did was that I moved enable/disable gate code to 
+sun4i_tcon_channel_set_status() and it worked just as well.
+
+I'll ask AW engineer what that gate actually does, but from what I saw, I 
+would say that most appropriate location to enable/disable TCON TOP TV TCON 
+gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON 
+is in use and enable appropriate gate. However, that doesn't sound right to me 
+for some reason.
+
+Best regards,
+Jernej
+
+
