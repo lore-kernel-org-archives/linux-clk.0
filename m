@@ -1,214 +1,259 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Fri, 15 Jun 2018 16:30:51 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-	kstewart@linuxfoundation.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v6 3/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <69915265bbff5c729bcd4ffd4ffdba8d24582068.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <eballetbo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <CGME20180514211840epcas3p41708e430bc22d7e61e8b894b12a083f9@epcas3p4.samsung.com>
+ <20180514211610.26618-4-enric.balletbo@collabora.com> <5AFA0B94.4000100@samsung.com>
+In-Reply-To: <5AFA0B94.4000100@samsung.com>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Sat, 16 Jun 2018 12:15:34 +0200
+Message-ID: <CAFqH_51jDy6hvwTtVQf52OZ2QFwAACzH8bh2bUZdxAnvKqM6=A@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/10] devfreq: rk3399_dmc: Pass ODT and auto power
+ down parameters to TF-A.
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, hjc@rock-chips.com,
+	David Airlie <airlied@linux.ie>, huang lin <hl@rock-chips.com>,
+	Linux PM list <linux-pm@vger.kernel.org>, dbasehore@chromium.org,
+	linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Sean Paul <seanpaul@chromium.org>,
+	kernel@collabora.com, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Support BD71837 gateable 32768 Hz clock.
+Hi Chanwoo,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |   6 ++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd71837.c | 145 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 drivers/clk/clk-bd71837.c
+I'll send a new version soon, just wanted to ask some questions here. See b=
+elow.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 41492e980ef4..065421a9eb22 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -279,6 +279,12 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD71837
-+	tristate "Clock driver for ROHM BD71837 PMIC MFD"
-+	depends on MFD_BD71837
-+	help
-+	  This driver supports ROHM BD71837 PMIC clock.
-+
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index de6d06ac790b..8393c4af7d5a 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD71837)	+= clk-bd71837.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd71837.c b/drivers/clk/clk-bd71837.c
-new file mode 100644
-index 000000000000..8b9aae33eade
---- /dev/null
-+++ b/drivers/clk/clk-bd71837.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c  -- ROHM BD71837MWV clock driver
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/bd71837.h>
-+#include <linux/clk-provider.h>
-+
-+struct bd71837_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	unsigned long rate;
-+	struct platform_device *pdev;
-+	struct bd71837 *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return bd71837_update_bits(c->mfd, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	enabled = c->mask;
-+	enabled &= bd71837_reg_read(c->mfd, c->reg);
-+
-+	return enabled;
-+}
-+static unsigned long bd71837_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct bd71837_clk *c = container_of(hw, struct bd71837_clk, hw);
-+
-+	return c->rate;
-+}
-+
-+static struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd71837_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd71837 *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd71837-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+		return -ENOMEM;
-+
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (parent_clk) {
-+		init.num_parents = 1;
-+	} else {
-+		/* If parent is not given from DT we assume the typical
-+		 * use-case with 32.768 KHz oscillator for RTC (Maybe we
-+		 * should just error out here and require parent?)
-+		 */
-+		c->rate = BD71837_CLK_RATE;
-+		bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-+		dev_warn(&pdev->dev, "No parent clk found - assuming 32,768 KHz\n");
-+	}
-+
-+	c->reg = BD71837_REG_OUT32K;
-+	c->mask = BD71837_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+					      "clock-output-names", 0,
-+					      &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (!rval) {
-+		if (parent->of_node) {
-+			rval = of_clk_add_hw_provider(parent->of_node,
-+					     of_clk_hw_simple_get,
-+					     &c->hw);
-+			if (rval)
-+				dev_err(&pdev->dev,
-+					"adding clk provider failed\n");
-+		}
-+	} else {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+	}
-+
-+	return rval;
-+}
-+
-+static int bd71837_clk_remove(struct platform_device *pdev)
-+{
-+	if (pdev->dev.parent->of_node)
-+		of_clk_del_provider(pdev->dev.parent->of_node);
-+	return 0;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd71837-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+	.remove = bd71837_clk_remove,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Missatge de Chanwoo Choi <cw00.choi@samsung.com> del dia dt., 15 de
+maig 2018 a les 0:21:
+>
+> Hi,
+>
+> On 2018=EB=85=84 05=EC=9B=94 15=EC=9D=BC 06:16, Enric Balletbo i Serra wr=
+ote:
+> > Trusted Firmware-A (TF-A) for rk3399 implements a SiP call to get the
+> > on-die termination (ODT) and auto power down parameters from kernel,
+> > this patch adds the functionality to do this. Also, if DDR clock
+> > frequency is lower than the on-die termination (ODT) disable frequency
+> > this driver should disable the DDR ODT.
+>
+> I have a question.
+> 'disable frequency' is the same meaning of 'disable the DDR ODT'?
+>
+
+Yes, the DT defines an odt_dis_freq parameter, when the DDR frequency
+is less than the value in this parameter we disable the ODT on the
+DRAM.
+
+> >
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > ---
+> >
+> >  drivers/devfreq/rk3399_dmc.c        | 50 ++++++++++++++++++++++++++++-
+> >  include/soc/rockchip/rockchip_sip.h |  1 +
+> >  2 files changed, 50 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.=
+c
+> > index d5c03e5abe13..cc1bbca3fb15 100644
+> > --- a/drivers/devfreq/rk3399_dmc.c
+> > +++ b/drivers/devfreq/rk3399_dmc.c
+> > @@ -18,14 +18,17 @@
+> >  #include <linux/devfreq.h>
+> >  #include <linux/devfreq-event.h>
+> >  #include <linux/interrupt.h>
+> > +#include <linux/mfd/syscon.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_opp.h>
+> > +#include <linux/regmap.h>
+> >  #include <linux/regulator/consumer.h>
+> >  #include <linux/rwsem.h>
+> >  #include <linux/suspend.h>
+> >
+> > +#include <soc/rockchip/rk3399_grf.h>
+> >  #include <soc/rockchip/rockchip_sip.h>
+> >
+> >  struct dram_timing {
+> > @@ -69,8 +72,11 @@ struct rk3399_dmcfreq {
+> >       struct mutex lock;
+> >       struct dram_timing timing;
+> >       struct regulator *vdd_center;
+> > +     struct regmap *regmap_pmu;
+> >       unsigned long rate, target_rate;
+> >       unsigned long volt, target_volt;
+> > +     unsigned int odt_dis_freq;
+> > +     int odt_pd_arg0, odt_pd_arg1;
+> >  };
+> >
+> >  static int rk3399_dmcfreq_target(struct device *dev, unsigned long *fr=
+eq,
+> > @@ -80,6 +86,8 @@ static int rk3399_dmcfreq_target(struct device *dev, =
+unsigned long *freq,
+> >       struct dev_pm_opp *opp;
+> >       unsigned long old_clk_rate =3D dmcfreq->rate;
+> >       unsigned long target_volt, target_rate;
+> > +     struct arm_smccc_res res;
+> > +     int dram_flag;
+> >       int err;
+> >
+> >       opp =3D devfreq_recommended_opp(dev, freq, flags);
+> > @@ -95,6 +103,15 @@ static int rk3399_dmcfreq_target(struct device *dev=
+, unsigned long *freq,
+> >
+> >       mutex_lock(&dmcfreq->lock);
+> >
+> > +     dram_flag =3D 0;
+>
+> Also, if dram_flag is 0, it mean that disable ODT frequency?
+
+Yes, not a good name, maybe I should just rename it to odt_enable to
+be more clear.
+
+> If it's right, you better to define the precise variables as following
+> instead of just integer(0 or 1).
+> For example,
+> - ROCKCHIP_SIP_DRAM_FREQ_ENABLE
+> - ROCKCHIP_SIP_DRAM_FREQ_DISABLE
+>
+> > +     if (target_rate >=3D dmcfreq->odt_dis_freq)
+> > +             dram_flag =3D 1;
+> > +
+> > +     arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, dmcfreq->odt_pd_arg0,
+> > +                   dmcfreq->odt_pd_arg1,
+> > +                   ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD,
+> > +                   dram_flag, 0, 0, 0, &res);
+> > +
+>
+> This operation is special for only rk3399_dmc. It is difficult
+> to understand what to do. I recommend you better to add the detailed comm=
+ent
+> with code.
+
+Will do.
+
+>
+> >       /*
+> >        * If frequency scaling from low to high, adjust voltage first.
+> >        * If frequency scaling from high to low, adjust frequency first.
+> > @@ -294,11 +311,13 @@ static int rk3399_dmcfreq_probe(struct platform_d=
+evice *pdev)
+> >  {
+> >       struct arm_smccc_res res;
+> >       struct device *dev =3D &pdev->dev;
+> > -     struct device_node *np =3D pdev->dev.of_node;
+> > +     struct device_node *np =3D pdev->dev.of_node, *node;
+> >       struct rk3399_dmcfreq *data;
+> >       int ret, index, size;
+> >       uint32_t *timing;
+> >       struct dev_pm_opp *opp;
+> > +     u32 ddr_type;
+> > +     u32 val;
+> >
+> >       data =3D devm_kzalloc(dev, sizeof(struct rk3399_dmcfreq), GFP_KER=
+NEL);
+> >       if (!data)
+> > @@ -334,6 +353,29 @@ static int rk3399_dmcfreq_probe(struct platform_de=
+vice *pdev)
+> >               return ret;
+> >       }
+> >
+> > +     /* Try to find the optional reference to the pmu syscon */
+> > +     node =3D of_parse_phandle(np, "rockchip,pmu", 0);
+> > +     if (node) {
+> > +             data->regmap_pmu =3D syscon_node_to_regmap(node);
+> > +             if (IS_ERR(data->regmap_pmu))
+> > +                     return PTR_ERR(data->regmap_pmu);
+> > +     }
+> > +
+> > +     /* Get DDR type */
+> > +     regmap_read(data->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+> > +     ddr_type =3D (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+> > +                 RK3399_PMUGRF_DDRTYPE_MASK;
+> > +
+> > +     /* Get the odt_dis_freq parameter in function of the DDR type */
+> > +     if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_DDR3)
+> > +             data->odt_dis_freq =3D data->timing.ddr3_odt_dis_freq;
+> > +     else if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_LPDDR3)
+> > +             data->odt_dis_freq =3D data->timing.lpddr3_odt_dis_freq;
+> > +     else if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_LPDDR4)
+> > +             data->odt_dis_freq =3D data->timing.lpddr4_odt_dis_freq;
+> > +     else
+> > +             return -EINVAL;
+> > +
+>
+> how about using 'switch' statement?
+>
+
+Ok
+
+> >       /*
+> >        * Get dram timing and pass it to arm trust firmware,
+> >        * the dram drvier in arm trust firmware will get these
+> > @@ -358,6 +400,12 @@ static int rk3399_dmcfreq_probe(struct platform_de=
+vice *pdev)
+> >                     ROCKCHIP_SIP_CONFIG_DRAM_INIT,
+> >                     0, 0, 0, 0, &res);
+> >
+> > +     data->odt_pd_arg0 =3D (data->timing.sr_idle & 0xff) |
+> > +                         ((data->timing.sr_mc_gate_idle & 0xff) << 8) =
+|
+> > +                         ((data->timing.standby_idle & 0xffff) << 16);
+> > +     data->odt_pd_arg1 =3D (data->timing.pd_idle & 0xfff) |
+> > +                         ((data->timing.srpd_lite_idle & 0xfff) << 16)=
+;
+> > +
+>
+> odt_pd_arg0 and odt_pd_arg1 might be used for disabling/enabling the ODT =
+frequency.
+> As I commented, it depend on only rk3399_dmc. You better to add detailed =
+comment.
+>
+
+Ok
+
+> And I prefer to define the XXX_SHIFT/XXX_MASK definition instead of
+> using 8/16/0xff/0xffff for the readability.
+>
+
+I tried to add the XXX_SHIFT/XXX_MASK definitions and IMHO the
+readability is worst if I use a maximum line length of 80 characters.
+These masks are only used here, let me try to convince you by adding a
+good doc in the next version and if you still prefer I add the
+definition I'll do.
+
+> >       /*
+> >        * We add a devfreq driver to our parent since it has a device tr=
+ee node
+> >        * with operating points.
+> > diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchip=
+/rockchip_sip.h
+> > index 7e28092c4d3d..ad9482c56797 100644
+> > --- a/include/soc/rockchip/rockchip_sip.h
+> > +++ b/include/soc/rockchip/rockchip_sip.h
+> > @@ -23,5 +23,6 @@
+> >  #define ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE    0x05
+> >  #define ROCKCHIP_SIP_CONFIG_DRAM_CLR_IRQ     0x06
+> >  #define ROCKCHIP_SIP_CONFIG_DRAM_SET_PARAM   0x07
+> > +#define ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD  0x08
+> >
+> >  #endif
+> >
+>
+>
+> --
+> Best Regards,
+> Chanwoo Choi
+> Samsung Electronics
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Cheers,
+ Enric
