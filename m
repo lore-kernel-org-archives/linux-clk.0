@@ -1,33 +1,76 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 5 Jun 2018 15:10:09 -0600
-From: Rob Herring <robh@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-	michael@amarulasolutions.com, matteo.lisi@engicam.com,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] clk: imx6ul: add GPIO clock gates
-Message-ID: <20180605211009.GA28373@rob-hp-laptop>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <rjwysocki@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+Sender: rjwysocki@gmail.com
+In-Reply-To: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com> <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 16 Jun 2018 17:50:18 +0200
+Message-ID: <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Srinath Mannam <srinath.mannam@broadcom.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 03, 2018 at 09:44:04AM +0800, Anson Huang wrote:
-> i.MX6UL has GPIO clock gates in CCM CCGR,
-> add them into clock tree for clock management.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since V1:
-> 	Move IMX6UL_CLK_GPIOx definition to end of clock table;
-> 	Based on Fabio's patch "[v2] dt-bindings: clock: imx6ul: Do not change the clock definition order".
->  drivers/clk/imx/clk-imx6ul.c             | 5 +++++
->  include/dt-bindings/clock/imx6ul-clock.h | 8 +++++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
+On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
+>> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>> > +Cc: Rafael, ACPI ML
+>> >
+>> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+>> > <srinath.mannam@broadcom.com> wrote:
+>> >> Hi Michael, Stephen,
+>> >>
+>> >> We are adding ACPI support in our Linux based platform.
+>> >> At present our clock hierarchy using common clock framework through DTS.
+>> >> Now we required ACPI support in common clock framework to upgrade our platform.
+>> >>
+>> >> For example, clk_get API called in many drivers to get clock device is
+>> >> tightly coupled with DT framework.
+>> >>
+>> >> Please let us know, if anybody in Open Source community have plans to
+>> >> add ACPI support for common clock framework.
+>>
+>> There are no plans for doing that AFAICS.
+>>
+>> Moreover, it generally would not be consistent with ACPI power
+>> management defined by the specification.
+>
+> This matches my understanding.
+>
+>>
+>> >> If not please suggest us alternative method to use common clock
+>> >> framework in ACPI use case.
+>>
+>> The problem with using the clock framework on systems with ACPI is
+>> that, in general, the clock manipulation is expected to be carried out
+>> by ACPI power management and therefore it is "owned" by AML.
+>> Currently, there are no defined methods for synchronizing the AML's
+>> use of clocks for power management with what the OS may do with them
+>> directly.
+>>
+>> In theory, that can be worked around to some extent by representing
+>> clocks as power resources in ASL (even though the provider information
+>> would be missing then) and manipulating those power resources directly
+>> from the OS.  I'm not aware of anyone doing that successfully,
+>> however.
+>>
+>> For simple power management it should be sufficient to let drivers
+>> rely on the ACPI PM domain which should happen automatically in the
+>> majority of cases anyway.
+>>
+>
+> Is this for clk_enable/disable? What about clk_set_rate() or
+> clk_set_phase()? Is ACPI's AML taking care of that?
 
-Acked-by: Rob Herring <robh@kernel.org>
+That's for clk_enable/disable AFAICS.
+
+AML doesn't manage device performance states at all.
