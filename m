@@ -1,94 +1,75 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs40.siol.net ([185.57.226.231]:45580 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S965985AbeFOQm0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 12:42:26 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
-Date: Fri, 15 Jun 2018 18:41:16 +0200
-Message-ID: <2948115.KggauuSURZ@jernej-laptop>
-In-Reply-To: <20180615083110.laruycabvyjmesmo@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 17 Jun 2018 15:05:28 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180617070527.GL16091@dragon>
+References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+ <20180517055014.6607-4-o.rempel@pengutronix.de>
+ <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
+ <2307533.g32PyNi9fl@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <2307533.g32PyNi9fl@aspire.rjw.lan>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
-> Hi,
+On Tue, Jun 12, 2018 at 04:33:05PM +0200, Rafael J. Wysocki wrote:
+> On Tuesday, June 12, 2018 2:42:12 PM CEST Oleksij Rempel wrote:
+> >  This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+> > --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
+> > Content-Type: multipart/mixed; boundary="d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg";
+> >  protected-headers="v1"
+> > From: Oleksij Rempel <o.rempel@pengutronix.de>
+> > To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+> >  "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+> > Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+> >  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+> >  linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+> >  Liam Girdwood <lgirdwood@gmail.com>,
+> >  Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+> >  Mark Rutland <mark.rutland@arm.com>,
+> >  Michael Turquette <mturquette@baylibre.com>,
+> >  Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+> >  Russell King <linux@armlinux.org.uk>
+> > Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
+> > Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
+> > References: <20180517055014.6607-1-o.rempel@pengutronix.de>
+> >  <20180517055014.6607-4-o.rempel@pengutronix.de>
+> > In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
+> > 
+> > --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg
+> > Content-Type: text/plain; charset=utf-8
+> > Content-Language: en-US
+> > Content-Transfer-Encoding: quoted-printable
+> > 
+> > Hi Rafael,
+> > 
+> > Last version of this patch was send at 17.05.2018. No other comment was
+> > provided and this patch is a blocker for other patches in this serie.
+> > Can you please give some feedback on it.
 > 
-> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
-> > TV TCONs connected to TCON TOP have to enable additional gate in order
-> > to work.
-> > 
-> > Add support for such TCONs.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
-> >  2 files changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
-> > 
-> >  		dev_err(dev, "Couldn't get the TCON bus clock\n");
-> >  		return PTR_ERR(tcon->clk);
-> >  	
-> >  	}
-> > 
-> > +
-> > +	if (tcon->quirks->has_tcon_top_gate) {
-> > +		tcon->top_clk = devm_clk_get(dev, "tcon-top");
-> > +		if (IS_ERR(tcon->top_clk)) {
-> > +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
-> > +			return PTR_ERR(tcon->top_clk);
-> > +		}
-> > +		clk_prepare_enable(tcon->top_clk);
-> > +	}
-> > +
+> I would have done that had I not missed the patch.
 > 
-> Is it required for the TCON itself to operate, or does the TCON
-> requires the TCON TOP, which in turn requires that clock to be
-> functional?
+> Which probably wouldn't have happened had you CCed it to linux-pm.
 > 
-> I find it quite odd to have a clock that isn't meant for a particular
-> device to actually be wired to another device. I'm not saying this
-> isn't the case, but it would be a first.
+> Anyway, I have no particular problems with exporting pm_power_off_prepare via
+> EXPORT_SYMBOL_GPL().
 
-Documentation doesn't say much about that gate. I did few tests and TCON 
-registers can be read and written even if TCON TOP TV TCON gate is disabled. 
-However, there is no image, as expected.
+Rafael,
 
-More interestingly, I enabled test pattern directly in TCON to eliminate 
-influence of the mixer. As soon as I disabled that gate, test pattern on HDMI 
-screen was gone, which suggest that this gate influences something inside 
-TCON.
+Can we have your explicit Acked-by tag on this patch?  Thanks.
 
-Another test I did was that I moved enable/disable gate code to 
-sun4i_tcon_channel_set_status() and it worked just as well.
-
-I'll ask AW engineer what that gate actually does, but from what I saw, I 
-would say that most appropriate location to enable/disable TCON TOP TV TCON 
-gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON 
-is in use and enable appropriate gate. However, that doesn't sound right to me 
-for some reason.
-
-Best regards,
-Jernej
-
-
+Shawn
