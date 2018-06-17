@@ -6,52 +6,113 @@ Cc: linux-clk@vger.kernel.org,
 	robh@kernel.org,
 	devicetree@vger.kernel.org,
 	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v4 0/2] clk: Add driver for MAX9485
-Date: Sun, 17 Jun 2018 14:05:33 +0200
-Message-Id: <20180617120535.2529-1-daniel@zonque.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v4 1/2] dts: clk: add devicetree bindings for MAX9485
+Date: Sun, 17 Jun 2018 14:05:34 +0200
+Message-Id: <20180617120535.2529-2-daniel@zonque.org>
+In-Reply-To: <20180617120535.2529-1-daniel@zonque.org>
+References: <20180617120535.2529-1-daniel@zonque.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is v4 of the driver for Maxim's MAX9485 programmable audio clock
-generator.
+This patch adds the devicetree bindings for MAX9485, a programmable audio
+clock generator.
 
-v3 → v4:
-* Rebased to 4.18-rc1
-
-v2 → v3:
-
-* Addressed a lot of issues pointed out by Stephen Boyd:
-  * Dropped local register caching
-  * Implement own OF clk_hw getter in favor of the onecell helper
-  * Implemented recalc_rate() properly by reading from the hardware
-  * Dropped input clock frequency validation
-  * Style issues
-
-* Fixed a gpio line handling bug in resume
-* Added Rob's Revied-by to 1/2
-
-v1 → v2:
-
-* Now served as two patches, one for the DT bits, and one for the actual
-  implementation. The DT bits are put in the 1st patch because the
-  implementation depends on the shared header file.
-
-* Added support for suspend/resume
-
-Daniel Mack (2):
-  dts: clk: add devicetree bindings for MAX9485
-  clk: Add driver for MAX9485
-
- .../bindings/clock/maxim,max9485.txt          |  59 +++
- drivers/clk/Kconfig                           |   6 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-max9485.c                     | 402 ++++++++++++++++++
- include/dt-bindings/clock/maxim,max9485.h     |  18 +
- 5 files changed, 486 insertions(+)
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/maxim,max9485.txt          | 59 +++++++++++++++++++
+ include/dt-bindings/clock/maxim,max9485.h     | 18 ++++++
+ 2 files changed, 77 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
- create mode 100644 drivers/clk/clk-max9485.c
  create mode 100644 include/dt-bindings/clock/maxim,max9485.h
 
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max9485.txt b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+new file mode 100644
+index 000000000000..61bec1100a94
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/maxim,max9485.txt
+@@ -0,0 +1,59 @@
++Devicetree bindings for Maxim MAX9485 Programmable Audio Clock Generator
++
++This device exposes 4 clocks in total:
++
++- MAX9485_MCLKOUT: 	A gated, buffered output of the input clock of 27 MHz
++- MAX9485_CLKOUT:	A PLL that can be configured to 16 different discrete
++			frequencies
++- MAX9485_CLKOUT[1,2]:	Two gated outputs for MAX9485_CLKOUT
++
++MAX9485_CLKOUT[1,2] are children of MAX9485_CLKOUT which upchain all rate set
++requests.
++
++Required properties:
++- compatible:	"maxim,max9485"
++- clocks:	Input clock, must provice 27.000 MHz
++- clock-names:	Must be set to "xclk"
++- #clock-cells: From common clock binding; shall be set to 1
++
++Optional properties:
++- reset-gpios:		GPIO descriptor connected to the #RESET input pin
++- vdd-supply:		A regulator node for Vdd
++- clock-output-names:	Name of output clocks, as defined in common clock
++			bindings
++
++If not explicitly set, the output names are "mclkout", "clkout", "clkout1"
++and "clkout2".
++
++Clocks are defined as preprocessor macros in the dt-binding header.
++
++Example:
++
++	#include <dt-bindings/clock/maxim,max9485.h>
++
++	xo-27mhz: xo-27mhz {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++
++	&i2c0 {
++		max9485: audio-clock@63 {
++			reg = <0x63>;
++			compatible = "maxim,max9485";
++			clock-names = "xclk";
++			clocks = <&xo-27mhz>;
++			reset-gpios = <&gpio 1 GPIO_ACTIVE_HIGH>;
++			vdd-supply = <&3v3-reg>;
++			#clock-cells = <1>;
++		};
++	};
++
++	// Clock consumer node
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clock-names = "foo-input-clk";
++		clocks = <&max9485 MAX9485_CLKOUT1>;
++	};
+diff --git a/include/dt-bindings/clock/maxim,max9485.h b/include/dt-bindings/clock/maxim,max9485.h
+new file mode 100644
+index 000000000000..185b09ce1869
+--- /dev/null
++++ b/include/dt-bindings/clock/maxim,max9485.h
+@@ -0,0 +1,18 @@
++/*
++ * Copyright (C) 2018 Daniel Mack
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#ifndef __DT_BINDINGS_MAX9485_CLK_H
++#define __DT_BINDINGS_MAX9485_CLK_H
++
++#define MAX9485_MCLKOUT	0
++#define MAX9485_CLKOUT	1
++#define MAX9485_CLKOUT1	2
++#define MAX9485_CLKOUT2	3
++
++#endif /* __DT_BINDINGS_MAX9485_CLK_H */
 -- 
 2.17.1
