@@ -1,73 +1,54 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v8 01/10] dt-bindings: firmware: Add bindings for ZynqMP firmware
-Date: Thu, 14 Jun 2018 11:27:33 -0700
-Message-ID: <1529000862-11510-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
-References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/8] dt: bindings: tegra20-emc: Document interrupt property
+Date: Sun, 17 Jun 2018 17:55:32 +0300
+Message-Id: <20180617145539.4758-2-digetx@gmail.com>
+In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
+References: <20180617145539.4758-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+EMC has a dedicated interrupt that is used to notify about completion of
+HW operations. Document the interrupt property.
 
-Add documentation to describe Xilinx ZynqMP firmware driver
-bindings. Firmware driver provides an interface to firmware
-APIs. Interface APIs can be used by any driver to communicate
-to PMUFW (Platform Management Unit).
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-new file mode 100644
-index 0000000..1b431d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-@@ -0,0 +1,29 @@
-+-----------------------------------------------------------------
-+Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
-+-----------------------------------------------------------------
-+
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate to PMUFW(Platform Management Unit).
-+These requests include clock management, pin control, device control,
-+power management service, FPGA service and other platform management
-+services.
-+
-+Required properties:
-+ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
-+ - method:	The method of calling the PM-API firmware layer.
-+		Permitted values are:
-+		  - "smc" : SMC #0, following the SMCCC
-+		  - "hvc" : HVC #0, following the SMCCC
-+
-+-------
-+Example
-+-------
-+
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
-+	};
-+};
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+index 4c33b29dc660..a6fe401d0d48 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+@@ -10,6 +10,7 @@ Properties:
+   and chosen using the ramcode board selector. If omitted, only one
+   set of tables can be present and said tables will be used
+   irrespective of ram-code configuration.
++- interrupts : Should contain EMC General interrupt.
+ 
+ Child device nodes describe the memory settings for different configurations and clock rates.
+ 
+@@ -20,6 +21,7 @@ Example:
+ 		#size-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
++		interrupts = <0 78 0x04>;
+ 	}
+ 
+ 
 -- 
-2.7.4
+2.17.1
