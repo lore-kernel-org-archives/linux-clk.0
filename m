@@ -1,51 +1,57 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Ken Ma <make@marvell.com>
-Subject: [PATCH 0/2] clk: Fix switching CPU rate from 300Mhz to 1.2GHz on Armada 3700
-Date: Tue, 19 Jun 2018 14:34:44 +0200
-Message-Id: <20180619123446.694-1-gregory.clement@bootlin.com>
+Return-Path: <daniel@zonque.org>
+From: Daniel Mack <daniel@zonque.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	Daniel Mack <daniel@zonque.org>
+Subject: [PATCH v4 0/2] clk: Add driver for MAX9485
+Date: Sun, 17 Jun 2018 14:05:33 +0200
+Message-Id: <20180617120535.2529-1-daniel@zonque.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+This is v4 of the driver for Maxim's MAX9485 programmable audio clock
+generator.
 
-in this series the first patch is the main patch which fixes the case
-when switching CPU rate from 300Mhz (or 200M MHz) to 1.2GH. See the
-commit log for the details. As this one is a fix, it should be applied
-on v4.18-rc.
+v3 → v4:
+* Rebased to 4.18-rc1
 
-While I was on this file, I also switch to SPDX license identifier,
-this one is fine for 4.19*;
+v2 → v3:
 
-Thanks,
+* Addressed a lot of issues pointed out by Stephen Boyd:
+  * Dropped local register caching
+  * Implement own OF clk_hw getter in favor of the onecell helper
+  * Implemented recalc_rate() properly by reading from the hardware
+  * Dropped input clock frequency validation
+  * Style issues
 
-Gregory
+* Fixed a gpio line handling bug in resume
+* Added Rob's Revied-by to 1/2
 
-Gregory CLEMENT (2):
-  clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to
-    1.2GHz
-  clk: mvebu: armada-37xx-periph: switch to SPDX license identifier
+v1 → v2:
 
- drivers/clk/mvebu/armada-37xx-periph.c | 43 +++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 4 deletions(-)
+* Now served as two patches, one for the DT bits, and one for the actual
+  implementation. The DT bits are put in the 1st patch because the
+  implementation depends on the shared header file.
+
+* Added support for suspend/resume
+
+Daniel Mack (2):
+  dts: clk: add devicetree bindings for MAX9485
+  clk: Add driver for MAX9485
+
+ .../bindings/clock/maxim,max9485.txt          |  59 +++
+ drivers/clk/Kconfig                           |   6 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-max9485.c                     | 402 ++++++++++++++++++
+ include/dt-bindings/clock/maxim,max9485.h     |  18 +
+ 5 files changed, 486 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
+ create mode 100644 drivers/clk/clk-max9485.c
+ create mode 100644 include/dt-bindings/clock/maxim,max9485.h
 
 -- 
 2.17.1
