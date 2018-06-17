@@ -1,54 +1,280 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <cwchoi00@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
- <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com> <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
- <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 25 Jun 2018 18:09:45 +0200
-Message-ID: <CAMRc=MdsTAz7rd6W0M8gcmY0-PfNY9RGW6hxrfhECecbkm2E1g@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To: David Lechner <david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reply-To: cwchoi00@gmail.com
+In-Reply-To: <CAFqH_51jDy6hvwTtVQf52OZ2QFwAACzH8bh2bUZdxAnvKqM6=A@mail.gmail.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
+ <CGME20180514211840epcas3p41708e430bc22d7e61e8b894b12a083f9@epcas3p4.samsung.com>
+ <20180514211610.26618-4-enric.balletbo@collabora.com> <5AFA0B94.4000100@samsung.com>
+ <CAFqH_51jDy6hvwTtVQf52OZ2QFwAACzH8bh2bUZdxAnvKqM6=A@mail.gmail.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Date: Sun, 17 Jun 2018 09:00:29 +0900
+Message-ID: <CAGTfZH3DqzOXNy-w6x=DC9PJ-XPe8SPtZqkONwVO2aL5OGAcqA@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/10] devfreq: rk3399_dmc: Pass ODT and auto power
+ down parameters to TF-A.
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	Enric Balletbo i Serra <enric.balletbo@collabora.com>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org, hjc@rock-chips.com,
+	David Airlie <airlied@linux.ie>, huang lin <hl@rock-chips.com>,
+	Linux PM list <linux-pm@vger.kernel.org>, dbasehore@chromium.org,
+	linux-kernel <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Sean Paul <seanpaul@chromium.org>,
+	kernel@collabora.com, linux-clk@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-25 18:06 GMT+02:00 David Lechner <david@lechnology.com>:
-> On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
->>
->> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
->>>
->>> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>>>
->>>>
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> We want to be able to get the clock both from the board file by its
->>>> con_id and from the aemif driver by dev_id.
->>>
->>>
->>>
->>> What about the other SoCs? Don't they need this change as well?
->>>
->>
->> So I double checked and turns out I missed one other board that's
->> affected by this series and calls clk_get() from machine code:
->> dm644x-evm.
->>
->> I'll fix it in v2.
->
->
-> The ti-aemif platform driver also does clk_get(). Don't you need
-> lookups to make that work as well? For example, DA830 doesn't have
-> a clock lookup for aemif at all.
->
+Hi Enric
 
-Right, I'll check that too.
+2018-06-16 19:15 GMT+09:00 Enric Balletbo Serra <eballetbo@gmail.com>:
+> Hi Chanwoo,
+>
+> I'll send a new version soon, just wanted to ask some questions here. See=
+ below.
+>
+> Missatge de Chanwoo Choi <cw00.choi@samsung.com> del dia dt., 15 de
+> maig 2018 a les 0:21:
+>>
+>> Hi,
+>>
+>> On 2018=EB=85=84 05=EC=9B=94 15=EC=9D=BC 06:16, Enric Balletbo i Serra w=
+rote:
+>> > Trusted Firmware-A (TF-A) for rk3399 implements a SiP call to get the
+>> > on-die termination (ODT) and auto power down parameters from kernel,
+>> > this patch adds the functionality to do this. Also, if DDR clock
+>> > frequency is lower than the on-die termination (ODT) disable frequency
+>> > this driver should disable the DDR ODT.
+>>
+>> I have a question.
+>> 'disable frequency' is the same meaning of 'disable the DDR ODT'?
+>>
+>
+> Yes, the DT defines an odt_dis_freq parameter, when the DDR frequency
+> is less than the value in this parameter we disable the ODT on the
+> DRAM.
+>
+>> >
+>> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> > ---
+>> >
+>> >  drivers/devfreq/rk3399_dmc.c        | 50 ++++++++++++++++++++++++++++=
+-
+>> >  include/soc/rockchip/rockchip_sip.h |  1 +
+>> >  2 files changed, 50 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc=
+.c
+>> > index d5c03e5abe13..cc1bbca3fb15 100644
+>> > --- a/drivers/devfreq/rk3399_dmc.c
+>> > +++ b/drivers/devfreq/rk3399_dmc.c
+>> > @@ -18,14 +18,17 @@
+>> >  #include <linux/devfreq.h>
+>> >  #include <linux/devfreq-event.h>
+>> >  #include <linux/interrupt.h>
+>> > +#include <linux/mfd/syscon.h>
+>> >  #include <linux/module.h>
+>> >  #include <linux/of.h>
+>> >  #include <linux/platform_device.h>
+>> >  #include <linux/pm_opp.h>
+>> > +#include <linux/regmap.h>
+>> >  #include <linux/regulator/consumer.h>
+>> >  #include <linux/rwsem.h>
+>> >  #include <linux/suspend.h>
+>> >
+>> > +#include <soc/rockchip/rk3399_grf.h>
+>> >  #include <soc/rockchip/rockchip_sip.h>
+>> >
+>> >  struct dram_timing {
+>> > @@ -69,8 +72,11 @@ struct rk3399_dmcfreq {
+>> >       struct mutex lock;
+>> >       struct dram_timing timing;
+>> >       struct regulator *vdd_center;
+>> > +     struct regmap *regmap_pmu;
+>> >       unsigned long rate, target_rate;
+>> >       unsigned long volt, target_volt;
+>> > +     unsigned int odt_dis_freq;
+>> > +     int odt_pd_arg0, odt_pd_arg1;
+>> >  };
+>> >
+>> >  static int rk3399_dmcfreq_target(struct device *dev, unsigned long *f=
+req,
+>> > @@ -80,6 +86,8 @@ static int rk3399_dmcfreq_target(struct device *dev,=
+ unsigned long *freq,
+>> >       struct dev_pm_opp *opp;
+>> >       unsigned long old_clk_rate =3D dmcfreq->rate;
+>> >       unsigned long target_volt, target_rate;
+>> > +     struct arm_smccc_res res;
+>> > +     int dram_flag;
+>> >       int err;
+>> >
+>> >       opp =3D devfreq_recommended_opp(dev, freq, flags);
+>> > @@ -95,6 +103,15 @@ static int rk3399_dmcfreq_target(struct device *de=
+v, unsigned long *freq,
+>> >
+>> >       mutex_lock(&dmcfreq->lock);
+>> >
+>> > +     dram_flag =3D 0;
+>>
+>> Also, if dram_flag is 0, it mean that disable ODT frequency?
+>
+> Yes, not a good name, maybe I should just rename it to odt_enable to
+> be more clear.
+>
+>> If it's right, you better to define the precise variables as following
+>> instead of just integer(0 or 1).
+>> For example,
+>> - ROCKCHIP_SIP_DRAM_FREQ_ENABLE
+>> - ROCKCHIP_SIP_DRAM_FREQ_DISABLE
+>>
+>> > +     if (target_rate >=3D dmcfreq->odt_dis_freq)
+>> > +             dram_flag =3D 1;
+>> > +
+>> > +     arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, dmcfreq->odt_pd_arg0,
+>> > +                   dmcfreq->odt_pd_arg1,
+>> > +                   ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD,
+>> > +                   dram_flag, 0, 0, 0, &res);
+>> > +
+>>
+>> This operation is special for only rk3399_dmc. It is difficult
+>> to understand what to do. I recommend you better to add the detailed com=
+ment
+>> with code.
+>
+> Will do.
+>
+>>
+>> >       /*
+>> >        * If frequency scaling from low to high, adjust voltage first.
+>> >        * If frequency scaling from high to low, adjust frequency first=
+.
+>> > @@ -294,11 +311,13 @@ static int rk3399_dmcfreq_probe(struct platform_=
+device *pdev)
+>> >  {
+>> >       struct arm_smccc_res res;
+>> >       struct device *dev =3D &pdev->dev;
+>> > -     struct device_node *np =3D pdev->dev.of_node;
+>> > +     struct device_node *np =3D pdev->dev.of_node, *node;
+>> >       struct rk3399_dmcfreq *data;
+>> >       int ret, index, size;
+>> >       uint32_t *timing;
+>> >       struct dev_pm_opp *opp;
+>> > +     u32 ddr_type;
+>> > +     u32 val;
+>> >
+>> >       data =3D devm_kzalloc(dev, sizeof(struct rk3399_dmcfreq), GFP_KE=
+RNEL);
+>> >       if (!data)
+>> > @@ -334,6 +353,29 @@ static int rk3399_dmcfreq_probe(struct platform_d=
+evice *pdev)
+>> >               return ret;
+>> >       }
+>> >
+>> > +     /* Try to find the optional reference to the pmu syscon */
+>> > +     node =3D of_parse_phandle(np, "rockchip,pmu", 0);
+>> > +     if (node) {
+>> > +             data->regmap_pmu =3D syscon_node_to_regmap(node);
+>> > +             if (IS_ERR(data->regmap_pmu))
+>> > +                     return PTR_ERR(data->regmap_pmu);
+>> > +     }
+>> > +
+>> > +     /* Get DDR type */
+>> > +     regmap_read(data->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
+>> > +     ddr_type =3D (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
+>> > +                 RK3399_PMUGRF_DDRTYPE_MASK;
+>> > +
+>> > +     /* Get the odt_dis_freq parameter in function of the DDR type */
+>> > +     if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_DDR3)
+>> > +             data->odt_dis_freq =3D data->timing.ddr3_odt_dis_freq;
+>> > +     else if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_LPDDR3)
+>> > +             data->odt_dis_freq =3D data->timing.lpddr3_odt_dis_freq;
+>> > +     else if (ddr_type =3D=3D RK3399_PMUGRF_DDRTYPE_LPDDR4)
+>> > +             data->odt_dis_freq =3D data->timing.lpddr4_odt_dis_freq;
+>> > +     else
+>> > +             return -EINVAL;
+>> > +
+>>
+>> how about using 'switch' statement?
+>>
+>
+> Ok
+>
+>> >       /*
+>> >        * Get dram timing and pass it to arm trust firmware,
+>> >        * the dram drvier in arm trust firmware will get these
+>> > @@ -358,6 +400,12 @@ static int rk3399_dmcfreq_probe(struct platform_d=
+evice *pdev)
+>> >                     ROCKCHIP_SIP_CONFIG_DRAM_INIT,
+>> >                     0, 0, 0, 0, &res);
+>> >
+>> > +     data->odt_pd_arg0 =3D (data->timing.sr_idle & 0xff) |
+>> > +                         ((data->timing.sr_mc_gate_idle & 0xff) << 8)=
+ |
+>> > +                         ((data->timing.standby_idle & 0xffff) << 16)=
+;
+>> > +     data->odt_pd_arg1 =3D (data->timing.pd_idle & 0xfff) |
+>> > +                         ((data->timing.srpd_lite_idle & 0xfff) << 16=
+);
+>> > +
+>>
+>> odt_pd_arg0 and odt_pd_arg1 might be used for disabling/enabling the ODT=
+ frequency.
+>> As I commented, it depend on only rk3399_dmc. You better to add detailed=
+ comment.
+>>
+>
+> Ok
+>
+>> And I prefer to define the XXX_SHIFT/XXX_MASK definition instead of
+>> using 8/16/0xff/0xffff for the readability.
+>>
+>
+> I tried to add the XXX_SHIFT/XXX_MASK definitions and IMHO the
+> readability is worst if I use a maximum line length of 80 characters.
+> These masks are only used here, let me try to convince you by adding a
+> good doc in the next version and if you still prefer I add the
+> definition I'll do.
 
-Thanks,
-Bart
+If you add the some description and it would be only used on here,
+I don't force to add some definition such as _SHIFT, _MASK as you suggested=
+.
+
+>
+>> >       /*
+>> >        * We add a devfreq driver to our parent since it has a device t=
+ree node
+>> >        * with operating points.
+>> > diff --git a/include/soc/rockchip/rockchip_sip.h b/include/soc/rockchi=
+p/rockchip_sip.h
+>> > index 7e28092c4d3d..ad9482c56797 100644
+>> > --- a/include/soc/rockchip/rockchip_sip.h
+>> > +++ b/include/soc/rockchip/rockchip_sip.h
+>> > @@ -23,5 +23,6 @@
+>> >  #define ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE    0x05
+>> >  #define ROCKCHIP_SIP_CONFIG_DRAM_CLR_IRQ     0x06
+>> >  #define ROCKCHIP_SIP_CONFIG_DRAM_SET_PARAM   0x07
+>> > +#define ROCKCHIP_SIP_CONFIG_DRAM_SET_ODT_PD  0x08
+>> >
+>> >  #endif
+>> >
+>>
+>>
+>> --
+>> Best Regards,
+>> Chanwoo Choi
+>> Samsung Electronics
+>>
+>> _______________________________________________
+>> Linux-rockchip mailing list
+>> Linux-rockchip@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> Cheers,
+>  Enric
+
+
+
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
