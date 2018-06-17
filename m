@@ -1,53 +1,29 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v2 24/27] drm: of: Export drm_crtc_port_mask()
-Date: Wed, 13 Jun 2018 18:04:24 +0200
-Message-ID: <1909375.AJdhpVkKnf@jernej-laptop>
-In-Reply-To: <20180613073605.gnhcwrywooxhyryj@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-25-jernej.skrabec@siol.net> <20180613073605.gnhcwrywooxhyryj@flea>
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 17 Jun 2018 15:21:11 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc: Colin Didier <colin.dider@devialet.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Cl=E9ment?= Peron <clement.peron@devialet.com>
+Subject: Re: [PATCH 1/5] ARM: imx: remove inexistant EPIT timer init
+Message-ID: <20180617072109.GO16091@dragon>
+References: <20180528173412.10000-1-peron.clem@gmail.com>
+ <20180528173412.10000-2-peron.clem@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180528173412.10000-2-peron.clem@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sreda, 13. junij 2018 ob 09:36:05 CEST je Maxime Ripard napisal(a):
-> On Tue, Jun 12, 2018 at 10:00:33PM +0200, Jernej Skrabec wrote:
-> > Function is useful when drm_of_find_possible_crtcs() can't be used and
-> > custom parsing is needed. This can happen for example when there is a
-> > node with multiple muxes between crtc and encoder.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/drm_of.c | 4 ++--
-> >  include/drm/drm_of.h     | 8 ++++++++
-> >  2 files changed, 10 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-> > index 1fe122461298..2e9cea3287b2 100644
-> > --- a/drivers/gpu/drm/drm_of.c
-> > +++ b/drivers/gpu/drm/drm_of.c
-> > @@ -22,8 +22,8 @@ static void drm_release_of(struct device *dev, void
-> > *data)> 
-> >   * Given a port OF node, return the possible mask of the corresponding
-> >   * CRTC within a device's list of CRTCs.  Returns zero if not found.
-> >   */
-> > 
-> > -static uint32_t drm_crtc_port_mask(struct drm_device *dev,
-> > -				   struct device_node *port)
-> > +uint32_t drm_crtc_port_mask(struct drm_device *dev,
-> > +			    struct device_node *port)
+On Mon, May 28, 2018 at 07:34:08PM +0200, Clément Péron wrote:
+> From: Clément Peron <clement.peron@devialet.com>
 > 
-> It should probably be exported too?
+> i.MX EPIT timer has been removed but not the init function declaration.
+> 
+> Signed-off-by: Clément Peron <clement.peron@devialet.com>
 
-Yes, of course. It will be in next version.
-
-Best regards,
-Jernej
+Applied, thanks.
