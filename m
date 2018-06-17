@@ -1,67 +1,44 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 02/24] clk: sunxi-ng: r40: Allow setting parent rate to display related clocks
-Date: Mon, 25 Jun 2018 14:02:42 +0200
-Message-Id: <20180625120304.7543-3-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+Date: Sun, 17 Jun 2018 17:55:35 +0300
+Message-Id: <20180617145539.4758-5-digetx@gmail.com>
+In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
+References: <20180617145539.4758-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Display related peripherals need precise clocks to operate correctly.
+Add interrupt entry into the EMC DT node.
 
-Allow DE2, TCONs and HDMI to set parent clock.
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index c16a62a7bdbd..fa5317719684 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -655,7 +655,8 @@ static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
- 
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mp_clk, "mp", de_parents,
- 				 0x108, 0, 4, 24, 3, BIT(31), 0);
- 
-@@ -667,9 +668,11 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
- static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
- 			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
--				 0x11c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x11c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const deinterlace_parents[] = { "pll-periph0",
- 						    "pll-periph1" };
-@@ -699,7 +702,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
- 		      0x154, BIT(31), 0);
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c14794..3cd3cb28cfd9 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -609,6 +609,7 @@
+ 	memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
-2.18.0
+2.17.1
