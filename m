@@ -1,39 +1,43 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Tue, 5 Jun 2018 10:57:29 +0300
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180605075729.GA20078@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <985ac760de3be503f9196eb6353a57eeb92c6dc0.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <985ac760de3be503f9196eb6353a57eeb92c6dc0.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/8] ARM: dts: tegra20: Add clock entry to External Memory Controller
+Date: Sun, 17 Jun 2018 17:55:36 +0300
+Message-Id: <20180617145539.4758-6-digetx@gmail.com>
+In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
+References: <20180617145539.4758-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 04, 2018 at 04:18:07PM +0300, Matti Vaittinen wrote:
-> +static struct regmap_irq_chip bd71837_irq_chip = {
-> +	.name = "bd71837-irq",
-> +	.irqs = bd71837_irqs,
-> +	.num_irqs = ARRAY_SIZE(bd71837_irqs),
-> +	.num_regs = 1,
-> +	.irq_reg_stride = 1,
-> +	.status_base = BD71837_REG_IRQ,
-> +	.mask_base = BD71837_REG_MIRQ,
-> +	.init_ack_masked = true,
-> +	.mask_invert = false,
-> +};
+Add clock entry into the EMC DT node.
 
-.ack_base = BD71837_REG_IRQ, is missing. I'll send yet another version
-with this fixed - unless Rob tells me to drop the whole irq handling
-from the patch series.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-Br,
-	Matti Vaittinen
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 3cd3cb28cfd9..877e41fe87cf 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -610,6 +610,7 @@
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_EMC>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+-- 
+2.17.1
