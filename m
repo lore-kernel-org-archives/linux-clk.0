@@ -1,34 +1,85 @@
-Return-Path: <f.fainelli@gmail.com>
-Return-Path: <f.fainelli@gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: Update Stingray clock DT nodes
-To: Ray Jui <ray.jui@broadcom.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Pramod Kumar <pramod.kumar@broadcom.com>
-References: <1527900968-12017-1-git-send-email-ray.jui@broadcom.com>
- <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <9305e486-9c67-0fca-7fd8-c954ee0d8c6f@gmail.com>
-Date: Mon, 4 Jun 2018 14:11:18 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ve1eur01on0048.outbound.protection.outlook.com ([104.47.1.48]:13259
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S966885AbeFRIxk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:53:40 -0400
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: mailbox: provide imx-mailbox
+ documentation
+Date: Mon, 18 Jun 2018 08:53:37 +0000
+Message-ID: <9d436d3a9c534b0c7af339aa13e91c1293a55503.camel@nxp.com>
+References: <20180615095107.24610-1-o.rempel@pengutronix.de>
+         <20180615095107.24610-3-o.rempel@pengutronix.de>
+In-Reply-To: <20180615095107.24610-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1527900968-12017-4-git-send-email-ray.jui@broadcom.com>
-Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/01/2018 05:56 PM, Ray Jui wrote:
-> From: Pramod Kumar <pramod.kumar@broadcom.com>
-> 
-> Update clock output names in the Stingray clock DT nodes so they match
-> the binding document and the latest ASIC datasheet. Also add entries
-> for LCPLL2
-> 
-> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-
-Applied to devicetree-arm64/next, thanks!
--- 
-Florian
+T24gRnJpLCAyMDE4LTA2LTE1IGF0IDExOjUxICswMjAwLCBPbGVrc2lqIFJlbXBlbCB3cm90ZToN
+Cj4gU2lnbmVkLW9mZi1ieTogT2xla3NpaiBSZW1wZWwgPG8ucmVtcGVsQHBlbmd1dHJvbml4LmRl
+Pg0KPiAtLS0NCj4gIC4uLi9iaW5kaW5ncy9tYWlsYm94L2lteC1tYWlsYm94LnR4dCAgICAgICAg
+ICB8IDM1ICsrKysrKysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAzNSBpbnNlcnRp
+b25zKCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL21haWxib3gvaW14LW1haWxib3gudHh0DQoNCkEgcmVjZW50IHBhdGNoIHdhcyBwb3N0
+ZWQgd2hpY2ggYWRkcyBhIHNpbWlsYXIgYnV0IGRpZmZlcmVudCBiaW5kaW5nDQpmb3IgdGhlIE1V
+IG9uIDhxbS84cXhwIFNPQ3M6DQoNCmh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gv
+MTA0Njg4ODUvDQoNCkxvb2tpbmcgYXQgbWFudWFscyBzaWRlLWJ5LXNpZGUgdGhlIGhhcmR3YXJl
+IHNlZW1zIHRvIGJlIHRoZSBzYW1lIHNvDQp0aGVyZSBzaG91bGQgYmUgYSBzaW5nbGUgYmluZGlu
+Zy4gUmlnaHQ/DQoNClRoYXQgc2VyaWVzIEkgcG9pbnRlZCB0byB1c2VzIHRoZSBNVSB0byBpbXBs
+ZW1lbnQgYSBjb21tdW5pY2F0aW9uIHdpdGgNCmEgc3BlY2lhbCAiU0NVIiBjb3JlIHdoaWNoIHJ1
+bnMgTlhQIGZpcm13YXJlIGZvciBoYW5kbGluZyBkZXRhaWxzIGxpa2UNCnBvd2VyIG1hbmFnZW1l
+bnQuIEhvd2V2ZXIgaW14OCBzb2NzIGFsc28gaGF2ZSBvdGhlciBNVXMgYW5kIE00IGNvcmVzDQpm
+b3IgY3VzdG9tZXJzIHRvIHVzZSBwcmV0dHkgZXhhY3RseSBsaWtlIHRoZXkgd291bGQgb24gN2Qu
+DQoNClRoZSBoYXJkd2FyZSBleHBvc2VzIGEgdmVyeSBnZW5lcmljIGludGVyZmFjZSBhbmQgbXkg
+aW1wcmVzc2lvbiBpcyB0aGF0DQogZHJpdmVycyBmb3IgdGhlIE1VIGFyZSBhY3R1YWxseSBoaWdo
+bHkgc3BlY2lmaWMgdG8gd2hhdCBpcyBvbiB0aGUNCm90aGVyIHNpZGUgb2YgdGhlIE1VLiBGb3Ig
+ZXhhbXBsZSB5b3VyIGRyaXZlciBjb2RlIHNlZW1zIHRvIGJlIG1hcHBpbmcNCnRoZSA0IE1VIHJl
+Z2lzdGVycyB0byBzZXBhcmF0ZSAiY2hhbm5lbHMiIGJ1dCBmb3IgU0NVIG1lc3NhZ2VzIGFyZQ0K
+d3JpdHRlbiBpbiBhbGwgcmVnaXN0ZXJzIGluIGEgcm91bmQtcm9iaW4gd2F5Lg0KDQpTaG91bGRu
+J3QgeW91ciBNVS11c2luZyBkcml2ZXIgYmUgYSBzZXBhcmF0ZSBub2RlIHdoaWNoIHJlZmVyZW5j
+ZXMgdGhlDQpNVSBieSBwaGFuZGxlPyBMaWtlIGluIHRoaXMgcGF0Y2g6DQoNCmh0dHBzOi8vcGF0
+Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Njg4ODcvDQoNCj4gZGlmZiAtLWdpdCBhL0RvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tYWlsYm94L2lteC1tYWlsYm94LnR4dCBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tYWlsYm94L2lteC1tYWlsYm94LnR4dA0K
+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAwMDAwMDAuLjE1NzdiODZmMTIw
+Ng0KPiAtLS0gL2Rldi9udWxsDQo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9tYWlsYm94L2lteC1tYWlsYm94LnR4dA0KPiBAQCAtMCwwICsxLDM1IEBADQo+ICtpLk1Y
+IE1lc3NhZ2luZyBVbml0DQo+ICs9PT09PT09PT09PT09PT09PT09DQo+ICsNCj4gK1RoZSBpLk1Y
+IE1lc3NhZ2luZyBVbml0IChNVSkgY29udGFpbnMgdHdvIHJlZ2lzdGVyIHNldHM6ICJBIiBhbmQg
+IkIiLiBJbiBtb3N0DQo+ICtjYXNlcyB0aGV5IGFyZSBhY2Nlc3NpYmxlIGZyb20gYWxsIFByb2Nl
+c3NvciBVbml0cy4gT24gb25lIGhhbmQsIGF0IGxlYXN0IGZvcg0KPiArbWFpbGJveCBmdW5jdGlv
+bmFsaXR5LCBpdCBtYWtlcyBubyBkaWZmZXJlbmNlIHdoaWNoIGFwcGxpY2F0aW9uIG9yIHByb2Nl
+c3NvciBpcw0KPiArdXNpbmcgd2hpY2ggc2V0IG9mIHRoZSBNVS4gT24gb3RoZXIgaGFuZCwgdGhl
+IHJlZ2lzdGVyIHNldHMgZm9yIGVhY2ggb2YgdGhlIE1VDQo+ICtwYXJ0cyBhcmUgbm90IGlkZW50
+aWNhbC4NCj4gKw0KPiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4gKy0gY29tcGF0aWJsZSA6CVNo
+ZWxsIGJlIG9uZSBvZjoNCj4gKyAgICAgICAgICAgICAgICAgICAgImZzbCxpbXg3cy1tdS1hIiBh
+bmQgImZzbCxpbXg3cy1tdS1iIiBmb3IgaS5NWDdTIG9yIGkuTVg3RA0KPiArLSByZWcgOgkJcGh5
+c2ljYWwgYmFzZSBhZGRyZXNzIG9mIHRoZSBtYWlsYm94IGFuZCBsZW5ndGggb2YNCj4gKwkJbWVt
+b3J5IG1hcHBlZCByZWdpb24uDQo+ICstICNtYm94LWNlbGxzOglDb21tb24gbWFpbGJveCBiaW5k
+aW5nIHByb3BlcnR5IHRvIGlkZW50aWZ5IHRoZSBudW1iZXINCj4gKwkJb2YgY2VsbHMgcmVxdWly
+ZWQgZm9yIHRoZSBtYWlsYm94IHNwZWNpZmllci4gU2hvdWxkIGJlIDEuDQo+ICstIGludGVycnVw
+dHMgOglUaGUgaW50ZXJydXB0IG51bWJlcg0KPiArLSBjbG9ja3MgICAgIDogIHBoYW5kbGUgdG8g
+dGhlIGlucHV0IGNsb2NrLg0KPiArDQo+ICtFeGFtcGxlOg0KPiArCW11MGE6IG1haWxib3hAMzBh
+YTAwMDAgew0KPiArCQljb21wYXRpYmxlID0gImZzbCxpbXg3cy1tdS1hIjsNCj4gKwkJcmVnID0g
+PDB4MzBhYTAwMDAgMHgyOD47DQo+ICsJCWludGVycnVwdHMgPSA8R0lDX1NQSSA4OCBJUlFfVFlQ
+RV9MRVZFTF9ISUdIPjsNCj4gKwkJY2xvY2tzID0gPCZjbGtzIElNWDdEX01VX1JPT1RfQ0xLPjsN
+Cj4gKwkJI21ib3gtY2VsbHMgPSA8MT47DQo+ICsJfTsNCj4gKw0KPiArCW11MGI6IG1haWxib3hA
+MzBhYjAwMDAgew0KPiArCQljb21wYXRpYmxlID0gImZzbCxpbXg3cy1tdS1iIjsNCj4gKwkJcmVn
+ID0gPDB4MzBhYjAwMDAgMHgyOD47DQo+ICsJCWludGVycnVwdHMgPSA8R0lDX1NQSSA5NyBJUlFf
+VFlQRV9MRVZFTF9ISUdIPjsNCj4gKwkJY2xvY2tzID0gPCZjbGtzIElNWDdEX01VX1JPT1RfQ0xL
+PjsNCj4gKwkJI21ib3gtY2VsbHMgPSA8MT47DQo+ICsJfTsNCg==
