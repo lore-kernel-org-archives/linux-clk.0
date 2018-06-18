@@ -1,57 +1,55 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
 MIME-Version: 1.0
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com> <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 11 Jun 2018 12:00:39 +0200
-Message-ID: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com> <69915265bbff5c729bcd4ffd4ffdba8d24582068.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <69915265bbff5c729bcd4ffd4ffdba8d24582068.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+Date: Mon, 18 Jun 2018 17:10:11 +0300
+Message-ID: <CANhJrGOhGJLtL5Gm6JS++YPis0pSdEDSKNb4CiQ7igYqR4K46g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] clk: bd71837: Add driver for BD71837 PMIC clock
+To: "Vaittinen, Matti" <matti.vaittinen@fi.rohmeurope.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
+	chenjh@rock-chips.com, andrew.smirnov@gmail.com, linus.walleij@linaro.org,
+	kstewart@linuxfoundation.org, heiko@sntech.de, gregkh@linuxfoundation.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Content-Type: multipart/alternative; boundary="0000000000005f1ce1056eeb2072"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+--0000000000005f1ce1056eeb2072
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas R9A06G032 SYSCTRL node description.
+> +       c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> +               return -ENOMEM;
+> +
 >
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
-> @@ -0,0 +1,32 @@
-> +* Renesas R9A06G032 SYSCTRL
-> +
-> +Required Properties:
-> +
-> +  - compatible: Must be:
-> +    - "renesas,r9a06g032-sysctrl"
-> +  - reg: Base address and length of the SYSCTRL IO block.
-> +  - #clock-cells: Must be 1
+> Please ignore this patch. I have merge errors here like dropping the if
+> here. I'll send new one at least for clk tomorrow.
 
-(repeating myself) No clocks/clock-names for the external clock inputs?
 
-"RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
- reference clock outputs for RMII/MII."
+Br. Matti Vaittinen
 
-The rest looks fine to me.
-Thanks!
+--0000000000005f1ce1056eeb2072
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Gr{oetje,eeting}s,
+<div dir=3D"auto"><div><div class=3D"gmail_quote"><div dir=3D"ltr">=C2=A0</=
+div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-lef=
+t:1px #ccc solid;padding-left:1ex">
++=C2=A0 =C2=A0 =C2=A0 =C2=A0c =3D devm_kzalloc(&amp;pdev-&gt;dev, sizeof(*c=
+), GFP_KERNEL);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM;<br>
++<br>
+</blockquote><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;b=
+order-left:1px #ccc solid;padding-left:1ex"><br></blockquote><blockquote cl=
+ass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;p=
+adding-left:1ex">Please ignore this patch. I have merge errors here like dr=
+opping the if here. I&#39;ll send new one at least for clk tomorrow.</block=
+quote></div></div><div dir=3D"auto"><br></div><div dir=3D"auto">Br. Matti V=
+aittinen=C2=A0</div><div dir=3D"auto"><br></div><div dir=3D"auto"><br></div=
+><div dir=3D"auto"></div></div>
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--0000000000005f1ce1056eeb2072--
