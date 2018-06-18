@@ -1,62 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45821 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755989AbeFOJvQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 05:51:16 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v2 3/4] ARM: dts: imx7s: add i.MX7 messaging unit support
-Date: Fri, 15 Jun 2018 11:51:06 +0200
-Message-Id: <20180615095107.24610-4-o.rempel@pengutronix.de>
-In-Reply-To: <20180615095107.24610-1-o.rempel@pengutronix.de>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <dan.carpenter@oracle.com>
+Date: Mon, 18 Jun 2018 17:40:11 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: kbuild@01.org, Taniya Das <tdas@codeaurora.org>
+Cc: kbuild-all@01.org, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh@kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rohit Kumar <rohitkr@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+Message-ID: <20180618144011.v5uwk4lkiuynggl3@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Define the Messaging Unit (MU) for i.MX7 in the processor's dtsi.
-The respective driver is added in the next commit.
+Hi Taniya,
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Thank you for the patch! Perhaps something to improve:
+
+url:    https://github.com/0day-ci/linux/commits/Taniya-Das/Add-support-for-LPASS-clock-controller-for-SDM845/20180614-155144
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+
+smatch warnings:
+drivers/clk/qcom/lpasscc-sdm845.c:197 lpass_clocks_sdm845_probe() warn: passing zero to 'PTR_ERR'
+
+# https://github.com/0day-ci/linux/commit/035d2520712de752be68d10a37650b65b6aee154
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 035d2520712de752be68d10a37650b65b6aee154
+vim +/PTR_ERR +197 drivers/clk/qcom/lpasscc-sdm845.c
+
+035d2520 Taniya Das 2018-06-14  179  
+035d2520 Taniya Das 2018-06-14  180  static int lpass_clocks_sdm845_probe(struct platform_device *pdev,
+035d2520 Taniya Das 2018-06-14  181  				     struct device_node *np,
+035d2520 Taniya Das 2018-06-14  182  				     const struct qcom_cc_desc *desc)
+035d2520 Taniya Das 2018-06-14  183  {
+035d2520 Taniya Das 2018-06-14  184  	struct regmap *regmap;
+035d2520 Taniya Das 2018-06-14  185  	struct resource res;
+035d2520 Taniya Das 2018-06-14  186  	void __iomem *base;
+035d2520 Taniya Das 2018-06-14  187  
+035d2520 Taniya Das 2018-06-14  188  	if (of_address_to_resource(np, 0, &res))
+035d2520 Taniya Das 2018-06-14  189  		return -ENOMEM;
+035d2520 Taniya Das 2018-06-14  190  
+035d2520 Taniya Das 2018-06-14  191  	base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
+035d2520 Taniya Das 2018-06-14  192  	if (IS_ERR(base))
+035d2520 Taniya Das 2018-06-14  193  		return -ENOMEM;
+035d2520 Taniya Das 2018-06-14  194  
+035d2520 Taniya Das 2018-06-14  195  	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+035d2520 Taniya Das 2018-06-14  196  	if (!regmap)
+035d2520 Taniya Das 2018-06-14 @197  		return PTR_ERR(regmap);
+                                                       ^^^^^^^^^^^^^^^
+035d2520 Taniya Das 2018-06-14  198  
+035d2520 Taniya Das 2018-06-14  199  	return qcom_cc_really_probe(pdev, desc, regmap);
+035d2520 Taniya Das 2018-06-14  200  }
+035d2520 Taniya Das 2018-06-14  201  
+
 ---
- arch/arm/boot/dts/imx7s.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx7s.dtsi b/arch/arm/boot/dts/imx7s.dtsi
-index d9437e773b37..87a82c1f4dfd 100644
---- a/arch/arm/boot/dts/imx7s.dtsi
-+++ b/arch/arm/boot/dts/imx7s.dtsi
-@@ -1008,6 +1008,24 @@
- 				status = "disabled";
- 			};
- 
-+			mu0a: mailbox@30aa0000 {
-+				compatible = "fsl,imx7s-mu-a";
-+				reg = <0x30aa0000 0x10000>;
-+				interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX7D_MU_ROOT_CLK>;
-+				#mbox-cells = <1>;
-+				status = "disabled";
-+			};
-+
-+			mu0b: mailbox@30ab0000 {
-+				compatible = "fsl,imx7s-mu-b";
-+				reg = <0x30ab0000 0x10000>;
-+				interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX7D_MU_ROOT_CLK>;
-+				#mbox-cells = <1>;
-+				status = "disabled";
-+			};
-+
- 			usbotg1: usb@30b10000 {
- 				compatible = "fsl,imx7d-usb", "fsl,imx27-usb";
- 				reg = <0x30b10000 0x200>;
--- 
-2.17.1
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
