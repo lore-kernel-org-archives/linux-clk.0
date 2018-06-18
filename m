@@ -1,78 +1,70 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 26 Jun 2018 15:03:06 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180626120306.GD2118@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
- <20180626112455.GC2118@localhost.localdomain>
- <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+Return-Path: <yixin.zhu@linux.intel.com>
+Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
+To: Rob Herring <robh@kernel.org>
+Cc: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+ chuanhua.lei@linux.intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
+ qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
+ "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+ devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-3-songjun.wu@linux.intel.com>
+ <20180612223725.GC2197@rob-hp-laptop>
+ <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+ <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+From: yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <4bb8f16e-2663-3a62-3c09-dc58fcb11831@linux.intel.com>
+Date: Mon, 18 Jun 2018 18:05:15 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+In-Reply-To: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Again Eric,
 
-On Tue, Jun 26, 2018 at 01:40:40PM +0200, Enric Balletbo Serra wrote:
-> Hi Matti,
-> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> dia dt., 26 de juny 2018 a les 13:25:
-> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
-> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> > > dia dt., 19 de juny 2018 a les 12:57:
-> >
-> > > > +static const struct of_device_id bd71837_of_match[] = {
-> > > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
-> > > > +       { },
-> > >
-> > > nit: { /* sentinel */ }
-> >
-> > I am sorry but I didn't quite get the point here. Could you please
-> > explain what did you expect to be added here?
-> >
+
+On 6/14/2018 10:09 PM, Rob Herring wrote:
+> On Thu, Jun 14, 2018 at 2:40 AM, yixin zhu <yixin.zhu@linux.intel.com> wrote:
+>>
+>>
+>> On 6/13/2018 6:37 AM, Rob Herring wrote:
+>>>
+>>> On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
+>>>>
+>>>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>>>
+>>>> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
 > 
-> It's a nit but It is a good practice to specify that the last entry is
-> a sentinel. Just this.
+> [...]
 > 
-> +static const struct of_device_id bd71837_of_match[] = {
-> +       { .compatible = "rohm,bd71837", .data = (void *)0},
-> +       { /* sentinel */ }
-> +};
-
-Oh, I see. Finally something I can disagree =) I quickly opened few
-random drivers which declare match table. None of them practiced this
-good practice. So I guess it is not such a standard after all. And I
-guess the meaning of last entry in match table should be quite obvious.
-Adding the comment /* sentinel */ sounds like stating the obvious at
-best - at worst it gets one just to wonder what the "sentinel" means =)
-
+>>>> +Example:
+>>>> +       clkgate0: clkgate0 {
+>>>> +               #clock-cells = <1>;
+>>>> +               compatible = "intel,grx500-gate0-clk";
+>>>> +               reg = <0x114>;
+>>>> +               clock-output-names = "gate_xbar0", "gate_xbar1",
+>>>> "gate_xbar2",
+>>>> +               "gate_xbar3", "gate_xbar6", "gate_xbar7";
+>>>> +       };
+>>>
+>>>
+>>> We generally don't do a clock node per clock or few clocks but rather 1
+>>> clock node per clock controller block. See any recent clock bindings.
+>>>
+>>> Rob
+>>
+>> Do you mean only one example is needed per clock controller block?
+>> cpuclk is not needed in the document?
 > 
-> And just noticed, is .data = (void *)0 really required?
- 
-As static structs should be initialized to zero I'd say it is not
-required. Will remove this. Thanks for pointing this out.
-
-Br,
-	Matti Vaittinen
+> No, I mean generally we have 1 DT node for the h/w block with all the
+> clock control registers rather than nodes with a single register and 1
+> or a couple of clocks. Sometimes the clock registers are mixed with
+> other functions which complicates things a bit. But I can't tell that
+> here because you haven't documented what's in the rest of the register
+> space.
+> 
+> Rob
+> 
+Thanks
+Will update to use one DT node for the whole clock controller.
