@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 3/6] bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-Date: Wed, 6 Jun 2018 11:38:23 +0530
-Message-ID: <20180606060826.14671-4-faiz_abbas@ti.com>
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <alsa-devel@alsa-project.org>, <nicolas.ferre@microchip.com>,
+ <boris.brezillon@bootlin.com>, <alexandre.belloni@bootlin.com>,
+ <robh+dt@kernel.org>, <broonie@kernel.org>, <sboyd@kernel.org>
+Subject: [PATCH v5 0/5] ASoC: add driver for Atmel I2S controller
+Date: Mon, 18 Jun 2018 17:12:34 +0300
+Message-ID: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Cristian.Birsan@microchip.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The dra76x MCAN generic interconnect module has a its own
-format for the bits in the control registers.
+This is a rework of Cyrille's patches named:
+[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
+https://lkml.org/lkml/2015/9/29/454
 
-Therefore add a new module type, new regbits and new capabilities
-specific to the MCAN module.
+This is the version 5 of the series, and addresses the received feedback
+on the mailing lists.
 
-Acked-by: Rob Herring <robh@kernel.org>
-CC: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- .../devicetree/bindings/bus/ti-sysc.txt        |  1 +
- drivers/bus/ti-sysc.c                          | 18 ++++++++++++++++++
- include/dt-bindings/bus/ti-sysc.h              |  2 ++
- include/linux/platform_data/ti-sysc.h          |  1 +
- 4 files changed, 22 insertions(+)
+This series applies on top of clk-next branch of clk/linux.git.
 
-diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-index 2957a9ae291f..ebbb11144b7b 100644
---- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
-+++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
-@@ -36,6 +36,7 @@ Required standard properties:
- 		"ti,sysc-omap-aes"
- 		"ti,sysc-mcasp"
- 		"ti,sysc-usb-host-fs"
-+		"ti,sysc-dra7-mcan"
- 
- - reg		shall have register areas implemented for the interconnect
- 		target module in question such as revision, sysc and syss
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 7cd2fd04b212..4a2244419b9b 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1262,6 +1262,23 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
- 	.regbits = &sysc_regbits_omap4_usb_host_fs,
- };
- 
-+static const struct sysc_regbits sysc_regbits_dra7_mcan = {
-+	.dmadisable_shift = -ENODEV,
-+	.midle_shift = -ENODEV,
-+	.sidle_shift = -ENODEV,
-+	.clkact_shift = -ENODEV,
-+	.enwkup_shift = 4,
-+	.srst_shift = 0,
-+	.emufree_shift = -ENODEV,
-+	.autoidle_shift = -ENODEV,
-+};
-+
-+static const struct sysc_capabilities sysc_dra7_mcan = {
-+	.type = TI_SYSC_DRA7_MCAN,
-+	.sysc_mask = SYSC_DRA7_MCAN_ENAWAKEUP | SYSC_OMAP4_SOFTRESET,
-+	.regbits = &sysc_regbits_dra7_mcan,
-+};
-+
- static int sysc_init_pdata(struct sysc *ddata)
- {
- 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
-@@ -1441,6 +1458,7 @@ static const struct of_device_id sysc_match[] = {
- 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
- 	{ .compatible = "ti,sysc-usb-host-fs",
- 	  .data = &sysc_omap4_usb_host_fs, },
-+	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
- 	{  },
- };
- MODULE_DEVICE_TABLE(of, sysc_match);
-diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
-index 2c005376ac0e..7138384e2ef9 100644
---- a/include/dt-bindings/bus/ti-sysc.h
-+++ b/include/dt-bindings/bus/ti-sysc.h
-@@ -15,6 +15,8 @@
- /* SmartReflex sysc found on 36xx and later */
- #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
- 
-+#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
-+
- /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
- #define SYSC_IDLE_FORCE			0
- #define SYSC_IDLE_NO			1
-diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
-index 80ce28d40832..1ea3aab972b4 100644
---- a/include/linux/platform_data/ti-sysc.h
-+++ b/include/linux/platform_data/ti-sysc.h
-@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
- 	TI_SYSC_OMAP4_SR,
- 	TI_SYSC_OMAP4_MCASP,
- 	TI_SYSC_OMAP4_USB_HOST_FS,
-+	TI_SYSC_DRA7_MCAN,
- };
- 
- struct ti_sysc_cookie {
+Based on received feedback, I created a mux clock driver to select the I2S
+clock source, that also includes proper devicetree bindings and nodes.
+Also, I added the I2S nodes in sama5d2's devicetree, with the missing
+pin muxing for the second I2S controller.
+
+Alexandre Belloni plans to change the at91 fine grained clock nodes and
+he recommended to leave the bindings for this clock driver in the same
+(wrong) manner, so he could fix them all at once.
+
+This series of patches adds support to the new Atmel I2S controller
+embedded on sama5d2 SoCs.
+
+ChangeLog
+
+v4 -> v5
+ - removed patches:
+   [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+   [PATCH v4 5/7] ASoC: atmel-i2s: add driver for the new Atmel I2S controller
+   from this series since they were applied to the asoc tree at:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
+ - addressed comments received on the mux clock;
+
+v3 -> v4
+ - as suggested by Rob Herring:
+   - added a clock mux driver for I2S's clock control bit;
+   - more precise description of I2S's devicetree bindings;
+   - removed SoC and internal detalls from bindings;
+ - addressed comments from Mark Brown;
+ - added devicetree nodes and pin muxing for I2S;
+
+v2 -> v3
+ - fix the coding style, add some more comments and add a section dedicated
+  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
+  Brown.
+
+v1 -> v2
+ - initialize dev->dev before calling dev->caps->mck_init()
+
+Codrin Ciubotariu (3):
+  dt-bindings: clk: at91: add an I2S mux clock
+  clk: at91: add I2S clock mux driver
+  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+
+Cyrille Pitchen (2):
+  ARM: dts: at91: sama5d2: add nodes for I2S controllers
+  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+
+ .../devicetree/bindings/clock/at91-clock.txt  |  35 ++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   |  28 +++++
+ arch/arm/boot/dts/sama5d2.dtsi                |  52 ++++++++
+ arch/arm/mach-at91/Kconfig                    |   4 +
+ drivers/clk/at91/Makefile                     |   1 +
+ drivers/clk/at91/clk-i2s-mux.c                | 116 ++++++++++++++++++
+ 6 files changed, 236 insertions(+)
+ create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+
 -- 
-2.17.0
+2.17.1
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
