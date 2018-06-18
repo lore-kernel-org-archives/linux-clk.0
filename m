@@ -1,43 +1,105 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37903 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbeF1ByA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 21:54:00 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:31558 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934921AbeFRONy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jun 2018 10:13:54 -0400
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <sboyd@kernel.org>
+CC: <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+Date: Mon, 18 Jun 2018 17:12:38 +0300
+Message-ID: <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-7-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-7-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 09:53:36 +0800
-Message-ID: <CAGb2v65dNvqcWa7MUMesrEeDGfEmd0xPpKQmbqJ60_FHe=Y_JA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v3 06/24] drm/sun4i: Fix releasing node when
- enumerating enpoints
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> sun4i_drv_add_endpoints() has a memory leak since it uses of_node_put()
-> when remote is equal to NULL and does nothing when remote has a valid
-> pointer.
->
-> Invert the logic to fix memory leak.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-Given this is a fix, it should have Fixes and stable tags.
+This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
+each I2S node.
 
-ChenYu
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+[codrin.ciubotariu@microchip.com: added phandle to new mux clock]
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+
+The bindings for the I2S node are applied to broonie/sound.git .
+
+Changes in v5:
+	- the previous name was:
+	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+
+ arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index eeb6afa1cda7..eca73ce40bc5 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -58,6 +58,8 @@
+ 		serial1 = &uart3;
+ 		tcb0 = &tcb0;
+ 		tcb1 = &tcb1;
++		i2s0 = &i2s0;
++		i2s1 = &i2s1;
+ 	};
+ 
+ 	cpus {
+@@ -1313,6 +1315,22 @@
+ 				clocks = <&clk32k>;
+ 			};
+ 
++			i2s0: i2s@f8050000 {
++				compatible = "atmel,sama5d2-i2s";
++				reg = <0xf8050000 0x100>;
++				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(31))>,
++				       <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(32))>;
++				dma-names = "tx", "rx";
++				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
++				clock-names = "pclk", "gclk", "aclk", "muxclk";
++				status = "disabled";
++			};
++
+ 			can0: can@f8054000 {
+ 				compatible = "bosch,m_can";
+ 				reg = <0xf8054000 0x4000>, <0x210000 0x4000>;
+@@ -1506,6 +1524,22 @@
+ 				status = "disabled";
+ 			};
+ 
++			i2s1: i2s@fc04c000 {
++				compatible = "atmel,sama5d2-i2s";
++				reg = <0xfc04c000 0x100>;
++				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 7>;
++				dmas = <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(33))>,
++				       <&dma0
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
++					 AT91_XDMAC_DT_PERID(34))>;
++				dma-names = "tx", "rx";
++				clocks = <&i2s1_clk>, <&i2s1_gclk>, <&audio_pll_pmc>, <&i2s1muxck>;
++				clock-names = "pclk", "gclk", "aclk", "muxclk";
++				status = "disabled";
++			};
++
+ 			can1: can@fc050000 {
+ 				compatible = "bosch,m_can";
+ 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
+-- 
+2.17.1
+
