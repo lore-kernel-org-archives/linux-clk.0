@@ -1,32 +1,80 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <nsekhar@ti.com>
+Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
+ =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland
+	<mark.rutland@arm.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz
+ Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180518164829.27052-1-david@lechnology.com>
+ <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
+ <89b599d3-c43a-255f-8da6-9bea6cf53a5d@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <513d20f6-da4f-1e3e-7d11-4a0f1193b13d@ti.com>
+Date: Mon, 18 Jun 2018 10:17:09 +0530
 MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, adriana.reus@nxp.com,
- fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
- mturquette@baylibre.com, robh+dt@kernel.org, rui.silva@linaro.org,
- shawnguo@kernel.org, stefan@agner.ch
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526605266-18464-3-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
- <1526605266-18464-3-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <152788068714.225090.5079106153189288626@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 3/3] ARM: dts: imx7: correct enet ipg clock
-Date: Fri, 01 Jun 2018 12:18:07 -0700
+In-Reply-To: <89b599d3-c43a-255f-8da6-9bea6cf53a5d@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-05-17 18:01:06)
-> ENET "ipg" clock should be IMX7D_ENETx_IPG_ROOT_CLK
-> rather than IMX7D_ENET_AXI_ROOT_CLK which is for ENET bus
-> clock.
-> =
+Hi David,
 
-> Based on Andy Duan's patch from the NXP kernel tree.
-> =
+On Sunday 17 June 2018 09:18 PM, David Lechner wrote:
+> Hi Sekhar,
+> 
+> On 05/22/2018 04:38 AM, Sekhar Nori wrote:
+>> Hi David,
+>>
+>> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
+>>> This series converts mach-davinci to use the common clock framework.
+>>>
+>>> The series works like this, the first 3 patches fix some issues with
+>>> the clock
+>>> drivers that have already been accepted into the mainline kernel.
+>>>
+>>> Then, starting with "ARM: davinci: pass clock as parameter to
+>>> davinci_timer_init()", we get the mach code ready for the switch by
+>>> adding the
+>>> code needed for the new clock drivers and adding #ifndef
+>>> CONFIG_COMMON_CLK
+>>> around the legacy clocks so that we can switch easily between the old
+>>> and the
+>>> new.
+>>>
+>>> "ARM: davinci: switch to common clock framework" actually flips the
+>>> switch
+>>> to start using the new clock drivers. Then the next 8 patches remove all
+>>> of the old clock code.
+>>>
+>>> The final four patches add device tree clock support to the one SoC that
+>>> supports it.
+>>>
+>>> This series has been tested on TI OMAP-L138 LCDK (both device tree
+>>> and legacy
+>>> board file).
+>>
+>> If you do end up sending a v12, you can leave out the mach-davinci
+>> portions unless there are any changes you need to make. I will pick them
+>> up from this series once the driver dependencies are merged.
+>>
+>> I do hope the drivers/clk/* changes can be merged from v4.18.
+>>
+>> Thanks,
+>> Sekhar
+>>
+> 
+> Are you going to pick up the arch patches from this series now that
+> the 4.18 merge window is closed?
+> 
+> All of the clk patches landed in 4.18.
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+yes!
 
-Applied to clk-next
+Thanks,
+Sekhar
