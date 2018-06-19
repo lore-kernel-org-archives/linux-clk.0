@@ -1,97 +1,246 @@
-Return-Path: <horms@verge.net.au>
-Date: Fri, 29 Jun 2018 16:45:06 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Message-ID: <20180629144505.xcencoba4ru6tiee@verge.net.au>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
- <20180628120031.eq2yuysz4re2olwn@verge.net.au>
- <20180628121609.jf4dp4azeowte7pb@verge.net.au>
- <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 07/14] clk: qcom: Add support for Krait clocks
+Date: Tue, 19 Jun 2018 19:15:18 +0530
+Message-Id: <1529415925-28915-8-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 28, 2018 at 02:45:41PM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
-> > On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
-> > > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
-> > > > This adds the Renesas R9A06G032 bare bone support.
-> > > >
-> > > > This currently only handles the SYSCTRL block note,
-> > > > generic parts (gic, architected timer) and a UART.
-> > > >
-> > > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> > >
-> > > Thanks, applied with the following appended:
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 9d5eeff51b5f..4c85ac04872d 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -1969,6 +1969,7 @@ S:      Supported
-> > >  F:   arch/arm/boot/dts/emev2*
-> > >  F:   arch/arm/boot/dts/r7s*
-> > >  F:   arch/arm/boot/dts/r8a*
-> > > +F:   arch/arm/boot/dts/r9a*
-> > >  F:   arch/arm/boot/dts/sh*
-> > >  F:   arch/arm/configs/shmobile_defconfig
-> > >  F:   arch/arm/include/debug/renesas-scif.S
-> >
-> > One more update.
-> >
-> > dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
-> > current base of the renesas tree and likely base for the rest of the v4.19
-> > development cycle.
-> >
-> > Accordingly I have removed the include of that header and replaced
-> > the use of symbols it defines with numeric constants. The result is below.
-> 
-> Oh right. Thanks!
-> 
-> > Please:
-> > 1) Check that this is correct and
-> 
-> Looks good to me, except for the bogus "fixes" and "SoB" below
-> (bad squash?)
-> 
-> > From: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
-> >
-> > This adds the Renesas R9A06G032 bare bone support.
-> >
-> > This currently only handles the SYSCTRL block note,
-> > generic parts (gic, architected timer) and a UART.
-> >
-> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > [simon: updated MAINTAINERS file
-> > [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> >
-> > fixes
->   ^^^^^
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
->   ^^^^
-> 
-> Gr{oetje,eeting}s,
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks, I'll remove that trailing garbage.
+The Krait clocks are made up of a series of muxes and a divider
+that choose between a fixed rate clock and dedicated HFPLLs for
+each CPU. Instead of using mmio accesses to remux parents, the
+Krait implementation exposes the remux control via cp15
+registers. Support these clocks.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig     |   4 ++
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-krait.h |  37 +++++++++++++
+ 4 files changed, 166 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 95f9980..66894d2 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -261,3 +261,7 @@ config QCOM_HFPLL
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
++
++config KRAIT_CLOCKS
++	bool
++	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index d486aa3..82615ed 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+new file mode 100644
+index 0000000..2e41767
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -0,0 +1,124 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include <asm/krait-l2-accessors.h>
++
++#include "clk-krait.h"
++
++/* Secondary and primary muxes share the same cp15 register */
++static DEFINE_SPINLOCK(krait_clock_reg_lock);
++
++#define LPL_SHIFT	8
++static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
++{
++	unsigned long flags;
++	u32 regval;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	regval = krait_get_l2_indirect_reg(mux->offset);
++	regval &= ~(mux->mask << mux->shift);
++	regval |= (sel & mux->mask) << mux->shift;
++	if (mux->lpl) {
++		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
++		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
++	}
++	krait_set_l2_indirect_reg(mux->offset, regval);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	/* Wait for switch to complete. */
++	mb();
++	udelay(1);
++}
++
++static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	mux->en_mask = sel;
++	/* Don't touch mux if CPU is off as it won't work */
++	if (__clk_is_enabled(hw->clk))
++		__krait_mux_set_sel(mux, sel);
++
++	return 0;
++}
++
++static u8 krait_mux_get_parent(struct clk_hw *hw)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = krait_get_l2_indirect_reg(mux->offset);
++	sel >>= mux->shift;
++	sel &= mux->mask;
++	mux->en_mask = sel;
++
++	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
++}
++
++const struct clk_ops krait_mux_clk_ops = {
++	.set_parent = krait_mux_set_parent,
++	.get_parent = krait_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate_closest,
++};
++EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
++
++/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
++static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
++	return DIV_ROUND_UP(*parent_rate, 2);
++}
++
++static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	unsigned long flags;
++	u32 val;
++	u32 mask = BIT(d->width) - 1;
++
++	if (d->lpl)
++		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	val = krait_get_l2_indirect_reg(d->offset);
++	val &= ~mask;
++	krait_set_l2_indirect_reg(d->offset, val);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	u32 mask = BIT(d->width) - 1;
++	u32 div;
++
++	div = krait_get_l2_indirect_reg(d->offset);
++	div >>= d->shift;
++	div &= mask;
++	div = (div + 1) * 2;
++
++	return DIV_ROUND_UP(parent_rate, div);
++}
++
++const struct clk_ops krait_div2_clk_ops = {
++	.round_rate = krait_div2_round_rate,
++	.set_rate = krait_div2_set_rate,
++	.recalc_rate = krait_div2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+new file mode 100644
+index 0000000..441ba1e
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __QCOM_CLK_KRAIT_H
++#define __QCOM_CLK_KRAIT_H
++
++#include <linux/clk-provider.h>
++
++struct krait_mux_clk {
++	unsigned int	*parent_map;
++	u32		offset;
++	u32		mask;
++	u32		shift;
++	u32		en_mask;
++	bool		lpl;
++
++	struct clk_hw	hw;
++	struct notifier_block   clk_nb;
++};
++
++#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
++
++extern const struct clk_ops krait_mux_clk_ops;
++
++struct krait_div2_clk {
++	u32		offset;
++	u8		width;
++	u32		shift;
++	bool		lpl;
++
++	struct clk_hw	hw;
++};
++
++#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
++
++extern const struct clk_ops krait_div2_clk_ops;
++
++#endif
+-- 
+1.9.1
