@@ -1,260 +1,311 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54129 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933496AbeFRLwB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jun 2018 07:52:01 -0400
-Subject: Re: [PATCH v2 2/4] dt-bindings: mailbox: provide imx-mailbox
- documentation
-To: Leonard Crestez <leonard.crestez@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-3-o.rempel@pengutronix.de>
- <9d436d3a9c534b0c7af339aa13e91c1293a55503.camel@nxp.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <acce6810-65d7-4264-13d0-ad405639cd6f@pengutronix.de>
-Date: Mon, 18 Jun 2018 13:51:53 +0200
-MIME-Version: 1.0
-In-Reply-To: <9d436d3a9c534b0c7af339aa13e91c1293a55503.camel@nxp.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="CrmCHUZCCgEARE9OXaeSwcH5SK5IueJaT"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on Krait CPUs
+Date: Tue, 19 Jun 2018 19:15:24 +0530
+Message-Id: <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CrmCHUZCCgEARE9OXaeSwcH5SK5IueJaT
-Content-Type: multipart/mixed; boundary="OxXuGUNF13ExLsUB86qDoljtHyQBvtpGV";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Leonard Crestez <leonard.crestez@nxp.com>,
- "mark.rutland@arm.com" <mark.rutland@arm.com>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>, "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Richard Zhu <hongxing.zhu@nxp.com>,
- dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <fabio.estevam@nxp.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Message-ID: <acce6810-65d7-4264-13d0-ad405639cd6f@pengutronix.de>
-Subject: Re: [PATCH v2 2/4] dt-bindings: mailbox: provide imx-mailbox
- documentation
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-3-o.rempel@pengutronix.de>
- <9d436d3a9c534b0c7af339aa13e91c1293a55503.camel@nxp.com>
-In-Reply-To: <9d436d3a9c534b0c7af339aa13e91c1293a55503.camel@nxp.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
---OxXuGUNF13ExLsUB86qDoljtHyQBvtpGV
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Register a cpufreq-generic device whenever we detect that a
+"qcom,krait" compatible CPU is present in DT.
 
-Hi Leonard,
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+[Sricharan: updated to use dev_pm_opp_set_prop_name and
+	    nvmem apis]
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+[Thierry Escande: update to add support for opp-supported-hw]
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ [v10] updated to add support for opp-supported-hw given by
+       Thierry Escande <thierry.escande@linaro.org>
 
-On 18.06.2018 10:53, Leonard Crestez wrote:
-> On Fri, 2018-06-15 at 11:51 +0200, Oleksij Rempel wrote:
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  .../bindings/mailbox/imx-mailbox.txt          | 35 ++++++++++++++++++=
+ drivers/cpufreq/Kconfig.arm          |  10 ++
+ drivers/cpufreq/Makefile             |   1 +
+ drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+ drivers/cpufreq/qcom-cpufreq.c       | 201 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 217 insertions(+)
+ create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 7f56fe5..87e5d8d 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -134,6 +134,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
+ 
++config ARM_QCOM_CPUFREQ
++	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
++	depends on ARCH_QCOM
++	select PM_OPP
++	help
++	  This enables the CPUFreq driver for Qualcomm SoCs with
++	  KRAIT processors.
 +
->>  1 file changed, 35 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mail=
-box.txt
->=20
-> A recent patch was posted which adds a similar but different binding
-> for the MU on 8qm/8qxp SOCs:
->=20
-> https://patchwork.kernel.org/patch/10468885/
->=20
-> Looking at manuals side-by-side the hardware seems to be the same so
-> there should be a single binding. Right?
-
-yes. This is why it make no sense to create imx8 specific MU driver.
-
-> That series I pointed to uses the MU to implement a communication with
-> a special "SCU" core which runs NXP firmware for handling details like
-> power management. However imx8 socs also have other MUs and M4 cores
-> for customers to use pretty exactly like they would on 7d.
->=20
-> The hardware exposes a very generic interface and my impression is that=
-
->  drivers for the MU are actually highly specific to what is on the
-> other side of the MU. For example your driver code seems to be mapping
-> the 4 MU registers to separate "channels" but for SCU messages are
-> written in all registers in a round-robin way.
-
-ok.. let's take some of IMX8 SCU driver code to see if there any differen=
-ce:
-
--- this part of the code is blocking write procedure for one channeler
-per write-- correct?
-+void mu_send_msg(struct mu_priv *priv, uint32_t index, uint32_t msg)
++	  If in doubt, say N.
++
+ config ARM_S3C_CPUFREQ
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 8d24ade..c591e1e 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 3b585e4..e2e9a99 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -127,6 +127,11 @@
+ 	{ .compatible = "ti,am43", },
+ 	{ .compatible = "ti,dra7", },
+ 
++	{ .compatible = "qcom,ipq8064", },
++	{ .compatible = "qcom,apq8064", },
++	{ .compatible = "qcom,msm8974", },
++	{ .compatible = "qcom,msm8960", },
++
+ 	{ }
+ };
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq.c b/drivers/cpufreq/qcom-cpufreq.c
+new file mode 100644
+index 0000000..1d4ab54
+--- /dev/null
++++ b/drivers/cpufreq/qcom-cpufreq.c
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/cpu.h>
++#include <linux/module.h>
++#include <linux/nvmem-consumer.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/slab.h>
++
++static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver,
++					  struct nvmem_cell *pvs_nvmem, u8 *buf)
 +{
-+	uint32_t mask =3D MU_SR_TE0_MASK >> index;
++	u32 pte_efuse;
 +
-+	/* Wait TX register to be empty. */
-+	while (!(readl_relaxed(priv->base + MU_ASR) & mask))
-+		;
-+	writel_relaxed(msg, priv->base + MU_ATR0  + (index * 4));
-+}
-+EXPORT_SYMBOL_GPL(mu_send_msg);
-
-+static void sc_ipc_write(struct sc_ipc *sc_ipc, void *data)
-+{
-+	sc_rpc_msg_t *msg =3D (sc_rpc_msg_t *) data;
-+	uint8_t count =3D 0;
++	pte_efuse = *((u32 *)buf);
 +
-+	/* Check size */
-+	if (msg->size > SC_RPC_MAX_MSG)
-+		return;
++	*speed = pte_efuse & 0xf;
++	if (*speed == 0xf)
++		*speed = (pte_efuse >> 4) & 0xf;
 +
-+	/* Write first word */
-+	mu_send_msg(sc_ipc->mu_base, 0, *((uint32_t *) msg));
-+	count++;
-
---- in this loop we are writing to one channel per loop and waiting
-until the channel was done ----
-
-+	/* Write remaining words */
-+	while (count < msg->size) {
-+		mu_send_msg(sc_ipc->mu_base, count % MU_TR_COUNT,
-+			    msg->DATA.u32[count - 1]);
-+		count++;
++	if (*speed == 0xf) {
++		*speed = 0;
++		pr_warn("Speed bin: Defaulting to %d\n", *speed);
++	} else {
++		pr_info("Speed bin: %d\n", *speed);
 +	}
++
++	*pvs = (pte_efuse >> 10) & 0x7;
++	if (*pvs == 0x7)
++		*pvs = (pte_efuse >> 13) & 0x7;
++
++	if (*pvs == 0x7) {
++		*pvs = 0;
++		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
++	} else {
++		pr_info("PVS bin: %d\n", *pvs);
++	}
++
++	kfree(buf);
 +}
-
-
-=2E.. and here is a proof that sc_ipc_write will do in some cases 5 round=
-s
-(5 * 4 bytes =3D 20 bytes single message) with probable busy waiting for
-each channel, which make me think that shared memory would be a better de=
-al.
-
-+sc_err_t sc_misc_seco_image_load(sc_ipc_t ipc, uint32_t addr_src,
-+				 uint32_t addr_dst, uint32_t len, bool fw)
++
++static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver,
++					  struct nvmem_cell *pvs_nvmem, u8 *buf)
 +{
-+	sc_rpc_msg_t msg;
-+	uint8_t result;
++	u32 pte_efuse, redundant_sel;
 +
-+	RPC_VER(&msg) =3D SC_RPC_VERSION;
-+	RPC_SVC(&msg) =3D (uint8_t)SC_RPC_SVC_MISC;
-+	RPC_FUNC(&msg) =3D (uint8_t)MISC_FUNC_SECO_IMAGE_LOAD;
-+	RPC_U32(&msg, 0) =3D addr_src;
-+	RPC_U32(&msg, 4) =3D addr_dst;
-+	RPC_U32(&msg, 8) =3D len;
-+	RPC_U8(&msg, 12) =3D (uint8_t)fw;
-+	RPC_SIZE(&msg) =3D 5;
++	pte_efuse = *((u32 *)buf);
++	redundant_sel = (pte_efuse >> 24) & 0x7;
++	*speed = pte_efuse & 0x7;
 +
-+	sc_call_rpc(ipc, &msg, false);
++	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
++	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
++	*pvs_ver = (pte_efuse >> 4) & 0x3;
 +
-+	result =3D RPC_R8(&msg);
-+	return (sc_err_t)result;
++	switch (redundant_sel) {
++	case 1:
++		*speed = (pte_efuse >> 27) & 0xf;
++		break;
++	case 2:
++		*pvs = (pte_efuse >> 27) & 0xf;
++		break;
++	}
++
++	/* Check SPEED_BIN_BLOW_STATUS */
++	if (pte_efuse & BIT(3)) {
++		pr_info("Speed bin: %d\n", *speed);
++	} else {
++		pr_warn("Speed bin not set. Defaulting to 0!\n");
++		*speed = 0;
++	}
++
++	/* Check PVS_BLOW_STATUS */
++	pte_efuse = *(((u32 *)buf) + 4);
++	if (pte_efuse) {
++		pr_info("PVS bin: %d\n", *pvs);
++	} else {
++		pr_warn("PVS bin not set. Defaulting to 0!\n");
++		*pvs = 0;
++	}
++
++	pr_info("PVS version: %d\n", *pvs_ver);
++	kfree(buf);
 +}
 +
-
-So, the same code with mailbox framework will be some thing like this:
-
-	/* Write remaining words */
-	while (count < msg->size) {
-		mbox_send_message(sc_ipc->mbox_chan[count % MU_TR_COUNT],
-msg->DATA.u32[count - 1]);
-		count++;
-	}
-
-to provide identical behavior we should set mbox_client->tx_block =3D tru=
-e
-and implement polling mode in the mailbox driver.
-
-Please note. I don't think sc_ipc_write() implementation is good. I just
-don't expect it will be ever changed.
-
-> Shouldn't your MU-using driver be a separate node which references the
-> MU by phandle? Like in this patch:
-
-sure. But it is generic, not mailbox controller specific and make no
-sense to describe client binding again in the controller binding.
-
-> https://patchwork.kernel.org/patch/10468887/
->=20
->> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt=
- b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
->> new file mode 100644
->> index 000000000000..1577b86f1206
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
->> @@ -0,0 +1,35 @@
->> +i.MX Messaging Unit
->> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> +
->> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B".=
- In most
->> +cases they are accessible from all Processor Units. On one hand, at l=
-east for
->> +mailbox functionality, it makes no difference which application or pr=
-ocessor is
->> +using which set of the MU. On other hand, the register sets for each =
-of the MU
->> +parts are not identical.
->> +
->> +Required properties:
->> +- compatible :	Shell be one of:
->> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S =
-or i.MX7D
->> +- reg :		physical base address of the mailbox and length of
->> +		memory mapped region.
->> +- #mbox-cells:	Common mailbox binding property to identify the number=
-
->> +		of cells required for the mailbox specifier. Should be 1.
->> +- interrupts :	The interrupt number
->> +- clocks     :  phandle to the input clock.
->> +
->> +Example:
->> +	mu0a: mailbox@30aa0000 {
->> +		compatible =3D "fsl,imx7s-mu-a";
->> +		reg =3D <0x30aa0000 0x28>;
->> +		interrupts =3D <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
->> +		#mbox-cells =3D <1>;
->> +	};
->> +
->> +	mu0b: mailbox@30ab0000 {
->> +		compatible =3D "fsl,imx7s-mu-b";
->> +		reg =3D <0x30ab0000 0x28>;
->> +		interrupts =3D <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
->> +		clocks =3D <&clks IMX7D_MU_ROOT_CLK>;
->> +		#mbox-cells =3D <1>;
->> +	};
-
-
---OxXuGUNF13ExLsUB86qDoljtHyQBvtpGV--
-
---CrmCHUZCCgEARE9OXaeSwcH5SK5IueJaT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsnnNkACgkQdQOiSHVI
-77TlfQf/QvHVujeBc82qLVpMABD3TPkXMrORiGwE+F2y9mNaDSxlYe2cTO0xiZjK
-L1DRkJiv/NIYKZQh9Qqz2iMtdKTMwV/q0TgUrDqxC8E4IBXaMfMkppEAnnvv/Sxf
-TasB1iMY0eqhQVgE2A+Q5v2gb+U1NBc81RuJ/SMKzYhAqnMe5xUFz9y0TQemJH76
-A4exdWYBnroY+RW8UOVgql/Dbj0MPyVa08uZ6Exj8+lEMT8dWFQ8BYtafe1vAJE8
-/B8gROm+rMXYw2eYS+yIyRXb94ftpmBJ2QVR+NYv15Qu6QY6HOj/CNoUvrC3mI0K
-9Xb8XE5isbcEB1vmxGXW0uxEL43tRw==
-=w7T/
------END PGP SIGNATURE-----
-
---CrmCHUZCCgEARE9OXaeSwcH5SK5IueJaT--
++static int __init qcom_cpufreq_populate_opps(struct nvmem_cell *pvs_nvmem,
++					     struct opp_table **tbl1,
++					     struct opp_table **tbl2)
++{
++	int speed = 0, pvs = 0, pvs_ver = 0, cpu, ret;
++	struct device *cpu_dev;
++	u8 *buf;
++	size_t len;
++	char pvs_name[] = "speedXX-pvsXX-vXX";
++	u32 hw_version;
++
++	buf = nvmem_cell_read(pvs_nvmem, &len);
++	if (len == 4)
++		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
++	else if (len == 8)
++		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
++	else
++		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
++
++	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
++		 speed, pvs, pvs_ver);
++
++	hw_version = (1 << speed);
++
++	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
++		cpu_dev = get_cpu_device(cpu);
++		if (!cpu_dev)
++			return -ENODEV;
++
++		tbl1[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
++		if (IS_ERR(tbl1[cpu])) {
++			ret = PTR_ERR(tbl1[cpu]);
++			tbl1[cpu] = 0;
++			pr_warn("failed to add OPP name %s\n", pvs_name);
++			return ret;
++		}
++
++		tbl2[cpu] = dev_pm_opp_set_supported_hw(cpu_dev, &hw_version,
++							1);
++		if (IS_ERR(tbl2[cpu])) {
++			ret = PTR_ERR(tbl2[cpu]);
++			tbl2[cpu] = 0;
++			pr_warn("failed to set supported hw version\n");
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int __init qcom_cpufreq_driver_init(void)
++{
++	struct platform_device *pdev;
++	struct device *cpu_dev;
++	struct device_node *np;
++	struct nvmem_cell *pvs_nvmem;
++	struct opp_table *tbl1[NR_CPUS] = { NULL }, *tbl2[NR_CPUS] = { NULL };
++	int ret, cpu = 0;
++
++	cpu_dev = get_cpu_device(0);
++	if (!cpu_dev)
++		return -ENODEV;
++
++	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
++	if (!np)
++		return -ENOENT;
++
++	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
++		ret = -ENOENT;
++		goto free_np;
++	}
++
++	pvs_nvmem = of_nvmem_cell_get(np, NULL);
++	if (IS_ERR(pvs_nvmem)) {
++		dev_err(cpu_dev, "Could not get nvmem cell\n");
++		ret = PTR_ERR(pvs_nvmem);
++		goto free_np;
++	}
++
++	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl1, tbl2);
++	if (ret)
++		goto free_opp_name;
++
++	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
++	if (IS_ERR(pdev)) {
++		ret = PTR_ERR(pdev);
++		goto free_opp_name;
++	}
++
++	of_node_put(np);
++
++	return 0;
++
++free_opp_name:
++	while (tbl1[cpu]) {
++		dev_pm_opp_put_prop_name(tbl1[cpu]);
++		cpu++;
++	}
++
++	cpu = 0;
++	while (tbl2[cpu]) {
++		dev_pm_opp_put_supported_hw(tbl2[cpu]);
++		cpu++;
++	}
++
++free_np:
++	of_node_put(np);
++
++	return ret;
++}
++late_initcall(qcom_cpufreq_driver_init);
++
++MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
++MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
++MODULE_LICENSE("GPL v2");
+-- 
+1.9.1
