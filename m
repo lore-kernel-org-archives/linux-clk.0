@@ -1,80 +1,111 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/8] Tegra20 External Memory Controller driver
-Date: Sun, 17 Jun 2018 17:55:31 +0300
-Message-Id: <20180617145539.4758-1-digetx@gmail.com>
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <d-gerlach@ti.com>, <j-keerthy@ti.com>
+Subject: [PATCH 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
+Date: Tue, 19 Jun 2018 09:58:25 +0530
+Message-ID: <1529382505-3069-5-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Save/restore clk context based on enable_off_mode setting.
+The context needs to be saved at the very end of suspend path
+and restored at the beginning of resume path.
 
-Couple years ago the Tegra20 EMC driver was removed from the kernel
-due to incompatible changes in the Tegra's clock driver. This patchset
-introduces a modernized EMC driver. Currently the sole purpose of the
-driver is to initialize DRAM frequency to maximum rate during of the
-kernels boot-up. Later we may consider implementing dynamic memory
-frequency scaling, utilizing functionality provided by this driver.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
+ drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
+ include/linux/platform_data/pm33xx.h |  1 +
+ 3 files changed, 29 insertions(+)
 
-Changelog:
-
-v3:
-	- Handle "nvidia,use-ram-code" DT property, its handling was missed
-	  in the previous versions.
-
-	- Honor "emc-tables" DT node naming which is explicitly specified
-	  in the DT binding, also was missed in the previous versions.
-
-	- Two new DT binding patches: one adds the EMC clock property,
-	  other relocates the binding doc file to the appropriate directory.
-	  One new patch that adds EMC clock property to the DTS file.
-
-	- Addressed v2 review comments from Thierry Reding. Driver does not
-	  preserve backwards compatibility with older device tree binding.
-
-	- The PLL_M and PLL_P clocks are kept internal to the driver because
-	  after some more considering I couldn't find a really good reason why
-	  these clocks should be in the device tree.
-
-	- Some minor cleanups and fixes in the drivers code.
-
-v2:
-	- Minor code cleanups like consistent use of writel_relaxed instead
-	  of non-relaxed version, reworded error messages, etc.
-
-	- Factored out use_pllm_ud bit checking into a standalone patch for
-	  consistency.
-
-Dmitry Osipenko (8):
-  dt: bindings: tegra20-emc: Document interrupt property
-  dt: bindings: tegra20-emc: Document clock property
-  dt: bindings: Move tegra20-emc binding to memory-controllers directory
-  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
-  ARM: dts: tegra20: Add clock entry to External Memory Controller
-  clk: tegra20: Turn EMC clock gate into divider
-  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
-  memory: tegra: Introduce Tegra20 EMC driver
-
- .../nvidia,tegra20-emc.txt                    |   4 +
- arch/arm/boot/dts/tegra20.dtsi                |   2 +
- drivers/clk/tegra/clk-tegra20.c               |  46 +-
- drivers/memory/tegra/Kconfig                  |  10 +
- drivers/memory/tegra/Makefile                 |   1 +
- drivers/memory/tegra/tegra20-emc.c            | 574 ++++++++++++++++++
- 6 files changed, 627 insertions(+), 10 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
-
+diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
+index 9b3755a..29f848f 100644
+--- a/arch/arm/mach-omap2/pm33xx-core.c
++++ b/arch/arm/mach-omap2/pm33xx-core.c
+@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
+ 	return 0;
+ }
+ 
++static int am43xx_check_off_mode_enable(void)
++{
++	/*
++	 * Check for am437x-sk-evm which due to HW design cannot support
++	 * this mode reliably.
++	 */
++	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
++		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
++		return 0;
++	}
++
++	return enable_off_mode;
++}
++
+ static int amx3_common_init(void)
+ {
+ 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
+@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
+ 	.init = am43xx_suspend_init,
+ 	.soc_suspend = am43xx_suspend,
+ 	.get_sram_addrs = amx3_get_sram_addrs,
++	.check_off_mode_enable = am43xx_check_off_mode_enable,
+ };
+ 
+ static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 652739c..e749b8d 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -6,6 +6,7 @@
+  *	Vaibhav Bedia, Dave Gerlach
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+ #include <linux/genalloc.h>
+@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ {
+ 	int i, ret = 0;
+ 
++	/*
++	 * For RTC only mode with DDR in selfresh we need to save
++	 * clocks context at the very end
++	 */
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_save_context();
++
+ 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
+ 				  am33xx_do_wfi_sram);
+ 
+@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ 		}
+ 	}
+ 
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_restore_context();
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
+index f9bed2a..36f7007 100644
+--- a/include/linux/platform_data/pm33xx.h
++++ b/include/linux/platform_data/pm33xx.h
+@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
+ 	int	(*init)(void);
+ 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
+ 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
++	int (*check_off_mode_enable)(void);
+ };
+ 
+ struct am33xx_pm_sram_data {
 -- 
-2.17.1
+1.9.1
