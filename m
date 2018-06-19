@@ -1,55 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53419 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755242AbeFYKxb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 06:53:31 -0400
-From: Adam Ford <aford173@gmail.com>
-To: adam.ford@logicpd.com
-Cc: t-kristo@ti.com, woods.technical@gmail.com,
-        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
-        mturquette@baylibre.com, linux-omap@vger.kernel.org,
-        tony@atomide.com, Adam Ford <aford173@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH V2] clk: ti: omap3: Fix am3517 mdio clock alias
-Date: Mon, 25 Jun 2018 05:53:13 -0500
-Message-Id: <20180625105313.4201-1-aford173@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gilad@benyossef.com>
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com> <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Tue, 19 Jun 2018 16:57:15 +0300
+Message-ID: <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, Ofir Drang <ofir.drang@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-A previous patch removed OMAP clock aliases that were perceived
-to be unnecessary.  Unfortunately, it broke the ethernet on the
-am3517-evm.  This patch enables the MDIO clock and EMAC clock.
+On Tue, Jun 19, 2018 at 3:58 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Gilad,
+>
+> On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wr=
+ote:
+>> The patch set enables the use of CryptoCell found in some Renesas R-Car
+>> Salvator-X boards and fixes some driver issues uncovered that prevented
+>> to work properly.
+>
+> With DEBUG enabled on R-Car H3, I see lots of
+>
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
+>     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
+>
+> during boot. Is that expected?
 
-Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
-Cc: stable@vger.kernel.org #4.16+
+Yes. The condition itself it is reporting is not necessarily bad. It
+means that driver
+did not act on certain HW notification during interrupts and that's
+OK, we don't act on all of them
+depending on configuration - e.g. if you have CONFIG_FIPS enabled and
+an active TEE module or not.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
-     to work like the original patch intended.
+I can rate_limit the message if it bothers you but other than that it
+is a harmless debug print.
 
-diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
-index ca294914bbb1..4b6062b631b1 100644
---- a/arch/arm/boot/dts/am3517.dtsi
-+++ b/arch/arm/boot/dts/am3517.dtsi
-@@ -39,6 +39,8 @@
- 			ti,davinci-ctrl-ram-size = <0x2000>;
- 			ti,davinci-rmii-en = /bits/ 8 <1>;
- 			local-mac-address = [ 00 00 00 00 00 00 ];
-+			clocks = <&emac_ick>;
-+			clock-names = "ick";
- 		};
- 
- 		davinci_mdio: ethernet@5c030000 {
-@@ -49,6 +51,8 @@
- 			bus_freq = <1000000>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			clocks = <&emac_fck>;
-+			clock-names = "fck";
- 		};
- 
- 		uart4: serial@4809e000 {
--- 
-2.17.1
+Thanks,
+Gilad
 
+
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
