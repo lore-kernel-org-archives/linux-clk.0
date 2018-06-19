@@ -1,79 +1,52 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v9 08/10] firmware: xilinx: Add debugfs for query data API
-Date: Wed, 20 Jun 2018 10:40:33 -0700
-Message-ID: <1529516435-7315-9-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <152640754443.34267.2752714761157535255@swboyd.mtv.corp.google.com>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>,
+ Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+ Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20180418000926.4998-1-bjorn.andersson@linaro.org>
+ <152640754443.34267.2752714761157535255@swboyd.mtv.corp.google.com>
+Message-ID: <152944318698.16708.666113900436407121@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: qcom: Add some missing gcc clks for msm8996
+Date: Tue, 19 Jun 2018 14:19:46 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Quoting Stephen Boyd (2018-05-15 11:05:44)
+> Quoting Bjorn Andersson (2018-04-17 17:09:26)
+> > @@ -3350,6 +3522,7 @@ static struct clk_regmap *gcc_msm8996_clocks[] =
+=3D {
+> >         [GCC_AGGRE0_CNOC_AHB_CLK] =3D &gcc_aggre0_cnoc_ahb_clk.clkr,
+> >         [GCC_SMMU_AGGRE0_AXI_CLK] =3D &gcc_smmu_aggre0_axi_clk.clkr,
+> >         [GCC_SMMU_AGGRE0_AHB_CLK] =3D &gcc_smmu_aggre0_ahb_clk.clkr,
+> > +       [GCC_AGGRE1_PNOC_AHB_CLK] =3D &gcc_aggre1_pnoc_ahb_clk.clkr,
+> >         [GCC_AGGRE2_UFS_AXI_CLK] =3D &gcc_aggre2_ufs_axi_clk.clkr,
+> >         [GCC_AGGRE2_USB3_AXI_CLK] =3D &gcc_aggre2_usb3_axi_clk.clkr,
+> >         [GCC_QSPI_AHB_CLK] =3D &gcc_qspi_ahb_clk.clkr,
+> > @@ -3360,6 +3533,19 @@ static struct clk_regmap *gcc_msm8996_clocks[] =
+=3D {
+> >         [GCC_PCIE_CLKREF_CLK] =3D &gcc_pcie_clkref_clk.clkr,
+> >         [GCC_RX2_USB2_CLKREF_CLK] =3D &gcc_rx2_usb2_clkref_clk.clkr,
+> >         [GCC_RX1_USB2_CLKREF_CLK] =3D &gcc_rx1_usb2_clkref_clk.clkr,
+> > +       [GCC_HLOS1_VOTE_LPASS_CORE_SMMU_CLK] =3D
+> > +                                       &hlos1_vote_lpass_core_smmu_clk=
+.clkr,
+> =
 
-Add debugfs file to query platform specific data from firmware
-using debugfs interface.
+> drivers/clk/qcom/gcc-msm8996.c:3512:10: warning: Initializer entry define=
+d twice
+> drivers/clk/qcom/gcc-msm8996.c:3536:10: also defined here
+> =
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+> Resend please, or at least let me know what to do here. It looks like
+> the one you sent has the parent chain setup properly so that the bus
+> rcgs are in the chain of clks, while the one that is already there
+> doesn't have the chain setup.
 
-diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
-index 148dbff..1cb69f7 100644
---- a/drivers/firmware/xilinx/zynqmp-debug.c
-+++ b/drivers/firmware/xilinx/zynqmp-debug.c
-@@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
- static struct pm_api_info pm_api_list[] = {
- 	PM_API(PM_GET_API_VERSION),
- 	PM_API(PM_IOCTL),
-+	PM_API(PM_QUERY_DATA),
- };
- 
- /**
-@@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
- 			sprintf(debugfs_buf, "IOCTL return value: %u\n",
- 				pm_api_ret[1]);
- 		break;
-+	case PM_QUERY_DATA:
-+	{
-+		struct zynqmp_pm_query_data qdata = {0};
-+
-+		qdata.qid = pm_api_arg[0];
-+		qdata.arg1 = pm_api_arg[1];
-+		qdata.arg2 = pm_api_arg[2];
-+		qdata.arg3 = pm_api_arg[3];
-+
-+		ret = eemi_ops->query_data(qdata, pm_api_ret);
-+		if (ret)
-+			break;
-+
-+		if (qdata.qid == PM_QID_CLOCK_GET_NAME)
-+			sprintf(debugfs_buf, "Clock name = %s\n",
-+				(char *)pm_api_ret);
-+		else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
-+			sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
-+				pm_api_ret[1], pm_api_ret[2]);
-+		else
-+			sprintf(debugfs_buf,
-+				"data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
-+				pm_api_ret[0], pm_api_ret[1],
-+				pm_api_ret[2], pm_api_ret[3]);
-+		break;
-+	}
- 	default:
- 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
- 		ret = -EINVAL;
--- 
-2.7.4
+Reminder, this fell out as one of the patches I looked at merging for
+v4.18 but didn't make the cut because of this confusion.
