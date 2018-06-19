@@ -1,63 +1,169 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:45524 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934898AbeFRONm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jun 2018 10:13:42 -0400
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <sboyd@kernel.org>
-CC: <Cristian.Birsan@microchip.com>
-Subject: [PATCH v5 3/5] ARM: dts: at91: sama5d2: add I2S clock muxing nodes
-Date: Mon, 18 Jun 2018 17:12:37 +0300
-Message-ID: <20180618141239.10892-4-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 08/14] clk: qcom: Add KPSS ACC/GCC driver
+Date: Tue, 19 Jun 2018 19:15:19 +0530
+Message-Id: <1529415925-28915-9-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds two clock muxes for the two I2S
-buses present on sama5d2 platforms.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. For CPUfreq
+purposes probe these devices and expose a mux clock that chooses
+between PXO and PLL8.
+
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/boot/dts/sama5d2.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/clk/qcom/Kconfig    |  8 +++++
+ drivers/clk/qcom/Makefile   |  1 +
+ drivers/clk/qcom/kpss-xcc.c | 87 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 96 insertions(+)
+ create mode 100644 drivers/clk/qcom/kpss-xcc.c
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 61f68e5c48e9..eeb6afa1cda7 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -992,6 +992,24 @@
- 						atmel,clk-output-range = <0 100000000>;
- 					};
- 				};
-+
-+				i2s_clkmux {
-+					compatible = "atmel,sama5d2-clk-i2s-mux";
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					i2s0muxck: i2s0_muxclk {
-+						clocks = <&i2s0_clk>, <&i2s0_gclk>;
-+						#clock-cells = <0>;
-+						reg = <0>;
-+					};
-+
-+					i2s1muxck: i2s1_muxclk {
-+						clocks = <&i2s1_clk>, <&i2s1_gclk>;
-+						#clock-cells = <0>;
-+						reg = <1>;
-+					};
-+				};
- 			};
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 66894d2..b17f638 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -262,6 +262,14 @@ config QCOM_HFPLL
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
  
- 			qspi0: spi@f0020000 {
++config KPSS_XCC
++	tristate "KPSS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the Krait ACC and GCC clock controllers. Say Y
++	  if you want to support CPU frequency scaling on devices such
++	  as MSM8960, APQ8064, etc.
++
+ config KRAIT_CLOCKS
+ 	bool
+ 	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 82615ed..b9cf068 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -43,4 +43,5 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+ obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
+new file mode 100644
+index 0000000..8590b5e
+--- /dev/null
++++ b/drivers/clk/qcom/kpss-xcc.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++
++static const char *aux_parents[] = {
++	"pll8_vote",
++	"pxo",
++};
++
++static unsigned int aux_parent_map[] = {
++	3,
++	0,
++};
++
++static const struct of_device_id kpss_xcc_match_table[] = {
++	{ .compatible = "qcom,kpss-acc-v1", .data = (void *)1UL },
++	{ .compatible = "qcom,kpss-gcc" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, kpss_xcc_match_table);
++
++static int kpss_xcc_driver_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *id;
++	struct clk *clk;
++	struct resource *res;
++	void __iomem *base;
++	const char *name;
++
++	id = of_match_device(kpss_xcc_match_table, &pdev->dev);
++	if (!id)
++		return -ENODEV;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	if (id->data) {
++		if (of_property_read_string_index(pdev->dev.of_node,
++						  "clock-output-names",
++						  0, &name))
++			return -ENODEV;
++		base += 0x14;
++	} else {
++		name = "acpu_l2_aux";
++		base += 0x28;
++	}
++
++	clk = clk_register_mux_table(&pdev->dev, name, aux_parents,
++				     ARRAY_SIZE(aux_parents), 0, base, 0, 0x3,
++				     0, aux_parent_map, NULL);
++
++	platform_set_drvdata(pdev, clk);
++
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static int kpss_xcc_driver_remove(struct platform_device *pdev)
++{
++	clk_unregister_mux(platform_get_drvdata(pdev));
++	return 0;
++}
++
++static struct platform_driver kpss_xcc_driver = {
++	.probe = kpss_xcc_driver_probe,
++	.remove = kpss_xcc_driver_remove,
++	.driver = {
++		.name = "kpss-xcc",
++		.of_match_table = kpss_xcc_match_table,
++	},
++};
++module_platform_driver(kpss_xcc_driver);
++
++MODULE_DESCRIPTION("Krait Processor Sub System (KPSS) Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:kpss-xcc");
 -- 
-2.17.1
-
+1.9.1
