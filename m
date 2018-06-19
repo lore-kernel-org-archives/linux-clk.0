@@ -1,42 +1,119 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:34578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750776AbeFBCTt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 Jun 2018 22:19:49 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: =?utf-8?b?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180529170436.22711-3-peron.clem@gmail.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?utf-8?q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
-References: <20180529170436.22711-1-peron.clem@gmail.com>
- <20180529170436.22711-3-peron.clem@gmail.com>
-Message-ID: <152790598808.225090.1770456627783302488@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 2/5] clk: imx6: add EPIT clock support
-Date: Fri, 01 Jun 2018 19:19:48 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Ken Ma <make@marvell.com>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+Date: Tue, 19 Jun 2018 14:34:45 +0200
+Message-Id: <20180619123446.694-2-gregory.clement@bootlin.com>
+In-Reply-To: <20180619123446.694-1-gregory.clement@bootlin.com>
+References: <20180619123446.694-1-gregory.clement@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Cl=C3=A9ment P=C3=A9ron (2018-05-29 10:04:33)
-> From: Colin Didier <colin.didier@devialet.com>
-> =
+Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+respectively) to L0 frequency (1.2 Ghz) requires a significant amount
+of time to let VDD stabilize to the appropriate voltage. This amount of
+time is large enough that it cannot be covered by the hardware
+countdown register. Due to this, the CPU might start operating at L0
+before the voltage is stabilized, leading to CPU stalls.
 
-> Add EPIT clock support to the i.MX6Q clocking infrastructure.
-> =
+To work around this problem, we prevent switching directly from the
+L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+frequency in-between. The sequence therefore becomes:
 
-> Signed-off-by: Colin Didier <colin.didier@devialet.com>
-> Signed-off-by: Cl=C3=A9ment Peron <clement.peron@devialet.com>
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
+1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+2. Sleep 20ms for stabling VDD voltage
+3. Then switch from L1(600MHZ) to L0(1200Mhz).
 
-Applied to clk-next
+It is based on the work done by Ken Ma <make@marvell.com>
 
+Cc: stable@vger.kernel.org
+Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 6860bd5a37c5..44e4e27eddad 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -35,6 +35,7 @@
+ #define CLK_SEL		0x10
+ #define CLK_DIS		0x14
+ 
++#define  ARMADA_37XX_DVFS_LOAD_1 1
+ #define LOAD_LEVEL_NR	4
+ 
+ #define ARMADA_37XX_NB_L0L1	0x18
+@@ -507,6 +508,40 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return -EINVAL;
+ }
+ 
++/*
++ * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
++ * respectively) to L0 frequency (1.2 Ghz) requires a significant
++ * amount of time to let VDD stabilize to the appropriate
++ * voltage. This amount of time is large enough that it cannot be
++ * covered by the hardware countdown register. Due to this, the CPU
++ * might start operating at L0 before the voltage is stabilized,
++ * leading to CPU stalls.
++ *
++ * To work around this problem, we prevent switching directly from the
++ * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
++ * frequency in-between. The sequence therefore becomes:
++ * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
++ * 2. Sleep 20ms for stabling VDD voltage
++ * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
++ */
++static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
++{
++	unsigned int cur_level;
++
++	if (rate != 1200 * 1000 * 1000)
++		return;
++
++	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
++	cur_level &= ARMADA_37XX_NB_CPU_LOAD_MASK;
++	if (cur_level <= ARMADA_37XX_DVFS_LOAD_1)
++		return;
++
++	regmap_update_bits(base, ARMADA_37XX_NB_CPU_LOAD,
++			   ARMADA_37XX_NB_CPU_LOAD_MASK,
++			   ARMADA_37XX_DVFS_LOAD_1);
++	msleep(20);
++}
++
+ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       unsigned long parent_rate)
+ {
+@@ -537,6 +572,9 @@ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			 */
+ 			reg = ARMADA_37XX_NB_CPU_LOAD;
+ 			mask = ARMADA_37XX_NB_CPU_LOAD_MASK;
++
++			clk_pm_cpu_set_rate_wa(rate, base);
++
+ 			regmap_update_bits(base, reg, mask, load_level);
+ 
+ 			return rate;
+-- 
+2.17.1
