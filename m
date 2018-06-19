@@ -1,43 +1,71 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <d-gerlach@ti.com>, <j-keerthy@ti.com>
+Subject: [PATCH 2/4] clk: clk: Add clk_dflt_restore
+Date: Tue, 19 Jun 2018 09:58:23 +0530
+Message-ID: <1529382505-3069-3-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1439344955.9677.1526991935718@email.1und1.de>
-References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com> <1439344955.9677.1526991935718@email.1und1.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 2 Jun 2018 10:48:52 -0300
-Message-ID: <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
-To: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>, Rob Herring <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-	Anson Huang <Anson.Huang@nxp.com>, Matteo Lisi <matteo.lisi@engicam.com>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+The default restore context function enables or disables
+the clock based on the enable_count. This is done in cases
+where the clock context is lost and based on the enable_count
+the clock either needs to be enabled/disabled. This particularly
+helps restore the state of gate clocks.
 
-On Tue, May 22, 2018 at 9:25 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ drivers/clk/clk.c            | 19 +++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
->> --- a/include/dt-bindings/clock/imx6ul-clock.h
->> +++ b/include/dt-bindings/clock/imx6ul-clock.h
->> @@ -242,20 +242,25 @@
->>  #define IMX6UL_CLK_CKO2_PODF         229
->>  #define IMX6UL_CLK_CKO2                      230
->>  #define IMX6UL_CLK_CKO                       231
->> +#define IMX6UL_CLK_GPIO1             232
->> +#define IMX6UL_CLK_GPIO2             233
->> +#define IMX6UL_CLK_GPIO3             234
->> +#define IMX6UL_CLK_GPIO4             235
->> +#define IMX6UL_CLK_GPIO5             236
->
-> this change looks like a breakage of devicetree ABI. You are changing the mean of the existing clock IDs on i.MX6ULL, which probably regress the combination of older DTBs with newer kernel.
-
-Good point! I will send a fix for f5a4670de96678 ("clk: imx: Add new
-clo01 and clo2 controlled
-by CCOSR") which did the same reordering.
-
-Thanks
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7347e06..c201b8b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++/**
++ * clk_dflt_restore_context - restore context for poweroff
++ * @hw: the clk_hw pointer of clock whose state is to be restored
++ *
++ * The default restore context function enables or disables
++ * the clock based on the enable_count. This is done in cases
++ * where the clock context is lost and based on the enable_count
++ * the clock either needs to be enabled/disabled. This particularly
++ * helps restore the state of gate clocks.
++ */
++void clk_dflt_restore_context(struct clk_hw *hw)
++{
++	if (hw->clk->core->enable_count)
++		hw->clk->core->ops->enable(hw);
++	else
++		hw->clk->core->ops->disable(hw);
++}
++EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
++
+ static int _clk_save_context(struct clk_core *clk)
+ {
+ 	struct clk_core *child;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7f30d62..3e0c61a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 
+ #endif	/* platform dependent I/O accessors */
+ 
++void clk_dflt_restore_context(struct clk_hw *hw);
++
+ #endif /* CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
+-- 
+1.9.1
