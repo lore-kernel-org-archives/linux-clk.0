@@ -1,32 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:42320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967134AbeFSUMc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:12:32 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Hans de Goede <hdegoede@redhat.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180619172221.20252-1-geert+renesas@glider.be>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20180619172221.20252-1-geert+renesas@glider.be>
-Message-ID: <152943915116.16708.6058152206701595837@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] video: fbdev: simplefb: Stop including <linux/clk-provider.h>
-Date: Tue, 19 Jun 2018 13:12:31 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 11/14] dt-bindings: clock: Document qcom,krait-cc
+Date: Tue, 19 Jun 2018 19:15:22 +0530
+Message-Id: <1529415925-28915-12-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-06-19 10:22:21)
-> Simplefb is not a clock provider, but it uses of_clk_get_parent_count(),
-> so it can just include <linux/of_clk.h> instead.
-> =
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+The Krait clock controller controls the krait CPU and the L2 clocks
+consisting a primary mux and secondary mux. Add document for that.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+ [v10] updated to include clocks and clock-names property newly
 
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+new file mode 100644
+index 0000000..030ba60
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+@@ -0,0 +1,34 @@
++Krait Clock Controller
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++			"qcom,krait-cc-v1"
++			"qcom,krait-cc-v2"
++
++- #clock-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 1
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the clock parents of hfpll, secondary muxes.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
++
++Example:
++
++	kraitcc: clock-controller {
++		compatible = "qcom,krait-cc-v1";
++		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
++		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
++		#clock-cells = <1>;
++	};
+-- 
+1.9.1
