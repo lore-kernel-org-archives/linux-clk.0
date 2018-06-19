@@ -1,65 +1,54 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33495 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1030283AbeFSSxm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jun 2018 14:53:42 -0400
+Date: Tue, 19 Jun 2018 14:53:39 -0400
+From: David Rivshin <drivshin@awxrd.com>
+To: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>
+Subject: dmtimer fclk regression in 4.16?
+Message-ID: <20180619145339.08322293.drivshin@awxrd.com>
 MIME-Version: 1.0
-In-Reply-To: <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
- <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 25 Jun 2018 18:01:14 +0200
-Message-ID: <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To: David Lechner <david@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
-> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We want to be able to get the clock both from the board file by its
->> con_id and from the aemif driver by dev_id.
->
->
-> What about the other SoCs? Don't they need this change as well?
->
+I think I've run across a regression in 4.16 that resulted from the TI clock 
+infrastructure changes. A bisect pointed to [1] as the first breaking commit. 
 
-So I double checked and turns out I missed one other board that's
-affected by this series and calls clk_get() from machine code:
-dm644x-evm.
+Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented 
+by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with 
+4.16 that parenting fails in omap_dm_timer_set_source(), called from 
+pwm_omap_dmtimer_probe, at this check:
+	if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
+		return 0;
+because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent 
+is "timer7_fck". 
 
-I'll fix it in v2.
+It seemed to me that timer->fclk should instead be "timer7_fck" (which has 
+the desired set of possible parents). I tried following the lead set in [2] 
+and added "clocks" and "clock-names" properties on timer7. However, that 
+resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(), 
+failing when it tries to parent "timer7_fck" to itself. 
+
+The following change in omap_dm_timer_prepare() does seem to work:
+-		timer->fclk = clk_get(&timer->pdev->dev, "fck");
++		timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));
+but I'm very uncertain whether that's the right path. 
+Should omap_dm_timer know that the clock returned is actually a child of the 
+clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the 
+timerN_fck in the first place? Or is the problem something else entirely?
+
+As I'm not sure how these pieces are all intended to fit together, any 
+pointers would be appreciated.
 
 Thanks,
-Bart
+David Rivshin
 
->
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>   drivers/clk/davinci/psc-dm365.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/davinci/psc-dm365.c
->> b/drivers/clk/davinci/psc-dm365.c
->> index 8c73086cc676..c75424f4ea3b 100644
->> --- a/drivers/clk/davinci/psc-dm365.c
->> +++ b/drivers/clk/davinci/psc-dm365.c
->> @@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,           NULL,
->> "da830-mmc.1");
->>   LPSC_CLKDEV1(asp0_clkdev,             NULL,           "davinci-mcbsp");
->>   LPSC_CLKDEV1(usb_clkdev,              "usb",          NULL);
->>   LPSC_CLKDEV1(spi2_clkdev,             NULL,           "spi_davinci.2");
->> -LPSC_CLKDEV1(aemif_clkdev,             "aemif",        NULL);
->> +LPSC_CLKDEV2(aemif_clkdev,             "aemif",        NULL,
->> +                                       NULL,           "ti-aemif");
->>   LPSC_CLKDEV1(mmcsd0_clkdev,           NULL,           "da830-mmc.0");
->>   LPSC_CLKDEV1(i2c_clkdev,              NULL,           "i2c_davinci.1");
->>   LPSC_CLKDEV1(uart0_clkdev,            NULL,           "serial8250.0");
->>
->
+[1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data") 
+https://www.spinics.net/lists/linux-omap/msg139798.html
+[2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
+https://www.spinics.net/lists/linux-omap/msg140605.html
+
