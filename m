@@ -1,48 +1,89 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <j-keerthy@ti.com>
+Subject: Re: [PATCH 2/4] clk: clk: Add clk_dflt_restore
+To: Tero Kristo <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <d-gerlach@ti.com>
+References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+ <1529382505-3069-3-git-send-email-j-keerthy@ti.com>
+ <e3ef633e-d506-58cf-b6f1-bae188dbe875@ti.com>
+From: "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <b0651571-a30a-93b4-5a88-c9738239d35d@ti.com>
+Date: Tue, 19 Jun 2018 16:43:28 +0530
 MIME-Version: 1.0
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180529160804.1982-1-gregkh@linuxfoundation.org>
-Cc: linux-clk@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180529160804.1982-1-gregkh@linuxfoundation.org>
-Message-ID: <152790643550.225090.7686614109247734629@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/5] clk: no need to check return value of debugfs_create
- functions
-Date: Fri, 01 Jun 2018 19:27:15 -0700
+In-Reply-To: <e3ef633e-d506-58cf-b6f1-bae188dbe875@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Greg Kroah-Hartman (2018-05-29 09:08:00)
-> -
-> -       d =3D debugfs_create_u32("clk_protect_count", 0444, core->dentry,
-> -                              &core->protect_count);
-> -       if (!d)
-> -               goto err_out;
-> -
-> -       d =3D debugfs_create_u32("clk_notifier_count", 0444, core->dentry,
-> -                              &core->notifier_count);
-> -       if (!d)
-> -               goto err_out;
-> +       if (!core || !pdentry)
-> +               return;
->  =
 
-> -       if (core->num_parents > 1) {
-> -               d =3D debugfs_create_file("clk_possible_parents", 0444,
-> -                               core->dentry, core, &possible_parents_fop=
-s);
-> -               if (!d)
-> -                       goto err_out;
-> -       }
-> +       root =3D debugfs_create_dir(core->name, pdentry);
-> +       core->dentry =3D root;
->  =
 
-> -       if (core->ops->debug_init) {
-> -               ret =3D core->ops->debug_init(core->hw, core->dentry);
+On 6/19/2018 11:36 AM, Tero Kristo wrote:
+> On 19/06/18 07:28, Keerthy wrote:
+>> The default restore context function enables or disables
+>> the clock based on the enable_count. This is done in cases
+>> where the clock context is lost and based on the enable_count
+>> the clock either needs to be enabled/disabled. This particularly
+>> helps restore the state of gate clocks.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>   drivers/clk/clk.c            | 19 +++++++++++++++++++
+>>   include/linux/clk-provider.h |  2 ++
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 7347e06..c201b8b 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core 
+>> *core)
+>>       return ret;
+>>   }
+>> +/**
+>> + * clk_dflt_restore_context - restore context for poweroff
+>> + * @hw: the clk_hw pointer of clock whose state is to be restored
+>> + *
+>> + * The default restore context function enables or disables
+>> + * the clock based on the enable_count. This is done in cases
+>> + * where the clock context is lost and based on the enable_count
+>> + * the clock either needs to be enabled/disabled. This particularly
+>> + * helps restore the state of gate clocks.
+>> + */
+>> +void clk_dflt_restore_context(struct clk_hw *hw)
+> 
+> I think the name of this function is wrong, it should be 
+> clk_gate_restore_context, as only gate clocks are ever going to be using 
+> this afaics.
 
-This returns an int. We should go fix all the ops to return void now
-because nobody should care. I can pile that patch on top.
+Okay. Yes this applies to gate clocks. I will fix this.
 
-Anyway, applied to clk-next.
+> 
+> -Tero
+> 
+>> +{
+>> +    if (hw->clk->core->enable_count)
+>> +        hw->clk->core->ops->enable(hw);
+>> +    else
+>> +        hw->clk->core->ops->disable(hw);
+>> +}
+>> +EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
+>> +
+>>   static int _clk_save_context(struct clk_core *clk)
+>>   {
+>>       struct clk_core *child;
+>> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+>> index 7f30d62..3e0c61a 100644
+>> --- a/include/linux/clk-provider.h
+>> +++ b/include/linux/clk-provider.h
+>> @@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem 
+>> *reg)
+>>   #endif    /* platform dependent I/O accessors */
+>> +void clk_dflt_restore_context(struct clk_hw *hw);
+>> +
+>>   #endif /* CONFIG_COMMON_CLK */
+>>   #endif /* CLK_PROVIDER_H */
+>>
+> 
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
