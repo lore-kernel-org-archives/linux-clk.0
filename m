@@ -1,88 +1,33 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v3 03/24] clk: sunxi-ng: r40: Export video PLLs
-Date: Mon, 25 Jun 2018 14:02:43 +0200
-Message-Id: <20180625120304.7543-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <alexandre.belloni@bootlin.com>
+Date: Tue, 19 Jun 2018 23:30:34 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] MAINTAINERS: Remove the AT91 clk driver entry
+Message-ID: <20180619213034.GC3128@piout.net>
+References: <20180613082936.14038-1-boris.brezillon@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180613082936.14038-1-boris.brezillon@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
+On 13/06/2018 10:29:36+0200, Boris Brezillon wrote:
+> I've stopped actively maintaining this driver for quite some time
+> already, and at91 maintainers are doing a good job at maintaining it.
+> Remove the AT91 clk driver entry so that the driver automatically
+> falls under the "ARM/Microchip (AT91) SoC support" entry.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+>  MAINTAINERS | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+Applied, thanks.
 
-Export them.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
- include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-index 0db8e1e97af8..db2a1243f9ff 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-@@ -25,7 +25,9 @@
- #define CLK_PLL_AUDIO_2X	4
- #define CLK_PLL_AUDIO_4X	5
- #define CLK_PLL_AUDIO_8X	6
--#define CLK_PLL_VIDEO0		7
-+
-+/* PLL_VIDEO0 is exported */
-+
- #define CLK_PLL_VIDEO0_2X	8
- #define CLK_PLL_VE		9
- #define CLK_PLL_DDR0		10
-@@ -34,7 +36,9 @@
- #define CLK_PLL_PERIPH0_2X	13
- #define CLK_PLL_PERIPH1		14
- #define CLK_PLL_PERIPH1_2X	15
--#define CLK_PLL_VIDEO1		16
-+
-+/* PLL_VIDEO1 is exported */
-+
- #define CLK_PLL_VIDEO1_2X	17
- #define CLK_PLL_SATA		18
- #define CLK_PLL_SATA_OUT	19
-diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
-index 4fa5f69fc297..f9e15a235626 100644
---- a/include/dt-bindings/clock/sun8i-r40-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
-@@ -43,6 +43,10 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
- #define _DT_BINDINGS_CLK_SUN8I_R40_H_
- 
-+#define CLK_PLL_VIDEO0		7
-+
-+#define CLK_PLL_VIDEO1		16
-+
- #define CLK_CPU			24
- 
- #define CLK_BUS_MIPI_DSI	29
 -- 
-2.18.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
