@@ -1,97 +1,180 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Wed, 13 Jun 2018 15:17:52 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Make vic03 a child of pll_c3
-Message-ID: <20180613131752.GA17445@ulmo>
-References: <20180611081853.31474-1-thierry.reding@gmail.com>
- <20180611082244.GA31882@ulmo>
- <20180612154025.GW27696@tbergstrom-lnx.Nvidia.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Return-Path: <dmitry.torokhov@gmail.com>
+Date: Tue, 19 Jun 2018 10:50:28 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
+ power button
+Message-ID: <20180619175028.GA71788@dtor-ws>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
-In-Reply-To: <20180612154025.GW27696@tbergstrom-lnx.Nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Matti,
 
---YZ5djTAD1cGYuMQK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
+> ROHM BD71837 PMIC power button driver providing power-key press
+> information to user-space.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/input/misc/Kconfig          | 10 +++++
+>  drivers/input/misc/Makefile         |  1 +
+>  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
+> 
+> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+> index 572b15fa18c2..694c05d3f9fb 100644
+> --- a/drivers/input/misc/Kconfig
+> +++ b/drivers/input/misc/Kconfig
+> @@ -96,6 +96,16 @@ config INPUT_ATMEL_CAPTOUCH
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called atmel_captouch.
+>  
+> +config INPUT_BD718XX_PWRKEY
+> +	tristate "ROHM BD71837/BD71847 power key support"
+> +	depends on MFD_BD71837
+> +	help
+> +	  Say Y here if you want support for the power key usually found
+> +	  on boards using a ROHM BD71837/BD71847 compatible PMIC.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called bd718xx-pwrkey.
+> +
+>  config INPUT_BMA150
+>  	tristate "BMA150/SMB380 acceleration sensor support"
+>  	depends on I2C
+> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+> index 72cde28649e2..ea5b81cbf2bf 100644
+> --- a/drivers/input/misc/Makefile
+> +++ b/drivers/input/misc/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
+>  obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
+>  obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
+>  obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
+> +obj-$(CONFIG_INPUT_BD718XX_PWRKEY)	+= bd718xx-pwrkey.o
+>  obj-$(CONFIG_INPUT_CM109)		+= cm109.o
+>  obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
+>  obj-$(CONFIG_INPUT_CMA3000_I2C)		+= cma3000_d0x_i2c.o
+> diff --git a/drivers/input/misc/bd718xx-pwrkey.c b/drivers/input/misc/bd718xx-pwrkey.c
+> new file mode 100644
+> index 000000000000..e8ac9475c3cf
+> --- /dev/null
+> +++ b/drivers/input/misc/bd718xx-pwrkey.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd718xx-pwrkey.c -- ROHM BD71837MWV and BD71847 power button driver
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/mfd/bd71837.h>
+> +
+> +struct bd718xx_pwrkey {
+> +	struct input_dev *idev;
+> +	struct bd71837 *mfd;
+> +	int irq;
+> +};
+> +
+> +static irqreturn_t button_irq(int irq, void *_priv)
+> +{
+> +	struct input_dev *idev = (struct input_dev *)_priv;
+> +
+> +	input_report_key(idev, KEY_POWER, 1);
+> +	input_sync(idev);
+> +	input_report_key(idev, KEY_POWER, 0);
+> +	input_sync(idev);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bd718xx_pwr_btn_probe(struct platform_device *pdev)
+> +{
+> +	int err = -ENOMEM;
+> +	struct bd718xx_pwrkey *pk;
+> +
+> +	pk = devm_kzalloc(&pdev->dev, sizeof(*pk), GFP_KERNEL);
+> +	if (!pk)
+> +		goto err_out;
+> +
+> +	pk->mfd = dev_get_drvdata(pdev->dev.parent);
+> +
+> +	pk->idev = devm_input_allocate_device(&pdev->dev);
+> +	if (!pk->idev)
+> +		goto err_out;
+> +
+> +	pk->idev->name = "bd718xx-pwrkey";
+> +	pk->idev->phys = "bd718xx-pwrkey/input0";
+> +	pk->idev->dev.parent = &pdev->dev;
+> +
+> +	input_set_capability(pk->idev, EV_KEY, KEY_POWER);
+> +
+> +	err = platform_get_irq_byname(pdev, "pwr-btn-s");
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "could not get power key interrupt\n");
+> +		goto err_out;
+> +	}
+> +
+> +	pk->irq = err;
+> +	err = devm_request_threaded_irq(&pdev->dev, pk->irq, NULL, &button_irq,
+> +					0, "bd718xx-pwrkey", pk);
+> +	if (err)
+> +		goto err_out;
+> +
+> +	platform_set_drvdata(pdev, pk);
+> +	err = regmap_update_bits(pk->mfd->regmap,
+> +				 BD71837_REG_PWRONCONFIG0,
+> +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
+> +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
 
-On Tue, Jun 12, 2018 at 06:40:25PM +0300, Peter De Schrijver wrote:
-> On Mon, Jun 11, 2018 at 10:22:44AM +0200, Thierry Reding wrote:
-> > On Mon, Jun 11, 2018 at 10:18:53AM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >=20
-> > > By default, the vic03 clock is a child of pll_m but that runs at 924 =
-MHz
-> > > which is too fast for VIC. Make vic03 a child of pll_c3 by default so=
- it
-> > > will run at a supported frequency.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > >  drivers/clk/tegra/clk-tegra124.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk=
--tegra124.c
-> > > index 0c69c7970950..f5048f82c0b9 100644
-> > > --- a/drivers/clk/tegra/clk-tegra124.c
-> > > +++ b/drivers/clk/tegra/clk-tegra124.c
-> > > @@ -1290,6 +1290,7 @@ static struct tegra_clk_init_table common_init_=
-table[] __initdata =3D {
-> > >  	{ TEGRA124_CLK_MSELECT, TEGRA124_CLK_CLK_MAX, 0, 1 },
-> > >  	{ TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1 },
-> > >  	{ TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 400000, 0 },
-> > > +	{ TEGRA124_CLK_VIC03, TEGRA124_CLK_PLL_C3, 0, 0 },
-> > >  	/* must be the last entry */
-> > >  	{ TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
-> > >  };
-> >=20
-> > Adding Peter for visibility.
->=20
-> I think we should consider using the Assigned clock parents and rate feat=
-ure
-> of the DT clock binding.
+This seems to be the only custom bit of set up in the driver, the rest I
+think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
+we could move this into MFD piece and drop this driver?
 
-I'm sure we could do that, but it'd also be completely inconsistent with
-what we've done so far. These init tables effectively do the same thing
-as the assigned parents and rate bindings, only they predate them and we
-have done it this way essentially forever.
+> +	if (err)
+> +		goto err_out;
+> +
+> +	err = input_register_device(pk->idev);
+> +
+> +err_out:
+> +
+> +	return err;
+> +}
+> +
+> +static struct platform_driver bd718xx_pwr_btn_driver = {
+> +	.probe	= bd718xx_pwr_btn_probe,
+> +	.driver = {
+> +		.name	= "bd718xx-pwrkey",
+> +	},
+> +};
+> +module_platform_driver(bd718xx_pwr_btn_driver);
+> +MODULE_DESCRIPTION("Power button driver for buttons connected to ROHM bd71837/bd71847 PMIC");
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +
+> -- 
+> 2.14.3
+> 
 
-I think there's some benefit in moving to the new bindings, but perhaps
-it'd make more sense to do it for Tegra186 and later because we don't
-have any of these initialization tables there yet and we don't even have
-a custom driver like this.
+Thanks.
 
-Thierry
-
---YZ5djTAD1cGYuMQK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlshGX0ACgkQ3SOs138+
-s6FFgQ//QEbajano7jhIxKDUKb6c2qGWVmQzBMNIeai/8114T4slymX1sdwb5LKb
-TtIPiGDG+1Ag0Anik4zgRaE+kA7fgY+p3wSN5GklMWe5TisPwW6qgMFm7iV3biIY
-xBqHcpwZ70fC6lUASyXCOkifE5nP1GoETPSI7FFuDRJWembHUBQN9Q+Z1y9rkh0H
-e1kO50f2LpV8pFOT8m8XGAEy2+9kYE42hqLuIAlBjIHQZ+sx+RWvoWJgJNVLSWsB
-4Jk3HpTpLkXYrXdibCYltUbdrAPl7GhZ3IwwY+0rbYZCFUJL1+Y9HKYd4u531A38
-/SFPnfZJE9pmQGILGbyk+e9OuKLEY+zwpXhmsUpsvXH3NmD3LKjEAByr5lp9ulmW
-EGhWz1ERYHGz2OLpYLXL+EAhfRyj7u38QwoTjTKGXOqffeAQU7jTt1kM6/oS6Uas
-/ycVYms7Q0BRbXCr82HYxxDLQNBXceklv5NmqEtoi9tVe/FJZ5kuuKcb8VxcdLst
-e0UPBmKqS9hQk469IwkOCWd6SReFWPKtIom5bsPAF4oykZd+UZ73dLxXR4qkyJ/V
-VUydplQ9I5Dj1OWpBUZBTTm5sias6egbzLdK388L23I4kgKOR1wKciD4g3tU+G86
-Bkh0U3luVR6EIZV26viFKGLVzuiDyZeqKw9lwQ331ZmjgfIzpdE=
-=AlbF
------END PGP SIGNATURE-----
-
---YZ5djTAD1cGYuMQK--
+-- 
+Dmitry
