@@ -1,295 +1,165 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v9 05/10] firmware: xilinx: Add clock APIs
-Date: Wed, 20 Jun 2018 10:40:30 -0700
-Message-ID: <1529516435-7315-6-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Tue, 19 Jun 2018 13:57:09 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
+	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
+	kstewart@linuxfoundation.org, heiko@sntech.de,
+	gregkh@linuxfoundation.org
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
+ power button
+Message-ID: <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+ROHM BD71837 PMIC power button driver providing power-key press
+information to user-space.
 
-Add clock APIs to control clocks through firmware
-interface.
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 186 ++++++++++++++++++++++++++++++++++-
- include/linux/firmware/xlnx-zynqmp.h |  30 ++++++
- 2 files changed, 214 insertions(+), 2 deletions(-)
+ drivers/input/misc/Kconfig          | 10 +++++
+ drivers/input/misc/Makefile         |  1 +
+ drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 86d9bb8..c764d6e 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -269,14 +269,196 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-  */
- static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
- {
--	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
--				   qdata.arg2, qdata.arg3, out);
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				  qdata.arg2, qdata.arg3, out);
-+
-+	/*
-+	 * For clock name query, all bytes in SMC response are clock name
-+	 * characters and return code is always success. For invalid clocks,
-+	 * clock name bytes would be 0s.
-+	 */
-+	return qdata.qid == PM_QID_CLOCK_GET_NAME ? 0 : ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_enable() - Enable the clock for given id
-+ * @clock_id:	ID of the clock to be enabled
-+ *
-+ * This function is used by master to enable the clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_enable(u32 clock_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_ENABLE, clock_id, 0, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_disable() - Disable the clock for given id
-+ * @clock_id:	ID of the clock to be disable
-+ *
-+ * This function is used by master to disable the clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_disable(u32 clock_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_DISABLE, clock_id, 0, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getstate() - Get the clock state for given id
-+ * @clock_id:	ID of the clock to be queried
-+ * @state:	1/0 (Enabled/Disabled)
-+ *
-+ * This function is used by master to get the state of clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getstate(u32 clock_id, u32 *state)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETSTATE, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*state = ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setdivider() - Set the clock divider for given id
-+ * @clock_id:	ID of the clock
-+ * @divider:	divider value
-+ *
-+ * This function is used by master to set divider for any clock
-+ * to achieve desired rate.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setdivider(u32 clock_id, u32 divider)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETDIVIDER, clock_id, divider,
-+				   0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getdivider() - Get the clock divider for given id
-+ * @clock_id:	ID of the clock
-+ * @divider:	divider value
-+ *
-+ * This function is used by master to get divider values
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getdivider(u32 clock_id, u32 *divider)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETDIVIDER, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*divider = ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setrate() - Set the clock rate for given id
-+ * @clock_id:	ID of the clock
-+ * @rate:	rate value in hz
-+ *
-+ * This function is used by master to set rate for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setrate(u32 clock_id, u64 rate)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETRATE, clock_id,
-+				   rate & 0xFFFFFFFF,
-+				   (rate >> 32) & 0xFFFFFFFF,
-+				   0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getrate() - Get the clock rate for given id
-+ * @clock_id:	ID of the clock
-+ * @rate:	rate value in hz
-+ *
-+ * This function is used by master to get rate
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getrate(u32 clock_id, u64 *rate)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETRATE, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*rate = ((u64)ret_payload[2] << 32) | ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setparent() - Set the clock parent for given id
-+ * @clock_id:	ID of the clock
-+ * @parent_id:	parent id
-+ *
-+ * This function is used by master to set parent for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setparent(u32 clock_id, u32 parent_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETPARENT, clock_id,
-+				   parent_id, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getparent() - Get the clock parent for given id
-+ * @clock_id:	ID of the clock
-+ * @parent_id:	parent id
-+ *
-+ * This function is used by master to get parent index
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETPARENT, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*parent_id = ret_payload[1];
-+
-+	return ret;
- }
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 572b15fa18c2..694c05d3f9fb 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -96,6 +96,16 @@ config INPUT_ATMEL_CAPTOUCH
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called atmel_captouch.
  
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
- 	.query_data = zynqmp_pm_query_data,
-+	.clock_enable = zynqmp_pm_clock_enable,
-+	.clock_disable = zynqmp_pm_clock_disable,
-+	.clock_getstate = zynqmp_pm_clock_getstate,
-+	.clock_setdivider = zynqmp_pm_clock_setdivider,
-+	.clock_getdivider = zynqmp_pm_clock_getdivider,
-+	.clock_setrate = zynqmp_pm_clock_setrate,
-+	.clock_getrate = zynqmp_pm_clock_getrate,
-+	.clock_setparent = zynqmp_pm_clock_setparent,
-+	.clock_getparent = zynqmp_pm_clock_getparent,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 354385d..29fb352 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -36,6 +36,15 @@ enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
- 	PM_QUERY_DATA,
-+	PM_CLOCK_ENABLE,
-+	PM_CLOCK_DISABLE,
-+	PM_CLOCK_GETSTATE,
-+	PM_CLOCK_SETDIVIDER,
-+	PM_CLOCK_GETDIVIDER,
-+	PM_CLOCK_SETRATE,
-+	PM_CLOCK_GETRATE,
-+	PM_CLOCK_SETPARENT,
-+	PM_CLOCK_GETPARENT,
- };
- 
- /* PMU-FW return status codes */
-@@ -49,8 +58,20 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_ioctl_id {
-+	IOCTL_SET_PLL_FRAC_MODE = 8,
-+	IOCTL_GET_PLL_FRAC_MODE,
-+	IOCTL_SET_PLL_FRAC_DATA,
-+	IOCTL_GET_PLL_FRAC_DATA,
++config INPUT_BD718XX_PWRKEY
++	tristate "ROHM BD71837/BD71847 power key support"
++	depends on MFD_BD71837
++	help
++	  Say Y here if you want support for the power key usually found
++	  on boards using a ROHM BD71837/BD71847 compatible PMIC.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called bd718xx-pwrkey.
++
+ config INPUT_BMA150
+ 	tristate "BMA150/SMB380 acceleration sensor support"
+ 	depends on I2C
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index 72cde28649e2..ea5b81cbf2bf 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
+ obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
+ obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
+ obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
++obj-$(CONFIG_INPUT_BD718XX_PWRKEY)	+= bd718xx-pwrkey.o
+ obj-$(CONFIG_INPUT_CM109)		+= cm109.o
+ obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
+ obj-$(CONFIG_INPUT_CMA3000_I2C)		+= cma3000_d0x_i2c.o
+diff --git a/drivers/input/misc/bd718xx-pwrkey.c b/drivers/input/misc/bd718xx-pwrkey.c
+new file mode 100644
+index 000000000000..e8ac9475c3cf
+--- /dev/null
++++ b/drivers/input/misc/bd718xx-pwrkey.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 ROHM Semiconductors
++// bd718xx-pwrkey.c -- ROHM BD71837MWV and BD71847 power button driver
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/input.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/mfd/bd71837.h>
++
++struct bd718xx_pwrkey {
++	struct input_dev *idev;
++	struct bd71837 *mfd;
++	int irq;
 +};
 +
- enum pm_query_id {
- 	PM_QID_INVALID,
-+	PM_QID_CLOCK_GET_NAME,
-+	PM_QID_CLOCK_GET_TOPOLOGY,
-+	PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
-+	PM_QID_CLOCK_GET_PARENTS,
-+	PM_QID_CLOCK_GET_ATTRIBUTES,
- };
- 
- /**
-@@ -71,6 +92,15 @@ struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
-+	int (*clock_enable)(u32 clock_id);
-+	int (*clock_disable)(u32 clock_id);
-+	int (*clock_getstate)(u32 clock_id, u32 *state);
-+	int (*clock_setdivider)(u32 clock_id, u32 divider);
-+	int (*clock_getdivider)(u32 clock_id, u32 *divider);
-+	int (*clock_setrate)(u32 clock_id, u64 rate);
-+	int (*clock_getrate)(u32 clock_id, u64 *rate);
-+	int (*clock_setparent)(u32 clock_id, u32 parent_id);
-+	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
++static irqreturn_t button_irq(int irq, void *_priv)
++{
++	struct input_dev *idev = (struct input_dev *)_priv;
++
++	input_report_key(idev, KEY_POWER, 1);
++	input_sync(idev);
++	input_report_key(idev, KEY_POWER, 0);
++	input_sync(idev);
++
++	return IRQ_HANDLED;
++}
++
++static int bd718xx_pwr_btn_probe(struct platform_device *pdev)
++{
++	int err = -ENOMEM;
++	struct bd718xx_pwrkey *pk;
++
++	pk = devm_kzalloc(&pdev->dev, sizeof(*pk), GFP_KERNEL);
++	if (!pk)
++		goto err_out;
++
++	pk->mfd = dev_get_drvdata(pdev->dev.parent);
++
++	pk->idev = devm_input_allocate_device(&pdev->dev);
++	if (!pk->idev)
++		goto err_out;
++
++	pk->idev->name = "bd718xx-pwrkey";
++	pk->idev->phys = "bd718xx-pwrkey/input0";
++	pk->idev->dev.parent = &pdev->dev;
++
++	input_set_capability(pk->idev, EV_KEY, KEY_POWER);
++
++	err = platform_get_irq_byname(pdev, "pwr-btn-s");
++	if (err < 0) {
++		dev_err(&pdev->dev, "could not get power key interrupt\n");
++		goto err_out;
++	}
++
++	pk->irq = err;
++	err = devm_request_threaded_irq(&pdev->dev, pk->irq, NULL, &button_irq,
++					0, "bd718xx-pwrkey", pk);
++	if (err)
++		goto err_out;
++
++	platform_set_drvdata(pdev, pk);
++	err = regmap_update_bits(pk->mfd->regmap,
++				 BD71837_REG_PWRONCONFIG0,
++				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
++				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
++	if (err)
++		goto err_out;
++
++	err = input_register_device(pk->idev);
++
++err_out:
++
++	return err;
++}
++
++static struct platform_driver bd718xx_pwr_btn_driver = {
++	.probe	= bd718xx_pwr_btn_probe,
++	.driver = {
++		.name	= "bd718xx-pwrkey",
++	},
++};
++module_platform_driver(bd718xx_pwr_btn_driver);
++MODULE_DESCRIPTION("Power button driver for buttons connected to ROHM bd71837/bd71847 PMIC");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++
 -- 
-2.7.4
+2.14.3
