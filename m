@@ -1,109 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:38009 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965479AbeFZOj5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Jun 2018 10:39:57 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
-References: <20180626092926.26361-1-miquel.raynal@bootlin.com>
-Date: Tue, 26 Jun 2018 16:39:44 +0200
-In-Reply-To: <20180626092926.26361-1-miquel.raynal@bootlin.com> (Miquel
-        Raynal's message of "Tue, 26 Jun 2018 11:29:25 +0200")
-Message-ID: <87fu19a9xr.fsf@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	David Brown <david.brown@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 2/2] clk: fix CLK_SET_RATE_GATE with clock rate protection
+Date: Tue, 19 Jun 2018 15:40:51 +0200
+Message-Id: <20180619134051.16726-3-jbrunet@baylibre.com>
+In-Reply-To: <20180619134051.16726-1-jbrunet@baylibre.com>
+References: <20180619134051.16726-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Miquel,
+CLK_SET_RATE_GATE should prevent any operation which may result in a rate
+change or glitch while the clock is prepared/enabled.
 
- On mar., juin 26 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+IOW, the following sequence is not allowed anymore with CLK_SET_RATE_GATE:
+* clk_get()
+* clk_prepare_enable()
+* clk_get_rate()
+* clk_set_rate()
 
-> Prepare the introduction of suspend/resume hooks by having an easy way
-> to access all the registers in one go just from a device: add the IP
-> base address in the driver data.
->
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+At the moment this is enforced on the leaf clock of the operation, not
+along the tree. This problematic because, if a PLL has the CLK_RATE_GATE,
+it won't be enforced if the clk_set_rate() is called on its child clocks.
 
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+clock tree
 
-Thanks,
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Gregory
-
-> ---
->
-> Changes since v1:
-> =================
-> * None
->
-> drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-> index 6860bd5a37c5..a9e3dcc50a7b 100644
-> --- a/drivers/clk/mvebu/armada-37xx-periph.c
-> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
-> @@ -58,6 +58,7 @@
->  struct clk_periph_driver_data {
->  	struct clk_hw_onecell_data *hw_data;
->  	spinlock_t lock;
-> +	void __iomem *reg;
->  };
->  
->  struct clk_double_div {
-> @@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	int num_periph = 0, i, ret;
->  	struct resource *res;
-> -	void __iomem *reg;
->  
->  	data = of_device_get_match_data(dev);
->  	if (!data)
-> @@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
->  	while (data[num_periph].name)
->  		num_periph++;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	reg = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(reg))
-> -		return PTR_ERR(reg);
-> -
->  	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
->  	if (!driver_data)
->  		return -ENOMEM;
-> @@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	driver_data->hw_data->num = num_periph;
->  
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	driver_data->reg = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(driver_data->reg))
-> +		return PTR_ERR(driver_data->reg);
-> +
->  	spin_lock_init(&driver_data->lock);
->  
->  	for (i = 0; i < num_periph; i++) {
->  		struct clk_hw **hw = &driver_data->hw_data->hws[i];
-> -
-> -		if (armada_3700_add_composite_clk(&data[i], reg,
-> +		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
->  						  &driver_data->lock, dev, hw))
->  			dev_err(dev, "Can't register periph clock %s\n",
->  				data[i].name);
-> -- 
-> 2.14.1
->
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9760b526ca31..97c09243fb21 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -691,6 +691,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	    "Unpreparing critical %s\n", core->name))
+ 		return;
+ 
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_unprotect(core);
++
+ 	if (--core->prepare_count > 0)
+ 		return;
+ 
+@@ -765,6 +768,16 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 	core->prepare_count++;
+ 
++	/*
++	 * CLK_SET_RATE_GATE is a special case of clock protection
++	 * Instead of a consumer claiming exclusive rate control, it is
++	 * actually the provider which prevents any consumer from making any
++	 * operation which could result in a rate change or rate glitch while
++	 * the clock is prepared.
++	 */
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_protect(core);
++
+ 	return 0;
+ unprepare:
+ 	clk_core_unprepare(core->parent);
+@@ -1888,9 +1901,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (clk_core_rate_is_protected(core))
+ 		return -EBUSY;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.14.3
