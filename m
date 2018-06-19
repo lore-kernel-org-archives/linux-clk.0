@@ -1,112 +1,149 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 12/13] ARM: davinci: mityomapl138: use aemif platform driver
-Date: Thu, 28 Jun 2018 11:57:47 +0200
-Message-Id: <20180628095748.4462-13-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 01/14] ARM: Add Krait L2 register accessor functions
+Date: Tue, 19 Jun 2018 19:15:12 +0530
+Message-Id: <1529415925-28915-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in mityomapl138.
+Krait CPUs have a handful of L2 cache controller registers that
+live behind a cp15 based indirection register. First you program
+the indirection register (l2cpselr) to point the L2 'window'
+register (l2cpdr) at what you want to read/write.  Then you
+read/write the 'window' register to do what you want. The
+l2cpselr register is not banked per-cpu so we must lock around
+accesses to it to prevent other CPUs from re-pointing l2cpdr
+underneath us.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- arch/arm/mach-davinci/board-mityomapl138.c | 55 ++++++++++++++++------
- 1 file changed, 41 insertions(+), 14 deletions(-)
+ arch/arm/common/Kconfig                   |  3 ++
+ arch/arm/common/Makefile                  |  1 +
+ arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/krait-l2-accessors.h |  9 ++++++
+ 4 files changed, 61 insertions(+)
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 2cce0d7d2f2a..2933e0c87cfa 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -30,6 +30,7 @@
- #include <mach/da8xx.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <mach/mux.h>
- #include <linux/platform_data/spi-davinci.h>
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index e5ad070..c8e1986 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -7,6 +7,9 @@ config DMABOUNCE
+ 	bool
+ 	select ZONE_DMA
  
-@@ -422,27 +423,53 @@ static struct resource mityomapl138_nandflash_resource[] = {
- 	},
- };
- 
--static struct platform_device mityomapl138_nandflash_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &mityomapl138_nandflash_data,
-+static struct platform_device mityomapl138_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &mityomapl138_nandflash_data,
-+		},
-+		.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
-+		.resource	= mityomapl138_nandflash_resource,
- 	},
--	.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
--	.resource	= mityomapl138_nandflash_resource,
- };
- 
--static struct platform_device *mityomapl138_devices[] __initdata = {
--	&mityomapl138_nandflash_device,
-+static struct resource mityomapl138_aemif_resources[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
++config KRAIT_L2_ACCESSORS
++	bool
 +
-+static struct aemif_abus_data mityomapl138_aemif_abus_data[] = {
-+	{
-+		.cs	= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data mityomapl138_aemif_pdata = {
-+	.abus_data		= mityomapl138_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(mityomapl138_aemif_abus_data),
-+	.sub_devices		= mityomapl138_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(mityomapl138_aemif_devices),
-+};
-+
-+static struct platform_device mityomapl138_aemif_device = {
-+	.name		= "ti-aemif",
-+	.id		= -1,
-+	.dev = {
-+		.platform_data	= &mityomapl138_aemif_pdata,
-+	},
-+	.resource	= mityomapl138_aemif_resources,
-+	.num_resources	= ARRAY_SIZE(mityomapl138_aemif_resources),
- };
+ config SHARP_LOCOMO
+ 	bool
  
- static void __init mityomapl138_setup_nand(void)
- {
--	platform_add_devices(mityomapl138_devices,
--				 ARRAY_SIZE(mityomapl138_devices));
--
--	if (davinci_aemif_setup(&mityomapl138_nandflash_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+	if (platform_device_register(&mityomapl138_aemif_device))
-+		pr_warn("%s: Cannot register AEMIF device\n", __func__);
- }
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 70b4a14..eec6cd1 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -7,6 +7,7 @@ obj-y				+= firmware.o
  
- static const short mityomap_mii_pins[] = {
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
++obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+new file mode 100644
+index 0000000..9a97dda
+--- /dev/null
++++ b/arch/arm/common/krait-l2-accessors.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/spinlock.h>
++#include <linux/export.h>
++
++#include <asm/barrier.h>
++#include <asm/krait-l2-accessors.h>
++
++static DEFINE_RAW_SPINLOCK(krait_l2_lock);
++
++void krait_set_l2_indirect_reg(u32 addr, u32 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then write to the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
++	isb();
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++}
++EXPORT_SYMBOL(krait_set_l2_indirect_reg);
++
++u32 krait_get_l2_indirect_reg(u32 addr)
++{
++	u32 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then read from the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+new file mode 100644
+index 0000000..a5f2cdd
+--- /dev/null
++++ b/arch/arm/include/asm/krait-l2-accessors.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
++#define __ASMARM_KRAIT_L2_ACCESSORS_H
++
++extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
++extern u32 krait_get_l2_indirect_reg(u32 addr);
++
++#endif
 -- 
-2.17.1
+1.9.1
