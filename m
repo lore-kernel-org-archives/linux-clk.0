@@ -1,26 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
- kernel@pengutronix.de, mark.rutland@arm.com, matteo.lisi@engicam.com,
- michael@amarulasolutions.com, mturquette@baylibre.com, robh+dt@kernel.org,
- shawnguo@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <153029777187.143105.15648614335130166075@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 1/2] clk: imx6ul: add GPIO clock gates
-Date: Fri, 29 Jun 2018 11:42:51 -0700
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Marcin Wojtas <mw@semihalf.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Hua Jing <jinghua@marvell.com>,
+	Neta Zur Hershkovits <neta@marvell.com>,
+	Ken Ma <make@marvell.com>
+Subject: [PATCH 0/2] clk: Fix switching CPU rate from 300Mhz to 1.2GHz on Armada 3700
+Date: Tue, 19 Jun 2018 14:34:44 +0200
+Message-Id: <20180619123446.694-1-gregory.clement@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-06-02 18:44:04)
-> i.MX6UL has GPIO clock gates in CCM CCGR,
-> add them into clock tree for clock management.
-> =
+Hello,
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+in this series the first patch is the main patch which fixes the case
+when switching CPU rate from 300Mhz (or 200M MHz) to 1.2GH. See the
+commit log for the details. As this one is a fix, it should be applied
+on v4.18-rc.
 
-Applied to clk-next
+While I was on this file, I also switch to SPDX license identifier,
+this one is fine for 4.19*;
+
+Thanks,
+
+Gregory
+
+Gregory CLEMENT (2):
+  clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to
+    1.2GHz
+  clk: mvebu: armada-37xx-periph: switch to SPDX license identifier
+
+ drivers/clk/mvebu/armada-37xx-periph.c | 43 +++++++++++++++++++++++---
+ 1 file changed, 39 insertions(+), 4 deletions(-)
+
+-- 
+2.17.1
