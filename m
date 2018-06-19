@@ -1,50 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:45756 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755272AbeFNUp3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Jun 2018 16:45:29 -0400
-Subject: Re: [PATCH v8 03/10] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
-        mingo@kernel.org, gregkh@linuxfoundation.org,
-        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, michal.simek@xilinx.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-clk@vger.kernel.org
-Cc: rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jolly Shah <jollys@xilinx.com>
-References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
- <1529000862-11510-4-git-send-email-jollys@xilinx.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3044c2b9-2268-dfcb-2d45-0117c6f91a8d@infradead.org>
-Date: Thu, 14 Jun 2018 13:45:20 -0700
-MIME-Version: 1.0
-In-Reply-To: <1529000862-11510-4-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 04/14] dt-bindings: clock: Document qcom,hfpll
+Date: Tue, 19 Jun 2018 19:15:15 +0530
+Message-Id: <1529415925-28915-5-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/14/2018 11:27 AM, Jolly Shah wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
-> 
-> Add ZynqMP firmware IOCTL API to control and configure
-> devices like PLLs, SD, Gem, etc.
-> 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h |  2 ++
->  2 files changed, 22 insertions(+)
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Hi,
+Adds bindings document for qcom,hfpll instantiated within
+the Krait processor subsystem as separate register region.
 
-Does this driver claim (implement) some specific ioctl code or ID?
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+---
+[v10] Updated to add clocks and clock-names properties newly
 
-If so, its ioctl numbers should be documented in Documentation/ioctl/ioctl-number.txt.
+ .../devicetree/bindings/clock/qcom,hfpll.txt       | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
 
-thanks,
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+new file mode 100644
+index 0000000..ec02a02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -0,0 +1,60 @@
++High-Frequency PLL (HFPLL)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>:
++		shall contain only one of the following. The generic
++		compatible "qcom,hfpll" should be also included.
++
++                        "qcom,hfpll-ipq8064", "qcom,hfpll"
++                        "qcom,hfpll-apq8064", "qcom,hfpll"
++                        "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8960", "qcom,hfpll"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: address and size of HPLL registers. An optional second
++		    element specifies the address and size of the alias
++		    register region.
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the xo clock.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "xo".
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
++		    starting at 0. Otherwise hfpll_Y where Y is more specific
++		    such as "l2".
++
++Example:
++
++1) An HFPLL for the L2 cache.
++
++	clock-controller@f9016000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf9016000 0x30>;
++		clocks = <&xo_board>;
++		clock-names = "xo";
++		clock-output-names = "hfpll_l2";
++	};
++
++2) An HFPLL for CPU0. This HFPLL has the alias register region.
++
++	clock-controller@f908a000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
++		clocks = <&xo_board>;
++		clock-names = "xo";
++		clock-output-names = "hfpll0";
++	};
 -- 
-~Randy
+1.9.1
