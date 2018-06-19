@@ -1,115 +1,80 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35388 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756314AbeFORNl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 13:13:41 -0400
-MIME-Version: 1.0
-In-Reply-To: <2948115.KggauuSURZ@jernej-laptop>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
- <2948115.KggauuSURZ@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 16 Jun 2018 01:13:17 +0800
-Message-ID: <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support
- for tcon-top gate
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+Received: from mga02.intel.com ([134.134.136.20]:20695 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755536AbeFSGqd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:46:33 -0400
+Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
+        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ralf Baechle <ralf@linux-mips.org>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-2-songjun.wu@linux.intel.com>
+ <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
+ <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
+ <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
+From: "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <32ff76eb-6711-f0f2-2d83-6887a961855f@linux.intel.com>
+Date: Tue, 19 Jun 2018 14:46:27 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
-<jernej.skrabec@siol.net> wrote:
-> Hi,
->
-> Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
->> Hi,
->>
->> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
->> > TV TCONs connected to TCON TOP have to enable additional gate in order
->> > to work.
->> >
->> > Add support for such TCONs.
->> >
->> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> > ---
->> >
->> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
->> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
->> >  2 files changed, 15 insertions(+)
->> >
->> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
->> > 100644
->> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
->> >
->> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
->> >             return PTR_ERR(tcon->clk);
->> >
->> >     }
->> >
->> > +
->> > +   if (tcon->quirks->has_tcon_top_gate) {
->> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
->> > +           if (IS_ERR(tcon->top_clk)) {
->> > +                   dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
->> > +                   return PTR_ERR(tcon->top_clk);
->> > +           }
->> > +           clk_prepare_enable(tcon->top_clk);
->> > +   }
->> > +
->>
->> Is it required for the TCON itself to operate, or does the TCON
->> requires the TCON TOP, which in turn requires that clock to be
->> functional?
->>
->> I find it quite odd to have a clock that isn't meant for a particular
->> device to actually be wired to another device. I'm not saying this
->> isn't the case, but it would be a first.
->
-> Documentation doesn't say much about that gate. I did few tests and TCON
-> registers can be read and written even if TCON TOP TV TCON gate is disabled.
-> However, there is no image, as expected.
 
-The R40 manual does include it in the diagram, on page 504. There's also a
-mux to select whether the clock comes directly from the CCU or the TV encoder
-(a feedback mode?). I assume this is the gate you are referring to here, in
-which case it is not a bus clock, but rather the TCON module or channel clock,
-strangely routed.
 
-> More interestingly, I enabled test pattern directly in TCON to eliminate
-> influence of the mixer. As soon as I disabled that gate, test pattern on HDMI
-> screen was gone, which suggest that this gate influences something inside
-> TCON.
+On 6/18/2018 6:59 PM, Arnd Bergmann wrote:
+> On Mon, Jun 18, 2018 at 11:42 AM, Wu, Songjun
+> <songjun.wu@linux.intel.com> wrote:
+>> On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
+>>> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com>
+>>> wrote:
+>>>> Previous implementation uses a hard-coded register value to check if
+>>>> the current serial entity is the console entity.
+>>>> Now the lantiq serial driver uses the aliases for the index of the
+>>>> serial port.
+>>>> The lantiq danube serial dts are updated with aliases to support this.
+>>>>
+>>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>>>> ---
+>>>>
+>>>>    arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
+>>>>    1 file changed, 5 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi
+>>>> b/arch/mips/boot/dts/lantiq/danube.dtsi
+>>>> index 2dd950181f8a..7a9e15da6bd0 100644
+>>>> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
+>>>> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+>>>> @@ -4,6 +4,10 @@
+>>>>           #size-cells = <1>;
+>>>>           compatible = "lantiq,xway", "lantiq,danube";
+>>>>
+>>>> +       aliases {
+>>>> +               serial0 = &asc1;
+>>>> +       };
+>>>> +
+>>> You generally want the aliases to be part of the board specific file,
+>>> not every board numbers their serial ports in the same way.
+>>>
+>> In this chip only asc1 can be used as console,  so serial0 is defined in
+>> chip specific file.
+> This was a more general comment about 'aliases' being board specific
+> in principle (though we've had exceptions in the past). Even if there
+> is only one uart on the chip, I'd recommend following the same
+> conventions as the other chips that have more than one uart.
 >
-> Another test I did was that I moved enable/disable gate code to
-> sun4i_tcon_channel_set_status() and it worked just as well.
->
-> I'll ask AW engineer what that gate actually does, but from what I saw, I
-> would say that most appropriate location to enable/disable TCON TOP TV TCON
-> gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON
-> is in use and enable appropriate gate. However, that doesn't sound right to me
-> for some reason.
-
-If what I said above it true, then yes, the appropriate location to enable it
-is the TCON driver, but moreover, the representation of the clock tree should
-be fixed such that the TCON takes the clock from the TCON TOP as its channel/
-module clock instead. That way you don't need this patch, but you'd add another
-for all the clock routing.
-
-ChenYu
+>         Arnd
+Accept, 'aliases' will be move to the board specific file.
