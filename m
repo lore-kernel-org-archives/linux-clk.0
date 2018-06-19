@@ -1,189 +1,82 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/9] ARM: davinci: omapl138-hawk: add aemif & nand support
-Date: Mon, 25 Jun 2018 17:29:13 +0200
-Message-Id: <20180625152920.11549-3-brgl@bgdev.pl>
-In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 2/4] clk: clk: Add clk_dflt_restore
+To: Keerthy <j-keerthy@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <d-gerlach@ti.com>
+References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+ <1529382505-3069-3-git-send-email-j-keerthy@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <e3ef633e-d506-58cf-b6f1-bae188dbe875@ti.com>
+Date: Tue, 19 Jun 2018 09:06:16 +0300
+MIME-Version: 1.0
+In-Reply-To: <1529382505-3069-3-git-send-email-j-keerthy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 19/06/18 07:28, Keerthy wrote:
+> The default restore context function enables or disables
+> the clock based on the enable_count. This is done in cases
+> where the clock context is lost and based on the enable_count
+> the clock either needs to be enabled/disabled. This particularly
+> helps restore the state of gate clocks.
+> 
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> ---
+>   drivers/clk/clk.c            | 19 +++++++++++++++++++
+>   include/linux/clk-provider.h |  2 ++
+>   2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 7347e06..c201b8b 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
+>   	return ret;
+>   }
+>   
+> +/**
+> + * clk_dflt_restore_context - restore context for poweroff
+> + * @hw: the clk_hw pointer of clock whose state is to be restored
+> + *
+> + * The default restore context function enables or disables
+> + * the clock based on the enable_count. This is done in cases
+> + * where the clock context is lost and based on the enable_count
+> + * the clock either needs to be enabled/disabled. This particularly
+> + * helps restore the state of gate clocks.
+> + */
+> +void clk_dflt_restore_context(struct clk_hw *hw)
 
-We now have support for aemif & nand from board files. As an example
-add support for nand to da850-hawk.
+I think the name of this function is wrong, it should be 
+clk_gate_restore_context, as only gate clocks are ever going to be using 
+this afaics.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+-Tero
 
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 466e87b24e9a..02c0f36633e9 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -16,6 +16,11 @@
- #include <linux/gpio.h>
- #include <linux/gpio/machine.h>
- #include <linux/platform_data/gpio-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
-+#include <linux/mtd/rawnand.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/platform_data/mtd-davinci.h>
-+#include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/regulator/machine.h>
- 
- #include <asm/mach-types.h>
-@@ -166,6 +171,129 @@ static __init void omapl138_hawk_mmc_init(void)
- 	gpiod_remove_lookup_table(&mmc_gpios_table);
- }
- 
-+static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
-+	{
-+		.name		= "u-boot env",
-+		.offset		= 0,
-+		.size		= SZ_128K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	 },
-+	{
-+		.name		= "u-boot",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= SZ_512K,
-+		.mask_flags	= MTD_WRITEABLE,
-+	},
-+	{
-+		.name		= "free space",
-+		.offset		= MTDPART_OFS_APPEND,
-+		.size		= MTDPART_SIZ_FULL,
-+		.mask_flags	= 0,
-+	},
-+};
-+
-+static struct davinci_aemif_timing omapl138_hawk_nandflash_timing = {
-+	.wsetup		= 24,
-+	.wstrobe	= 21,
-+	.whold		= 14,
-+	.rsetup		= 19,
-+	.rstrobe	= 50,
-+	.rhold		= 0,
-+	.ta		= 20,
-+};
-+
-+static struct davinci_nand_pdata omapl138_hawk_nandflash_data = {
-+	.core_chipsel	= 1,
-+	.parts		= omapl138_hawk_nandflash_partition,
-+	.nr_parts	= ARRAY_SIZE(omapl138_hawk_nandflash_partition),
-+	.ecc_mode	= NAND_ECC_HW,
-+	.ecc_bits	= 4,
-+	.bbt_options	= NAND_BBT_USE_FLASH,
-+	.options	= NAND_BUSWIDTH_16,
-+	.timing		= &omapl138_hawk_nandflash_timing,
-+	.mask_chipsel	= 0,
-+	.mask_ale	= 0,
-+	.mask_cle	= 0,
-+};
-+
-+static struct resource omapl138_hawk_nandflash_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CS3_BASE,
-+		.end	= DA8XX_AEMIF_CS3_BASE + SZ_32M,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct resource omapl138_hawk_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-+		.flags	= IORESOURCE_MEM,
-+	}
-+};
-+
-+static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
-+	}
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &omapl138_hawk_nandflash_data,
-+		},
-+		.resource	= omapl138_hawk_nandflash_resource,
-+		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
-+	}
-+};
-+
-+static struct aemif_platform_data omapl138_hawk_aemif_pdata = {
-+	.cs_offset = 2,
-+	.abus_data = omapl138_hawk_aemif_abus_data,
-+	.num_abus_data = ARRAY_SIZE(omapl138_hawk_aemif_abus_data),
-+	.sub_devices = omapl138_hawk_aemif_devices,
-+	.num_sub_devices = ARRAY_SIZE(omapl138_hawk_aemif_devices),
-+};
-+
-+static struct platform_device omapl138_hawk_aemif_device = {
-+	.name		= "ti-aemif",
-+	.dev = {
-+		.platform_data	= &omapl138_hawk_aemif_pdata,
-+	},
-+	.resource	= omapl138_hawk_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(omapl138_hawk_aemif_resource),
-+	.id		= -1,
-+};
-+
-+static const short omapl138_hawk_nand_pins[] = {
-+	DA850_EMA_WAIT_1, DA850_NEMA_OE, DA850_NEMA_WE, DA850_NEMA_CS_3,
-+	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
-+	DA850_EMA_D_4, DA850_EMA_D_5, DA850_EMA_D_6, DA850_EMA_D_7,
-+	DA850_EMA_D_8, DA850_EMA_D_9, DA850_EMA_D_10, DA850_EMA_D_11,
-+	DA850_EMA_D_12, DA850_EMA_D_13, DA850_EMA_D_14, DA850_EMA_D_15,
-+	DA850_EMA_A_1, DA850_EMA_A_2,
-+	-1
-+};
-+
-+static int omapl138_hawk_register_aemif(void)
-+{
-+	int ret;
-+
-+	ret = davinci_cfg_reg_list(omapl138_hawk_nand_pins);
-+	if (ret)
-+		pr_warn("%s: NAND mux setup failed: %d\n", __func__, ret);
-+
-+	return platform_device_register(&omapl138_hawk_aemif_device);
-+}
-+
- static irqreturn_t omapl138_hawk_usb_ocic_irq(int irq, void *dev_id);
- static da8xx_ocic_handler_t hawk_usb_ocic_handler;
- 
-@@ -298,6 +426,10 @@ static __init void omapl138_hawk_init(void)
- 
- 	omapl138_hawk_usb_init();
- 
-+	ret = omapl138_hawk_register_aemif();
-+	if (ret)
-+		pr_warn("%s: aemif registration failed: %d\n", __func__, ret);
-+
- 	ret = da8xx_register_watchdog();
- 	if (ret)
- 		pr_warn("%s: watchdog registration failed: %d\n",
--- 
-2.17.1
+> +{
+> +	if (hw->clk->core->enable_count)
+> +		hw->clk->core->ops->enable(hw);
+> +	else
+> +		hw->clk->core->ops->disable(hw);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
+> +
+>   static int _clk_save_context(struct clk_core *clk)
+>   {
+>   	struct clk_core *child;
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 7f30d62..3e0c61a 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+>   
+>   #endif	/* platform dependent I/O accessors */
+>   
+> +void clk_dflt_restore_context(struct clk_hw *hw);
+> +
+>   #endif /* CONFIG_COMMON_CLK */
+>   #endif /* CLK_PROVIDER_H */
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
