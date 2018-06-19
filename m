@@ -1,55 +1,74 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 1 Jul 2018 10:19:49 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <anson.huang@nxp.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	"michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Message-ID: <20180701021947.GA4348@dragon>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180628005217.GC22683@dragon>
- <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	David Brown <david.brown@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Quentin Schulz <quentin.schulz@free-electrons.com>,
+	Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: [PATCH 0/2] clk: enforce CLK_SET_RATE_GATE along the tree
+Date: Tue, 19 Jun 2018 15:40:49 +0200
+Message-Id: <20180619134051.16726-1-jbrunet@baylibre.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2018-06-27 17:52:18)
-> > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> > > Gentle Ping...
-> > 
-> > I cannot apply this dts patch until the clock patch is landed on
-> > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-> > created by clock patch.
-> > 
-> 
-> Does it matter if that clk ID changes across branches? Or is everything
-> good if it just exists as some number?
+This is a resend of the last unmerged patch of the clock protect v5 [0]
+patchset. It makes use of the clock protection mechanism to fix and
+enforce CLK_SET_RATE_GATE flag.
 
-We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
-it doesn't matter if IMX6UL_CLK_GPIO1 changes.
+With this flag set, any operation resulting in a rate change or glitch
+should be prevented. This might be useful when, for example, a PLL can't
+safely relock while in use.
 
-> The patch adding the define
-> conflicts with another patch to fix the numbering scheme to be
-> incremental instead of changing IMX6UL and IMX6ULL which is annoying.
-> I'll probably make a topic branch just for the fix and merge it into
-> clk-fixes and this branch so you can pick it up from there if you like.
+ATM, this is enforced only on the leaf clock of the operation (the clock
+on which clk_set_rate() is called). It is ignored otherwise. It means
+that, if:
+ * clock A has CLK_SET_RATE_PARENT and is a child on clock B
+ * clock B has CLK_SET_RATE_GATE set
+it is possible to:
+ * call clk_prepare_enable on clock A (clock B also gets enabled)
+ * call clk_set_rate() on clock A,
+  => with rate propagation clock B (or its parents) might change while
+     enabled
 
-It will be good if you can have a topic branch.  Otherwise, we are also
-fine to wait till the clock patches lands on mainline.
+Patch 2 of this series fixes this problem.
 
-Shawn
+Some platform may have been relying on the broken implementation of
+CLK_SET_RATE_GATE but, since the platform actually bypassed
+CLK_SET_RATE_GATE, we can drop the flag without changing anything.
+
+This is the case for qcom SDC clock and mmci driver, which does the
+following sequence:
+ * clk_get()
+ * clk_prepare_enable()
+ * clk_get_rate()
+ * clk_set_rate()
+This is obviously not possible when CLK_SET_RATE_GATE is set.
+Patch 1 drops the CLK_SET_RATE_GATE from qcom sdc clocks. Other qcom's
+clocks are using the same scheme, so maybe there something worth
+checking here.
+
+This case was detected using kernelCI but some other platforms might be
+doing the same. Maintainers of the platforms using this flag have been
+warned ... but please test!
+
+[0]: https://lkml.kernel.org/r/20171201215200.23523-1-jbrunet@baylibre.com
+
+Jerome Brunet (2):
+  clk: qcom: drop CLK_SET_RATE_GATE from sdc clocks
+  clk: fix CLK_SET_RATE_GATE with clock rate protection
+
+ drivers/clk/clk.c              | 16 +++++++++++++---
+ drivers/clk/qcom/gcc-ipq806x.c |  3 ---
+ drivers/clk/qcom/gcc-mdm9615.c |  2 --
+ drivers/clk/qcom/gcc-msm8660.c |  5 -----
+ drivers/clk/qcom/gcc-msm8960.c |  5 -----
+ 5 files changed, 13 insertions(+), 18 deletions(-)
+
+-- 
+2.14.3
