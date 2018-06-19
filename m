@@ -1,105 +1,131 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:31558 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934921AbeFRONy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Jun 2018 10:13:54 -0400
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <sboyd@kernel.org>
-CC: <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S controllers
-Date: Mon, 18 Jun 2018 17:12:38 +0300
-Message-ID: <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
-In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 09/14] dt-bindings: arm: Document qcom,kpss-gcc
+Date: Tue, 19 Jun 2018 19:15:20 +0530
+Message-Id: <1529415925-28915-10-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
-each I2S node.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. Documenting
+the bindings here.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added phandle to new mux clock]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
+[v10] Updated to add clocks and clock-names property newly
 
-The bindings for the I2S node are applied to broonie/sound.git .
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  | 19 ++++++++++
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 44 ++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 
-Changes in v5:
-	- the previous name was:
-	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
-
- arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index eeb6afa1cda7..eca73ce40bc5 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -58,6 +58,8 @@
- 		serial1 = &uart3;
- 		tcb0 = &tcb0;
- 		tcb1 = &tcb1;
-+		i2s0 = &i2s0;
-+		i2s1 = &i2s1;
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+index 1333db9..7f69636 100644
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+@@ -21,10 +21,29 @@ PROPERTIES
+ 		    the register region. An optional second element specifies
+ 		    the base address and size of the alias register region.
+ 
++- clocks:
++        Usage: required
++        Value type: <prop-encoded-array>
++        Definition: reference to the pll parents.
++
++- clock-names:
++        Usage: required
++        Value type: <stringlist>
++        Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: optional
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpuX_aux where X is a
++		    CPU number starting at 0.
++
+ Example:
+ 
+ 	clock-controller@2088000 {
+ 		compatible = "qcom,kpss-acc-v2";
+ 		reg = <0x02088000 0x1000>,
+ 		      <0x02008000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu0_aux";
  	};
- 
- 	cpus {
-@@ -1313,6 +1315,22 @@
- 				clocks = <&clk32k>;
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xf8050000 0x100>;
-+				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(31))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(32))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+new file mode 100644
+index 0000000..e628758
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+@@ -0,0 +1,44 @@
++Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
 +
- 			can0: can@f8054000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xf8054000 0x4000>, <0x210000 0x4000>;
-@@ -1506,6 +1524,22 @@
- 				status = "disabled";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				compatible = "atmel,sama5d2-i2s";
-+				reg = <0xfc04c000 0x100>;
-+				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 7>;
-+				dmas = <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(33))>,
-+				       <&dma0
-+					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-+					 AT91_XDMAC_DT_PERID(34))>;
-+				dma-names = "tx", "rx";
-+				clocks = <&i2s1_clk>, <&i2s1_gclk>, <&audio_pll_pmc>, <&i2s1muxck>;
-+				clock-names = "pclk", "gclk", "aclk", "muxclk";
-+				status = "disabled";
-+			};
++PROPERTIES
 +
- 			can1: can@fc050000 {
- 				compatible = "bosch,m_can";
- 				reg = <0xfc050000 0x4000>, <0x210000 0x4000>;
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: should be one of the following. The generic compatible
++			"qcom,kpss-gcc" should also be included.
++			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: base address and size of the register region
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the pll parents.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpu_l2_aux indicating
++		    an L2 cache auxiliary clock.
++
++Example:
++
++	l2cc: clock-controller@2011000 {
++		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
++		reg = <0x2011000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu_l2_aux";
++	};
 -- 
-2.17.1
-
+1.9.1
