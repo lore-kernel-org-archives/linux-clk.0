@@ -1,43 +1,47 @@
-Return-Path: <pp@emlix.com>
-From: Philipp Puschmann <pp@emlix.com>
-To: shawnguo@kernel.org
-Cc: s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	pp@emlix.com,
-	linux-kernel@vger.kernel.org,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: imx6: fix video_27m parent for IMX6SX_CLK_CKO1_SEL
-Date: Wed,  6 Jun 2018 11:29:28 +0200
-Message-Id: <20180606092928.11724-1-pp@emlix.com>
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
+        <d-gerlach@ti.com>, <j-keerthy@ti.com>
+Subject: [PATCH 0/4] clk: clk: Add functions to save/restore clock context en-masse
+Date: Tue, 19 Jun 2018 09:58:21 +0530
+Message-ID: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-q/dl datasheets list the 5th selection value for ck01_sel as
-video_27M_clk_root.
+Deep enough power saving mode can result into losing context of the clock
+registers also, and they need to be restored once coming back from the power
+saving mode. Hence add functions to save/restore clock context.
 
-By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
-as parent for IMX6QDL_CLK_CKO1_SEL.
+Tested for DS0 on am437x-gp-evm
 
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
----
- drivers/clk/imx/clk-imx6q.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Based on top of linux-next
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8d518ad5dc13..7e6a8f079634 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -65,7 +65,7 @@ static const char *ipg_per_sels[] = { "ipg", "osc", };
- static const char *ecspi_sels[] = { "pll3_60m", "osc", };
- static const char *can_sels[] = { "pll3_60m", "osc", "pll3_80m", };
- static const char *cko1_sels[]	= { "pll3_usb_otg", "pll2_bus", "pll1_sys", "pll5_video_div",
--				    "dummy", "axi", "enfc", "ipu1_di0", "ipu1_di1", "ipu2_di0",
-+				    "video_27m", "axi", "enfc", "ipu1_di0", "ipu1_di1", "ipu2_di0",
- 				    "ipu2_di1", "ahb", "ipg", "ipg_per", "ckil", "pll4_audio_div", };
- static const char *cko2_sels[] = {
- 	"mmdc_ch0_axi", "mmdc_ch1_axi", "usdhc4", "usdhc1",
+Keerthy (2):
+  clk: clk: Add clk_dflt_restore
+  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
+    setting
+
+Russ Dill (2):
+  clk: clk: Add functions to save/restore clock context en-masse
+  clk: ti: Add functions to save/restore clk context
+
+ arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
+ drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h               |   2 +
+ drivers/clk/ti/divider.c             |  36 ++++++++++
+ drivers/clk/ti/dpll.c                |   6 ++
+ drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/gate.c                |   3 +
+ drivers/clk/ti/mux.c                 |  29 ++++++++
+ drivers/soc/ti/pm33xx.c              |  13 ++++
+ include/linux/clk-provider.h         |   9 +++
+ include/linux/clk.h                  |  25 +++++++
+ include/linux/clk/ti.h               |   6 ++
+ include/linux/platform_data/pm33xx.h |   1 +
+ 13 files changed, 362 insertions(+)
+
 -- 
-2.17.0
+1.9.1
