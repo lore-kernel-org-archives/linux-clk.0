@@ -1,88 +1,182 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v2 03/27] clk: sunxi-ng: r40: Export video PLLs
-Date: Tue, 12 Jun 2018 22:00:12 +0200
-Message-Id: <20180612200036.21483-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh@kernel.org,
+	viresh.kumar@linaro.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	rjw@rjwysocki.net,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux@arm.linux.org.uk,
+	thierry.escande@linaro.org,
+	ctatlor97@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v10 12/14] clk: qcom: Add safe switch hook for krait mux clocks
+Date: Tue, 19 Jun 2018 19:15:23 +0530
+Message-Id: <1529415925-28915-13-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Video PLLs need to be referenced in R40 DT as possible HDMI PHY parent.
+When the Hfplls are reprogrammed during the rate change,
+the primary muxes which are sourced from the same hfpll
+for higher frequencies, needs to be switched to the 'safe
+secondary mux' as the parent for that small window. This
+is done by registering a clk notifier for the muxes and
+switching to the safe parent in the PRE_RATE_CHANGE notifier
+and back to the original parent in the POST_RATE_CHANGE notifier.
 
-Export them.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 8 ++++++--
- include/dt-bindings/clock/sun8i-r40-ccu.h | 4 ++++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-krait.c |  2 ++
+ drivers/clk/qcom/clk-krait.h |  3 +++
+ drivers/clk/qcom/krait-cc.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-index 0db8e1e97af8..db2a1243f9ff 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
-@@ -25,7 +25,9 @@
- #define CLK_PLL_AUDIO_2X	4
- #define CLK_PLL_AUDIO_4X	5
- #define CLK_PLL_AUDIO_8X	6
--#define CLK_PLL_VIDEO0		7
-+
-+/* PLL_VIDEO0 is exported */
-+
- #define CLK_PLL_VIDEO0_2X	8
- #define CLK_PLL_VE		9
- #define CLK_PLL_DDR0		10
-@@ -34,7 +36,9 @@
- #define CLK_PLL_PERIPH0_2X	13
- #define CLK_PLL_PERIPH1		14
- #define CLK_PLL_PERIPH1_2X	15
--#define CLK_PLL_VIDEO1		16
-+
-+/* PLL_VIDEO1 is exported */
-+
- #define CLK_PLL_VIDEO1_2X	17
- #define CLK_PLL_SATA		18
- #define CLK_PLL_SATA_OUT	19
-diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
-index 4fa5f69fc297..f9e15a235626 100644
---- a/include/dt-bindings/clock/sun8i-r40-ccu.h
-+++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
-@@ -43,6 +43,10 @@
- #ifndef _DT_BINDINGS_CLK_SUN8I_R40_H_
- #define _DT_BINDINGS_CLK_SUN8I_R40_H_
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index a651710..ee1076c 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -50,6 +50,8 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	if (__clk_is_enabled(hw->clk))
+ 		__krait_mux_set_sel(mux, sel);
  
-+#define CLK_PLL_VIDEO0		7
++	mux->reparent = true;
 +
-+#define CLK_PLL_VIDEO1		16
-+
- #define CLK_CPU			24
+ 	return 0;
+ }
  
- #define CLK_BUS_MIPI_DSI	29
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+index 441ba1e..9120bd2 100644
+--- a/drivers/clk/qcom/clk-krait.h
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -12,6 +12,9 @@ struct krait_mux_clk {
+ 	u32		shift;
+ 	u32		en_mask;
+ 	bool		lpl;
++	u8		safe_sel;
++	u8		old_index;
++	bool		reparent;
+ 
+ 	struct clk_hw	hw;
+ 	struct notifier_block   clk_nb;
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+index 7c9dfb0..4d4b657 100644
+--- a/drivers/clk/qcom/krait-cc.c
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -26,6 +26,49 @@
+ 	0,
+ };
+ 
++/*
++ * Notifier function for switching the muxes to safe parent
++ * while the hfpll is getting reprogrammed.
++ */
++static int krait_notifier_cb(struct notifier_block *nb,
++			     unsigned long event,
++			     void *data)
++{
++	int ret = 0;
++	struct krait_mux_clk *mux = container_of(nb, struct krait_mux_clk,
++						 clk_nb);
++	/* Switch to safe parent */
++	if (event == PRE_RATE_CHANGE) {
++		mux->old_index = krait_mux_clk_ops.get_parent(&mux->hw);
++		ret = krait_mux_clk_ops.set_parent(&mux->hw, mux->safe_sel);
++		mux->reparent = false;
++	/*
++	 * By the time POST_RATE_CHANGE notifier is called,
++	 * clk framework itself would have changed the parent for the new rate.
++	 * Only otherwise, put back to the old parent.
++	 */
++	} else if (event == POST_RATE_CHANGE) {
++		if (!mux->reparent)
++			ret = krait_mux_clk_ops.set_parent(&mux->hw,
++							   mux->old_index);
++	}
++
++	return notifier_from_errno(ret);
++}
++
++static int krait_notifier_register(struct device *dev, struct clk *clk,
++				   struct krait_mux_clk *mux)
++{
++	int ret = 0;
++
++	mux->clk_nb.notifier_call = krait_notifier_cb;
++	ret = clk_notifier_register(clk, &mux->clk_nb);
++	if (ret)
++		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++
++	return ret;
++}
++
+ static int
+ krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
+ {
+@@ -70,6 +113,7 @@
+ krait_add_sec_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset, bool unique_aux)
+ {
++	int ret;
+ 	struct krait_mux_clk *mux;
+ 	static const char *sec_mux_list[] = {
+ 		"acpu_aux",
+@@ -93,6 +137,7 @@
+ 	mux->shift = 2;
+ 	mux->parent_map = sec_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 0;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
+ 	if (!init.name)
+@@ -108,6 +153,11 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto unique_aux;
++
++unique_aux:
+ 	if (unique_aux)
+ 		kfree(sec_mux_list[0]);
+ err_aux:
+@@ -119,6 +169,7 @@
+ krait_add_pri_mux(struct device *dev, int id, const char *s,
+ 		  unsigned int offset)
+ {
++	int ret;
+ 	struct krait_mux_clk *mux;
+ 	const char *p_names[3];
+ 	struct clk_init_data init = {
+@@ -139,6 +190,7 @@
+ 	mux->lpl = id >= 0;
+ 	mux->parent_map = pri_mux_map;
+ 	mux->hw.init = &init;
++	mux->safe_sel = 2;
+ 
+ 	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
+ 	if (!init.name)
+@@ -164,6 +216,10 @@
+ 
+ 	clk = devm_clk_register(dev, &mux->hw);
+ 
++	ret = krait_notifier_register(dev, clk, mux);
++	if (ret)
++		goto err_p3;
++err_p3:
+ 	kfree(p_names[2]);
+ err_p2:
+ 	kfree(p_names[1]);
 -- 
-2.17.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+1.9.1
