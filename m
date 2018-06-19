@@ -1,51 +1,160 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-References: <cover.1524820923.git.mbrugger@suse.com> <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
- <20180430103029.GD5147@dell> <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
-In-Reply-To: <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 26 Jun 2018 12:32:54 -0600
-Message-ID: <CAL_Jsq+TTsgCeFeSXYdF1e8MyrOmmFvnR7ZwyQzv+FYK1G5R6w@mail.gmail.com>
-Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org,
-	Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, CK Hu <ck.hu@mediatek.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@linux.ie>,
-	Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, David Miller <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Sean Wang <sean.wang@mediatek.com>,
-	linux-clk <linux-clk@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42454 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966649AbeFSQA7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jun 2018 12:00:59 -0400
+Received: by mail-wr0-f196.google.com with SMTP id w10-v6so193499wrk.9
+        for <linux-clk@vger.kernel.org>; Tue, 19 Jun 2018 09:00:58 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: remove obsolete register access
+Date: Tue, 19 Jun 2018 18:00:50 +0200
+Message-Id: <20180619160050.26958-1-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 9:39 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
->
->
->
-> On 30/04/18 12:30, Lee Jones wrote:
-> > On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> >
-> >> From: Matthias Brugger <mbrugger@suse.com>
-> >>
-> >> Add binding description for the mmsys mfd for some Mediatek
-> >> devices. mmsys has some registers to control clock gates (which is
-> >> used in the clk driver) and some registers to set the routing and enable
-> >> the differnet blocks of the display subsystem.
-> >>
-> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> >> ---
-> >>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
-> >>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
-> >>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
-> >>  3 files changed, 28 insertions(+), 3 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+The legacy method to access the hhi register space is not longer used.
+We can safely drop it now.
 
-Please CC DT list on bindings.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/axg.c  | 37 ++-----------------------------------
+ drivers/clk/meson/gxbb.c | 36 ++----------------------------------
+ 2 files changed, 4 insertions(+), 69 deletions(-)
 
-Rob
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index bd4dbc696b88..3fb884db1b10 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -12,7 +12,6 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/init.h>
+-#include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+@@ -995,49 +994,17 @@ static const struct of_device_id clkc_match_table[] = {
+ 	{}
+ };
+ 
+-static const struct regmap_config clkc_regmap_config = {
+-	.reg_bits       = 32,
+-	.val_bits       = 32,
+-	.reg_stride     = 4,
+-};
+-
+ static int axg_clkc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+-	void __iomem *clk_base = NULL;
+ 	struct regmap *map;
+ 	int ret, i;
+ 
+ 	/* Get the hhi system controller node if available */
+ 	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+ 	if (IS_ERR(map)) {
+-		dev_err(dev,
+-			"failed to get HHI regmap - Trying obsolete regs\n");
+-
+-		/*
+-		 * FIXME: HHI registers should be accessed through
+-		 * the appropriate system controller. This is required because
+-		 * there is more than just clocks in this register space
+-		 *
+-		 * This fallback method is only provided temporarily until
+-		 * all the platform DTs are properly using the syscon node
+-		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (!res)
+-			return -EINVAL;
+-
+-
+-		clk_base = devm_ioremap(dev, res->start, resource_size(res));
+-		if (!clk_base) {
+-			dev_err(dev, "Unable to map clk base\n");
+-			return -ENXIO;
+-		}
+-
+-		map = devm_regmap_init_mmio(dev, clk_base,
+-					    &clkc_regmap_config);
+-		if (IS_ERR(map))
+-			return PTR_ERR(map);
++		dev_err(dev, "failed to get HHI regmap\n");
++		return PTR_ERR(map);
+ 	}
+ 
+ 	/* Populate regmap for the regmap backed clocks */
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 177fffb9ebef..297ebc391475 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -7,7 +7,6 @@
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/init.h>
+-#include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+@@ -2228,17 +2227,9 @@ static const struct of_device_id clkc_match_table[] = {
+ 	{},
+ };
+ 
+-static const struct regmap_config clkc_regmap_config = {
+-	.reg_bits       = 32,
+-	.val_bits       = 32,
+-	.reg_stride     = 4,
+-};
+-
+ static int gxbb_clkc_probe(struct platform_device *pdev)
+ {
+ 	const struct clkc_data *clkc_data;
+-	struct resource *res;
+-	void __iomem *clk_base;
+ 	struct regmap *map;
+ 	int ret, i;
+ 	struct device *dev = &pdev->dev;
+@@ -2250,31 +2241,8 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 	/* Get the hhi system controller node if available */
+ 	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+ 	if (IS_ERR(map)) {
+-		dev_err(dev,
+-			"failed to get HHI regmap - Trying obsolete regs\n");
+-
+-		/*
+-		 * FIXME: HHI registers should be accessed through
+-		 * the appropriate system controller. This is required because
+-		 * there is more than just clocks in this register space
+-		 *
+-		 * This fallback method is only provided temporarily until
+-		 * all the platform DTs are properly using the syscon node
+-		 */
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-		if (!res)
+-			return -EINVAL;
+-
+-		clk_base = devm_ioremap(dev, res->start, resource_size(res));
+-		if (!clk_base) {
+-			dev_err(dev, "Unable to map clk base\n");
+-			return -ENXIO;
+-		}
+-
+-		map = devm_regmap_init_mmio(dev, clk_base,
+-					    &clkc_regmap_config);
+-		if (IS_ERR(map))
+-			return PTR_ERR(map);
++		dev_err(dev, "failed to get HHI regmap\n");
++		return PTR_ERR(map);
+ 	}
+ 
+ 	/* Populate regmap for the common regmap backed clocks */
+-- 
+2.14.3
+
