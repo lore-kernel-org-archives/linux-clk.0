@@ -1,108 +1,56 @@
-Return-Path: <zhangqing@rock-chips.com>
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de
-Cc: sboyd@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	cl@rock-chips.com,
-	xxx@rock-chips.com,
-	xf@rock-chips.com,
-	huangtao@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 1/4] dt-bindings: add bindings for px30 clock controller
-Date: Fri,  8 Jun 2018 14:31:56 +0800
-Message-Id: <1528439519-30135-2-git-send-email-zhangqing@rock-chips.com>
-In-Reply-To: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
-References: <1528439519-30135-1-git-send-email-zhangqing@rock-chips.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1529422152.28510.24.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 19 Jun 2018 17:29:12 +0200
+In-Reply-To: <1528892771.2292.2.camel@baylibre.com>
+References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
+	 <1528892771.2292.2.camel@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add devicetree bindings for Rockchip cru which found on
-Rockchip SoCs.
+On Wed, 2018-06-13 at 14:26 +0200, Jerome Brunet wrote:
+> On Wed, 2018-06-13 at 14:20 +0200, Neil Armstrong wrote:
+> > On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+> > seems to be dependent on the FCLK_DIV2 to be operationnal.
+> > 
+> > The issue occured since v4.17-rc1 by freezing the kernel boot when
+> > the 'schedutil' cpufreq governor was selected as default :
+> > 
+> >    [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+> >    domain-0 init dvfs: 4
+> >    [   12.087757] hctosys: unable to open rtc device (rtc0)
+> >    [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+> >    [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+> > 
+> > But when disabling the MMC driver, the boot finished but cpufreq failed to
+> > change the CPU frequency :
+> > 
+> >    [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+> > 
+> > A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
+> > the first bad commit.
+> > This commit added support for the missing clock gates before the fixed PLL
+> > fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+> > all the unused fixed dividers, thus disabled a critical clock path for
+> > the SCPI Co-Processor.
+> > 
+> > This patch simply sets the FCLK_DIV2 gate as critical to ensure
+> > nobody can disable it.
+> > 
+> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Good catch !
+> We'll probably have to check the axg family as well
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- .../bindings/clock/rockchip,px30-cru.txt           | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+SCPI is not enabled on AXG at this time. We'll deal with it when the time comes.
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-new file mode 100644
-index 000000000000..af5a45b680d0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
-@@ -0,0 +1,67 @@
-+* Rockchip PX30 Clock and Reset Unit
-+
-+The PX30 clock controller generates and supplies clock to various
-+controllers within the SoC and also implements a reset controller for SoC
-+peripherals.
-+
-+Required Properties:
-+
-+- compatible: PMU for CRU should be "rockchip,px30-pmu-cru"
-+- compatible: CRU should be "rockchip,px30-cru"
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+- #clock-cells: should be 1.
-+- #reset-cells: should be 1.
-+
-+Optional Properties:
-+
-+- rockchip,grf: phandle to the syscon managing the "general register files"
-+  If missing, pll rates are not changeable, due to the missing pll lock status.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. All available clocks are defined as
-+preprocessor macros in the dt-bindings/clock/px30-cru.h headers and can be
-+used in device tree sources. Similar macros exist for the reset sources in
-+these files.
-+
-+External clocks:
-+
-+There are several clocks that are generated outside the SoC. It is expected
-+that they are defined using standard clock bindings with following
-+clock-output-names:
-+ - "xin24m" - crystal input - required,
-+ - "xin32k" - rtc clock - optional,
-+ - "i2sx_clkin" - external I2S clock - optional,
-+ - "gmac_clkin" - external GMAC clock - optional
-+
-+Example: Clock controller node:
-+
-+	pmucru: pmu-clock-controller@ff2bc000 {
-+		compatible = "rockchip,px30-pmucru";
-+		reg = <0x0 0xff2bc000 0x0 0x1000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+	cru: clock-controller@ff2b0000 {
-+		compatible = "rockchip,px30-cru";
-+		reg = <0x0 0xff2b0000 0x0 0x1000>;
-+		rockchip,grf = <&grf>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+
-+Example: UART controller node that consumes the clock generated by the clock
-+  controller:
-+
-+	uart0: serial@ff030000 {
-+		compatible = "rockchip,px30-uart", "snps,dw-apb-uart";
-+		reg = <0x0 0xff030000 0x0 0x100>;
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&pmucru SCLK_UART0_PMU>, <&pmucru PCLK_UART0_PMU>;
-+		clock-names = "baudclk", "apb_pclk";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		status = "disabled";
-+	};
-+
--- 
-1.9.1
+patch applied.
+Thx
