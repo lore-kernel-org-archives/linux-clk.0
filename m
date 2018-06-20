@@ -1,90 +1,348 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <sricharan@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180613072649.dzbusalsfqlgymew@flea>
-References: <20180521115947.wqrnv2hczate65lz@flea> <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
- <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com> <20180613072649.dzbusalsfqlgymew@flea>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 13 Jun 2018 17:16:30 +0900
-Message-ID: <CAK7LNAR0TZEp9JfJAf3gmE1v6ig04TZ-NCiXm5_zYdpsQwhuRw@mail.gmail.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Wed, 20 Jun 2018 14:18:59 +0530
+From: sricharan@codeaurora.org
+To: Craig Tatlor <ctatlor97@gmail.com>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
+ thierry.escande@linaro.org, linux-arm-msm-owner@vger.kernel.org,
+ bjorn.andersson@linaro.org
+Subject: Re: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+In-Reply-To: <20180619152927.GA6139@arch>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+ <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
+ <20180619152927.GA6139@arch>
+Message-ID: <e986492417c0ca1f5784b651a614321d@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi.
+On 2018-06-19 20:59, Craig Tatlor wrote:
+> The pvs refuse check is incorrect... With downstream it says it isn't
+> blown and that it is 11, which also happens on upstream if I import 
+> it's
+> efuse reading code from an older revision, or comment out the check.
+> 
 
-2018-06-13 16:26 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> On Mon, Jun 11, 2018 at 03:53:41PM +0800, Chen-Yu Tsai wrote:
->> Hi,
->>
->> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->> > Hi Maxime,
->> >
->> >
->> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
->> >> Hi Mike, Stephen,
->> >>
->> >> Please merge the following changes for the next merge window, thanks!
->> >>
->> >> Maxime
->> >>
->> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
->> >>
->> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
->> >>
->> >> are available in the Git repository at:
->> >>
->> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
->> >>
->> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
->> >>
->> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
->> >>
->> >> ----------------------------------------------------------------
->> >> Allwinner clock changes for 4.18
->> >>
->> >> Not a lot of changes for this release, but two quite important features
->> >> were added: the H6 PRCM clock support, and the needed changes to the R40
->> >> clock driver to allow for the EMAC to operate.
->> >>
->> >> ----------------------------------------------------------------
->> >> Icenowy Zheng (3):
->> >>       clk: sunxi-ng: add support for H6 PRCM CCU
->> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
->> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
->> >>
->> >
->> >
->> >
->> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
->> > not included in the pull request?
->> >
->> >
->> > You said "I've picked it up"
->> > https://patchwork.kernel.org/patch/10348031/
->>
->> It looks like it was accidentally dropped after a rebase.
->> Not quite sure what happened there. Maxime?
->
-> I'm not quite sure what happened, sorry, but this should have
-> definitely been part of that PR :/
->
+  ok, atleast on my ipq8064, it works the same. let me check once.
 
-Stephen offered to pick it up directly for -rc2.
-Is that OK with you?
+> Also, I'm still getting my issue about clocks above 2,147,483,647hz
+> however I think this may be related to the division in the hfpll driver
+> so I'll have a debug around there.
+> 
 
-I am fine if it is well-organized between you and Stephen.
+   hmm, atleast on ipq8064, it goes till the max frequency. As you said
+   it might be to do with the hfpll driver that runs on 8974. I will try 
+to test
+   on that hardware.
+
+   That said, just realized that i missed a minor comment from Bjorn.
+   Will anyway update it.
+
+Regards,
+  Sricharan
 
 
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+> On Tue, Jun 19, 2018 at 07:15:24PM +0530, Sricharan R wrote:
+>> From: Stephen Boyd <sboyd@codeaurora.org>
+>> 
+>> Register a cpufreq-generic device whenever we detect that a
+>> "qcom,krait" compatible CPU is present in DT.
+>> 
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> [Sricharan: updated to use dev_pm_opp_set_prop_name and
+>> 	    nvmem apis]
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> [Thierry Escande: update to add support for opp-supported-hw]
+>> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+>> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> ---
+>>  [v10] updated to add support for opp-supported-hw given by
+>>        Thierry Escande <thierry.escande@linaro.org>
+>> 
+>>  drivers/cpufreq/Kconfig.arm          |  10 ++
+>>  drivers/cpufreq/Makefile             |   1 +
+>>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
+>>  drivers/cpufreq/qcom-cpufreq.c       | 201 
+>> +++++++++++++++++++++++++++++++++++
+>>  4 files changed, 217 insertions(+)
+>>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
+>> 
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index 7f56fe5..87e5d8d 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -134,6 +134,16 @@ config ARM_OMAP2PLUS_CPUFREQ
+>>  	depends on ARCH_OMAP2PLUS
+>>  	default ARCH_OMAP2PLUS
+>> 
+>> +config ARM_QCOM_CPUFREQ
+>> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
+>> +	depends on ARCH_QCOM
+>> +	select PM_OPP
+>> +	help
+>> +	  This enables the CPUFreq driver for Qualcomm SoCs with
+>> +	  KRAIT processors.
+>> +
+>> +	  If in doubt, say N.
+>> +
+>>  config ARM_S3C_CPUFREQ
+>>  	bool
+>>  	help
+>> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+>> index 8d24ade..c591e1e 100644
+>> --- a/drivers/cpufreq/Makefile
+>> +++ b/drivers/cpufreq/Makefile
+>> @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+>>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+>>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+>>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+>> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
+>>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+>>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+>>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+>> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c 
+>> b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> index 3b585e4..e2e9a99 100644
+>> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+>> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+>> @@ -127,6 +127,11 @@
+>>  	{ .compatible = "ti,am43", },
+>>  	{ .compatible = "ti,dra7", },
+>> 
+>> +	{ .compatible = "qcom,ipq8064", },
+>> +	{ .compatible = "qcom,apq8064", },
+>> +	{ .compatible = "qcom,msm8974", },
+>> +	{ .compatible = "qcom,msm8960", },
+>> +
+>>  	{ }
+>>  };
+>> 
+>> diff --git a/drivers/cpufreq/qcom-cpufreq.c 
+>> b/drivers/cpufreq/qcom-cpufreq.c
+>> new file mode 100644
+>> index 0000000..1d4ab54
+>> --- /dev/null
+>> +++ b/drivers/cpufreq/qcom-cpufreq.c
+>> @@ -0,0 +1,201 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> +
+>> +#include <linux/cpu.h>
+>> +#include <linux/module.h>
+>> +#include <linux/nvmem-consumer.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_opp.h>
+>> +#include <linux/slab.h>
+>> +
+>> +static void __init get_krait_bin_format_a(int *speed, int *pvs, int 
+>> *pvs_ver,
+>> +					  struct nvmem_cell *pvs_nvmem, u8 *buf)
+>> +{
+>> +	u32 pte_efuse;
+>> +
+>> +	pte_efuse = *((u32 *)buf);
+>> +
+>> +	*speed = pte_efuse & 0xf;
+>> +	if (*speed == 0xf)
+>> +		*speed = (pte_efuse >> 4) & 0xf;
+>> +
+>> +	if (*speed == 0xf) {
+>> +		*speed = 0;
+>> +		pr_warn("Speed bin: Defaulting to %d\n", *speed);
+>> +	} else {
+>> +		pr_info("Speed bin: %d\n", *speed);
+>> +	}
+>> +
+>> +	*pvs = (pte_efuse >> 10) & 0x7;
+>> +	if (*pvs == 0x7)
+>> +		*pvs = (pte_efuse >> 13) & 0x7;
+>> +
+>> +	if (*pvs == 0x7) {
+>> +		*pvs = 0;
+>> +		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
+>> +	} else {
+>> +		pr_info("PVS bin: %d\n", *pvs);
+>> +	}
+>> +
+>> +	kfree(buf);
+>> +}
+>> +
+>> +static void __init get_krait_bin_format_b(int *speed, int *pvs, int 
+>> *pvs_ver,
+>> +					  struct nvmem_cell *pvs_nvmem, u8 *buf)
+>> +{
+>> +	u32 pte_efuse, redundant_sel;
+>> +
+>> +	pte_efuse = *((u32 *)buf);
+>> +	redundant_sel = (pte_efuse >> 24) & 0x7;
+>> +	*speed = pte_efuse & 0x7;
+>> +
+>> +	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
+>> +	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
+>> +	*pvs_ver = (pte_efuse >> 4) & 0x3;
+>> +
+>> +	switch (redundant_sel) {
+>> +	case 1:
+>> +		*speed = (pte_efuse >> 27) & 0xf;
+>> +		break;
+>> +	case 2:
+>> +		*pvs = (pte_efuse >> 27) & 0xf;
+>> +		break;
+>> +	}
+>> +
+>> +	/* Check SPEED_BIN_BLOW_STATUS */
+>> +	if (pte_efuse & BIT(3)) {
+>> +		pr_info("Speed bin: %d\n", *speed);
+>> +	} else {
+>> +		pr_warn("Speed bin not set. Defaulting to 0!\n");
+>> +		*speed = 0;
+>> +	}
+>> +
+>> +	/* Check PVS_BLOW_STATUS */
+>> +	pte_efuse = *(((u32 *)buf) + 4);
+>> +	if (pte_efuse) {
+>> +		pr_info("PVS bin: %d\n", *pvs);
+>> +	} else {
+>> +		pr_warn("PVS bin not set. Defaulting to 0!\n");
+>> +		*pvs = 0;
+>> +	}
+>> +
+>> +	pr_info("PVS version: %d\n", *pvs_ver);
+>> +	kfree(buf);
+>> +}
+>> +
+>> +static int __init qcom_cpufreq_populate_opps(struct nvmem_cell 
+>> *pvs_nvmem,
+>> +					     struct opp_table **tbl1,
+>> +					     struct opp_table **tbl2)
+>> +{
+>> +	int speed = 0, pvs = 0, pvs_ver = 0, cpu, ret;
+>> +	struct device *cpu_dev;
+>> +	u8 *buf;
+>> +	size_t len;
+>> +	char pvs_name[] = "speedXX-pvsXX-vXX";
+>> +	u32 hw_version;
+>> +
+>> +	buf = nvmem_cell_read(pvs_nvmem, &len);
+>> +	if (len == 4)
+>> +		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
+>> +	else if (len == 8)
+>> +		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
+>> +	else
+>> +		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
+>> +
+>> +	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
+>> +		 speed, pvs, pvs_ver);
+>> +
+>> +	hw_version = (1 << speed);
+>> +
+>> +	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
+>> +		cpu_dev = get_cpu_device(cpu);
+>> +		if (!cpu_dev)
+>> +			return -ENODEV;
+>> +
+>> +		tbl1[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
+>> +		if (IS_ERR(tbl1[cpu])) {
+>> +			ret = PTR_ERR(tbl1[cpu]);
+>> +			tbl1[cpu] = 0;
+>> +			pr_warn("failed to add OPP name %s\n", pvs_name);
+>> +			return ret;
+>> +		}
+>> +
+>> +		tbl2[cpu] = dev_pm_opp_set_supported_hw(cpu_dev, &hw_version,
+>> +							1);
+>> +		if (IS_ERR(tbl2[cpu])) {
+>> +			ret = PTR_ERR(tbl2[cpu]);
+>> +			tbl2[cpu] = 0;
+>> +			pr_warn("failed to set supported hw version\n");
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int __init qcom_cpufreq_driver_init(void)
+>> +{
+>> +	struct platform_device *pdev;
+>> +	struct device *cpu_dev;
+>> +	struct device_node *np;
+>> +	struct nvmem_cell *pvs_nvmem;
+>> +	struct opp_table *tbl1[NR_CPUS] = { NULL }, *tbl2[NR_CPUS] = { NULL 
+>> };
+>> +	int ret, cpu = 0;
+>> +
+>> +	cpu_dev = get_cpu_device(0);
+>> +	if (!cpu_dev)
+>> +		return -ENODEV;
+>> +
+>> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+>> +	if (!np)
+>> +		return -ENOENT;
+>> +
+>> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
+>> +		ret = -ENOENT;
+>> +		goto free_np;
+>> +	}
+>> +
+>> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
+>> +	if (IS_ERR(pvs_nvmem)) {
+>> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
+>> +		ret = PTR_ERR(pvs_nvmem);
+>> +		goto free_np;
+>> +	}
+>> +
+>> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl1, tbl2);
+>> +	if (ret)
+>> +		goto free_opp_name;
+>> +
+>> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
+>> +	if (IS_ERR(pdev)) {
+>> +		ret = PTR_ERR(pdev);
+>> +		goto free_opp_name;
+>> +	}
+>> +
+>> +	of_node_put(np);
+>> +
+>> +	return 0;
+>> +
+>> +free_opp_name:
+>> +	while (tbl1[cpu]) {
+>> +		dev_pm_opp_put_prop_name(tbl1[cpu]);
+>> +		cpu++;
+>> +	}
+>> +
+>> +	cpu = 0;
+>> +	while (tbl2[cpu]) {
+>> +		dev_pm_opp_put_supported_hw(tbl2[cpu]);
+>> +		cpu++;
+>> +	}
+>> +
+>> +free_np:
+>> +	of_node_put(np);
+>> +
+>> +	return ret;
+>> +}
+>> +late_initcall(qcom_cpufreq_driver_init);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
+>> +MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 1.9.1
+>> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
