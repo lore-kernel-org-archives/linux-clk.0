@@ -1,33 +1,32 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:44318 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933793AbeFLVy0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 17:54:26 -0400
-Date: Tue, 12 Jun 2018 15:54:22 -0600
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Jun 2018 12:14:11 -0600
 From: Rob Herring <robh@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] dt-bindings: clk: at91: Document all the PMC
- compatibles
-Message-ID: <20180612215422.GA7376@rob-hp-laptop>
-References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
- <20180607084107.4461-3-alexandre.belloni@bootlin.com>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: heiko@sntech.de, sboyd@kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+	huangtao@rock-chips.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: add bindings for px30 clock
+ controller
+Message-ID: <20180620181411.GA1689@rob-hp-laptop>
+References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
+ <1529029011-15021-2-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180607084107.4461-3-alexandre.belloni@bootlin.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1529029011-15021-2-git-send-email-zhangqing@rock-chips.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 07, 2018 at 10:41:05AM +0200, Alexandre Belloni wrote:
-> Add missing PMC compatibles to the list of available compatibles.
+On Fri, Jun 15, 2018 at 10:16:48AM +0800, Elaine Zhang wrote:
+> Add devicetree bindings for Rockchip cru which found on
+> Rockchip SoCs.
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 > ---
->  Documentation/devicetree/bindings/clock/at91-clock.txt | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  .../bindings/clock/rockchip,px30-cru.txt           | 66 ++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
