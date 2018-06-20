@@ -1,25 +1,40 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38918 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754065AbeFTPsC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jun 2018 11:48:02 -0400
+Date: Wed, 20 Jun 2018 09:47:59 -0600
+From: Rob Herring <robh@kernel.org>
+To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
+        boris.brezillon@bootlin.com, alexandre.belloni@bootlin.com,
+        broonie@kernel.org, sboyd@kernel.org, Cristian.Birsan@microchip.com
+Subject: Re: [PATCH v5 1/5] dt-bindings: clk: at91: add an I2S mux clock
+Message-ID: <20180620154759.GA4755@rob-hp-laptop>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+ <20180618141239.10892-2-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Paul Cercueil <paul@crapouillou.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180520163117.14125-1-paul@crapouillou.net>
-Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-References: <20180520163117.14125-1-paul@crapouillou.net>
-Message-ID: <152792061833.225090.599214934282467838@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/6] clk: ingenic: Add support for clocks whose gate bit is
- inverted
-Date: Fri, 01 Jun 2018 23:23:38 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180618141239.10892-2-codrin.ciubotariu@microchip.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-05-20 09:31:12)
-> Support the clocks which are gated when their gate bit is cleared
-> instead of set.
-> =
-
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+On Mon, Jun 18, 2018 at 05:12:35PM +0300, Codrin Ciubotariu wrote:
+> The I2S mux clock can be used to select the I2S input clock. The
+> available parents are the peripheral and the generated clocks.
+> 
+> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 > ---
+> 
+> Changes in v5:
+> 	- specified clock's parent;
+> 	- added a newline before adding the clock's compatible string;
+> 
+>  .../devicetree/bindings/clock/at91-clock.txt  | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 
-Applied to clk-next
+Well, since Alexandre promises all this is going to get re-worked soon:
+
+Acked-by: Rob Herring <robh@kernel.org>
