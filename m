@@ -1,160 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42454 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966649AbeFSQA7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jun 2018 12:00:59 -0400
-Received: by mail-wr0-f196.google.com with SMTP id w10-v6so193499wrk.9
-        for <linux-clk@vger.kernel.org>; Tue, 19 Jun 2018 09:00:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: remove obsolete register access
-Date: Tue, 19 Jun 2018 18:00:50 +0200
-Message-Id: <20180619160050.26958-1-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 20 Jun 2018 09:43:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+	phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl:
+ documentation
+Message-ID: <20180620154344.GA32205@rob-hp-laptop>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The legacy method to access the hhi register space is not longer used.
-We can safely drop it now.
+On Thu, Jun 14, 2018 at 11:56:31AM +0100, Michel Pollet wrote:
+> The Renesas R9A06G032 SYSCTRL node description.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c  | 37 ++-----------------------------------
- drivers/clk/meson/gxbb.c | 36 ++----------------------------------
- 2 files changed, 4 insertions(+), 69 deletions(-)
+One nit, otherwise:
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index bd4dbc696b88..3fb884db1b10 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -12,7 +12,6 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/init.h>
--#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
-@@ -995,49 +994,17 @@ static const struct of_device_id clkc_match_table[] = {
- 	{}
- };
- 
--static const struct regmap_config clkc_regmap_config = {
--	.reg_bits       = 32,
--	.val_bits       = 32,
--	.reg_stride     = 4,
--};
--
- static int axg_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
--	void __iomem *clk_base = NULL;
- 	struct regmap *map;
- 	int ret, i;
- 
- 	/* Get the hhi system controller node if available */
- 	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
- 	if (IS_ERR(map)) {
--		dev_err(dev,
--			"failed to get HHI regmap - Trying obsolete regs\n");
--
--		/*
--		 * FIXME: HHI registers should be accessed through
--		 * the appropriate system controller. This is required because
--		 * there is more than just clocks in this register space
--		 *
--		 * This fallback method is only provided temporarily until
--		 * all the platform DTs are properly using the syscon node
--		 */
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		if (!res)
--			return -EINVAL;
--
--
--		clk_base = devm_ioremap(dev, res->start, resource_size(res));
--		if (!clk_base) {
--			dev_err(dev, "Unable to map clk base\n");
--			return -ENXIO;
--		}
--
--		map = devm_regmap_init_mmio(dev, clk_base,
--					    &clkc_regmap_config);
--		if (IS_ERR(map))
--			return PTR_ERR(map);
-+		dev_err(dev, "failed to get HHI regmap\n");
-+		return PTR_ERR(map);
- 	}
- 
- 	/* Populate regmap for the regmap backed clocks */
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 177fffb9ebef..297ebc391475 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -7,7 +7,6 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/init.h>
--#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
-@@ -2228,17 +2227,9 @@ static const struct of_device_id clkc_match_table[] = {
- 	{},
- };
- 
--static const struct regmap_config clkc_regmap_config = {
--	.reg_bits       = 32,
--	.val_bits       = 32,
--	.reg_stride     = 4,
--};
--
- static int gxbb_clkc_probe(struct platform_device *pdev)
- {
- 	const struct clkc_data *clkc_data;
--	struct resource *res;
--	void __iomem *clk_base;
- 	struct regmap *map;
- 	int ret, i;
- 	struct device *dev = &pdev->dev;
-@@ -2250,31 +2241,8 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
- 	/* Get the hhi system controller node if available */
- 	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
- 	if (IS_ERR(map)) {
--		dev_err(dev,
--			"failed to get HHI regmap - Trying obsolete regs\n");
--
--		/*
--		 * FIXME: HHI registers should be accessed through
--		 * the appropriate system controller. This is required because
--		 * there is more than just clocks in this register space
--		 *
--		 * This fallback method is only provided temporarily until
--		 * all the platform DTs are properly using the syscon node
--		 */
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--		if (!res)
--			return -EINVAL;
--
--		clk_base = devm_ioremap(dev, res->start, resource_size(res));
--		if (!clk_base) {
--			dev_err(dev, "Unable to map clk base\n");
--			return -ENXIO;
--		}
--
--		map = devm_regmap_init_mmio(dev, clk_base,
--					    &clkc_regmap_config);
--		if (IS_ERR(map))
--			return PTR_ERR(map);
-+		dev_err(dev, "failed to get HHI regmap\n");
-+		return PTR_ERR(map);
- 	}
- 
- 	/* Populate regmap for the common regmap backed clocks */
--- 
-2.14.3
+Reviewed-by: Rob Herring <robh@kernel.org>
 
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> new file mode 100644
+> index 0000000..f6cb5e3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+> @@ -0,0 +1,44 @@
+> +* Renesas R9A06G032 SYSCTRL
+> +
+> +Required Properties:
+> +
+> +  - compatible: Must be:
+> +    - "renesas,r9a06g032-sysctrl"
+> +  - reg: Base address and length of the SYSCTRL IO block.
+> +  - #clock-cells: Must be 1
+> +  - clocks: References to the parent clocks:
+> +	- external 40mhz crystal.
+> +	- external (optional) 32.768khz
+> +	- external (optional) jtag input
+> +	- external (optional) RGMII_REFCLK
+> +  - clock-names: Must be:
+> +        clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
+> +
+> +Examples
+> +--------
+> +
+> +  - SYSCTRL node:
+> +
+> +	sysctrl: system-controller@4000c000 {
+> +		compatible = "renesas,r9a06g032-sysctrl";
+> +		reg = <0x4000c000 0x1000>;
+> +		status = "okay";
+
+Don't show status in examples.
+
+> +		#clock-cells = <1>;
+> +
+> +		clocks = <&ext_mclk>, <&ext_rtc_clk>,
+> +				<&ext_jtag_clk>, <&ext_rgmii_ref>;
+> +		clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
+> +	};
+> +
+> +  - Other nodes can use the clocks provided by SYSCTRL as in:
+> +
+> +	#include <dt-bindings/clock/r9a06g032-sysctrl.h>
+> +	uart0: serial@40060000 {
+> +		compatible = "snps,dw-apb-uart";
+> +		reg = <0x40060000 0x400>;
+> +		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +		clocks = <&sysctrl R9A06G032_CLK_UART0>;
+> +		clock-names = "baudclk";
+> +	};
+> -- 
+> 2.7.4
+> 
