@@ -1,87 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:51591 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965654AbeF0Tu6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Jun 2018 15:50:58 -0400
-Date: Wed, 27 Jun 2018 21:50:43 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180627195043.hfasvppfm2cbudx7@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180627180215.y5kvvdqeriadxwte@flea>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v9 04/10] firmware: xilinx: Add query data API
+Date: Wed, 20 Jun 2018 10:40:29 -0700
+Message-ID: <1529516435-7315-5-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bezsy6kupmrzsenq"
-In-Reply-To: <20180627180215.y5kvvdqeriadxwte@flea>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Rajan Vaja <rajanv@xilinx.com>
 
---bezsy6kupmrzsenq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add ZynqMP firmware query data API to query platform
+specific information(clocks, pins) from firmware.
 
-1;5202;0c
-On Wed, Jun 27, 2018 at 08:02:15PM +0200, Maxime Ripard wrote:
-> On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> > This series adds support for R40 HDMI pipeline. It is a bit special
-> > than other already supported pipelines because it has additional unit
-> > called TCON TOP responsible for relationship configuration between
-> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > and TV encoders.
-> >=20
-> > However, it seems that TCON TOP will become a norm, since newer
-> > Allwinner SoCs like H6 also have this unit.
-> >=20
-> > I tested different possible configurations:
-> > - mixer0 <> TCON-TV0 <> HDMI
-> > - mixer0 <> TCON-TV1 <> HDMI
-> > - mixer1 <> TCON-TV0 <> HDMI
-> > - mixer1 <> TCON-TV1 <> HDMI
-> >=20
-> > Please review.
->=20
-> I just applied it. It didn't apply cleanly, so please make sure it
-> does next time, or at least state what the dependencies are.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-And it didn't compile either, because of the compile error that was
-reported to the previous version by kbuild... Those shouldn't be
-ignored and simply fixed.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---bezsy6kupmrzsenq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz6pIACgkQ0rTAlCFN
-r3QHyw//UA9Nx2FAEMfBfKNdc8cDdb5MMoAGgXg8uqNDSjuj5BhCPwiqE6rLZSTS
-beJSkjmLfBR0CauhVv53vwmGOveNd2Uz0saS3FZY4bO/jLAmGOpB7na0Hlq3pZYH
-sBuzFTkxollAkHohikoG1avNV2dBDfeFB+RfQ3ElcyJ9C8Bt/dphy4d0Ea4dRSMa
-NZQ9fJvjPSaKOEFWWOmT6kbvAwkaEgg4g7q3nYltdF3Mlk9tWE5ZaGTRYClXenpb
-HZoUf0hXSTEs8Ls5CsQlZJvSxmisPJ2OY1ByYxAKVjYZAw0EWMs7rg0/2lA4SvM4
-OxswQm4XhB/e0Dtn87OVn7q7Vz0nCZO23g2GBVDTIzTGsfRn8f+3Ma9glcKZsyDL
-HqdOKrJ0zROS0R6AIMa/OVu46DC+ajUn3w2/h/aBkP8KJfdaN+MqWtDEGOYmq68o
-wDiz3Dgz3WOg3YLPM8p/94fopkEfihaeRCa+7Drt35Tfo3bI0rB7KIenzLehLnmt
-Pvu7wDOk5OJiW6u4LU0TLsUoEq4Dd62xhBkyvM7cm6Stn6O13Hnhsn5imTK48hYJ
-H6QmGW4uEFkXRfYGcQx5WY4IcD7zGNGlcNuCMjhMmvegTY75U1DFgS1W6jsu8hEu
-NtOK2+L/SsRdksyyUj9rhMQXn/wJhYr45rn/a4pKAJCLvxhJa6E=
-=L764
------END PGP SIGNATURE-----
-
---bezsy6kupmrzsenq--
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 34c5ad5..86d9bb8 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
+ 
++/**
++ * zynqmp_pm_query_data() - Get query data from firmware
++ * @qdata:	Variable to the zynqmp_pm_query_data structure
++ * @out:	Returned output value
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				   qdata.arg2, qdata.arg3, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.query_data = zynqmp_pm_query_data,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 2eec6e7..354385d 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -35,6 +35,7 @@
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_IOCTL = 34,
++	PM_QUERY_DATA,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -48,9 +49,28 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
+ 
++enum pm_query_id {
++	PM_QID_INVALID,
++};
++
++/**
++ * struct zynqmp_pm_query_data - PM query data structure
++ * @qid:	query ID
++ * @arg1:	Argument 1 of query data
++ * @arg2:	Argument 2 of query data
++ * @arg3:	Argument 3 of query data
++ */
++struct zynqmp_pm_query_data {
++	u32 qid;
++	u32 arg1;
++	u32 arg2;
++	u32 arg3;
++};
++
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+-- 
+2.7.4
