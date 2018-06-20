@@ -1,69 +1,48 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] clk: imx6sl: remove clks_init_on array
-Date: Sun,  3 Jun 2018 11:00:45 +0800
-Message-Id: <1527994847-2363-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <sricharan@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Wed, 20 Jun 2018 14:38:58 +0530
+From: sricharan@codeaurora.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: mark.rutland@arm.com, robh@kernel.org, linux@arm.linux.org.uk,
+ ctatlor97@gmail.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+ mturquette@baylibre.com, linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+ linux@armlinux.org.uk, thierry.escande@linaro.org,
+ linux-kernel@vger.kernel.org, david.brown@linaro.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ andy.gross@linaro.org, linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+In-Reply-To: <f195e30e-bef3-9352-9584-fec35631ec5e@arm.com>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+ <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
+ <f195e30e-bef3-9352-9584-fec35631ec5e@arm.com>
+Message-ID: <4a15ab80f732ae22f12a1351550be6dc@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
+Hi Sudeep,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx6sl.c | 12 ------------
- 1 file changed, 12 deletions(-)
+>> 
+>> Register a cpufreq-generic device whenever we detect that a
+>> "qcom,krait" compatible CPU is present in DT.
+>> 
+> 
+> Just curious to know how different is this from qcom kryo driver
+> that was added recently. IIRC even that gets the speedbin from nvmem.
+> Can they be merged ? I don't see need to have different driver for 
+> Krait
+> and Kryo CPUs when the code is not even remotely related to CPU type.
+> 
+> Sorry if I have missed anything from previous versions, I just happen
+> to open and looked at this series first time today.
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 66b1dd1..eb6bcbf 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
- static void __iomem *ccm_base;
- static void __iomem *anatop_base;
- 
--static const u32 clks_init_on[] __initconst = {
--	IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
--};
--
- /*
-  * ERR005311 CCM: After exit from WAIT mode, unwanted interrupt(s) taken
-  *           during WAIT mode entry process could cause cache memory
-@@ -195,7 +191,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
--	int i;
- 	int ret;
- 
- 	clks[IMX6SL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
-@@ -426,13 +421,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 		pr_warn("%s: failed to set AHB clock rate %d!\n",
- 			__func__, ret);
- 
--	/*
--	 * Make sure those always on clocks are enabled to maintain the correct
--	 * usecount and enabling/disabling of parent PLLs.
--	 */
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clks[clks_init_on[i]]);
--
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY2_GATE]);
--- 
-2.7.4
+  Correct, having these two merged was pointed out earlier as well by 
+Viresh.
+  Now that kryo is merged, i will check once and see if they can be 
+nicely
+  merged.
+
+Regards,
+  Sricharan
