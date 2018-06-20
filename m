@@ -1,104 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs27.siol.net ([185.57.226.218]:48179 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933756AbeFYMFg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:36 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 18/24] drm/sun4i: DW HDMI PHY: Add support for second PLL
-Date: Mon, 25 Jun 2018 14:02:58 +0200
-Message-Id: <20180625120304.7543-19-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <horms@verge.net.au>
+Date: Wed, 20 Jun 2018 10:51:46 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Ofir Drang <ofir.drang@arm.com>
+Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+Message-ID: <20180620085145.7bxfbu7bi45sftnk@verge.net.au>
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+ <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
+ <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some DW HDMI PHYs, like those found in A64 and R40 SoCs, can select
-between two clock parents.
+On Tue, Jun 19, 2018 at 04:57:15PM +0300, Gilad Ben-Yossef wrote:
+> On Tue, Jun 19, 2018 at 3:58 PM, Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > Hi Gilad,
+> >
+> > On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> >> The patch set enables the use of CryptoCell found in some Renesas R-Car
+> >> Salvator-X boards and fixes some driver issues uncovered that prevented
+> >> to work properly.
+> >
+> > With DEBUG enabled on R-Car H3, I see lots of
+> >
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
+> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
+> >
+> > during boot. Is that expected?
+> 
+> Yes. The condition itself it is reporting is not necessarily bad. It
+> means that driver
+> did not act on certain HW notification during interrupts and that's
+> OK, we don't act on all of them
+> depending on configuration - e.g. if you have CONFIG_FIPS enabled and
+> an active TEE module or not.
+> 
+> I can rate_limit the message if it bothers you but other than that it
+> is a harmless debug print.
 
-Add code which reads second PLL from DT.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 ++
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 20 +++++++++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 3ba71aff92fc..46a3aa6a53a9 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -147,6 +147,7 @@ struct sun8i_hdmi_phy;
- 
- struct sun8i_hdmi_phy_variant {
- 	bool has_phy_clk;
-+	bool has_second_pll;
- 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
- 	void (*phy_disable)(struct dw_hdmi *hdmi,
- 			    struct sun8i_hdmi_phy *phy);
-@@ -160,6 +161,7 @@ struct sun8i_hdmi_phy {
- 	struct clk			*clk_mod;
- 	struct clk			*clk_phy;
- 	struct clk			*clk_pll0;
-+	struct clk			*clk_pll1;
- 	unsigned int			rcal;
- 	struct regmap			*regs;
- 	struct reset_control		*rst_phy;
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index e56b9e5b1c42..f0877b3f67e7 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -482,10 +482,19 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 			goto err_put_clk_mod;
- 		}
- 
-+		if (phy->variant->has_second_pll) {
-+			phy->clk_pll1 = of_clk_get_by_name(node, "pll-1");
-+			if (IS_ERR(phy->clk_pll1)) {
-+				dev_err(dev, "Could not get pll-1 clock\n");
-+				ret = PTR_ERR(phy->clk_pll1);
-+				goto err_put_clk_pll0;
-+			}
-+		}
-+
- 		ret = sun8i_phy_clk_create(phy, dev);
- 		if (ret) {
- 			dev_err(dev, "Couldn't create the PHY clock\n");
--			goto err_put_clk_pll0;
-+			goto err_put_clk_pll1;
- 		}
- 
- 		clk_prepare_enable(phy->clk_phy);
-@@ -528,9 +537,10 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	reset_control_put(phy->rst_phy);
- err_disable_clk_phy:
- 	clk_disable_unprepare(phy->clk_phy);
-+err_put_clk_pll1:
-+	clk_put(phy->clk_pll1);
- err_put_clk_pll0:
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
- err_put_clk_mod:
- 	clk_put(phy->clk_mod);
- err_put_clk_bus:
-@@ -551,8 +561,8 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
- 
- 	reset_control_put(phy->rst_phy);
- 
--	if (phy->variant->has_phy_clk)
--		clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll0);
-+	clk_put(phy->clk_pll1);
- 	clk_put(phy->clk_mod);
- 	clk_put(phy->clk_bus);
- }
--- 
-2.18.0
-
+Rate limiting sounds like an excellent idea to me.
