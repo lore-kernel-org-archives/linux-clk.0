@@ -1,36 +1,79 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v9 08/10] firmware: xilinx: Add debugfs for query data API
+Date: Wed, 20 Jun 2018 10:40:33 -0700
+Message-ID: <1529516435-7315-9-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOf5uwneWyjNpD-tGGL7CgL2_jJFvDtzbi+NBg7wqGMGR4qGCw@mail.gmail.com>
-References: <1526959560-6014-1-git-send-email-Anson.Huang@nxp.com>
- <1439344955.9677.1526991935718@email.1und1.de> <CAOMZO5BVhjwGpJ22qBihKcjWyvBkzNPU0cNtNY9HToLLEkYByA@mail.gmail.com>
- <CAOf5uwneWyjNpD-tGGL7CgL2_jJFvDtzbi+NBg7wqGMGR4qGCw@mail.gmail.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 2 Jun 2018 11:07:40 -0300
-Message-ID: <CAOMZO5DfpwEDrBrMaTCt1_2Kkkm_tuVLE2WMy5z2=iO_rRFVEg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: imx6ul: add GPIO clock gates
-To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, Rob Herring <robh+dt@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
-	Anson Huang <Anson.Huang@nxp.com>, Matteo Lisi <matteo.lisi@engicam.com>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael,
+From: Rajan Vaja <rajanv@xilinx.com>
 
-On Sat, Jun 2, 2018 at 11:04 AM, Michael Nazzareno Trimarchi
-<michael@amarulasolutions.com> wrote:
+Add debugfs file to query platform specific data from firmware
+using debugfs interface.
 
-> ull is a preatty new platform so one board was listed. Are you sure
-> that we need?
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-There are several imx6ul based dts in mainline and it is better if we
-can avoid dtb breakage when possible.
-
-In this case we can avoid the dtb breakage by adding the new clock
-definitions at the end of the file, just like we do for all the other
-imx devices.
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index 148dbff..1cb69f7 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
+ static struct pm_api_info pm_api_list[] = {
+ 	PM_API(PM_GET_API_VERSION),
+ 	PM_API(PM_IOCTL),
++	PM_API(PM_QUERY_DATA),
+ };
+ 
+ /**
+@@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 			sprintf(debugfs_buf, "IOCTL return value: %u\n",
+ 				pm_api_ret[1]);
+ 		break;
++	case PM_QUERY_DATA:
++	{
++		struct zynqmp_pm_query_data qdata = {0};
++
++		qdata.qid = pm_api_arg[0];
++		qdata.arg1 = pm_api_arg[1];
++		qdata.arg2 = pm_api_arg[2];
++		qdata.arg3 = pm_api_arg[3];
++
++		ret = eemi_ops->query_data(qdata, pm_api_ret);
++		if (ret)
++			break;
++
++		if (qdata.qid == PM_QID_CLOCK_GET_NAME)
++			sprintf(debugfs_buf, "Clock name = %s\n",
++				(char *)pm_api_ret);
++		else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
++			sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
++				pm_api_ret[1], pm_api_ret[2]);
++		else
++			sprintf(debugfs_buf,
++				"data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
++				pm_api_ret[0], pm_api_ret[1],
++				pm_api_ret[2], pm_api_ret[3]);
++		break;
++	}
+ 	default:
+ 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
+ 		ret = -EINVAL;
+-- 
+2.7.4
