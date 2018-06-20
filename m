@@ -1,47 +1,37 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-2-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
-Date: Mon, 25 Jun 2018 10:53:44 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:37417 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754580AbeFTTRK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jun 2018 15:17:10 -0400
+Date: Wed, 20 Jun 2018 13:17:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: maxime.ripard@bootlin.com, wens@csie.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 18/27] dt-bindings: display: sun4i-drm: Add
+ description of A64 HDMI PHY
+Message-ID: <20180620191708.GA6846@rob-hp-laptop>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-19-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <20180625152920.11549-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180612200036.21483-19-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Jun 12, 2018 at 10:00:27PM +0200, Jernej Skrabec wrote:
+> A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+> clock parents. It is compatible to other HDMI PHYs, like that found in
+> R40.
 > 
-> We want to be able to get the clock both from the board file by its
-> con_id and from the aemif driver by dev_id.
-
-What about the other SoCs? Don't they need this change as well?
-
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > ---
->   drivers/clk/davinci/psc-dm365.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
-> index 8c73086cc676..c75424f4ea3b 100644
-> --- a/drivers/clk/davinci/psc-dm365.c
-> +++ b/drivers/clk/davinci/psc-dm365.c
-> @@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
->   LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
->   LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
->   LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
-> -LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
-> +LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
-> +					NULL,		"ti-aemif");
->   LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
->   LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
->   LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
-> 
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+
+Acked-by: Rob Herring <robh@kernel.org>
+
