@@ -1,193 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:37136 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932528AbeFUILP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:15 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
-Subject: [PATCH v2 1/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Thu, 21 Jun 2018 13:40:17 +0530
-Message-ID: <1529568620-19765-2-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the reset framework
+Date: Thu, 21 Jun 2018 09:37:02 +0200
+Message-Id: <20180621073706.22812-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russ Dill <Russ.Dill@ti.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
+These are the remaining patches that still need to be merged in order
+to complete the conversion of the davinci dsp driver to using the reset
+framework.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
----
+They apply on top of v4.18-rc1 with David Lechner's remaining patches
+merged.
 
-No Changes in v2
+v1 -> v2:
+- fixed the device tree patches the descriptions of which were mixed up
+- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
+  reset provider, since it's possible that the lookup table was not yet
+  registered
+- made the local variable naming consistent in the davinci-rproc driver
+- fixed a typo in PATCH 5/8
 
- drivers/clk/clk.c            | 74 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  7 +++++
- include/linux/clk.h          | 25 +++++++++++++++
- 3 files changed, 106 insertions(+)
+v2 -> v3:
+- modify PATCH 1/8: drop the provider argument from the function adding
+  lookup entries and instead pass the provider name to the RESET_LOOKUP
+  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
+  cannot get the corresponding reset controller
+- modify the reset lookup entry in psc-da850
+- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
+  emit an error message if devm_reset_control_get_exclusive() returns
+  this error code
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a24a6af..7347e06 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,80 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+static int _clk_save_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+	int ret = 0;
-+
-+	hlist_for_each_entry(child, &clk->children, child_node) {
-+		ret = _clk_save_context(child);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (clk->ops && clk->ops->save_context)
-+		ret = clk->ops->save_context(clk->hw);
-+
-+	return ret;
-+}
-+
-+static void _clk_restore_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+
-+	if (clk->ops && clk->ops->restore_context)
-+		clk->ops->restore_context(clk->hw);
-+
-+	hlist_for_each_entry(child, &clk->children, child_node)
-+		_clk_restore_context(child);
-+}
-+
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code.  Returns 0 on success.
-+ */
-+int clk_save_context(void)
-+{
-+	struct clk_core *clk;
-+	int ret;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(clk_save_context);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * Restore the saved clock context upon resume.
-+ *
-+ */
-+void clk_restore_context(void)
-+{
-+	struct clk_core *clk;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node)
-+		_clk_restore_context(clk);
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
-+		_clk_restore_context(clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_restore_context);
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index b7cfa03..7f30d62 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -106,6 +106,11 @@ struct clk_rate_request {
-  *		Called with enable_lock held.  This function must not
-  *		sleep.
-  *
-+ * @save_context: Save the context of the clock in prepration for poweroff.
-+ *
-+ * @restore_context: Restore the context of the clock after a restoration
-+ *		of power.
-+ *
-  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-  *		ensure that the prepare_mutex is held across this call.
-@@ -201,6 +206,8 @@ struct clk_ops {
- 	void		(*disable)(struct clk_hw *hw);
- 	int		(*is_enabled)(struct clk_hw *hw);
- 	void		(*disable_unused)(struct clk_hw *hw);
-+	int		(*save_context)(struct clk_hw *hw);
-+	void		(*restore_context)(struct clk_hw *hw);
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
- 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..70a2662 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -596,6 +596,23 @@ int __must_check clk_bulk_enable(int num_clks,
-  */
- struct clk *clk_get_sys(const char *dev_id, const char *con_id);
- 
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code so locking is not necessary.
-+ */
-+int clk_save_context(void);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * This occurs with all clocks enabled. Occurs deep within the resume code
-+ * so locking is not necessary.
-+ */
-+void clk_restore_context(void);
-+
- #else /* !CONFIG_HAVE_CLK */
- 
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -695,6 +712,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
- 	return NULL;
- }
-+
-+static inline int clk_save_context(void)
-+{
-+	return 0;
-+}
-+
-+static inline void clk_restore_context(void) {}
-+
- #endif
- 
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+v3 -> v4:
+- make index the second parameter in RESET_LOOKUP() (right after the
+  provider name)
+
+v4 -> v5:
+- fix a bug where the dsp_reset object correctly stored in drproc struct
+
+v5 -> v6:
+- rebased on top of v4.17-rc1 and retested
+- dropped patches that were applied during 4.17 merge window
+- added relevant review and ack tags
+
+v6 -> v7:
+- rebased on top of v4.18-rc1 and dropped patches that were applied for
+  v4.17
+
+Bartosz Golaszewski (4):
+  remoteproc/davinci: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+
+ arch/arm/boot/dts/da850.dtsi               |  2 ++
+ arch/arm/mach-davinci/include/mach/clock.h | 21 -------------
+ drivers/clk/davinci/psc.c                  | 18 ------------
+ drivers/remoteproc/da8xx_remoteproc.c      | 34 ++++++++++++++++++----
+ 4 files changed, 31 insertions(+), 44 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
 -- 
-1.9.1
-
+2.17.1
