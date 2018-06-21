@@ -1,65 +1,50 @@
-Return-Path: <horms@verge.net.au>
-Date: Wed, 20 Jun 2018 10:51:46 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Ofir Drang <ofir.drang@arm.com>
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-Message-ID: <20180620085145.7bxfbu7bi45sftnk@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
- <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from userp2120.oracle.com ([156.151.31.85]:37212 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754292AbeFUIGu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:06:50 -0400
+Date: Thu, 21 Jun 2018 11:06:28 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: gregory.clement@bootlin.com
+Cc: linux-clk@vger.kernel.org
+Subject: [bug report] clk: mvebu: armada-37xx-periph: prepare cpu clk to be
+ used with DVFS
+Message-ID: <20180620201208.rzzc3lpu2lmyy4sz@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 19, 2018 at 04:57:15PM +0300, Gilad Ben-Yossef wrote:
-> On Tue, Jun 19, 2018 at 3:58 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > Hi Gilad,
-> >
-> > On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> >> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> >> Salvator-X boards and fixes some driver issues uncovered that prevented
-> >> to work properly.
-> >
-> > With DEBUG enabled on R-Car H3, I see lots of
-> >
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
-> >
-> > during boot. Is that expected?
-> 
-> Yes. The condition itself it is reporting is not necessarily bad. It
-> means that driver
-> did not act on certain HW notification during interrupts and that's
-> OK, we don't act on all of them
-> depending on configuration - e.g. if you have CONFIG_FIPS enabled and
-> an active TEE module or not.
-> 
-> I can rate_limit the message if it bothers you but other than that it
-> is a harmless debug print.
+Hello Gregory CLEMENT,
 
-Rate limiting sounds like an excellent idea to me.
+The patch 9818a7a4fd10: "clk: mvebu: armada-37xx-periph: prepare cpu
+clk to be used with DVFS" from Nov 30, 2017, leads to the following
+static checker warning:
+
+	drivers/clk/mvebu/armada-37xx-periph.c:432 clk_pm_cpu_get_parent()
+	warn: signedness bug returning '(-22)'
+
+drivers/clk/mvebu/armada-37xx-periph.c
+   418  static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
+               ^^
+   419  {
+   420          struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
+   421          int num_parents = clk_hw_get_num_parents(hw);
+   422          u32 val;
+   423  
+   424          if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
+   425                  val = armada_3700_pm_dvfs_get_cpu_parent(pm_cpu->nb_pm_base);
+   426          } else {
+   427                  val = readl(pm_cpu->reg_mux) >> pm_cpu->shift_mux;
+   428                  val &= pm_cpu->mask_mux;
+   429          }
+   430  
+   431          if (val >= num_parents)
+   432                  return -EINVAL;
+                               ^^^^^^^
+   433  
+   434          return val;
+   435  }
+
+regards,
+dan carpenter
