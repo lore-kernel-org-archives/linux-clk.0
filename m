@@ -1,102 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:55974 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935337AbeFMLF1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 07:05:27 -0400
-MIME-Version: 1.0
-In-Reply-To: <20180601065821.28234-3-o.rempel@pengutronix.de>
-References: <20180601065821.28234-1-o.rempel@pengutronix.de> <20180601065821.28234-3-o.rempel@pengutronix.de>
-From: Dong Aisheng <dongas86@gmail.com>
-Date: Wed, 13 Jun 2018 19:05:25 +0800
-Message-ID: <CAA+hA=RNxUHro_92YdORw7FOHba=ZSv4q697npCNKwoMG-_HMw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] dt-bindings: mailbox: provide imx-mailbox documentation
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v7 4/4] ARM: davinci: dts: add a reset control to the dsp node
+Date: Thu, 21 Jun 2018 09:37:06 +0200
+Message-Id: <20180621073706.22812-5-brgl@bgdev.pl>
+In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Oleksij,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Some more comments besides Rob's:
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
 
-On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  .../bindings/mailbox/imx-mailbox.txt          | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
->
-> diff --git a/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
-> new file mode 100644
-> index 000000000000..a45604b33039
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/imx-mailbox.txt
-> @@ -0,0 +1,35 @@
-> +i.MX Messaging Unit
-> +===================
-> +
-> +The i.MX Messaging Unit (MU) contains two register sets: "A" and "B". In most cases
-> +they are accessible from all Processor Units. On one hand, at least for mailbox functionality,
-> +it makes no difference which application or processor is using which set of the MU. On
-> +other hand, the register sets for each of the MU parts are not identical.
-> +
-> +Required properties:
-> +- compatible : Shell be one of:
-> +                    "fsl,imx7s-mu-a" and "fsl,imx7s-mu-b" for i.MX7S or i.MX7D
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-What's current requirement to distinguish Side A and B?
-I see current code, side A only does extra clear of xCR register but none for B.
-Is this a generic approach or something customized?
-
-BTW can we name it more generically?e.g. fsl,imx7s-mu.
-And using a property to indicate whether it's side A or B if really required.
-
-Furthermore, AFAIK MX7 MU is derived from MX6SX.
-Should we add and use fsl,imx6sx-mu instead?
-e.g.
- - compatible : Shell be one of:
-                       "fsl,imx6sx-mu" and "fsl,imx7s-mu".
-
-Regards
-Dong Aisheng
-
-> +- reg :        physical base address of the mailbox and length of
-> +               memory mapped region.
-> +- #mbox-cells: Common mailbox binding property to identify the number
-> +               of cells required for the mailbox specifier. Should be 1.
-> +- interrupts : interrupt number. The interrupt specifier format
-> +               depends on the interrupt controller parent.
-> +- clocks     :  phandle to the input clock.
-> +
-> +Example:
-> +       mu0a: mu@30aa0000 {
-> +               compatible = "fsl,imx7s-mu-a";
-> +               reg = <0x30aa0000 0x28>;
-> +               interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> +               clocks = <&clks IMX7D_MU_ROOT_CLK>;
-> +               #mbox-cells = <1>;
-> +       };
-> +
-> +       mu0b: mu@30ab0000 {
-> +               compatible = "fsl,imx7s-mu-b";
-> +               reg = <0x30ab0000 0x28>;
-> +               interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-> +               clocks = <&clks IMX7D_MU_ROOT_CLK>;
-> +               #mbox-cells = <1>;
-> +       };
-> --
-> 2.17.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index 1bc0e4bc0697..225e0cf4b7bc 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -118,6 +118,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
+-- 
+2.17.1
