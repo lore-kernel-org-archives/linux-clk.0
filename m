@@ -1,134 +1,40 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 3/9] ARM: davinci: da850-evm: use aemif platform driver in
- legacy mode
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-4-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <aef6d06b-b322-e2cd-b773-84ba1296c6d2@lechnology.com>
-Date: Mon, 25 Jun 2018 11:04:20 -0500
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 21 Jun 2018 13:34:00 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
+	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
+	kstewart@linuxfoundation.org, heiko@sntech.de,
+	gregkh@linuxfoundation.org
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 0/4] mfd/regulator/clk/input: bd71837: ROHM BD71837
+ PMIC driver
+Message-ID: <20180621103400.GB6076@localhost.localdomain>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20180625152920.11549-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Jun 19, 2018 at 01:55:31PM +0300, Matti Vaittinen wrote:
+> Patch series adding support for ROHM BD71837 PMIC.
 > 
-> We now support board files in the aemif driver. Register a platform
-> device instead of using the handcrafted API in da850-evm.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   arch/arm/mach-davinci/board-da850-evm.c | 93 ++++++++++++++-----------
->   1 file changed, 51 insertions(+), 42 deletions(-)
-> 
-> diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-> index 442c16773f09..0ae7c47ed2b0 100644
-> --- a/arch/arm/mach-davinci/board-da850-evm.c
-> +++ b/arch/arm/mach-davinci/board-da850-evm.c
-> @@ -33,6 +33,7 @@
->   #include <linux/platform_data/gpio-davinci.h>
->   #include <linux/platform_data/mtd-davinci.h>
->   #include <linux/platform_data/mtd-davinci-aemif.h>
-> +#include <linux/platform_data/ti-aemif.h>
+What is the preferred way when I send updated patches:
 
-alphabetical order would be after spi-davinci.h
+1. always resend _all_ unapplied patches even if there is no changes to
+   some of them. (patch-vN mail thread contains _all_ unapplied patches)
+2. only resend changed patches (patch-vN mail thread contains only
+   patches that were changed from patch-vN-1)
 
->   #include <linux/platform_data/spi-davinci.h>
->   #include <linux/platform_data/uio_pruss.h>
->   #include <linux/regulator/machine.h>
+I have currently used approach 1 - so that no patches would be
+accidentally forgotten - but downside is that people need to check if
+they have already reviewed some of the patches. I'd rather not caused
+any extra work. What is the most convenient way for you guys?
 
-
-> @@ -266,37 +257,58 @@ static struct resource da850_evm_nandflash_resource[] = {
->   	},
->   };
->   
-> -static struct platform_device da850_evm_nandflash_device = {
-> -	.name		= "davinci_nand",
-> -	.id		= 1,
-> -	.dev		= {
-> -		.platform_data	= &da850_evm_nandflash_data,
-> -	},
-> -	.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
-> -	.resource	= da850_evm_nandflash_resource,
-> +static struct resource da850_evm_aemif_resource[] = {
-> +	{
-> +		.start	= DA8XX_AEMIF_CTL_BASE,
-> +		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
-> +		.flags	= IORESOURCE_MEM,
-> +	}
->   };
->   
-> -static struct platform_device *da850_evm_devices[] = {
-> -	&da850_evm_nandflash_device,
-> -	&da850_evm_norflash_device,
-> +static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
-> +	{
-> +		.cs	= 3,
-> +	}
->   };
->   
-> -#define DA8XX_AEMIF_CE2CFG_OFFSET	0x10
-> -#define DA8XX_AEMIF_ASIZE_16BIT		0x1
-> -
-> -static void __init da850_evm_init_nor(void)
-> -{
-> -	void __iomem *aemif_addr;
-> -
-> -	aemif_addr = ioremap(DA8XX_AEMIF_CTL_BASE, SZ_32K);
-> +static struct platform_device da850_evm_aemif_devices[] = {
-> +	{
-> +		.name		= "davinci_nand",
-> +		.id		= 1,
-
-The existing clock lookup is for "davinci_nand.0". Might need to
-change id here.
-
-> +		.dev		= {
-> +			.platform_data	= &da850_evm_nandflash_data,
-> +		},
-> +		.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
-> +		.resource	= da850_evm_nandflash_resource,
-> +	},
-> +	{
-> +		.name		= "physmap-flash",
-> +		.id		= 0,
-> +		.dev		= {
-> +			.platform_data  = &da850_evm_norflash_data,
-> +		},
-> +		.num_resources	= 1,
-> +		.resource	= da850_evm_norflash_resource,
-> +	}
-> +};
->   
-> -	/* Configure data bus width of CS2 to 16 bit */
-> -	writel(readl(aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET) |
-> -		DA8XX_AEMIF_ASIZE_16BIT,
-> -		aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET);
-> +static struct aemif_platform_data da850_evm_aemif_pdata = {
-> +	.cs_offset = 2,
-> +	.abus_data = da850_evm_aemif_abus_data,
-> +	.num_abus_data = ARRAY_SIZE(da850_evm_aemif_abus_data),
-> +	.sub_devices = da850_evm_aemif_devices,
-> +	.num_sub_devices = ARRAY_SIZE(da850_evm_aemif_devices),
-> +};
->   
-> -	iounmap(aemif_addr);
-> -}
-> +static struct platform_device da850_evm_aemif_device = {
-> +	.name		= "ti-aemif",
-> +	.dev = {
-> +		.platform_data	= &da850_evm_aemif_pdata,
-> +	},
-> +	.resource	= da850_evm_aemif_resource,
-> +	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
-> +	.id		= -1,
-> +};
->   
->   static const short da850_evm_nand_pins[] = {
->   	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
+Br,
+    Matti Vaittinen
