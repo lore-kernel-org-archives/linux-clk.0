@@ -1,35 +1,81 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Mon, 25 Jun 2018 11:33:17 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 04/24] dt-bindings: display: sunxi-drm: Add TCON TOP
- description
-Message-ID: <20180625173317.GA3691@rob-hp-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180625120304.7543-5-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37307 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932770AbeFUIPb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:15:31 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v3 2/4] clk: clk: Add clk_gate_restore_context function
+Date: Thu, 21 Jun 2018 13:45:05 +0530
+Message-ID: <1529568907-19930-3-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180625120304.7543-5-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 02:02:44PM +0200, Jernej Skrabec wrote:
-> TCON TOP main purpose is to configure whole display pipeline. It
-> determines relationships between mixers and TCONs, selects source TCON
-> for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
-> clock source and contains additional TV TCON and DSI gates.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  .../bindings/display/sunxi/sun4i-drm.txt      | 56 +++++++++++++++++++
->  include/dt-bindings/clock/sun8i-tcon-top.h    | 11 ++++
->  2 files changed, 67 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+The clock gate restore context function enables or disables
+the gate clocks based on the enable_count. This is done in cases
+where the clock context is lost and based on the enable_count
+the clock either needs to be enabled/disabled.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+
+Changes in v2:
+
+	* Renamed clk_dflt_restore to clk_gate_restore_context
+
+ drivers/clk/clk.c            | 19 +++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7347e06..c201b8b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++/**
++ * clk_gate_restore_context - restore context for poweroff
++ * @hw: the clk_hw pointer of clock whose state is to be restored
++ *
++ * The clock gate restore context function enables or disables
++ * the gate clocks based on the enable_count. This is done in cases
++ * where the clock context is lost and based on the enable_count
++ * the clock either needs to be enabled/disabled. This
++ * helps restore the state of gate clocks.
++ */
++void clk_gate_restore_context(struct clk_hw *hw)
++{
++	if (hw->clk->core->enable_count)
++		hw->clk->core->ops->enable(hw);
++	else
++		hw->clk->core->ops->disable(hw);
++}
++EXPORT_SYMBOL_GPL(clk_gate_restore_context);
++
+ static int _clk_save_context(struct clk_core *clk)
+ {
+ 	struct clk_core *child;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7f30d62..3e0c61a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 
+ #endif	/* platform dependent I/O accessors */
+ 
++void clk_gate_restore_context(struct clk_hw *hw);
++
+ #endif /* CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
+-- 
+1.9.1
+
