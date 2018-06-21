@@ -1,81 +1,150 @@
-Return-Path: <nsekhar@ti.com>
-Subject: =?UTF-8?Q?Re:_[PATCH_v11_00/27]_ARM:_davinci:_convert_to_common_clo?=
- =?UTF-8?B?Y2sgZnJhbWV3b3Jr4oCL?=
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland
-	<mark.rutland@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz
- Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180518164829.27052-1-david@lechnology.com>
- <850a0ec9-53aa-02a5-ecbd-e068b13b2764@ti.com>
- <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <a45f20fe-61f1-6c10-c44d-655f9960d824@ti.com>
-Date: Tue, 26 Jun 2018 18:26:31 +0530
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 21 Jun 2018 13:25:47 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
+ power button
+Message-ID: <20180621102547.GA6076@localhost.localdomain>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180619175028.GA71788@dtor-ws>
+ <20180620064316.GB28784@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <9ca9d240-f556-cb4f-1a58-4a55c379a02f@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180620064316.GB28784@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday 25 May 2018 11:51 PM, David Lechner wrote:
-> On 05/22/2018 04:38 AM, Sekhar Nori wrote:
->> Hi David,
->>
->> On Friday 18 May 2018 10:18 PM, David Lechner wrote:
->>> This series converts mach-davinci to use the common clock framework.
->>>
->>> The series works like this, the first 3 patches fix some issues with
->>> the clock
->>> drivers that have already been accepted into the mainline kernel.
->>>
->>> Then, starting with "ARM: davinci: pass clock as parameter to
->>> davinci_timer_init()", we get the mach code ready for the switch by
->>> adding the
->>> code needed for the new clock drivers and adding #ifndef
->>> CONFIG_COMMON_CLK
->>> around the legacy clocks so that we can switch easily between the old
->>> and the
->>> new.
->>>
->>> "ARM: davinci: switch to common clock framework" actually flips the
->>> switch
->>> to start using the new clock drivers. Then the next 8 patches remove all
->>> of the old clock code.
->>>
->>> The final four patches add device tree clock support to the one SoC that
->>> supports it.
->>>
->>> This series has been tested on TI OMAP-L138 LCDK (both device tree
->>> and legacy
->>> board file).
->>
->> If you do end up sending a v12, you can leave out the mach-davinci
->> portions unless there are any changes you need to make. I will pick them
->> up from this series once the driver dependencies are merged.
->>
->> I do hope the drivers/clk/* changes can be merged from v4.18.
->>
-> 
-> I have resent all of the clk patches (including all of the ones I listed as
-> dependencies in addition to the three remaining in this series) under the
-> cover "clk: davinci: outstanding fixes​".
-> 
-> I also found that we need to add power-domains properties to the PWM nodes
-> in "ARM: dts: da850: Add clocks". I probably should just take your advice
-> and just globally added them even if they are not documented for some types
-> ofnodes.
+On Wed, Jun 20, 2018 at 09:43:16AM +0300, Matti Vaittinen wrote:
+> On Tue, Jun 19, 2018 at 10:50:28AM -0700, Dmitry Torokhov wrote:
+> > Hi Matti,
+> > 
+> > On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
+> > > ROHM BD71837 PMIC power button driver providing power-key press
+> > > information to user-space.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > >  drivers/input/misc/Kconfig          | 10 +++++
+> > >  drivers/input/misc/Makefile         |  1 +
+> > >  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 101 insertions(+)
+> > >  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
+> > > 
+> > > +	platform_set_drvdata(pdev, pk);
+> > > +	err = regmap_update_bits(pk->mfd->regmap,
+> > > +				 BD71837_REG_PWRONCONFIG0,
+> > > +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
+> > > +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
+> > 
+> > This seems to be the only custom bit of set up in the driver, the rest I
+> > think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
+> > we could move this into MFD piece and drop this driver?
 
-I think doing it en masse will be controversial. Just add it to PWM
-nodes for now (I am assuming the binding documentation agrees).
+I did following in MFD driver - is this what you suggested:
++static struct gpio_keys_button btns[] = {
++       {
++               .code = KEY_POWER,
++               .gpio = -1,
++               .type = EV_KEY,
++       },
++};
++
++static struct gpio_keys_platform_data bd718xx_powerkey_data = {
++       .buttons = &btns[0],
++       .nbuttons = ARRAY_SIZE(btns),
++       .name = "bd718xx-pwrkey",
++};
++
++/* bd71837 multi function cells */
++
++static struct mfd_cell bd71837_mfd_cells[] = {
++       {
++               .name = "bd71837-clk",
++       }, {
++               .name = "gpio-keys",
++               .platform_data = &bd718xx_powerkey_data,
++               .pdata_size = sizeof(bd718xx_powerkey_data),
++       }, {
 
-I have applied this series so please send any more changes as follow-on
-patches.
+//snip
 
-Thanks
-Sekhar
++static int bd71837_i2c_probe(struct i2c_client *i2c,
++                           const struct i2c_device_id *id)
++{
+
+// snip
+
++       ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
++               IRQF_ONESHOT, 0,
++               &bd71837_irq_chip, &bd71837->irq_data);
++       if (ret < 0) {
++               dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
++               goto err_out;
++       }
++       /* I think this should be done conditionally and only when pwrkey is used
++        * What would be the correct way to decide if we want to touch rhw button
++        * press detection times?
++        */
++       ret = regmap_update_bits(bd71837->regmap,
++                                BD71837_REG_PWRONCONFIG0,
++                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
++                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
++       if (ret < 0) {
++               dev_err(bd71837->dev, "Failed to configure button short press timeout %d\n", ret);
++               goto err_out;
++       }
++       /* According to BD71847 datasheet the HW default for long press detection
++        * is 10ms. So letch change it to 10 sec so we can actually get the short
++        * push and allow gracefull shut down
++        */
++       ret = regmap_update_bits(bd71837->regmap,
++                                BD71837_REG_PWRONCONFIG1,
++                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
++                                BD718XX_PWRBTN_LONG_PRESS_10S);
++       if (ret < 0) {
++               dev_err(bd71837->dev, "Failed to configure button long press timeout %d\n", ret);
++               goto err_out;
++       }
++       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
++                                         BD71837_INT_PWRBTN_S);
++
++       if (btns[0].irq < 0) {
++               ret = btns[0].irq;
++               goto err_out;
++       }
++
++       ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
++                             bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
++                             NULL, 0,
++                             regmap_irq_get_domain(bd71837->irq_data));
+
+If looks is Ok I will send new patch with this approach at next week -
+unless I get lost during the traditional midsummer festival here in
+Finland.
+
+> Finally, there may be cases when power button is not attached to PMIC
+> or is needing different configuration for 'short push'. This is why I
+> would prefer having own Kconfig option for this power-key driver. I am
+> not sure if it is easily doable if we use gpio_keys?
+
+What would be the preferred mechanism for skipping the button push duration
+configurations (time it takes for PMIC to detect short or long push)? Or
+setting the durations to values user(s) would prefer? To me this sounds again
+something we could configure from DT. Would adding propereties
+rohm,short-press-ms and rohm,long-press-ms sound reasonable? I will send
+the first version with no option to skip/specify the configuration
+(fixed 10ms for short press, 10 sec for long press) but I would like to add
+support for specifying the duration as next step.
+
+Br,
+	Matti Vaittinen
