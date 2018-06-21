@@ -1,62 +1,120 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com
-Cc: linux-mips@linux-mips.org, qi-ming.wu@intel.com,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-Date: Tue, 12 Jun 2018 13:40:28 +0800
-Message-Id: <20180612054034.4969-2-songjun.wu@linux.intel.com>
-In-Reply-To: <20180612054034.4969-1-songjun.wu@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:22936 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932466AbeFUIPm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:15:42 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v3 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
+Date: Thu, 21 Jun 2018 13:45:07 +0530
+Message-ID: <1529568907-19930-5-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Previous implementation uses a hard-coded register value to check if
-the current serial entity is the console entity.
-Now the lantiq serial driver uses the aliases for the index of the
-serial port.
-The lantiq danube serial dts are updated with aliases to support this.
+Save/restore clk context based on enable_off_mode setting.
+The context needs to be saved at the very end of suspend path
+and restored at the beginning of resume path.
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
 
- arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+No Changes in v2
 
-diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-index 2dd950181f8a..7a9e15da6bd0 100644
---- a/arch/mips/boot/dts/lantiq/danube.dtsi
-+++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-@@ -4,6 +4,10 @@
- 	#size-cells = <1>;
- 	compatible = "lantiq,xway", "lantiq,danube";
+ arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
+ drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
+ include/linux/platform_data/pm33xx.h |  1 +
+ 3 files changed, 29 insertions(+)
+
+diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
+index 9b3755a..29f848f 100644
+--- a/arch/arm/mach-omap2/pm33xx-core.c
++++ b/arch/arm/mach-omap2/pm33xx-core.c
+@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
+ 	return 0;
+ }
  
-+	aliases {
-+		serial0 = &asc1;
-+	};
++static int am43xx_check_off_mode_enable(void)
++{
++	/*
++	 * Check for am437x-sk-evm which due to HW design cannot support
++	 * this mode reliably.
++	 */
++	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
++		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
++		return 0;
++	}
 +
- 	cpus {
- 		cpu@0 {
- 			compatible = "mips,mips24Kc";
-@@ -74,7 +78,7 @@
- 			reg = <0xE100A00 0x100>;
- 		};
++	return enable_off_mode;
++}
++
+ static int amx3_common_init(void)
+ {
+ 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
+@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
+ 	.init = am43xx_suspend_init,
+ 	.soc_suspend = am43xx_suspend,
+ 	.get_sram_addrs = amx3_get_sram_addrs,
++	.check_off_mode_enable = am43xx_check_off_mode_enable,
+ };
  
--		serial@E100C00 {
-+		asc1: serial@E100C00 {
- 			compatible = "lantiq,asc";
- 			reg = <0xE100C00 0x400>;
- 			interrupt-parent = <&icu0>;
+ static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 652739c..e749b8d 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -6,6 +6,7 @@
+  *	Vaibhav Bedia, Dave Gerlach
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+ #include <linux/genalloc.h>
+@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ {
+ 	int i, ret = 0;
+ 
++	/*
++	 * For RTC only mode with DDR in selfresh we need to save
++	 * clocks context at the very end
++	 */
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_save_context();
++
+ 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
+ 				  am33xx_do_wfi_sram);
+ 
+@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ 		}
+ 	}
+ 
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_restore_context();
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
+index f9bed2a..36f7007 100644
+--- a/include/linux/platform_data/pm33xx.h
++++ b/include/linux/platform_data/pm33xx.h
+@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
+ 	int	(*init)(void);
+ 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
+ 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
++	int (*check_off_mode_enable)(void);
+ };
+ 
+ struct am33xx_pm_sram_data {
 -- 
-2.11.0
+1.9.1
+
