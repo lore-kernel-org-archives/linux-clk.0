@@ -1,47 +1,81 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:35538 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932707AbeFUILR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:17 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v2 2/4] clk: clk: Add clk_gate_restore_context function
+Date: Thu, 21 Jun 2018 13:40:18 +0530
+Message-ID: <1529568620-19765-3-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
-References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be> <152788083877.225090.16757573144833344500@swboyd.mtv.corp.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 1 Jun 2018 21:22:33 +0200
-Message-ID: <CAMuHMdUNXQDdv-CQs+KpaHJ8gGFjFrPRNXF3HPZNyTdQr+23Og@mail.gmail.com>
-Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from __of_clk_get()
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+The clock gate restore context function enables or disables
+the gate clocks based on the enable_count. This is done in cases
+where the clock context is lost and based on the enable_count
+the clock either needs to be enabled/disabled.
 
-On Fri, Jun 1, 2018 at 9:20 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
->> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
->> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
->> counting number of phandles in a property").
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> Commit bd69f73f2c81eed9 is in v3.9.
->
-> Did you send this to Russell's patch tracker? Otherwise I can pick it up
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-Not yet. The patch tracker is for reviewed patches, AFAIK.
+Changes in v2:
 
-> to clk-next.
+	* Renamed clk_dflt_restore to clk_gate_restore_context
 
-Thanks!
+ drivers/clk/clk.c            | 19 +++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 7347e06..c201b8b 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++/**
++ * clk_gate_restore_context - restore context for poweroff
++ * @hw: the clk_hw pointer of clock whose state is to be restored
++ *
++ * The clock gate restore context function enables or disables
++ * the gate clocks based on the enable_count. This is done in cases
++ * where the clock context is lost and based on the enable_count
++ * the clock either needs to be enabled/disabled. This
++ * helps restore the state of gate clocks.
++ */
++void clk_gate_restore_context(struct clk_hw *hw)
++{
++	if (hw->clk->core->enable_count)
++		hw->clk->core->ops->enable(hw);
++	else
++		hw->clk->core->ops->disable(hw);
++}
++EXPORT_SYMBOL_GPL(clk_gate_restore_context);
++
+ static int _clk_save_context(struct clk_core *clk)
+ {
+ 	struct clk_core *child;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7f30d62..3e0c61a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 
+ #endif	/* platform dependent I/O accessors */
+ 
++void clk_gate_restore_context(struct clk_hw *hw);
++
+ #endif /* CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.9.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
