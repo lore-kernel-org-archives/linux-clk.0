@@ -1,62 +1,120 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to
- register
-To: Mikko Perttunen <mperttunen@nvidia.com>, <pdeschrijver@nvidia.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <thierry.reding@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <swarren@nvidia.com>, <vbhadram@nvidia.com>
-References: <20180629143814.17950-1-mperttunen@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <f378f345-02db-f3fd-4c95-b1a2e8ecf3f5@nvidia.com>
-Date: Fri, 29 Jun 2018 15:41:45 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37143 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932397AbeFUILZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:25 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v2 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
+Date: Thu, 21 Jun 2018 13:40:20 +0530
+Message-ID: <1529568620-19765-5-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180629143814.17950-1-mperttunen@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Save/restore clk context based on enable_off_mode setting.
+The context needs to be saved at the very end of suspend path
+and restored at the beginning of resume path.
 
-On 29/06/18 15:38, Mikko Perttunen wrote:
-> When registering clocks, we just skip any that fail to register
-> (leaving a NULL hole in the clock table). However, our of_xlate
-> function still tries to dereference each entry while looking for
-> the clock with the requested id, causing a crash if any clocks
-> failed to register. Add a check to of_xlate to skip any NULL
-> clocks.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-bpmp.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index a896692b74ec..01dada561c10 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
->  	unsigned int id = clkspec->args[0], i;
->  	struct tegra_bpmp *bpmp = data;
->  
-> -	for (i = 0; i < bpmp->num_clocks; i++)
-> -		if (bpmp->clocks[i]->id == id)
-> -			return &bpmp->clocks[i]->hw;
-> +	for (i = 0; i < bpmp->num_clocks; i++) {
-> +		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
-> +
-> +		if (!clk)
-> +			continue;
-> +
-> +		if (clk->id == id)
-> +			return &clk->hw;
-> +	}
->  
->  	return NULL;
->  }
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+No Changes in v2
 
-Cheers!
-Jon
+ arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
+ drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
+ include/linux/platform_data/pm33xx.h |  1 +
+ 3 files changed, 29 insertions(+)
 
+diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
+index 9b3755a..29f848f 100644
+--- a/arch/arm/mach-omap2/pm33xx-core.c
++++ b/arch/arm/mach-omap2/pm33xx-core.c
+@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
+ 	return 0;
+ }
+ 
++static int am43xx_check_off_mode_enable(void)
++{
++	/*
++	 * Check for am437x-sk-evm which due to HW design cannot support
++	 * this mode reliably.
++	 */
++	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
++		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
++		return 0;
++	}
++
++	return enable_off_mode;
++}
++
+ static int amx3_common_init(void)
+ {
+ 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
+@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
+ 	.init = am43xx_suspend_init,
+ 	.soc_suspend = am43xx_suspend,
+ 	.get_sram_addrs = amx3_get_sram_addrs,
++	.check_off_mode_enable = am43xx_check_off_mode_enable,
+ };
+ 
+ static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 652739c..e749b8d 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -6,6 +6,7 @@
+  *	Vaibhav Bedia, Dave Gerlach
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+ #include <linux/genalloc.h>
+@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ {
+ 	int i, ret = 0;
+ 
++	/*
++	 * For RTC only mode with DDR in selfresh we need to save
++	 * clocks context at the very end
++	 */
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_save_context();
++
+ 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
+ 				  am33xx_do_wfi_sram);
+ 
+@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
+ 		}
+ 	}
+ 
++	if (suspend_state == PM_SUSPEND_MEM &&
++	    pm_ops->check_off_mode_enable())
++		clk_restore_context();
++
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
+index f9bed2a..36f7007 100644
+--- a/include/linux/platform_data/pm33xx.h
++++ b/include/linux/platform_data/pm33xx.h
+@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
+ 	int	(*init)(void);
+ 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
+ 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
++	int (*check_off_mode_enable)(void);
+ };
+ 
+ struct am33xx_pm_sram_data {
 -- 
-nvpublic
+1.9.1
+
