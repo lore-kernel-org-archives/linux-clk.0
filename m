@@ -1,53 +1,65 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 05/13] clk: davinci: psc-da830: add a lookup entry for aemif clock
-Date: Tue, 26 Jun 2018 11:25:29 +0200
-Message-Id: <20180626092537.6737-6-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Chen-Yu Tsai <wens@csie.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAGb2v67gL8m+XorkC78PwcaDA9cz69acsMkOrcLc9dgBY7m1eQ@mail.gmail.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Maxime Ripard <maxime.ripard@bootlin.com>,
+ Mike Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ linux-clk <linux-clk@vger.kernel.org>
+References: <20180521115947.wqrnv2hczate65lz@flea>
+ <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
+ <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
+ <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
+ <CAGb2v66MkLLqL=Ei5kMb_CzpgUANpkNN3E52mSHKrZ0L7rXAog@mail.gmail.com>
+ <CAGb2v67gL8m+XorkC78PwcaDA9cz69acsMkOrcLc9dgBY7m1eQ@mail.gmail.com>
+Message-ID: <152959425090.16708.15302996362223342459@swboyd.mtv.corp.google.com>
+Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
+Date: Thu, 21 Jun 2018 08:17:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Chen-Yu Tsai (2018-06-19 19:14:26)
+> Hi Stephen,
+> =
 
-We want to use the ti-aemif platform driver for da830-evm. To make it
-work we need a lookup entry for the aemif clock.
+> On Tue, Jun 12, 2018 at 4:38 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+> > On Tue, Jun 12, 2018 at 4:00 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> >> Quoting Chen-Yu Tsai (2018-06-11 00:53:41)
+> >>>
+> >>
+> >> I can directly pick and send as fix for clk-fixes targeting rc2.
+> =
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc-da830.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> This is a friendly reminder to pick up this patch for -rc2.
+> =
 
-diff --git a/drivers/clk/davinci/psc-da830.c b/drivers/clk/davinci/psc-da830.c
-index 081b039fcb02..6481337382a6 100644
---- a/drivers/clk/davinci/psc-da830.c
-+++ b/drivers/clk/davinci/psc-da830.c
-@@ -14,6 +14,7 @@
- 
- #include "psc.h"
- 
-+LPSC_CLKDEV1(aemif_clkdev,	NULL,	"ti-aemif");
- LPSC_CLKDEV1(spi0_clkdev,	NULL,	"spi_davinci.0");
- LPSC_CLKDEV1(mmcsd_clkdev,	NULL,	"da830-mmc.0");
- LPSC_CLKDEV1(uart0_clkdev,	NULL,	"serial8250.0");
-@@ -22,7 +23,7 @@ static const struct davinci_lpsc_clk_info da830_psc0_info[] = {
- 	LPSC(0,  0, tpcc,     pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
- 	LPSC(1,  0, tptc0,    pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
- 	LPSC(2,  0, tptc1,    pll0_sysclk2, NULL,         LPSC_ALWAYS_ENABLED),
--	LPSC(3,  0, aemif,    pll0_sysclk3, NULL,         LPSC_ALWAYS_ENABLED),
-+	LPSC(3,  0, aemif,    pll0_sysclk3, aemif_clkdev, LPSC_ALWAYS_ENABLED),
- 	LPSC(4,  0, spi0,     pll0_sysclk2, spi0_clkdev,  0),
- 	LPSC(5,  0, mmcsd,    pll0_sysclk2, mmcsd_clkdev, 0),
- 	LPSC(6,  0, aintc,    pll0_sysclk4, NULL,         LPSC_ALWAYS_ENABLED),
--- 
-2.17.1
+> > The patch can still be found in the sunxi/for-next branch of the
+> > sunxi repo on kernel.org:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/commit/=
+?h=3Dsunxi/for-next&id=3Dd4a1496286b0c29fcace4e10c0047cca7cc79b25
+> =
+
+> This is still available, but no longer referenced in any branch,
+> as we've updated our sunxi/for-next branch for 4.19 stuff.
+> =
+
+> > Or the original on patchwork:
+> >
+> > https://patchwork.kernel.org/patch/10348027/
+> =
+
+> And
+> =
+
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
+> =
+
+> if you pick directly from patchwork.
+> =
+
+
+Got it from linux-next. Thanks!
