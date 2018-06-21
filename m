@@ -1,101 +1,52 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 22/24] drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
-Date: Mon, 25 Jun 2018 14:03:02 +0200
-Message-Id: <20180625120304.7543-23-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl> <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 21 Jun 2018 13:41:26 +0200
+Message-ID: <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-drm_of_find_possible_crtcs() doesn't work when DW HDMI encoder is
-connected to TCON (crtc) through mux in TCON TOP.
+2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> Hi Bartosz,
+>
+> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> These are the remaining patches that still need to be merged in order
+>> to complete the conversion of the davinci dsp driver to using the reset
+>> framework.
+>>
+>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
+>> merged.
+>
+> Series looks good to me.
+>
+> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
+> and #2 ?
+>
+> Given the dependencies and to preserve bisect its easiest if I take the
+> series with acks from remoteproc and clock maintainers.
+>
+> Open to other suggestions as well.
+>
+> Thanks,
+> Sekhar
 
-In that case TCON TOP HDMI mux input port has to be manually traversed
-and checked if it matches any known crtc.
+Oops you're right about the order. Do you want me to resend?
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 46 ++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 9f40a44b456b..d443886e055b 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -12,6 +12,7 @@
- #include <drm/drm_crtc_helper.h>
- 
- #include "sun8i_dw_hdmi.h"
-+#include "sun8i_tcon_top.h"
- 
- static void sun8i_dw_hdmi_encoder_mode_set(struct drm_encoder *encoder,
- 					   struct drm_display_mode *mode,
-@@ -41,6 +42,48 @@ sun8i_dw_hdmi_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
-+static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
-+{
-+	return !!of_match_node(sun8i_tcon_top_of_table, node);
-+}
-+
-+static u32 sun8i_dw_hdmi_find_possible_crtcs(struct drm_device *drm,
-+					     struct device_node *node)
-+{
-+	struct device_node *port, *ep, *remote, *remote_port;
-+	u32 crtcs = 0;
-+
-+	port = of_graph_get_port_by_id(node, 0);
-+	if (!port)
-+		return 0;
-+
-+	ep = of_get_next_available_child(port, NULL);
-+	if (!ep)
-+		return 0;
-+
-+	remote = of_graph_get_remote_port_parent(ep);
-+	if (!remote)
-+		return 0;
-+
-+	if (sun8i_dw_hdmi_node_is_tcon_top(remote)) {
-+		port = of_graph_get_port_by_id(remote, 4);
-+		if (!port)
-+			return 0;
-+
-+		for_each_child_of_node(port, ep) {
-+			remote_port = of_graph_get_remote_port(ep);
-+			if (remote_port) {
-+				crtcs |= drm_crtc_port_mask(drm, remote_port);
-+				of_node_put(remote_port);
-+			}
-+		}
-+	} else {
-+		crtcs = drm_of_find_possible_crtcs(drm, node);
-+	}
-+
-+	return crtcs;
-+}
-+
- static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 			      void *data)
- {
-@@ -63,7 +106,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi->dev = &pdev->dev;
- 	encoder = &hdmi->encoder;
- 
--	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
-+	encoder->possible_crtcs =
-+		sun8i_dw_hdmi_find_possible_crtcs(drm, dev->of_node);
- 	/*
- 	 * If we failed to find the CRTC(s) which this encoder is
- 	 * supposed to be connected to, it's because the CRTC has
--- 
-2.18.0
+Bart
