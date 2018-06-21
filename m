@@ -1,117 +1,222 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39049 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754069AbeFTPxY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jun 2018 11:53:24 -0400
-Date: Wed, 20 Jun 2018 11:53:21 -0400
-From: David Rivshin <drivshin@awxrd.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        "J, Keerthy" <j-keerthy@ti.com>
-Subject: Re: dmtimer fclk regression in 4.16?
-Message-ID: <20180620115321.5496761a.drivshin@awxrd.com>
-In-Reply-To: <b37ee1e6-1b06-b82f-9948-ac66a06544ca@baylibre.com>
-References: <20180619145339.08322293.drivshin@awxrd.com>
-        <1b9995a0-0a44-2896-4492-0d16e3fa2b53@ti.com>
-        <b37ee1e6-1b06-b82f-9948-ac66a06544ca@baylibre.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
+Date: Thu, 21 Jun 2018 17:35:45 +0200
+Message-ID: <2366311.u3CXHO0a4d@jernej-laptop>
+In-Reply-To: <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <2581098.bNJirayF9O@jernej-laptop> <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 20 Jun 2018 09:11:19 +0200
-Neil Armstrong <narmstrong@baylibre.com> wrote:
-
-> Hi,
-> 
-> On 20/06/2018 08:30, Tero Kristo wrote:
-> > On 19/06/18 21:53, David Rivshin wrote:  
-> >> I think I've run across a regression in 4.16 that resulted from the TI clock
-> >> infrastructure changes. A bisect pointed to [1] as the first breaking commit.
-> >>
-> >> Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented
-> >> by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with
-> >> 4.16 that parenting fails in omap_dm_timer_set_source(), called from
-> >> pwm_omap_dmtimer_probe, at this check:
-> >>     if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
-> >>         return 0;
-> >> because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent
-> >> is "timer7_fck".
-> >>
-> >> It seemed to me that timer->fclk should instead be "timer7_fck" (which has
-> >> the desired set of possible parents). I tried following the lead set in [2]
-> >> and added "clocks" and "clock-names" properties on timer7. However, that
-> >> resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(),
-> >> failing when it tries to parent "timer7_fck" to itself.
-> >>
-> >> The following change in omap_dm_timer_prepare() does seem to work:
-> >> -        timer->fclk = clk_get(&timer->pdev->dev, "fck");
-> >> +        timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));  
+Dne četrtek, 21. junij 2018 ob 03:23:27 CEST je Chen-Yu Tsai napisal(a):
+> On Thu, Jun 21, 2018 at 3:37 AM, Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Dne sobota, 16. junij 2018 ob 07:48:38 CEST je Chen-Yu Tsai napisal(a):
+> >> On Sat, Jun 16, 2018 at 1:33 AM, Jernej Škrabec <jernej.skrabec@siol.net>
 > > 
-> > It seems omap_dm_timer_of_set_source() is actually completely broken and isn't doing anything useful. Neil, what was this function supposed to be doing, seeing you invented the initial patch for that (commit 31a7448f4fa8a528040e3df593e9781f55218183)?  
-> 
-> The original change was supposed to set the timer source clock by using the clock defined in the DT, but
-> it was made to work when the code was in arch/arm and the fck was not found from DT.
-> 
-> 
-> The omap_dm_timer_of_set_source() should be changed to get a specified clock name like "src":
-> parent = clk_get(&timer->pdev->dev, "src");
-> if (IS_ERR(parent))
-> 	return -ENODEV;
-> 
-> And the fck clock should be added to all timer nodes.
-> 
-> For example ed839c3664cb308144fe70a3a95813ab59a03dfb or 521f9e5e3f871cdac3ecd2a583d14d0472278053 only adds fck to timer1/2, the 7 timers should have the fck clock.
-> 
-> @David: chan you test the omap_dm_timer_of_set_source() change and in DT update the timer7 node with :
-> clocks = <&timer7_fck>, <&clkdiv32k_ck>;
-> clock-names = "fck", "src";
-
-That didn't work as-is because clkdiv32k_ck isn't a direct parent of 
-timer7_fck anymore. However, if I change it to 
-	<&l4_per_clkctrl AM3_CLKDIV32K_CLKCTRL 0> 
-then all seems well.
-
-Since pwm-dmtimer-omap sets the source clock explicitly anyways 
-(based on the DT), using any of the parents of timer7_fck as 
-the timer7 "src" clock works in my case.
-
-Also, if I leave off the "src" clock entirely, then omap_dm_timer_prepare()
-defaults it to using that same clock:
-	rc = omap_dm_timer_of_set_source(timer);
-	if (rc == -ENODEV)
-		return omap_dm_timer_set_source(timer, OMAP_TIMER_SRC_32_KHZ);
-and that also works for me.
-
-Thanks,
-David Rivshin
-
-> 
-> Thanks,
-> Neil
-> 
+> > wrote:
+> >> > Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai napisal(a):
+> >> >> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
+> >> >> 
+> >> >> <jernej.skrabec@siol.net> wrote:
+> >> >> > Hi,
+> >> >> > 
+> >> >> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard 
+napisal(a):
+> >> >> >> Hi,
+> >> >> >> 
+> >> >> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+> >> >> >> > TV TCONs connected to TCON TOP have to enable additional gate in
+> >> >> >> > order
+> >> >> >> > to work.
+> >> >> >> > 
+> >> >> >> > Add support for such TCONs.
+> >> >> >> > 
+> >> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> >> >> > ---
+> >> >> >> > 
+> >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+> >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+> >> >> >> >  2 files changed, 15 insertions(+)
+> >> >> >> > 
+> >> >> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
+> >> >> >> > 08747fc3ee71..0afb5a94a414
+> >> >> >> > 100644
+> >> >> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct
+> >> >> >> > device
+> >> >> >> > *dev,
+> >> >> >> > 
+> >> >> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
+> >> >> >> >             return PTR_ERR(tcon->clk);
+> >> >> >> >     
+> >> >> >> >     }
+> >> >> >> > 
+> >> >> >> > +
+> >> >> >> > +   if (tcon->quirks->has_tcon_top_gate) {
+> >> >> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
+> >> >> >> > +           if (IS_ERR(tcon->top_clk)) {
+> >> >> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
+> >> >> >> > clock\n");
+> >> >> >> > +                   return PTR_ERR(tcon->top_clk);
+> >> >> >> > +           }
+> >> >> >> > +           clk_prepare_enable(tcon->top_clk);
+> >> >> >> > +   }
+> >> >> >> > +
+> >> >> >> 
+> >> >> >> Is it required for the TCON itself to operate, or does the TCON
+> >> >> >> requires the TCON TOP, which in turn requires that clock to be
+> >> >> >> functional?
+> >> >> >> 
+> >> >> >> I find it quite odd to have a clock that isn't meant for a
+> >> >> >> particular
+> >> >> >> device to actually be wired to another device. I'm not saying this
+> >> >> >> isn't the case, but it would be a first.
+> >> >> > 
+> >> >> > Documentation doesn't say much about that gate. I did few tests and
+> >> >> > TCON
+> >> >> > registers can be read and written even if TCON TOP TV TCON gate is
+> >> >> > disabled. However, there is no image, as expected.
+> >> >> 
+> >> >> The R40 manual does include it in the diagram, on page 504. There's
+> >> >> also
+> >> >> a
+> >> >> mux to select whether the clock comes directly from the CCU or the TV
+> >> >> encoder (a feedback mode?). I assume this is the gate you are
+> >> >> referring
+> >> >> to
+> >> >> here, in which case it is not a bus clock, but rather the TCON module
+> >> >> or
+> >> >> channel clock, strangely routed.
+> >> >> 
+> >> >> > More interestingly, I enabled test pattern directly in TCON to
+> >> >> > eliminate
+> >> >> > influence of the mixer. As soon as I disabled that gate, test
+> >> >> > pattern
+> >> >> > on
+> >> >> > HDMI screen was gone, which suggest that this gate influences
+> >> >> > something
+> >> >> > inside TCON.
+> >> >> > 
+> >> >> > Another test I did was that I moved enable/disable gate code to
+> >> >> > sun4i_tcon_channel_set_status() and it worked just as well.
+> >> >> > 
+> >> >> > I'll ask AW engineer what that gate actually does, but from what I
+> >> >> > saw,
+> >> >> > I
+> >> >> > would say that most appropriate location to enable/disable TCON TOP
+> >> >> > TV
+> >> >> > TCON
+> >> >> > gate is TCON driver. Alternatively, TCON TOP driver could check if
+> >> >> > any
+> >> >> > TV
+> >> >> > TCON is in use and enable appropriate gate. However, that doesn't
+> >> >> > sound
+> >> >> > right to me for some reason.
+> >> >> 
+> >> >> If what I said above it true, then yes, the appropriate location to
+> >> >> enable
+> >> >> it is the TCON driver, but moreover, the representation of the clock
+> >> >> tree
+> >> >> should be fixed such that the TCON takes the clock from the TCON TOP
+> >> >> as
+> >> >> its
+> >> >> channel/ module clock instead. That way you don't need this patch, but
+> >> >> you'd add another for all the clock routing.
+> >> > 
+> >> > Can you be more specific? I not sure what you mean here.
+> >> 
+> >> For clock related properties in the device tree:
+> >> 
+> >> &tcon_top {
+> >> 
+> >>     clocks = <&ccu CLK_BUS_TCON_TOP>,
+> >>     
+> >>              <&ccu CLK_TCON_TV0>,
+> >>              <&tve0>,
+> >>              <&ccu CLK_TCON_TV1>,
+> >>              <&tve1>;
+> >>     
+> >>     clock-names = "bus", "tcon-tv0", "tve0", "tcon-tv1", "tve1";
+> >>     clock-output-names = "tcon-top-tv0", "tcon-top-tv1";
+> >> 
+> >> };
+> >> 
+> >> &tcon_tv0 {
+> >> 
+> >>     clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>'
+> >>     clock-names = "ahb", "tcon-ch1";
+> >> 
+> >> };
+> >> 
+> >> A diagram would look like:
+> >>                    | This part is TCON TOP |
+> >>                    
+> >>                    v                       v
+> >> 
+> >> CCU CLK_TCON_TV0 --|----\                  |
+> >> 
+> >>                    |     mux ---- gate ----|-- TCON_TV0
+> >> 
+> >> TVE0 --------------|----/                  |
+> >> 
+> >> And the same goes for TCON_TV1 and TVE1.
+> >> 
+> >> The user manual is a bit lacking on how TVE outputs a clock though.
 > > 
-> > -Tero
-> >   
-> >> but I'm very uncertain whether that's the right path.
-> >> Should omap_dm_timer know that the clock returned is actually a child of the
-> >> clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the
-> >> timerN_fck in the first place? Or is the problem something else entirely?
-> >>
-> >> As I'm not sure how these pieces are all intended to fit together, any
-> >> pointers would be appreciated.
-> >>
-> >> Thanks,
-> >> David Rivshin
-> >>
-> >> [1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data")
-> >> https://www.spinics.net/lists/linux-omap/msg139798.html
-> >> [2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
-> >> https://www.spinics.net/lists/linux-omap/msg140605.html
-> >>  
+> > I didn't yet received any response on HW details from AW till now, but I
+> > would like to post new version of patches soon.
 > > 
-> > -- 
-> > Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki  
+> > While chaining like you described could be implemented easily, I don't
+> > think it really represents HW as it is. Tests showed that these two
+> > clocks are independent, otherwise register writes/reads wouldn't be
+> > possible with tcon- top gate disabled. I chose tcon-top bus clock as a
+> > parent becase if it is not enabled, it simply won't work.
 > 
+> AFAIK with the TCONs, even when the TCON channel clock (not the bus clock)
+> is disabled, register accesses still work.
 
+You're right, I just tested that.
+
+> I'm saying that the TCON TOP
+> gate is downstream from the TCON channel clock in the CCU. These are not
+> related to the TCON bus clock in the CCU, which affects register access.
+> 
+> Did Allwinner provide any information regarding the hierarchy of the clocks?
+
+No reponse for now.
+
+> > However, if everyone feels chaining is the best way to implement it, I'll
+> > do it.
+> 
+> I would like to get it right and match actual hardware. My proposal is
+> based on my understanding from the diagrams in the user manual.
+
+So for now, your explanation is the most reasonable. Should we go ahead and 
+implement your idea?
+
+Please note that H6 has TCON-TOP too, but it has only one LCD TCON and one TV 
+TCON instead of two of each kind. That means we will have hole in indices 
+(tcon_lcd0 is 1, tcon_tv0 is 3, which is aligned with R40) and different TCON-
+TOP binding (no tcon_tv1 channel clock), but setup is exactly the same.
+
+Best regard,
+Jernej
