@@ -1,45 +1,59 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
- the aemif clock
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-2-brgl@bgdev.pl>
- <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
- <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
-Date: Mon, 25 Jun 2018 11:06:46 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37300 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932466AbeFUIPU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:15:20 -0400
+From: Keerthy <j-keerthy@ti.com>
+To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v3 0/4] clk: clk: Add functions to save/restore clock context en-masse
+Date: Thu, 21 Jun 2018 13:45:03 +0530
+Message-ID: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
-> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
->> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
->>>
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> We want to be able to get the clock both from the board file by its
->>> con_id and from the aemif driver by dev_id.
->>
->>
->> What about the other SoCs? Don't they need this change as well?
->>
-> 
-> So I double checked and turns out I missed one other board that's
-> affected by this series and calls clk_get() from machine code:
-> dm644x-evm.
-> 
-> I'll fix it in v2.
+Deep enough power saving mode can result into losing context of the clock
+registers also, and they need to be restored once coming back from the power
+saving mode. Hence add functions to save/restore clock context.
 
-The ti-aemif platform driver also does clk_get(). Don't you need
-lookups to make that work as well? For example, DA830 doesn't have
-a clock lookup for aemif at all.
+Tested for DS0 on am437x-gp-evm
+
+Based on top of linux-next
+
+Changes in v2:
+
+        * Renamed clk_dflt_restore to clk_gate_restore_context
+
+Changes in v3: Corrected the e-mail address of linux-omap list
+
+Keerthy (2):
+  clk: clk: Add clk_gate_restore_context function
+  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
+    setting
+
+Russ Dill (2):
+  clk: clk: Add functions to save/restore clock context en-masse
+  clk: ti: Add functions to save/restore clk context
+
+ arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
+ drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h               |   2 +
+ drivers/clk/ti/divider.c             |  36 ++++++++++
+ drivers/clk/ti/dpll.c                |   6 ++
+ drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/gate.c                |   3 +
+ drivers/clk/ti/mux.c                 |  29 ++++++++
+ drivers/soc/ti/pm33xx.c              |  13 ++++
+ include/linux/clk-provider.h         |   9 +++
+ include/linux/clk.h                  |  25 +++++++
+ include/linux/clk/ti.h               |   6 ++
+ include/linux/platform_data/pm33xx.h |   1 +
+ 13 files changed, 362 insertions(+)
+
+-- 
+1.9.1
+
