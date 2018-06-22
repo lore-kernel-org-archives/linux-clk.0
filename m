@@ -1,85 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
-Date: Mon, 25 Jun 2018 14:02:50 +0200
-Message-Id: <20180625120304.7543-11-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Message-ID: <1529664085.2900.3.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: audio-divider is one based
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Fri, 22 Jun 2018 12:41:25 +0200
+In-Reply-To: <e8898e54-24b1-ec77-1b08-390607640747@baylibre.com>
+References: <20180619154753.12788-1-jbrunet@baylibre.com>
+         <e8898e54-24b1-ec77-1b08-390607640747@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Current "old" method to find engine worked pretty well for DE2. However,
-it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
-TOP has multiple input ports, but current engine search algorithm
-expects only one.
+On Wed, 2018-06-20 at 10:31 +0200, Neil Armstrong wrote:
+> On 19/06/2018 17:47, Jerome Brunet wrote:
+> > The audio divider is one based. This offset was mistakenly dropped from
+> > recalc_rate() when migrating to clk_regmap.
+> > 
+> > Fixes: 88a4e1283681 ("clk: meson: migrate the audio divider clock to clk_regmap")
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/meson/clk-audio-divider.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
+> > index 58f546e04807..e4cf96ba704e 100644
+> > --- a/drivers/clk/meson/clk-audio-divider.c
+> > +++ b/drivers/clk/meson/clk-audio-divider.c
+> > @@ -51,7 +51,7 @@ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
+> >  	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
+> >  	unsigned long divider;
+> >  
+> > -	divider = meson_parm_read(clk->map, &adiv->div);
+> > +	divider = meson_parm_read(clk->map, &adiv->div) + 1;
+> >  
+> >  	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
+> >  }
+> > 
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
 
-This can be fixed by first looking for output port id and selecting
-matching input by subtracting 1 for the next round. This work even if
-there is only one input and output.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 08747fc3ee71..264bcc43da11 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device *dev,
-  */
- static struct sunxi_engine *
- sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
--				struct device_node *node)
-+				struct device_node *node,
-+				u32 port_id)
- {
- 	struct device_node *port, *ep, *remote;
- 	struct sunxi_engine *engine = ERR_PTR(-EINVAL);
-+	u32 reg = 0;
- 
--	port = of_graph_get_port_by_id(node, 0);
-+	port = of_graph_get_port_by_id(node, port_id);
- 	if (!port)
- 		return ERR_PTR(-EINVAL);
- 
-@@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
- 		if (remote == engine->node)
- 			goto out_put_remote;
- 
-+	/*
-+	 * According to device tree binding input ports have even id
-+	 * number and output ports have odd id. Since component with
-+	 * more than one input and one output (TCON TOP) exits, correct
-+	 * remote input id has to be calculated by subtracting 1 from
-+	 * remote output id. If this for some reason can't be done, 0
-+	 * is used as input port id.
-+	 */
-+	port = of_graph_get_remote_port(ep);
-+	if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
-+		reg -= 1;
-+
- 	/* keep looking through upstream ports */
--	engine = sun4i_tcon_find_engine_traverse(drv, remote);
-+	engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
- 
- out_put_remote:
- 	of_node_put(remote);
-@@ -950,7 +964,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
- 
- 	/* Fallback to old method by traversing input endpoints */
- 	of_node_put(port);
--	return sun4i_tcon_find_engine_traverse(drv, node);
-+	return sun4i_tcon_find_engine_traverse(drv, node, 0);
- }
- 
- static int sun4i_tcon_bind(struct device *dev, struct device *master,
--- 
-2.18.0
+Applied for fixes
