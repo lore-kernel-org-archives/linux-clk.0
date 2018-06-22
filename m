@@ -1,57 +1,90 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	aisheng.dong@nxp.com,
+	ping.bai@nxp.com
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
+Date: Fri, 22 Jun 2018 14:32:34 +0800
+Message-Id: <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Dan Carpenter <dan.carpenter@oracle.com>,
- David Lechner <david@lechnology.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Michael Turquette <mturquette@baylibre.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
- <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
-Message-ID: <152996958098.143105.4718477050150092384@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
-Date: Mon, 25 Jun 2018 16:33:00 -0700
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting David Lechner (2018-06-25 16:17:55)
-> On 06/02/2018 02:52 AM, Dan Carpenter wrote:
-> > There is a copy and paste bug here.  We should be testing "usb1" instead
-> > of "usb0".
-> > =
+i.MX6SLL has GPIO clock gates in CCM CCGR, add
+clock property for GPIO driver to make sure all
+GPIO banks work as expected.
 
-> > Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clock=
-s")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > =
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6sll.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/=
-da8xx-cfgchip.c
-> > index c971111d2601..20a120aa147e 100644
-> > --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> > +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> > @@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device =
-*dev, struct regmap *regmap)
-> >   =
-
-> >       usb1 =3D da8xx_cfgchip_register_usb1_clk48(dev, regmap);
-> >       if (IS_ERR(usb1)) {
-> > -             if (PTR_ERR(usb0) =3D=3D -EPROBE_DEFER)
-> > +             if (PTR_ERR(usb1) =3D=3D -EPROBE_DEFER)
-> >                       return -EPROBE_DEFER;
-> >   =
-
-> >               dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
-> > =
-
-> =
-
-> Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
-> =
-
-
-Ok. I expect this will be coming in a PR soon? Usually I can pick up
-fixes just fine from the list and merge them on up to Linus, unless you
-feel the need to pick it into your development tree to base future
-development on.
+diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
+index c9b0ccc..116f561 100644
+--- a/arch/arm/boot/dts/imx6sll.dtsi
++++ b/arch/arm/boot/dts/imx6sll.dtsi
+@@ -375,6 +375,7 @@
+ 				reg = <0x0209c000 0x4000>;
+ 				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO1>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -386,6 +387,7 @@
+ 				reg = <0x020a0000 0x4000>;
+ 				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO2>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -397,6 +399,7 @@
+ 				reg = <0x020a4000 0x4000>;
+ 				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO3>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -408,6 +411,7 @@
+ 				reg = <0x020a8000 0x4000>;
+ 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO4>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -419,6 +423,7 @@
+ 				reg = <0x020ac000 0x4000>;
+ 				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO5>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+@@ -430,6 +435,7 @@
+ 				reg = <0x020b0000 0x4000>;
+ 				interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clks IMX6SLL_CLK_GPIO6>;
+ 				gpio-controller;
+ 				#gpio-cells = <2>;
+ 				interrupt-controller;
+-- 
+2.7.4
