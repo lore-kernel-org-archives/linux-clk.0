@@ -1,139 +1,46 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 07/27] drm/sun4i: Split out code for enumerating endpoints in output port
-Date: Tue, 12 Jun 2018 22:00:16 +0200
-Message-Id: <20180612200036.21483-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1529667246.2900.6.camel@baylibre.com>
+Subject: Re: [PATCH v2 0/6] clk: meson: axg: add audio clock controller
+ support
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>, Carlo Caione
+ <carlo@caione.org>,  Kevin Hilman <khilman@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 22 Jun 2018 13:34:06 +0200
+In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
+References: <20180522163457.13834-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now, each node has one input port and one output port. However,
-with TCON TOP this is no longer true. It has 3 input and 3 output ports.
+On Tue, 2018-05-22 at 18:34 +0200, Jerome Brunet wrote:
+> The purpose of this patchset is to add support for the clock controller
+> dedicated to the audio subsystem found on A113 based SoCs
+> 
+> The series depends on the CLK_MUX_ROUND_CLOSEST fixes [merged in clk-next]
+> and the duty cycle support [1] making their way into CCF.
+> 
+> First patch is a clean-up of the meson clk Kconfig.
+> Then, there is 3 clock provider drivers for clocks found in the audio
+> The last 3 are for the clock controller itself.
+> 
+> Changes since v1: [2]
+>  * Rebase clk-meson's next/drivers
+>  * Correct typo in documentation and squash DT patches
+> 
+> [1]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
+> [2]: https://lkml.kernel.org/r/20180425163304.10852-1-jbrunet@baylibre.com
+> 
+> Jerome Brunet (6):
+>   clk: meson: clean-up meson clock configuration
+>   clk: meson: add clk-phase clock driver
+>   clk: meson: add triple phase clock driver
+>   clk: meson: add axg audio sclk divider driver
+>   dt-bindings: clock: add meson axg audio clock controller bindings
+>   clk: meson: axg: add the audio clock controller driver
 
-In order to prepare to this situation, split out the code which checks
-all endpoints in input port and adds available components to fifo.
-
-This patch doesn't do any functional change.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 84 +++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index e15fa2389e3f..20193d6f33ba 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -231,12 +231,55 @@ struct endpoint_list {
- 	DECLARE_KFIFO(fifo, struct device_node *, 16);
- };
- 
-+static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
-+					 struct device_node *node,
-+					 int port_id)
-+{
-+	struct device_node *ep, *remote, *port;
-+
-+	port = of_graph_get_port_by_id(node, port_id);
-+	if (!port) {
-+		DRM_DEBUG_DRIVER("No output to bind on port %d\n", port_id);
-+		return;
-+	}
-+
-+	for_each_available_child_of_node(port, ep) {
-+		remote = of_graph_get_remote_port_parent(ep);
-+		if (!remote) {
-+			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
-+			continue;
-+		}
-+
-+		/*
-+		 * If the node is our TCON, the first port is used for
-+		 * panel or bridges, and will not be part of the
-+		 * component framework.
-+		 */
-+		if (sun4i_drv_node_is_tcon(node)) {
-+			struct of_endpoint endpoint;
-+
-+			if (of_graph_parse_endpoint(ep, &endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				of_node_put(remote);
-+				continue;
-+			}
-+
-+			if (!endpoint.id) {
-+				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+				of_node_put(remote);
-+				continue;
-+			}
-+		}
-+
-+		kfifo_put(&list->fifo, remote);
-+	}
-+}
-+
- static int sun4i_drv_add_endpoints(struct device *dev,
- 				   struct endpoint_list *list,
- 				   struct component_match **match,
- 				   struct device_node *node)
- {
--	struct device_node *port, *ep, *remote;
- 	int count = 0;
- 
- 	/*
-@@ -272,43 +315,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 		count++;
- 	}
- 
--	/* Inputs are listed first, then outputs */
--	port = of_graph_get_port_by_id(node, 1);
--	if (!port) {
--		DRM_DEBUG_DRIVER("No output to bind\n");
--		return count;
--	}
--
--	for_each_available_child_of_node(port, ep) {
--		remote = of_graph_get_remote_port_parent(ep);
--		if (!remote) {
--			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
--			continue;
--		}
--
--		/*
--		 * If the node is our TCON, the first port is used for
--		 * panel or bridges, and will not be part of the
--		 * component framework.
--		 */
--		if (sun4i_drv_node_is_tcon(node)) {
--			struct of_endpoint endpoint;
--
--			if (of_graph_parse_endpoint(ep, &endpoint)) {
--				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
--				of_node_put(remote);
--				continue;
--			}
--
--			if (!endpoint.id) {
--				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
--				of_node_put(remote);
--				continue;
--			}
--		}
--
--		kfifo_put(&list->fifo, remote);
--	}
-+	/* each node has at least one output */
-+	sun4i_drv_traverse_endpoints(list, node, 1);
- 
- 	return count;
- }
--- 
-2.17.1
+Applied for next on top of mike's clk-core-duty-cycle branch.
