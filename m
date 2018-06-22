@@ -1,79 +1,38 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 2/2] clk: qcom: gcc: Register QUPv3 RCGs for DFS on SDM845
-Date: Thu, 28 Jun 2018 17:17:31 +0530
-Message-Id: <1530186451-24648-3-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
-References: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-2-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 15:21:47 +0200
+Message-ID: <CAMuHMdUr+PT540D+MK5kuAsZW+4MRu5KE+kid6QZkMacRjAsXw@mail.gmail.com>
+Subject: Re: [PATCH v9 1/5] dt-bindings: Add the r9a06g032-sysctrl.h file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-QUPv3 clocks support DFS and thus register the RCGs which require support
-for the same.
+On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the constants necessary to use the renesas,r9a06g032-sysctrl node.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gcc-sdm845.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+Thanks, queuing in clk-renesas-for-v4.19.
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index e78e6f5..034c762 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3421,9 +3421,29 @@ enum {
- };
- MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+Gr{oetje,eeting}s,
 
-+static struct clk_rcg2 *gcc_dfs_clocks[] = {
-+	&gcc_qupv3_wrap0_s0_clk_src,
-+	&gcc_qupv3_wrap0_s1_clk_src,
-+	&gcc_qupv3_wrap0_s2_clk_src,
-+	&gcc_qupv3_wrap0_s3_clk_src,
-+	&gcc_qupv3_wrap0_s4_clk_src,
-+	&gcc_qupv3_wrap0_s5_clk_src,
-+	&gcc_qupv3_wrap0_s6_clk_src,
-+	&gcc_qupv3_wrap0_s7_clk_src,
-+	&gcc_qupv3_wrap1_s0_clk_src,
-+	&gcc_qupv3_wrap1_s1_clk_src,
-+	&gcc_qupv3_wrap1_s2_clk_src,
-+	&gcc_qupv3_wrap1_s3_clk_src,
-+	&gcc_qupv3_wrap1_s4_clk_src,
-+	&gcc_qupv3_wrap1_s5_clk_src,
-+	&gcc_qupv3_wrap1_s6_clk_src,
-+	&gcc_qupv3_wrap1_s7_clk_src,
-+};
-+
- static int gcc_sdm845_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	int ret;
+                        Geert
 
- 	regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
- 	if (IS_ERR(regmap))
-@@ -3437,7 +3457,12 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
- 	regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
--	return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-+	if (ret)
-+		return ret;
-+
-+	return qcom_cc_register_rcg_dfs(pdev, gcc_dfs_clocks,
-+					ARRAY_SIZE(gcc_dfs_clocks));
- }
-
- static struct platform_driver gcc_sdm845_driver = {
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
