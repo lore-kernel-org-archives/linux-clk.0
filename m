@@ -1,30 +1,64 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
- kernel@pengutronix.de, mturquette@baylibre.com, shawnguo@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1528074406-11735-4-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
- <1528074406-11735-4-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <153029787526.143105.9890407619664364865@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 4/4] clk: imx6ul: remove clks_init_on array
-Date: Fri, 29 Jun 2018 11:44:35 -0700
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-3-git-send-email-michel.pollet@bp.renesas.com> <20180620154344.GA32205@rob-hp-laptop>
+In-Reply-To: <20180620154344.GA32205@rob-hp-laptop>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 15:27:27 +0200
+Message-ID: <CAMuHMdW5bfhPeHxdCeJEJrkWAXvxU4wSVvDErF2DhCQfvF1rUw@mail.gmail.com>
+Subject: Re: [PATCH v9 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+To: Rob Herring <robh@kernel.org>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-06-03 18:06:46)
-> Clock framework will enable those clocks registered
-> with CLK_IS_CRITICAL flag, so no need to have
-> clks_init_on array during clock initialization now.
-> =
+On Wed, Jun 20, 2018 at 5:43 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Jun 14, 2018 at 11:56:31AM +0100, Michel Pollet wrote:
+> > The Renesas R9A06G032 SYSCTRL node description.
+> >
+> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > ---
+> >  .../bindings/clock/renesas,r9a06g032-sysctrl.txt   | 44 ++++++++++++++++++++++
+> >  1 file changed, 44 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+>
+> One nit, otherwise:
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> ARM clock is busy divider type which has the
-> CLK_IS_CRITICAL flag set by default when registered.
-> =
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
 
-Applied to clk-next
+> > +Examples
+> > +--------
+> > +
+> > +  - SYSCTRL node:
+> > +
+> > +     sysctrl: system-controller@4000c000 {
+> > +             compatible = "renesas,r9a06g032-sysctrl";
+> > +             reg = <0x4000c000 0x1000>;
+> > +             status = "okay";
+>
+> Don't show status in examples.
+
+Thanks, queuing in clk-renesas-for-v4.19 with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
