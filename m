@@ -1,39 +1,94 @@
-Return-Path: <bgolaszewski@baylibre.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	aisheng.dong@nxp.com,
+	ping.bai@nxp.com
+Cc: Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
+Date: Fri, 22 Jun 2018 14:32:33 +0800
+Message-Id: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
-References: <20180626092537.6737-1-brgl@bgdev.pl> <20180626092537.6737-5-brgl@bgdev.pl>
- <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Wed, 27 Jun 2018 12:03:30 +0200
-Message-ID: <CAMpxmJXpAECkA7FTLx-nR_w0ZEBUw_A7qpu2P6e_mS6k=pTsUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries
- for the aemif clock
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	arm-soc <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-27 12:01 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> We want to be able to get the clock both from the board file by its
->> con_id and from the aemif driver by dev_id.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> I see the DM365 and DM644x EVM board files getting reference to aemif
-> clock using just the con_id, but don't see that for DM646x. Am I
-> overlooking something?
->
-> Thanks,
-> Sekhar
+According to Reference Manual Rev.0, 06/2017,
+there are GPIO LPCGs defined in CCM CCGRs,
+add them into clock tree.
 
-It's being done indirectly from mach-davinci/aemif.c. I guess we can
-remove it again after last patch.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sll.c             | 6 ++++++
+ include/dt-bindings/clock/imx6sll-clock.h | 9 ++++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-Bart
+diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
+index 3651c77..6270645 100644
+--- a/drivers/clk/imx/clk-imx6sll.c
++++ b/drivers/clk/imx/clk-imx6sll.c
+@@ -253,6 +253,7 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SLL_CLK_DCP]		= imx_clk_gate2("dcp", "ahb", base + 0x68, 10);
+ 	clks[IMX6SLL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg", "ipg", base + 0x68, 28);
+ 	clks[IMX6SLL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf", base + 0x68, 28);
++	clks[IMX6SLL_CLK_GPIO2]		= imx_clk_gate2("gpio2", "ipg", base + 0x68, 30);
+ 
+ 	/* CCGR1 */
+ 	clks[IMX6SLL_CLK_ECSPI1]	= imx_clk_gate2("ecspi1",	"ecspi_podf", base + 0x6c, 0);
+@@ -267,13 +268,17 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SLL_CLK_GPT_SERIAL]	= imx_clk_gate2("gpt1_serial",	"perclk", base + 0x6c, 22);
+ 	clks[IMX6SLL_CLK_UART4_IPG]	= imx_clk_gate2("uart4_ipg",	"ipg", base + 0x6c, 24);
+ 	clks[IMX6SLL_CLK_UART4_SERIAL]	= imx_clk_gate2("uart4_serail",	"uart_podf", base + 0x6c, 24);
++	clks[IMX6SLL_CLK_GPIO1]		= imx_clk_gate2("gpio1",	"ipg", base + 0x6c, 26);
++	clks[IMX6SLL_CLK_GPIO5]		= imx_clk_gate2("gpio5",	"ipg", base + 0x6c, 30);
+ 
+ 	/* CCGR2 */
++	clks[IMX6SLL_CLK_GPIO6]		= imx_clk_gate2("gpio6",	"ipg",    base + 0x70, 0);
+ 	clks[IMX6SLL_CLK_CSI]		= imx_clk_gate2("csi",		"axi",    base + 0x70,	2);
+ 	clks[IMX6SLL_CLK_I2C1]		= imx_clk_gate2("i2c1",		"perclk", base + 0x70,	6);
+ 	clks[IMX6SLL_CLK_I2C2]		= imx_clk_gate2("i2c2",		"perclk", base + 0x70,	8);
+ 	clks[IMX6SLL_CLK_I2C3]		= imx_clk_gate2("i2c3",		"perclk", base + 0x70,	10);
+ 	clks[IMX6SLL_CLK_OCOTP]		= imx_clk_gate2("ocotp",	"ipg",    base + 0x70,	12);
++	clks[IMX6SLL_CLK_GPIO3]		= imx_clk_gate2("gpio3",	"ipg",    base + 0x70,	26);
+ 	clks[IMX6SLL_CLK_LCDIF_APB]	= imx_clk_gate2("lcdif_apb",	"axi",    base + 0x70,	28);
+ 	clks[IMX6SLL_CLK_PXP]		= imx_clk_gate2("pxp",		"axi",    base + 0x70,	30);
+ 
+@@ -283,6 +288,7 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SLL_CLK_EPDC_AXI]	= imx_clk_gate2("epdc_aclk",	"axi",		base + 0x74, 4);
+ 	clks[IMX6SLL_CLK_EPDC_PIX]	= imx_clk_gate2("epdc_pix",	"epdc_podf",	base + 0x74, 4);
+ 	clks[IMX6SLL_CLK_LCDIF_PIX]	= imx_clk_gate2("lcdif_pix",	"lcdif_podf",	base + 0x74, 10);
++	clks[IMX6SLL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74, 12);
+ 	clks[IMX6SLL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74, 16);
+ 	clks[IMX6SLL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf",  base + 0x74,	20, CLK_IS_CRITICAL);
+ 	clks[IMX6SLL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg", "ipg",	   base + 0x74,	24, CLK_IS_CRITICAL);
+diff --git a/include/dt-bindings/clock/imx6sll-clock.h b/include/dt-bindings/clock/imx6sll-clock.h
+index 151111e..1036475 100644
+--- a/include/dt-bindings/clock/imx6sll-clock.h
++++ b/include/dt-bindings/clock/imx6sll-clock.h
+@@ -197,6 +197,13 @@
+ #define IMX6SLL_CLK_EXTERN_AUDIO_PODF   171
+ #define IMX6SLL_CLK_EXTERN_AUDIO        172
+ 
+-#define IMX6SLL_CLK_END			173
++#define IMX6SLL_CLK_GPIO1               173
++#define IMX6SLL_CLK_GPIO2               174
++#define IMX6SLL_CLK_GPIO3               175
++#define IMX6SLL_CLK_GPIO4               176
++#define IMX6SLL_CLK_GPIO5               177
++#define IMX6SLL_CLK_GPIO6               178
++
++#define IMX6SLL_CLK_END			179
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SLL_H */
+-- 
+2.7.4
