@@ -1,113 +1,70 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	robh@kernel.org
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rohit Kumar <rohitkr@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
-Date: Thu, 14 Jun 2018 13:09:02 +0530
-Message-Id: <1528961943-12506-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1528961943-12506-1-git-send-email-tdas@codeaurora.org>
-References: <1528961943-12506-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 14:14:30 +0200
+Message-ID: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for Low Power Audio subsystem clock controller for
-Qualcomm Technology Inc's SDM845 SoCs.
+Hi Michel,
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,lpasscc.txt     | 46 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,lpass-sdm845.h      | 18 +++++++++
- 2 files changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+CC MarcZ
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-new file mode 100644
-index 0000000..16cabc4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-@@ -0,0 +1,46 @@
-+Qualcomm LPASS Clock Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible	: shall contain "qcom,sdm845-lpasscc"
-+- #clock-cells	: from common clock binding, shall contain 1.
-+
-+Note that #address-cells, #size-cells, and ranges shall be present to ensure
-+the lpasscc can address the various lpass cc registers.
-+
-+Child Node Properties :
-+The Low Pass Audio clock controller would need to define the following child
-+nodes with the properties.
-+- compatible	: shall contain all of the below for clocks in each LPASS domain
-+			"qcom,sdm845-lpass-gcc",
-+			"qcom,sdm845-lpass-cc",
-+			"qcom,sdm845-lpass-qdsp6ss"
-+- reg		: shall contain base register address and size,
-+
-+Example:
-+
-+The below node has to be defined in the cases where the LPASS peripheral loader
-+would bring the subsystem out of reset.
-+
-+	lpasscc: clock-controller {
-+		compatible = "qcom,sdm845-lpasscc";
-+			#clock-cells = <1>;
-+	                #address-cells = <1>;
-+		        #size-cells = <1>;
-+			ranges;
-+
-+			lpass_gcc@100000 {
-+				compatible = "qcom,sdm845-lpass-gcc";
-+				reg = <0x00147000 0x20>;
-+			};
-+
-+			lpass@17014000 {
-+				compatible = "qcom,sdm845-lpass-cc";
-+				reg = <0x17014000 0x1f004>;
-+			};
-+
-+			lpass_q6@17300020 {
-+				compatible = "qcom,sdm845-lpass-qdsp6ss";
-+				reg = <0x17300020 0x20>;
-+			};
-+		 };
-diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-new file mode 100644
-index 0000000..b9d816e
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+
-+#define GCC_LPASS_Q6_AXI_CLK				0
-+#define GCC_LPASS_SWAY_CLK				1
-+#define LPASS_AUDIO_WRAPPER_AON_CLK			2
-+#define LPASS_Q6SS_AHBM_AON_CLK				3
-+#define LPASS_Q6SS_AHBS_AON_CLK				4
-+#define LPASS_QDSP6SS_XO_CLK				5
-+#define LPASS_QDSP6SS_SLEEP_CLK				6
-+#define LPASS_QDSP6SS_CORE_CLK				7
-+
-+#endif
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles the SYSCTRL block note,
+> generic parts (gic, architected timer) and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+
+> +       timer {
+> +               compatible = "arm,cortex-a7-timer",
+
+Checkpatch says:
+WARNING: DT compatible string "arm,cortex-a7-timer" appears
+un-documented -- check ./Documentation/devicetree/bindings/
+
+> +                            "arm,armv7-timer";
+
+Documentation/devicetree/bindings/arm/arch_timer.txt says:
+
+    compatible should at least contain "arm,armv7-timer"
+
+but fails to list other possible values?
+
+> +               interrupt-parent = <&gic>;
+> +               arm,cpu-registers-not-fw-configured;
+> +               always-on;
+> +               interrupts =
+> +                       <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+> +                       <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
+> +       };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
