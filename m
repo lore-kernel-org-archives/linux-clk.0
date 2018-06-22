@@ -1,39 +1,37 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, adriana.reus@nxp.com,
- fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
- mturquette@baylibre.com, robh+dt@kernel.org, rui.silva@linaro.org,
- shawnguo@kernel.org, stefan@agner.ch
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <1526605266-18464-1-git-send-email-Anson.Huang@nxp.com>
- <1526605266-18464-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <152788068298.225090.12195731726234176520@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH V2 2/3] clk: imx7d: correct enet clock CCGR registers
-Date: Fri, 01 Jun 2018 12:18:02 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1529664130.2900.5.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: remove obsolete register access
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Fri, 22 Jun 2018 12:42:10 +0200
+In-Reply-To: <0e57617b-0ece-3c6d-f124-6197ef82b1c7@baylibre.com>
+References: <20180619160050.26958-1-jbrunet@baylibre.com>
+         <0e57617b-0ece-3c6d-f124-6197ef82b1c7@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-05-17 18:01:05)
-> Correct enet clock gates as below:
-> =
+On Wed, 2018-06-20 at 10:31 +0200, Neil Armstrong wrote:
+> On 19/06/2018 18:00, Jerome Brunet wrote:
+> > The legacy method to access the hhi register space is not longer used.
+> > We can safely drop it now.
+> > 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> >  drivers/clk/meson/axg.c  | 37 ++-----------------------------------
+> >  drivers/clk/meson/gxbb.c | 36 ++----------------------------------
+> >  2 files changed, 4 insertions(+), 69 deletions(-)
+> > 
+> > 
 
-> CCGR6: IMX7D_ENET_AXI_ROOT_CLK (enet1 and enet2 bus clocks)
-> CCGR112: IMX7D_ENET1_TIME_ROOT_CLK, IMX7D_ENET1_IPG_ROOT_CLK
-> CCGR113: IMX7D_ENET2_TIME_ROOT_CLK, IMX7D_ENET2_IPG_ROOT_CLK
-> =
+[...]
 
-> Just rename unused IMX7D_ENETx_REF_ROOT_CLK for
-> IMX7D_ENETx_IPG_ROOT_CLK instead of adding new clocks.
-> =
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-> Based on Andy Duan's patch from the NXP kernel tree.
-> =
-
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-
-Applied to clk-next
+Applied for next
