@@ -1,58 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:57409 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751325AbeFVMwi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:52:38 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 6/7] arm64: allwinner: a64: add device tree node for HDMI simplefb
-Date: Fri, 22 Jun 2018 20:45:39 +0800
-Message-Id: <20180622124540.56203-5-icenowy@aosc.io>
-In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
-References: <20180622124540.56203-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Jun 2018 15:29:30 +0200
+Message-ID: <CAMuHMdUin=CjcWvR=nCm9vN-8VWaNXbFt+3k_MUEOmqpKoe2mA@mail.gmail.com>
+Subject: Re: [PATCH v9 5/5] clk: renesas: Renesas R9A06G032 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-As the U-Boot bootloader now is also capable of initialize the HDMI on
-A64 boards, add a simplefb device tree node for accessing the HDMI
-framebuffer initialized by the bootloader.
+Hi Michel,
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Dropped LCD SimpleFB as it's already added. LCD SimpleFB needs some
-  fix but the fix is present when adding DE2 CCU.
+On Thu, Jun 14, 2018 at 1:03 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Thanks for your patch!
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 318c4ba8ae9f..840753432ea5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -68,6 +68,15 @@
- 				 <&display_clocks CLK_MIXER0>;
- 			status = "disabled";
- 		};
-+
-+		simplefb_hdmi: framebuffer-hdmi {
-+			compatible = "allwinner,simple-framebuffer",
-+				     "simple-framebuffer";
-+			allwinner,pipeline = "mixer1-lcd1-hdmi";
-+			clocks = <&display_clocks CLK_MIXER1>,
-+				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	cpus {
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+
+> +static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+> +{
+
+[...]
+
+> +       error = of_clk_add_provider(np, of_clk_src_onecell_get, &clocks->data);
+> +       if (error)
+> +               return error;
+> +
+> +       error = devm_add_action_or_reset(
+> +                       dev, r9a06g032_clocks_del_clk_provider, np);
+> +
+> +       return error;
+
+This could just be "return devm_add_action_or_reset(...);".
+
+Queuing in clk-renesas-for-v4.19 with the above small change.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
