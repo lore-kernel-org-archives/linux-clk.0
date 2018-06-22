@@ -1,113 +1,162 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Rajan Vaja <RAJANV@xilinx.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
- <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
-Message-ID: <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro CLK_OF_DECLARE_DRIVER
-Date: Fri, 01 Jun 2018 23:40:36 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 7/7] arm64: allwinner: a64: add HDMI regulator to all DTs' simplefb_hdmi
+Date: Fri, 22 Jun 2018 21:05:24 +0800
+Message-Id: <20180622130524.57131-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rajan Vaja (2018-05-03 02:18:30)
-> Hi Stephen,
-> =
+On usual A64 board design the power of HDMI controller is connected to
+DLDO1 of the AXP803 PMIC. If this regulator is shut down, the HDMI
+output will be blank. Therefore the simplefb driver should keep this
+regulator on.
 
-> > -----Original Message-----
-> > From: Rajan Vaja
-> > Sent: 16 March 2018 05:20 PM
-> > To: 'Stephen Boyd' <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Shah
-> > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> > mturquette@baylibre.com
-> > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
-> > CLK_OF_DECLARE_DRIVER
-> > =
+Add the regulator to all currently available A64 boards' simplefb_hdmi
+device node, if the board is capable of outputing HDMI.
 
-> > Hi Stephen,
-> > =
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Added HDMI regulator configuration on two A64 laptops (Pinebook and
+  TERES-I).
 
-> > Thanks for the comment.
-> > =
+ arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts       | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts        | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts     | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts           | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts         | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts | 4 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts          | 4 ++++
+ 8 files changed, 32 insertions(+)
 
-> > > -----Original Message-----
-> > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > > Sent: 16 March 2018 12:17 AM
-> > > To: Rajan Vaja <RAJANV@xilinx.com>
-> > > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Jolly Sh=
-ah
-> > > <JOLLYS@xilinx.com>; Michal Simek <michals@xilinx.com>;
-> > > mturquette@baylibre.com
-> > > Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
-> > > CLK_OF_DECLARE_DRIVER
-> > >
-> > > Quoting Rajan Vaja (2018-03-09 11:27:40)
-> > > > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > > > >
-> > > > > Is the intent to register the clk twice? I believe things are wor=
-king as
-> > > > > intended without this patch, so maybe you can explain a little mo=
-re what
-> > > > > you're trying to fix.
-> > > > [Rajan] Yes. During of_clk_init() if some DT fixed factor clock has
-> > > > parent which is neither mentioned in output-clock-names of clock
-> > > > controller nor registered as clock provider, of_clk_init() will try=
- to
-> > > > forcefully register in second loop.
-> > > >
-> > > >                         if (force || parent_ready(clk_provider->np)=
-) {
-> > > >
-> > > >                                 /* Don't populate platform devices =
-*/
-> > > >                                 of_node_set_flag(clk_provider->np,
-> > > >                                                  OF_POPULATED);
-> > > >
-> > > > So registration of this DT fixed-factor clock would fail as parent
-> > > > would be NULL as below (called from _of_fixed_factor_clk_setup()):
-> > > > parent_name =3D of_clk_get_parent_name(node, 0);
-> > > >
-> > > > On the other hand, even if registration failed, that node will be
-> > > > marked as OF_POPULATED, so probe of clk-fixed-factor.c will also not
-> > > > be called and that DT fixed-factor clock would never be registered.
-> > > >
-> > > > Same thing is discussed at  https://lkml.org/lkml/2017/6/5/681 .
-> > >
-> > > Ok. I believe the answer is to fix the DT to describe the parent chain
-> > > properly with clock-output-names. Otherwise, we have no good way of
-> > > figuring out what the name should be.
-> > [Rajan] clock DT binding doc says that clock-output-names property
-> > is optional and sometimes not recommended.
-> > I think this patch fixes the issue we have which mandates to add clock-=
-output-
-> > names
-> > property (for this particular case). Also, IIUC platform driver probe i=
-n clk-fixed-
-> > factor.c
-> > will never be called unless we use CLK_OF_DECLARE_DRIVER.
-> > I completely agree that proper solution would be to stop using strings =
-to
-> > describe clock topology.
-> [Rajan] Any comments on this?
-> Unless we have proper solution ready, we need to have some mechanism to h=
-andle this scenario.
-> clock-output-names is optional and without this, it mandates to use clock=
--output-names.
-> =
-
-
-I couldn't read your outlook sent email and I was too busy to go
-translate it. Some bug in my MUA it seems.
-
-Can you add the output-names property? In this case it's practically
-mandatory, so if you can't do it I'd like to hear why not.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 0716b1441187..094cfed13df9 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -296,6 +296,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index e2dce48fa29a..98dbff19f5cc 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -195,6 +195,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3b3081b10ecb..3f531393eaee 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -214,6 +214,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index bf42690a3361..1221764f5719 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -191,6 +191,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+index a75825798a71..1b9b92e541d2 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -229,6 +229,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ /* On Euler connector */
+ &spdif {
+ 	status = "disabled";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+index 58253d6f9be1..104f8a6c6ca8 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+@@ -263,6 +263,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index abe179de35d7..c21f2331add6 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -134,6 +134,10 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index d9baab3dc96b..9065f30a758e 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -253,6 +253,10 @@
+ 	regulator-name = "vcc-rtc";
+ };
+ 
++&simplefb_hdmi {
++	vcc-hdmi-supply = <&reg_dldo1>;
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+2.17.1
