@@ -1,40 +1,130 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:38918 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754065AbeFTPsC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Jun 2018 11:48:02 -0400
-Date: Wed, 20 Jun 2018 09:47:59 -0600
-From: Rob Herring <robh@kernel.org>
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
-        boris.brezillon@bootlin.com, alexandre.belloni@bootlin.com,
-        broonie@kernel.org, sboyd@kernel.org, Cristian.Birsan@microchip.com
-Subject: Re: [PATCH v5 1/5] dt-bindings: clk: at91: add an I2S mux clock
-Message-ID: <20180620154759.GA4755@rob-hp-laptop>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
- <20180618141239.10892-2-codrin.ciubotariu@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180618141239.10892-2-codrin.ciubotariu@microchip.com>
+Received: from hermes.aosc.io ([199.195.250.187]:57171 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeFVMr7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:47:59 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 3/7] bus: add bus driver for accessing Allwinner A64 DE2
+Date: Fri, 22 Jun 2018 20:45:36 +0800
+Message-Id: <20180622124540.56203-2-icenowy@aosc.io>
+In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
+References: <20180622124540.56203-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 18, 2018 at 05:12:35PM +0300, Codrin Ciubotariu wrote:
-> The I2S mux clock can be used to select the I2S input clock. The
-> available parents are the peripheral and the generated clocks.
-> 
-> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> ---
-> 
-> Changes in v5:
-> 	- specified clock's parent;
-> 	- added a newline before adding the clock's compatible string;
-> 
->  .../devicetree/bindings/clock/at91-clock.txt  | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
+The "Display Engine 2.0" (usually called DE2) on the Allwinner A64 SoC
+is different from the ones on other Allwinner SoCs. It requires a SRAM
+region to be claimed, otherwise all DE2 subblocks won't be accessible.
 
-Well, since Alexandre promises all this is going to get re-worked soon:
+Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
+region when probing.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+No changes since v1.
+
+ drivers/bus/Kconfig      | 10 ++++++++
+ drivers/bus/Makefile     |  1 +
+ drivers/bus/sun50i-de2.c | 49 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+)
+ create mode 100644 drivers/bus/sun50i-de2.c
+
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index d1c0b60e9326..1851112ccc29 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -103,6 +103,16 @@ config SIMPLE_PM_BUS
+ 	  Controller (BSC, sometimes called "LBSC within Bus Bridge", or
+ 	  "External Bus Interface") as found on several Renesas ARM SoCs.
+ 
++config SUN50I_DE2_BUS
++	bool "Allwinner A64 DE2 Bus Driver"
++	  default ARM64
++	  depends on ARCH_SUNXI
++	  select SUNXI_SRAM
++	  help
++	  Say y here to enable support for Allwinner A64 DE2 bus driver. It's
++	  mostly transparent, but a SRAM region needs to be claimed in the SRAM
++	  controller to make the all blocks in the DE2 part accessible.
++
+ config SUNXI_RSB
+ 	tristate "Allwinner sunXi Reduced Serial Bus Driver"
+ 	  default MACH_SUN8I || MACH_SUN9I || ARM64
+diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
+index b8f036cca7ff..ca300b1914ce 100644
+--- a/drivers/bus/Makefile
++++ b/drivers/bus/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_OMAP_INTERCONNECT)	+= omap_l3_smx.o omap_l3_noc.o
+ 
+ obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
+ obj-$(CONFIG_QCOM_EBI2)		+= qcom-ebi2.o
++obj-$(CONFIG_SUN50I_DE2_BUS)	+= sun50i-de2.o
+ obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
+ obj-$(CONFIG_SIMPLE_PM_BUS)	+= simple-pm-bus.o
+ obj-$(CONFIG_TEGRA_ACONNECT)	+= tegra-aconnect.o
+diff --git a/drivers/bus/sun50i-de2.c b/drivers/bus/sun50i-de2.c
+new file mode 100644
+index 000000000000..836828ef96d5
+--- /dev/null
++++ b/drivers/bus/sun50i-de2.c
+@@ -0,0 +1,49 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Allwinner A64 Display Engine 2.0 Bus Driver
++ *
++ * Copyright (C) 2018 Icenowy Zheng <icenowy@aosc.io>
++ */
++
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/soc/sunxi/sunxi_sram.h>
++
++static int sun50i_de2_bus_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	int ret;
++
++	ret = sunxi_sram_claim(&pdev->dev);
++	if (ret) {
++		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
++		return ret;
++	}
++
++	if (np)
++		of_platform_populate(np, NULL, NULL, &pdev->dev);
++
++	return 0;
++}
++
++static int sun50i_de2_bus_remove(struct platform_device *pdev)
++{
++	sunxi_sram_release(&pdev->dev);
++	return 0;
++}
++
++static const struct of_device_id sun50i_de2_bus_of_match[] = {
++	{ .compatible = "allwinner,sun50i-a64-de2", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver sun50i_de2_bus_driver = {
++	.probe = sun50i_de2_bus_probe,
++	.remove = sun50i_de2_bus_remove,
++	.driver = {
++		.name = "sun50i-de2-bus",
++		.of_match_table = sun50i_de2_bus_of_match,
++	},
++};
++
++builtin_platform_driver(sun50i_de2_bus_driver);
+-- 
+2.17.1
+
