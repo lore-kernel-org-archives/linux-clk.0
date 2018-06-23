@@ -1,82 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:20695 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753899AbeFKGHc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Jun 2018 02:07:32 -0400
-Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
- <20180606060826.14671-5-faiz_abbas@ti.com>
- <20180607073530.GH5738@atomide.com>
- <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
- <20180608062158.GI5738@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
-Date: Mon, 11 Jun 2018 11:38:44 +0530
+Return-Path: <woods.technical@gmail.com>
+Return-Path: <woods.technical@gmail.com>
+Date: Sat, 23 Jun 2018 09:38:43 -0500
+From: "Derald D. Woods" <woods.technical@gmail.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: t-kristo@ti.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-omap@vger.kernel.org,
+	tony@atomide.com, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: omap3: Fix am3517 mdio clock alias
+Message-ID: <20180623143824.GA14050@ethiopia>
+References: <20180623110912.20633-1-aford173@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180608062158.GI5738@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180623110912.20633-1-aford173@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tony,
-
-On Friday 08 June 2018 11:51 AM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180607 10:24]:
->> Hi,
->>
->> On Thursday 07 June 2018 01:05 PM, Tony Lindgren wrote:
->>> * Faiz Abbas <faiz_abbas@ti.com> [180606 06:14]:
->>>> +static int sysc_reset(struct sysc *ddata)
->>>> +{
->>>> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
->>>> +	int val = sysc_read(ddata, offset);
->>>> +
->>>> +	val |= (0x1 << ddata->cap->regbits->srst_shift);
->>>> +	sysc_write(ddata, offset, val);
->>>> +
->>>> +	/* Poll on reset status */
->>>> +	if (ddata->cfg.quirks & SYSC_QUIRK_RESET_STATUS) {
->>>> +		offset = ddata->offsets[SYSC_SYSSTATUS];
->>>> +
->>>> +		return readl_poll_timeout(ddata->module_va + offset, val,
->>>> +				(val & ddata->cfg.syss_mask) == 0x0,
->>>> +				100, MAX_MODULE_SOFTRESET_WAIT);
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>
->>> I wonder if we should also add SYSS_QUIRK_RESET_STATUS in
->>> addition to SYSC_QUIRK_RESET status to make it easy to
->>> read the right register?
->>
->> I assumed SYSC_QUIRK is the prefix to indicate the ti-sysc driver not
->> the register. Are there layouts in which the reset status bit is in the
->> sysconfig register rather than the sysstatus register?
+On Sat, Jun 23, 2018 at 06:09:12AM -0500, Adam Ford wrote:
+> A previous patch removed OMAP clock aliases that were perceived
+> to be unnecessary.  Unfortunately, it broke the ethernet on the
+> am3517-evm.  This patch renables the MDIO clock.
 > 
-> Yes we can have reset status bit in either syss or syssconfig register.
-
-You mean sysstatus and sysconfig right?
-
-> We detect that in sysc_init_syss_mask() but we should also set something
-> at that point to make it clear which reset to use. But as we don't need
-> the quirk flag, it's probably set a function pointer after the detection.
-> So how about let's have two functions sysc_reset() and sysc_syss_reset()
-> and then we can implement sysc_syss_reset() in a separate patch after
-> testing it when we have a non-platform data using example for
-> sysc_syss_reset().
+> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+> Cc: stable@vger.kernel.org #4.16+
 > 
 
-Shouldn't the function I add be called sysc_syss_reset()? The reset
-status bit is in the sysstatus.
+On AM3517-EVM, you can add:
 
-Thanks,
-Faiz
+Tested-by: Derald D. Woods <woods.technical@gmail.com>
 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> 
+> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+> index 8aa5f5793835..f84734bd0aa7 100644
+> --- a/drivers/clk/ti/clk-3xxx.c
+> +++ b/drivers/clk/ti/clk-3xxx.c
+> @@ -254,6 +254,8 @@ static struct ti_dt_clk omap36xx_am35xx_omap3430es2plus_clks[] = {
+>  };
+>  
+>  static struct ti_dt_clk am35xx_clks[] = {
+> +	DT_CLK("davinci_emac.0", NULL, "emac_ick"),
+> +	DT_CLK("davinci_mdio.0", NULL, "emac_fck"),
+>  	DT_CLK(NULL, "hsotgusb_ick", "hsotgusb_ick_am35xx"),
+>  	DT_CLK(NULL, "hsotgusb_fck", "hsotgusb_fck_am35xx"),
+>  	DT_CLK(NULL, "uart4_ick", "uart4_ick_am35xx"),
+> -- 
+> 2.17.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
