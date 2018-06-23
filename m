@@ -1,111 +1,226 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 04/14] dt-bindings: clock: Document qcom,hfpll
-Date: Tue, 19 Jun 2018 19:15:15 +0530
-Message-Id: <1529415925-28915-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 1/3] clk: qcom: Move frequency table macro to common file
+Date: Sat, 23 Jun 2018 19:49:25 +0530
+Message-Id: <1529763567-13131-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Frequency table macro is used by multiple clock drivers, move frequency
+table macro to common header file.
 
-Adds bindings document for qcom,hfpll instantiated within
-the Krait processor subsystem as separate register region.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
-[v10] Updated to add clocks and clock-names properties newly
+ drivers/clk/qcom/clk-rcg.h        | 2 ++
+ drivers/clk/qcom/gcc-apq8084.c    | 2 --
+ drivers/clk/qcom/gcc-ipq4019.c    | 2 --
+ drivers/clk/qcom/gcc-ipq8074.c    | 2 --
+ drivers/clk/qcom/gcc-msm8916.c    | 2 --
+ drivers/clk/qcom/gcc-msm8974.c    | 2 --
+ drivers/clk/qcom/gcc-msm8994.c    | 2 --
+ drivers/clk/qcom/gcc-msm8996.c    | 2 --
+ drivers/clk/qcom/gcc-msm8998.c    | 2 --
+ drivers/clk/qcom/gcc-sdm845.c     | 2 --
+ drivers/clk/qcom/mmcc-apq8084.c   | 2 --
+ drivers/clk/qcom/mmcc-msm8974.c   | 2 --
+ drivers/clk/qcom/mmcc-msm8996.c   | 2 --
+ drivers/clk/qcom/videocc-sdm845.c | 2 --
+ 14 files changed, 2 insertions(+), 26 deletions(-)
 
- .../devicetree/bindings/clock/qcom,hfpll.txt       | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b209a2f..dbd5a9e 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -7,6 +7,8 @@
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-new file mode 100644
-index 0000000..ec02a02
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -0,0 +1,60 @@
-+High-Frequency PLL (HFPLL)
++#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
 +
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>:
-+		shall contain only one of the following. The generic
-+		compatible "qcom,hfpll" should be also included.
-+
-+                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-+                        "qcom,hfpll-apq8064", "qcom,hfpll"
-+                        "qcom,hfpll-msm8974", "qcom,hfpll"
-+                        "qcom,hfpll-msm8960", "qcom,hfpll"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: address and size of HPLL registers. An optional second
-+		    element specifies the address and size of the alias
-+		    register region.
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the xo clock.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "xo".
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-+		    starting at 0. Otherwise hfpll_Y where Y is more specific
-+		    such as "l2".
-+
-+Example:
-+
-+1) An HFPLL for the L2 cache.
-+
-+	clock-controller@f9016000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf9016000 0x30>;
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+		clock-output-names = "hfpll_l2";
-+	};
-+
-+2) An HFPLL for CPU0. This HFPLL has the alias register region.
-+
-+	clock-controller@f908a000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+		clock-output-names = "hfpll0";
-+	};
--- 
-1.9.1
+ struct freq_tbl {
+ 	unsigned long freq;
+ 	u8 src;
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 486d961..9c99a71 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -106,8 +106,6 @@ enum {
+ 	"sleep_clk_src",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 46cb256..8902ad4 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -179,8 +179,6 @@ struct clk_fepll {
+ 	"ddrpllapss",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static const struct freq_tbl ftbl_gcc_audio_pwm_clk[] = {
+ 	F(48000000, P_XO, 1, 0, 0),
+ 	F(200000000, P_FEPLL200, 1, 0, 0),
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 0462f4a..505c626 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -32,8 +32,6 @@
+ #include "clk-regmap-mux.h"
+ #include "reset.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_GPLL0,
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index d6c7f50..ac2b0aa 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -264,8 +264,6 @@ enum {
+ 	"sleep_clk",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x21004,
+ 	.m_reg = 0x21008,
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 348e30d..08e2900d 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -62,8 +62,6 @@ enum {
+ 	"gpll4_vote",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 1e38efc..53f0f36 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -57,8 +57,6 @@ enum {
+ 	"gpll4",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_fixed_factor xo = {
+ 	.mult = 1,
+ 	.div = 1,
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 9f35b3f..9d3756c 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -32,8 +32,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_GPLL0,
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 78d87f5..9f0ae40 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -25,8 +25,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_AUD_REF_CLK,
+ 	P_CORE_BI_PLL_TEST_SE,
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index e78e6f5..19b470f 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -25,8 +25,6 @@
+ #include "gdsc.h"
+ #include "reset.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_BI_TCXO,
+ 	P_AUD_REF_CLK,
+diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
+index 30777f9..4ce1d7c 100644
+--- a/drivers/clk/qcom/mmcc-apq8084.c
++++ b/drivers/clk/qcom/mmcc-apq8084.c
+@@ -219,8 +219,6 @@ enum {
+ 	"sleep_clk_src",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll mmpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 715e7cd..9181851 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -184,8 +184,6 @@ enum {
+ 	"dsi1pllbyte",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll mmpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 1a25ee4..60f08b3 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -34,8 +34,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_MMPLL0,
+diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+index 9073b7a..5d6a772 100644
+--- a/drivers/clk/qcom/videocc-sdm845.c
++++ b/drivers/clk/qcom/videocc-sdm845.c
+@@ -18,8 +18,6 @@
+ #include "clk-pll.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_BI_TCXO,
+ 	P_CORE_BI_PLL_TEST_SE,
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
