@@ -1,489 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59201 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932888AbeFZK4K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jun 2018 06:56:10 -0400
-Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-To: "A.s. Dong" <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <66bc8ac0-913a-f444-e554-ade4df1306b6@pengutronix.de>
-Date: Tue, 26 Jun 2018 12:56:04 +0200
-MIME-Version: 1.0
-In-Reply-To: <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="jlrU39Y7eubSWT1VJIKYASgkst0f8sNn9"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 2/3] dt-bindings: clock: Introduce QCOM Display clock bindings
+Date: Sat, 23 Jun 2018 19:49:26 +0530
+Message-Id: <1529763567-13131-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---jlrU39Y7eubSWT1VJIKYASgkst0f8sNn9
-Content-Type: multipart/mixed; boundary="1Wt230pLOk8KFviUq2v8SSCINPepf9X64";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "A.s. Dong" <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Message-ID: <66bc8ac0-913a-f444-e554-ade4df1306b6@pengutronix.de>
-Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Add device tree bindings for display clock controller for Qualcomm
+Technology Inc's SDM845 SoCs.
 
---1Wt230pLOk8KFviUq2v8SSCINPepf9X64
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
-
-
-On 26.06.2018 12:09, A.s. Dong wrote:
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: Friday, June 15, 2018 5:51 PM
->> To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
->> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
->> Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>
->> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
->> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org; linu=
-x-
->> clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
->> Subject: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit=
-
->>
->> The Mailbox controller is able to send messages (up to 4 32 bit words)=
-
->> between the endpoints.
->>
->> This driver was tested using the mailbox-test driver sending messages
->> between the Cortex-A7 and the Cortex-M4.
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->>  drivers/mailbox/Kconfig       |   6 +
->>  drivers/mailbox/Makefile      |   2 +
->>  drivers/mailbox/imx-mailbox.c | 288
->> ++++++++++++++++++++++++++++++++++
->>  3 files changed, 296 insertions(+)
->>  create mode 100644 drivers/mailbox/imx-mailbox.c
->>
->> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig index
->> a2bb27446dce..e1d2738a2e4c 100644
->> --- a/drivers/mailbox/Kconfig
->> +++ b/drivers/mailbox/Kconfig
->> @@ -15,6 +15,12 @@ config ARM_MHU
->>  	  The controller has 3 mailbox channels, the last of which can be
->>  	  used in Secure mode only.
->>
->> +config IMX_MBOX
->> +	tristate "iMX Mailbox"
->> +	depends on SOC_IMX7D || COMPILE_TEST
->> +	help
->> +	  Mailbox implementation for iMX7D Messaging Unit (MU).
->> +
->>  config PLATFORM_MHU
->>  	tristate "Platform MHU Mailbox"
->>  	depends on OF
->> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile index=
-
->> cc23c3a43fcd..ba2fe1b6dd62 100644
->> --- a/drivers/mailbox/Makefile
->> +++ b/drivers/mailbox/Makefile
->> @@ -7,6 +7,8 @@ obj-$(CONFIG_MAILBOX_TEST)	+=3D mailbox-test.o
->>
->>  obj-$(CONFIG_ARM_MHU)	+=3D arm_mhu.o
->>
->> +obj-$(CONFIG_IMX_MBOX)	+=3D imx-mailbox.o
->> +
->>  obj-$(CONFIG_PLATFORM_MHU)	+=3D platform_mhu.o
->>
->>  obj-$(CONFIG_PL320_MBOX)	+=3D pl320-ipc.o
->> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailb=
-ox.c
->> new file mode 100644 index 000000000000..e3f621cb1d30
->> --- /dev/null
->> +++ b/drivers/mailbox/imx-mailbox.c
->> @@ -0,0 +1,288 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018 Pengutronix, Oleksij Rempel
->> +<o.rempel@pengutronix.de>  */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mailbox_controller.h>
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +
->> +/* Transmit Register */
->> +#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
->> +/* Receive Register */
->> +#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
->> +/* Status Register */
->> +#define IMX_MU_xSR		0x20
->> +#define IMX_MU_xSR_TEn(x)	BIT(20 + (x))
->> +#define IMX_MU_xSR_RFn(x)	BIT(24 + (x))
->> +#define IMX_MU_xSR_BRDIP	BIT(9)
->> +
->> +/* Control Register */
->> +#define IMX_MU_xCR		0x24
->> +/* Transmit Interrupt Enable */
->> +#define IMX_MU_xCR_TIEn(x)	BIT(20 + (x))
->> +/* Receive Interrupt Enable */
->> +#define IMX_MU_xCR_RIEn(x)	BIT(24 + (x))
->> +
->> +#define IMX_MU_MAX_CHANS	4u
->> +
->> +struct imx_mu_priv;
->> +
->> +struct imx_mu_cfg {
->> +	unsigned int		chans;
->> +	void (*init_hw)(struct imx_mu_priv *priv); };
->> +
->> +struct imx_mu_con_priv {
->> +	int			irq;
->> +	unsigned int		bidx;
->> +	unsigned int		idx;
->> +};
->> +
->> +struct imx_mu_priv {
->> +	struct device		*dev;
->> +	const struct imx_mu_cfg	*dcfg;
->> +	void __iomem		*base;
->> +
->> +	struct mbox_controller	mbox;
->> +	struct mbox_chan	mbox_chans[IMX_MU_MAX_CHANS];
->> +
->> +	struct imx_mu_con_priv  con_priv[IMX_MU_MAX_CHANS];
->> +	struct clk		*clk;
->> +};
->> +
->> +static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller *mbo=
-x)
->> +{
->> +	return container_of(mbox, struct imx_mu_priv, mbox); }
->> +
->> +static void imx_mu_write(struct imx_mu_priv *priv, u32 val, u32 offs)=
- {
->> +	iowrite32(val, priv->base + offs);
->> +}
->> +
->> +static u32 imx_mu_read(struct imx_mu_priv *priv, u32 offs) {
->> +	return ioread32(priv->base + offs);
->> +}
->> +
->> +static u32 imx_mu_rmw(struct imx_mu_priv *priv, u32 offs, u32 set, u3=
-2
->> +clr) {
->> +	u32 val;
->> +
->> +	val =3D imx_mu_read(priv, offs);
->> +	val &=3D ~clr;
->> +	val |=3D set;
->> +	imx_mu_write(priv, val, offs);
->> +
->> +	return val;
->> +}
->> +
->> +static irqreturn_t imx_mu_isr(int irq, void *p) {
->> +	struct mbox_chan *chan =3D p;
->> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->> +
->> +	u32 val, dat;
->> +
->> +	val =3D imx_mu_read(priv, IMX_MU_xSR);
->> +	val &=3D IMX_MU_xSR_TEn(cp->bidx) | IMX_MU_xSR_RFn(cp->bidx);
->> +	if (!val)
->> +		return IRQ_NONE;
->> +
->> +	if (val & IMX_MU_xSR_TEn(cp->bidx)) {
->=20
-> I'm wondering whether this can work properly for multi consumers
-> at the same time.=20
-> Because xSR_TEn is 1 by default and four virtual channels actually
-> are using the same interrupt. That means channel 1 interrupt may
-> cause channel 2 believe it's txdone.
-> Have we tested such using?
-
-see imx_mu_send_data()
-=2E.... imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
-
->=20
->> +		imx_mu_rmw(priv, IMX_MU_xCR, 0, IMX_MU_xCR_TIEn(cp-
->>> bidx));
-
-and here ^^^
-TX status is enabled only for send and disabled as soon at transfer is do=
-ne.
-
->> +		mbox_chan_txdone(chan, 0);
->> +	}
->> +
->> +	if (val & IMX_MU_xSR_RFn(cp->bidx)) {
->> +		dat =3D imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
->> +		mbox_chan_received_data(chan, (void *)&dat);
->> +	}
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static bool imx_mu_last_tx_done(struct mbox_chan *chan) {
->> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->> +	u32 val;
->> +
->> +	val =3D imx_mu_read(priv, IMX_MU_xSR);
->> +	/* test if transmit register is empty */
->> +	return (!!(val & IMX_MU_xSR_TEn(cp->bidx))); }
->> +
->> +static int imx_mu_send_data(struct mbox_chan *chan, void *data) {
->> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->> +	u32 *arg =3D data;
->> +
->> +	if (!imx_mu_last_tx_done(chan))
->> +		return -EBUSY;
->> +
->> +	imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
->> +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
->> +
->> +	return 0;
->> +}
->=20
-> Since Sascha is requesting to write a generic MU mailbox driver for bot=
-h
-> SCU MU and M4 case, the current way using virtual channels in this patc=
-h
-> only send one word a time obviously can't fit for SCU MU clients well.
-> Do you think if we can refer to TI case to design a generic data transf=
-er
-> protocol to allow send multi words which is more close to SCU?
-
-According to your code, you are able to send 1 word message. It means,
-your SCU is configured to trigger an interrupt or status update if REG0
-was written. The same is true for 2, 3, 4 and 5 word messages.
-
-If the MU configuration would look like you it described, you would be
-forced to write always 4 words, even for 1 word message.
-
-> include/linux/soc/ti/ti-msgmgr.h
-> struct ti_msgmgr_message {
->         size_t len;
->         u8 *buf;
-> }; =20
->=20
-> Or we try to support both type transfer protocols in this driver?
-
-Sure. ti-msgmgr.c is a good example. You will probably need reduced
-variant of it. It is generic enough to make it useful not only for SCU.
-
-> That may introduce much complexities, personally I'm not quite
-> like that.
-
-I expect 50-150 lines of extra code.
-
-> Regards
-> Dong Aisheng
->=20
->> +
->> +static int imx_mu_startup(struct mbox_chan *chan) {
->> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->> +	int ret;
->> +
->> +	ret =3D request_irq(cp->irq, imx_mu_isr,
->> +			  IRQF_SHARED, "imx_mu_chan", chan);
->> +	if (ret) {
->> +		dev_err(chan->mbox->dev,
->> +			"Unable to acquire IRQ %d\n", cp->irq);
->> +		return ret;
->> +	}
->> +
->> +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xCR_RIEn(cp->bidx), 0);
->> +
->> +	return 0;
->> +}
->> +
->> +static void imx_mu_shutdown(struct mbox_chan *chan) {
->> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->> +
->> +	imx_mu_rmw(priv, IMX_MU_xCR, 0,
->> +		   IMX_MU_xCR_TIEn(cp->bidx) | IMX_MU_xCR_RIEn(cp-
->>> bidx));
->> +
->> +	free_irq(cp->irq, chan);
->> +}
->> +
->> +static const struct mbox_chan_ops imx_mu_ops =3D {
->> +	.send_data =3D imx_mu_send_data,
->> +	.startup =3D imx_mu_startup,
->> +	.shutdown =3D imx_mu_shutdown,
->> +};
->> +
->> +static int imx_mu_probe(struct platform_device *pdev) {
->> +	struct device *dev =3D &pdev->dev;
->> +	struct resource *iomem;
->> +	struct imx_mu_priv *priv;
->> +	const struct imx_mu_cfg *dcfg;
->> +	unsigned int i, chans;
->> +	int irq, ret;
->> +
->> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +	if (!priv)
->> +		return -ENOMEM;
->> +
->> +	dcfg =3D of_device_get_match_data(dev);
->> +	if (!dcfg)
->> +		return -EINVAL;
->> +
->> +	priv->dcfg =3D dcfg;
->> +	priv->dev =3D dev;
->> +
->> +	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	priv->base =3D devm_ioremap_resource(&pdev->dev, iomem);
->> +	if (IS_ERR(priv->base))
->> +		return PTR_ERR(priv->base);
->> +
->> +	irq =3D platform_get_irq(pdev, 0);
->> +	if (irq <=3D 0)
->> +		return irq < 0 ? irq : -EINVAL;
->> +
->> +	priv->clk =3D devm_clk_get(dev, NULL);
->> +	if (IS_ERR(priv->clk)) {
->> +		if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
->> +			priv->clk =3D NULL;
->> +		} else {
->> +			dev_err(dev, "Failed to get clock\n");
->> +			return PTR_ERR(priv->clk);
->> +		}
->> +	}
->> +
->> +	ret =3D clk_prepare_enable(priv->clk);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to enable clock\n");
->> +		return ret;
->> +	}
->> +
->> +	chans =3D min(dcfg->chans, IMX_MU_MAX_CHANS);
->> +	/* Initialize channel identifiers */
->> +	for (i =3D 0; i < chans; i++) {
->> +		struct imx_mu_con_priv *cp =3D &priv->con_priv[i];
->> +
->> +		cp->bidx =3D 3 - i;
->> +		cp->idx =3D i;
->> +		cp->irq =3D irq;
->> +		priv->mbox_chans[i].con_priv =3D cp;
->> +	}
->> +
->> +	priv->mbox.dev =3D dev;
->> +	priv->mbox.ops =3D &imx_mu_ops;
->> +	priv->mbox.chans =3D priv->mbox_chans;
->> +	priv->mbox.num_chans =3D chans;
->> +	priv->mbox.txdone_irq =3D true;
->> +
->> +	platform_set_drvdata(pdev, priv);
->> +
->> +	if (priv->dcfg->init_hw)
->> +		priv->dcfg->init_hw(priv);
->> +
->> +	return mbox_controller_register(&priv->mbox);
->> +}
->> +
->> +static int imx_mu_remove(struct platform_device *pdev) {
->> +	struct imx_mu_priv *priv =3D platform_get_drvdata(pdev);
->> +
->> +	mbox_controller_unregister(&priv->mbox);
->> +	clk_disable_unprepare(priv->clk);
->> +
->> +	return 0;
->> +}
->> +
->> +
->> +static void imx_mu_init_imx7d_a(struct imx_mu_priv *priv) {
->> +	/* Set default config */
->> +	imx_mu_write(priv, 0, IMX_MU_xCR);
->> +}
->> +
->> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_a =3D {
->> +	.chans =3D IMX_MU_MAX_CHANS,
->> +	.init_hw =3D imx_mu_init_imx7d_a,
->> +};
->> +
->> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_b =3D {
->> +	.chans =3D IMX_MU_MAX_CHANS,
->> +};
->> +
->> +static const struct of_device_id imx_mu_dt_ids[] =3D {
->> +	{ .compatible =3D "fsl,imx7s-mu-a", .data =3D &imx_mu_cfg_imx7d_a },=
-
->> +	{ .compatible =3D "fsl,imx7s-mu-b", .data =3D &imx_mu_cfg_imx7d_b },=
-
->> +	{ },
->> +};
->> +MODULE_DEVICE_TABLE(of, imx_mu_dt_ids);
->> +
->> +static struct platform_driver imx_mu_driver =3D {
->> +	.probe		=3D imx_mu_probe,
->> +	.remove		=3D imx_mu_remove,
->> +	.driver =3D {
->> +		.name	=3D "imx_mu",
->> +		.of_match_table =3D imx_mu_dt_ids,
->> +	},
->> +};
->> +module_platform_driver(imx_mu_driver);
->> +
->> +MODULE_AUTHOR("Oleksij Rempel <o.rempel@pengutronix.de>");
->> +MODULE_DESCRIPTION("Message Unit driver for i.MX");
->> MODULE_LICENSE("GPL
->> +v2");
->> --
->> 2.17.1
->=20
->=20
->=20
-
-
---1Wt230pLOk8KFviUq2v8SSCINPepf9X64--
-
---jlrU39Y7eubSWT1VJIKYASgkst0f8sNn9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlsyG8QACgkQdQOiSHVI
-77SO+QgArMw8Xg6VLTLFKWfJvr1cLAj/xCUvRaXx9eYLoY7pBZ3Ejox89P7JC1Cc
-xLWvzOKtannhwiZTtTK5OtGgzbwDQ+YgLTdHx3CEny8yyq+HAjWTeKWPaFQ6lsFm
-b80G23bXqoHjMc/p8UA+TnTFWYJvz6OAxBJJvb8MFsSCnzYsIEsR5WDDjRIGoh6o
-nDQNEq9U9wA76RtlN/OyOMEQwzWsOUvJ5EoYbjgleuVNNBK3bWr5phH5W5RmWW+g
-y8CFLSEW2iEKx3/uEKWD9s6olLGSvmk6aCqdyNtSIyCCwLpoD1/twx53Y9OypcfF
-AQI2LCi6Ui/foP/uMHHJ0V1cCyoSuw==
-=bJrb
------END PGP SIGNATURE-----
-
---jlrU39Y7eubSWT1VJIKYASgkst0f8sNn9--
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.txt b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+new file mode 100644
+index 0000000..d639e18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+@@ -0,0 +1,19 @@
++Qualcomm Technologies, Inc. Display Clock Controller Binding
++------------------------------------------------------------
++
++Required properties :
++
++- compatible : shall contain "qcom,sdm845-dispcc"
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	dispcc: clock-controller@af00000 {
++		compatible = "qcom,sdm845-dispcc";
++		reg = <0xaf00000 0x100000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+new file mode 100644
+index 0000000..11eed4b
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++
++/* DISP_CC clock registers */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AXI_CLK					1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				4
++#define DISP_CC_MDSS_BYTE1_CLK					5
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				7
++#define DISP_CC_MDSS_ESC0_CLK					8
++#define DISP_CC_MDSS_ESC0_CLK_SRC				9
++#define DISP_CC_MDSS_ESC1_CLK					10
++#define DISP_CC_MDSS_ESC1_CLK_SRC				11
++#define DISP_CC_MDSS_MDP_CLK					12
++#define DISP_CC_MDSS_MDP_CLK_SRC				13
++#define DISP_CC_MDSS_MDP_LUT_CLK				14
++#define DISP_CC_MDSS_PCLK0_CLK					15
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				16
++#define DISP_CC_MDSS_PCLK1_CLK					17
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				18
++#define DISP_CC_MDSS_ROT_CLK					19
++#define DISP_CC_MDSS_ROT_CLK_SRC				20
++#define DISP_CC_MDSS_RSCC_AHB_CLK				21
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				22
++#define DISP_CC_MDSS_VSYNC_CLK					23
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				24
++#define DISP_CC_PLL0						25
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
++
++/* DISP_CC Reset */
++#define DISP_CC_MDSS_RSCC_BCR					0
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++
++#endif
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
