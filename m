@@ -1,49 +1,55 @@
-Return-Path: <andy.shevchenko@gmail.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v2 0/2] Add display clock controller driver for SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1528885997-10311-1-git-send-email-tdas@codeaurora.org>
+ <152942182329.16708.17615552184746348831@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <88b6cfa5-27fd-7fd0-e306-ae9580a39775@codeaurora.org>
+Date: Sat, 23 Jun 2018 19:54:03 +0530
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be> <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Jun 2018 14:04:03 +0300
-Message-ID: <CAHp75VeCmeBkUfnmx2F-czHCVVDm32WiGzvih8xozPEdv8P_Hw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for printk
- format %pCr
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <152942182329.16708.17615552184746348831@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 1, 2018 at 2:00 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->>
->> This patch series:
->>   - Changes all existing users of "%pCr" to print the result of
->>     clk_get_rate() directly, which is safe as they all do this in task
->>     context only,
->>   - Removes support for the "%pCr" printk format.
->
-> Looks good to me.
->
-> What tree will this go through? The normal printk one? Just checking
-> that this doesn't end up falling through the cracks because nobody
-> knows who would take it...
+Hello Stephen,
 
-We discussed few month before with Petr that he would take care of the
-patches against vsprintf.c.
-I think this is the case here.
+Thanks for the comments.
+
+On 6/19/2018 8:53 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-06-13 03:33:15)
+>>   [v2]
+>>    * Removed unused header file includes.
+>>    * Moved the frequency table macro to a common file [1].
+>>    * Move to pll config to probe.
+>>    * Update SoC name in device tree binding and
+>>      also update the Kconfig.
+>>
+>> Add support for the display clock controller found on SDM845
+>> based devices. This would allow display drivers to probe and
+>> control their clocks.
+>>
+>> The Display clock driver depends on the frequency table macro
+>> movement to a common file [1].
+> 
+> Please send that patch along with these patches so the dependency is
+> clear.
+> 
+
+Please check the latest patch series :
+  https://lkml.org/lkml/2018/6/23/109
+
+>>
+>>   [1]:  https://lkml.org/lkml/2018/6/13/216
+>>
 
 -- 
-With Best Regards,
-Andy Shevchenko
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
