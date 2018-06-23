@@ -1,111 +1,65 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v3 01/24] clk: sunxi-ng: r40: Add minimal rate for video PLLs
-Date: Mon, 25 Jun 2018 14:02:41 +0200
-Message-Id: <20180625120304.7543-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/3] Add display clock controller driver for SDM845
+Date: Sat, 23 Jun 2018 19:49:24 +0530
+Message-Id: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
+ [v3]
+  * Move frequency table macro to common file,
+    add the patch along to maintain dependency.
 
-Because of that, set minimal rate to both R40 video PLLs to 192 MHz.
+ [v2]
+  * Removed unused header file includes.
+  * Moved the frequency table macro to a common file [1].
+  * Move to pll config to probe.
+  * Update SoC name in device tree binding and
+    also update the Kconfig.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 46 +++++++++++++++-------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
+Add support for the display clock controller found on SDM845
+based devices. This would allow display drivers to probe and
+control their clocks.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 933f2e68f42a..c16a62a7bdbd 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -65,17 +65,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   CLK_SET_RATE_UNGATE);
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x0010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x0010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
-@@ -151,17 +152,18 @@ static struct ccu_nk pll_periph1_clk = {
- };
- 
- /* TODO: The result of N/M is required to be in [8, 25] range. */
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,	/* N */
-+					    0, 4,	/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static struct ccu_nkm pll_sata_clk = {
- 	.enable		= BIT(31),
--- 
-2.18.0
+Taniya Das (3):
+  clk: qcom: Move frequency table macro to common file
+  dt-bindings: clock: Introduce QCOM Display clock bindings
+  clk: qcom: Add display clock controller driver for SDM845
 
+ .../devicetree/bindings/clock/qcom,dispcc.txt      |  19 +
+ drivers/clk/qcom/Kconfig                           |  10 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-rcg.h                         |   2 +
+ drivers/clk/qcom/dispcc-sdm845.c                   | 674 +++++++++++++++++++++
+ drivers/clk/qcom/gcc-apq8084.c                     |   2 -
+ drivers/clk/qcom/gcc-ipq4019.c                     |   2 -
+ drivers/clk/qcom/gcc-ipq8074.c                     |   2 -
+ drivers/clk/qcom/gcc-msm8916.c                     |   2 -
+ drivers/clk/qcom/gcc-msm8974.c                     |   2 -
+ drivers/clk/qcom/gcc-msm8994.c                     |   2 -
+ drivers/clk/qcom/gcc-msm8996.c                     |   2 -
+ drivers/clk/qcom/gcc-msm8998.c                     |   2 -
+ drivers/clk/qcom/gcc-sdm845.c                      |   2 -
+ drivers/clk/qcom/mmcc-apq8084.c                    |   2 -
+ drivers/clk/qcom/mmcc-msm8974.c                    |   2 -
+ drivers/clk/qcom/mmcc-msm8996.c                    |   2 -
+ drivers/clk/qcom/videocc-sdm845.c                  |   2 -
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     |  45 ++
+ 19 files changed, 751 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
