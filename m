@@ -1,149 +1,79 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 01/14] ARM: Add Krait L2 register accessor functions
-Date: Tue, 19 Jun 2018 19:15:12 +0530
-Message-Id: <1529415925-28915-2-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54072 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeFWOGq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 Jun 2018 10:06:46 -0400
+MIME-Version: 1.0
+References: <20180622124540.56203-1-icenowy@aosc.io> <20180622124540.56203-4-icenowy@aosc.io>
+In-Reply-To: <20180622124540.56203-4-icenowy@aosc.io>
+From: Julian Calaby <julian.calaby@gmail.com>
+Date: Sun, 24 Jun 2018 00:06:27 +1000
+Message-ID: <CAGRGNgUuEjmEcvJ3OUcQ9_6bPs9fDvKzUFm_NfCsYyjxVOVw3A@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 5/7] arm64: allwinner: a64: add necessary
+ device tree nodes for DE2 CCU
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, jagan@amarulasolutions.com,
+        jernej.skrabec@siol.net, devicetree <devicetree@vger.kernel.org>,
+        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Icenowy,
 
-Krait CPUs have a handful of L2 cache controller registers that
-live behind a cp15 based indirection register. First you program
-the indirection register (l2cpselr) to point the L2 'window'
-register (l2cpdr) at what you want to read/write.  Then you
-read/write the 'window' register to do what you want. The
-l2cpselr register is not banked per-cpu so we must lock around
-accesses to it to prevent other CPUs from re-pointing l2cpdr
-underneath us.
+On Fri, Jun 22, 2018 at 10:49 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+> As we have all necessary parts to enable the DE2 CCU on the Allwinner
+> A64 SoC, add the needed device tree nodes, including the DE2 CCU itself
+> and the DE2 bus.
+>
+> The "mixer0-lcd0" simplefb device node is updated to use the DE2 CCU.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v2:
+> - Drop SRAM controller device tree node addition (as it's already added
+>   as part of syscon change.)
+> - Fix the clock reference in LCD SimpleFB.
+>
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 30 +++++++++++++++----
+>  1 file changed, 24 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index ff2ddde1e117..318c4ba8ae9f 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -58,17 +60,12 @@
+>                 #size-cells = <1>;
+>                 ranges;
+>
+> -/*
+> - * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
+> - * However there is no support for this clock on A64 yet, so we depend
+> - * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
+> - */
+>                 simplefb_lcd: framebuffer-lcd {
+>                         compatible = "allwinner,simple-framebuffer",
+>                                      "simple-framebuffer";
+>                         allwinner,pipeline = "mixer0-lcd0";
+>                         clocks = <&ccu CLK_TCON0>,
+> -                                <&ccu CLK_DE>, <&ccu CLK_BUS_DE>;
+> +                                <&display_clocks CLK_MIXER0>;
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- arch/arm/common/Kconfig                   |  3 ++
- arch/arm/common/Makefile                  |  1 +
- arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
- arch/arm/include/asm/krait-l2-accessors.h |  9 ++++++
- 4 files changed, 61 insertions(+)
- create mode 100644 arch/arm/common/krait-l2-accessors.c
- create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
+Doesn't this technically break simplefb if this DT is used with a
+Linux that doesn't have the display clock driver?
 
-diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
-index e5ad070..c8e1986 100644
---- a/arch/arm/common/Kconfig
-+++ b/arch/arm/common/Kconfig
-@@ -7,6 +7,9 @@ config DMABOUNCE
- 	bool
- 	select ZONE_DMA
- 
-+config KRAIT_L2_ACCESSORS
-+	bool
-+
- config SHARP_LOCOMO
- 	bool
- 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index 70b4a14..eec6cd1 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -7,6 +7,7 @@ obj-y				+= firmware.o
- 
- obj-$(CONFIG_SA1111)		+= sa1111.o
- obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
-+obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
- obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
- obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
- obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
-diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
-new file mode 100644
-index 0000000..9a97dda
---- /dev/null
-+++ b/arch/arm/common/krait-l2-accessors.c
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/spinlock.h>
-+#include <linux/export.h>
-+
-+#include <asm/barrier.h>
-+#include <asm/krait-l2-accessors.h>
-+
-+static DEFINE_RAW_SPINLOCK(krait_l2_lock);
-+
-+void krait_set_l2_indirect_reg(u32 addr, u32 val)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then write to the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
-+	isb();
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+}
-+EXPORT_SYMBOL(krait_set_l2_indirect_reg);
-+
-+u32 krait_get_l2_indirect_reg(u32 addr)
-+{
-+	u32 val;
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&krait_l2_lock, flags);
-+	/*
-+	 * Select the L2 window by poking l2cpselr, then read from the window
-+	 * via l2cpdr.
-+	 */
-+	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
-+	isb();
-+	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
-+
-+	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
-+
-+	return val;
-+}
-+EXPORT_SYMBOL(krait_get_l2_indirect_reg);
-diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
-new file mode 100644
-index 0000000..a5f2cdd
---- /dev/null
-+++ b/arch/arm/include/asm/krait-l2-accessors.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
-+#define __ASMARM_KRAIT_L2_ACCESSORS_H
-+
-+extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
-+extern u32 krait_get_l2_indirect_reg(u32 addr);
-+
-+#endif
+Do we care about breaking that use-case?
+
+Thanks,
+
 -- 
-1.9.1
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
