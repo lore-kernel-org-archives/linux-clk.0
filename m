@@ -1,58 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44093 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935314AbeFMMs7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 08:48:59 -0400
-Date: Wed, 13 Jun 2018 14:48:50 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Dong Aisheng <dongas86@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v1 4/4] mailbox: Add support for i.MX7D messaging unit
-Message-ID: <20180613124850.w3bzerkpkbql6ite@pengutronix.de>
-References: <20180601065821.28234-1-o.rempel@pengutronix.de>
- <20180601065821.28234-5-o.rempel@pengutronix.de>
- <CAA+hA=RpoRXUK+jB18F4OeYE9PG73SDa_NLYeN5Q2G3B1bC-JA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAA+hA=RpoRXUK+jB18F4OeYE9PG73SDa_NLYeN5Q2G3B1bC-JA@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 17/24] drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+Date: Mon, 25 Jun 2018 14:02:57 +0200
+Message-Id: <20180625120304.7543-18-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jun 13, 2018 at 08:21:10PM +0800, Dong Aisheng wrote:
-> Hi Oleksij,
-> 
-> On Fri, Jun 1, 2018 at 2:58 PM, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> > The Mailbox controller is able to send messages (up to 4 32 bit words)
-> > between the endpoints.
-> 
-> Could we really be able to send up to 4 42bit words with this driver?
-> 
-> It looks to me the current Mailbox framework is more designed for share mem
-> transfer which does not fit i.MX MU well.
+DW HDMI PHY driver and PHY clock driver share same registers. Make sure
+that DW HDMI PHY setup code doesn't change any clock related bits.
+During initialization, set PHY PLL parent bit to 0.
 
-The mailbox framework just defines channels and messages. A message is a
-void * which may contain arbitrary data or even no data at all; some
-drivers simply ignore the message pointer, so in fact they act as a
-doorbell unit only.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  2 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 12 +++++++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-There's nothing about shared memory in the mailbox framework, but of
-course you can combine a mailbox driver and shared memory to a remote
-message mechanism. That could be done with the i.MX MU aswell and would
-indeed be a good match for the hardware.
-
-Sascha
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 79154f0f674a..3ba71aff92fc 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -98,7 +98,7 @@
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO2_EN		BIT(29)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO1_EN		BIT(28)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_HV_IS_33	BIT(27)
+-#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL	BIT(26)
++#define SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK	BIT(26)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_PLLEN		BIT(25)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_LDO_VSET(x)	((x) << 22)
+ #define SUN8I_HDMI_PHY_PLL_CFG1_UNKNOWN(x)	((x) << 20)
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 966688f04741..e56b9e5b1c42 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -183,7 +183,13 @@ static int sun8i_hdmi_phy_config_h3(struct dw_hdmi *hdmi,
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
+ 			   SUN8I_HDMI_PHY_ANA_CFG1_TXEN_MASK, 0);
+ 
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG, pll_cfg1_init);
++	/*
++	 * NOTE: We have to be careful not to overwrite PHY parent
++	 * clock selection bit and clock divider.
++	 */
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
++			   (u32)~SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK,
++			   pll_cfg1_init);
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG2_REG,
+ 			   (u32)~SUN8I_HDMI_PHY_PLL_CFG2_PREDIV_MSK,
+ 			   pll_cfg2_init);
+@@ -352,6 +358,10 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
+ 			   SUN8I_HDMI_PHY_ANA_CFG3_SCLEN |
+ 			   SUN8I_HDMI_PHY_ANA_CFG3_SDAEN);
+ 
++	/* reset PHY PLL clock parent */
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_PLL_CFG1_REG,
++			   SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL_MSK, 0);
++
+ 	/* set HW control of CEC pins */
+ 	regmap_write(phy->regs, SUN8I_HDMI_PHY_CEC_REG, 0);
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.18.0
