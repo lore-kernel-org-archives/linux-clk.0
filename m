@@ -1,70 +1,144 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Jun 2018 14:14:30 +0200
-Message-ID: <CAMuHMdXamhn2GZs41i=wHXSRn0HgeHg4=7=g7pg7uni3LizK9w@mail.gmail.com>
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs56.siol.net ([185.57.226.247]:47878 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933436AbeFYMFE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:04 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 07/24] drm/sun4i: Split out code for enumerating endpoints in output port
+Date: Mon, 25 Jun 2018 14:02:47 +0200
+Message-Id: <20180625120304.7543-8-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Until now, each node has one input port and one output port. However,
+with TCON TOP this is no longer true. It has 3 input and 3 output ports.
 
-CC MarcZ
+In order to prepare to this situation, split out the code which checks
+all endpoints in input port and adds available components to fifo.
 
-On Thu, Jun 14, 2018 at 1:02 PM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This adds the Renesas R9A06G032 bare bone support.
->
-> This currently only handles the SYSCTRL block note,
-> generic parts (gic, architected timer) and a UART.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+This patch doesn't do any functional change.
 
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 84 +++++++++++++++++--------------
+ 1 file changed, 46 insertions(+), 38 deletions(-)
 
-> +       timer {
-> +               compatible = "arm,cortex-a7-timer",
-
-Checkpatch says:
-WARNING: DT compatible string "arm,cortex-a7-timer" appears
-un-documented -- check ./Documentation/devicetree/bindings/
-
-> +                            "arm,armv7-timer";
-
-Documentation/devicetree/bindings/arm/arch_timer.txt says:
-
-    compatible should at least contain "arm,armv7-timer"
-
-but fails to list other possible values?
-
-> +               interrupt-parent = <&gic>;
-> +               arm,cpu-registers-not-fw-configured;
-> +               always-on;
-> +               interrupts =
-> +                       <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                       <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                       <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                       <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index e15fa2389e3f..20193d6f33ba 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -231,12 +231,55 @@ struct endpoint_list {
+ 	DECLARE_KFIFO(fifo, struct device_node *, 16);
+ };
+ 
++static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
++					 struct device_node *node,
++					 int port_id)
++{
++	struct device_node *ep, *remote, *port;
++
++	port = of_graph_get_port_by_id(node, port_id);
++	if (!port) {
++		DRM_DEBUG_DRIVER("No output to bind on port %d\n", port_id);
++		return;
++	}
++
++	for_each_available_child_of_node(port, ep) {
++		remote = of_graph_get_remote_port_parent(ep);
++		if (!remote) {
++			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
++			continue;
++		}
++
++		/*
++		 * If the node is our TCON, the first port is used for
++		 * panel or bridges, and will not be part of the
++		 * component framework.
++		 */
++		if (sun4i_drv_node_is_tcon(node)) {
++			struct of_endpoint endpoint;
++
++			if (of_graph_parse_endpoint(ep, &endpoint)) {
++				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
++				of_node_put(remote);
++				continue;
++			}
++
++			if (!endpoint.id) {
++				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
++				of_node_put(remote);
++				continue;
++			}
++		}
++
++		kfifo_put(&list->fifo, remote);
++	}
++}
++
+ static int sun4i_drv_add_endpoints(struct device *dev,
+ 				   struct endpoint_list *list,
+ 				   struct component_match **match,
+ 				   struct device_node *node)
+ {
+-	struct device_node *port, *ep, *remote;
+ 	int count = 0;
+ 
+ 	/*
+@@ -272,43 +315,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 		count++;
+ 	}
+ 
+-	/* Inputs are listed first, then outputs */
+-	port = of_graph_get_port_by_id(node, 1);
+-	if (!port) {
+-		DRM_DEBUG_DRIVER("No output to bind\n");
+-		return count;
+-	}
+-
+-	for_each_available_child_of_node(port, ep) {
+-		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote) {
+-			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
+-			continue;
+-		}
+-
+-		/*
+-		 * If the node is our TCON, the first port is used for
+-		 * panel or bridges, and will not be part of the
+-		 * component framework.
+-		 */
+-		if (sun4i_drv_node_is_tcon(node)) {
+-			struct of_endpoint endpoint;
+-
+-			if (of_graph_parse_endpoint(ep, &endpoint)) {
+-				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+-				of_node_put(remote);
+-				continue;
+-			}
+-
+-			if (!endpoint.id) {
+-				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
+-				of_node_put(remote);
+-				continue;
+-			}
+-		}
+-
+-		kfifo_put(&list->fifo, remote);
+-	}
++	/* each node has at least one output */
++	sun4i_drv_traverse_endpoints(list, node, 1);
+ 
+ 	return count;
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.18.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
