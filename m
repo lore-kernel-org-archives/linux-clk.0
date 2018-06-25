@@ -1,131 +1,104 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 08/13] ARM: davinci: dm365-evm: use the ti-aemif soc driver
-Date: Thu, 28 Jun 2018 11:57:43 +0200
-Message-Id: <20180628095748.4462-9-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v3 08/24] drm/sun4i: Add support for traversing graph with
+ TCON TOP
+Date: Mon, 25 Jun 2018 14:02:48 +0200
+Message-Id: <20180625120304.7543-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+TCON TOP is different from other nodes in graph by having 3 input and 3
+output ports. Additionally, connection to TV TCON might lead back to
+HDMI mux input port, creating loops.
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm365-evm.
+Add support for traversing such graph.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/mach-davinci/board-dm365-evm.c | 59 +++++++++++++++++++------
- 1 file changed, 46 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 307e88d99dd3..8143756ff38b 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/eeprom.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/platform_data/ti-aemif.h>
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 20193d6f33ba..e6c62c079146 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -26,6 +26,7 @@
+ #include "sun4i_frontend.h"
+ #include "sun4i_framebuffer.h"
+ #include "sun4i_tcon.h"
++#include "sun8i_tcon_top.h"
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -159,14 +160,47 @@ static struct resource davinci_nand_resources[] = {
- 	},
- };
+ DEFINE_DRM_GEM_CMA_FOPS(sun4i_drv_fops);
  
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct platform_device davinci_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
-+		.dev		= {
-+			.platform_data	= &davinci_nand_data,
-+		},
-+	}
-+};
-+
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start		= DM365_ASYNC_EMIF_CONTROL_BASE,
-+		.end		= DM365_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
-+	{
-+		.cs		= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= da850_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da850_evm_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
-+};
-+
-+static struct platform_device davinci_aemif_device = {
-+	.name			= "ti-aemif",
-+	.id			= -1,
-+	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource		= davinci_aemif_resources,
-+	.num_resources		= ARRAY_SIZE(davinci_aemif_resources),
- };
- 
- static struct at24_platform_data eeprom_info = {
-@@ -537,10 +571,6 @@ static void __init evm_init_i2c(void)
- 	i2c_register_board_info(1, i2c_info, ARRAY_SIZE(i2c_info));
+@@ -197,6 +198,11 @@ static bool sun4i_drv_node_is_tcon(struct device_node *node)
+ 	return !!of_match_node(sun4i_tcon_of_table, node);
  }
  
--static struct platform_device *dm365_evm_nand_devices[] __initdata = {
--	&davinci_nand_device,
--};
--
- static inline int have_leds(void)
++static bool sun4i_drv_node_is_tcon_top(struct device_node *node)
++{
++	return !!of_match_node(sun8i_tcon_top_of_table, node);
++}
++
+ static int compare_of(struct device *dev, void *data)
  {
- #ifdef CONFIG_LEDS_CLASS
-@@ -628,6 +658,7 @@ static void __init evm_init_cpld(void)
- 	u8 mux, resets;
- 	const char *label;
- 	struct clk *aemif_clk;
-+	int rc;
+ 	DRM_DEBUG_DRIVER("Comparing of node %pOF with %pOF\n",
+@@ -258,6 +264,18 @@ static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
+ 		if (sun4i_drv_node_is_tcon(node)) {
+ 			struct of_endpoint endpoint;
  
- 	/* Make sure we can configure the CPLD through CS1.  Then
- 	 * leave it on for later access to MMC and LED registers.
-@@ -660,8 +691,10 @@ static void __init evm_init_cpld(void)
- 		/* external keypad mux */
- 		mux |= BIT(7);
++			/*
++			 * TCON TOP is always probed before TCON. However, TCON
++			 * points back to TCON TOP when it is source for HDMI.
++			 * We have to skip it here to prevent infinite looping
++			 * between TCON TOP and TCON.
++			 */
++			if (sun4i_drv_node_is_tcon_top(remote)) {
++				DRM_DEBUG_DRIVER("TCON output endpoint is TCON TOP... skipping\n");
++				of_node_put(remote);
++				continue;
++			}
++
+ 			if (of_graph_parse_endpoint(ep, &endpoint)) {
+ 				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
+ 				of_node_put(remote);
+@@ -318,6 +336,12 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 	/* each node has at least one output */
+ 	sun4i_drv_traverse_endpoints(list, node, 1);
  
--		platform_add_devices(dm365_evm_nand_devices,
--				ARRAY_SIZE(dm365_evm_nand_devices));
-+		rc = platform_device_register(&davinci_aemif_device);
-+		if (rc)
-+			pr_warn("%s(): error registering the aemif device: %d\n",
-+				__func__, rc);
- 	} else {
- 		/* no OneNAND support yet */
- 	}
++	/* TCON TOP has second and third output */
++	if (sun4i_drv_node_is_tcon_top(node)) {
++		sun4i_drv_traverse_endpoints(list, node, 3);
++		sun4i_drv_traverse_endpoints(list, node, 5);
++	}
++
+ 	return count;
+ }
+ 
 -- 
-2.17.1
+2.18.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
