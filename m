@@ -1,43 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f53.google.com ([209.85.208.53]:37312 "EHLO
-        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751958AbeF1Bvy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 21:51:54 -0400
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
+From: David Lechner <david@lechnology.com>
+Message-ID: <3a6d0388-7915-8ea3-6ad6-38dc7ee06377@lechnology.com>
+Date: Mon, 25 Jun 2018 18:17:55 -0500
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-10-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-10-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 09:51:31 +0800
-Message-ID: <CAGb2v64EkVK+AEngEuadBzAZagyU7eyOhHhBh0iFrxS+-BbCYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have
- channel 0
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
-> Because of that, all output endpoints on such TCON node will point to a
-> encoder which is part of component framework.
->
-> Correct current graph traversing algorithm in such way that it doesn't
-> skip output enpoints with id 0 on TV TCONs.
+On 06/02/2018 02:52 AM, Dan Carpenter wrote:
+> There is a copy and paste bug here.  We should be testing "usb1" instead
+> of "usb0".
+> 
+> Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+> index c971111d2601..20a120aa147e 100644
+> --- a/drivers/clk/davinci/da8xx-cfgchip.c
+> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
+> @@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device *dev, struct regmap *regmap)
+>   
+>   	usb1 = da8xx_cfgchip_register_usb1_clk48(dev, regmap);
+>   	if (IS_ERR(usb1)) {
+> -		if (PTR_ERR(usb0) == -EPROBE_DEFER)
+> +		if (PTR_ERR(usb1) == -EPROBE_DEFER)
+>   			return -EPROBE_DEFER;
+>   
+>   		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
+> 
 
-No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
-have channel 0, it must be skipped.
+Applied to https://github.com/dlech/linux/tree/clk-davinci-fixes
 
-ChenYu
+Thanks.
