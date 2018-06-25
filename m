@@ -1,47 +1,28 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <d-gerlach@ti.com>, <j-keerthy@ti.com>
-Subject: [PATCH 0/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Tue, 19 Jun 2018 09:58:21 +0530
-Message-ID: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 9/9] ARM: davinci: kill davinci_aemif_setup()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
+ <20180625152920.11549-10-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <e6dc21f3-aa09-54e0-3090-b4913075b09e@lechnology.com>
+Date: Mon, 25 Jun 2018 11:23:25 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180625152920.11549-10-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
+On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> All users now register platform devices using the ti-aemif driver.
+> Remove the handcrafted aemif API.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Tested for DS0 on am437x-gp-evm
-
-Based on top of linux-next
-
-Keerthy (2):
-  clk: clk: Add clk_dflt_restore
-  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
-    setting
-
-Russ Dill (2):
-  clk: clk: Add functions to save/restore clock context en-masse
-  clk: ti: Add functions to save/restore clk context
-
- arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
- drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
- drivers/clk/ti/clock.h               |   2 +
- drivers/clk/ti/divider.c             |  36 ++++++++++
- drivers/clk/ti/dpll.c                |   6 ++
- drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c                |   3 +
- drivers/clk/ti/mux.c                 |  29 ++++++++
- drivers/soc/ti/pm33xx.c              |  13 ++++
- include/linux/clk-provider.h         |   9 +++
- include/linux/clk.h                  |  25 +++++++
- include/linux/clk/ti.h               |   6 ++
- include/linux/platform_data/pm33xx.h |   1 +
- 13 files changed, 362 insertions(+)
-
--- 
-1.9.1
+I found the subject line to be a bit misleading since this patch
+removes an entire file, not just the one function mentioned.
