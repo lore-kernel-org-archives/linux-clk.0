@@ -1,82 +1,42 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the reset framework
-Date: Thu, 21 Jun 2018 09:37:02 +0200
-Message-Id: <20180621073706.22812-1-brgl@bgdev.pl>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 2/9] ARM: davinci: omapl138-hawk: add aemif & nand support
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
+ <20180625152920.11549-3-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <41248083-69db-4b88-8a11-e7fa2bd06718@lechnology.com>
+Date: Mon, 25 Jun 2018 11:08:57 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180625152920.11549-3-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We now have support for aemif & nand from board files. As an example
+> add support for nand to da850-hawk.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-These are the remaining patches that still need to be merged in order
-to complete the conversion of the davinci dsp driver to using the reset
-framework.
+> +static struct platform_device omapl138_hawk_aemif_devices[] = {
+> +	{
+> +		.name		= "davinci_nand",
+> +		.id		= 1,
 
-They apply on top of v4.18-rc1 with David Lechner's remaining patches
-merged.
+same comment as on da850-evm...
 
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
+this might need id = 0 now.
 
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
-
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
-
-v4 -> v5:
-- fix a bug where the dsp_reset object correctly stored in drproc struct
-
-v5 -> v6:
-- rebased on top of v4.17-rc1 and retested
-- dropped patches that were applied during 4.17 merge window
-- added relevant review and ack tags
-
-v6 -> v7:
-- rebased on top of v4.18-rc1 and dropped patches that were applied for
-  v4.17
-
-Bartosz Golaszewski (4):
-  remoteproc/davinci: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 -------------
- drivers/clk/davinci/psc.c                  | 18 ------------
- drivers/remoteproc/da8xx_remoteproc.c      | 34 ++++++++++++++++++----
- 4 files changed, 31 insertions(+), 44 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
--- 
-2.17.1
+> +		.dev		= {
+> +			.platform_data	= &omapl138_hawk_nandflash_data,
+> +		},
+> +		.resource	= omapl138_hawk_nandflash_resource,
+> +		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
+> +	}
+> +};
