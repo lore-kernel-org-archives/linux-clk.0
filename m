@@ -1,111 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45824 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752369AbeF1CHP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:07:15 -0400
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
+ the aemif clock
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
+ <20180625152920.11549-2-brgl@bgdev.pl>
+ <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
+ <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
+Date: Mon, 25 Jun 2018 11:06:46 -0500
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-11-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-11-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 10:06:52 +0800
-Message-ID: <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
-Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Current "old" method to find engine worked pretty well for DE2. However,
-> it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
-> TOP has multiple input ports, but current engine search algorithm
-> expects only one.
->
-> This can be fixed by first looking for output port id and selecting
-> matching input by subtracting 1 for the next round. This work even if
-> there is only one input and output.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 08747fc3ee71..264bcc43da11 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device *dev,
->   */
->  static struct sunxi_engine *
->  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
-> -                               struct device_node *node)
-> +                               struct device_node *node,
-> +                               u32 port_id)
->  {
->         struct device_node *port, *ep, *remote;
->         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
-> +       u32 reg = 0;
->
-> -       port = of_graph_get_port_by_id(node, 0);
-> +       port = of_graph_get_port_by_id(node, port_id);
->         if (!port)
->                 return ERR_PTR(-EINVAL);
->
-> @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
->                 if (remote == engine->node)
->                         goto out_put_remote;
->
-> +       /*
-> +        * According to device tree binding input ports have even id
-> +        * number and output ports have odd id. Since component with
-> +        * more than one input and one output (TCON TOP) exits, correct
-> +        * remote input id has to be calculated by subtracting 1 from
-> +        * remote output id. If this for some reason can't be done, 0
-> +        * is used as input port id.
-> +        */
+On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
+> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
+>> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+>>>
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> We want to be able to get the clock both from the board file by its
+>>> con_id and from the aemif driver by dev_id.
+>>
+>>
+>> What about the other SoCs? Don't they need this change as well?
+>>
+> 
+> So I double checked and turns out I missed one other board that's
+> affected by this series and calls clk_get() from machine code:
+> dm644x-evm.
+> 
+> I'll fix it in v2.
 
-You need to call
-
-    of_node_put(port);
-
-to drop the reference to the original port.
-
-Otherwise,
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-
-> +       port = of_graph_get_remote_port(ep);
-> +       if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
-> +               reg -= 1;
-> +
->         /* keep looking through upstream ports */
-> -       engine = sun4i_tcon_find_engine_traverse(drv, remote);
-> +       engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
->
->  out_put_remote:
->         of_node_put(remote);
-> @@ -950,7 +964,7 @@ static struct sunxi_engine *sun4i_tcon_find_engine(struct sun4i_drv *drv,
->
->         /* Fallback to old method by traversing input endpoints */
->         of_node_put(port);
-> -       return sun4i_tcon_find_engine_traverse(drv, node);
-> +       return sun4i_tcon_find_engine_traverse(drv, node, 0);
->  }
->
->  static int sun4i_tcon_bind(struct device *dev, struct device *master,
-> --
-> 2.18.0
->
+The ti-aemif platform driver also does clk_get(). Don't you need
+lookups to make that work as well? For example, DA830 doesn't have
+a clock lookup for aemif at all.
