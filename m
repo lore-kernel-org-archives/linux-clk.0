@@ -1,37 +1,104 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
-Date: Sun, 17 Jun 2018 17:55:34 +0300
-Message-Id: <20180617145539.4758-4-digetx@gmail.com>
-In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
-References: <20180617145539.4758-1-digetx@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 24/24] ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+Date: Mon, 25 Jun 2018 14:03:04 +0200
+Message-Id: <20180625120304.7543-25-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Move tegra20-emc binding to the memory-controllers directory for
-consistency with the other Tegra memory bindings.
+Since HDMI can be considered as main output, most capable mixer is
+connected to it (mixer0).
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+ .../boot/dts/sun8i-r40-bananapi-m2-ultra.dts  | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+diff --git a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+index 27d9ccd0ef2f..0ebc2f9a980e 100644
+--- a/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
++++ b/arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts
+@@ -58,6 +58,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -93,6 +104,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci1 {
+ 	status = "okay";
+ };
+@@ -101,6 +116,16 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 
+@@ -195,6 +220,26 @@
+ 	status = "okay";
+ };
+ 
++&tcon_top_hdmi_in_tcon_tv0 {
++	remote-endpoint = <&tcon_tv0_out_tcon_top>;
++};
++
++&tcon_top_mixer0_out_tcon_tv0 {
++	remote-endpoint = <&tcon_tv0_in_tcon_top>;
++};
++
++&tcon_tv0_in {
++	tcon_tv0_in_tcon_top: endpoint {
++		remote-endpoint = <&tcon_top_mixer0_out_tcon_tv0>;
++	};
++};
++
++&tcon_tv0_out {
++	tcon_tv0_out_tcon_top: endpoint {
++		remote-endpoint = <&tcon_top_hdmi_in_tcon_tv0>;
++	};
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pb_pins>;
 -- 
-2.17.1
+2.18.0
