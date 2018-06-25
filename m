@@ -1,33 +1,65 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 5 Jun 2018 09:47:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 2/4] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180605154757.GA26812@rob-hp-laptop>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <6509bbe0238c20c16930c9f23d63656b1d5f4af2.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
+ <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 25 Jun 2018 18:01:14 +0200
+Message-ID: <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
+ the aemif clock
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 04, 2018 at 04:18:30PM +0300, Matti Vaittinen wrote:
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 76 ++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
+> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+>>
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We want to be able to get the clock both from the board file by its
+>> con_id and from the aemif driver by dev_id.
+>
+>
+> What about the other SoCs? Don't they need this change as well?
+>
 
-I've replied on the prior version discussion. Please don't send new 
-versions if the last one is still under discussion.
+So I double checked and turns out I missed one other board that's
+affected by this series and calls clk_get() from machine code:
+dm644x-evm.
 
-Rob
+I'll fix it in v2.
+
+Thanks,
+Bart
+
+>
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>   drivers/clk/davinci/psc-dm365.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/davinci/psc-dm365.c
+>> b/drivers/clk/davinci/psc-dm365.c
+>> index 8c73086cc676..c75424f4ea3b 100644
+>> --- a/drivers/clk/davinci/psc-dm365.c
+>> +++ b/drivers/clk/davinci/psc-dm365.c
+>> @@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,           NULL,
+>> "da830-mmc.1");
+>>   LPSC_CLKDEV1(asp0_clkdev,             NULL,           "davinci-mcbsp");
+>>   LPSC_CLKDEV1(usb_clkdev,              "usb",          NULL);
+>>   LPSC_CLKDEV1(spi2_clkdev,             NULL,           "spi_davinci.2");
+>> -LPSC_CLKDEV1(aemif_clkdev,             "aemif",        NULL);
+>> +LPSC_CLKDEV2(aemif_clkdev,             "aemif",        NULL,
+>> +                                       NULL,           "ti-aemif");
+>>   LPSC_CLKDEV1(mmcsd0_clkdev,           NULL,           "da830-mmc.0");
+>>   LPSC_CLKDEV1(i2c_clkdev,              NULL,           "i2c_davinci.1");
+>>   LPSC_CLKDEV1(uart0_clkdev,            NULL,           "serial8250.0");
+>>
+>
