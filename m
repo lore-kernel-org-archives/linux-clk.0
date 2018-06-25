@@ -1,29 +1,44 @@
-Return-Path: <srinath.mannam@broadcom.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 3/9] ARM: davinci: da850-evm: use aemif platform driver in
+ legacy mode
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+ Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
+ <20180625152920.11549-4-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <13418bf6-dbe7-5091-b5a7-07f779fb9f63@lechnology.com>
+Date: Mon, 25 Jun 2018 11:00:11 -0500
 MIME-Version: 1.0
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-Date: Wed, 13 Jun 2018 09:44:45 +0530
-Message-ID: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
-Subject: ACPI support in common clock framework
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180625152920.11549-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michael, Stephen,
+On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We now support board files in the aemif driver. Register a platform
+> device instead of using the handcrafted API in da850-evm.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-We are adding ACPI support in our Linux based platform.
-At present our clock hierarchy using common clock framework through DTS.
-Now we required ACPI support in common clock framework to upgrade our platform.
+> -	iounmap(aemif_addr);
+> -}
+> +static struct platform_device da850_evm_aemif_device = {
+> +	.name		= "ti-aemif",
+> +	.dev = {
+> +		.platform_data	= &da850_evm_aemif_pdata,
+> +	},
+> +	.resource	= da850_evm_aemif_resource,
+> +	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
+> +	.id		= -1,
+> +};
+> 
 
-For example, clk_get API called in many drivers to get clock device is
-tightly coupled with DT framework.
-
-Please let us know, if anybody in Open Source community have plans to
-add ACPI support for common clock framework.
-If not please suggest us alternative method to use common clock
-framework in ACPI use case.
-
-Thanks in advance.
-
-Regards,
-Srinath.
+Not essential, but it is nice to have the id right after name
+since they are closely related (as you did in several other
+instances in this same patch). For a second, I thought you
+forgot id = -1 here before I saw it.
