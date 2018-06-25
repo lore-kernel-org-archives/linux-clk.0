@@ -1,174 +1,112 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 03/14] clk: qcom: Add HFPLL driver
-Date: Tue, 19 Jun 2018 19:15:14 +0530
-Message-Id: <1529415925-28915-4-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 8/9] ARM: davinci: mityomapl138: use aemif platform driver
+Date: Mon, 25 Jun 2018 17:29:19 +0200
+Message-Id: <20180625152920.11549-9-brgl@bgdev.pl>
+In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in mityomapl138.
 
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
+ arch/arm/mach-davinci/board-mityomapl138.c | 55 ++++++++++++++++------
+ 1 file changed, 41 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 9c3480d..95f9980 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -253,3 +253,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
-+
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 1331ed7..d486aa3 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -42,3 +42,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-new file mode 100644
-index 0000000..a6de7101
---- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
-+
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
-+};
-+
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_ops_hfpll,
-+	};
-+
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-+}
-+
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index 2cce0d7d2f2a..b0fdea355d96 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -30,6 +30,7 @@
+ #include <mach/da8xx.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <mach/mux.h>
+ #include <linux/platform_data/spi-davinci.h>
+ 
+@@ -422,27 +423,53 @@ static struct resource mityomapl138_nandflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device mityomapl138_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &mityomapl138_nandflash_data,
++static struct platform_device mityomapl138_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &mityomapl138_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
++		.resource	= mityomapl138_nandflash_resource,
+ 	},
+-	.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
+-	.resource	= mityomapl138_nandflash_resource,
+ };
+ 
+-static struct platform_device *mityomapl138_devices[] __initdata = {
+-	&mityomapl138_nandflash_device,
++static struct resource mityomapl138_aemif_resources[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
++		.flags	= IORESOURCE_MEM,
 +	},
 +};
-+module_platform_driver(qcom_hfpll_driver);
 +
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
++static struct aemif_abus_data mityomapl138_aemif_abus_data[] = {
++	{
++		.cs	= 1,
++	},
++};
++
++static struct aemif_platform_data mityomapl138_aemif_pdata = {
++	.abus_data		= mityomapl138_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(mityomapl138_aemif_abus_data),
++	.sub_devices		= mityomapl138_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(mityomapl138_aemif_devices),
++};
++
++static struct platform_device mityomapl138_aemif_device = {
++	.name		= "ti-aemif",
++	.dev = {
++		.platform_data	= &mityomapl138_aemif_pdata,
++	},
++	.resource	= mityomapl138_aemif_resources,
++	.num_resources	= ARRAY_SIZE(mityomapl138_aemif_resources),
++	.id		= -1,
+ };
+ 
+ static void __init mityomapl138_setup_nand(void)
+ {
+-	platform_add_devices(mityomapl138_devices,
+-				 ARRAY_SIZE(mityomapl138_devices));
+-
+-	if (davinci_aemif_setup(&mityomapl138_nandflash_device))
+-		pr_warn("%s: Cannot configure AEMIF\n", __func__);
++	if (platform_device_register(&mityomapl138_aemif_device))
++		pr_warn("%s: Cannot register AEMIF device\n", __func__);
+ }
+ 
+ static const short mityomap_mii_pins[] = {
 -- 
-1.9.1
+2.17.1
