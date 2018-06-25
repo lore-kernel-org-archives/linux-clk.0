@@ -1,69 +1,60 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
-Date: Mon, 25 Jun 2018 14:02:56 +0200
-Message-Id: <20180625120304.7543-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <woods.technical@gmail.com>
+Return-Path: <woods.technical@gmail.com>
+Date: Mon, 25 Jun 2018 08:19:56 -0500
+From: "Derald D. Woods" <woods.technical@gmail.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: adam.ford@logicpd.com, linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-omap@vger.kernel.org,
+	tony@atomide.com, stable@vger.kernel.org
+Subject: Re: [PATCH V3] ARM: dts: omap3: Fix am3517 mdio and emac clock
+ references
+Message-ID: <20180625131955.GA25402@ethiopia>
+References: <20180625124133.21839-1-aford173@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180625124133.21839-1-aford173@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Current DW HDMI PHY code never prepares and enables PHY clock after it is
-created. It's just used as it is. This may work in some cases, but it's
-clearly wrong. Fix it by adding proper calls to enable/disable PHY
-clock.
+On Mon, Jun 25, 2018 at 07:41:33AM -0500, Adam Ford wrote:
+> A previous patch removed OMAP clock aliases that were perceived
+> to be unnecessary.  Unfortunately, it broke the ethernet on the
+> am3517-evm.  This patch enables the MDIO clock and EMAC clock.
+> 
 
-Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
+Tested-by: Derald D. Woods <woods.technical@gmail.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 5a52fc489a9d..966688f04741 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -477,13 +477,15 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 			dev_err(dev, "Couldn't create the PHY clock\n");
- 			goto err_put_clk_pll0;
- 		}
-+
-+		clk_prepare_enable(phy->clk_phy);
- 	}
- 
- 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
- 	if (IS_ERR(phy->rst_phy)) {
- 		dev_err(dev, "Could not get phy reset control\n");
- 		ret = PTR_ERR(phy->rst_phy);
--		goto err_put_clk_pll0;
-+		goto err_disable_clk_phy;
- 	}
- 
- 	ret = reset_control_deassert(phy->rst_phy);
-@@ -514,6 +516,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	reset_control_assert(phy->rst_phy);
- err_put_rst_phy:
- 	reset_control_put(phy->rst_phy);
-+err_disable_clk_phy:
-+	clk_disable_unprepare(phy->clk_phy);
- err_put_clk_pll0:
- 	if (phy->variant->has_phy_clk)
- 		clk_put(phy->clk_pll0);
-@@ -531,6 +535,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
- 
- 	clk_disable_unprepare(phy->clk_mod);
- 	clk_disable_unprepare(phy->clk_bus);
-+	clk_disable_unprepare(phy->clk_phy);
- 
- 	reset_control_assert(phy->rst_phy);
- 
--- 
-2.18.0
+> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+> Cc: stable@vger.kernel.org #4.16+
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> V3:  Fix subject heading since we're no longer modifying the clk driver
+> 
+> V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
+>      to work like the original patch intended.
+>      
+> diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
+> index ca294914bbb1..4b6062b631b1 100644
+> --- a/arch/arm/boot/dts/am3517.dtsi
+> +++ b/arch/arm/boot/dts/am3517.dtsi
+> @@ -39,6 +39,8 @@
+>  			ti,davinci-ctrl-ram-size = <0x2000>;
+>  			ti,davinci-rmii-en = /bits/ 8 <1>;
+>  			local-mac-address = [ 00 00 00 00 00 00 ];
+> +			clocks = <&emac_ick>;
+> +			clock-names = "ick";
+>  		};
+>  
+>  		davinci_mdio: ethernet@5c030000 {
+> @@ -49,6 +51,8 @@
+>  			bus_freq = <1000000>;
+>  			#address-cells = <1>;
+>  			#size-cells = <0>;
+> +			clocks = <&emac_fck>;
+> +			clock-names = "fck";
+>  		};
+>  
+>  		uart4: serial@4809e000 {
+> -- 
+> 2.17.1
+> 
