@@ -1,46 +1,35 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>,
-	linux-clk@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
-Date: Thu,  7 Jun 2018 16:39:59 +0930
-Message-Id: <20180607070959.31995-1-joel@jms.id.au>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 25 Jun 2018 11:33:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: maxime.ripard@bootlin.com, wens@csie.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 04/24] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Message-ID: <20180625173317.GA3691@rob-hp-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-5-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180625120304.7543-5-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is used by the host to talk to the BMC's PCIe slave device. The BMC
-is not involved, but the clock needs to be enabled so the host can use
-the device.
+On Mon, Jun 25, 2018 at 02:02:44PM +0200, Jernej Skrabec wrote:
+> TCON TOP main purpose is to configure whole display pipeline. It
+> determines relationships between mixers and TCONs, selects source TCON
+> for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+> clock source and contains additional TV TCON and DSI gates.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt      | 56 +++++++++++++++++++
+>  include/dt-bindings/clock/sun8i-tcon-top.h    | 11 ++++
+>  2 files changed, 67 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-Cc: stable@vger.kernel.org # 4.15
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
-Tested-by: Lei YU <mine260309@gmail.com>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-aspeed.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 4d425594999d..c17032bc853a 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -91,8 +91,8 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
--	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
--	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
-+	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	CLK_IS_CRITICAL }, /* PCIe/PCI */
-+	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	CLK_IS_CRITICAL }, /* DAC */
- 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
- 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
- 	[ASPEED_CLK_GATE_LCLK] =	{  8,  5, "lclk-gate",		NULL,	0 }, /* LPC */
--- 
-2.17.1
+Reviewed-by: Rob Herring <robh@kernel.org>
