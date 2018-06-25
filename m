@@ -1,54 +1,163 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33495 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1030283AbeFSSxm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Jun 2018 14:53:42 -0400
-Date: Tue, 19 Jun 2018 14:53:39 -0400
-From: David Rivshin <drivshin@awxrd.com>
-To: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Cc: Tony Lindgren <tony@atomide.com>
-Subject: dmtimer fclk regression in 4.16?
-Message-ID: <20180619145339.08322293.drivshin@awxrd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 3/9] ARM: davinci: da850-evm: use aemif platform driver in legacy mode
+Date: Mon, 25 Jun 2018 17:29:14 +0200
+Message-Id: <20180625152920.11549-4-brgl@bgdev.pl>
+In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-I think I've run across a regression in 4.16 that resulted from the TI clock 
-infrastructure changes. A bisect pointed to [1] as the first breaking commit. 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented 
-by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with 
-4.16 that parenting fails in omap_dm_timer_set_source(), called from 
-pwm_omap_dmtimer_probe, at this check:
-	if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
-		return 0;
-because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent 
-is "timer7_fck". 
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in da850-evm.
 
-It seemed to me that timer->fclk should instead be "timer7_fck" (which has 
-the desired set of possible parents). I tried following the lead set in [2] 
-and added "clocks" and "clock-names" properties on timer7. However, that 
-resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(), 
-failing when it tries to parent "timer7_fck" to itself. 
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-da850-evm.c | 93 ++++++++++++++-----------
+ 1 file changed, 51 insertions(+), 42 deletions(-)
 
-The following change in omap_dm_timer_prepare() does seem to work:
--		timer->fclk = clk_get(&timer->pdev->dev, "fck");
-+		timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));
-but I'm very uncertain whether that's the right path. 
-Should omap_dm_timer know that the clock returned is actually a child of the 
-clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the 
-timerN_fck in the first place? Or is the problem something else entirely?
-
-As I'm not sure how these pieces are all intended to fit together, any 
-pointers would be appreciated.
-
-Thanks,
-David Rivshin
-
-[1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data") 
-https://www.spinics.net/lists/linux-omap/msg139798.html
-[2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
-https://www.spinics.net/lists/linux-omap/msg140605.html
-
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 442c16773f09..0ae7c47ed2b0 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -33,6 +33,7 @@
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <linux/platform_data/spi-davinci.h>
+ #include <linux/platform_data/uio_pruss.h>
+ #include <linux/regulator/machine.h>
+@@ -185,16 +186,6 @@ static struct resource da850_evm_norflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device da850_evm_norflash_device = {
+-	.name		= "physmap-flash",
+-	.id		= 0,
+-	.dev		= {
+-		.platform_data  = &da850_evm_norflash_data,
+-	},
+-	.num_resources	= 1,
+-	.resource	= da850_evm_norflash_resource,
+-};
+-
+ /* DA850/OMAP-L138 EVM includes a 512 MByte large-page NAND flash
+  * (128K blocks). It may be used instead of the (default) SPI flash
+  * to boot, using TI's tools to install the secondary boot loader
+@@ -266,37 +257,58 @@ static struct resource da850_evm_nandflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device da850_evm_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &da850_evm_nandflash_data,
+-	},
+-	.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
+-	.resource	= da850_evm_nandflash_resource,
++static struct resource da850_evm_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
++		.flags	= IORESOURCE_MEM,
++	}
+ };
+ 
+-static struct platform_device *da850_evm_devices[] = {
+-	&da850_evm_nandflash_device,
+-	&da850_evm_norflash_device,
++static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
++	{
++		.cs	= 3,
++	}
+ };
+ 
+-#define DA8XX_AEMIF_CE2CFG_OFFSET	0x10
+-#define DA8XX_AEMIF_ASIZE_16BIT		0x1
+-
+-static void __init da850_evm_init_nor(void)
+-{
+-	void __iomem *aemif_addr;
+-
+-	aemif_addr = ioremap(DA8XX_AEMIF_CTL_BASE, SZ_32K);
++static struct platform_device da850_evm_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &da850_evm_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
++		.resource	= da850_evm_nandflash_resource,
++	},
++	{
++		.name		= "physmap-flash",
++		.id		= 0,
++		.dev		= {
++			.platform_data  = &da850_evm_norflash_data,
++		},
++		.num_resources	= 1,
++		.resource	= da850_evm_norflash_resource,
++	}
++};
+ 
+-	/* Configure data bus width of CS2 to 16 bit */
+-	writel(readl(aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET) |
+-		DA8XX_AEMIF_ASIZE_16BIT,
+-		aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET);
++static struct aemif_platform_data da850_evm_aemif_pdata = {
++	.cs_offset = 2,
++	.abus_data = da850_evm_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(da850_evm_aemif_abus_data),
++	.sub_devices = da850_evm_aemif_devices,
++	.num_sub_devices = ARRAY_SIZE(da850_evm_aemif_devices),
++};
+ 
+-	iounmap(aemif_addr);
+-}
++static struct platform_device da850_evm_aemif_device = {
++	.name		= "ti-aemif",
++	.dev = {
++		.platform_data	= &da850_evm_aemif_pdata,
++	},
++	.resource	= da850_evm_aemif_resource,
++	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
++	.id		= -1,
++};
+ 
+ static const short da850_evm_nand_pins[] = {
+ 	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
+@@ -339,13 +351,10 @@ static inline void da850_evm_setup_nor_nand(void)
+ 			pr_warn("%s: NOR mux setup failed: %d\n",
+ 				__func__, ret);
+ 
+-		da850_evm_init_nor();
+-
+-		platform_add_devices(da850_evm_devices,
+-					ARRAY_SIZE(da850_evm_devices));
+-
+-		if (davinci_aemif_setup(&da850_evm_nandflash_device))
+-			pr_warn("%s: Cannot configure AEMIF.\n", __func__);
++		ret = platform_device_register(&da850_evm_aemif_device);
++		if (ret)
++			pr_warn("%s: registering aemif failed: %d\n",
++				__func__, ret);
+ 	}
+ }
+ 
+-- 
+2.17.1
