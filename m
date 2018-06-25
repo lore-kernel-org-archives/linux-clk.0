@@ -1,48 +1,61 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for
- S700
-To: Stephen Boyd <sboyd@kernel.org>, Saravanan Sekar <sravanhome@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- manivannan.sadhasivam@linaro.org, pn@denx.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-2-sravanhome@gmail.com>
- <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <c3a62fea-a769-d2fc-2fef-c43ac9c95de6@suse.de>
-Date: Fri, 29 Jun 2018 19:38:50 +0200
-MIME-Version: 1.0
-In-Reply-To: <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs50.siol.net ([185.57.226.241]:47837 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933304AbeFYMFB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:01 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 06/24] drm/sun4i: Fix releasing node when enumerating enpoints
+Date: Mon, 25 Jun 2018 14:02:46 +0200
+Message-Id: <20180625120304.7543-7-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 29.06.2018 um 19:36 schrieb Stephen Boyd:
-> Quoting Saravanan Sekar (2018-06-28 12:18:03)
->> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> index ef79d7905f44..28f3f4a0f7f0 100644
->> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
->> index 66dd5309f0a2..3530b705df90 100644
->> --- a/arch/arm64/boot/dts/actions/s700.dtsi
->> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> 
-> Can the above part be split from the below part? I don't want to merge
-> dts bits into clk tree, when those should normally go through arm-soc.
-> 
->> diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
->> new file mode 100644
+sun4i_drv_add_endpoints() has a memory leak since it uses of_node_put()
+when remote is equal to NULL and does nothing when remote has a valid
+pointer.
 
-This part needs to go into the bindings patch, which should be 1/3, not
-3/3 please.
+Invert the logic to fix memory leak.
 
-Thanks,
-Andreas
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 50d19605c38f..e15fa2389e3f 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -283,7 +283,6 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 		remote = of_graph_get_remote_port_parent(ep);
+ 		if (!remote) {
+ 			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
+-			of_node_put(remote);
+ 			continue;
+ 		}
+ 
+@@ -297,11 +296,13 @@ static int sun4i_drv_add_endpoints(struct device *dev,
+ 
+ 			if (of_graph_parse_endpoint(ep, &endpoint)) {
+ 				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
++				of_node_put(remote);
+ 				continue;
+ 			}
+ 
+ 			if (!endpoint.id) {
+ 				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
++				of_node_put(remote);
+ 				continue;
+ 			}
+ 		}
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.18.0
+
