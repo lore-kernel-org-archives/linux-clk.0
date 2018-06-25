@@ -1,43 +1,54 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Fabio Estevam <festevam@gmail.com>
-CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, dl-linux-imx
-	<linux-imx@nxp.com>, "moderated list:ARM/FREESCALE IMX / MXC ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, linux-clk
-	<linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-Date: Sun, 3 Jun 2018 12:48:03 +0000
-Message-ID: <2D554312-36F2-4781-899C-8D9F5BD20B46@nxp.com>
-References: 
- <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>,<CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
-In-Reply-To: 
- <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/9] ARM: davinci: deduplicate aemif support
+Date: Mon, 25 Jun 2018 17:29:11 +0200
+Message-Id: <20180625152920.11549-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGksIEZhYmlvDQoNCkZyb20gQW5zb24ncyBpUGhvbmUgNg0KDQoNCj4g5ZyoIDIwMTjlubQ25pyI
-M+aXpe+8jDIwOjQ077yMRmFiaW8gRXN0ZXZhbSA8ZmVzdGV2YW1AZ21haWwuY29tPiDlhpnpgZPv
-vJoNCj4gDQo+PiBPbiBTdW4sIEp1biAzLCAyMDE4IGF0IDEyOjAwIEFNLCBBbnNvbiBIdWFuZyA8
-QW5zb24uSHVhbmdAbnhwLmNvbT4gd3JvdGU6DQo+PiBDbG9jayBmcmFtZXdvcmsgd2lsbCBlbmFi
-bGUgdGhvc2UgY2xvY2tzIHJlZ2lzdGVyZWQNCj4+IHdpdGggQ0xLX0lTX0NSSVRJQ0FMIGZsYWcs
-IHNvIG5vIG5lZWQgdG8gaGF2ZQ0KPj4gY2xrc19pbml0X29uIGFycmF5IGR1cmluZyBjbG9jayBp
-bml0aWFsaXphdGlvbiBub3cuDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxB
-bnNvbi5IdWFuZ0BueHAuY29tPg0KPj4gLS0tDQo+PiBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZx
-LmMgfCAxNCArKy0tLS0tLS0tLS0tLQ0KPj4gMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KSwgMTIgZGVsZXRpb25zKC0pDQo+PiANCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgv
-Y2xrLWlteDZxLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZxLmMNCj4+IGluZGV4IGI5ZWE3
-MDMuLjg3NTRjNjEgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDZxLmMN
-Cj4+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14NnEuYw0KPj4gQEAgLTk2LDEyICs5Niw2
-IEBAIHN0YXRpYyBjb25zdCBjaGFyICpwbGw3X2J5cGFzc19zZWxzW10gPSB7ICJwbGw3IiwgInBs
-bDdfYnlwYXNzX3NyYyIsIH07DQo+PiBzdGF0aWMgc3RydWN0IGNsayAqY2xrW0lNWDZRRExfQ0xL
-X0VORF07DQo+PiBzdGF0aWMgc3RydWN0IGNsa19vbmVjZWxsX2RhdGEgY2xrX2RhdGE7DQo+PiAN
-Cj4+IC1zdGF0aWMgdW5zaWduZWQgaW50IGNvbnN0IGNsa3NfaW5pdF9vbltdIF9faW5pdGNvbnN0
-ID0gew0KPj4gLSAgICAgICBJTVg2UURMX0NMS19NTURDX0NIMF9BWEksDQo+PiAtICAgICAgIElN
-WDZRRExfQ0xLX1JPTSwNCj4+IC0gICAgICAgSU1YNlFETF9DTEtfQVJNLA0KPiANCj4gSU1YNlFE
-TF9DTEtfQVJNIGRvZXMgbm90IGhhdmUgdGhlIENMS19JU19DUklUSUNBTCBmbGFnLg0KPiANCj4g
-SXMgdGhpcyBpbnRlbmRlZD8gSWYgc28sIHBsZWFzZSBtZW50aW9uIGluIHRoZSBjb21taXQgbG9n
-Lg0KDQpBcyBJIGV4cGxhaW4gaW4gcHJldmlvdXMgbWFpbCwgYnVzeSBkaXZpZGVyIGNsayB0eXBl
-IGFscmVhZHkgaW5jbHVkZSB0aGUgZmxhZyB3aGVuIHJlZ2lzdGVyZWQuDQoNCkFuc29uLg==
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+This series moves all aemif/nand users to using the ti-aemif platform
+driver located in drivers/memory instead of the older API located in
+mach-davinci.
+
+The first patch adds a necessary clock lookup and the last patch
+removes the duplicate aemif code.
+
+Bartosz Golaszewski (9):
+  clk: davinci: psc-dm365: use two lookup entries for the aemif clock
+  ARM: davinci: omapl138-hawk: add aemif & nand support
+  ARM: davinci: da850-evm: use aemif platform driver in legacy mode
+  ARM: davinci: dm365-evm: use the ti-aemif soc driver
+  ARM: davinci: dm644x-evm: use aemif platform driver
+  ARM: davinci: da830-evm: use aemif platform driver
+  ARM: davinci: dm646x-evm: use aemif platform driver
+  ARM: davinci: mityomapl138: use aemif platform driver
+  ARM: davinci: kill davinci_aemif_setup()
+
+ arch/arm/mach-davinci/Makefile                |   2 +-
+ arch/arm/mach-davinci/aemif.c                 | 218 ------------------
+ arch/arm/mach-davinci/board-da830-evm.c       |  56 ++++-
+ arch/arm/mach-davinci/board-da850-evm.c       |  93 ++++----
+ arch/arm/mach-davinci/board-dm365-evm.c       |  59 +++--
+ arch/arm/mach-davinci/board-dm644x-evm.c      |  55 +++--
+ arch/arm/mach-davinci/board-dm646x-evm.c      |  52 ++++-
+ arch/arm/mach-davinci/board-mityomapl138.c    |  55 +++--
+ arch/arm/mach-davinci/board-omapl138-hawk.c   | 132 +++++++++++
+ drivers/clk/davinci/psc-dm365.c               |   3 +-
+ .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
+ 11 files changed, 400 insertions(+), 326 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/aemif.c
+
+-- 
+2.17.1
