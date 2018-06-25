@@ -1,44 +1,43 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 3/9] ARM: davinci: da850-evm: use aemif platform driver in
- legacy mode
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
- <20180625152920.11549-4-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <13418bf6-dbe7-5091-b5a7-07f779fb9f63@lechnology.com>
-Date: Mon, 25 Jun 2018 11:00:11 -0500
-MIME-Version: 1.0
-In-Reply-To: <20180625152920.11549-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 13/24] dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+Date: Mon, 25 Jun 2018 14:02:53 +0200
+Message-Id: <20180625120304.7543-14-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We now support board files in the aemif driver. Register a platform
-> device instead of using the handcrafted API in da850-evm.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+R40 DE2 mixers are similar to those found in A83T, except it needs
+different clock settings.
 
-> -	iounmap(aemif_addr);
-> -}
-> +static struct platform_device da850_evm_aemif_device = {
-> +	.name		= "ti-aemif",
-> +	.dev = {
-> +		.platform_data	= &da850_evm_aemif_pdata,
-> +	},
-> +	.resource	= da850_evm_aemif_resource,
-> +	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
-> +	.id		= -1,
-> +};
-> 
+Add a compatibles for them.
 
-Not essential, but it is nice to have the id right after name
-since they are closely related (as you did in several other
-instances in this same patch). For a second, I thought you
-forgot id = -1 here before I saw it.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index fe31b1510717..84fe38dbb900 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -366,6 +366,8 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-0
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-0
++    * allwinner,sun8i-r40-de2-mixer-1
+     * allwinner,sun8i-v3s-de2-mixer
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+-- 
+2.18.0
