@@ -1,59 +1,39 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] thermal: bcm2835: Stop using printk format %pCr
-Date: Fri,  1 Jun 2018 11:28:20 +0200
-Message-Id: <1527845302-12159-3-git-send-email-geert+renesas@glider.be>
-In-Reply-To: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1529915064-5014-1-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 25 Jun 2018 11:20:52 +0200
+Message-ID: <CAMuHMdVtkxvpBjSy2+2MHvZ15t5ZTSq-4H+pfgsayOx+EHXnEg@mail.gmail.com>
+Subject: Re: [PATCH v10 1/1] clk: renesas: Renesas R9A06G032 clock driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+Hi Michel,
 
-Replace it by printing the variable that already holds the clock rate.
-Note that calling clk_get_rate() is safe here, as the code runs in task
-context.
+On Mon, Jun 25, 2018 at 10:29 AM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/thermal/broadcom/bcm2835_thermal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks, updated.
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index a4d6a0e2e9938190..23ad4f9f21438e45 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -213,8 +213,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 	rate = clk_get_rate(data->clk);
- 	if ((rate < 1920000) || (rate > 5000000))
- 		dev_warn(&pdev->dev,
--			 "Clock %pCn running at %pCr Hz is outside of the recommended range: 1.92 to 5MHz\n",
--			 data->clk, data->clk);
-+			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
-+			 data->clk, rate);
- 
- 	/* register of thermal sensor and get info from DT */
- 	tz = thermal_zone_of_sensor_register(&pdev->dev, 0, data,
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
