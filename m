@@ -1,46 +1,55 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-Date: Tue, 26 Jun 2018 11:25:28 +0200
-Message-Id: <20180626092537.6737-5-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:53419 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755242AbeFYKxb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 06:53:31 -0400
+From: Adam Ford <aford173@gmail.com>
+To: adam.ford@logicpd.com
+Cc: t-kristo@ti.com, woods.technical@gmail.com,
+        linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+        mturquette@baylibre.com, linux-omap@vger.kernel.org,
+        tony@atomide.com, Adam Ford <aford173@gmail.com>,
+        stable@vger.kernel.org
+Subject: [PATCH V2] clk: ti: omap3: Fix am3517 mdio clock alias
+Date: Mon, 25 Jun 2018 05:53:13 -0500
+Message-Id: <20180625105313.4201-1-aford173@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+A previous patch removed OMAP clock aliases that were perceived
+to be unnecessary.  Unfortunately, it broke the ethernet on the
+am3517-evm.  This patch enables the MDIO clock and EMAC clock.
 
-We want to be able to get the clock both from the board file by its
-con_id and from the aemif driver by dev_id.
+Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+Cc: stable@vger.kernel.org #4.16+
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- drivers/clk/davinci/psc-dm646x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
+     to work like the original patch intended.
 
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-index c3f82ed70a80..20012dc7471a 100644
---- a/drivers/clk/davinci/psc-dm646x.c
-+++ b/drivers/clk/davinci/psc-dm646x.c
-@@ -18,7 +18,8 @@
- LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
- LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
- 				"fck",		"davinci_mdio.0");
--LPSC_CLKDEV1(aemif_clkdev,	"aemif",	NULL);
-+LPSC_CLKDEV2(aemif_clkdev,	"aemif",	NULL,
-+				NULL,		"ti-aemif");
- LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
- LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
- LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
+diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
+index ca294914bbb1..4b6062b631b1 100644
+--- a/arch/arm/boot/dts/am3517.dtsi
++++ b/arch/arm/boot/dts/am3517.dtsi
+@@ -39,6 +39,8 @@
+ 			ti,davinci-ctrl-ram-size = <0x2000>;
+ 			ti,davinci-rmii-en = /bits/ 8 <1>;
+ 			local-mac-address = [ 00 00 00 00 00 00 ];
++			clocks = <&emac_ick>;
++			clock-names = "ick";
+ 		};
+ 
+ 		davinci_mdio: ethernet@5c030000 {
+@@ -49,6 +51,8 @@
+ 			bus_freq = <1000000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			clocks = <&emac_fck>;
++			clock-names = "fck";
+ 		};
+ 
+ 		uart4: serial@4809e000 {
 -- 
 2.17.1
+
