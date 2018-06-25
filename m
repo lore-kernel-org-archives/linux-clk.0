@@ -1,109 +1,95 @@
-Return-Path: <joel.stan@gmail.com>
-Return-Path: <joel.stan@gmail.com>
-Sender: "joel.stan@gmail.com" <joel.stan@gmail.com>
-From: Joel Stanley <joel@jms.id.au>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
-Date: Fri, 29 Jun 2018 08:45:40 +0930
-Message-Id: <20180628231540.26633-1-joel@jms.id.au>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:60432 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754186AbeFYP7k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Jun 2018 11:59:40 -0400
+Date: Mon, 25 Jun 2018 17:59:28 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 6/7] arm64: allwinner: a64: add device tree node for
+ HDMI simplefb
+Message-ID: <20180625155928.ep6xrqhbxwejjr4a@flea>
+References: <20180622124540.56203-1-icenowy@aosc.io>
+ <20180622124540.56203-5-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="noanhksd45spdaor"
+In-Reply-To: <20180622124540.56203-5-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The HPLL can be configured through a register (SCU24), however some
-platforms chose to configure it through the strapping settings and do
-not use the register. This was not noticed as the logic for bit 18 in
-SCU24 was confused: set means programmed, but the driver read it as set
-means strapped.
 
-This gives us the correct HPLL value on Palmetto systems, from which
-most of the peripheral clocks are generated.
+--noanhksd45spdaor
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
-Cc: stable@vger.kernel.org # v4.15
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-aspeed.c | 42 +++++++++++++++++++++++++++-------------
- 1 file changed, 29 insertions(+), 13 deletions(-)
+On Fri, Jun 22, 2018 at 08:45:39PM +0800, Icenowy Zheng wrote:
+> As the U-Boot bootloader now is also capable of initialize the HDMI on
+> A64 boards, add a simplefb device tree node for accessing the HDMI
+> framebuffer initialized by the bootloader.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v2:
+> - Dropped LCD SimpleFB as it's already added. LCD SimpleFB needs some
+>   fix but the fix is present when adding DE2 CCU.
+>=20
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index 318c4ba8ae9f..840753432ea5 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -68,6 +68,15 @@
+>  				 <&display_clocks CLK_MIXER0>;
+>  			status =3D "disabled";
+>  		};
+> +
+> +		simplefb_hdmi: framebuffer-hdmi {
+> +			compatible =3D "allwinner,simple-framebuffer",
+> +				     "simple-framebuffer";
+> +			allwinner,pipeline =3D "mixer1-lcd1-hdmi";
+> +			clocks =3D <&display_clocks CLK_MIXER1>,
+> +				 <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
+> +			status =3D "disabled";
+> +		};
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 38b366b00c57..2ef4ad7bdbdc 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -24,7 +24,7 @@
- #define ASPEED_MPLL_PARAM	0x20
- #define ASPEED_HPLL_PARAM	0x24
- #define  AST2500_HPLL_BYPASS_EN	BIT(20)
--#define  AST2400_HPLL_STRAPPED	BIT(18)
-+#define  AST2400_HPLL_PROGRAMMED BIT(18)
- #define  AST2400_HPLL_BYPASS_EN	BIT(17)
- #define ASPEED_MISC_CTRL	0x2c
- #define  UART_DIV13_EN		BIT(12)
-@@ -565,29 +565,45 @@ builtin_platform_driver(aspeed_clk_driver);
- static void __init aspeed_ast2400_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
--	u32 val, freq, div;
-+	u32 val, div, clkin, hpll;
-+	const u16 hpll_rates[][4] = {
-+		{384, 360, 336, 408},
-+		{400, 375, 350, 425},
-+	};
-+	int rate;
- 
- 	/*
- 	 * CLKIN is the crystal oscillator, 24, 48 or 25MHz selected by
- 	 * strapping
- 	 */
- 	regmap_read(map, ASPEED_STRAP, &val);
--	if (val & CLKIN_25MHZ_EN)
--		freq = 25000000;
--	else if (val & AST2400_CLK_SOURCE_SEL)
--		freq = 48000000;
--	else
--		freq = 24000000;
--	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, freq);
--	pr_debug("clkin @%u MHz\n", freq / 1000000);
-+	rate = (val >> 8) & 3;
-+	if (val & CLKIN_25MHZ_EN) {
-+		clkin = 25000000;
-+		hpll = hpll_rates[1][rate];
-+	} else if (val & AST2400_CLK_SOURCE_SEL) {
-+		clkin = 48000000;
-+		hpll = hpll_rates[0][rate];
-+	} else {
-+		clkin = 24000000;
-+		hpll = hpll_rates[0][rate];
-+	}
-+	hw = clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, clkin);
-+	pr_debug("clkin @%u MHz\n", clkin / 1000000);
- 
- 	/*
- 	 * High-speed PLL clock derived from the crystal. This the CPU clock,
--	 * and we assume that it is enabled
-+	 * and we assume that it is enabled. It can be configured through the
-+	 * HPLL_PARAM register, or set to a specified frequency by strapping.
- 	 */
- 	regmap_read(map, ASPEED_HPLL_PARAM, &val);
--	WARN(val & AST2400_HPLL_STRAPPED, "hpll is strapped not configured");
--	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = aspeed_ast2400_calc_pll("hpll", val);
-+	if (val & AST2400_HPLL_PROGRAMMED)
-+		hw = aspeed_ast2400_calc_pll("hpll", val);
-+	else
-+		hw = clk_hw_register_fixed_rate(NULL, "hpll", "clkin", 0,
-+				hpll * 1000000);
-+
-+	aspeed_clk_data->hws[ASPEED_CLK_HPLL] = hw;
- 
- 	/*
- 	 * Strap bits 11:10 define the CPU/AHB clock frequency ratio (aka HCLK)
--- 
-2.17.1
+This node should be before the lcd node
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--noanhksd45spdaor
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsxEV8ACgkQ0rTAlCFN
+r3Sg5g/9GijgGQ4CNam22NlFUhkaJ4xYrrXyLO08zT3ZQftHGhlxefjYSSzFoVu1
+Rf1aKj0NzawGwq+m7k7G+BMa/sR6nL5+tYDzyACVkvD+HwCZO+TntT3O98HbAJ3d
+7EMra8uW4aIUAcZXT6BPn3b+MFqgLjTqkpbLm+HA2MD/lEGievVcR9lFn161Tvzf
+DXrcmOpDOf2Z/WwaLi8tVcwZXMY4Du3Dgtaydkez9up2g7rhJR1n/7vDjPcM1Fec
+1v9kS7XBDABEvMgkKDYkhAm/wpWr9WMxfTIQoYcL3hdX1WGpaM7F9AEJwzVjHWnl
+1Zwj5KEUMJrr86T1XKn/N2fTob97JgoIXEynTKblA7NCBefI2N947mLb8DTciYV9
+Pt9Rp3evTcv8F2QgESCGp1oH+3t7vfXcofiaC35a6Zp6qJ6POqLTxELyc8TflK22
+xhCeFOrb1FKW9HsdOPA+IvRhQNl751aWhGB+5gZvfcpbXQKmfTQ7PR5Jkja+Ee5l
+FgmXUcSA/XYIuB9UEVqI6U5vb6eGL3gzFbGwYkJ40aKCerRfGfTS+CuVgQsF+6g8
+NhRLaKs5rkT1U+t++DP5+oYuNfEJRp6xdmnL87od6/1HNfGBnyzNJLo0mBJaAhSU
+C1bsrXgAE+MYxu0XDgPFbu0qjWDbvnOqly5ZCYCTAROImw8iTTQ=
+=jVZD
+-----END PGP SIGNATURE-----
+
+--noanhksd45spdaor--
