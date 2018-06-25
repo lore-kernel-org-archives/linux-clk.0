@@ -1,42 +1,60 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42860 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752434AbeFFV41 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 17:56:27 -0400
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH V2] clk: ti: omap3: Fix am3517 mdio clock alias
+To: Adam Ford <aford173@gmail.com>, <adam.ford@logicpd.com>
+CC: <woods.technical@gmail.com>, <linux-clk@vger.kernel.org>,
+        <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <stable@vger.kernel.org>
+References: <20180625105313.4201-1-aford173@gmail.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <60e56097-0c57-2352-d1f0-76740a5b75f1@ti.com>
+Date: Mon, 25 Jun 2018 15:16:57 +0300
 MIME-Version: 1.0
-In-Reply-To: <3be11aeea9cd0399837acb201f6226d9@agner.ch>
-References: <1527948122-32092-1-git-send-email-festevam@gmail.com> <3be11aeea9cd0399837acb201f6226d9@agner.ch>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 6 Jun 2018 18:56:26 -0300
-Message-ID: <CAOMZO5DOBg+f4Lvh2KoMBjHDnenFh09Sy5HDWfA1Qb5Lit2mng@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock
- definition order
-To: Stefan Agner <stefan@agner.ch>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Yongcai Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180625105313.4201-1-aford173@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stefan,
+On 25/06/18 13:53, Adam Ford wrote:
 
-On Wed, Jun 6, 2018 at 1:27 PM, Stefan Agner <stefan@agner.ch> wrote:
+Subject line should be: "ARM: dts: omap3:" etc.
 
->> +#define IMX6ULL_CLK_ESAI_SEL         236
->
-> Nit: Add an empty line here?
+-Tero
 
-The lack of an empty line is on purpose because I wanted to avoid
-someone thinking:
-"Oh, there is hole here, let me fill it with new clocks here" :-)
+> A previous patch removed OMAP clock aliases that were perceived
+> to be unnecessary.  Unfortunately, it broke the ethernet on the
+> am3517-evm.  This patch enables the MDIO clock and EMAC clock.
+> 
+> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+> Cc: stable@vger.kernel.org #4.16+
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
+>       to work like the original patch intended.
+> 
+> diff --git a/arch/arm/boot/dts/am3517.dtsi b/arch/arm/boot/dts/am3517.dtsi
+> index ca294914bbb1..4b6062b631b1 100644
+> --- a/arch/arm/boot/dts/am3517.dtsi
+> +++ b/arch/arm/boot/dts/am3517.dtsi
+> @@ -39,6 +39,8 @@
+>   			ti,davinci-ctrl-ram-size = <0x2000>;
+>   			ti,davinci-rmii-en = /bits/ 8 <1>;
+>   			local-mac-address = [ 00 00 00 00 00 00 ];
+> +			clocks = <&emac_ick>;
+> +			clock-names = "ick";
+>   		};
+>   
+>   		davinci_mdio: ethernet@5c030000 {
+> @@ -49,6 +51,8 @@
+>   			bus_freq = <1000000>;
+>   			#address-cells = <1>;
+>   			#size-cells = <0>;
+> +			clocks = <&emac_fck>;
+> +			clock-names = "fck";
+>   		};
+>   
+>   		uart4: serial@4809e000 {
+> 
 
-> Reviewed-by: Stefan Agner <stefan@agner.ch>
-
-Thanks for reviewing!
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
