@@ -1,39 +1,119 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH] clk: davinci: cfgchip: testing the wrong variable
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
-From: David Lechner <david@lechnology.com>
-Message-ID: <9444dee2-db66-77ab-06bb-81df888f6287@lechnology.com>
-Date: Sat, 2 Jun 2018 09:33:00 -0500
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
+To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
+ mchehab@kernel.org, rdunlap@infradead.org, sean.wang@mediatek.com,
+ linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Matthias Brugger <mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+ <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
+ <20180430103029.GD5147@dell>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
+Date: Mon, 25 Jun 2018 17:39:05 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180602075256.hrvidsfsmr33mv2f@kili.mountain>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180430103029.GD5147@dell>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/02/2018 02:52 AM, Dan Carpenter wrote:
-> There is a copy and paste bug here.  We should be testing "usb1" instead
-> of "usb0".
+
+
+On 30/04/18 12:30, Lee Jones wrote:
+> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
 > 
-> Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> Add binding description for the mmsys mfd for some Mediatek
+>> devices. mmsys has some registers to control clock gates (which is
+>> used in the clk driver) and some registers to set the routing and enable
+>> the differnet blocks of the display subsystem.
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> ---
+>>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
+>>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+>>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
+>>  3 files changed, 28 insertions(+), 3 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> index 4eb8bbe15c01..4468345f8b1a 100644
+>> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+>>  Required Properties:
+>>  
+>>  - compatible: Should be one of:
+>> -	- "mediatek,mt2701-mmsys", "syscon"
+>>  	- "mediatek,mt2712-mmsys", "syscon"
+>>  	- "mediatek,mt6797-mmsys", "syscon"
+>> -	- "mediatek,mt8173-mmsys", "syscon"
+>>  - #clock-cells: Must be 1
+>>  
+>>  The mmsys controller uses the common clk binding from
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> index 383183a89164..85a3b4ec06cd 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> @@ -9,7 +9,7 @@ function block.
+>>  
+>>  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
+>>  For a description of the MMSYS_CONFIG binding, see
+>> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
+>> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>>  
+>>  DISP function blocks
+>>  ====================
+>> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>> new file mode 100644
+>> index 000000000000..2331ae16917e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+>> @@ -0,0 +1,27 @@
+>> +MediaTek MMSYS Multifunction Device Driver
 > 
-> diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-> index c971111d2601..20a120aa147e 100644
-> --- a/drivers/clk/davinci/da8xx-cfgchip.c
-> +++ b/drivers/clk/davinci/da8xx-cfgchip.c
-> @@ -672,7 +672,7 @@ static int of_da8xx_usb_phy_clk_init(struct device *dev, struct regmap *regmap)
->   
->   	usb1 = da8xx_cfgchip_register_usb1_clk48(dev, regmap);
->   	if (IS_ERR(usb1)) {
-> -		if (PTR_ERR(usb0) == -EPROBE_DEFER)
-> +		if (PTR_ERR(usb1) == -EPROBE_DEFER)
->   			return -EPROBE_DEFER;
->   
->   		dev_warn(dev, "Failed to register usb1_clk48 (%ld)\n",
+> What is "MMSYS"?
+> 
+> "Multi-Function Driver"s are specific to Linux.
+> 
+> What actually is the device?
 > 
 
-Reviewed-by: David Lechner <david@lechnology.com>
+It's includes all the DRM parts of the SoC together with the clocks for the
+device. MMSYS IMHO stands for Multi-Media-System.
+
+Regards,
+Matthias
+
+>> +MMSYS is a multifunction device with the following sub modules:
+>> +- clocks for the multi-media subsystem
+>> +- central node for the DRM subsystem.
+>> +
+>> +This document describes the binding for MFD device. The MFD takes care to initailize
+>> +the clock driver and the DRM driver. More info see
+>> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> +
+>> +Required properties:
+>> +- compatible: Should be one of:
+>> +	- "mediatek,mt2701-mmsys", "syscon"
+>> +	- "mediatek,mt8173-mmsys", "syscon"
+>> +- #clock-cells: Must be 1
+>> +
+>> +Optional properties:
+>> +- power-domains: list of powerdomains needed for the subsystem to work
+>> +
+>> +Example:
+>> +
+>> +mmsys: clock-controller@14000000 {
+>> +	compatible = "mediatek,mt8173-mmsys", "syscon";
+>> +	reg = <0 0x14000000 0 0x1000>;
+>> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
+>> +	#clock-cells = <1>;
+>> +};
+> 
