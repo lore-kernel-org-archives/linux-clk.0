@@ -1,57 +1,189 @@
-Return-Path: <andy.shevchenko@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <152996983664.143105.1441423217241075965@swboyd.mtv.corp.google.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
- <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
- <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
- <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
- <914341e7-ca94-054d-6127-522b745006b4@arm.com> <152996983664.143105.1441423217241075965@swboyd.mtv.corp.google.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 26 Jun 2018 20:27:43 +0300
-Message-ID: <CAHp75VfJQOZ9K=SusdDpV5NGeSnCvLvcg9w7nqqiyudH7+QGgA@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Srinath Mannam <srinath.mannam@broadcom.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 2/9] ARM: davinci: omapl138-hawk: add aemif & nand support
+Date: Mon, 25 Jun 2018 17:29:13 +0200
+Message-Id: <20180625152920.11549-3-brgl@bgdev.pl>
+In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 26, 2018 at 2:37 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Sudeep Holla (2018-06-25 10:15:45)
->>
->>
->> On 25/06/18 17:37, Stephen Boyd wrote:
->> > Quoting Rafael J. Wysocki (2018-06-16 08:50:18)
->> >> On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
->> >>>
->> >>> Is this for clk_enable/disable? What about clk_set_rate() or
->> >>> clk_set_phase()? Is ACPI's AML taking care of that?
->> >>
->> >> That's for clk_enable/disable AFAICS.
->> >>
->> >> AML doesn't manage device performance states at all.
->> >
->> > Alright. We may need to add a better way for device drivers to get
->> > handles to clk pointers on ACPI firmware so they can change frequencies
->> > or phase, etc.
->>
->> Is there any specific usecase/device needing this in the kernel ? SPI
->> slaves ?
->
-> Mark Brown has been pushing x86 folks to use clk framework for audio
-> drivers in ASoC. I haven't seen other uses besides that really.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-All LPSS code based on fixed rate clocks created by some platform
-code. Since we have no board files for modern x86 platforms the clock
-providers and consumers often are located in the same / adjoining
-drivers.
+We now have support for aemif & nand from board files. As an example
+add support for nand to da850-hawk.
 
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 466e87b24e9a..02c0f36633e9 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -16,6 +16,11 @@
+ #include <linux/gpio.h>
+ #include <linux/gpio/machine.h>
+ #include <linux/platform_data/gpio-davinci.h>
++#include <linux/platform_data/ti-aemif.h>
++#include <linux/mtd/rawnand.h>
++#include <linux/mtd/partitions.h>
++#include <linux/platform_data/mtd-davinci.h>
++#include <linux/platform_data/mtd-davinci-aemif.h>
+ #include <linux/regulator/machine.h>
+ 
+ #include <asm/mach-types.h>
+@@ -166,6 +171,129 @@ static __init void omapl138_hawk_mmc_init(void)
+ 	gpiod_remove_lookup_table(&mmc_gpios_table);
+ }
+ 
++static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
++	{
++		.name		= "u-boot env",
++		.offset		= 0,
++		.size		= SZ_128K,
++		.mask_flags	= MTD_WRITEABLE,
++	 },
++	{
++		.name		= "u-boot",
++		.offset		= MTDPART_OFS_APPEND,
++		.size		= SZ_512K,
++		.mask_flags	= MTD_WRITEABLE,
++	},
++	{
++		.name		= "free space",
++		.offset		= MTDPART_OFS_APPEND,
++		.size		= MTDPART_SIZ_FULL,
++		.mask_flags	= 0,
++	},
++};
++
++static struct davinci_aemif_timing omapl138_hawk_nandflash_timing = {
++	.wsetup		= 24,
++	.wstrobe	= 21,
++	.whold		= 14,
++	.rsetup		= 19,
++	.rstrobe	= 50,
++	.rhold		= 0,
++	.ta		= 20,
++};
++
++static struct davinci_nand_pdata omapl138_hawk_nandflash_data = {
++	.core_chipsel	= 1,
++	.parts		= omapl138_hawk_nandflash_partition,
++	.nr_parts	= ARRAY_SIZE(omapl138_hawk_nandflash_partition),
++	.ecc_mode	= NAND_ECC_HW,
++	.ecc_bits	= 4,
++	.bbt_options	= NAND_BBT_USE_FLASH,
++	.options	= NAND_BUSWIDTH_16,
++	.timing		= &omapl138_hawk_nandflash_timing,
++	.mask_chipsel	= 0,
++	.mask_ale	= 0,
++	.mask_cle	= 0,
++};
++
++static struct resource omapl138_hawk_nandflash_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CS3_BASE,
++		.end	= DA8XX_AEMIF_CS3_BASE + SZ_32M,
++		.flags	= IORESOURCE_MEM,
++	},
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct resource omapl138_hawk_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
++		.flags	= IORESOURCE_MEM,
++	}
++};
++
++static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
++	{
++		.cs	= 3,
++	}
++};
++
++static struct platform_device omapl138_hawk_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &omapl138_hawk_nandflash_data,
++		},
++		.resource	= omapl138_hawk_nandflash_resource,
++		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
++	}
++};
++
++static struct aemif_platform_data omapl138_hawk_aemif_pdata = {
++	.cs_offset = 2,
++	.abus_data = omapl138_hawk_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(omapl138_hawk_aemif_abus_data),
++	.sub_devices = omapl138_hawk_aemif_devices,
++	.num_sub_devices = ARRAY_SIZE(omapl138_hawk_aemif_devices),
++};
++
++static struct platform_device omapl138_hawk_aemif_device = {
++	.name		= "ti-aemif",
++	.dev = {
++		.platform_data	= &omapl138_hawk_aemif_pdata,
++	},
++	.resource	= omapl138_hawk_aemif_resource,
++	.num_resources	= ARRAY_SIZE(omapl138_hawk_aemif_resource),
++	.id		= -1,
++};
++
++static const short omapl138_hawk_nand_pins[] = {
++	DA850_EMA_WAIT_1, DA850_NEMA_OE, DA850_NEMA_WE, DA850_NEMA_CS_3,
++	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
++	DA850_EMA_D_4, DA850_EMA_D_5, DA850_EMA_D_6, DA850_EMA_D_7,
++	DA850_EMA_D_8, DA850_EMA_D_9, DA850_EMA_D_10, DA850_EMA_D_11,
++	DA850_EMA_D_12, DA850_EMA_D_13, DA850_EMA_D_14, DA850_EMA_D_15,
++	DA850_EMA_A_1, DA850_EMA_A_2,
++	-1
++};
++
++static int omapl138_hawk_register_aemif(void)
++{
++	int ret;
++
++	ret = davinci_cfg_reg_list(omapl138_hawk_nand_pins);
++	if (ret)
++		pr_warn("%s: NAND mux setup failed: %d\n", __func__, ret);
++
++	return platform_device_register(&omapl138_hawk_aemif_device);
++}
++
+ static irqreturn_t omapl138_hawk_usb_ocic_irq(int irq, void *dev_id);
+ static da8xx_ocic_handler_t hawk_usb_ocic_handler;
+ 
+@@ -298,6 +426,10 @@ static __init void omapl138_hawk_init(void)
+ 
+ 	omapl138_hawk_usb_init();
+ 
++	ret = omapl138_hawk_register_aemif();
++	if (ret)
++		pr_warn("%s: aemif registration failed: %d\n", __func__, ret);
++
+ 	ret = da8xx_register_watchdog();
+ 	if (ret)
+ 		pr_warn("%s: watchdog registration failed: %d\n",
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
