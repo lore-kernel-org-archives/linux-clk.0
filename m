@@ -1,86 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs39.siol.net ([185.57.226.230]:45095 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754498AbeFMQVN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Jun 2018 12:21:13 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, wens@csie.org
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
-Date: Wed, 13 Jun 2018 18:20:07 +0200
-Message-ID: <2662622.yHSNrIAaJ9@jernej-laptop>
-In-Reply-To: <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180613074621.5phumovcyymbkfbn@flea> <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 6/9] ARM: davinci: da830-evm: use aemif platform driver
+Date: Mon, 25 Jun 2018 17:29:17 +0200
+Message-Id: <20180625152920.11549-7-brgl@bgdev.pl>
+In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
+References: <20180625152920.11549-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sreda, 13. junij 2018 ob 10:04:20 CEST je Chen-Yu Tsai napisal(a):
-> On Wed, Jun 13, 2018 at 3:46 PM, Maxime Ripard
-> 
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
-> >> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
-> >> sense to check if panel or bridge is connected to them.
-> >> 
-> >> Check if TCON has channel 0 and only then check for connected panel or
-> >> bridges.
-> >> 
-> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
-> >>  1 file changed, 9 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index b1205a7bc20f..c9ffa5381185
-> >> 100644
-> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops
-> >> = {>> 
-> >>  static int sun4i_tcon_probe(struct platform_device *pdev)
-> >>  {
-> >>  
-> >>       struct device_node *node = pdev->dev.of_node;
-> >> 
-> >> +     const struct sun4i_tcon_quirks *quirks;
-> >> 
-> >>       struct drm_bridge *bridge;
-> >>       struct drm_panel *panel;
-> >>       int ret;
-> >> 
-> >> -     ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
-> >> -     if (ret == -EPROBE_DEFER)
-> >> -             return ret;
-> >> +     quirks = of_device_get_match_data(&pdev->dev);
-> > 
-> > We should probably check ofr the pointer value before dereferencing it.
-> 
-> I think we've discussed this before. If the driver has data structures
-> for all the supported compatible strings, and it is device tree only,
-> then we should just let it blow up in the user's face, since they are
-> obviously doing something they shouldn't be doing to get the driver
-> to probe without a compatible string match.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-TCON can't work with no quirks specified, since that would mean that neither 
-channels are present. Additionally, sun4i_tcon_bind() also doesn't check if 
-quirks are NULL or not. So I concur with Chen-Yu here.
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in da830-evm.
 
-Best regards,
-Jernej
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
+ 1 file changed, 44 insertions(+), 12 deletions(-)
 
-
-
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index b2470141dba3..666db3cee08a 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -28,6 +28,7 @@
+ #include <linux/platform_data/mtd-davinci-aemif.h>
+ #include <linux/platform_data/spi-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <linux/regulator/machine.h>
+ 
+ #include <asm/mach-types.h>
+@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
+ 	},
+ };
+ 
+-static struct platform_device da830_evm_nand_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &da830_evm_nand_pdata,
++static struct platform_device da830_evm_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &da830_evm_nand_pdata,
++		},
++		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
++		.resource	= da830_evm_nand_resources,
++	},
++};
++
++static struct resource da830_evm_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
++	{
++		.cs	= 3,
+ 	},
+-	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
+-	.resource	= da830_evm_nand_resources,
++};
++
++static struct aemif_platform_data da830_evm_aemif_pdata = {
++	.abus_data		= da830_evm_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
++	.sub_devices		= da830_evm_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
++	.cs_offset		= 2,
++};
++
++static struct platform_device da830_evm_aemif_device = {
++	.name		= "ti-aemif",
++	.dev = {
++		.platform_data = &da830_evm_aemif_pdata,
++	},
++	.resource	= da830_evm_aemif_resource,
++	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
++	.id		= -1,
+ };
+ 
+ /*
+@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
+ 	if (ret)
+ 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
+ 
+-	ret = platform_device_register(&da830_evm_nand_device);
++	ret = platform_device_register(&da830_evm_aemif_device);
+ 	if (ret)
+-		pr_warn("%s: NAND device not registered\n", __func__);
+-
+-	if (davinci_aemif_setup(&da830_evm_nand_device))
+-		pr_warn("%s: Cannot configure AEMIF\n", __func__);
++		pr_warn("%s: AEMIF device not registered\n", __func__);
+ 
+ 	gpio_direction_output(mux_mode, 1);
+ }
+-- 
+2.17.1
