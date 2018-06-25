@@ -1,84 +1,79 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com> <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Jun 2018 09:17:24 +0200
-Message-ID: <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs16.siol.net ([185.57.226.207]:48078 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933639AbeFYMFY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:24 -0400
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 14/24] drm/sun4i: Add support for R40 mixers
+Date: Mon, 25 Jun 2018 14:02:54 +0200
+Message-Id: <20180625120304.7543-15-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Michel,
+Both mixers have similar capabilities as others SoCs with DE2.
 
-On Wed, Jun 13, 2018 at 8:38 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> On 11 June 2018 11:01, Geert wrote:
-> > On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
-> > <michel.pollet@bp.renesas.com> wrote:
-> > > The Renesas R9A06G032 SYSCTRL node description.
-> > >
-> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> >
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-
-> > sysctr
-> > > +++ l.txt
-> > > @@ -0,0 +1,32 @@
-> > > +* Renesas R9A06G032 SYSCTRL
-> > > +
-> > > +Required Properties:
-> > > +
-> > > +  - compatible: Must be:
-> > > +    - "renesas,r9a06g032-sysctrl"
-> > > +  - reg: Base address and length of the SYSCTRL IO block.
-> > > +  - #clock-cells: Must be 1
-> >
-> > (repeating myself) No clocks/clock-names for the external clock inputs?
-> >
-> > "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
-> > reference clock outputs for RMII/MII."
->
-> Well, I'm trying to keep the binding as simple as possible, to dodge any
-> further discussion. Adding these will be possible later, I don't need them
-> for the moment anyway.
+First mixer has 1 VI and 3 UI planes and supports HW scaling on all
+planes.
 
-Don't you? The external clock inputs are at the root of the clock tree, so I'd
-say you need them. Bolting them on later may become complicated, especially
-if you care about DTB backwards compatibility.
+Second mixer has 1 VI and 1 UI planes and also supports HW scaling on
+all planes.
 
-The reset controller subsystem is optional anyway, and used only by a small
-number of drivers, so support for resets can definitely be postponed.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-> Did you have a chance to review the clock driver proper? I'm pondering
-> sending a v9 since it's been a week (with very minor changes) -- but I
-> don't want to interrupt if you were in the process of reviewing...
-
-I had a quick glance. Looks OK mostly, so it's definitely heading for the right
-direction!
-One remaining question: do you need CLK_OF_DECLARE()?
-Is there any reason your clock driver cannot be a platform driver, which is
-the recommended way?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 126899d6f0d3..ee8febb25903 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -500,6 +500,22 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
+ 	.vi_num		= 1,
+ };
+ 
++static const struct sun8i_mixer_cfg sun8i_r40_mixer0_cfg = {
++	.ccsc		= 0,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0xf,
++	.ui_num		= 3,
++	.vi_num		= 1,
++};
++
++static const struct sun8i_mixer_cfg sun8i_r40_mixer1_cfg = {
++	.ccsc		= 1,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
++
+ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.vi_num = 2,
+ 	.ui_num = 1,
+@@ -521,6 +537,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-h3-de2-mixer-0",
+ 		.data = &sun8i_h3_mixer0_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-r40-de2-mixer-0",
++		.data = &sun8i_r40_mixer0_cfg,
++	},
++	{
++		.compatible = "allwinner,sun8i-r40-de2-mixer-1",
++		.data = &sun8i_r40_mixer1_cfg,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.18.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
