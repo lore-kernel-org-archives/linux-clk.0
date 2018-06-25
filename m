@@ -1,113 +1,69 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 4 Jun 2018 16:17:44 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v5 0/4] mfd/regulator/clk: bd71837: ROHM BD71837 PMIC driver
-Message-ID: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc: airlied@linux.ie, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
+Date: Mon, 25 Jun 2018 14:02:56 +0200
+Message-Id: <20180625120304.7543-17-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+Current DW HDMI PHY code never prepares and enables PHY clock after it is
+created. It's just used as it is. This may work in some cases, but it's
+clearly wrong. Fix it by adding proper calls to enable/disable PHY
+clock.
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDO’s to provide all the power rails required by the
-SoC and the commonly used peripherals.
+Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
 
-The driver aims to not limit the usage of PMIC. Thus the buck and LDO
-naming is generic and not tied to any specific purposes. However there
-is following limitations which make it mostly suitable for use cases
-where the processor where PMIC driver is running is powered by the PMIC:
-
-- The PMIC is not re-initialized if it resets. PMIC may reset as a
-  result of voltage monitoring (over/under voltage) or due to reset
-  request. Driver is only initializing PMIC at probe. This is not
-  problem as long as processor controlling PMIC is powered by PMIC.
-
-- The PMIC internal state machine is ignored by driver. Driver assumes
-  the PMIC is wired so that it is always in "run" state when controlled
-  by the driver.
-
-Changelog v5
-- dropped regulator patches which are already applied to Mark's tree
-Based on feedback from Rob Herring and Stephen Boyd
-- mfd bindings:	explain why this can be interrupt-controller
-- mfd bindings:	describe interrupts better
-- mfd bindings:	require one cell interrupt specifier
-- mfd bindings:	use generic node names in example
-- mfd driver:	ack masked interrupt once at init
-- clk bindings:	use generic node names in example
-- clk driver:	use devm
-- clk driver:	use of_clk_add_hw_provider
-- clk driver:	change severity of print and how prints are emitted at
-		probe error path.
-- clk driver:	dropped forward declared functions
-- clk configs:	drop unnecessary dependencies
-- clk driver:	other styling issues
-- mfd/clk DT:	drop clk node.
-
-Changelog v4
-- remove mutex from regulator state check as core prevents simultaneous
-  accesses
-- allow voltage change for bucks 1 to 4 when regulator is enabled
-- fix indentiation problems
-- properly correct SPDX comments
-
-Changelog v3
-- kill unused variable
-- kill unused definitions
-- use REGMAP_IRQ_REG
-
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
-
-patch 1: 
-        MFD driver and definitions bringing interrupt support and
-        enabling clk and regulator subsystems.
-Patches 2 and 3
-
-This patch series is based on for-mfd-next
-
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Matti Vaittinen (4):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-  clk: bd71837: Add driver for BD71837 PMIC clock
-
- .../bindings/clock/rohm,bd71837-clock.txt          |  38 +++
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  76 ++++++
- drivers/clk/Kconfig                                |   7 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-bd71837.c                          | 146 +++++++++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/bd71837.c                              | 223 ++++++++++++++++
- include/linux/mfd/bd71837.h                        | 288 +++++++++++++++++++++
- 9 files changed, 793 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rohm,bd71837-clock.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 drivers/clk/clk-bd71837.c
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 include/linux/mfd/bd71837.h
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 5a52fc489a9d..966688f04741 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -477,13 +477,15 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 			dev_err(dev, "Couldn't create the PHY clock\n");
+ 			goto err_put_clk_pll0;
+ 		}
++
++		clk_prepare_enable(phy->clk_phy);
+ 	}
+ 
+ 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
+ 	if (IS_ERR(phy->rst_phy)) {
+ 		dev_err(dev, "Could not get phy reset control\n");
+ 		ret = PTR_ERR(phy->rst_phy);
+-		goto err_put_clk_pll0;
++		goto err_disable_clk_phy;
+ 	}
+ 
+ 	ret = reset_control_deassert(phy->rst_phy);
+@@ -514,6 +516,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
+ 	reset_control_assert(phy->rst_phy);
+ err_put_rst_phy:
+ 	reset_control_put(phy->rst_phy);
++err_disable_clk_phy:
++	clk_disable_unprepare(phy->clk_phy);
+ err_put_clk_pll0:
+ 	if (phy->variant->has_phy_clk)
+ 		clk_put(phy->clk_pll0);
+@@ -531,6 +535,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
+ 
+ 	clk_disable_unprepare(phy->clk_mod);
+ 	clk_disable_unprepare(phy->clk_bus);
++	clk_disable_unprepare(phy->clk_phy);
+ 
+ 	reset_control_assert(phy->rst_phy);
+ 
 -- 
-2.14.3
+2.18.0
