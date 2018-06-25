@@ -1,153 +1,111 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-To: Lee Jones <lee.jones@linaro.org>, matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, sean.wang@mediatek.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Matthias Brugger <mbrugger@suse.com>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
- <20180430101826.GC5147@dell>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <5269ccfd-0274-3c12-7eeb-5de923197d92@gmail.com>
-Date: Mon, 25 Jun 2018 17:33:28 +0200
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v3 01/24] clk: sunxi-ng: r40: Add minimal rate for video PLLs
+Date: Mon, 25 Jun 2018 14:02:41 +0200
+Message-Id: <20180625120304.7543-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-In-Reply-To: <20180430101826.GC5147@dell>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
+According to documentation and experience with other similar SoCs, video
+PLLs don't work stable if their output frequency is set below 192 MHz.
+
+Because of that, set minimal rate to both R40 video PLLs to 192 MHz.
+
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 46 +++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 933f2e68f42a..c16a62a7bdbd 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -65,17 +65,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   CLK_SET_RATE_UNGATE);
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+-					"osc24M", 0x0010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
++					    "osc24M", 0x0010,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+@@ -151,17 +152,18 @@ static struct ccu_nk pll_periph1_clk = {
+ };
+ 
+ /* TODO: The result of N/M is required to be in [8, 25] range. */
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+-					"osc24M", 0x030,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
++					    "osc24M", 0x030,
++					    192000000,	/* Minimum rate */
++					    8, 7,	/* N */
++					    0, 4,	/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static struct ccu_nkm pll_sata_clk = {
+ 	.enable		= BIT(31),
+-- 
+2.18.0
 
 
-On 30/04/18 12:18, Lee Jones wrote:
-> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> 
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> The MMSYS subsystem includes clocks and drm components.
->> This patch adds a MFD device to probe both drivers from the same
->> device tree compatible.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
->>  drivers/mfd/Kconfig     |  9 ++++++
->>  drivers/mfd/Makefile    |  2 ++
->>  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 90 insertions(+)
->>  create mode 100644 drivers/mfd/mtk-mmsys.c
->>
->> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->> index b860eb5aa194..d23a3b9a2c58 100644
->> --- a/drivers/mfd/Kconfig
->> +++ b/drivers/mfd/Kconfig
->> @@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
->>  	help
->>  	  Select this if your MC13xxx is connected via an I2C bus.
->>  
->> +config MFD_MEDIATEK_MMSYS
->> +	tristate "Mediatek MMSYS interface"
->> +	select MFD_CORE
->> +	select REGMAP_MMIO
->> +	help
->> +	  Select this if you have a MMSYS subsystem in your SoC. The
->> +	  MMSYS subsystem has at least a clock driver part and some
->> +	  DRM components.
->> +
->>  config MFD_MXS_LRADC
->>  	tristate "Freescale i.MX23/i.MX28 LRADC"
->>  	depends on ARCH_MXS || COMPILE_TEST
->> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
->> index d9d2cf0d32ef..b96118bd68d9 100644
->> --- a/drivers/mfd/Makefile
->> +++ b/drivers/mfd/Makefile
->> @@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
->>  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
->>  obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
->>  
->> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
->> +
->>  obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
->>  
->>  obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
->> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
->> new file mode 100644
->> index 000000000000..c802343fb1c6
->> --- /dev/null
->> +++ b/drivers/mfd/mtk-mmsys.c
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +
->> +/*
->> + * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
->> + *
->> + * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
->> + *
->> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
->> + */
->> +
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/mfd/core.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +enum {
->> +	MMSYS_MT2701 = 1,
->> +};
->> +
->> +static const struct mfd_cell mmsys_mt2701_devs[] = {
->> +	{ .name = "clk-mt2701-mm", },
->> +	{ .name = "drm-mt2701-mm", },
->> +};
->> +
->> +static int mmsys_probe(struct platform_device *pdev)
->> +{
->> +	const struct mfd_cell *mmsys_cells;
->> +	int nr_cells;
->> +	long id;
->> +	int ret;
->> +
->> +	id = (long) of_device_get_match_data(&pdev->dev);
->> +	if (!id) {
->> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	switch (id) {
->> +	case MMSYS_MT2701:
->> +		mmsys_cells = mmsys_mt2701_devs;
->> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
->> +		break;
->> +	default:
->> +		return -ENODEV;
->> +	}
->> +
->> +	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
->> +					NULL, 0, NULL);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +};
-> 
-> This driver is pretty pointless.  It doesn't actually do anything.
-> 
-> I think you just want to use "simple-mfd" instead.
-> 
-
-I think the problem is, that right now we have two drivers which use the same
-devicetree binding, which are clk and drm driver. With a simple-mfd we would
-need two compatibles, and this would break backwards compatibility.
-
-Regards,
-Matthias
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
