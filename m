@@ -1,47 +1,133 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 03/13] clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-Date: Thu, 28 Jun 2018 11:57:38 +0200
-Message-Id: <20180628095748.4462-4-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org,
+	robh+dt@kernel.org
+Subject: [PATCH v3 04/24] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Date: Mon, 25 Jun 2018 14:02:44 +0200
+Message-Id: <20180625120304.7543-5-jernej.skrabec@siol.net>
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+TCON TOP main purpose is to configure whole display pipeline. It
+determines relationships between mixers and TCONs, selects source TCON
+for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+clock source and contains additional TV TCON and DSI gates.
 
-We want to be able to get the clock both from the board file by its
-con_id and from the aemif driver by dev_id.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/davinci/psc-dm644x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../bindings/display/sunxi/sun4i-drm.txt      | 56 +++++++++++++++++++
+ include/dt-bindings/clock/sun8i-tcon-top.h    | 11 ++++
+ 2 files changed, 67 insertions(+)
+ create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
-diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
-index fc0230e3a3d6..0cea6e0bd5f0 100644
---- a/drivers/clk/davinci/psc-dm644x.c
-+++ b/drivers/clk/davinci/psc-dm644x.c
-@@ -21,7 +21,8 @@ LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
- 					"fck",		"davinci_mdio.0");
- LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
- LPSC_CLKDEV1(ide_clkdev,		NULL,		"palm_bk3710");
--LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
-+LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
-+					NULL,		"ti-aemif");
- LPSC_CLKDEV1(mmcsd_clkdev,		NULL,		"dm6441-mmc.0");
- LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
- LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3346c1e2a7a0..fe31b1510717 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -187,6 +187,62 @@ And on the A23, A31, A31s and A33, you need one more clock line:
+    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
+                  clock, that can be used to drive the LVDS clock
+ 
++TCON TOP
++--------
++
++TCON TOPs main purpose is to configure whole display pipeline. It determines
++relationships between mixers and TCONs, selects source TCON for HDMI, muxes
++LCD and TV encoder GPIO output, selects TV encoder clock source and contains
++additional TV TCON and DSI gates.
++
++It allows display pipeline to be configured in very different ways:
++
++                                / LCD0/LVDS0
++                 / [0] TCON-LCD0
++                 |              \ MIPI DSI
++ mixer0          |
++        \        / [1] TCON-LCD1 - LCD1/LVDS1
++         TCON-TOP
++        /        \ [2] TCON-TV0 [0] - TVE0/RGB
++ mixer1          |                  \
++                 |                   TCON-TOP - HDMI
++                 |                  /
++                 \ [3] TCON-TV1 [1] - TVE1/RGB
++
++Note that both TCON TOP references same physical unit. Both mixers can be
++connected to any TCON.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-r40-tcon-top
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandle to the clocks feeding the TCON TOP
++    * bus: TCON TOP interface clock
++    * tcon-tv0: TCON TV0 clock
++    * tve0: TVE0 clock
++    * tcon-tv1: TCON TV1 clock
++    * tve1: TVE0 clock
++    * dsi: MIPI DSI clock
++  - clock-names: clock name mentioned above
++  - resets: phandle to the reset line driving the TCON TOP
++  - #clock-cells : must contain 1
++  - clock-output-names: Names of clocks created for TCON TV0 channel clock,
++    TCON TV1 channel clock and DSI channel clock, in that order.
++
++- ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. 6 ports should
++    be defined:
++    * port 0 is input for mixer0 mux
++    * port 1 is output for mixer0 mux
++    * port 2 is input for mixer1 mux
++    * port 3 is output for mixer1 mux
++    * port 4 is input for HDMI mux
++    * port 5 is output for HDMI mux
++    All output endpoints for mixer muxes and input endpoints for HDMI mux should
++    have reg property with the id of the target TCON, as shown in above graph
++    (0-3 for mixer muxes and 0-1 for HDMI mux). All ports should have only one
++    endpoint connected to remote endpoint.
++
+ DRC
+ ---
+ 
+diff --git a/include/dt-bindings/clock/sun8i-tcon-top.h b/include/dt-bindings/clock/sun8i-tcon-top.h
+new file mode 100644
+index 000000000000..25164d767835
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-tcon-top.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/* Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++
++#define CLK_TCON_TOP_TV0	0
++#define CLK_TCON_TOP_TV1	1
++#define CLK_TCON_TOP_DSI	2
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_ */
 -- 
-2.17.1
+2.18.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
