@@ -1,51 +1,60 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
-Date: Fri, 29 Jun 2018 21:19:33 +0200
-Message-ID: <3131254.YlICBQirlu@jernej-laptop>
-In-Reply-To: <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-17-jernej.skrabec@siol.net> <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: ACPI support in common clock framework
+To: Stephen Boyd <sboyd@kernel.org>,
+ Srinath Mannam <srinath.mannam@broadcom.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
+ <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+ <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
+ <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <914341e7-ca94-054d-6127-522b745006b4@arm.com>
+Date: Mon, 25 Jun 2018 18:15:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 28. junij 2018 ob 04:22:36 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Current DW HDMI PHY code never prepares and enables PHY clock after it is
-> > created. It's just used as it is. This may work in some cases, but it's
-> > clearly wrong. Fix it by adding proper calls to enable/disable PHY
-> > clock.
-> > 
-> > Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> So why does it work on the H3? Because there's only one PLL that the whole
-> display pipeline uses?
-> 
-> We should probably tag this for stable. So,
-> 
-> Cc: <stable@vger.kernel.org>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-Same question as before, how this should be handled? Can I send separate patch 
-with same content to stable ML only?
 
-Best regards,
-Jernej
+On 25/06/18 17:37, Stephen Boyd wrote:
+> Quoting Rafael J. Wysocki (2018-06-16 08:50:18)
+>> On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+>>>
+>>> Is this for clk_enable/disable? What about clk_set_rate() or
+>>> clk_set_phase()? Is ACPI's AML taking care of that?
+>>
+>> That's for clk_enable/disable AFAICS.
+>>
+>> AML doesn't manage device performance states at all.
+> 
+> Alright. We may need to add a better way for device drivers to get
+> handles to clk pointers on ACPI firmware so they can change frequencies
+> or phase, etc. 
+
+Is there any specific usecase/device needing this in the kernel ? SPI
+slaves ?
+
+> Right now it's all through clkdev and it looks to be
+> mostly based on string matching of connection names instead of
+> associating clks with devices.
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-acpi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+Regards,
+Sudeep
