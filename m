@@ -1,54 +1,70 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/8] dt: bindings: tegra20-emc: Document interrupt property
-Date: Sun, 17 Jun 2018 17:55:32 +0300
-Message-Id: <20180617145539.4758-2-digetx@gmail.com>
-In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
-References: <20180617145539.4758-1-digetx@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: omap3: Fix am3517 mdio clock alias
+To: "Derald D. Woods" <woods.technical@gmail.com>,
+        Adam Ford
+	<aford173@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <sboyd@codeaurora.org>,
+        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
+        <tony@atomide.com>, <stable@vger.kernel.org>
+References: <20180623110912.20633-1-aford173@gmail.com>
+ <20180623143824.GA14050@ethiopia>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <6ed7daab-08b5-edb7-8207-a32c402f6b2a@ti.com>
+Date: Mon, 25 Jun 2018 09:26:53 +0300
+MIME-Version: 1.0
+In-Reply-To: <20180623143824.GA14050@ethiopia>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+On 23/06/18 17:38, Derald D. Woods wrote:
+> On Sat, Jun 23, 2018 at 06:09:12AM -0500, Adam Ford wrote:
+>> A previous patch removed OMAP clock aliases that were perceived
+>> to be unnecessary.  Unfortunately, it broke the ethernet on the
+>> am3517-evm.  This patch renables the MDIO clock.
+>>
+>> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+>> Cc: stable@vger.kernel.org #4.16+
+>>
+> 
+> On AM3517-EVM, you can add:
+> 
+> Tested-by: Derald D. Woods <woods.technical@gmail.com>
+> 
+>> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+Can you try adding the alternative solution with the DT change I just 
+proposed?
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
- 	}
- 
- 
--- 
-2.17.1
+clocks = <&emac_fck>;
+clock-names = "fck";
+
+... under the mdio node?
+
+The target is to get rid of the clock aliases under the driver files.
+
+-Tero
+
+>>
+>> diff --git a/drivers/clk/ti/clk-3xxx.c b/drivers/clk/ti/clk-3xxx.c
+>> index 8aa5f5793835..f84734bd0aa7 100644
+>> --- a/drivers/clk/ti/clk-3xxx.c
+>> +++ b/drivers/clk/ti/clk-3xxx.c
+>> @@ -254,6 +254,8 @@ static struct ti_dt_clk omap36xx_am35xx_omap3430es2plus_clks[] = {
+>>   };
+>>   
+>>   static struct ti_dt_clk am35xx_clks[] = {
+>> +	DT_CLK("davinci_emac.0", NULL, "emac_ick"),
+>> +	DT_CLK("davinci_mdio.0", NULL, "emac_fck"),
+>>   	DT_CLK(NULL, "hsotgusb_ick", "hsotgusb_ick_am35xx"),
+>>   	DT_CLK(NULL, "hsotgusb_fck", "hsotgusb_fck_am35xx"),
+>>   	DT_CLK(NULL, "uart4_ick", "uart4_ick_am35xx"),
+>> -- 
+>> 2.17.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
