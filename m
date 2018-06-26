@@ -1,47 +1,109 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 04/13] clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-Date: Thu, 28 Jun 2018 11:57:39 +0200
-Message-Id: <20180628095748.4462-5-brgl@bgdev.pl>
-In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:38009 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965479AbeFZOj5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Jun 2018 10:39:57 -0400
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
+References: <20180626092926.26361-1-miquel.raynal@bootlin.com>
+Date: Tue, 26 Jun 2018 16:39:44 +0200
+In-Reply-To: <20180626092926.26361-1-miquel.raynal@bootlin.com> (Miquel
+        Raynal's message of "Tue, 26 Jun 2018 11:29:25 +0200")
+Message-ID: <87fu19a9xr.fsf@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Miquel,
 
-We want to be able to get the clock both from the board file by its
-con_id and from the aemif driver by dev_id.
+ On mar., juin 26 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
----
- drivers/clk/davinci/psc-dm646x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Prepare the introduction of suspend/resume hooks by having an easy way
+> to access all the registers in one go just from a device: add the IP
+> base address in the driver data.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/drivers/clk/davinci/psc-dm646x.c b/drivers/clk/davinci/psc-dm646x.c
-index c3f82ed70a80..20012dc7471a 100644
---- a/drivers/clk/davinci/psc-dm646x.c
-+++ b/drivers/clk/davinci/psc-dm646x.c
-@@ -18,7 +18,8 @@
- LPSC_CLKDEV1(ide_clkdev,	NULL,		"palm_bk3710");
- LPSC_CLKDEV2(emac_clkdev,	NULL,		"davinci_emac.1",
- 				"fck",		"davinci_mdio.0");
--LPSC_CLKDEV1(aemif_clkdev,	"aemif",	NULL);
-+LPSC_CLKDEV2(aemif_clkdev,	"aemif",	NULL,
-+				NULL,		"ti-aemif");
- LPSC_CLKDEV1(mcasp0_clkdev,	NULL,		"davinci-mcasp.0");
- LPSC_CLKDEV1(mcasp1_clkdev,	NULL,		"davinci-mcasp.1");
- LPSC_CLKDEV1(uart0_clkdev,	NULL,		"serial8250.0");
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+
+Thanks,
+
+Gregory
+
+> ---
+>
+> Changes since v1:
+> =================
+> * None
+>
+> drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 6860bd5a37c5..a9e3dcc50a7b 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -58,6 +58,7 @@
+>  struct clk_periph_driver_data {
+>  	struct clk_hw_onecell_data *hw_data;
+>  	spinlock_t lock;
+> +	void __iomem *reg;
+>  };
+>  
+>  struct clk_double_div {
+> @@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	int num_periph = 0, i, ret;
+>  	struct resource *res;
+> -	void __iomem *reg;
+>  
+>  	data = of_device_get_match_data(dev);
+>  	if (!data)
+> @@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+>  	while (data[num_periph].name)
+>  		num_periph++;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	reg = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(reg))
+> -		return PTR_ERR(reg);
+> -
+>  	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
+>  	if (!driver_data)
+>  		return -ENOMEM;
+> @@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  	driver_data->hw_data->num = num_periph;
+>  
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	driver_data->reg = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(driver_data->reg))
+> +		return PTR_ERR(driver_data->reg);
+> +
+>  	spin_lock_init(&driver_data->lock);
+>  
+>  	for (i = 0; i < num_periph; i++) {
+>  		struct clk_hw **hw = &driver_data->hw_data->hws[i];
+> -
+> -		if (armada_3700_add_composite_clk(&data[i], reg,
+> +		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
+>  						  &driver_data->lock, dev, hw))
+>  			dev_err(dev, "Can't register periph clock %s\n",
+>  				data[i].name);
+> -- 
+> 2.14.1
+>
+
 -- 
-2.17.1
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
