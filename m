@@ -1,81 +1,83 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:37307 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932770AbeFUIPb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:15:31 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v3 2/4] clk: clk: Add clk_gate_restore_context function
-Date: Thu, 21 Jun 2018 13:45:05 +0530
-Message-ID: <1529568907-19930-3-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
-References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <miquel.raynal@bootlin.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
+Date: Tue, 26 Jun 2018 11:29:25 +0200
+Message-Id: <20180626092926.26361-1-miquel.raynal@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock gate restore context function enables or disables
-the gate clocks based on the enable_count. This is done in cases
-where the clock context is lost and based on the enable_count
-the clock either needs to be enabled/disabled.
+Prepare the introduction of suspend/resume hooks by having an easy way
+to access all the registers in one go just from a device: add the IP
+base address in the driver data.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
 
-Changes in v2:
+Changes since v1:
+=================
+* None
 
-	* Renamed clk_dflt_restore to clk_gate_restore_context
+drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
- drivers/clk/clk.c            | 19 +++++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7347e06..c201b8b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 6860bd5a37c5..a9e3dcc50a7b 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -58,6 +58,7 @@
+ struct clk_periph_driver_data {
+ 	struct clk_hw_onecell_data *hw_data;
+ 	spinlock_t lock;
++	void __iomem *reg;
+ };
  
-+/**
-+ * clk_gate_restore_context - restore context for poweroff
-+ * @hw: the clk_hw pointer of clock whose state is to be restored
-+ *
-+ * The clock gate restore context function enables or disables
-+ * the gate clocks based on the enable_count. This is done in cases
-+ * where the clock context is lost and based on the enable_count
-+ * the clock either needs to be enabled/disabled. This
-+ * helps restore the state of gate clocks.
-+ */
-+void clk_gate_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_gate_restore_context);
+ struct clk_double_div {
+@@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	int num_periph = 0, i, ret;
+ 	struct resource *res;
+-	void __iomem *reg;
+ 
+ 	data = of_device_get_match_data(dev);
+ 	if (!data)
+@@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ 	while (data[num_periph].name)
+ 		num_periph++;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	reg = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(reg))
+-		return PTR_ERR(reg);
+-
+ 	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
+ 	if (!driver_data)
+ 		return -ENOMEM;
+@@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	driver_data->hw_data->num = num_periph;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	driver_data->reg = devm_ioremap_resource(dev, res);
++	if (IS_ERR(driver_data->reg))
++		return PTR_ERR(driver_data->reg);
 +
- static int _clk_save_context(struct clk_core *clk)
- {
- 	struct clk_core *child;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7f30d62..3e0c61a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 	spin_lock_init(&driver_data->lock);
  
- #endif	/* platform dependent I/O accessors */
- 
-+void clk_gate_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
+ 	for (i = 0; i < num_periph; i++) {
+ 		struct clk_hw **hw = &driver_data->hw_data->hws[i];
+-
+-		if (armada_3700_add_composite_clk(&data[i], reg,
++		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
+ 						  &driver_data->lock, dev, hw))
+ 			dev_err(dev, "Can't register periph clock %s\n",
+ 				data[i].name);
 -- 
-1.9.1
-
+2.14.1
