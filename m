@@ -1,44 +1,115 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59707 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756036AbeFOJvQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Jun 2018 05:51:16 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
-Date: Fri, 15 Jun 2018 11:51:04 +0200
-Message-Id: <20180615095107.24610-2-o.rempel@pengutronix.de>
-In-Reply-To: <20180615095107.24610-1-o.rempel@pengutronix.de>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 10/13] ARM: davinci: da830-evm: use aemif platform driver
+Date: Tue, 26 Jun 2018 11:25:34 +0200
+Message-Id: <20180626092537.6737-11-brgl@bgdev.pl>
+In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-This clock is needed for iMX mailbox driver
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in da830-evm.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
+ 1 file changed, 44 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 975a20d3cc94..c7159bfac77a 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
- 	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
-+	clks[IMX7D_MU_ROOT_CLK] = imx_clk_gate4("mu_root_clk", "ipg_root_clk", base + 0x4270, 0);
- 	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
- 	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index b2470141dba3..7d8ab36ff83d 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -28,6 +28,7 @@
+ #include <linux/platform_data/mtd-davinci-aemif.h>
+ #include <linux/platform_data/spi-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <linux/regulator/machine.h>
+ 
+ #include <asm/mach-types.h>
+@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
+ 	},
+ };
+ 
+-static struct platform_device da830_evm_nand_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &da830_evm_nand_pdata,
++static struct platform_device da830_evm_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &da830_evm_nand_pdata,
++		},
++		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
++		.resource	= da830_evm_nand_resources,
++	},
++};
++
++static struct resource da830_evm_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
++	{
++		.cs	= 3,
+ 	},
+-	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
+-	.resource	= da830_evm_nand_resources,
++};
++
++static struct aemif_platform_data da830_evm_aemif_pdata = {
++	.abus_data		= da830_evm_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
++	.sub_devices		= da830_evm_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
++	.cs_offset		= 2,
++};
++
++static struct platform_device da830_evm_aemif_device = {
++	.name		= "ti-aemif",
++	.id		= -1,
++	.dev = {
++		.platform_data = &da830_evm_aemif_pdata,
++	},
++	.resource	= da830_evm_aemif_resource,
++	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
+ };
+ 
+ /*
+@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
+ 	if (ret)
+ 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
+ 
+-	ret = platform_device_register(&da830_evm_nand_device);
++	ret = platform_device_register(&da830_evm_aemif_device);
+ 	if (ret)
+-		pr_warn("%s: NAND device not registered\n", __func__);
+-
+-	if (davinci_aemif_setup(&da830_evm_nand_device))
+-		pr_warn("%s: Cannot configure AEMIF\n", __func__);
++		pr_warn("%s: AEMIF device not registered\n", __func__);
+ 
+ 	gpio_direction_output(mux_mode, 1);
+ }
 -- 
 2.17.1
-
