@@ -1,59 +1,37 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:53548 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752011AbeF0UWF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Jun 2018 16:22:05 -0400
-Date: Thu, 28 Jun 2018 04:21:30 +0800
-In-Reply-To: <20180627183721.jmmsmp3u3mq4drvb@flea>
-References: <20180622122615.55836-1-icenowy@aosc.io> <20180627183721.jmmsmp3u3mq4drvb@flea>
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:40310 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751869AbeFZIJQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jun 2018 04:09:16 -0400
+Received: by mail-wr0-f193.google.com with SMTP id g18-v6so16203395wro.7
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jun 2018 01:09:15 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clk: meson: remove unused clk-audio-divider driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180620100610.29010-1-jbrunet@baylibre.com>
+ <20180620100610.29010-3-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <2cdbc56d-a1e5-62f7-c3d5-9d5f37544118@baylibre.com>
+Date: Tue, 26 Jun 2018 10:09:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 0/7] Allwinner A64 DE2 CCU support with dedicated DE2 bus driver
-To: linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC: devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <EB513C5E-4BBD-46B2-9B61-18ED0B14C0E4@aosc.io>
+In-Reply-To: <20180620100610.29010-3-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-于 2018年6月28日 GMT+08:00 上午2:37:21, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Fri, Jun 22, 2018 at 08:26:08PM +0800, Icenowy Zheng wrote:
->> This patchset tries to implement the Allwinner A64 DE2 as a bus
->driver,
->> in order to model the fact that the SRAM claim controls the access to
->> the whole DE2 memory space.
->> 
->> PATCH 1 and PATCH 4 are for the CCU part.
->> 
->> PATCH 2 is the device tree binding for the A64 DE2 bus, and PATCH 3
->> implements the bus driver.
->> 
->> PATCH 5 adds the DE2 CCU device tree node, with the DE2 bus node.
->> 
->> PATCH 6 and 7 are HDMI simplefb patches for A64. They're present as a
->> test to this patchset.
->
->Applied all the patches with the minor modifications Chen-Yu and I
->suggested.
->
->The threading was broken on your serie though, so you probably want to
->check your git configuration.
-
-In fact I think I should check my ISP configuration.
-
-The breakage is introduced due to too long delay between aosc.io
-mail server and my computer, so I must start to send the
-remaining patches again.
-
->
->Thanks!
->Maxime
+On 20/06/2018 12:06, Jerome Brunet wrote:
+> clk-audio-divider is no longer used, we can remove it.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/Makefile            |   2 +-
+>  drivers/clk/meson/clk-audio-divider.c | 110 ----------------------------------
+>  drivers/clk/meson/clkc.h              |   7 ---
+>  3 files changed, 1 insertion(+), 118 deletions(-)
+>  delete mode 100644 drivers/clk/meson/clk-audio-divider.c
+> 
+[...]
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
