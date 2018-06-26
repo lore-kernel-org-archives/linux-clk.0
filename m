@@ -1,281 +1,466 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <eballetbo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4758026.sMRKe6aTTs@jernej-laptop>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
- <2366311.u3CXHO0a4d@jernej-laptop> <4758026.sMRKe6aTTs@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 25 Jun 2018 11:51:41 +0800
-Message-ID: <CAGb2v67wVpAKk-5kSpnbnBXz7DkHToPa6bwuRBnsfHovw74HVQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support
- for tcon-top gate
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: linux-sunxi <linux-sunxi@googlegroups.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com> <20180626112455.GC2118@localhost.localdomain>
+In-Reply-To: <20180626112455.GC2118@localhost.localdomain>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Tue, 26 Jun 2018 13:40:40 +0200
+Message-ID: <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To: matti.vaittinen@fi.rohmeurope.com
+Cc: Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+	Arnd Bergmann <arnd@arndb.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	Linus Walleij <linus.walleij@linaro.org>, Kate Stewart <kstewart@linuxfoundation.org>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 3:52 AM, Jernej Škrabec
-<jernej.skrabec@gmail.com> wrote:
-> Dne četrtek, 21. junij 2018 ob 17:35:45 CEST je Jernej Škrabec napisal(a):
->> Dne četrtek, 21. junij 2018 ob 03:23:27 CEST je Chen-Yu Tsai napisal(a):
->> > On Thu, Jun 21, 2018 at 3:37 AM, Jernej Škrabec <jernej.skrabec@siol.net>
->>
->> wrote:
->> > > Dne sobota, 16. junij 2018 ob 07:48:38 CEST je Chen-Yu Tsai napisal(a):
->> > >> On Sat, Jun 16, 2018 at 1:33 AM, Jernej Škrabec
->> > >> <jernej.skrabec@siol.net>
->> > >
->> > > wrote:
->> > >> > Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai
-> napisal(a):
->> > >> >> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
->> > >> >>
->> > >> >> <jernej.skrabec@siol.net> wrote:
->> > >> >> > Hi,
->> > >> >> >
->> > >> >> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard
->>
->> napisal(a):
->> > >> >> >> Hi,
->> > >> >> >>
->> > >> >> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
->> > >> >> >> > TV TCONs connected to TCON TOP have to enable additional gate
->> > >> >> >> > in
->> > >> >> >> > order
->> > >> >> >> > to work.
->> > >> >> >> >
->> > >> >> >> > Add support for such TCONs.
->> > >> >> >> >
->> > >> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> > >> >> >> > ---
->> > >> >> >> >
->> > >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
->> > >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
->> > >> >> >> >  2 files changed, 15 insertions(+)
->> > >> >> >> >
->> > >> >> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
->> > >> >> >> > 08747fc3ee71..0afb5a94a414
->> > >> >> >> > 100644
->> > >> >> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->> > >> >> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct
->> > >> >> >> > device
->> > >> >> >> > *dev,
->> > >> >> >> >
->> > >> >> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
->> > >> >> >> >             return PTR_ERR(tcon->clk);
->> > >> >> >> >
->> > >> >> >> >     }
->> > >> >> >> >
->> > >> >> >> > +
->> > >> >> >> > +   if (tcon->quirks->has_tcon_top_gate) {
->> > >> >> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
->> > >> >> >> > +           if (IS_ERR(tcon->top_clk)) {
->> > >> >> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
->> > >> >> >> > clock\n");
->> > >> >> >> > +                   return PTR_ERR(tcon->top_clk);
->> > >> >> >> > +           }
->> > >> >> >> > +           clk_prepare_enable(tcon->top_clk);
->> > >> >> >> > +   }
->> > >> >> >> > +
->> > >> >> >>
->> > >> >> >> Is it required for the TCON itself to operate, or does the TCON
->> > >> >> >> requires the TCON TOP, which in turn requires that clock to be
->> > >> >> >> functional?
->> > >> >> >>
->> > >> >> >> I find it quite odd to have a clock that isn't meant for a
->> > >> >> >> particular
->> > >> >> >> device to actually be wired to another device. I'm not saying
->> > >> >> >> this
->> > >> >> >> isn't the case, but it would be a first.
->> > >> >> >
->> > >> >> > Documentation doesn't say much about that gate. I did few tests
->> > >> >> > and
->> > >> >> > TCON
->> > >> >> > registers can be read and written even if TCON TOP TV TCON gate is
->> > >> >> > disabled. However, there is no image, as expected.
->> > >> >>
->> > >> >> The R40 manual does include it in the diagram, on page 504. There's
->> > >> >> also
->> > >> >> a
->> > >> >> mux to select whether the clock comes directly from the CCU or the
->> > >> >> TV
->> > >> >> encoder (a feedback mode?). I assume this is the gate you are
->> > >> >> referring
->> > >> >> to
->> > >> >> here, in which case it is not a bus clock, but rather the TCON
->> > >> >> module
->> > >> >> or
->> > >> >> channel clock, strangely routed.
->> > >> >>
->> > >> >> > More interestingly, I enabled test pattern directly in TCON to
->> > >> >> > eliminate
->> > >> >> > influence of the mixer. As soon as I disabled that gate, test
->> > >> >> > pattern
->> > >> >> > on
->> > >> >> > HDMI screen was gone, which suggest that this gate influences
->> > >> >> > something
->> > >> >> > inside TCON.
->> > >> >> >
->> > >> >> > Another test I did was that I moved enable/disable gate code to
->> > >> >> > sun4i_tcon_channel_set_status() and it worked just as well.
->> > >> >> >
->> > >> >> > I'll ask AW engineer what that gate actually does, but from what I
->> > >> >> > saw,
->> > >> >> > I
->> > >> >> > would say that most appropriate location to enable/disable TCON
->> > >> >> > TOP
->> > >> >> > TV
->> > >> >> > TCON
->> > >> >> > gate is TCON driver. Alternatively, TCON TOP driver could check if
->> > >> >> > any
->> > >> >> > TV
->> > >> >> > TCON is in use and enable appropriate gate. However, that doesn't
->> > >> >> > sound
->> > >> >> > right to me for some reason.
->> > >> >>
->> > >> >> If what I said above it true, then yes, the appropriate location to
->> > >> >> enable
->> > >> >> it is the TCON driver, but moreover, the representation of the clock
->> > >> >> tree
->> > >> >> should be fixed such that the TCON takes the clock from the TCON TOP
->> > >> >> as
->> > >> >> its
->> > >> >> channel/ module clock instead. That way you don't need this patch,
->> > >> >> but
->> > >> >> you'd add another for all the clock routing.
->> > >> >
->> > >> > Can you be more specific? I not sure what you mean here.
->> > >>
->> > >> For clock related properties in the device tree:
->> > >>
->> > >> &tcon_top {
->> > >>
->> > >>     clocks = <&ccu CLK_BUS_TCON_TOP>,
->> > >>
->> > >>              <&ccu CLK_TCON_TV0>,
->> > >>              <&tve0>,
->> > >>              <&ccu CLK_TCON_TV1>,
->> > >>              <&tve1>;
->> > >>
->> > >>     clock-names = "bus", "tcon-tv0", "tve0", "tcon-tv1", "tve1";
->> > >>     clock-output-names = "tcon-top-tv0", "tcon-top-tv1";
->> > >>
->> > >> };
->> > >>
->> > >> &tcon_tv0 {
->> > >>
->> > >>     clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>'
->> > >>     clock-names = "ahb", "tcon-ch1";
->> > >>
->> > >> };
->> > >>
->> > >> A diagram would look like:
->> > >>                    | This part is TCON TOP |
->> > >>
->> > >>                    v                       v
->> > >>
->> > >> CCU CLK_TCON_TV0 --|----\                  |
->> > >>
->> > >>                    |     mux ---- gate ----|-- TCON_TV0
->> > >>
->> > >> TVE0 --------------|----/                  |
->> > >>
->> > >> And the same goes for TCON_TV1 and TVE1.
->> > >>
->> > >> The user manual is a bit lacking on how TVE outputs a clock though.
->> > >
->> > > I didn't yet received any response on HW details from AW till now, but I
->> > > would like to post new version of patches soon.
->> > >
->> > > While chaining like you described could be implemented easily, I don't
->> > > think it really represents HW as it is. Tests showed that these two
->> > > clocks are independent, otherwise register writes/reads wouldn't be
->> > > possible with tcon- top gate disabled. I chose tcon-top bus clock as a
->> > > parent becase if it is not enabled, it simply won't work.
->> >
->> > AFAIK with the TCONs, even when the TCON channel clock (not the bus clock)
->> > is disabled, register accesses still work.
->>
->> You're right, I just tested that.
->>
->> > I'm saying that the TCON TOP
->> > gate is downstream from the TCON channel clock in the CCU. These are not
->> > related to the TCON bus clock in the CCU, which affects register access.
->> >
->> > Did Allwinner provide any information regarding the hierarchy of the
->> > clocks?
->> No reponse for now.
->>
->> > > However, if everyone feels chaining is the best way to implement it,
->> > > I'll
->> > > do it.
->> >
->> > I would like to get it right and match actual hardware. My proposal is
->> > based on my understanding from the diagrams in the user manual.
->>
->> So for now, your explanation is the most reasonable. Should we go ahead and
->> implement your idea?
->>
->> Please note that H6 has TCON-TOP too, but it has only one LCD TCON and one
->> TV TCON instead of two of each kind. That means we will have hole in
->> indices (tcon_lcd0 is 1, tcon_tv0 is 3, which is aligned with R40) and
->> different TCON- TOP binding (no tcon_tv1 channel clock), but setup is
->> exactly the same.
+Hi Matti,
+Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+dia dt., 26 de juny 2018 a les 13:25:
 >
-> I just noticed issue with this proposal. If we have following clock chain for
-> HDMI, everythings is ok:
+> Hello Eric,
 >
-> TCON-TV0 -> TCON-TOP-TV0
+> Thanks for the comments! I'll be addressing these in patch series v8
+> - except the regmap wrapper one which will be taken care of by another
+> patch set.
 >
-> TCON TV sets TCON-TOP-TV0 clock rate, which in turn sets TCON-TV0 clock and
-> everything works.
+> On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > Hi Matti,
+> >
+> > Thanks for the patch, a few comments below, some are feedback I
+> > received when I sent some patches to this subsystem.
+> >
+> > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > dia dt., 19 de juny 2018 a les 12:57:
+> > >
+> > > ROHM BD71837 PMIC MFD driver providing interrupts and support
+> > > for two subsystems:
+> > > - clk
+> > > - Regulators
+> > >
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > >  drivers/mfd/Kconfig         |  13 ++
+> > >  drivers/mfd/Makefile        |   1 +
+> > >  drivers/mfd/bd71837.c       | 221 ++++++++++++++++++++++++++
+> > >  include/linux/mfd/bd71837.h | 367 ++++++++++++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 602 insertions(+)
+> > >  create mode 100644 drivers/mfd/bd71837.c
+> > >  create mode 100644 include/linux/mfd/bd71837.h
+> > >
+> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > index b860eb5aa194..7aa05fc9ed8e 100644
+> > > --- a/drivers/mfd/Kconfig
+> > > +++ b/drivers/mfd/Kconfig
+> > > @@ -1787,6 +1787,19 @@ config MFD_STW481X
+> > >           in various ST Microelectronics and ST-Ericsson embedded
+> > >           Nomadik series.
+> > >
+> > > +config MFD_BD71837
+> > > +       bool "BD71837 Power Management chip"
+> >
+> > I know that some drivers need to be built-in, is this really a
+> > requirement for this driver? Or should work as a module too.
+> >
 >
-> However, when TVE will be configured, it would look like this:
+> I have been writing power/reset driver for this PMIC. I thought that the
+> modules would be unload before reset hook is ran - which seems to be
+> not true on platform where I tested this. So you are correct, at least
+> on cases where reset is not used via PMIC - or where the platform is not
+> unloading modules prior reset - these drivers can indeed be modules. So
+> it is fair to allow building them as modules. Users who want to build
+> this in kernel can still do so. => I'll change this.
 >
-> TVE0 -> TCON-TOP-TV0
+> > > +       depends on I2C=y
+> > > +       depends on OF
+> > > +       select REGMAP_I2C
+> > > +       select REGMAP_IRQ
+> > > +       select MFD_CORE
+> > > +       help
+> > > +         Select this option to get support for the ROHM BD71837
+> > > +         Power Management chips. BD71837 is designed to power processors like
+> > > +         NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
+> > > +         and emergency shut down as well as 32,768KHz clock output.
+> > > +
+> > >  config MFD_STM32_LPTIMER
+> > >         tristate "Support for STM32 Low-Power Timer"
+> > >         depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> > > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > > index e9fd20dba18d..09dc9eb3782c 100644
+> > > --- a/drivers/mfd/Makefile
+> > > +++ b/drivers/mfd/Makefile
+> > > @@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS)      += stm32-timers.o
+> > >  obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+> > >  obj-$(CONFIG_MFD_SC27XX_PMIC)  += sprd-sc27xx-spi.o
+> > >  obj-$(CONFIG_RAVE_SP_CORE)     += rave-sp.o
+> > > +obj-$(CONFIG_MFD_BD71837)      += bd71837.o
+> > >
+> > > diff --git a/drivers/mfd/bd71837.c b/drivers/mfd/bd71837.c
+> > > new file mode 100644
+> > > index 000000000000..0f0361d6cad6
+> > > --- /dev/null
+> > > +++ b/drivers/mfd/bd71837.c
+> > > @@ -0,0 +1,221 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> >
+> > There is a mismatch between what SPDX says and MODULE_LICENSE says.
+> >
+> > GPL-2.0 = GPL v2 only
+> > MODULE_LICENSE(GPL) = GPL v2 or later.
+> >
+> >  You'd like to change the SPDX identifier to GPL-2.0-or-later or set
+> > module license to "GPL v2".
 >
-> TVE driver will set TVE0 clock to 216 MHz and TCON TV would set TCON-TOP-TV0
-> rate which in turn sets TVE0 clock to something like 13.5 MHz (or whatever is
-> the right clock rate for PAL and NTSC). As you can see, same clock is set to
-> two different rates by two different drivers.
+> Right. Thanks for pointing that out.
 >
-> It *might* still work, since encoders set clock rate after TCON (at least that
-> is my experience for HDMI pipeline), but that is still wrong.
+> >
+> > > +// Copyright (C) 2018 ROHM Semiconductors
+> > > +// bd71837.c -- ROHM BD71837MWV mfd driver
+> > > +//
+> > > +// Datasheet available from
+> > > +// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> > > +
+> > > +#include <linux/module.h>
+> > > +#include <linux/moduleparam.h>
+> > This include is not required.
+> >
+> > > +#include <linux/init.h>
+> > > +#include <linux/slab.h>
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/irq.h>
+> > ditto
+> >
+> > > +#include <linux/irqdomain.h>
+> > ditto
+> >
+> > > +#include <linux/gpio.h>
+> > ditto
+> >
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/of_device.h>
+> > > +#include <linux/of_gpio.h>
+> > ditto
+> > > +#include <linux/mfd/core.h>
+> > > +#include <linux/mfd/bd71837.h>
+> > > +
+> >
+> > Please review the needed includes.
 >
-> To overcome above issue, I would stick to original proposal with additional
-> clock specified in TCON TV DT node. That way TCON driver would always set
-> clock rate to TCON-TV0 clock. If TVE0 is enabled, TCON wouldn't interfere with
-> setting clock rate, because TCON-TV0 clock would be decoupled in TCON-TOP mux.
+> I'll do that, thanks.
 >
-> What do you think?
+> > > +static const struct resource irqs[] = {
+> > > +       {
+> > > +               .start = BD71837_INT_PWRBTN,
+> > > +               .end = BD71837_INT_PWRBTN,
+> > > +               .flags = IORESOURCE_IRQ,
+> > > +               .name = "pwr-btn",
+> > > +       }, {
+> > > +               .start = BD71837_INT_PWRBTN_L,
+> > > +               .end = BD71837_INT_PWRBTN_L,
+> > > +               .flags = IORESOURCE_IRQ,
+> > > +               .name = "pwr-btn-l",
+> > > +       }, {
+> > > +               .start = BD71837_INT_PWRBTN_S,
+> > > +               .end = BD71837_INT_PWRBTN_S,
+> > > +               .flags = IORESOURCE_IRQ,
+> > > +               .name = "pwr-btn-s",
+> > > +       },
+> >
+> > nit: no comma at the end
+>
+> Whole struct will be removed. I will use gpio-keys and remove the
+> bd718xx-pwrkey driver as suggested by Dmitry Torokhov.
+>
+> > > +};
+> > > +
+> > > +/* bd71837 multi function cells */
+> > > +static struct mfd_cell bd71837_mfd_cells[] = {
+> > > +       {
+> > > +               .name = "bd71837-clk",
+> > > +       }, {
+> > > +               .name = "bd718xx-pwrkey",
+> > > +               .resources = &irqs[0],
+> > > +               .num_resources = ARRAY_SIZE(irqs),
+> > > +       }, {
+> > > +               .name = "bd71837-pmic",
+> > > +       },
+> > nit: no comma at the end
+>
+> Ok.
+>
+> > > +};
+> > > +
+> > > +static const struct regmap_irq bd71837_irqs[] = {
+> > > +       REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
+> > > +       REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
+> > > +};
+> > > +
+> > > +static struct regmap_irq_chip bd71837_irq_chip = {
+> > > +       .name = "bd71837-irq",
+> > > +       .irqs = bd71837_irqs,
+> > > +       .num_irqs = ARRAY_SIZE(bd71837_irqs),
+> > > +       .num_regs = 1,
+> > > +       .irq_reg_stride = 1,
+> > > +       .status_base = BD71837_REG_IRQ,
+> > > +       .mask_base = BD71837_REG_MIRQ,
+> > > +       .ack_base = BD71837_REG_IRQ,
+> > > +       .init_ack_masked = true,
+> > > +       .mask_invert = false,
+> > > +};
+> > > +
+> > > +static int bd71837_irq_exit(struct bd71837 *bd71837)
+> > > +{
+> > > +       if (bd71837->chip_irq > 0)
+> > > +               regmap_del_irq_chip(bd71837->chip_irq, bd71837->irq_data);
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static const struct regmap_range pmic_status_range = {
+> > > +       .range_min = BD71837_REG_IRQ,
+> > > +       .range_max = BD71837_REG_POW_STATE,
+> > > +};
+> > > +
+> > > +static const struct regmap_access_table volatile_regs = {
+> > > +       .yes_ranges = &pmic_status_range,
+> > > +       .n_yes_ranges = 1,
+> > > +};
+> > > +
+> > > +static const struct regmap_config bd71837_regmap_config = {
+> > > +       .reg_bits = 8,
+> > > +       .val_bits = 8,
+> > > +       .volatile_table = &volatile_regs,
+> > > +       .max_register = BD71837_MAX_REGISTER - 1,
+> > > +       .cache_type = REGCACHE_RBTREE,
+> > > +};
+> > > +
+> > > +#ifdef CONFIG_OF
+>
+> > The driver is DT-only and depends on OF so you don't need to protect this.
+> True. I'll remove this
+>
+> > > +static const struct of_device_id bd71837_of_match[] = {
+> > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > +       { },
+> >
+> > nit: { /* sentinel */ }
+>
+> I am sorry but I didn't quite get the point here. Could you please
+> explain what did you expect to be added here?
+>
 
-I think this is the wrong representation, and worse, you are trying to work
-around software issues with it.
+It's a nit but It is a good practice to specify that the last entry is
+a sentinel. Just this.
 
-So to confirm some details, the TVE expects 216 MHz clock, and it expects the
-TCON to run and output data at 216 MHz as well. Is that correct?
++static const struct of_device_id bd71837_of_match[] = {
++       { .compatible = "rohm,bd71837", .data = (void *)0},
++       { /* sentinel */ }
++};
 
-Would any settings for the TCON differ between when HDMI or TVE is used?
+And just noticed, is .data = (void *)0 really required?
 
-Does TVE and TCON run at 216 MHz regardless of resolution? I kind of doubt it.
-It might be expecting 297 MHz for PC resolutions.
-
-I think these kinds of quirks should be handled in the software, instead of
-being papered over.
-
-ChenYu
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, bd71837_of_match);
+> > > +#endif //CONFIG_OF
+> > > +
+> > > +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> > > +                           const struct i2c_device_id *id)
+> > > +{
+> > > +       struct bd71837 *bd71837;
+> > > +       struct bd71837_board *board_info;
+> > > +       int ret = -EINVAL;
+> > > +
+> > > +       board_info = dev_get_platdata(&i2c->dev);
+> > > +
+> > > +       if (!board_info) {
+> > > +               board_info = devm_kzalloc(&i2c->dev, sizeof(*board_info),
+> > > +                                         GFP_KERNEL);
+> > > +               if (!board_info) {
+> > > +                       ret = -ENOMEM;
+> > > +                       goto err_out;
+> > > +               } else if (i2c->irq) {
+> > > +                       board_info->gpio_intr = i2c->irq;
+> > > +               } else {
+> > > +                       ret = -ENOENT;
+> > > +                       goto err_out;
+> > > +               }
+> > > +       }
+> > > +
+> > > +       if (!board_info)
+> > > +               goto err_out;
+> > > +
+> > > +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
+> > > +       if (bd71837 == NULL)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       i2c_set_clientdata(i2c, bd71837);
+> > > +       bd71837->dev = &i2c->dev;
+> > > +       bd71837->i2c_client = i2c;
+> > > +       bd71837->chip_irq = board_info->gpio_intr;
+> > > +
+> > > +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+> > > +       if (IS_ERR(bd71837->regmap)) {
+> > > +               ret = PTR_ERR(bd71837->regmap);
+> > > +               dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
+> > > +               goto err_out;
+> > > +       }
+> > > +
+> > > +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
+> > > +       if (ret < 0) {
+> > > +               dev_err(bd71837->dev,
+> > > +                       "%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
+> > > +               goto err_out;
+> > > +       }
+> > > +
+> > > +       ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
+> > > +               IRQF_ONESHOT, 0,
+> > > +               &bd71837_irq_chip, &bd71837->irq_data);
+> >
+> > I think that you can use 'devm_regmap_add_irq_chip' here and remove
+> > the code to delete the irq chip
+>
+> Right. Good point. Makes this lot leaner and cleaner.
+>
+> > > +       if (ret < 0) {
+> > > +               dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
+> > > +               goto err_out;
+> > > +       }
+> > > +
+> > > +       ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+> > > +                             bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
+> > > +                             NULL, 0,
+> > > +                             regmap_irq_get_domain(bd71837->irq_data));
+> >
+> > Same here, I think you can use the devm_mfd_add_devices.
+>
+> Right. Good point. Makes this lot leaner and cleaner.
+>
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static const struct i2c_device_id bd71837_i2c_id[] = {
+> > > +       { .name = "bd71837", },
+> > > +       { }
+> >
+> > nit: { /* sentinel */ }
+>
+> I am sorry but I didn't quite get the point here. Could you please
+> explain what did you expect to be added here?
+>
+> > > +};
+> > > +MODULE_DEVICE_TABLE(i2c, bd71837_i2c_id);
+> > > +
+> > > +static struct i2c_driver bd71837_i2c_driver = {
+> > > +       .driver = {
+> > > +               .name = "bd71837-mfd",
+> > > +               .owner = THIS_MODULE,
+> >
+> > Remove this, it is not needed, the core does it for you.
+>
+> True. Thanks.
+>
+> > > +               .of_match_table = of_match_ptr(bd71837_of_match),
+> >
+> > The driver is DT-only, don't need to call of_match_ptr.
+>
+> Ok.
+>
+> > > +       },
+> > > +       .probe = bd71837_i2c_probe,
+> > > +       .remove = bd71837_i2c_remove,
+> > > +       .id_table = bd71837_i2c_id,
+> > > +};
+> > > +
+> > > +static int __init bd71837_i2c_init(void)
+> > > +{
+> > > +       return i2c_add_driver(&bd71837_i2c_driver);
+> > > +}
+> > > +/* init early so consumer devices can complete system boot */
+> > > +subsys_initcall(bd71837_i2c_init);
+> > > +
+> > > +static void __exit bd71837_i2c_exit(void)
+> > > +{
+> > > +       i2c_del_driver(&bd71837_i2c_driver);
+> > > +}
+> > > +module_exit(bd71837_i2c_exit);
+> > > +
+> >
+> > Can't you use module_i2c_driver here and get rid of init/exit calls?
+>
+> I did this because of subsys_initcall() and how other drivers had used
+> that.
+>
+> > > +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> > > +MODULE_DESCRIPTION("BD71837 chip multi-function driver");
+> > > +MODULE_LICENSE("GPL");
+> >
+> > License mismatch.
+>
+> Thanks again
+>
+> > > diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
+> > > new file mode 100644
+> > > index 000000000000..125c7478ec29
+> > > --- /dev/null
+> > > +++ b/include/linux/mfd/bd71837.h
+> > > @@ -0,0 +1,367 @@
+> > > +
+> > > +/* register write induced reset settings */
+> >
+> > /* Register ...
+>
+> Ok.
+>
+> > > +
+> > > +/* even though the bit zero is not SWRESET type we still want to write zero
+> >
+> > /*
+> >  * Even
+>
+> Ok.
+>
+> > > + * to it when changing type. Biz zero is 'SWRESET' trigger bit and if we
+> >
+> > s/Biz/Bit/
+>
+> Ok.
+>
+> > > +/*
+> > > + * bd71837 sub-driver chip access routines
+> > > + */
+> > > +
+> >
+> > All these access routines only hide the regmap_* calls, so why not use
+> > the regmap calls directly in the driver and remove all this?
+>
+> This was also discussed with Stephen during the review for clk patches:
+> https://lore.kernel.org/lkml/152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com/
+>
+> I will later send a new patch set which only removes these wrappers from
+> this MFD and also the submodules. I like to introduce that as a separate
+> change set after the whole driver is applied as it impacts to some already
+> applied parts. I don't want any mismatches which jump out as compile errors
+> when MFD gets applied and config dependencies get solved.
+>
+> But yes, you are correct - the write/read to BD71837 is plain regmap access
+> and same simple access seems to be working with the BD71847 when it comes.
+> So these are not needed and will be removed.
+>
+> Br,
+>         Matti Vaittinen
