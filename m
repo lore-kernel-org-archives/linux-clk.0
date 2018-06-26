@@ -1,115 +1,57 @@
 Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
+References: <20180625152920.11549-1-brgl@bgdev.pl> <20180625152920.11549-2-brgl@bgdev.pl>
+ <241fed6e-b414-feac-8e6c-39713c5e665e@lechnology.com> <CAMRc=MdTdoL9qsrMAxhCTaQM7HGrAPpTVjDuHQ81Q5O-QMNcYQ@mail.gmail.com>
+ <c8d28664-e0fb-5a02-3c5b-b78684f87648@lechnology.com>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Date: Tue, 26 Jun 2018 10:27:21 +0200
+Message-ID: <CAMRc=MfDmQxiy+jX4kW1A8vvP4xVXjKDo8VpgRZ-2AsTNik-0A@mail.gmail.com>
+Subject: Re: [PATCH 1/9] clk: davinci: psc-dm365: use two lookup entries for
+ the aemif clock
+To: David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
 	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 6/9] ARM: davinci: da830-evm: use aemif platform driver
-Date: Mon, 25 Jun 2018 17:29:17 +0200
-Message-Id: <20180625152920.11549-7-brgl@bgdev.pl>
-In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+2018-06-25 18:06 GMT+02:00 David Lechner <david@lechnology.com>:
+> On 06/25/2018 11:01 AM, Bartosz Golaszewski wrote:
+>>
+>> 2018-06-25 17:53 GMT+02:00 David Lechner <david@lechnology.com>:
+>>>
+>>> On 06/25/2018 10:29 AM, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> We want to be able to get the clock both from the board file by its
+>>>> con_id and from the aemif driver by dev_id.
+>>>
+>>>
+>>>
+>>> What about the other SoCs? Don't they need this change as well?
+>>>
+>>
+>> So I double checked and turns out I missed one other board that's
+>> affected by this series and calls clk_get() from machine code:
+>> dm644x-evm.
+>>
+>> I'll fix it in v2.
+>
+>
+> The ti-aemif platform driver also does clk_get(). Don't you need
+> lookups to make that work as well? For example, DA830 doesn't have
+> a clock lookup for aemif at all.
+>
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in da830-evm.
+This seems like a bug: in arch/arm/mach-davinci/aemif.c in current
+mainline we do call clk_get() for 'aemif' and it's called indirectly
+from board-da830-evm.c via davinci_aemif_setup().
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da830-evm.c | 56 +++++++++++++++++++------
- 1 file changed, 44 insertions(+), 12 deletions(-)
+I'll address this too in v2.
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index b2470141dba3..666db3cee08a 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/platform_data/mtd-davinci-aemif.h>
- #include <linux/platform_data/spi-davinci.h>
- #include <linux/platform_data/usb-davinci.h>
-+#include <linux/platform_data/ti-aemif.h>
- #include <linux/regulator/machine.h>
- 
- #include <asm/mach-types.h>
-@@ -333,14 +334,48 @@ static struct resource da830_evm_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device da830_evm_nand_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &da830_evm_nand_pdata,
-+static struct platform_device da830_evm_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 1,
-+		.dev		= {
-+			.platform_data	= &da830_evm_nand_pdata,
-+		},
-+		.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
-+		.resource	= da830_evm_nand_resources,
-+	},
-+};
-+
-+static struct resource da830_evm_aemif_resource[] = {
-+	{
-+		.start	= DA8XX_AEMIF_CTL_BASE,
-+		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da830_evm_aemif_abus_data[] = {
-+	{
-+		.cs	= 3,
- 	},
--	.num_resources	= ARRAY_SIZE(da830_evm_nand_resources),
--	.resource	= da830_evm_nand_resources,
-+};
-+
-+static struct aemif_platform_data da830_evm_aemif_pdata = {
-+	.abus_data		= da830_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da830_evm_aemif_abus_data),
-+	.sub_devices		= da830_evm_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(da830_evm_aemif_devices),
-+	.cs_offset		= 2,
-+};
-+
-+static struct platform_device da830_evm_aemif_device = {
-+	.name		= "ti-aemif",
-+	.dev = {
-+		.platform_data = &da830_evm_aemif_pdata,
-+	},
-+	.resource	= da830_evm_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(da830_evm_aemif_resource),
-+	.id		= -1,
- };
- 
- /*
-@@ -371,12 +406,9 @@ static inline void da830_evm_init_nand(int mux_mode)
- 	if (ret)
- 		pr_warn("%s: emif25 mux setup failed: %d\n", __func__, ret);
- 
--	ret = platform_device_register(&da830_evm_nand_device);
-+	ret = platform_device_register(&da830_evm_aemif_device);
- 	if (ret)
--		pr_warn("%s: NAND device not registered\n", __func__);
--
--	if (davinci_aemif_setup(&da830_evm_nand_device))
--		pr_warn("%s: Cannot configure AEMIF\n", __func__);
-+		pr_warn("%s: AEMIF device not registered\n", __func__);
- 
- 	gpio_direction_output(mux_mode, 1);
- }
--- 
-2.17.1
+Bart
