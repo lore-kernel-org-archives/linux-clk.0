@@ -1,210 +1,45 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH] clk: qcom: Move frequency table macro to common file
-Date: Wed, 13 Jun 2018 14:51:30 +0530
-Message-Id: <1528881690-10177-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34249 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752506AbeFZIJC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jun 2018 04:09:02 -0400
+Received: by mail-wr0-f195.google.com with SMTP id a12-v6so16232635wro.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Jun 2018 01:09:01 -0700 (PDT)
+Subject: Re: [PATCH 1/2] clk: meson: stop rate propagation for audio clocks
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180620100610.29010-1-jbrunet@baylibre.com>
+ <20180620100610.29010-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <76edc9c1-8fd2-de0a-ea88-ebb037a4775c@baylibre.com>
+Date: Tue, 26 Jun 2018 10:08:59 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180620100610.29010-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Frequency table macro is used by multiple clock drivers, move frequency
-table macro to common header file.
-
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h      | 2 ++
- drivers/clk/qcom/gcc-apq8084.c  | 2 --
- drivers/clk/qcom/gcc-ipq4019.c  | 2 --
- drivers/clk/qcom/gcc-ipq8074.c  | 2 --
- drivers/clk/qcom/gcc-msm8916.c  | 2 --
- drivers/clk/qcom/gcc-msm8974.c  | 2 --
- drivers/clk/qcom/gcc-msm8994.c  | 2 --
- drivers/clk/qcom/gcc-msm8996.c  | 2 --
- drivers/clk/qcom/gcc-msm8998.c  | 2 --
- drivers/clk/qcom/gcc-sdm845.c   | 2 --
- drivers/clk/qcom/mmcc-apq8084.c | 2 --
- drivers/clk/qcom/mmcc-msm8974.c | 2 --
- drivers/clk/qcom/mmcc-msm8996.c | 2 --
- 13 files changed, 2 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index b209a2f..dbd5a9e 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -7,6 +7,8 @@
- #include <linux/clk-provider.h>
- #include "clk-regmap.h"
-
-+#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-+
- struct freq_tbl {
- 	unsigned long freq;
- 	u8 src;
-diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
-index 486d961..9c99a71 100644
---- a/drivers/clk/qcom/gcc-apq8084.c
-+++ b/drivers/clk/qcom/gcc-apq8084.c
-@@ -106,8 +106,6 @@ enum {
- 	"sleep_clk_src",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 46cb256..8902ad4 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -179,8 +179,6 @@ struct clk_fepll {
- 	"ddrpllapss",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static const struct freq_tbl ftbl_gcc_audio_pwm_clk[] = {
- 	F(48000000, P_XO, 1, 0, 0),
- 	F(200000000, P_FEPLL200, 1, 0, 0),
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 0462f4a..505c626 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -32,8 +32,6 @@
- #include "clk-regmap-mux.h"
- #include "reset.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_GPLL0,
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index d6c7f50..ac2b0aa 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -264,8 +264,6 @@ enum {
- 	"sleep_clk",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x21004,
- 	.m_reg = 0x21008,
-diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
-index 348e30d..08e2900d 100644
---- a/drivers/clk/qcom/gcc-msm8974.c
-+++ b/drivers/clk/qcom/gcc-msm8974.c
-@@ -62,8 +62,6 @@ enum {
- 	"gpll4_vote",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll gpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-index 1e38efc..53f0f36 100644
---- a/drivers/clk/qcom/gcc-msm8994.c
-+++ b/drivers/clk/qcom/gcc-msm8994.c
-@@ -57,8 +57,6 @@ enum {
- 	"gpll4",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_fixed_factor xo = {
- 	.mult = 1,
- 	.div = 1,
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 9f35b3f..9d3756c 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -32,8 +32,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_GPLL0,
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 78d87f5..9f0ae40 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -25,8 +25,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_AUD_REF_CLK,
- 	P_CORE_BI_PLL_TEST_SE,
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index e78e6f5..19b470f 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -25,8 +25,6 @@
- #include "gdsc.h"
- #include "reset.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_BI_TCXO,
- 	P_AUD_REF_CLK,
-diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
-index 30777f9..4ce1d7c 100644
---- a/drivers/clk/qcom/mmcc-apq8084.c
-+++ b/drivers/clk/qcom/mmcc-apq8084.c
-@@ -219,8 +219,6 @@ enum {
- 	"sleep_clk_src",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll mmpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 715e7cd..9181851 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -184,8 +184,6 @@ enum {
- 	"dsi1pllbyte",
- };
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- static struct clk_pll mmpll0 = {
- 	.l_reg = 0x0004,
- 	.m_reg = 0x0008,
-diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
-index 1a25ee4..60f08b3 100644
---- a/drivers/clk/qcom/mmcc-msm8996.c
-+++ b/drivers/clk/qcom/mmcc-msm8996.c
-@@ -34,8 +34,6 @@
- #include "reset.h"
- #include "gdsc.h"
-
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_MMPLL0,
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+On 20/06/2018 12:06, Jerome Brunet wrote:
+> It is actually a lot easier to setup the PLL with carefully chosen rates
+> than relying on CCF clock propagation for this audio use case.
+> This way, we can make sure we will always be able to provide the common
+> audio clock rates, while having the PLL in the optimal operating range.
+> 
+> For this, we stop the rate propagation at the mux picking the
+> PLL and let it round to the closest matching PLL.
+> 
+> Doing so, we can use the generic divider for the i2s clock.
+> clk-audio-divider is no longer required. It was a (poor) attempt
+> to use CCF rate propagation while making sure the PLL rate would
+> be high enough to work with audio use cases.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/gxbb.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+[...]
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
