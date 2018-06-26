@@ -1,66 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933658AbeFLQdZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:33:25 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
-        boris.brezillon@bootlin.com, broonie@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nicolas.ferre@microchip.com, robh+dt@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
-Cc: Cristian.Birsan@microchip.com
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
- <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
- <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
-Message-ID: <152882120419.16708.16947882037246176868@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
-Date: Tue, 12 Jun 2018 09:33:24 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mine260309@gmail.com>
+Return-Path: <mine260309@gmail.com>
+From: Lei YU <mine260309@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lei YU <mine260309@gmail.com>,
+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH] clk: aspeed: Fix SDCLK name
+Date: Tue, 26 Jun 2018 09:55:25 +0800
+Message-Id: <1529978125-28712-1-git-send-email-mine260309@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Codrin Ciubotariu (2018-06-04 01:20:29)
-> On 31.05.2018 18:26, Stephen Boyd wrote:
-> > Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
-> > =
+The SDCLK was named SDCLKCLK, and no one has used this yet.
+Fix it.
 
-> >> +       .get_parent =3D clk_i2s_mux_get_parent,
-> >> +       .set_parent =3D clk_i2s_mux_set_parent,
-> >> +       .determine_rate =3D __clk_mux_determine_rate,
-> >> +};
-> >> +
-> >> +static struct clk_hw * __init
-> >> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
-> >> +                         const char * const *parent_names,
-> >> +                         unsigned int num_parents, u32 bus_id)
-> >> +{
-> >> +       struct clk_init_data init =3D {};
-> >> +       struct clk_i2s_mux *i2s_ck;
-> >> +       int ret;
-> >> +
-> >> +       i2s_ck =3D kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
-> >> +       if (!i2s_ck)
-> >> +               return ERR_PTR(-ENOMEM);
-> >> +
-> >> +       init.name =3D name;
-> >> +       init.ops =3D &clk_i2s_mux_ops;
-> >> +       init.parent_names =3D parent_names;
-> >> +       init.num_parents =3D num_parents;
-> >> +       init.flags =3D CLK_IGNORE_UNUSED;
-> > =
+Signed-off-by: Lei YU <mine260309@gmail.com>
+---
+ drivers/clk/clk-aspeed.c                 | 2 +-
+ include/dt-bindings/clock/aspeed-clock.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> > Really? Why?
-> =
-
-> I am thinking that there is no need to gate this clock, since there is =
-
-> no way to gate this clock in HW.
-
-This flag is not necessary if the clk can't be gated via hardware
-control registers. Please remove the flag.
-
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index 38b366b..f49c684 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -109,7 +109,7 @@ struct aspeed_clk_gate {
+ 	[ASPEED_CLK_GATE_RSACLK] =	{ 24, -1, "rsaclk-gate",	NULL,	0 }, /* RSA */
+ 	[ASPEED_CLK_GATE_UART3CLK] =	{ 25, -1, "uart3clk-gate",	"uart",	0 }, /* UART3 */
+ 	[ASPEED_CLK_GATE_UART4CLK] =	{ 26, -1, "uart4clk-gate",	"uart",	0 }, /* UART4 */
+-	[ASPEED_CLK_GATE_SDCLKCLK] =	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* SDIO/SD */
++	[ASPEED_CLK_GATE_SDCLK] =	{ 27, 16, "sdclk-gate",		NULL,	0 }, /* SDIO/SD */
+ 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
+ };
+ 
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index 4476184..f437386 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -25,7 +25,7 @@
+ #define ASPEED_CLK_GATE_RSACLK		19
+ #define ASPEED_CLK_GATE_UART3CLK	20
+ #define ASPEED_CLK_GATE_UART4CLK	21
+-#define ASPEED_CLK_GATE_SDCLKCLK	22
++#define ASPEED_CLK_GATE_SDCLK		22
+ #define ASPEED_CLK_GATE_LHCCLK		23
+ #define ASPEED_CLK_HPLL			24
+ #define ASPEED_CLK_AHB			25
+-- 
+1.9.1
