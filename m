@@ -1,43 +1,69 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: David Lechner <david@lechnology.com>,
-	Sekhar Nori <nsekhar@ti.com>,
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>
-Cc: linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: davinci: fix a typo (which leads to build failures)
-Date: Mon, 25 Jun 2018 19:25:50 +0200
-Message-Id: <20180625172550.17379-1-brgl@bgdev.pl>
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 00/13] ARM: davinci: remove duplicate aemif support
+Date: Tue, 26 Jun 2018 11:25:24 +0200
+Message-Id: <20180626092537.6737-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This should have been DM365, not DM356.
+This series moves all aemif/nand users to using the ti-aemif platform
+driver located in drivers/memory instead of the older API located in
+mach-davinci.
 
-Fixes: 4eff0bebf4ed5 ("clk: davinci: Fix link errors when not all SoCs are enabled")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+First five patches add necessary changes to the clock driver. Next
+seven convert the board files to using the ti-aemif driver. Last patch
+removes now dead code.
 
-diff --git a/drivers/clk/davinci/psc.h b/drivers/clk/davinci/psc.h
-index 6a42529d31a9..cc5614567a70 100644
---- a/drivers/clk/davinci/psc.h
-+++ b/drivers/clk/davinci/psc.h
-@@ -107,7 +107,7 @@ extern const struct davinci_psc_init_data of_da850_psc1_init_data;
- #ifdef CONFIG_ARCH_DAVINCI_DM355
- extern const struct davinci_psc_init_data dm355_psc_init_data;
- #endif
--#ifdef CONFIG_ARCH_DAVINCI_DM356
-+#ifdef CONFIG_ARCH_DAVINCI_DM365
- extern const struct davinci_psc_init_data dm365_psc_init_data;
- #endif
- #ifdef CONFIG_ARCH_DAVINCI_DM644x
+v1 -> v2:
+- added missing clock lookups for ti-aemif where needed
+- removed an unnecessary davinci_nand clock lookup from psc-da850
+- moved the .id field initialization of aemif platform devices next to .name
+- tweaked the commit message for the last patch
+
+Bartosz Golaszewski (13):
+  clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
+  clk: davinci: psc-dm365: use two lookup entries for the aemif clock
+  clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
+  clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
+  clk: davinci: psc-da830: add a lookup entry for aemif clock
+  ARM: davinci: omapl138-hawk: add aemif & nand support
+  ARM: davinci: da850-evm: use aemif platform driver in legacy mode
+  ARM: davinci: dm365-evm: use the ti-aemif soc driver
+  ARM: davinci: dm644x-evm: use aemif platform driver
+  ARM: davinci: da830-evm: use aemif platform driver
+  ARM: davinci: dm646x-evm: use aemif platform driver
+  ARM: davinci: mityomapl138: use aemif platform driver
+  ARM: davinci: unduplicate aemif support
+
+ arch/arm/mach-davinci/Makefile                |   2 +-
+ arch/arm/mach-davinci/aemif.c                 | 218 ------------------
+ arch/arm/mach-davinci/board-da830-evm.c       |  56 ++++-
+ arch/arm/mach-davinci/board-da850-evm.c       |  93 ++++----
+ arch/arm/mach-davinci/board-dm365-evm.c       |  59 +++--
+ arch/arm/mach-davinci/board-dm644x-evm.c      |  55 +++--
+ arch/arm/mach-davinci/board-dm646x-evm.c      |  52 ++++-
+ arch/arm/mach-davinci/board-mityomapl138.c    |  55 +++--
+ arch/arm/mach-davinci/board-omapl138-hawk.c   | 132 +++++++++++
+ drivers/clk/davinci/psc-da830.c               |   3 +-
+ drivers/clk/davinci/psc-da850.c               |   3 +-
+ drivers/clk/davinci/psc-dm365.c               |   3 +-
+ drivers/clk/davinci/psc-dm644x.c              |   3 +-
+ drivers/clk/davinci/psc-dm646x.c              |   3 +-
+ .../linux/platform_data/mtd-davinci-aemif.h   |   1 -
+ 15 files changed, 407 insertions(+), 331 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/aemif.c
+
 -- 
 2.17.1
