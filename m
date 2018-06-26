@@ -1,27 +1,46 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Yisheng Xie <xieyisheng1@huawei.com>, linux-kernel@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
-Cc: andy.shevchenko@gmail.com, Yisheng Xie <xieyisheng1@huawei.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-10-git-send-email-xieyisheng1@huawei.com>
-Message-ID: <152792025666.225090.11039188217774859492@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 09/21] clk: use match_string() helper
-Date: Fri, 01 Jun 2018 23:17:36 -0700
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 02/13] clk: davinci: psc-dm365: use two lookup entries for the aemif clock
+Date: Tue, 26 Jun 2018 11:25:26 +0200
+Message-Id: <20180626092537.6737-3-brgl@bgdev.pl>
+In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Yisheng Xie (2018-05-31 04:11:14)
-> match_string() returns the index of an array for a matching string,
-> which can be used instead of open coded variant.
-> =
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
+We want to be able to get the clock both from the board file by its
+con_id and from the aemif driver by dev_id.
 
-Applied to clk-next
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/clk/davinci/psc-dm365.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+index 8c73086cc676..c75424f4ea3b 100644
+--- a/drivers/clk/davinci/psc-dm365.c
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
+ LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
+ LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
+ LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
+-LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
++					NULL,		"ti-aemif");
+ LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
+ LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
+ LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
+-- 
+2.17.1
