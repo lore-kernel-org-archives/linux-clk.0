@@ -1,51 +1,116 @@
-Return-Path: <srinath.mannam@broadcom.com>
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-Date: Thu, 14 Jun 2018 16:28:12 +0530
-Message-ID: <CABe79T5i8zUcBJnFmM-pAvzXf2CZXesh4NqxSGFj8f0Z-c8m1g@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <miquel.raynal@bootlin.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume support
+Date: Tue, 26 Jun 2018 11:29:26 +0200
+Message-Id: <20180626092926.26361-2-miquel.raynal@bootlin.com>
+In-Reply-To: <20180626092926.26361-1-miquel.raynal@bootlin.com>
+References: <20180626092926.26361-1-miquel.raynal@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Thank you Andy,
+Add suspend/resume hooks in Armada 37xx peripheral clocks driver to
+handle S2RAM operations.
 
-Regards,
-Srinath.
+One can think that these hooks are useless by comparing the register
+values before and after a suspend/resume cycle: they will look the same
+anyway. This is because of some scripts executed by the Cortex-M3 core
+during ATF operations to init both the clocks and the DDR. These values
+could be modified by the BL33 stage or by Linux itself and should be
+preserved.
 
-On Wed, Jun 13, 2018 at 1:43 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> +Cc: Rafael, ACPI ML
->
-> On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
-> <srinath.mannam@broadcom.com> wrote:
->> Hi Michael, Stephen,
->>
->> We are adding ACPI support in our Linux based platform.
->> At present our clock hierarchy using common clock framework through DTS.
->> Now we required ACPI support in common clock framework to upgrade our platform.
->>
->> For example, clk_get API called in many drivers to get clock device is
->> tightly coupled with DT framework.
->>
->> Please let us know, if anybody in Open Source community have plans to
->> add ACPI support for common clock framework.
->> If not please suggest us alternative method to use common clock
->> framework in ACPI use case.
->>
->> Thanks in advance.
->>
->> Regards,
->> Srinath.
->
->
->
-> --
-> With Best Regards,
-> Andy Shevchenko
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+
+Changes since v1:
+=================
+* Defined an ARMADA_3700_DEV_PM_OPS value for when CONFIG_PM is present
+  or not and used it in the platform device structure to define '.pm'.
+
+ drivers/clk/mvebu/armada-37xx-periph.c | 50 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index a9e3dcc50a7b..99b00f578ae2 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -59,6 +59,15 @@ struct clk_periph_driver_data {
+ 	struct clk_hw_onecell_data *hw_data;
+ 	spinlock_t lock;
+ 	void __iomem *reg;
++#if defined(CONFIG_PM)
++	/* Storage registers for suspend/resume operations */
++	u32 tbg_sel;
++	u32 div_sel0;
++	u32 div_sel1;
++	u32 div_sel2;
++	u32 clk_sel;
++	u32 clk_dis;
++#endif /* CONFIG_PM */
+ };
+ 
+ struct clk_double_div {
+@@ -642,6 +651,46 @@ static int armada_3700_add_composite_clk(const struct clk_periph_data *data,
+ 	return PTR_ERR_OR_ZERO(*hw);
+ }
+ 
++#if defined(CONFIG_PM)
++static int armada_3700_periph_clock_suspend(struct device *dev)
++{
++	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
++
++	data->tbg_sel = readl(data->reg + TBG_SEL);
++	data->div_sel0 = readl(data->reg + DIV_SEL0);
++	data->div_sel1 = readl(data->reg + DIV_SEL1);
++	data->div_sel2 = readl(data->reg + DIV_SEL2);
++	data->clk_sel = readl(data->reg + CLK_SEL);
++	data->clk_dis = readl(data->reg + CLK_DIS);
++
++	return 0;
++}
++
++static int armada_3700_periph_clock_resume(struct device *dev)
++{
++	struct clk_periph_driver_data *data = dev_get_drvdata(dev);
++
++	/* Follow the same order than what the Cortex-M3 does (ATF code) */
++	writel(data->clk_dis, data->reg + CLK_DIS);
++	writel(data->div_sel0, data->reg + DIV_SEL0);
++	writel(data->div_sel1, data->reg + DIV_SEL1);
++	writel(data->div_sel2, data->reg + DIV_SEL2);
++	writel(data->tbg_sel, data->reg + TBG_SEL);
++	writel(data->clk_sel, data->reg + CLK_SEL);
++
++	return 0;
++}
++
++static const struct dev_pm_ops armada_3700_periph_clock_pm_ops = {
++	.suspend        = armada_3700_periph_clock_suspend,
++	.resume         = armada_3700_periph_clock_resume,
++};
++
++#define ARMADA_3700_DEV_PM_OPS (&armada_3700_periph_clock_pm_ops)
++#else
++#define ARMADA_3700_DEV_PM_OPS NULL
++#endif /* CONFIG_PM */
++
+ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
+ {
+ 	struct clk_periph_driver_data *driver_data;
+@@ -717,6 +766,7 @@ static struct platform_driver armada_3700_periph_clock_driver = {
+ 	.driver		= {
+ 		.name	= "marvell-armada-3700-periph-clock",
+ 		.of_match_table = armada_3700_periph_clock_of_match,
++		.pm	= ARMADA_3700_DEV_PM_OPS,
+ 	},
+ };
+ 
+-- 
+2.14.1
