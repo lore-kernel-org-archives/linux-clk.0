@@ -1,104 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:57261 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751213AbeFVMtc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:49:32 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 5/7] arm64: allwinner: a64: add necessary device tree nodes for DE2 CCU
-Date: Fri, 22 Jun 2018 20:45:38 +0800
-Message-Id: <20180622124540.56203-4-icenowy@aosc.io>
-In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
-References: <20180622124540.56203-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 12/13] ARM: davinci: mityomapl138: use aemif platform driver
+Date: Tue, 26 Jun 2018 11:25:36 +0200
+Message-Id: <20180626092537.6737-13-brgl@bgdev.pl>
+In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-As we have all necessary parts to enable the DE2 CCU on the Allwinner
-A64 SoC, add the needed device tree nodes, including the DE2 CCU itself
-and the DE2 bus.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The "mixer0-lcd0" simplefb device node is updated to use the DE2 CCU.
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in mityomapl138.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-Changes in v2:
-- Drop SRAM controller device tree node addition (as it's already added
-  as part of syscon change.)
-- Fix the clock reference in LCD SimpleFB.
+ arch/arm/mach-davinci/board-mityomapl138.c | 55 ++++++++++++++++------
+ 1 file changed, 41 insertions(+), 14 deletions(-)
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 30 +++++++++++++++----
- 1 file changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index ff2ddde1e117..318c4ba8ae9f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -43,9 +43,11 @@
-  */
+diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
+index 2cce0d7d2f2a..2933e0c87cfa 100644
+--- a/arch/arm/mach-davinci/board-mityomapl138.c
++++ b/arch/arm/mach-davinci/board-mityomapl138.c
+@@ -30,6 +30,7 @@
+ #include <mach/da8xx.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <mach/mux.h>
+ #include <linux/platform_data/spi-davinci.h>
  
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun8i-r-ccu.h>
+@@ -422,27 +423,53 @@ static struct resource mityomapl138_nandflash_resource[] = {
+ 	},
+ };
  
- / {
-@@ -58,17 +60,12 @@
- 		#size-cells = <1>;
- 		ranges;
+-static struct platform_device mityomapl138_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &mityomapl138_nandflash_data,
++static struct platform_device mityomapl138_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &mityomapl138_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
++		.resource	= mityomapl138_nandflash_resource,
+ 	},
+-	.num_resources	= ARRAY_SIZE(mityomapl138_nandflash_resource),
+-	.resource	= mityomapl138_nandflash_resource,
+ };
  
--/*
-- * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
-- * However there is no support for this clock on A64 yet, so we depend
-- * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
-- */
- 		simplefb_lcd: framebuffer-lcd {
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "mixer0-lcd0";
- 			clocks = <&ccu CLK_TCON0>,
--				 <&ccu CLK_DE>, <&ccu CLK_BUS_DE>;
-+				 <&display_clocks CLK_MIXER0>;
- 			status = "disabled";
- 		};
- 	};
-@@ -169,6 +166,27 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		de2@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2";
-+			reg = <0x1000000 0x400000>;
-+			allwinner,sram = <&de2_sram 1>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x1000000 0x400000>;
+-static struct platform_device *mityomapl138_devices[] __initdata = {
+-	&mityomapl138_nandflash_device,
++static struct resource mityomapl138_aemif_resources[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
 +
-+			display_clocks: clock@0 {
-+				compatible = "allwinner,sun50i-a64-de2-clk";
-+				reg = <0x0 0x100000>;
-+				clocks = <&ccu CLK_DE>,
-+					 <&ccu CLK_BUS_DE>;
-+				clock-names = "mod",
-+					      "bus";
-+				resets = <&ccu RST_BUS_DE>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+		};
++static struct aemif_abus_data mityomapl138_aemif_abus_data[] = {
++	{
++		.cs	= 1,
++	},
++};
 +
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-control";
- 			reg = <0x01c00000 0x1000>;
++static struct aemif_platform_data mityomapl138_aemif_pdata = {
++	.abus_data		= mityomapl138_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(mityomapl138_aemif_abus_data),
++	.sub_devices		= mityomapl138_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(mityomapl138_aemif_devices),
++};
++
++static struct platform_device mityomapl138_aemif_device = {
++	.name		= "ti-aemif",
++	.id		= -1,
++	.dev = {
++		.platform_data	= &mityomapl138_aemif_pdata,
++	},
++	.resource	= mityomapl138_aemif_resources,
++	.num_resources	= ARRAY_SIZE(mityomapl138_aemif_resources),
+ };
+ 
+ static void __init mityomapl138_setup_nand(void)
+ {
+-	platform_add_devices(mityomapl138_devices,
+-				 ARRAY_SIZE(mityomapl138_devices));
+-
+-	if (davinci_aemif_setup(&mityomapl138_nandflash_device))
+-		pr_warn("%s: Cannot configure AEMIF\n", __func__);
++	if (platform_device_register(&mityomapl138_aemif_device))
++		pr_warn("%s: Cannot register AEMIF device\n", __func__);
+ }
+ 
+ static const short mityomap_mii_pins[] = {
 -- 
 2.17.1
-
