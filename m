@@ -1,43 +1,35 @@
-Return-Path: <festevam@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <20180608101924.31195-1-pp@emlix.com>
-References: <20180608101924.31195-1-pp@emlix.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 8 Jun 2018 10:00:52 -0300
-Message-ID: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-To: Philipp Puschmann <pp@emlix.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <dinguyen@kernel.org>
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: dinguyen@kernel.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com
+Subject: [PATCH 2/2] clk: socfpga: stratix10: fix the sdmmc_free_clk mux
+Date: Tue, 26 Jun 2018 08:28:10 -0500
+Message-Id: <1530019690-32685-2-git-send-email-dinguyen@kernel.org>
+In-Reply-To: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
+References: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+The first parent of the sdmmc_free_clk should be the main_sdmmc_clk.
 
-On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
-> q/dl datasheets list the 5th selection value for ck01_sel as
-> video_27M_clk_root.
->
-> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
-> as parent for IMX6QDL_CLK_CKO1_SEL.
->
-> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-s10.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You could still have added my Reviewed-by tag that I sent previously :-)
-
-Here it goes:
-
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-
-Also in the future, when posting a new version of a patch, please mark
-it as such:
-
-[PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-
-and write below the --- line what are the changes in this new version.
-
-Thanks
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index a15769f..5b238fc 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -28,7 +28,7 @@ static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
+ static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
+ static const char * const emac_ptp_free_mux[] = {"peri_emac_ptp_clk", "boot_clk"};
+ static const char * const gpio_db_free_mux[] = {"peri_gpio_db_clk", "boot_clk"};
+-static const char * const sdmmc_free_mux[] = {"peri_sdmmc_clk", "boot_clk"};
++static const char * const sdmmc_free_mux[] = {"main_sdmmc_clk", "boot_clk"};
+ static const char * const s2f_usr1_free_mux[] = {"peri_s2f_usr1_clk", "boot_clk"};
+ static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
+ static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
+-- 
+2.7.4
