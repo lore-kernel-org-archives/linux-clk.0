@@ -1,71 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:60395 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965529AbeF0PCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 11:02:07 -0400
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 2/2] ARM: dts: pxa: fix the rtc controller
-Date: Wed, 27 Jun 2018 17:01:50 +0200
-Message-Id: <20180627150150.23951-2-robert.jarzmik@free.fr>
-In-Reply-To: <20180627150150.23951-1-robert.jarzmik@free.fr>
-References: <20180627150150.23951-1-robert.jarzmik@free.fr>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linus.walleij@linaro.org>
+MIME-Version: 1.0
+References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com> <e6b215db77c8203704c9d1216a9e8747de1b5779.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <e6b215db77c8203704c9d1216a9e8747de1b5779.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 26 Jun 2018 09:54:23 +0200
+Message-ID: <CACRpkdb9M7eN6JSk8yz=K90s1+S0cY9OcD_pDBCbQ3GuzfNWGA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To: matti.vaittinen@fi.rohmeurope.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+	Arnd Bergmann <arnd@arndb.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, Jianhong Chen <chenjh@rock-chips.com>,
+	Andrey Smirnov <andrew.smirnov@gmail.com>, Kate Stewart <kstewart@linuxfoundation.org>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Greg KH <gregkh@linuxfoundation.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Input <linux-input@vger.kernel.org>,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The RTC controller is fed by an external fixed 32kHz clock. Yet the
-driver wants to acquire this clock, even though it doesn't make any use
-of it, ie. doesn't get the rate to make calculation.
+On Fri, Jun 15, 2018 at 3:29 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
 
-Therefore, use the exported 32.768kHz clock in the PXA clock tree to
-make the driver happy and working.
+> ROHM BD71837 PMIC MFD driver providing interrupts and support
+> for two subsystems:
+> - clk
+> - Regulators
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
-Since v1: change the dummy clock by the actual 32.768kHz
----
- arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
- arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
- 2 files changed, 8 insertions(+)
+This looks like a clean and nice MFD core driver to me.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
-index 95d59be97213..78a413ea0e88 100644
---- a/arch/arm/boot/dts/pxa25x.dtsi
-+++ b/arch/arm/boot/dts/pxa25x.dtsi
-@@ -80,6 +80,10 @@
- 			#pwm-cells = <1>;
- 			clocks = <&clks CLK_PWM1>;
- 		};
-+
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>>;
-+		};
- 	};
- 
- 	timer@40a00000 {
-diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
-index 747f750f675d..2ab6986433c8 100644
---- a/arch/arm/boot/dts/pxa27x.dtsi
-+++ b/arch/arm/boot/dts/pxa27x.dtsi
-@@ -113,6 +113,10 @@
- 
- 			status = "disabled";
- 		};
-+
-+		rtc@40900000 {
-+			clocks = <&clks CLK_OSC32k768>;
-+		};
- 	};
- 
- 	clocks {
--- 
-2.11.0
-
+Yours,
+Linus Walleij
