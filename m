@@ -1,97 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <alsa-devel@alsa-project.org>, <nicolas.ferre@microchip.com>,
- <boris.brezillon@bootlin.com>, <alexandre.belloni@bootlin.com>,
- <robh+dt@kernel.org>, <broonie@kernel.org>, <sboyd@kernel.org>
-Subject: [PATCH v5 0/5] ASoC: add driver for Atmel I2S controller
-Date: Mon, 18 Jun 2018 17:12:34 +0300
-Message-ID: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+Return-Path: <andy.shevchenko@gmail.com>
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Cristian.Birsan@microchip.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+In-Reply-To: <152996983664.143105.1441423217241075965@swboyd.mtv.corp.google.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
+ <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+ <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
+ <152994466823.143105.11787470853817181844@swboyd.mtv.corp.google.com>
+ <914341e7-ca94-054d-6127-522b745006b4@arm.com> <152996983664.143105.1441423217241075965@swboyd.mtv.corp.google.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 26 Jun 2018 20:27:43 +0300
+Message-ID: <CAHp75VfJQOZ9K=SusdDpV5NGeSnCvLvcg9w7nqqiyudH7+QGgA@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Srinath Mannam <srinath.mannam@broadcom.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a rework of Cyrille's patches named:
-[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
-https://lkml.org/lkml/2015/9/29/454
+On Tue, Jun 26, 2018 at 2:37 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Sudeep Holla (2018-06-25 10:15:45)
+>>
+>>
+>> On 25/06/18 17:37, Stephen Boyd wrote:
+>> > Quoting Rafael J. Wysocki (2018-06-16 08:50:18)
+>> >> On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+>> >>>
+>> >>> Is this for clk_enable/disable? What about clk_set_rate() or
+>> >>> clk_set_phase()? Is ACPI's AML taking care of that?
+>> >>
+>> >> That's for clk_enable/disable AFAICS.
+>> >>
+>> >> AML doesn't manage device performance states at all.
+>> >
+>> > Alright. We may need to add a better way for device drivers to get
+>> > handles to clk pointers on ACPI firmware so they can change frequencies
+>> > or phase, etc.
+>>
+>> Is there any specific usecase/device needing this in the kernel ? SPI
+>> slaves ?
+>
+> Mark Brown has been pushing x86 folks to use clk framework for audio
+> drivers in ASoC. I haven't seen other uses besides that really.
 
-This is the version 5 of the series, and addresses the received feedback
-on the mailing lists.
-
-This series applies on top of clk-next branch of clk/linux.git.
-
-Based on received feedback, I created a mux clock driver to select the I2S
-clock source, that also includes proper devicetree bindings and nodes.
-Also, I added the I2S nodes in sama5d2's devicetree, with the missing
-pin muxing for the second I2S controller.
-
-Alexandre Belloni plans to change the at91 fine grained clock nodes and
-he recommended to leave the bindings for this clock driver in the same
-(wrong) manner, so he could fix them all at once.
-
-This series of patches adds support to the new Atmel I2S controller
-embedded on sama5d2 SoCs.
-
-ChangeLog
-
-v4 -> v5
- - removed patches:
-   [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
-   [PATCH v4 5/7] ASoC: atmel-i2s: add driver for the new Atmel I2S controller
-   from this series since they were applied to the asoc tree at:
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
- - addressed comments received on the mux clock;
-
-v3 -> v4
- - as suggested by Rob Herring:
-   - added a clock mux driver for I2S's clock control bit;
-   - more precise description of I2S's devicetree bindings;
-   - removed SoC and internal detalls from bindings;
- - addressed comments from Mark Brown;
- - added devicetree nodes and pin muxing for I2S;
-
-v2 -> v3
- - fix the coding style, add some more comments and add a section dedicated
-  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
-  Brown.
-
-v1 -> v2
- - initialize dev->dev before calling dev->caps->mck_init()
-
-Codrin Ciubotariu (3):
-  dt-bindings: clk: at91: add an I2S mux clock
-  clk: at91: add I2S clock mux driver
-  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
-
-Cyrille Pitchen (2):
-  ARM: dts: at91: sama5d2: add nodes for I2S controllers
-  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-
- .../devicetree/bindings/clock/at91-clock.txt  |  35 ++++++
- arch/arm/boot/dts/at91-sama5d2_xplained.dts   |  28 +++++
- arch/arm/boot/dts/sama5d2.dtsi                |  52 ++++++++
- arch/arm/mach-at91/Kconfig                    |   4 +
- drivers/clk/at91/Makefile                     |   1 +
- drivers/clk/at91/clk-i2s-mux.c                | 116 ++++++++++++++++++
- 6 files changed, 236 insertions(+)
- create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+All LPSS code based on fixed rate clocks created by some platform
+code. Since we have no board files for modern x86 platforms the clock
+providers and consumers often are located in the same / adjoining
+drivers.
 
 -- 
-2.17.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+With Best Regards,
+Andy Shevchenko
