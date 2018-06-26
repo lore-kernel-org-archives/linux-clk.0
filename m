@@ -1,54 +1,102 @@
-Return-Path: <ilia.lin@gmail.com>
-Return-Path: <ilia.lin@gmail.com>
-From: ilia.lin@gmail.com
-To: ilia.lin@gmail.com
-Cc: Ilia Lin <ilialin@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Amit Kucheria <amit.kucheria@linaro.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v13 3/8] clk: Use devm_ in the register fixed factor clock
-Date: Thu, 14 Jun 2018 23:53:50 +0200
-Message-Id: <20180614215358.11264-4-ilia.lin@gmail.com>
-In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
-References: <20180614215358.11264-1-ilia.lin@gmail.com>
+Return-Path: <miquel.raynal@bootlin.com>
+Date: Tue, 26 Jun 2018 11:09:18 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume
+ support
+Message-ID: <20180626110918.35c13653@xps13>
+In-Reply-To: <87in868202.fsf@bootlin.com>
+References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
+	<20180421142344.25944-2-miquel.raynal@bootlin.com>
+	<87in868202.fsf@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Ilia Lin <ilialin@codeaurora.org>
+Hi Gregory,
 
-Use devm_clk_hw_register instead of clk_hw_register
-to simplify the usage of this API. This way drivers that call
-the clk_hw_register_fixed_factor won't need to maintain
-a data structure for further cleanup.
+On Wed, 02 May 2018 18:18:37 +0200, Gregory CLEMENT
+<gregory.clement@bootlin.com> wrote:
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/clk/clk-fixed-factor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Miquel,
+> =20
+>  On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+>=20
+> > Add suspend/resume hooks in Armada 37xx peripheral clocks driver to
+> > handle S2RAM operations.
+> >
+> > One can think that these hooks are useless by comparing the register
+> > values before and after a suspend/resume cycle: they will look the same
+> > anyway. This is because of some scripts executed by the Cortex-M3 core
+> > during ATF operations to init both the clocks and the DDR. These values
+> > could be modified by the BL33 stage or by Linux itself and should be
+> > preserved.
+> >
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > ---
+> >  drivers/clk/mvebu/armada-37xx-periph.c | 48 ++++++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 48 insertions(+)
+> >
+> > diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu=
+/armada-37xx-periph.c
+> > index 723bb7f6cea1..cd560bdcb8a9 100644
+> > --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> > +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> > @@ -59,6 +59,15 @@ struct clk_periph_driver_data {
+> >  	struct clk_hw_onecell_data *hw_data;
+> >  	spinlock_t lock;
+> >  	void __iomem *reg;
+> > +#if defined(CONFIG_PM)
+> > +	/* Storage registers for suspend/resume operations */
+> > +	u32 tbg_sel;
+> > +	u32 div_sel0;
+> > +	u32 div_sel1;
+> > +	u32 div_sel2;
+> > +	u32 clk_sel;
+> > +	u32 clk_dis;
+> > +#endif /* CONFIG_PM */
+> >  };
+> > =20
+> >  struct clk_double_div {
+> > @@ -642,6 +651,42 @@ static int armada_3700_add_composite_clk(const str=
+uct clk_periph_data *data,
+> >  	return PTR_ERR_OR_ZERO(*hw);
+> >  }
+> > =20
+> > +#if defined(CONFIG_PM) =20
+>=20
+> I think you could get rid of this conditional code. Have a look on what
+> is done in others drivers around DEV_PM_OPS and __maybe_unused.
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402de5584..8e39bda8e596 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 	init.num_parents = 1;
- 
- 	hw = &fix->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = devm_clk_hw_register(dev, hw);
- 	if (ret) {
- 		kfree(fix);
- 		hw = ERR_PTR(ret);
--- 
-2.11.0
+Thanks for pointing it.
+
+Actually most implementations do not use __maybe_unused but do
+something like:
+
+#if defined(CONFIG_PM)
+
+static int xxx_pm_suspend() { ... }
+
+static void xxx_pm_resume() { ... }
+
+static struct pm_ops ops;
+#define XXX_DEV_PM_OPS &ops
+#else
+#define XXX_DEV_PM_OPS NULL
+#endif /* CONFIG_PM */=20
+
+And then in the platform_driver structure:
+
+        .pm =3D XXX_DEV_PM_OPS,
+
+This way, the only #if/#endif is "out" of the current code and the
+".pm =3D" line is free of preprocessor macros.
+
+Thanks,
+Miqu=C3=A8l
