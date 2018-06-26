@@ -1,273 +1,113 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Fri, 15 Jun 2018 16:31:33 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-	kstewart@linuxfoundation.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v6 4/4] input/power: Add driver for BD71837/BD71847 PMIC
- power button
-Message-ID: <6bf288c2b6aa13b10f3861b0ae621ffd95aaf9c2.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 09/13] ARM: davinci: dm644x-evm: use aemif platform driver
+Date: Tue, 26 Jun 2018 11:25:33 +0200
+Message-Id: <20180626092537.6737-10-brgl@bgdev.pl>
+In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-ROHM BD71837 PMIC power button driver providing power-key press
-information to user-space.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in dm644x-evm.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/input/misc/Kconfig          | 10 +++++
- drivers/input/misc/Makefile         |  1 +
- drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
- include/linux/mfd/bd71837.h         | 82 +++++++++++++++++++++++++++++++++
- 4 files changed, 183 insertions(+)
- create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
+ arch/arm/mach-davinci/board-dm644x-evm.c | 55 ++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 572b15fa18c2..694c05d3f9fb 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -96,6 +96,16 @@ config INPUT_ATMEL_CAPTOUCH
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called atmel_captouch.
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 738e443ab15f..e4a8f9225d16 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -42,6 +42,7 @@
+ #include <linux/platform_data/mmc-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
  
-+config INPUT_BD718XX_PWRKEY
-+	tristate "ROHM BD71837/BD71847 power key support"
-+	depends on MFD_BD71837
-+	help
-+	  Say Y here if you want support for the power key usually found
-+	  on boards using a ROHM BD71837/BD71847 compatible PMIC.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called bd718xx-pwrkey.
-+
- config INPUT_BMA150
- 	tristate "BMA150/SMB380 acceleration sensor support"
- 	depends on I2C
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 72cde28649e2..ea5b81cbf2bf 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
- obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
- obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
- obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
-+obj-$(CONFIG_INPUT_BD718XX_PWRKEY)	+= bd718xx-pwrkey.o
- obj-$(CONFIG_INPUT_CM109)		+= cm109.o
- obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
- obj-$(CONFIG_INPUT_CMA3000_I2C)		+= cma3000_d0x_i2c.o
-diff --git a/drivers/input/misc/bd718xx-pwrkey.c b/drivers/input/misc/bd718xx-pwrkey.c
-new file mode 100644
-index 000000000000..e8ac9475c3cf
---- /dev/null
-+++ b/drivers/input/misc/bd718xx-pwrkey.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd718xx-pwrkey.c -- ROHM BD71837MWV and BD71847 power button driver
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/mfd/bd71837.h>
-+
-+struct bd718xx_pwrkey {
-+	struct input_dev *idev;
-+	struct bd71837 *mfd;
-+	int irq;
+ #include "davinci.h"
+ 
+@@ -174,14 +175,47 @@ static struct resource davinci_evm_nandflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device davinci_evm_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 0,
+-	.dev		= {
+-		.platform_data	= &davinci_evm_nandflash_data,
++static struct resource davinci_evm_aemif_resource[] = {
++	{
++		.start		= DM644X_ASYNC_EMIF_CONTROL_BASE,
++		.end		= DM644X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
++		.flags		= IORESOURCE_MEM,
+ 	},
+-	.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
+-	.resource	= davinci_evm_nandflash_resource,
 +};
 +
-+static irqreturn_t button_irq(int irq, void *_priv)
-+{
-+	struct input_dev *idev = (struct input_dev *)_priv;
-+
-+	input_report_key(idev, KEY_POWER, 1);
-+	input_sync(idev);
-+	input_report_key(idev, KEY_POWER, 0);
-+	input_sync(idev);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int bd718xx_pwr_btn_probe(struct platform_device *pdev)
-+{
-+	int err = -ENOMEM;
-+	struct bd718xx_pwrkey *pk;
-+
-+	pk = devm_kzalloc(&pdev->dev, sizeof(*pk), GFP_KERNEL);
-+	if (!pk)
-+		goto err_out;
-+
-+	pk->mfd = dev_get_drvdata(pdev->dev.parent);
-+
-+	pk->idev = devm_input_allocate_device(&pdev->dev);
-+	if (!pk->idev)
-+		goto err_out;
-+
-+	pk->idev->name = "bd718xx-pwrkey";
-+	pk->idev->phys = "bd718xx-pwrkey/input0";
-+	pk->idev->dev.parent = &pdev->dev;
-+
-+	input_set_capability(pk->idev, EV_KEY, KEY_POWER);
-+
-+	err = platform_get_irq_byname(pdev, "pwr-btn-s");
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "could not get power key interrupt\n");
-+		goto err_out;
-+	}
-+
-+	pk->irq = err;
-+	err = devm_request_threaded_irq(&pdev->dev, pk->irq, NULL, &button_irq,
-+					0, "bd718xx-pwrkey", pk);
-+	if (err)
-+		goto err_out;
-+
-+	platform_set_drvdata(pdev, pk);
-+	err = regmap_update_bits(pk->mfd->regmap,
-+				 BD71837_REG_PWRONCONFIG0,
-+				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
-+				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-+	if (err)
-+		goto err_out;
-+
-+	err = input_register_device(pk->idev);
-+
-+err_out:
-+
-+	return err;
-+}
-+
-+static struct platform_driver bd718xx_pwr_btn_driver = {
-+	.probe	= bd718xx_pwr_btn_probe,
-+	.driver = {
-+		.name	= "bd718xx-pwrkey",
++static struct aemif_abus_data davinci_evm_aemif_abus_data[] = {
++	{
++		.cs		= 1,
 +	},
 +};
-+module_platform_driver(bd718xx_pwr_btn_driver);
-+MODULE_DESCRIPTION("Power button driver for buttons connected to ROHM bd71837/bd71847 PMIC");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
 +
-diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
-index 641b7dba3076..410c0afa0452 100644
---- a/include/linux/mfd/bd71837.h
-+++ b/include/linux/mfd/bd71837.h
-@@ -100,6 +100,86 @@ enum {
- 	BD71837_MAX_REGISTER           = 0x100,
- };
- 
-+/* register write induced reset settings */
-+
-+/* even though the bit zero is not SWRESET type we still want to write zero
-+ * to it when changing type. Biz zero is 'SWRESET' trigger bit and if we
-+ * write 1 to it we will trigger the action. So always write 0 to it when
-+ * changning SWRESET action - no matter what we read from it.
-+ */
-+#define BD71837_SWRESET_TYPE_MASK 7
-+#define BD71837_SWRESET_TYPE_DISABLED 0
-+#define BD71837_SWRESET_TYPE_COLD 4
-+#define BD71837_SWRESET_TYPE_WARM 6
-+
-+#define BD71837_SWRESET_RESET_MASK 1
-+#define BD71837_SWRESET_RESET 1
-+
-+/* Poweroff state transition conditions */
-+
-+#define BD718XX_ON_REQ_POWEROFF_MASK 1
-+#define BD718XX_SWRESET_POWEROFF_MASK 2
-+#define BD718XX_WDOG_POWEROFF_MASK 4
-+#define BD718XX_KEY_L_POWEROFF_MASK 8
-+
-+#define BD718XX_POWOFF_TO_SNVS 0
-+#define BD718XX_POWOFF_TO_RDY 0xF
-+
-+#define BD718XX_POWOFF_TIME_MASK 0xF0
-+enum {
-+	BD718XX_POWOFF_TIME_5MS = 0,
-+	BD718XX_POWOFF_TIME_10MS,
-+	BD718XX_POWOFF_TIME_15MS,
-+	BD718XX_POWOFF_TIME_20MS,
-+	BD718XX_POWOFF_TIME_25MS,
-+	BD718XX_POWOFF_TIME_30MS,
-+	BD718XX_POWOFF_TIME_35MS,
-+	BD718XX_POWOFF_TIME_40MS,
-+	BD718XX_POWOFF_TIME_45MS,
-+	BD718XX_POWOFF_TIME_50MS,
-+	BD718XX_POWOFF_TIME_75MS,
-+	BD718XX_POWOFF_TIME_100MS,
-+	BD718XX_POWOFF_TIME_250MS,
-+	BD718XX_POWOFF_TIME_500MS,
-+	BD718XX_POWOFF_TIME_750MS,
-+	BD718XX_POWOFF_TIME_1500MS
++static struct platform_device davinci_evm_nandflash_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 0,
++		.dev		= {
++			.platform_data	= &davinci_evm_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
++		.resource	= davinci_evm_nandflash_resource,
++	},
 +};
 +
-+/* Poweron sequence state transition conditions */
-+
-+#define BD718XX_RDY_TO_SNVS_MASK 0xF
-+#define BD718XX_SNVS_TO_RUN_MASK 0xF0
-+
-+#define BD718XX_PWR_TRIG_KEY_L 1
-+#define BD718XX_PWR_TRIG_KEY_S 2
-+#define BD718XX_PWR_TRIG_PMIC_ON 4
-+#define BD718XX_PWR_TRIG_VSYS_UVLO 8
-+#define BD718XX_RDY_TO_SNVS_SIFT 0
-+#define BD718XX_SNVS_TO_RUN_SIFT 4
-+
-+/* Timeout value for detecting short press */
-+
-+#define BD718XX_PWRBTN_SHORT_PRESS_MASK 0xF
-+
-+enum {
-+	BD718XX_PWRBTN_SHORT_PRESS_10MS = 0,
-+	BD718XX_PWRBTN_SHORT_PRESS_500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_1000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_1500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_2000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_2500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_3000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_3500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_4000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_4500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_5000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_5500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_6000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_6500MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_7000MS,
-+	BD718XX_PWRBTN_SHORT_PRESS_7500MS
++static struct aemif_platform_data davinci_evm_aemif_pdata = {
++	.abus_data = davinci_evm_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(davinci_evm_aemif_abus_data),
++	.sub_devices = davinci_evm_nandflash_devices,
++	.num_sub_devices = ARRAY_SIZE(davinci_evm_nandflash_devices),
 +};
 +
- #define REGLOCK_PWRSEQ	0x1
- #define REGLOCK_VREG	0x10
- 
-@@ -222,6 +302,7 @@ enum {
- struct bd71837;
- struct bd71837_pmic;
- struct bd71837_clk;
-+struct bd718xx_pwrkey;
- 
- /*
-  * Board platform data may be used to initialize regulators.
-@@ -244,6 +325,7 @@ struct bd71837 {
- 
- 	struct bd71837_pmic *pmic;
- 	struct bd71837_clk *clk;
-+	struct bd718xx_pwrkey *pwrkey;
- 
- 	struct bd71837_board *of_plat_data;
++static struct platform_device davinci_evm_aemif_device = {
++	.name			= "ti-aemif",
++	.id			= -1,
++	.dev = {
++		.platform_data	= &davinci_evm_aemif_pdata,
++	},
++	.resource		= davinci_evm_aemif_resource,
++	.num_resources		= ARRAY_SIZE(davinci_evm_aemif_resource),
  };
+ 
+ static u64 davinci_fb_dma_mask = DMA_BIT_MASK(32);
+@@ -795,12 +829,7 @@ static __init void davinci_evm_init(void)
+ 
+ 		/* only one device will be jumpered and detected */
+ 		if (HAS_NAND) {
+-			platform_device_register(&davinci_evm_nandflash_device);
+-
+-			if (davinci_aemif_setup(&davinci_evm_nandflash_device))
+-				pr_warn("%s: Cannot configure AEMIF\n",
+-					__func__);
+-
++			platform_device_register(&davinci_evm_aemif_device);
+ #ifdef CONFIG_I2C
+ 			evm_leds[7].default_trigger = "nand-disk";
+ #endif
 -- 
-2.14.3
+2.17.1
