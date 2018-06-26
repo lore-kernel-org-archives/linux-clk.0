@@ -1,38 +1,48 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Eduardo Valentin <edubezval@gmail.com>, Eric Anholt <eric@anholt.net>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jia-Ju Bai <baijiaju1990@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Michael Turquette <mturquette@baylibre.com>,
- Stefan Wahren <stefan.wahren@i2se.com>, Zhang Rui <rui.zhang@intel.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
-Cc: Petr Mladek <pmladek@suse.com>,
- Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-doc@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, linux-renesas-soc@vger.kernel.org,
- linux-serial@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
- <1527845302-12159-2-git-send-email-geert+renesas@glider.be>
-Message-ID: <152787105335.144038.419639779875099925@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/4] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Fri, 01 Jun 2018 09:37:33 -0700
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	sboyd@kernel.org
+Cc: pn@denx.de,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	manivannan.sadhasivam@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH 0/2] Add clock driver for Actions S700 SoC 
+Date: Tue, 26 Jun 2018 21:28:18 +0200
+Message-Id: <20180626192820.28237-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-06-01 02:28:19)
-> Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-> called in atomic context.
-> =
+This patchset adds clock support for Actions Semi OWL series
+S700 SoC with relevant clock bindings and device tree info.
 
-> Replace it by open-coding the operation.  This is safe here, as the code
-> runs in task context.
-> =
+Changed the UART clock using CMU instance and changes are
+tested in cubieboard7 
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Thanks and regards,
+Saravanan,
+Parthiban
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Saravanan Sekar (2):
+  arm64: dts: actions: Enable clock controller for S700
+  clk: actions: Add S700 SoC clock support
+
+ .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
+ arch/arm64/boot/dts/actions/s700.dtsi         |   8 +
+ drivers/clk/actions/Kconfig                   |   7 +
+ drivers/clk/actions/Makefile                  |   1 +
+ drivers/clk/actions/owl-s700.c                | 614 ++++++++++++++++++
+ include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++
+ 6 files changed, 758 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-s700.c
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+
+-- 
+2.18.0
