@@ -1,91 +1,77 @@
-Return-Path: <SRS0=QEbD=JA=linuxfoundation.org=gregkh@kernel.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.16 25/43] serial: sh-sci: Stop using printk format %pCr
-Date: Thu, 14 Jun 2018 16:04:29 +0200
-Message-Id: <20180614132136.880991791@linuxfoundation.org>
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40447 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965262AbeFZDc5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 23:32:57 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180622124540.56203-5-icenowy@aosc.io>
+References: <20180622124540.56203-1-icenowy@aosc.io> <20180622124540.56203-5-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 26 Jun 2018 11:32:34 +0800
+Message-ID: <CAGb2v65W5zVGygcYx2CJDOm__Txp-Fjf=38axo=0K4A0g8hb_w@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 6/7] arm64: allwinner: a64: add device
+ tree node for HDMI simplefb
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Jun 22, 2018 at 8:45 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> As the U-Boot bootloader now is also capable of initialize the HDMI on
+> A64 boards, add a simplefb device tree node for accessing the HDMI
+> framebuffer initialized by the bootloader.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-------------------
+The subject should have "dts" in it, like:
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+    arm64: dts: allwinner: a64: ....
 
-commit d63c16f8e1ab761775275adcf54f4bef7c330295 upstream.
+Seems we've been missing them for half the patches this coming cycle.
 
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
+ChenYu
 
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-4-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/tty/serial/sh-sci.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -2691,8 +2691,8 @@ found:
- 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
- 				PTR_ERR(clk));
- 		else
--			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
--				clk, clk);
-+			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
-+				clk, clk_get_rate(clk));
- 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
- 	}
- 	return 0;
+> ---
+> Changes in v2:
+> - Dropped LCD SimpleFB as it's already added. LCD SimpleFB needs some
+>   fix but the fix is present when adding DE2 CCU.
+>
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index 318c4ba8ae9f..840753432ea5 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -68,6 +68,15 @@
+>                                  <&display_clocks CLK_MIXER0>;
+>                         status = "disabled";
+>                 };
+> +
+> +               simplefb_hdmi: framebuffer-hdmi {
+> +                       compatible = "allwinner,simple-framebuffer",
+> +                                    "simple-framebuffer";
+> +                       allwinner,pipeline = "mixer1-lcd1-hdmi";
+> +                       clocks = <&display_clocks CLK_MIXER1>,
+> +                                <&ccu CLK_TCON1>, <&ccu CLK_HDMI>;
+> +                       status = "disabled";
+> +               };
+>         };
+>
+>         cpus {
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
