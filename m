@@ -1,82 +1,36 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	michael@amarulasolutions.com,
-	matteo.lisi@engicam.com
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Date: Sun,  3 Jun 2018 09:44:05 +0800
-Message-Id: <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <rob.herring@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+References: <20180627194124.26366-1-robert.jarzmik@free.fr> <20180627194124.26366-2-robert.jarzmik@free.fr>
+In-Reply-To: <20180627194124.26366-2-robert.jarzmik@free.fr>
+From: Rob Herring <rob.herring@linaro.org>
+Date: Wed, 27 Jun 2018 15:40:23 -0600
+Message-ID: <CABGGisxeC=1Lc+ZKpR=Uzy75BQ8k=Tah4cYmZDnc_mdJWiCD1w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] ARM: dts: pxa: fix the rtc controller
+To: robert.jarzmik@free.fr
+Cc: daniel@zonque.org, haojian.zhuang@gmail.com,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6UL has GPIO clock gates in CCM CCGR, add
-clock property for GPIO driver to make sure all
-GPIO banks work as expected.
+On Wed, Jun 27, 2018 at 1:41 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
+>
+> The RTC controller is fed by an external fixed 32kHz clock. Yet the
+> driver wants to acquire this clock, even though it doesn't make any use
+> of it, ie. doesn't get the rate to make calculation.
+>
+> Therefore, use the exported 32.768kHz clock in the PXA clock tree to
+> make the driver happy and working.
+>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+> Since v1: change the dummy clock by the actual 32.768kHz
+> Since v3: remove spurious bracket
+> ---
+>  arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
+>  arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
+>  2 files changed, 8 insertions(+)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-	no changes since V1.
- arch/arm/boot/dts/imx6ul.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 1241972..405e068 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -437,6 +437,7 @@
- 				reg = <0x0209c000 0x4000>;
- 				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_GPIO1>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -450,6 +451,7 @@
- 				reg = <0x020a0000 0x4000>;
- 				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_GPIO2>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -462,6 +464,7 @@
- 				reg = <0x020a4000 0x4000>;
- 				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_GPIO3>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -474,6 +477,7 @@
- 				reg = <0x020a8000 0x4000>;
- 				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_GPIO4>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
-@@ -486,6 +490,7 @@
- 				reg = <0x020ac000 0x4000>;
- 				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clks IMX6UL_CLK_GPIO5>;
- 				gpio-controller;
- 				#gpio-cells = <2>;
- 				interrupt-controller;
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
