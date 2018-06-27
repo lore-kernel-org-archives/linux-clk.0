@@ -1,107 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:39863 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751107AbeF1Ils (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Jun 2018 04:41:48 -0400
-Date: Thu, 28 Jun 2018 10:41:46 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
-Message-ID: <20180628084146.ttqshyiehjj5by3k@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180627180215.y5kvvdqeriadxwte@flea>
- <20180627195043.hfasvppfm2cbudx7@flea>
- <4275695.oLYl8XEDF6@jernej-laptop>
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1530089565.29697.35.camel@mtkswgap22>
+Subject: Re: [PATCH v2 1/6] dt-bindings: gpu: mali-utgard: add
+ mediatek,mt7623-mali compatible
+From: Sean Wang <sean.wang@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <sboyd@codeaurora.org>, <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <p.zabel@pengutronix.de>,
+	<devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Date: Wed, 27 Jun 2018 16:52:45 +0800
+In-Reply-To: <3bd6e509-f99a-1f2d-1b66-65c414bacdbd@gmail.com>
+References: <cover.1524816502.git.sean.wang@mediatek.com>
+	 <7ab060c2e9ef2b220fc62913b8936b706dfaf202.1524816502.git.sean.wang@mediatek.com>
+	 <3bd6e509-f99a-1f2d-1b66-65c414bacdbd@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4mqqv2i6olj3uyyi"
-In-Reply-To: <4275695.oLYl8XEDF6@jernej-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
+On Mon, 2018-06-25 at 17:14 +0200, Matthias Brugger wrote:
+> 
+> On 27/04/18 10:14, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
+> > and define its own vendor-specific properties.
+> > 
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> 
+> Hi Rob,
+> 
+> Any comments regarding this patch?
+> 
+> Regards,
+> Matthias
+> 
 
---4mqqv2i6olj3uyyi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Matthias
 
-On Wed, Jun 27, 2018 at 10:25:37PM +0200, Jernej =C5=A0krabec wrote:
-> Dne sreda, 27. junij 2018 ob 21:50:43 CEST je Maxime Ripard napisal(a):
-> >=20
-> > On Wed, Jun 27, 2018 at 08:02:15PM +0200, Maxime Ripard wrote:
-> > > On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
-> > > > This series adds support for R40 HDMI pipeline. It is a bit special
-> > > > than other already supported pipelines because it has additional un=
-it
-> > > > called TCON TOP responsible for relationship configuration between
-> > > > mixers, TCONs and HDMI. Additionally, it has additional gates for D=
-SI
-> > > > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > > > and TV encoders.
-> > > >=20
-> > > > However, it seems that TCON TOP will become a norm, since newer
-> > > > Allwinner SoCs like H6 also have this unit.
-> > > >=20
-> > > > I tested different possible configurations:
-> > > > - mixer0 <> TCON-TV0 <> HDMI
-> > > > - mixer0 <> TCON-TV1 <> HDMI
-> > > > - mixer1 <> TCON-TV0 <> HDMI
-> > > > - mixer1 <> TCON-TV1 <> HDMI
-> > > >=20
-> > > > Please review.
-> > >=20
-> > > I just applied it. It didn't apply cleanly, so please make sure it
-> > > does next time, or at least state what the dependencies are.
-> >=20
-> > And it didn't compile either, because of the compile error that was
-> > reported to the previous version by kbuild... Those shouldn't be
-> > ignored and simply fixed.
->=20
-> Sorry about that. I forgot to rebase and had same linux-next base for all=
- 3=20
-> versions.
->=20
-> I actually take a look at that kbuild message, but it just didn't make mu=
-ch=20
-> sense and it worked for me without issues. Merge conflicts would explain =
-that.
+I've already got a Reviewed-by tag from Rob.
 
-This was happening when the driver is compiled as a module, which is
-pointed by the config attached to the kbuild mail. And asking is
-definitely encouraged when you're confused about such things, ignoring
-it on the other hand, not so much.
+Is it possible that this patch go through your tree ?
 
-Maxime
+	Sean
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4mqqv2i6olj3uyyi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls0n0kACgkQ0rTAlCFN
-r3SjEg//XPoaakL1HuR6pou4aBAC3wBTH0xzen/xOcnlwBSrjqVJix2BoYYgTxED
-RTIzeQDU3S2r0VWarPej/LDsu0/qk1CLiB5/fVUvNsVDTzcRtaqgRJWCAkFlFcvG
-lIphwo1nHZeJPmEBn9DsM/DN1svHIjlpbgiJXTHlpCtX/PgWZOghTKqySAbICCOF
-7XBO6OSW/IsG+4QEZzogVYOEbX25x2uzKcZTH3K2MjHoZN3k1tosz34h0BiBrDls
-PhJiYCC8UOfXQAHE6ZeA8B2z4F4V8GhE4WbI55voY1hrEWfDGVQySSM3dxrOwsbN
-3xkCQgRcMM/0qqR7849AADN4iTo+6HZUEW9qHZA5Wjeu2ua7Qn47mPS2D0tU34ut
-YAAR2D+aIHLgX4W8VXy2xBZmmE0CsCmBs6+kXPqQDdGCeJ5oVjoK8Bvfw1Q7bfgU
-Gr2L1aXKh7QgIZs3ecc+tm9RJe13wHTMz5o1GgegN0CEiHA1S0rqquRScK+JH2Qm
-kjpRiEENkb1u9LTDemOHsnRYHAJTGxpfl7Vfi6HVwIij0uKxrGFWkMvqQXYBviXA
-gbBDAyUbyo5osnO+t9RWxfQ0v7yOMN8AZ+5qiB8cccx1Xjl7RLvAFcTThtRv+IUz
-R4WLG3/74LLLj1CemxQi2r9In0ammee7VmyoOHrES1vzxUVG4lc=
-=sNCe
------END PGP SIGNATURE-----
-
---4mqqv2i6olj3uyyi--
+> >  Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> > index 99d1c0a..656068f 100644
+> > --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+> > @@ -19,6 +19,7 @@ Required properties:
+> >        + rockchip,rk3228-mali
+> >        + rockchip,rk3328-mali
+> >        + stericsson,db8500-mali
+> > +      + mediatek,mt7623-mali
+> >  
+> >    - reg: Physical base address and length of the GPU registers
+> >  
+> > @@ -89,6 +90,14 @@ to specify one more vendor-specific compatible, among:
+> >        * interrupt-names and interrupts:
+> >          + combined: combined interrupt of all of the above lines
+> >  
+> > +  - mediatek,mt7623-mali
+> > +     Required properties:
+> > +      * resets: phandle to the reset line for the GPU
+> > +      * mediatek,larb: phandle pointed to the local arbiter used to control the
+> > +	access to external memory on the SoC.
+> > +	see Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+> > +	for details
+> > +
+> >  Example:
+> >  
+> >  mali: gpu@1c40000 {
+> > 
