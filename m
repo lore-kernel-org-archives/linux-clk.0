@@ -1,70 +1,65 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:35811 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752260AbeFFGHa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 02:07:30 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 0/6] Add MCAN Support for dra76x
-Date: Wed, 6 Jun 2018 11:38:20 +0530
-Message-ID: <20180606060826.14671-1-faiz_abbas@ti.com>
+Received: from mailoutvs13.siol.net ([185.57.226.204]:41313 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932723AbeF0U1G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 16:27:06 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
+Date: Wed, 27 Jun 2018 22:25:37 +0200
+Message-ID: <4275695.oLYl8XEDF6@jernej-laptop>
+In-Reply-To: <20180627195043.hfasvppfm2cbudx7@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180627180215.y5kvvdqeriadxwte@flea> <20180627195043.hfasvppfm2cbudx7@flea>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The following patches add dts and sysconfig support
-for MCAN on TI's dra76 SOCs
+Dne sreda, 27. junij 2018 ob 21:50:43 CEST je Maxime Ripard napisal(a):
+> 1;5202;0c
+> 
+> On Wed, Jun 27, 2018 at 08:02:15PM +0200, Maxime Ripard wrote:
+> > On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
+> > > This series adds support for R40 HDMI pipeline. It is a bit special
+> > > than other already supported pipelines because it has additional unit
+> > > called TCON TOP responsible for relationship configuration between
+> > > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+> > > and TV TCONs, TV encoder clock settings and pin muxing between LCD
+> > > and TV encoders.
+> > > 
+> > > However, it seems that TCON TOP will become a norm, since newer
+> > > Allwinner SoCs like H6 also have this unit.
+> > > 
+> > > I tested different possible configurations:
+> > > - mixer0 <> TCON-TV0 <> HDMI
+> > > - mixer0 <> TCON-TV1 <> HDMI
+> > > - mixer1 <> TCON-TV0 <> HDMI
+> > > - mixer1 <> TCON-TV1 <> HDMI
+> > > 
+> > > Please review.
+> > 
+> > I just applied it. It didn't apply cleanly, so please make sure it
+> > does next time, or at least state what the dependencies are.
+> 
+> And it didn't compile either, because of the compile error that was
+> reported to the previous version by kbuild... Those shouldn't be
+> ignored and simply fixed.
 
-The patches depend on the following series:
-https://patchwork.kernel.org/patch/10221105/
+Sorry about that. I forgot to rebase and had same linux-next base for all 3 
+versions.
 
-Changes in v3:
- 1. Added reset functionality to the ti-sysc
-    driver. This enables me to drop the hwmod
-    data patch as everything is being done in dt.
+I actually take a look at that kbuild message, but it just didn't make much 
+sense and it worked for me without issues. Merge conflicts would explain that.
 
- 2. Dropped ti,hwmods from the dts nodes
+Best regards,
+Jernej
 
- 3. Fixed the unit address of target-module
-    and mcan
 
- 4. Removed the status="disabled" in dtsi
-    followed by status="okay" in dts.
 
-Changes in v2:
- 1. Added Support for mcan in the ti-sysc driver
-    Also added the target-module node for the same
-
- 2. Added clkctrl data for mcan clocks
-
-Faiz Abbas (4):
-  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-  bus: ti-sysc: Add support for software reset
-  ARM: dts: Add generic interconnect target module node for MCAN
-
-Franklin S Cooper Jr (1):
-  ARM: dts: dra76x: Add MCAN node
-
-Lokesh Vutla (1):
-  ARM: dts: dra762: Add MCAN clock support
-
- .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
- arch/arm/boot/dts/dra76-evm.dts               |  6 ++
- arch/arm/boot/dts/dra76x.dtsi                 | 65 +++++++++++++++++++
- drivers/bus/ti-sysc.c                         | 58 +++++++++++++++++
- drivers/clk/ti/clk-7xx.c                      |  1 +
- include/dt-bindings/bus/ti-sysc.h             |  2 +
- include/dt-bindings/clock/dra7.h              |  1 +
- include/linux/platform_data/ti-sysc.h         |  1 +
- 8 files changed, 135 insertions(+)
-
--- 
-2.17.0
 
