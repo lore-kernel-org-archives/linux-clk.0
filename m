@@ -1,374 +1,285 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
-Subject: [PATCH v2 3/4] clk: ti: Add functions to save/restore clk context
-Date: Thu, 21 Jun 2018 13:40:19 +0530
-Message-ID: <1529568620-19765-4-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
-References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:1952
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752449AbeF0DSv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Jun 2018 23:18:51 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+CC: Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
+Date: Wed, 27 Jun 2018 03:18:47 +0000
+Message-ID: <AM0PR04MB4211DD477A8C8A1B2181D81A80480@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180615095107.24610-1-o.rempel@pengutronix.de>
+ <20180615095107.24610-5-o.rempel@pengutronix.de>
+ <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20180626132320.uvgfxff32p32ke6f@pengutronix.de>
+In-Reply-To: <20180626132320.uvgfxff32p32ke6f@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russ Dill <Russ.Dill@ti.com>
+> -----Original Message-----
+> From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
+> Sent: Tuesday, June 26, 2018 9:23 PM
+> To: A.s. Dong <aisheng.dong@nxp.com>
+> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; Shawn Guo
+> <shawnguo@kernel.org>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
+> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> devicetree@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linux-arm-
+> kernel@lists.infradead.org; kernel@pengutronix.de; linux-
+> clk@vger.kernel.org
+> Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging uni=
+t
+>=20
+> On Tue, Jun 26, 2018 at 10:09:14AM +0000, A.s. Dong wrote:
+> > Since Sascha is requesting to write a generic MU mailbox driver for
+> > both SCU MU and M4 case, the current way using virtual channels in
+> > this patch only send one word a time obviously can't fit for SCU MU cli=
+ents
+> well.
+> > Do you think if we can refer to TI case to design a generic data
+> > transfer protocol to allow send multi words which is more close to SCU?
+> > include/linux/soc/ti/ti-msgmgr.h
+> > struct ti_msgmgr_message {
+> >         size_t len;
+> >         u8 *buf;
+> > };
+> >
+> > Or we try to support both type transfer protocols in this driver?
+> > That may introduce much complexities, personally I'm not quite like
+> > that.
+>=20
+> To give you an idea what I am suggesting see the following patch.
+> It implements SCU mode ontop of Oleksijs patch. Untested of course and as
+> said, the mailbox framework lacks some way of synchronous receive, that
+> would still have to be implemented and Jassi might have his own ideas how
+> this could be done, but it doesn't add much complexity.
+>=20
 
-SoCs like AM43XX lose clock registers context during RTC-only
-suspend. Hence add functions to save/restore the clock registers
-context.
+Thanks for this.
+We did similar thing as I described in another mail.
+The different is we use interrupt and hrtimer to polling for rx which is th=
+e most
+complicated part (Tx is quite simple). Be noted that for this demo code, we=
+ do
+not need enable RX interrupt if using synchronize polling.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
----
+If the mailbox framework can support synchronize polling, that would
+be good and will be much the same as we did in library way. Then we
+obviously can switch to mailbox way for SCU as well.
 
-Changes in v2:
+But as I repeat before, from your demo code, you can also see those bits ar=
+e
+much specific to SCU MU protocol which I don't think is quite suitable to b=
+e
+merged into a generic MU driver, except we can find a much common way for
+handling both SCU MU and M4 case (e.g. change to TI style data transfer pro=
+tocol).
 
-        * Replaced clk_dflt_restore instances to clk_gate_restore_context
+But anyway, I will try it as you guys insist. Then we do not need stop at t=
+his point
+for the whole QXP upstream work.
 
- drivers/clk/ti/clock.h    |   2 +
- drivers/clk/ti/divider.c  |  36 ++++++++++++++
- drivers/clk/ti/dpll.c     |   6 +++
- drivers/clk/ti/dpll3xxx.c | 124 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c     |   3 ++
- drivers/clk/ti/mux.c      |  29 +++++++++++
- include/linux/clk/ti.h    |   6 +++
- 7 files changed, 206 insertions(+)
+Regards
+Dong Aisheng
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index b582780..26fbdf2 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -24,6 +24,7 @@ struct clk_omap_divider {
- 	u8			flags;
- 	s8			latch;
- 	const struct clk_div_table	*table;
-+	u32		context;
- };
- 
- #define to_clk_omap_divider(_hw) container_of(_hw, struct clk_omap_divider, hw)
-@@ -36,6 +37,7 @@ struct clk_omap_mux {
- 	u8			shift;
- 	s8			latch;
- 	u8			flags;
-+	u8			saved_parent;
- };
- 
- #define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index aaa277d..4418e0d 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -268,10 +268,46 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+/**
-+ * clk_divider_save_context - Save the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the divider value
-+ */
-+static int clk_divider_save_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(&divider->reg) >> divider->shift;
-+	divider->context = val & div_mask(divider);
-+
-+	return 0;
-+}
-+
-+/**
-+ * clk_divider_restore_context - restore the saved the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved the divider value
-+ */
-+static void clk_divider_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(&divider->reg);
-+	val &= ~(div_mask(divider) << divider->shift);
-+	val |= divider->context << divider->shift;
-+	ti_clk_ll_ops->clk_writel(val, &divider->reg);
-+}
-+
- const struct clk_ops ti_clk_divider_ops = {
- 	.recalc_rate = ti_clk_divider_recalc_rate,
- 	.round_rate = ti_clk_divider_round_rate,
- 	.set_rate = ti_clk_divider_set_rate,
-+	.save_context = clk_divider_save_context,
-+	.restore_context = clk_divider_restore_context,
- };
- 
- static struct clk *_register_divider(struct device *dev, const char *name,
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 7d33ca9..b1c4d8a 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -39,6 +39,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap4_dpll_regm4xen_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_core_dpll_save_context,
-+	.restore_context = &omap3_core_dpll_restore_context,
- };
- #else
- static const struct clk_ops dpll_m4xen_ck_ops = {};
-@@ -62,6 +64,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context,
- };
- 
- static const struct clk_ops dpll_no_gate_ck_ops = {
-@@ -72,6 +76,8 @@
- 	.set_parent	= &omap3_noncore_dpll_set_parent,
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context
- };
- #else
- static const struct clk_ops dpll_core_ck_ops = {};
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 4534de2..44b6b64 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
- 	return rate;
- }
- 
-+/**
-+ * omap3_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_core_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_core_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		_omap3_dpll_write_clken(clk, 0x4);
-+		_omap3_wait_dpll_status(clk, 0);
-+
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		v &= ~(dd->mult_mask | dd->div1_mask);
-+		v |= dd->last_rounded_m << __ffs(dd->mult_mask);
-+		v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
-+		ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
-+
-+		_omap3_dpll_write_clken(clk, DPLL_LOCKED);
-+		_omap3_wait_dpll_status(clk, 1);
-+	} else {
-+		_omap3_dpll_write_clken(clk, clk->context);
-+	}
-+}
-+
-+/**
-+ * omap3_non_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 ctrl, mult_div1;
-+
-+	dd = clk->dpll_data;
-+
-+	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+
-+	if (clk->context == ((ctrl & dd->enable_mask) >>
-+			     __ffs(dd->enable_mask)) &&
-+	    dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
-+				   __ffs(dd->mult_mask)) &&
-+	    dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
-+				   __ffs(dd->div1_mask)) + 1) {
-+		/* nothing to be done */
-+		return;
-+	}
-+
-+	if (clk->context == DPLL_LOCKED)
-+		omap3_noncore_dpll_program(clk, 0);
-+	else
-+		_omap3_dpll_write_clken(clk, clk->context);
-+}
-+
- /* OMAP3/4 non-CORE DPLL clkops */
- const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
- 	.allow_idle	= omap3_dpll_allow_idle,
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 935b2de..2453b36 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -33,6 +33,7 @@
- 	.init		= &omap2_init_clk_clkdm,
- 	.enable		= &omap2_clkops_enable_clkdm,
- 	.disable	= &omap2_clkops_disable_clkdm,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- const struct clk_ops omap_gate_clk_ops = {
-@@ -40,6 +41,7 @@
- 	.enable		= &omap2_dflt_clk_enable,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
-@@ -47,6 +49,7 @@
- 	.enable		= &omap36xx_gate_clk_enable_with_hsdiv_restore,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- /**
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 69a4308..5749b2b 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -91,10 +91,39 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+/**
-+ * clk_mux_save_context - Save the parent selcted in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the parent mux value.
-+ */
-+static int clk_mux_save_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
-+
-+	mux->saved_parent = ti_clk_mux_get_parent(hw);
-+	return 0;
-+}
-+
-+/**
-+ * clk_mux_restore_context - Restore the parent in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved parent mux value.
-+ */
-+static void clk_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
-+
-+	ti_clk_mux_set_parent(hw, mux->saved_parent);
-+}
-+
- const struct clk_ops ti_clk_mux_ops = {
- 	.get_parent = ti_clk_mux_get_parent,
- 	.set_parent = ti_clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
-+	.save_context = clk_mux_save_context,
-+	.restore_context = clk_mux_restore_context,
- };
- 
- static struct clk *_register_mux(struct device *dev, const char *name,
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index a8faa38..c1b13bb 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -159,6 +159,7 @@ struct clk_hw_omap {
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
- 	const struct clk_hw_omap_ops	*ops;
-+	u32			context;
- };
- 
- /*
-@@ -293,6 +294,11 @@ struct ti_clk_features {
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw);
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
-+
-+int omap3_core_dpll_save_context(struct clk_hw *hw);
-+void omap3_core_dpll_restore_context(struct clk_hw *hw);
- 
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
- 
--- 
-1.9.1
+> Sascha
+>=20
+>=20
+> ------------------------------8<--------------------------------
+>=20
+> From fad77078a1f1b5719fcc3c1ab789ce9cca4c9212 Mon Sep 17 00:00:00 2001
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Date: Tue, 26 Jun 2018 15:07:04 +0200
+> Subject: [PATCH] mailbox: imx-mu: Implement SCU mode
+>=20
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/mailbox/imx-mailbox.c        | 89 +++++++++++++++++++++++++++-
+>  include/dt-bindings/mailbox/imx-mu.h | 10 ++++
+>  2 files changed, 98 insertions(+), 1 deletion(-)  create mode 100644
+> include/dt-bindings/mailbox/imx-mu.h
+>=20
+> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.=
+c
+> index e3f621cb1d30..a4803d1eae1d 100644
+> --- a/drivers/mailbox/imx-mailbox.c
+> +++ b/drivers/mailbox/imx-mailbox.c
+> @@ -10,6 +10,8 @@
+>  #include <linux/mailbox_controller.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/iopoll.h>
+> +#include <dt-bindings/mailbox/imx-mu.h>
+>=20
+>  /* Transmit Register */
+>  #define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
+> @@ -28,7 +30,7 @@
+>  /* Receive Interrupt Enable */
+>  #define IMX_MU_xCR_RIEn(x)	BIT(24 + (x))
+>=20
+> -#define IMX_MU_MAX_CHANS	4u
+> +#define IMX_MU_MAX_CHANS	5u
+>=20
+>  struct imx_mu_priv;
+>=20
+> @@ -119,12 +121,80 @@ static bool imx_mu_last_tx_done(struct
+> mbox_chan *chan)
+>  	return (!!(val & IMX_MU_xSR_TEn(cp->bidx)));  }
+>=20
+> +// Take from some include file
+> +struct sc_rpc_msg {
+> +	uint8_t version;
+> +	uint8_t size;
+> +	uint8_t svc;
+> +	uint8_t func;
+> +};
+> +
+> +#define MU_DATA_TIME_OUT_US    (100 * USEC_PER_MSEC)
+> +
+> +static int imx_mu_scu_send_data(struct imx_mu_priv *priv, void *data) {
+> +	struct sc_rpc_msg *msg =3D data;
+> +	uint32_t *msg_raw =3D data;
+> +	int i, ret;
+> +
+> +	for (i =3D 0; i < msg->size + 1; i++) {
+> +		int index =3D i % 4;
+> +		uint32_t asr;
+> +
+> +		/* Wait TX register to be empty. */
+> +		ret =3D readl_poll_timeout_atomic(priv->base + IMX_MU_xSR,
+> asr,
+> +						asr & IMX_MU_xSR_TEn(4 -
+> index),
+> +						0,
+> MU_DATA_TIME_OUT_US);
+> +		if (ret)
+> +			goto out;
+> +
+> +		writel(msg_raw[i], priv->base + IMX_MU_xTRn(4 - index));
+> +	}
+> +
+> +	ret =3D 0;
+> +out:
+> +	mbox_chan_txdone(chan, ret);
+> +	return ret;
+> +}
+> +
+> +static int imx_mu_scu_receive_data(struct imx_mu_priv *priv, void
+> +*data) {
+> +	struct sc_rpc_msg *msg =3D data;
+> +	uint32_t *msg_raw =3D data;
+> +	int i, ret, size =3D 8;
+> +
+> +	for (i =3D 0; i < size; i++) {
+> +		int index =3D i % 4;
+> +		uint32_t asr;
+> +
+> +		/* Wait TX register to be empty. */
+> +		ret =3D readl_poll_timeout_atomic(priv->base + IMX_MU_xSR,
+> asr,
+> +						asr & IMX_MU_xSR_RFn(4 -
+> index),
+> +						0,
+> MU_DATA_TIME_OUT_US);
+> +		if (ret)
+> +			return ret;
+> +
+> +		msg_raw[i] =3D readl(priv->base + IMX_MU_xRRn(4 - index));
+> +
+> +		if (i =3D=3D 0) {
+> +			size =3D msg->size;
+> +			if (size > 7)
+> +				return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_mu_send_data(struct mbox_chan *chan, void *data)  {
+>  	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+>  	struct imx_mu_con_priv *cp =3D chan->con_priv;
+>  	u32 *arg =3D data;
+>=20
+> +	if (cp->idx =3D=3D IMX_MU_CHANNEL_IMX8_SCU)
+> +		return imx_mu_scu_send_data(priv, data);
+> +
+>  	if (!imx_mu_last_tx_done(chan))
+>  		return -EBUSY;
+>=20
+> @@ -134,6 +204,17 @@ static int imx_mu_send_data(struct mbox_chan
+> *chan, void *data)
+>  	return 0;
+>  }
+>=20
+> +static int imx_mu_receive_data(struct mbox_chan *chan, void *data) {
+> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
+> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
+> +
+> +	if (cp->idx =3D=3D IMX_MU_CHANNEL_IMX8_SCU)
+> +		return imx_mu_scu_receive_data(priv, data);
+> +
+> +	return -EINVAL;
+> +}
+> +
+>  static int imx_mu_startup(struct mbox_chan *chan)  {
+>  	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox); @@ -
+> 166,6 +247,12 @@ static void imx_mu_shutdown(struct mbox_chan *chan)
+>=20
+>  static const struct mbox_chan_ops imx_mu_ops =3D {
+>  	.send_data =3D imx_mu_send_data,
+> +	/*
+> +	 * FIXME: This has to be implemented in the mailbox framework.
+> +	 * Currently there is only support for asynchronous read using
+> +	 * callbacks which is not suitable for the SCU usecase.
+> +	 */
+> +//	.synchronous_read =3D imx_mu_receive_data,
+>  	.startup =3D imx_mu_startup,
+>  	.shutdown =3D imx_mu_shutdown,
+>  };
+> diff --git a/include/dt-bindings/mailbox/imx-mu.h b/include/dt-
+> bindings/mailbox/imx-mu.h
+> new file mode 100644
+> index 000000000000..4836266a7e57
+> --- /dev/null
+> +++ b/include/dt-bindings/mailbox/imx-mu.h
+> @@ -0,0 +1,10 @@
+> +#ifndef __DT_BINDINGS_MAILBOX_IMX_MU_H
+> +#define __DT_BINDINGS_MAILBOX_IMX_MU_H
+> +
+> +#define IMX_MU_CHANNEL0		0
+> +#define IMX_MU_CHANNEL1		1
+> +#define IMX_MU_CHANNEL2		2
+> +#define IMX_MU_CHANNEL3		3
+> +#define IMX_MU_CHANNEL_IMX8_SCU 4
+> +
+> +#endif /* __DT_BINDINGS_MAILBOX_IMX_MU_H */
+> --
+> 2.17.1
+>=20
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Industrial Linux Solutions                 |
+> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fww
+> w.pengutronix.de%2F&data=3D02%7C01%7Caisheng.dong%40nxp.com%7C80f
+> 356f57b1546baa07c08d5db67fe40%7C686ea1d3bc2b4c6fa92cd99c5c301635%7
+> C0%7C0%7C636656162050199526&sdata=3DD0CE9mVcj8CakYwAET0aVUpGMe
+> Ulz8thqzRfDgGlzkA%3D&reserved=3D0  |
+> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
