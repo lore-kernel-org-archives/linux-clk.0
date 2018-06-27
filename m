@@ -1,26 +1,35 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries
+ for the aemif clock
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
+ <20180626092537.6737-5-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
+Date: Wed, 27 Jun 2018 15:31:14 +0530
 MIME-Version: 1.0
-To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
- kernel@pengutronix.de, mturquette@baylibre.com, shawnguo@kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1526533248-21990-2-git-send-email-Anson.Huang@nxp.com>
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1526533248-21990-1-git-send-email-Anson.Huang@nxp.com>
- <1526533248-21990-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <152788024703.225090.10824571841764355947@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: imx6sl: correct ocram_podf clock type
-Date: Fri, 01 Jun 2018 12:10:47 -0700
+In-Reply-To: <20180626092537.6737-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anson Huang (2018-05-16 22:00:48)
-> IMX6SL_CLK_OCRAM_PODF is a busy divider, its name in
-> CCM_CDHIPR register of Reference Manual CCM chapter
-> is axi_podf_busy, correct its clock type.
-> =
+On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We want to be able to get the clock both from the board file by its
+> con_id and from the aemif driver by dev_id.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+I see the DM365 and DM644x EVM board files getting reference to aemif
+clock using just the con_id, but don't see that for DM646x. Am I
+overlooking something?
 
-Applied to clk-next
+Thanks,
+Sekhar
