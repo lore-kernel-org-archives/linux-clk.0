@@ -1,71 +1,77 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <d-gerlach@ti.com>, <j-keerthy@ti.com>
-Subject: [PATCH 2/4] clk: clk: Add clk_dflt_restore
-Date: Tue, 19 Jun 2018 09:58:23 +0530
-Message-ID: <1529382505-3069-3-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
-References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 27 Jun 2018 20:02:15 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/24] Add support for R40 HDMI pipeline
+Message-ID: <20180627180215.y5kvvdqeriadxwte@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2wy3m2pbmtcl6uw2"
+In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The default restore context function enables or disables
-the clock based on the enable_count. This is done in cases
-where the clock context is lost and based on the enable_count
-the clock either needs to be enabled/disabled. This particularly
-helps restore the state of gate clocks.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- drivers/clk/clk.c            | 19 +++++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 21 insertions(+)
+--2wy3m2pbmtcl6uw2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7347e06..c201b8b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+/**
-+ * clk_dflt_restore_context - restore context for poweroff
-+ * @hw: the clk_hw pointer of clock whose state is to be restored
-+ *
-+ * The default restore context function enables or disables
-+ * the clock based on the enable_count. This is done in cases
-+ * where the clock context is lost and based on the enable_count
-+ * the clock either needs to be enabled/disabled. This particularly
-+ * helps restore the state of gate clocks.
-+ */
-+void clk_dflt_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_dflt_restore_context);
-+
- static int _clk_save_context(struct clk_core *clk)
- {
- 	struct clk_core *child;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7f30d62..3e0c61a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
- 
- #endif	/* platform dependent I/O accessors */
- 
-+void clk_dflt_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
--- 
-1.9.1
+On Mon, Jun 25, 2018 at 02:02:40PM +0200, Jernej Skrabec wrote:
+> This series adds support for R40 HDMI pipeline. It is a bit special
+> than other already supported pipelines because it has additional unit
+> called TCON TOP responsible for relationship configuration between
+> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+> and TV TCONs, TV encoder clock settings and pin muxing between LCD
+> and TV encoders.
+>=20
+> However, it seems that TCON TOP will become a norm, since newer
+> Allwinner SoCs like H6 also have this unit.
+>=20
+> I tested different possible configurations:
+> - mixer0 <> TCON-TV0 <> HDMI
+> - mixer0 <> TCON-TV1 <> HDMI
+> - mixer1 <> TCON-TV0 <> HDMI
+> - mixer1 <> TCON-TV1 <> HDMI
+>=20
+> Please review.
+
+I just applied it. It didn't apply cleanly, so please make sure it
+does next time, or at least state what the dependencies are.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--2wy3m2pbmtcl6uw2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsz0SYACgkQ0rTAlCFN
+r3SbdQ//euZyyHgI8fweXiCdyc7kUUDmnCUfKDb2K6NkxCqJ9W6HAtKlzNL9NIhr
+ixkSZCBtKgqmIfIaxuhBfL3Xc1k0haj6RS3rwVXOjrwd3eMMFz6ywvi2UkDNLYqA
+ROSGF/QyN5tPyEPYVEac4XYqxVOTdd0vweZHBWUSWHX0YuQM71QE5QJ7xnlhfv61
+bkQEsbnP9vbHQpYseH1v3UIwx8P7XnFS/wJ+OX5v2lwLNcFGl4Z4A8n1ZetVhIJs
+kTp88LXIImT5cWDnsDmONRbBfJvIiitICvJ/9hlN5tcAC86bBX8xuW58oRz2KAQR
+eTlzwvMR7DedVMZ7KWqtxztnPVcjCuy5ZLNYjE5ljhkueS4v1//2gzfM4fE46kOT
+FA+dW8YTIUt6iWn//S4vtXEtSINU7E6kDP5NcASKwg1RET7/ylw6TmOcVeyyjyIc
+R3HFC71s9Cp5eCFYO4ICgrU1Y7oNBhTJPdSK8f/NFJYlBMLUXAij0Dj7Dogqen+K
+lsZVMzYpQIZYvLIFwDqejmQEEnmUrT8MmLdx+1Ho0FkmeDae5pW+oX6UmyVBabZX
+ydyjntKnFxJQofKqm1NeDMTghrjmcto+Wqh//zMkJjaYQe1QGpU8WdOGVxEIoo+W
+9VFCRVtOQSSRNiMtc15s/tSrxAFzROMAdohn7KY5s5/JW0fi5QA=
+=MMdN
+-----END PGP SIGNATURE-----
+
+--2wy3m2pbmtcl6uw2--
