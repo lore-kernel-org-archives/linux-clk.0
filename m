@@ -1,80 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:40621 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934418AbeFLWjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 18:39:55 -0400
-Date: Tue, 12 Jun 2018 16:39:53 -0600
-From: Rob Herring <robh@kernel.org>
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com, linux-mips@linux-mips.org,
-        qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 7/7] tty: serial: lantiq: Add CCF support
-Message-ID: <20180612223953.GA21621@rob-hp-laptop>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-8-songjun.wu@linux.intel.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries
+ for the aemif clock
+To: Sekhar Nori <nsekhar@ti.com>,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+ Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, arm-soc <linux-arm-kernel@lists.infradead.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+References: <20180626092537.6737-1-brgl@bgdev.pl>
+ <20180626092537.6737-5-brgl@bgdev.pl>
+ <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
+ <CAMpxmJXpAECkA7FTLx-nR_w0ZEBUw_A7qpu2P6e_mS6k=pTsUQ@mail.gmail.com>
+ <28c47ca0-60ca-beb2-cd78-63ef6595fcd5@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <af78c876-a801-e16a-4983-0efcf8f85f56@lechnology.com>
+Date: Wed, 27 Jun 2018 11:54:50 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180612054034.4969-8-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <28c47ca0-60ca-beb2-cd78-63ef6595fcd5@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 01:40:34PM +0800, Songjun Wu wrote:
-> Previous implementation uses platform-dependent API to get the clock.
-> Those functions are not available for other SoC which uses the same IP.
-> The CCF (Common Clock Framework) have an abstraction based APIs
-> for clock.
-> Change to use CCF APIs to get clock and rate.
-> So that different SoCs can use the same driver.
-> Clocks and clock-names are updated in device tree binding.
+On 06/27/2018 05:26 AM, Sekhar Nori wrote:
+> On Wednesday 27 June 2018 03:33 PM, Bartosz Golaszewski wrote:
+>> 2018-06-27 12:01 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>>> On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> We want to be able to get the clock both from the board file by its
+>>>> con_id and from the aemif driver by dev_id.
+>>>>
+>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> I see the DM365 and DM644x EVM board files getting reference to aemif
+>>> clock using just the con_id, but don't see that for DM646x. Am I
+>>> overlooking something?
+>>>
+>>> Thanks,
+>>> Sekhar
+>>
+>> It's being done indirectly from mach-davinci/aemif.c. I guess we can
+>> remove it again after last patch.
 > 
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> 
-> ---
-> 
->  .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +++
+> I see. One way to avoid that would be to merge this into 11/13. I prefer
+> that, but it prevents clean separation of clock and machine patches. So
+> okay with current way too.
 
-Please split bindings to separate patch.
-
->  drivers/tty/serial/Kconfig                         |   2 +-
->  drivers/tty/serial/lantiq.c                        | 101 +++++++++++++++++----
->  3 files changed, 98 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/lantiq_asc.txt b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> index 3acbd309ab9d..608f0c87a4af 100644
-> --- a/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> +++ b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-> @@ -6,6 +6,10 @@ Required properties:
->  - interrupts: the 3 (tx rx err) interrupt numbers. The interrupt specifier
->    depends on the interrupt-parent interrupt controller.
->  
-> +Optional properties:
-> +- clocks: Should contain frequency clock and gate clock
-> +- clock-names: Should be "freq" and "asc"
-> +
->  Example:
->  
->  asc1: serial@e100c00 {
-> @@ -14,3 +18,14 @@ asc1: serial@e100c00 {
->  	interrupt-parent = <&icu0>;
->  	interrupts = <112 113 114>;
->  };
-> +
-> +asc0: serial@600000 {
-> +	compatible = "lantiq,asc";
-> +	reg = <0x600000 0x100000>;
-
-1MB of address space? That wastes a lot of virtual space on 32-bit 
-systems. Just make the size the actual used range.
-
-> +	interrupt-parent = <&gic>;
-> +	interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
-> +	<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
-> +	<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&pll0aclk SSX4_CLK>, <&clkgate1 GATE_URT_CLK>;
-> +	clock-names = "freq", "asc";
-> +};
+I think da850 has a con_id-only lookup that can be removed as well. I'm
+in favor of doing another series to clean these up later.
