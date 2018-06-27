@@ -1,33 +1,103 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 20 Jun 2018 13:16:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 16/27] dt-bindings: display: sun4i-drm: Add R40 mixer
- compatibles
-Message-ID: <20180620191636.GA6106@rob-hp-laptop>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-17-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180612200036.21483-17-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:19254 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965529AbeF0PCF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 11:02:05 -0400
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 1/2] clk: pxa: export 32kHz PLL
+Date: Wed, 27 Jun 2018 17:01:49 +0200
+Message-Id: <20180627150150.23951-1-robert.jarzmik@free.fr>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 10:00:25PM +0200, Jernej Skrabec wrote:
-> R40 DE2 mixers are similar to those found in A83T, except it needs
-> different clock settings.
-> 
-> Add a compatibles for them.
-> 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 2 ++
->  1 file changed, 2 insertions(+)
+This clock is especially used by the RTC driver, so export it so that
+devicetree users can use it.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+Since v2: fix missing parenthesis in clk-pxa25x.c and clk-pxa3xx.c
+---
+ drivers/clk/pxa/clk-pxa25x.c          | 6 ++++--
+ drivers/clk/pxa/clk-pxa27x.c          | 7 ++++---
+ drivers/clk/pxa/clk-pxa3xx.c          | 7 ++++---
+ include/dt-bindings/clock/pxa-clock.h | 3 ++-
+ 4 files changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
+index 6416c1f8e632..e88f8e01fe3a 100644
+--- a/drivers/clk/pxa/clk-pxa25x.c
++++ b/drivers/clk/pxa/clk-pxa25x.c
+@@ -292,8 +292,10 @@ static void __init pxa25x_register_plls(void)
+ {
+ 	clk_register_fixed_rate(NULL, "osc_3_6864mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE, 3686400);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE, 32768);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768));
+ 	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
+ 	clk_register_fixed_factor(NULL, "ppll_95_85mhz", "osc_3_6864mhz",
+ 				  0, 26, 1);
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index 25a30194d27a..d40b63e7bbce 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -314,9 +314,10 @@ static void __init pxa27x_register_plls(void)
+ 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				13 * MHz);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE,
+-				32768 * KHz);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768 * KHz));
+ 	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
+ 	clk_register_fixed_factor(NULL, "ppll_312mhz", "osc_13mhz", 0, 24, 1);
+ }
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index 2d126df2bccd..7aa120c3bd08 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -286,9 +286,10 @@ static void __init pxa3xx_register_plls(void)
+ 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				13 * MHz);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE,
+-				32768);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768));
+ 	clk_register_fixed_rate(NULL, "ring_osc_120mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				120 * MHz);
+diff --git a/include/dt-bindings/clock/pxa-clock.h b/include/dt-bindings/clock/pxa-clock.h
+index e65803b1dc7e..0b0fd2b01538 100644
+--- a/include/dt-bindings/clock/pxa-clock.h
++++ b/include/dt-bindings/clock/pxa-clock.h
+@@ -72,6 +72,7 @@
+ #define CLK_USIM 58
+ #define CLK_USIM1 59
+ #define CLK_USMI0 60
+-#define CLK_MAX 61
++#define CLK_OSC32k768 61
++#define CLK_MAX 62
+ 
+ #endif
+-- 
+2.11.0
+
