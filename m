@@ -1,51 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:53477 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932235AbeF1MAg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 08:00:36 -0400
-Date: Thu, 28 Jun 2018 14:00:32 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
-Message-ID: <20180628120031.eq2yuysz4re2olwn@verge.net.au>
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robert.jarzmik@free.fr>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v4 1/2] clk: pxa: export 32kHz PLL
+Date: Wed, 27 Jun 2018 21:41:23 +0200
+Message-Id: <20180627194124.26366-1-robert.jarzmik@free.fr>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
-> This adds the Renesas R9A06G032 bare bone support.
-> 
-> This currently only handles the SYSCTRL block note,
-> generic parts (gic, architected timer) and a UART.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+This clock is especially used by the RTC driver, so export it so that
+devicetree users can use it.
 
-Thanks, applied with the following appended:
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+Since v2: fix missing parenthesis in clk-pxa25x.c and clk-pxa3xx.c
+---
+ drivers/clk/pxa/clk-pxa25x.c          | 6 ++++--
+ drivers/clk/pxa/clk-pxa27x.c          | 7 ++++---
+ drivers/clk/pxa/clk-pxa3xx.c          | 7 ++++---
+ include/dt-bindings/clock/pxa-clock.h | 3 ++-
+ 4 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff51b5f..4c85ac04872d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1969,6 +1969,7 @@ S:	Supported
- F:	arch/arm/boot/dts/emev2*
- F:	arch/arm/boot/dts/r7s*
- F:	arch/arm/boot/dts/r8a*
-+F:	arch/arm/boot/dts/r9a*
- F:	arch/arm/boot/dts/sh*
- F:	arch/arm/configs/shmobile_defconfig
- F:	arch/arm/include/debug/renesas-scif.S
+diff --git a/drivers/clk/pxa/clk-pxa25x.c b/drivers/clk/pxa/clk-pxa25x.c
+index 6416c1f8e632..e88f8e01fe3a 100644
+--- a/drivers/clk/pxa/clk-pxa25x.c
++++ b/drivers/clk/pxa/clk-pxa25x.c
+@@ -292,8 +292,10 @@ static void __init pxa25x_register_plls(void)
+ {
+ 	clk_register_fixed_rate(NULL, "osc_3_6864mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE, 3686400);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE, 32768);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768));
+ 	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
+ 	clk_register_fixed_factor(NULL, "ppll_95_85mhz", "osc_3_6864mhz",
+ 				  0, 26, 1);
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index 25a30194d27a..d40b63e7bbce 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -314,9 +314,10 @@ static void __init pxa27x_register_plls(void)
+ 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				13 * MHz);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE,
+-				32768 * KHz);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768 * KHz));
+ 	clk_register_fixed_rate(NULL, "clk_dummy", NULL, 0, 0);
+ 	clk_register_fixed_factor(NULL, "ppll_312mhz", "osc_13mhz", 0, 24, 1);
+ }
+diff --git a/drivers/clk/pxa/clk-pxa3xx.c b/drivers/clk/pxa/clk-pxa3xx.c
+index 2d126df2bccd..7aa120c3bd08 100644
+--- a/drivers/clk/pxa/clk-pxa3xx.c
++++ b/drivers/clk/pxa/clk-pxa3xx.c
+@@ -286,9 +286,10 @@ static void __init pxa3xx_register_plls(void)
+ 	clk_register_fixed_rate(NULL, "osc_13mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				13 * MHz);
+-	clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
+-				CLK_GET_RATE_NOCACHE,
+-				32768);
++	clkdev_pxa_register(CLK_OSC32k768, "osc_32_768khz", NULL,
++			    clk_register_fixed_rate(NULL, "osc_32_768khz", NULL,
++						    CLK_GET_RATE_NOCACHE,
++						    32768));
+ 	clk_register_fixed_rate(NULL, "ring_osc_120mhz", NULL,
+ 				CLK_GET_RATE_NOCACHE,
+ 				120 * MHz);
+diff --git a/include/dt-bindings/clock/pxa-clock.h b/include/dt-bindings/clock/pxa-clock.h
+index e65803b1dc7e..0b0fd2b01538 100644
+--- a/include/dt-bindings/clock/pxa-clock.h
++++ b/include/dt-bindings/clock/pxa-clock.h
+@@ -72,6 +72,7 @@
+ #define CLK_USIM 58
+ #define CLK_USIM1 59
+ #define CLK_USMI0 60
+-#define CLK_MAX 61
++#define CLK_OSC32k768 61
++#define CLK_MAX 62
+ 
+ #endif
+-- 
+2.11.0
