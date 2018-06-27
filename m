@@ -1,14 +1,15 @@
 Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org,
-	robh+dt@kernel.org
-Subject: [PATCH v2 06/27] drm/sun4i: Fix releasing node when enumerating
- enpoints
-Date: Tue, 12 Jun 2018 22:00:15 +0200
-Message-Id: <20180612200036.21483-7-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 2/2] ARM: dts: pxa: fix the rtc controller
+References: <20180627150150.23951-1-robert.jarzmik@free.fr>
+ <20180627150150.23951-2-robert.jarzmik@free.fr>
+ <20180627171627.592849b5@windsurf.home>
+Date: Wed, 27 Jun 2018 17:28:04 +0200
+In-Reply-To: <20180627171627.592849b5@windsurf.home> (Thomas Petazzoni's
+ message of "Wed, 27 Jun 2018 17:16:27 +0200")
+Message-ID: <87muvgl057.fsf@belgarion.home>
+MIME-Version: 1.0
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,57 +17,32 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, airlied@linux.ie,
- gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-sunxi@googlegroups.com, seanpaul@chromium.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Daniel Mack <daniel@zonque.org>
 Content-Type: text/plain; charset="us-ascii"
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-sun4i_drv_add_endpoints() has a memory leak since it uses of_node_put()
-when remote is equal to NULL and does nothing when remote has a valid
-pointer.
+Thomas Petazzoni <thomas.petazzoni@bootlin.com> writes:
 
-Invert the logic to fix memory leak.
+> Hello,
+>> +		rtc@40900000 {
+>> +			clocks = <&clks CLK_OSC32k768>>;
+>
+> Double closing bracket, doesn't look good.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Rrrr you're right ... I swear this patchset is cursed ...
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index 50d19605c38f..e15fa2389e3f 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -283,7 +283,6 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 		remote = of_graph_get_remote_port_parent(ep);
- 		if (!remote) {
- 			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
--			of_node_put(remote);
- 			continue;
- 		}
- 
-@@ -297,11 +296,13 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 
- 			if (of_graph_parse_endpoint(ep, &endpoint)) {
- 				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				of_node_put(remote);
- 				continue;
- 			}
- 
- 			if (!endpoint.id) {
- 				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+				of_node_put(remote);
- 				continue;
- 			}
- 		}
+Thanks for spotting that, I'll send a v4.
+
+Cheers.
+
 -- 
-2.17.1
-
+Robert
 
 _______________________________________________
 linux-arm-kernel mailing list
