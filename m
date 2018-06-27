@@ -1,69 +1,47 @@
-Return-Path: <matthias.bgg@gmail.com>
-Return-Path: <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v2 1/6] dt-bindings: gpu: mali-utgard: add
- mediatek,mt7623-mali compatible
-To: sean.wang@mediatek.com, sboyd@codeaurora.org, mturquette@baylibre.com,
- robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de
-Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <cover.1524816502.git.sean.wang@mediatek.com>
- <7ab060c2e9ef2b220fc62913b8936b706dfaf202.1524816502.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <3bd6e509-f99a-1f2d-1b66-65c414bacdbd@gmail.com>
-Date: Mon, 25 Jun 2018 17:14:32 +0200
+Return-Path: <thierry.escande@linaro.org>
+Return-Path: <thierry.escande@linaro.org>
+Subject: Re: [PATCH v10 00/14] Krait clocks + Krait CPUfreq
+To: Sricharan R <sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk, ctatlor97@gmail.com
+From: Thierry Escande <thierry.escande@linaro.org>
+Message-ID: <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
+Date: Wed, 27 Jun 2018 11:31:46 +0200
 MIME-Version: 1.0
-In-Reply-To: <7ab060c2e9ef2b220fc62913b8936b706dfaf202.1524816502.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Sricharan,
 
-
-On 27/04/18 10:14, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+On 19/06/2018 15:45, Sricharan R wrote:
+> Sricharan R (2):
+>    clk: qcom: Add safe switch hook for krait mux clocks
+>    dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
 > 
-> The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
-> and define its own vendor-specific properties.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
+> Stephen Boyd (12):
+>    ARM: Add Krait L2 register accessor functions
+>    clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+>    clk: qcom: Add HFPLL driver
+>    dt-bindings: clock: Document qcom,hfpll
+>    clk: qcom: Add MSM8960/APQ8064's HFPLLs
+>    clk: qcom: Add IPQ806X's HFPLLs
+>    clk: qcom: Add support for Krait clocks
+>    clk: qcom: Add KPSS ACC/GCC driver
+>    dt-bindings: arm: Document qcom,kpss-gcc
+>    clk: qcom: Add Krait clock controller driver
+>    dt-bindings: clock: Document qcom,krait-cc
+>    cpufreq: Add module to register cpufreq on Krait CPUs
 
-Hi Rob,
+Tested on apq8064 (db600c).
 
-Any comments regarding this patch?
+Tested-By: Thierry Escande <thierry.escande@linaro.org>
 
-Regards,
-Matthias
-
->  Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> index 99d1c0a..656068f 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> @@ -19,6 +19,7 @@ Required properties:
->        + rockchip,rk3228-mali
->        + rockchip,rk3328-mali
->        + stericsson,db8500-mali
-> +      + mediatek,mt7623-mali
->  
->    - reg: Physical base address and length of the GPU registers
->  
-> @@ -89,6 +90,14 @@ to specify one more vendor-specific compatible, among:
->        * interrupt-names and interrupts:
->          + combined: combined interrupt of all of the above lines
->  
-> +  - mediatek,mt7623-mali
-> +     Required properties:
-> +      * resets: phandle to the reset line for the GPU
-> +      * mediatek,larb: phandle pointed to the local arbiter used to control the
-> +	access to external memory on the SoC.
-> +	see Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
-> +	for details
-> +
->  Example:
->  
->  mali: gpu@1c40000 {
-> 
+Best regards,
+Thierry
