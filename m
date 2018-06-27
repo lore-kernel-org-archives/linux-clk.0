@@ -1,40 +1,39 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Mikko Perttunen <cyndis@kapsi.fi>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra: emc: Avoid out-of-bounds bug
-Date: Tue,  5 Jun 2018 15:12:32 +0300
-Message-Id: <20180605121232.7121-1-digetx@gmail.com>
+Return-Path: <bgolaszewski@baylibre.com>
+MIME-Version: 1.0
+In-Reply-To: <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
+References: <20180626092537.6737-1-brgl@bgdev.pl> <20180626092537.6737-5-brgl@bgdev.pl>
+ <1da88059-2d5b-f035-1d4c-9e21ae141017@ti.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Wed, 27 Jun 2018 12:03:30 +0200
+Message-ID: <CAMpxmJXpAECkA7FTLx-nR_w0ZEBUw_A7qpu2P6e_mS6k=pTsUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/13] clk: davinci: psc-dm646x: use two lookup entries
+ for the aemif clock
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	arm-soc <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Apparently there was an attempt to avoid out-of-bounds accesses when there
-is only one memory timing available, but there is a typo in the code that
-neglects that attempt.
+2018-06-27 12:01 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> On Tuesday 26 June 2018 02:55 PM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We want to be able to get the clock both from the board file by its
+>> con_id and from the aemif driver by dev_id.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> I see the DM365 and DM644x EVM board files getting reference to aemif
+> clock using just the con_id, but don't see that for DM646x. Am I
+> overlooking something?
+>
+> Thanks,
+> Sekhar
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's being done indirectly from mach-davinci/aemif.c. I guess we can
+remove it again after last patch.
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 5234acd30e89..0621a3a82ea6 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -132,7 +132,7 @@ static int emc_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- 		timing = tegra->timings + i;
- 
- 		if (timing->rate > req->max_rate) {
--			i = min(i, 1);
-+			i = max(i, 1);
- 			req->rate = tegra->timings[i - 1].rate;
- 			return 0;
- 		}
--- 
-2.17.0
+Bart
