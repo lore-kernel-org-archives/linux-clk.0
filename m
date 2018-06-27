@@ -1,88 +1,58 @@
-Return-Path: <yamada.masahiro@socionext.com>
+Return-Path: <thomas.petazzoni@bootlin.com>
+Date: Wed, 27 Jun 2018 17:16:27 +0200
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Daniel Mack <daniel@zonque.org>, Haojian Zhuang
+ <haojian.zhuang@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] ARM: dts: pxa: fix the rtc controller
+Message-ID: <20180627171627.592849b5@windsurf.home>
+In-Reply-To: <20180627150150.23951-2-robert.jarzmik@free.fr>
+References: <20180627150150.23951-1-robert.jarzmik@free.fr>
+	<20180627150150.23951-2-robert.jarzmik@free.fr>
 MIME-Version: 1.0
-In-Reply-To: <20180521115947.wqrnv2hczate65lz@flea>
-References: <20180521115947.wqrnv2hczate65lz@flea>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 11 Jun 2018 11:00:28 +0900
-Message-ID: <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Maxime,
+Hello,
 
+On Wed, 27 Jun 2018 17:01:50 +0200, Robert Jarzmik wrote:
+> The RTC controller is fed by an external fixed 32kHz clock. Yet the
+> driver wants to acquire this clock, even though it doesn't make any use
+> of it, ie. doesn't get the rate to make calculation.
+> 
+> Therefore, use the exported 32.768kHz clock in the PXA clock tree to
+> make the driver happy and working.
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+> Since v1: change the dummy clock by the actual 32.768kHz
+> ---
+>  arch/arm/boot/dts/pxa25x.dtsi | 4 ++++
+>  arch/arm/boot/dts/pxa27x.dtsi | 4 ++++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/pxa25x.dtsi b/arch/arm/boot/dts/pxa25x.dtsi
+> index 95d59be97213..78a413ea0e88 100644
+> --- a/arch/arm/boot/dts/pxa25x.dtsi
+> +++ b/arch/arm/boot/dts/pxa25x.dtsi
+> @@ -80,6 +80,10 @@
+>  			#pwm-cells = <1>;
+>  			clocks = <&clks CLK_PWM1>;
+>  		};
+> +
+> +		rtc@40900000 {
+> +			clocks = <&clks CLK_OSC32k768>>;
 
-2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> Hi Mike, Stephen,
->
-> Please merge the following changes for the next merge window, thanks!
->
-> Maxime
->
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
->
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
->
-> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
->
->   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
->
-> ----------------------------------------------------------------
-> Allwinner clock changes for 4.18
->
-> Not a lot of changes for this release, but two quite important features
-> were added: the H6 PRCM clock support, and the needed changes to the R40
-> clock driver to allow for the EMAC to operate.
->
-> ----------------------------------------------------------------
-> Icenowy Zheng (3):
->       clk: sunxi-ng: add support for H6 PRCM CCU
->       clk: sunxi-ng: r40: rewrite init code to a platform driver
->       clk: sunxi-ng: r40: export a regmap to access the GMAC register
->
+Double closing bracket, doesn't look good.
 
+Best regards,
 
-
-Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
-not included in the pull request?
-
-
-You said "I've picked it up"
-https://patchwork.kernel.org/patch/10348031/
-
-
-
-
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |   3 +-
->  drivers/clk/sunxi-ng/Kconfig                       |   5 +
->  drivers/clk/sunxi-ng/Makefile                      |   1 +
->  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c             | 207 +++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h             |  19 ++
->  drivers/clk/sunxi-ng/ccu-sun8i-r40.c               |  72 +++++--
->  include/dt-bindings/clock/sun50i-h6-r-ccu.h        |  24 +++
->  include/dt-bindings/reset/sun50i-h6-r-ccu.h        |  17 ++
->  8 files changed, 336 insertions(+), 12 deletions(-)
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-h6-r.h
->  create mode 100644 include/dt-bindings/clock/sun50i-h6-r-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-h6-r-ccu.h
->
-> --
-> Maxime Ripard, Bootlin (formerly Free Electrons)
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
-
+Thomas
 -- 
-Best Regards
-Masahiro Yamada
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
