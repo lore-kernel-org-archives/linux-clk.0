@@ -1,131 +1,65 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4/9] ARM: davinci: dm365-evm: use the ti-aemif soc driver
-Date: Mon, 25 Jun 2018 17:29:15 +0200
-Message-Id: <20180625152920.11549-5-brgl@bgdev.pl>
-In-Reply-To: <20180625152920.11549-1-brgl@bgdev.pl>
-References: <20180625152920.11549-1-brgl@bgdev.pl>
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 0/2] clk: qcom: Add support for RCG to register for DFS
+Date: Thu, 28 Jun 2018 17:17:29 +0530
+Message-Id: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+ [v2]
+  * Move the dfs register function 'qcom_cc_register_rcg_dfs'
+    to clk-rcg2.c instead of common.c
+  * At boot read the DFS enable register and override the clk_ops
+    to be used for dfs or non-dfs RCGs.
+  * Remove flag 'dfs_enabled'.
+  * Remove functions 'clk_rcg2_dfs_determine_rate_lazy'
+  * Remove 'struct dfs_table *dfs_entry'
+  * Remove '_freq_tbl_determine_dfs_rate'
+  * Combine the function 'clk_index_pre_div_and_mode' and 'calculate_m_and_n'
+    to a single function and named it 'clk_rcg2_calculate_m_and_n'.
+  * Remove taking M/N/PERF offsets as function arguments.
+  * Add clocks in gcc-sdm845.c the DFS clock array to register.
 
-We now support board files in the aemif driver. Register a platform
-device instead of using the handcrafted API in dm365-evm.
+ [v1]
+   * Update SPDX for files.
+   * Add new clk_ops for DFS mode which would be used if dfs is enabled,
+     else fall back to the clk_rcg2_shared_ops.
+   * Use kcalloc in place kzalloc.
+   * Fixed the return type for 'clk_parent_index_pre_div_and_mode' which
+     is now renamed to 'clk_index_pre_div_and_mode'.
+   * Removed return of -EPERM from 'clk_rcg2_set_rate' and new dfs
+     clk_ops is introduced.
+   * Pass frequency table entry structure to function calculate_m_and_n.
+   * Remove desc from qcom_cc_register_rcg_dfs and instead pass array of
+     clk_rcg2.
+   * Add a dfs_enable flag to identify if dfs mode is enabled.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-dm365-evm.c | 59 +++++++++++++++++++------
- 1 file changed, 46 insertions(+), 13 deletions(-)
+In the cases where a RCG requires a Dynamic Frequency switch support
+requires to register which would at runtime read the clock perf level
+registers to identify the frequencies supported and update the frequency
+table accordingly.
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 307e88d99dd3..12b8d7b8c6b8 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -28,6 +28,7 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/eeprom.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/platform_data/ti-aemif.h>
- 
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -159,14 +160,47 @@ static struct resource davinci_nand_resources[] = {
- 	},
- };
- 
--static struct platform_device davinci_nand_device = {
--	.name			= "davinci_nand",
--	.id			= 0,
--	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
--	.resource		= davinci_nand_resources,
--	.dev			= {
--		.platform_data	= &davinci_nand_data,
-+static struct platform_device davinci_aemif_devices[] = {
-+	{
-+		.name		= "davinci_nand",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
-+		.resource	= davinci_nand_resources,
-+		.dev		= {
-+			.platform_data	= &davinci_nand_data,
-+		},
-+	}
-+};
-+
-+static struct resource davinci_aemif_resources[] = {
-+	{
-+		.start		= DM365_ASYNC_EMIF_CONTROL_BASE,
-+		.end		= DM365_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
-+	{
-+		.cs		= 1,
-+	},
-+};
-+
-+static struct aemif_platform_data davinci_aemif_pdata = {
-+	.abus_data		= da850_evm_aemif_abus_data,
-+	.num_abus_data		= ARRAY_SIZE(da850_evm_aemif_abus_data),
-+	.sub_devices		= davinci_aemif_devices,
-+	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
-+};
-+
-+static struct platform_device davinci_aemif_device = {
-+	.name			= "ti-aemif",
-+	.dev = {
-+		.platform_data	= &davinci_aemif_pdata,
- 	},
-+	.resource		= davinci_aemif_resources,
-+	.num_resources		= ARRAY_SIZE(davinci_aemif_resources),
-+	.id			= -1,
- };
- 
- static struct at24_platform_data eeprom_info = {
-@@ -537,10 +571,6 @@ static void __init evm_init_i2c(void)
- 	i2c_register_board_info(1, i2c_info, ARRAY_SIZE(i2c_info));
- }
- 
--static struct platform_device *dm365_evm_nand_devices[] __initdata = {
--	&davinci_nand_device,
--};
--
- static inline int have_leds(void)
- {
- #ifdef CONFIG_LEDS_CLASS
-@@ -628,6 +658,7 @@ static void __init evm_init_cpld(void)
- 	u8 mux, resets;
- 	const char *label;
- 	struct clk *aemif_clk;
-+	int rc;
- 
- 	/* Make sure we can configure the CPLD through CS1.  Then
- 	 * leave it on for later access to MMC and LED registers.
-@@ -660,8 +691,10 @@ static void __init evm_init_cpld(void)
- 		/* external keypad mux */
- 		mux |= BIT(7);
- 
--		platform_add_devices(dm365_evm_nand_devices,
--				ARRAY_SIZE(dm365_evm_nand_devices));
-+		rc = platform_device_register(&davinci_aemif_device);
-+		if (rc)
-+			pr_warn("%s(): error registering the aemif device: %d\n",
-+				__func__, rc);
- 	} else {
- 		/* no OneNAND support yet */
- 	}
--- 
-2.17.1
+Taniya Das (2):
+  clk: qcom: Add support for RCG to register for DFS
+  clk: qcom: gcc: Register QUPv3 RCGs for DFS on SDM845
+
+ drivers/clk/qcom/clk-rcg.h    |   5 +
+ drivers/clk/qcom/clk-rcg2.c   | 214 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c     |  14 +--
+ drivers/clk/qcom/common.h     |  16 +---
+ drivers/clk/qcom/gcc-sdm845.c |  27 +++++-
+ 5 files changed, 250 insertions(+), 26 deletions(-)
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
