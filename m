@@ -1,56 +1,47 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1529422152.28510.24.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Tue, 19 Jun 2018 17:29:12 +0200
-In-Reply-To: <1528892771.2292.2.camel@baylibre.com>
-References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
-	 <1528892771.2292.2.camel@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 02/13] clk: davinci: psc-dm365: use two lookup entries for the aemif clock
+Date: Thu, 28 Jun 2018 11:57:37 +0200
+Message-Id: <20180628095748.4462-3-brgl@bgdev.pl>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-06-13 at 14:26 +0200, Jerome Brunet wrote:
-> On Wed, 2018-06-13 at 14:20 +0200, Neil Armstrong wrote:
-> > On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
-> > seems to be dependent on the FCLK_DIV2 to be operationnal.
-> > 
-> > The issue occured since v4.17-rc1 by freezing the kernel boot when
-> > the 'schedutil' cpufreq governor was selected as default :
-> > 
-> >    [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
-> >    domain-0 init dvfs: 4
-> >    [   12.087757] hctosys: unable to open rtc device (rtc0)
-> >    [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-> >    [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> > 
-> > But when disabling the MMC driver, the boot finished but cpufreq failed to
-> > change the CPU frequency :
-> > 
-> >    [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
-> > 
-> > A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
-> > the first bad commit.
-> > This commit added support for the missing clock gates before the fixed PLL
-> > fixed dividers (FCLK_DIVx) and the clock framework basically disabled
-> > all the unused fixed dividers, thus disabled a critical clock path for
-> > the SCPI Co-Processor.
-> > 
-> > This patch simply sets the FCLK_DIV2 gate as critical to ensure
-> > nobody can disable it.
-> > 
-> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> Good catch !
-> We'll probably have to check the axg family as well
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-SCPI is not enabled on AXG at this time. We'll deal with it when the time comes.
+We want to be able to get the clock both from the board file by its
+con_id and from the aemif driver by dev_id.
 
-patch applied.
-Thx
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+ drivers/clk/davinci/psc-dm365.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/davinci/psc-dm365.c b/drivers/clk/davinci/psc-dm365.c
+index 8c73086cc676..c75424f4ea3b 100644
+--- a/drivers/clk/davinci/psc-dm365.c
++++ b/drivers/clk/davinci/psc-dm365.c
+@@ -21,7 +21,8 @@ LPSC_CLKDEV1(mmcsd1_clkdev,		NULL,		"da830-mmc.1");
+ LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
+ LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
+ LPSC_CLKDEV1(spi2_clkdev,		NULL,		"spi_davinci.2");
+-LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
++					NULL,		"ti-aemif");
+ LPSC_CLKDEV1(mmcsd0_clkdev,		NULL,		"da830-mmc.0");
+ LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
+ LPSC_CLKDEV1(uart0_clkdev,		NULL,		"serial8250.0");
+-- 
+2.17.1
