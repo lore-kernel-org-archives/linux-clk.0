@@ -1,82 +1,163 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 13 Jun 2018 09:36:05 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 24/27] drm: of: Export drm_crtc_port_mask()
-Message-ID: <20180613073605.gnhcwrywooxhyryj@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-25-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fqk45ekyxbgy3joq"
-In-Reply-To: <20180612200036.21483-25-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 07/13] ARM: davinci: da850-evm: use aemif platform driver in legacy mode
+Date: Thu, 28 Jun 2018 11:57:42 +0200
+Message-Id: <20180628095748.4462-8-brgl@bgdev.pl>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---fqk45ekyxbgy3joq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in da850-evm.
 
-On Tue, Jun 12, 2018 at 10:00:33PM +0200, Jernej Skrabec wrote:
-> Function is useful when drm_of_find_possible_crtcs() can't be used and
-> custom parsing is needed. This can happen for example when there is a
-> node with multiple muxes between crtc and encoder.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/drm_of.c | 4 ++--
->  include/drm/drm_of.h     | 8 ++++++++
->  2 files changed, 10 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-> index 1fe122461298..2e9cea3287b2 100644
-> --- a/drivers/gpu/drm/drm_of.c
-> +++ b/drivers/gpu/drm/drm_of.c
-> @@ -22,8 +22,8 @@ static void drm_release_of(struct device *dev, void *da=
-ta)
->   * Given a port OF node, return the possible mask of the corresponding
->   * CRTC within a device's list of CRTCs.  Returns zero if not found.
->   */
-> -static uint32_t drm_crtc_port_mask(struct drm_device *dev,
-> -				   struct device_node *port)
-> +uint32_t drm_crtc_port_mask(struct drm_device *dev,
-> +			    struct device_node *port)
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-da850-evm.c | 93 ++++++++++++++-----------
+ 1 file changed, 51 insertions(+), 42 deletions(-)
 
-It should probably be exported too?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fqk45ekyxbgy3joq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgyWQACgkQ0rTAlCFN
-r3RCFA//eA49EHWyvcyjgsi/qymB6nA7udnswkTDRRXPnYjeNdLiHNcBkZhLsee4
-uCBbnHLUyU2EUfYmNeYt4Ie4wur1ALFdDUa11hQrYNsvFx7A1FR0BqJWqvdPTNoN
-ynICsozYy4Qv5kpekaocg3vAL4OdoGnfBz+j4duXycNxy9VT8YJ6W3/0mEZghJCo
-W2VoB7mt+LOd+W6SVNOjQxnVg1aLliQWkEe/LPXCCU3+8bL1z4M6Uv0jQj7E7m7k
-d01IAN12kxEVMZGB8SYFLp+ArKHkFrkZaoOpPEn9giarfw5vbAowgCFwAtDbWezg
-loPXXbpDzqV5x/l6d4t44Zsj/uZB6uwZvuW87fGBRa+SYTVPpJsh5INiU59Hfe/N
-0ChAB/c0DygV5lQQ8miQNMsa0ihrG4IwmXJD+yn0YHTVcRIZf8BJYewBct3vr4a6
-3xw9cPNdVf02/iVYs1rRn50jcft4TaKSFX/Ee9N2lTf3/UtVnwM+D4wn//hymawe
-jE0TLbBVzTirh6fKbw7wjsWXRbE/UJ9dd3qbvrwhxCx+/SNZdoXr1kMNffatFq58
-n440TKOPUc4/VNx3ni9tnpHR+Nbp1JGMSuxixXCd6gL5bvcerA8VKfaLpK0vnOr2
-wj+L1xGOCdSj9O2y7DbovAHzLNo2ovCDzszpTmBKCsFU0ece8lM=
-=oShS
------END PGP SIGNATURE-----
-
---fqk45ekyxbgy3joq--
+diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
+index 442c16773f09..ace66f368f8d 100644
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -33,6 +33,7 @@
+ #include <linux/platform_data/gpio-davinci.h>
+ #include <linux/platform_data/mtd-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
+ #include <linux/platform_data/spi-davinci.h>
+ #include <linux/platform_data/uio_pruss.h>
+ #include <linux/regulator/machine.h>
+@@ -185,16 +186,6 @@ static struct resource da850_evm_norflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device da850_evm_norflash_device = {
+-	.name		= "physmap-flash",
+-	.id		= 0,
+-	.dev		= {
+-		.platform_data  = &da850_evm_norflash_data,
+-	},
+-	.num_resources	= 1,
+-	.resource	= da850_evm_norflash_resource,
+-};
+-
+ /* DA850/OMAP-L138 EVM includes a 512 MByte large-page NAND flash
+  * (128K blocks). It may be used instead of the (default) SPI flash
+  * to boot, using TI's tools to install the secondary boot loader
+@@ -266,37 +257,58 @@ static struct resource da850_evm_nandflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device da850_evm_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 1,
+-	.dev		= {
+-		.platform_data	= &da850_evm_nandflash_data,
+-	},
+-	.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
+-	.resource	= da850_evm_nandflash_resource,
++static struct resource da850_evm_aemif_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
++		.flags	= IORESOURCE_MEM,
++	}
+ };
+ 
+-static struct platform_device *da850_evm_devices[] = {
+-	&da850_evm_nandflash_device,
+-	&da850_evm_norflash_device,
++static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
++	{
++		.cs	= 3,
++	}
+ };
+ 
+-#define DA8XX_AEMIF_CE2CFG_OFFSET	0x10
+-#define DA8XX_AEMIF_ASIZE_16BIT		0x1
+-
+-static void __init da850_evm_init_nor(void)
+-{
+-	void __iomem *aemif_addr;
+-
+-	aemif_addr = ioremap(DA8XX_AEMIF_CTL_BASE, SZ_32K);
++static struct platform_device da850_evm_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 1,
++		.dev		= {
++			.platform_data	= &da850_evm_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
++		.resource	= da850_evm_nandflash_resource,
++	},
++	{
++		.name		= "physmap-flash",
++		.id		= 0,
++		.dev		= {
++			.platform_data  = &da850_evm_norflash_data,
++		},
++		.num_resources	= 1,
++		.resource	= da850_evm_norflash_resource,
++	}
++};
+ 
+-	/* Configure data bus width of CS2 to 16 bit */
+-	writel(readl(aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET) |
+-		DA8XX_AEMIF_ASIZE_16BIT,
+-		aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET);
++static struct aemif_platform_data da850_evm_aemif_pdata = {
++	.cs_offset = 2,
++	.abus_data = da850_evm_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(da850_evm_aemif_abus_data),
++	.sub_devices = da850_evm_aemif_devices,
++	.num_sub_devices = ARRAY_SIZE(da850_evm_aemif_devices),
++};
+ 
+-	iounmap(aemif_addr);
+-}
++static struct platform_device da850_evm_aemif_device = {
++	.name		= "ti-aemif",
++	.id		= -1,
++	.dev = {
++		.platform_data	= &da850_evm_aemif_pdata,
++	},
++	.resource	= da850_evm_aemif_resource,
++	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
++};
+ 
+ static const short da850_evm_nand_pins[] = {
+ 	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
+@@ -339,13 +351,10 @@ static inline void da850_evm_setup_nor_nand(void)
+ 			pr_warn("%s: NOR mux setup failed: %d\n",
+ 				__func__, ret);
+ 
+-		da850_evm_init_nor();
+-
+-		platform_add_devices(da850_evm_devices,
+-					ARRAY_SIZE(da850_evm_devices));
+-
+-		if (davinci_aemif_setup(&da850_evm_nandflash_device))
+-			pr_warn("%s: Cannot configure AEMIF.\n", __func__);
++		ret = platform_device_register(&da850_evm_aemif_device);
++		if (ret)
++			pr_warn("%s: registering aemif failed: %d\n",
++				__func__, ret);
+ 	}
+ }
+ 
+-- 
+2.17.1
