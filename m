@@ -1,106 +1,31 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs51.siol.net ([185.57.226.242]:38885 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934592AbeFLUCy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Jun 2018 16:02:54 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 25/27] drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
-Date: Tue, 12 Jun 2018 22:00:34 +0200
-Message-Id: <20180612200036.21483-26-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <horms@verge.net.au>
+Date: Thu, 28 Jun 2018 14:16:24 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, phil.edworthy@renesas.com,
+	Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 4/5] ARM: dts: Renesas RZN1D-DB Board base file
+Message-ID: <20180628121623.tncutbj6hrh2ccya@verge.net.au>
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-5-git-send-email-michel.pollet@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1528973829-25493-5-git-send-email-michel.pollet@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-drm_of_find_possible_crtcs() doesn't work when DW HDMI encoder is
-connected to TCON (crtc) through mux in TCON TOP.
+On Thu, Jun 14, 2018 at 11:56:33AM +0100, Michel Pollet wrote:
+> This adds a base device tree file for the RZN1-DB board, with only the
+> basic support allowing the system to boot to a prompt. Only one UART is
+> used, with only a single CPU running.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-In that case TCON TOP HDMI mux input port has to be manually traversed
-and checked if it matches any known crtc.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 46 ++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 9f40a44b456b..d443886e055b 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -12,6 +12,7 @@
- #include <drm/drm_crtc_helper.h>
- 
- #include "sun8i_dw_hdmi.h"
-+#include "sun8i_tcon_top.h"
- 
- static void sun8i_dw_hdmi_encoder_mode_set(struct drm_encoder *encoder,
- 					   struct drm_display_mode *mode,
-@@ -41,6 +42,48 @@ sun8i_dw_hdmi_mode_valid(struct drm_connector *connector,
- 	return MODE_OK;
- }
- 
-+static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
-+{
-+	return !!of_match_node(sun8i_tcon_top_of_table, node);
-+}
-+
-+static u32 sun8i_dw_hdmi_find_possible_crtcs(struct drm_device *drm,
-+					     struct device_node *node)
-+{
-+	struct device_node *port, *ep, *remote, *remote_port;
-+	u32 crtcs = 0;
-+
-+	port = of_graph_get_port_by_id(node, 0);
-+	if (!port)
-+		return 0;
-+
-+	ep = of_get_next_available_child(port, NULL);
-+	if (!ep)
-+		return 0;
-+
-+	remote = of_graph_get_remote_port_parent(ep);
-+	if (!remote)
-+		return 0;
-+
-+	if (sun8i_dw_hdmi_node_is_tcon_top(remote)) {
-+		port = of_graph_get_port_by_id(remote, 4);
-+		if (!port)
-+			return 0;
-+
-+		for_each_child_of_node(port, ep) {
-+			remote_port = of_graph_get_remote_port(ep);
-+			if (remote_port) {
-+				crtcs |= drm_crtc_port_mask(drm, remote_port);
-+				of_node_put(remote_port);
-+			}
-+		}
-+	} else {
-+		crtcs = drm_of_find_possible_crtcs(drm, node);
-+	}
-+
-+	return crtcs;
-+}
-+
- static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 			      void *data)
- {
-@@ -63,7 +106,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi->dev = &pdev->dev;
- 	encoder = &hdmi->encoder;
- 
--	encoder->possible_crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
-+	encoder->possible_crtcs =
-+		sun8i_dw_hdmi_find_possible_crtcs(drm, dev->of_node);
- 	/*
- 	 * If we failed to find the CRTC(s) which this encoder is
- 	 * supposed to be connected to, it's because the CRTC has
--- 
-2.17.1
-
+Thanks, applied.
