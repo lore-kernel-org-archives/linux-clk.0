@@ -1,661 +1,427 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] memory: tegra: Introduce Tegra20 EMC driver
-Date: Mon,  4 Jun 2018 01:36:54 +0300
-Message-Id: <20180603223654.23324-6-digetx@gmail.com>
-In-Reply-To: <20180603223654.23324-1-digetx@gmail.com>
-References: <20180603223654.23324-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs35.siol.net ([185.57.226.226]:48603 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751466AbeF1FQs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 01:16:48 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
+Date: Thu, 28 Jun 2018 07:15:18 +0200
+Message-ID: <21259128.K3MyN3b6Bq@jernej-laptop>
+In-Reply-To: <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-24-jernej.skrabec@siol.net> <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce driver for the External Memory Controller (EMC) found on Tegra20
-chips, which controls the external DRAM on the board. The purpose of this
-driver is to program memory timing for external memory on the EMC clock
-rate change.
+Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai napisal(a):
+> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Add all entries needed for HDMI to function properly.
+> > 
+> > Since R40 has highly configurable pipeline, both mixers and both TCON
+> > TVs are added. Board specific DT should then connect them together
+> > trough TCON TOP muxers to best fit the purpose of the board.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269 +++++++++++++++++++++++++++++++
+> >  1 file changed, 269 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
+> > b/arch/arm/boot/dts/sun8i-r40.dtsi index 173dcc1652d2..a2a75fb04caf
+> > 100644
+> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> > @@ -42,8 +42,11 @@
+> > 
+> >   */
+> >  
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > 
+> > +#include <dt-bindings/clock/sun8i-de2.h>
+> > 
+> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
+> > 
+> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/Kconfig       |  10 +
- drivers/memory/tegra/Makefile      |   1 +
- drivers/memory/tegra/tegra20-emc.c | 586 +++++++++++++++++++++++++++++
- 3 files changed, 597 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
+Maxime, above line breaks compilation for build robot, sorry.
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 6d74e499e18d..34e0b70f5c5f 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -6,6 +6,16 @@ config TEGRA_MC
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
- 
-+config TEGRA20_EMC
-+	bool "NVIDIA Tegra20 External Memory Controller driver"
-+	default y
-+	depends on ARCH_TEGRA_2x_SOC
-+	help
-+	  This driver is for the External Memory Controller (EMC) found on
-+	  Tegra20 chips. The EMC controls the external DRAM on the board.
-+	  This driver is required to change memory timings / clock rate for
-+	  external memory.
-+
- config TEGRA124_EMC
- 	bool "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 94ab16ba075b..3971a6b7c487 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -10,5 +10,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-+obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
- obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-new file mode 100644
-index 000000000000..26a18b5e7941
---- /dev/null
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -0,0 +1,586 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tegra20 External Memory Controller driver
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sort.h>
-+#include <linux/types.h>
-+
-+#include <soc/tegra/fuse.h>
-+
-+#define EMC_INTSTATUS				0x000
-+#define EMC_INTMASK				0x004
-+#define EMC_TIMING_CONTROL			0x028
-+#define EMC_RC					0x02c
-+#define EMC_RFC					0x030
-+#define EMC_RAS					0x034
-+#define EMC_RP					0x038
-+#define EMC_R2W					0x03c
-+#define EMC_W2R					0x040
-+#define EMC_R2P					0x044
-+#define EMC_W2P					0x048
-+#define EMC_RD_RCD				0x04c
-+#define EMC_WR_RCD				0x050
-+#define EMC_RRD					0x054
-+#define EMC_REXT				0x058
-+#define EMC_WDV					0x05c
-+#define EMC_QUSE				0x060
-+#define EMC_QRST				0x064
-+#define EMC_QSAFE				0x068
-+#define EMC_RDV					0x06c
-+#define EMC_REFRESH				0x070
-+#define EMC_BURST_REFRESH_NUM			0x074
-+#define EMC_PDEX2WR				0x078
-+#define EMC_PDEX2RD				0x07c
-+#define EMC_PCHG2PDEN				0x080
-+#define EMC_ACT2PDEN				0x084
-+#define EMC_AR2PDEN				0x088
-+#define EMC_RW2PDEN				0x08c
-+#define EMC_TXSR				0x090
-+#define EMC_TCKE				0x094
-+#define EMC_TFAW				0x098
-+#define EMC_TRPAB				0x09c
-+#define EMC_TCLKSTABLE				0x0a0
-+#define EMC_TCLKSTOP				0x0a4
-+#define EMC_TREFBW				0x0a8
-+#define EMC_QUSE_EXTRA				0x0ac
-+#define EMC_ODT_WRITE				0x0b0
-+#define EMC_ODT_READ				0x0b4
-+#define EMC_FBIO_CFG5				0x104
-+#define EMC_FBIO_CFG6				0x114
-+#define EMC_AUTO_CAL_INTERVAL			0x2a8
-+#define EMC_CFG_2				0x2b8
-+#define EMC_CFG_DIG_DLL				0x2bc
-+#define EMC_DLL_XFORM_DQS			0x2c0
-+#define EMC_DLL_XFORM_QUSE			0x2c4
-+#define EMC_ZCAL_REF_CNT			0x2e0
-+#define EMC_ZCAL_WAIT_CNT			0x2e4
-+#define EMC_CFG_CLKTRIM_0			0x2d0
-+#define EMC_CFG_CLKTRIM_1			0x2d4
-+#define EMC_CFG_CLKTRIM_2			0x2d8
-+
-+#define EMC_CLKCHANGE_REQ_ENABLE		BIT(0)
-+#define EMC_CLKCHANGE_PD_ENABLE			BIT(1)
-+#define EMC_CLKCHANGE_SR_ENABLE			BIT(2)
-+
-+#define EMC_TIMING_UPDATE			BIT(0)
-+
-+#define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
-+
-+static const unsigned long emc_timing_registers[] = {
-+	EMC_RC,
-+	EMC_RFC,
-+	EMC_RAS,
-+	EMC_RP,
-+	EMC_R2W,
-+	EMC_W2R,
-+	EMC_R2P,
-+	EMC_W2P,
-+	EMC_RD_RCD,
-+	EMC_WR_RCD,
-+	EMC_RRD,
-+	EMC_REXT,
-+	EMC_WDV,
-+	EMC_QUSE,
-+	EMC_QRST,
-+	EMC_QSAFE,
-+	EMC_RDV,
-+	EMC_REFRESH,
-+	EMC_BURST_REFRESH_NUM,
-+	EMC_PDEX2WR,
-+	EMC_PDEX2RD,
-+	EMC_PCHG2PDEN,
-+	EMC_ACT2PDEN,
-+	EMC_AR2PDEN,
-+	EMC_RW2PDEN,
-+	EMC_TXSR,
-+	EMC_TCKE,
-+	EMC_TFAW,
-+	EMC_TRPAB,
-+	EMC_TCLKSTABLE,
-+	EMC_TCLKSTOP,
-+	EMC_TREFBW,
-+	EMC_QUSE_EXTRA,
-+	EMC_FBIO_CFG6,
-+	EMC_ODT_WRITE,
-+	EMC_ODT_READ,
-+	EMC_FBIO_CFG5,
-+	EMC_CFG_DIG_DLL,
-+	EMC_DLL_XFORM_DQS,
-+	EMC_DLL_XFORM_QUSE,
-+	EMC_ZCAL_REF_CNT,
-+	EMC_ZCAL_WAIT_CNT,
-+	EMC_AUTO_CAL_INTERVAL,
-+	EMC_CFG_CLKTRIM_0,
-+	EMC_CFG_CLKTRIM_1,
-+	EMC_CFG_CLKTRIM_2,
-+};
-+
-+struct emc_timing {
-+	unsigned long rate;
-+	u32 emc_registers_data[ARRAY_SIZE(emc_timing_registers)];
-+};
-+
-+struct tegra_emc {
-+	struct device *dev;
-+	struct notifier_block clk_nb;
-+	struct clk *backup_clk;
-+	struct clk *emc_mux;
-+	struct clk *pll_m;
-+	struct clk *clk;
-+	void __iomem *regs;
-+
-+	struct completion clk_handshake_complete;
-+	int irq;
-+
-+	struct emc_timing *timings;
-+	unsigned int num_timings;
-+};
-+
-+static irqreturn_t tegra_emc_isr(int irq, void *data)
-+{
-+	struct tegra_emc *emc = data;
-+	u32 intmask = EMC_CLKCHANGE_COMPLETE_INT;
-+	u32 status;
-+
-+	status = readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
-+	if (!status)
-+		return IRQ_NONE;
-+
-+	/* clear interrupts */
-+	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
-+
-+	/* notify about EMC-CAR handshake completion */
-+	complete(&emc->clk_handshake_complete);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *emc,
-+						unsigned long rate)
-+{
-+	struct emc_timing *timing = NULL;
-+	unsigned int i;
-+
-+	for (i = 0; i < emc->num_timings; i++) {
-+		if (emc->timings[i].rate >= rate) {
-+			timing = &emc->timings[i];
-+			break;
-+		}
-+	}
-+
-+	if (!timing) {
-+		dev_err(emc->dev, "no timing for rate %lu\n", rate);
-+		return NULL;
-+	}
-+
-+	return timing;
-+}
-+
-+static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
-+{
-+	struct emc_timing *timing = tegra_emc_find_timing(emc, rate);
-+	unsigned int i;
-+
-+	if (!timing)
-+		return -ENOENT;
-+
-+	dev_dbg(emc->dev, "%s: timing rate %lu emc rate %lu\n",
-+		__func__, timing->rate, rate);
-+
-+	/* program shadow registers */
-+	for (i = 0; i < ARRAY_SIZE(timing->emc_registers_data); i++)
-+		writel_relaxed(timing->emc_registers_data[i],
-+			       emc->regs + emc_timing_registers[i]);
-+
-+	/* wait until programming has settled */
-+	readl_relaxed(emc->regs + emc_timing_registers[0]);
-+
-+	if (emc->irq < 0)
-+		writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT,
-+			       emc->regs + EMC_INTMASK);
-+	else
-+		reinit_completion(&emc->clk_handshake_complete);
-+
-+	return 0;
-+}
-+
-+static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
-+{
-+	long timeout;
-+	u32 value;
-+	int err;
-+
-+	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
-+
-+	if (flush) {
-+		/* manually initiate memory timing update */
-+		writel_relaxed(EMC_TIMING_UPDATE,
-+			       emc->regs + EMC_TIMING_CONTROL);
-+		return 0;
-+	}
-+
-+	if (emc->irq < 0) {
-+		/* poll interrupt status if IRQ isn't available */
-+		err = readl_relaxed_poll_timeout(emc->regs + EMC_INTSTATUS,
-+				value, value & EMC_CLKCHANGE_COMPLETE_INT,
-+				1, 100);
-+		if (err) {
-+			dev_err(emc->dev, "EMC-CAR handshake failed\n");
-+			return -EIO;
-+		}
-+
-+		return 0;
-+	}
-+
-+	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
-+					      usecs_to_jiffies(100));
-+	if (timeout == 0) {
-+		dev_err(emc->dev, "EMC handshake failed\n");
-+		return -EIO;
-+	} else if (timeout < 0) {
-+		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
-+			timeout);
-+		return timeout;
-+	}
-+
-+	return 0;
-+}
-+
-+static int load_one_timing_from_dt(struct tegra_emc *emc,
-+				   struct emc_timing *timing,
-+				   struct device_node *node)
-+{
-+	u32 rate;
-+	int err;
-+
-+	if (!of_device_is_compatible(node, "nvidia,tegra20-emc-table")) {
-+		dev_err(emc->dev, "incompatible DT node \"%s\"\n",
-+			node->name);
-+		return -EINVAL;
-+	}
-+
-+	err = of_property_read_u32(node, "clock-frequency", &rate);
-+	if (err) {
-+		dev_err(emc->dev, "timing %s: failed to read rate: %d\n",
-+			node->name, err);
-+		return err;
-+	}
-+
-+	err = of_property_read_u32_array(node, "nvidia,emc-registers",
-+					 timing->emc_registers_data,
-+					 ARRAY_SIZE(emc_timing_registers));
-+	if (err) {
-+		dev_err(emc->dev,
-+			"timing %s: failed to read emc timing data: %d\n",
-+			node->name, err);
-+		return err;
-+	}
-+
-+	/*
-+	 * The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz.
-+	 */
-+	timing->rate = rate * 2 * 1000;
-+
-+	dev_dbg(emc->dev, "%s: emc rate %ld\n", __func__, timing->rate);
-+
-+	return 0;
-+}
-+
-+static int cmp_timings(const void *_a, const void *_b)
-+{
-+	const struct emc_timing *a = _a;
-+	const struct emc_timing *b = _b;
-+
-+	if (a->rate < b->rate)
-+		return -1;
-+	else if (a->rate == b->rate)
-+		return 0;
-+	else
-+		return 1;
-+}
-+
-+static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
-+					  struct device_node *node)
-+{
-+	struct device_node *child;
-+	struct emc_timing *timing;
-+	int child_count;
-+	int err;
-+
-+	child_count = of_get_child_count(node);
-+	if (!child_count) {
-+		dev_err(emc->dev, "no memory timings in DT node\n");
-+		return -ENOENT;
-+	}
-+
-+	emc->timings = devm_kcalloc(emc->dev, child_count, sizeof(*timing),
-+				    GFP_KERNEL);
-+	if (!emc->timings)
-+		return -ENOMEM;
-+
-+	emc->num_timings = child_count;
-+	timing = emc->timings;
-+
-+	for_each_child_of_node(node, child) {
-+		err = load_one_timing_from_dt(emc, timing++, child);
-+		if (err) {
-+			of_node_put(child);
-+			return err;
-+		}
-+	}
-+
-+	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
-+	     NULL);
-+
-+	return 0;
-+}
-+
-+static struct device_node *
-+tegra_emc_find_node_by_ram_code(struct tegra_emc *emc, u32 ram_code)
-+{
-+	struct device_node *np;
-+	int err;
-+
-+	for_each_child_of_node(emc->dev->of_node, np) {
-+		u32 value;
-+
-+		err = of_property_read_u32(np, "nvidia,ram-code", &value);
-+		if (err || value != ram_code)
-+			continue;
-+
-+		return np;
-+	}
-+
-+	dev_info(emc->dev, "no memory timings for RAM code %u found in DT\n",
-+		 ram_code);
-+
-+	return NULL;
-+}
-+
-+static int tegra_emc_clk_change_notify(struct notifier_block *nb,
-+				       unsigned long msg, void *data)
-+{
-+	struct tegra_emc *emc = container_of(nb, struct tegra_emc, clk_nb);
-+	struct clk_notifier_data *cnd = data;
-+	int err;
-+
-+	switch (msg) {
-+	case PRE_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->new_rate);
-+		break;
-+
-+	case ABORT_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->old_rate);
-+		if (err)
-+			break;
-+
-+		err = emc_complete_timing_change(emc, true);
-+		break;
-+
-+	case POST_RATE_CHANGE:
-+		err = emc_complete_timing_change(emc, false);
-+		break;
-+
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return notifier_from_errno(err);
-+}
-+
-+static int emc_setup_hw(struct tegra_emc *emc)
-+{
-+	u32 emc_cfg;
-+
-+	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
-+
-+	/*
-+	 * Depending on a memory type, DRAM should enter either self-refresh
-+	 * or power-down state on EMC clock change.
-+	 */
-+	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
-+	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE))
-+	{
-+		dev_err(emc->dev,
-+			"bootloader didn't specify DRAM auto-suspend mode\n");
-+		return -EINVAL;
-+	}
-+
-+	/* allow EMC and CAR to handshake on PLL divider/source changes */
-+	emc_cfg |= EMC_CLKCHANGE_REQ_ENABLE;
-+	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
-+
-+	/* initialize interrupt */
-+	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTMASK);
-+	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTSTATUS);
-+
-+	return 0;
-+}
-+
-+static int emc_init(struct tegra_emc *emc, unsigned long rate)
-+{
-+	int err;
-+
-+	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to backup source: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_set_rate(emc->pll_m, rate);
-+	if (err)
-+		dev_err(emc->dev,
-+			"failed to change pll_m rate: %d\n", err);
-+
-+	err = clk_set_parent(emc->emc_mux, emc->pll_m);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to pll_m: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	struct tegra_emc *emc;
-+	struct resource *res;
-+	u32 ram_code;
-+	int err;
-+
-+	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
-+	if (!emc)
-+		return -ENOMEM;
-+
-+	emc->dev = &pdev->dev;
-+
-+	ram_code = tegra_read_ram_code();
-+
-+	np = tegra_emc_find_node_by_ram_code(emc, ram_code);
-+	if (!np)
-+		return -ENOENT;
-+
-+	err = tegra_emc_load_timings_from_dt(emc, np);
-+	of_node_put(np);
-+	if (err)
-+		return err;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(emc->regs))
-+		return PTR_ERR(emc->regs);
-+
-+	err = emc_setup_hw(emc);
-+	if (err)
-+		return err;
-+
-+	emc->irq = platform_get_irq(pdev, 0);
-+	if (emc->irq < 0) {
-+		dev_warn(&pdev->dev, "interrupt not specified\n");
-+		dev_warn(&pdev->dev, "continuing, but please update your DT\n");
-+	} else {
-+		init_completion(&emc->clk_handshake_complete);
-+
-+		err = devm_request_irq(&pdev->dev, emc->irq, tegra_emc_isr, 0,
-+				       dev_name(&pdev->dev), emc);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n",
-+				emc->irq, err);
-+			return err;
-+		}
-+	}
-+
-+	emc->pll_m = clk_get_sys(NULL, "pll_m");
-+	if (IS_ERR(emc->pll_m)) {
-+		err = PTR_ERR(emc->pll_m);
-+		dev_err(&pdev->dev, "failed to get pll_m: %d\n", err);
-+		return err;
-+	}
-+
-+	emc->backup_clk = clk_get_sys(NULL, "pll_p");
-+	if (IS_ERR(emc->backup_clk)) {
-+		err = PTR_ERR(emc->backup_clk);
-+		dev_err(&pdev->dev, "failed to get pll_p: %d\n", err);
-+		goto put_pll_m;
-+	}
-+
-+	emc->clk = clk_get_sys(NULL, "emc");
-+	if (IS_ERR(emc->clk)) {
-+		err = PTR_ERR(emc->clk);
-+		dev_err(&pdev->dev, "failed to get emc: %d\n", err);
-+		goto put_backup;
-+	}
-+
-+	emc->emc_mux = clk_get_parent(emc->clk);
-+	if (IS_ERR(emc->emc_mux)) {
-+		err = PTR_ERR(emc->emc_mux);
-+		dev_err(&pdev->dev, "failed to get emc_mux: %d\n", err);
-+		goto put_emc;
-+	}
-+
-+	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
-+
-+	err = clk_notifier_register(emc->clk, &emc->clk_nb);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
-+			err);
-+		goto put_emc;
-+	}
-+
-+	/* set DRAM clock rate to maximum */
-+	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize clk rate: %d\n",
-+			err);
-+		goto unreg_notifier;
-+	}
-+
-+	return 0;
-+
-+unreg_notifier:
-+	clk_notifier_unregister(emc->emc_mux, &emc->clk_nb);
-+put_emc:
-+	clk_put(emc->clk);
-+put_backup:
-+	clk_put(emc->backup_clk);
-+put_pll_m:
-+	clk_put(emc->pll_m);
-+
-+	return err;
-+}
-+
-+static const struct of_device_id tegra_emc_of_match[] = {
-+	{ .compatible = "nvidia,tegra20-emc", },
-+	{},
-+};
-+
-+static struct platform_driver tegra_emc_driver = {
-+	.probe = tegra_emc_probe,
-+	.driver = {
-+		.name = "tegra20-emc",
-+		.of_match_table = tegra_emc_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+
-+static int __init tegra_emc_init(void)
-+{
-+	return platform_driver_register(&tegra_emc_driver);
-+}
-+subsys_initcall(tegra_emc_init);
--- 
-2.17.0
+> > 
+> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
+> > 
+> > +#include <dt-bindings/reset/sun8i-de2.h>
+> > 
+> >  / {
+> >  
+> >         #address-cells = <1>;
+> > 
+> > @@ -99,12 +102,76 @@
+> > 
+> >                 };
+> >         
+> >         };
+> > 
+> > +       de: display-engine {
+> > +               compatible = "allwinner,sun8i-r40-display-engine",
+> > +                            "allwinner,sun8i-h3-display-engine";
+> 
+> Given that the display pipeline looks different, they should not be
+> compatible.
+
+Ok.
+
+> 
+> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
+> > +               status = "disabled";
+> > +       };
+> > +
+> > 
+> >         soc {
+> >         
+> >                 compatible = "simple-bus";
+> >                 #address-cells = <1>;
+> >                 #size-cells = <1>;
+> >                 ranges;
+> > 
+> > +               display_clocks: clock@1000000 {
+> > +                       compatible = "allwinner,sun8i-r40-de2-clk",
+> > +                                    "allwinner,sun8i-h3-de2-clk";
+> > +                       reg = <0x01000000 0x100000>;
+> > +                       clocks = <&ccu CLK_DE>,
+> > +                                <&ccu CLK_BUS_DE>;
+> > +                       clock-names = "mod",
+> > +                                     "bus";
+> > +                       resets = <&ccu RST_BUS_DE>;
+> > +                       #clock-cells = <1>;
+> > +                       #reset-cells = <1>;
+> > +               };
+> > +
+> > +               mixer0: mixer@1100000 {
+> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-0";
+> > +                       reg = <0x01100000 0x100000>;
+> > +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
+> > +                                <&display_clocks CLK_MIXER0>;
+> > +                       clock-names = "bus",
+> > +                                     "mod";
+> > +                       resets = <&display_clocks RST_MIXER0>;
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               mixer0_out: port@1 {
+> > +                                       reg = <1>;
+> > +                                       mixer0_out_tcon_top: endpoint {
+> > +                                               remote-endpoint =
+> > <&tcon_top_mixer0_in_mixer0>; +                                       };
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > +               mixer1: mixer@1200000 {
+> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-1";
+> > +                       reg = <0x01200000 0x100000>;
+> > +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
+> > +                                <&display_clocks CLK_MIXER1>;
+> > +                       clock-names = "bus",
+> > +                                     "mod";
+> > +                       resets = <&display_clocks RST_WB>;
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               mixer1_out: port@1 {
+> > +                                       reg = <1>;
+> > +                                       mixer1_out_tcon_top: endpoint {
+> > +                                               remote-endpoint =
+> > <&tcon_top_mixer1_in_mixer1>; +                                       };
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > 
+> >                 nmi_intc: interrupt-controller@1c00030 {
+> >                 
+> >                         compatible = "allwinner,sun7i-a20-sc-nmi";
+> >                         interrupt-controller;
+> > 
+> > @@ -451,6 +518,163 @@
+> > 
+> >                         #size-cells = <0>;
+> >                 
+> >                 };
+> > 
+> > +               tcon_top: tcon-top@1c70000 {
+> > +                       compatible = "allwinner,sun8i-r40-tcon-top";
+> > +                       reg = <0x01c70000 0x1000>;
+> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
+> > +                                <&ccu CLK_TCON_TV0>,
+> > +                                <&ccu CLK_TVE0>,
+> > +                                <&ccu CLK_TCON_TV1>,
+> > +                                <&ccu CLK_TVE1>,
+> > +                                <&ccu CLK_DSI_DPHY>;
+> > +                       clock-names = "bus",
+> > +                                     "tcon-tv0",
+> > +                                     "tve0",
+> > +                                     "tcon-tv1",
+> > +                                     "tve1",
+> > +                                     "dsi";
+> > +                       clock-output-names = "tcon-top-tv0",
+> > +                                            "tcon-top-tv1",
+> > +                                            "tcon-top-dsi";
+> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
+> > +                       #clock-cells = <1>;
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               tcon_top_mixer0_in: port@0 {
+> > +                                       reg = <0>;
+> > +
+> > +                                       tcon_top_mixer0_in_mixer0:
+> > endpoint { +                                              
+> > remote-endpoint = <&mixer0_out_tcon_top>; +                              
+> >         };
+> > +                               };
+> > +
+> > +                               tcon_top_mixer0_out: port@1 {
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +                                       reg = <1>;
+> > +
+> > +                                       tcon_top_mixer0_out_tcon_lcd0:
+> > endpoint@0 { +                                               reg = <0>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer0_out_tcon_lcd1:
+> > endpoint@1 { +                                               reg = <1>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer0_out_tcon_tv0:
+> > endpoint@2 { +                                               reg = <2>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer0_out_tcon_tv1:
+> > endpoint@3 { +                                               reg = <3>;
+> > +                                       };
+> > +                               };
+> > +
+> > +                               tcon_top_mixer1_in: port@2 {
+> > +                                       reg = <2>;
+> > +
+> > +                                       tcon_top_mixer1_in_mixer1:
+> > endpoint { +                                              
+> > remote-endpoint = <&mixer1_out_tcon_top>; +                              
+> >         };
+> > +                               };
+> > +
+> > +                               tcon_top_mixer1_out: port@3 {
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +                                       reg = <3>;
+> > +
+> > +                                       tcon_top_mixer1_out_tcon_lcd0:
+> > endpoint@0 { +                                               reg = <0>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer1_out_tcon_lcd1:
+> > endpoint@1 { +                                               reg = <1>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer1_out_tcon_tv0:
+> > endpoint@2 { +                                               reg = <2>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_mixer1_out_tcon_tv1:
+> > endpoint@3 { +                                               reg = <3>;
+> > +                                       };
+> > +                               };
+> > +
+> > +                               tcon_top_hdmi_in: port@4 {
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +                                       reg = <4>;
+> > +
+> > +                                       tcon_top_hdmi_in_tcon_tv0:
+> > endpoint@0 { +                                               reg = <0>;
+> > +                                       };
+> > +
+> > +                                       tcon_top_hdmi_in_tcon_tv1:
+> > endpoint@1 { +                                               reg = <1>;
+> > +                                       };
+> > +                               };
+> > +
+> > +                               tcon_top_hdmi_out: port@5 {
+> > +                                       reg = <5>;
+> > +
+> > +                                       tcon_top_hdmi_out_hdmi: endpoint {
+> > +                                               remote-endpoint =
+> > <&hdmi_in_tcon_top>; +                                       };
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > +               tcon_tv0: lcd-controller@1c73000 {
+> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+> > +                       reg = <0x01c73000 0x1000>;
+> > +                       interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>;
+> > +                       clock-names = "ahb", "tcon-ch1";
+> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
+> > +                       reset-names = "lcd";
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               tcon_tv0_in: port@0 {
+> > +                                       reg = <0>;
+> > +                               };
+> > +
+> > +                               tcon_tv0_out: port@1 {
+> > +                                       reg = <1>;
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > +               tcon_tv1: lcd-controller@1c74000 {
+> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+> > +                       reg = <0x01c74000 0x1000>;
+> > +                       interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top 1>;
+> > +                       clock-names = "ahb", "tcon-ch1";
+> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
+> > +                       reset-names = "lcd";
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               tcon_tv1_in: port@0 {
+> > +                                       reg = <0>;
+> > +                               };
+> > +
+> > +                               tcon_tv1_out: port@1 {
+> > +                                       reg = <1>;
+> 
+> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
+> connections. Also, on the driver side, there's no code to handle
+> dynamically mapping mixers to the TCONs that are being used. In the past we
+> had simple 1:1 mappings. This is no longer the case, and it needs to be
+> dealt with.
+
+How would TCON TOP driver know how to set muxes? There are no appropriate 
+bingings for muxes, except for V4L2 subsystem, which doesn't really work here.
+
+Additionaly, how would HDMI know which TCON belongs to it to appropriately set 
+possible_crtcs?
+
+Currently, my idea is that board DT creates wanted connections. Since there is 
+only one valid connection for each mux, driver knows eactly what to write into 
+mux register. HDMI driver can simply check which TCON connection is valid in 
+HDMI input mux and select it in possible_crtcs.
+
+Please also note that mixer0 and mixer1 don't have same capabilities and you 
+generally want mixer0 to be connected to main output. This is in contrast to 
+DE1 SoCs, where both backends and both frontends have same capability.
+
+Best regards,
+Jernej
+
+> 
+> ChenYu
+> 
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > 
+> >                 gic: interrupt-controller@1c81000 {
+> >                 
+> >                         compatible = "arm,gic-400";
+> >                         reg = <0x01c81000 0x1000>,
+> > 
+> > @@ -461,6 +685,51 @@
+> > 
+> >                         #interrupt-cells = <3>;
+> >                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
+> >                         IRQ_TYPE_LEVEL_HIGH)>;
+> >                 
+> >                 };
+> > 
+> > +
+> > +               hdmi: hdmi@1ee0000 {
+> > +                       compatible = "allwinner,sun8i-r40-dw-hdmi",
+> > +                                    "allwinner,sun8i-a83t-dw-hdmi";
+> > +                       reg = <0x01ee0000 0x10000>;
+> > +                       reg-io-width = <1>;
+> > +                       interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&ccu CLK_BUS_HDMI0>, <&ccu
+> > CLK_HDMI_SLOW>, +                                <&ccu CLK_HDMI>;
+> > +                       clock-names = "iahb", "isfr", "tmds";
+> > +                       resets = <&ccu RST_BUS_HDMI1>;
+> > +                       reset-names = "ctrl";
+> > +                       phys = <&hdmi_phy>;
+> > +                       phy-names = "hdmi-phy";
+> > +                       status = "disabled";
+> > +
+> > +                       ports {
+> > +                               #address-cells = <1>;
+> > +                               #size-cells = <0>;
+> > +
+> > +                               hdmi_in: port@0 {
+> > +                                       reg = <0>;
+> > +
+> > +                                       hdmi_in_tcon_top: endpoint {
+> > +                                               remote-endpoint =
+> > <&tcon_top_hdmi_out_hdmi>; +                                       };
+> > +                               };
+> > +
+> > +                               hdmi_out: port@1 {
+> > +                                       reg = <1>;
+> > +                               };
+> > +                       };
+> > +               };
+> > +
+> > +               hdmi_phy: hdmi-phy@1ef0000 {
+> > +                       compatible = "allwinner,sun8i-r40-hdmi-phy",
+> > +                                    "allwinner,sun50i-a64-hdmi-phy";
+> > +                       reg = <0x01ef0000 0x10000>;
+> > +                       clocks = <&ccu CLK_BUS_HDMI1>, <&ccu
+> > CLK_HDMI_SLOW>, +                                <&ccu 7>, <&ccu 16>;
+> > +                       clock-names = "bus", "mod", "pll-0", "pll-1";
+> > +                       resets = <&ccu RST_BUS_HDMI0>;
+> > +                       reset-names = "phy";
+> > +                       #phy-cells = <0>;
+> > +               };
+> > 
+> >         };
+> >         
+> >         timer {
+> > 
+> > --
+> > 2.18.0
+
+
+
+
