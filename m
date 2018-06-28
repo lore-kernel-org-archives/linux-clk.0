@@ -1,11 +1,17 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39395 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752581AbeF1Gvb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 02:51:31 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-6-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-6-jernej.skrabec@siol.net>
+In-Reply-To: <21259128.K3MyN3b6Bq@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-24-jernej.skrabec@siol.net> <CAGb2v66d-L4+TAgOMoPfpK2WAc3LKfprLB7tiAFL4YeL3Ogoow@mail.gmail.com>
+ <21259128.K3MyN3b6Bq@jernej-laptop>
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 09:47:20 +0800
-Message-ID: <CAGb2v6465Upen-aFiLXDrSPLDGLh+2REjaZ_91W39=E1DffHeA@mail.gmail.com>
-Subject: Re: [PATCH v3 05/24] drm/sun4i: Add TCON TOP driver
+Date: Thu, 28 Jun 2018 14:51:07 +0800
+Message-ID: <CAGb2v66q3a9nNjkSP1rgh9voMToutDxHtY1x1Wpkf8eEmLWLAA@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
 To: Jernej Skrabec <jernej.skrabec@siol.net>
 Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -21,411 +27,452 @@ Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-So I'm late to the party, but...
-
-On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> As already described in DT binding, TCON TOP is responsible for
-> configuring display pipeline. In this initial driver focus is on HDMI
-> pipeline, so TVE and LCD configuration is not implemented.
+On Thu, Jun 28, 2018 at 1:15 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai napisal(a):
+>> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > Add all entries needed for HDMI to function properly.
+>> >
+>> > Since R40 has highly configurable pipeline, both mixers and both TCON
+>> > TVs are added. Board specific DT should then connect them together
+>> > trough TCON TOP muxers to best fit the purpose of the board.
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269 +++++++++++++++++++++++++++++++
+>> >  1 file changed, 269 insertions(+)
+>> >
+>> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
+>> > b/arch/arm/boot/dts/sun8i-r40.dtsi index 173dcc1652d2..a2a75fb04caf
+>> > 100644
+>> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+>> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+>> > @@ -42,8 +42,11 @@
+>> >
+>> >   */
+>> >
+>> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> >
+>> > +#include <dt-bindings/clock/sun8i-de2.h>
+>> >
+>> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
+>> >
+>> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
 >
-> Implemented features:
-> - HDMI source selection
-> - clock driver (TCON and DSI gating)
-> - connecting mixers and TCONS
+> Maxime, above line breaks compilation for build robot, sorry.
 >
-> Something similar also existed in previous SoCs, except that it was part
-> of first TCON.
+>> >
+>> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
+>> >
+>> > +#include <dt-bindings/reset/sun8i-de2.h>
+>> >
+>> >  / {
+>> >
+>> >         #address-cells = <1>;
+>> >
+>> > @@ -99,12 +102,76 @@
+>> >
+>> >                 };
+>> >
+>> >         };
+>> >
+>> > +       de: display-engine {
+>> > +               compatible = "allwinner,sun8i-r40-display-engine",
+>> > +                            "allwinner,sun8i-h3-display-engine";
+>>
+>> Given that the display pipeline looks different, they should not be
+>> compatible.
 >
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/Makefile         |   3 +-
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 300 +++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.h |  40 ++++
->  3 files changed, 342 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.c
->  create mode 100644 drivers/gpu/drm/sun4i/sun8i_tcon_top.h
+> Ok.
 >
-> diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
-> index 2589f4acd5ae..09fbfd6304ba 100644
-> --- a/drivers/gpu/drm/sun4i/Makefile
-> +++ b/drivers/gpu/drm/sun4i/Makefile
-> @@ -16,7 +16,8 @@ sun8i-drm-hdmi-y              += sun8i_hdmi_phy_clk.o
+>>
+>> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
+>> > +               status = "disabled";
+>> > +       };
+>> > +
+>> >
+>> >         soc {
+>> >
+>> >                 compatible = "simple-bus";
+>> >                 #address-cells = <1>;
+>> >                 #size-cells = <1>;
+>> >                 ranges;
+>> >
+>> > +               display_clocks: clock@1000000 {
+>> > +                       compatible = "allwinner,sun8i-r40-de2-clk",
+>> > +                                    "allwinner,sun8i-h3-de2-clk";
+>> > +                       reg = <0x01000000 0x100000>;
+>> > +                       clocks = <&ccu CLK_DE>,
+>> > +                                <&ccu CLK_BUS_DE>;
+>> > +                       clock-names = "mod",
+>> > +                                     "bus";
+>> > +                       resets = <&ccu RST_BUS_DE>;
+>> > +                       #clock-cells = <1>;
+>> > +                       #reset-cells = <1>;
+>> > +               };
+>> > +
+>> > +               mixer0: mixer@1100000 {
+>> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-0";
+>> > +                       reg = <0x01100000 0x100000>;
+>> > +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
+>> > +                                <&display_clocks CLK_MIXER0>;
+>> > +                       clock-names = "bus",
+>> > +                                     "mod";
+>> > +                       resets = <&display_clocks RST_MIXER0>;
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               mixer0_out: port@1 {
+>> > +                                       reg = <1>;
+>> > +                                       mixer0_out_tcon_top: endpoint {
+>> > +                                               remote-endpoint =
+>> > <&tcon_top_mixer0_in_mixer0>; +                                       };
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> > +               mixer1: mixer@1200000 {
+>> > +                       compatible = "allwinner,sun8i-r40-de2-mixer-1";
+>> > +                       reg = <0x01200000 0x100000>;
+>> > +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
+>> > +                                <&display_clocks CLK_MIXER1>;
+>> > +                       clock-names = "bus",
+>> > +                                     "mod";
+>> > +                       resets = <&display_clocks RST_WB>;
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               mixer1_out: port@1 {
+>> > +                                       reg = <1>;
+>> > +                                       mixer1_out_tcon_top: endpoint {
+>> > +                                               remote-endpoint =
+>> > <&tcon_top_mixer1_in_mixer1>; +                                       };
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> >
+>> >                 nmi_intc: interrupt-controller@1c00030 {
+>> >
+>> >                         compatible = "allwinner,sun7i-a20-sc-nmi";
+>> >                         interrupt-controller;
+>> >
+>> > @@ -451,6 +518,163 @@
+>> >
+>> >                         #size-cells = <0>;
+>> >
+>> >                 };
+>> >
+>> > +               tcon_top: tcon-top@1c70000 {
+>> > +                       compatible = "allwinner,sun8i-r40-tcon-top";
+>> > +                       reg = <0x01c70000 0x1000>;
+>> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
+>> > +                                <&ccu CLK_TCON_TV0>,
+>> > +                                <&ccu CLK_TVE0>,
+>> > +                                <&ccu CLK_TCON_TV1>,
+>> > +                                <&ccu CLK_TVE1>,
+>> > +                                <&ccu CLK_DSI_DPHY>;
+>> > +                       clock-names = "bus",
+>> > +                                     "tcon-tv0",
+>> > +                                     "tve0",
+>> > +                                     "tcon-tv1",
+>> > +                                     "tve1",
+>> > +                                     "dsi";
+>> > +                       clock-output-names = "tcon-top-tv0",
+>> > +                                            "tcon-top-tv1",
+>> > +                                            "tcon-top-dsi";
+>> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
+>> > +                       #clock-cells = <1>;
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               tcon_top_mixer0_in: port@0 {
+>> > +                                       reg = <0>;
+>> > +
+>> > +                                       tcon_top_mixer0_in_mixer0:
+>> > endpoint { +
+>> > remote-endpoint = <&mixer0_out_tcon_top>; +
+>> >         };
+>> > +                               };
+>> > +
+>> > +                               tcon_top_mixer0_out: port@1 {
+>> > +                                       #address-cells = <1>;
+>> > +                                       #size-cells = <0>;
+>> > +                                       reg = <1>;
+>> > +
+>> > +                                       tcon_top_mixer0_out_tcon_lcd0:
+>> > endpoint@0 { +                                               reg = <0>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer0_out_tcon_lcd1:
+>> > endpoint@1 { +                                               reg = <1>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer0_out_tcon_tv0:
+>> > endpoint@2 { +                                               reg = <2>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer0_out_tcon_tv1:
+>> > endpoint@3 { +                                               reg = <3>;
+>> > +                                       };
+>> > +                               };
+>> > +
+>> > +                               tcon_top_mixer1_in: port@2 {
+>> > +                                       reg = <2>;
+>> > +
+>> > +                                       tcon_top_mixer1_in_mixer1:
+>> > endpoint { +
+>> > remote-endpoint = <&mixer1_out_tcon_top>; +
+>> >         };
+>> > +                               };
+>> > +
+>> > +                               tcon_top_mixer1_out: port@3 {
+>> > +                                       #address-cells = <1>;
+>> > +                                       #size-cells = <0>;
+>> > +                                       reg = <3>;
+>> > +
+>> > +                                       tcon_top_mixer1_out_tcon_lcd0:
+>> > endpoint@0 { +                                               reg = <0>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer1_out_tcon_lcd1:
+>> > endpoint@1 { +                                               reg = <1>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer1_out_tcon_tv0:
+>> > endpoint@2 { +                                               reg = <2>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_mixer1_out_tcon_tv1:
+>> > endpoint@3 { +                                               reg = <3>;
+>> > +                                       };
+>> > +                               };
+>> > +
+>> > +                               tcon_top_hdmi_in: port@4 {
+>> > +                                       #address-cells = <1>;
+>> > +                                       #size-cells = <0>;
+>> > +                                       reg = <4>;
+>> > +
+>> > +                                       tcon_top_hdmi_in_tcon_tv0:
+>> > endpoint@0 { +                                               reg = <0>;
+>> > +                                       };
+>> > +
+>> > +                                       tcon_top_hdmi_in_tcon_tv1:
+>> > endpoint@1 { +                                               reg = <1>;
+>> > +                                       };
+>> > +                               };
+>> > +
+>> > +                               tcon_top_hdmi_out: port@5 {
+>> > +                                       reg = <5>;
+>> > +
+>> > +                                       tcon_top_hdmi_out_hdmi: endpoint {
+>> > +                                               remote-endpoint =
+>> > <&hdmi_in_tcon_top>; +                                       };
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> > +               tcon_tv0: lcd-controller@1c73000 {
+>> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+>> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+>> > +                       reg = <0x01c73000 0x1000>;
+>> > +                       interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+>> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>;
+>> > +                       clock-names = "ahb", "tcon-ch1";
+>> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
+>> > +                       reset-names = "lcd";
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               tcon_tv0_in: port@0 {
+>> > +                                       reg = <0>;
+>> > +                               };
+>> > +
+>> > +                               tcon_tv0_out: port@1 {
+>> > +                                       reg = <1>;
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> > +               tcon_tv1: lcd-controller@1c74000 {
+>> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+>> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+>> > +                       reg = <0x01c74000 0x1000>;
+>> > +                       interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
+>> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top 1>;
+>> > +                       clock-names = "ahb", "tcon-ch1";
+>> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
+>> > +                       reset-names = "lcd";
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               tcon_tv1_in: port@0 {
+>> > +                                       reg = <0>;
+>> > +                               };
+>> > +
+>> > +                               tcon_tv1_out: port@1 {
+>> > +                                       reg = <1>;
+>>
+>> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
+>> connections. Also, on the driver side, there's no code to handle
+>> dynamically mapping mixers to the TCONs that are being used. In the past we
+>> had simple 1:1 mappings. This is no longer the case, and it needs to be
+>> dealt with.
 >
->  sun8i-mixer-y                  += sun8i_mixer.o sun8i_ui_layer.o \
->                                    sun8i_vi_layer.o sun8i_ui_scaler.o \
-> -                                  sun8i_vi_scaler.o sun8i_csc.o
-> +                                  sun8i_vi_scaler.o sun8i_csc.o \
-> +                                  sun8i_tcon_top.o
->
->  sun4i-tcon-y                   += sun4i_crtc.o
->  sun4i-tcon-y                   += sun4i_dotclock.o
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> new file mode 100644
-> index 000000000000..8da0460e0028
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> @@ -0,0 +1,300 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
-> +
-> +#include <drm/drmP.h>
-> +
-> +#include <dt-bindings/clock/sun8i-tcon-top.h>
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/component.h>
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/of_graph.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "sun8i_tcon_top.h"
-> +
-> +static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
-> +                                             int port_id)
-> +{
-> +       struct device_node *ep, *remote, *port;
-> +       struct of_endpoint endpoint;
-> +
-> +       port = of_graph_get_port_by_id(node, port_id);
-> +       if (!port)
-> +               return -ENOENT;
-> +
-> +       for_each_available_child_of_node(port, ep) {
-> +               remote = of_graph_get_remote_port_parent(ep);
-> +               if (!remote)
-> +                       continue;
-> +
-> +               if (of_device_is_available(remote)) {
-> +                       of_graph_parse_endpoint(ep, &endpoint);
-> +
-> +                       of_node_put(remote);
-> +
-> +                       return endpoint.id;
-> +               }
-> +
-> +               of_node_put(remote);
-> +       }
-> +
-> +       return -ENOENT;
-> +}
-> +
-> +static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
-> +                                                  struct clk *parent,
-> +                                                  void __iomem *regs,
-> +                                                  spinlock_t *lock,
-> +                                                  u8 bit, int name_index)
-> +{
-> +       const char *clk_name, *parent_name;
-> +       int ret;
-> +
-> +       parent_name = __clk_get_name(parent);
+> How would TCON TOP driver know how to set muxes? There are no appropriate
+> bingings for muxes, except for V4L2 subsystem, which doesn't really work here.
 
-You can simply pass in the binding clock name, and have
+This will end up being a bunch of custom functions exported from the TCON
+TOP driver to the TCON driver. As for bindings, the stuff you already have
+is mostly enough. You do have to specify the endpoint ID vs component
+mapping, so you can find the correct one.
 
-    index = of_property_match_string(np, "clock-names", name);
-    parent_name = of_clk_get_parent_name(dev->of_node, index);
+For example, you would specify that the IDs for TCON LCDs be 0 and 1, and TCON
+TVs be 2 and 3. Matching the actual register values is a nice convenience.
+These would be used by the driver as the TCON ID.
 
-> +       ret = of_property_read_string_index(dev->of_node,
-> +                                           "clock-output-names", name_index,
-> +                                           &clk_name);
-> +       if (ret)
-> +               return ERR_PTR(ret);
-> +
-> +       return clk_hw_register_gate(dev, clk_name, parent_name,
-> +                                   CLK_SET_RATE_PARENT,
-> +                                   regs + TCON_TOP_GATE_SRC_REG,
-> +                                   bit, 0, lock);
-> +};
-> +
-> +static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
-> +                              void *data)
-> +{
-> +       struct platform_device *pdev = to_platform_device(dev);
-> +       struct clk *dsi, *tcon_tv0, *tcon_tv1, *tve0, *tve1;
-> +       struct clk_hw_onecell_data *clk_data;
-> +       struct sun8i_tcon_top *tcon_top;
-> +       bool mixer0_unused = false;
-> +       struct resource *res;
-> +       void __iomem *regs;
-> +       int ret, i, id;
-> +       u32 val;
-> +
-> +       tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
-> +       if (!tcon_top)
-> +               return -ENOMEM;
-> +
-> +       clk_data = devm_kzalloc(dev, sizeof(*clk_data) +
-> +                               sizeof(*clk_data->hws) * CLK_NUM,
-> +                               GFP_KERNEL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +       tcon_top->clk_data = clk_data;
-> +
-> +       spin_lock_init(&tcon_top->reg_lock);
-> +
-> +       tcon_top->rst = devm_reset_control_get(dev, NULL);
-> +       if (IS_ERR(tcon_top->rst)) {
-> +               dev_err(dev, "Couldn't get our reset line\n");
-> +               return PTR_ERR(tcon_top->rst);
-> +       }
-> +
-> +       tcon_top->bus = devm_clk_get(dev, "bus");
-> +       if (IS_ERR(tcon_top->bus)) {
-> +               dev_err(dev, "Couldn't get the bus clock\n");
-> +               return PTR_ERR(tcon_top->bus);
-> +       }
-> +
-> +       dsi = devm_clk_get(dev, "dsi");
-> +       if (IS_ERR(dsi)) {
-> +               dev_err(dev, "Couldn't get the dsi clock\n");
-> +               return PTR_ERR(dsi);
-> +       }
-> +
-> +       tcon_tv0 = devm_clk_get(dev, "tcon-tv0");
-> +       if (IS_ERR(tcon_tv0)) {
-> +               dev_err(dev, "Couldn't get the tcon-tv0 clock\n");
-> +               return PTR_ERR(tcon_tv0);
-> +       }
-> +
-> +       tcon_tv1 = devm_clk_get(dev, "tcon-tv1");
-> +       if (IS_ERR(tcon_tv1)) {
-> +               dev_err(dev, "Couldn't get the tcon-tv1 clock\n");
-> +               return PTR_ERR(tcon_tv1);
-> +       }
-> +
-> +       tve0 = devm_clk_get(dev, "tve0");
-> +       if (IS_ERR(tve0)) {
-> +               dev_err(dev, "Couldn't get the tve0 clock\n");
-> +               return PTR_ERR(tve0);
-> +       }
-> +
-> +       tve1 = devm_clk_get(dev, "tve1");
-> +       if (IS_ERR(tve1)) {
-> +               dev_err(dev, "Couldn't get the tve1 clock\n");
-> +               return PTR_ERR(tve1);
-> +       }
+Also, we might want to consider them as two pairs of two TCONs (LCD + TV).
+The CRTC in DRM land is actually the mixer + TCON on our platform. This means
+we only have two CRTCs. So we could have CRTC 0 = mixer 0 + TCON LCD 0 + TCON
+TV 0. The "TCON_TVx_OUTSEL" and "DE_PORTx PERH Select" muxes would be set at
+run time in the mode set function, selecting either LCD or TV based on what
+encoder is attached.
 
-So you don't actually have to hold references to the parent clocks.
+This limitation is a software one, and should not bleed over into the hardware
+representation.
+
+> Additionaly, how would HDMI know which TCON belongs to it to appropriately set
+> possible_crtcs?
+
+HDMI is connected to the two TCON TVs through the TCON TOP mux. We handle TCON
+output muxing in the TCON driver, using the set_mux callback in the quirks.
+For R40, this callback would probably call into the TCON TOP driver asking it
+to set the mux to some value.
+
+> Currently, my idea is that board DT creates wanted connections. Since there is
+> only one valid connection for each mux, driver knows eactly what to write into
+> mux register. HDMI driver can simply check which TCON connection is valid in
+> HDMI input mux and select it in possible_crtcs.
+
+But that is not how the actual hardware looks like. The device tree should model
+the hardware, not a subset of it just because one thinks the implementation is
+difficult or won't be used at all.
+
+Furthermore, I think you have it backwards. possible_crtcs is generated based
+on (in our case) the connections between TCON and HDMI based on the device tree
+graph. So if you have both hooked up, both will show up in possible_crtcs, but
+only one crtc will actually be selected to feed the HDMI encoder. If you really
+need to access the current crtc, the drm_encoder struct contains a pointer to
+it.
+
+In DE 1.0 driver, we leave all the muxing to the TCON driver. See
+
+    https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/sun4i/sun4i_tcon.c#L537
+
+So in a sense, the HDMI encoder should be and is hooked up to both TCONs,
+but only one is active at any given time.
+
+> Please also note that mixer0 and mixer1 don't have same capabilities and you
+> generally want mixer0 to be connected to main output. This is in contrast to
+> DE1 SoCs, where both backends and both frontends have same capability.
+
+Yes. But who's to say the two display outputs can't be reversed or swapped
+around? With fixed singular connections, you also rule out mirrored output.
 
 ChenYu
 
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       regs = devm_ioremap_resource(dev, res);
-> +       if (IS_ERR(regs))
-> +               return PTR_ERR(regs);
-> +
-> +       ret = reset_control_deassert(tcon_top->rst);
-> +       if (ret) {
-> +               dev_err(dev, "Could not deassert ctrl reset control\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = clk_prepare_enable(tcon_top->bus);
-> +       if (ret) {
-> +               dev_err(dev, "Could not enable bus clock\n");
-> +               goto err_assert_reset;
-> +       }
-> +
-> +       val = 0;
-> +
-> +       /* check if HDMI mux output is connected */
-> +       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
-> +               /* find HDMI input endpoint id, if it is connected at all*/
-> +               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
-> +               if (id >= 0)
-> +                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
-> +               else
-> +                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
-> +       } else {
-> +               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
-> +       }
-> +
-> +       writel(val, regs + TCON_TOP_GATE_SRC_REG);
-> +
-> +       val = 0;
-> +
-> +       /* process mixer0 mux output */
-> +       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
-> +       if (id >= 0) {
-> +               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
-> +       } else {
-> +               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
-> +               mixer0_unused = true;
-> +       }
-> +
-> +       /* process mixer1 mux output */
-> +       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
-> +       if (id >= 0) {
-> +               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
-> +
-> +               /*
-> +                * mixer0 mux has priority over mixer1 mux. We have to
-> +                * make sure mixer0 doesn't overtake TCON from mixer1.
-> +                */
-> +               if (mixer0_unused && id == 0)
-> +                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
-> +       } else {
-> +               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
-> +       }
-> +
-> +       writel(val, regs + TCON_TOP_PORT_SEL_REG);
-> +
-> +       /*
-> +        * TCON TOP has two muxes, which select parent clock for each TCON TV
-> +        * channel clock. Parent could be either TCON TV or TVE clock. For now
-> +        * we leave this fixed to TCON TV, since TVE driver for R40 is not yet
-> +        * implemented. Once it is, graph needs to be traversed to determine
-> +        * if TVE is active on each TCON TV. If it is, mux should be switched
-> +        * to TVE clock parent.
-> +        */
-> +       clk_data->hws[CLK_TCON_TOP_TV0] =
-> +               sun8i_tcon_top_register_gate(dev, tcon_tv0, regs,
-> +                                            &tcon_top->reg_lock,
-> +                                            TCON_TOP_TCON_TV0_GATE, 0);
-> +
-> +       clk_data->hws[CLK_TCON_TOP_TV1] =
-> +               sun8i_tcon_top_register_gate(dev, tcon_tv1, regs,
-> +                                            &tcon_top->reg_lock,
-> +                                            TCON_TOP_TCON_TV1_GATE, 1);
-> +
-> +       clk_data->hws[CLK_TCON_TOP_DSI] =
-> +               sun8i_tcon_top_register_gate(dev, dsi, regs,
-> +                                            &tcon_top->reg_lock,
-> +                                            TCON_TOP_TCON_DSI_GATE, 2);
-> +
-> +       for (i = 0; i < CLK_NUM; i++)
-> +               if (IS_ERR(clk_data->hws[i])) {
-> +                       ret = PTR_ERR(clk_data->hws[i]);
-> +                       goto err_unregister_gates;
-> +               }
-> +
-> +       clk_data->num = CLK_NUM;
-> +
-> +       ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
-> +                                    clk_data);
-> +       if (ret)
-> +               goto err_unregister_gates;
-> +
-> +       dev_set_drvdata(dev, tcon_top);
-> +
-> +       return 0;
-> +
-> +err_unregister_gates:
-> +       for (i = 0; i < CLK_NUM; i++)
-> +               if (clk_data->hws[i])
-> +                       clk_hw_unregister_gate(clk_data->hws[i]);
-> +       clk_disable_unprepare(tcon_top->bus);
-> +err_assert_reset:
-> +       reset_control_assert(tcon_top->rst);
-> +
-> +       return ret;
-> +}
-> +
-> +static void sun8i_tcon_top_unbind(struct device *dev, struct device *master,
-> +                                 void *data)
-> +{
-> +       struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
-> +       struct clk_hw_onecell_data *clk_data = tcon_top->clk_data;
-> +       int i;
-> +
-> +       of_clk_del_provider(dev->of_node);
-> +       for (i = 0; i < CLK_NUM; i++)
-> +               clk_hw_unregister_gate(clk_data->hws[i]);
-> +
-> +       clk_disable_unprepare(tcon_top->bus);
-> +       reset_control_assert(tcon_top->rst);
-> +}
-> +
-> +static const struct component_ops sun8i_tcon_top_ops = {
-> +       .bind   = sun8i_tcon_top_bind,
-> +       .unbind = sun8i_tcon_top_unbind,
-> +};
-> +
-> +static int sun8i_tcon_top_probe(struct platform_device *pdev)
-> +{
-> +       return component_add(&pdev->dev, &sun8i_tcon_top_ops);
-> +}
-> +
-> +static int sun8i_tcon_top_remove(struct platform_device *pdev)
-> +{
-> +       component_del(&pdev->dev, &sun8i_tcon_top_ops);
-> +
-> +       return 0;
-> +}
-> +
-> +/* sun4i_drv uses this list to check if a device node is a TCON TOP */
-> +const struct of_device_id sun8i_tcon_top_of_table[] = {
-> +       { .compatible = "allwinner,sun8i-r40-tcon-top" },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
-> +EXPORT_SYMBOL(sun8i_tcon_top_of_table);
-> +
-> +static struct platform_driver sun8i_tcon_top_platform_driver = {
-> +       .probe          = sun8i_tcon_top_probe,
-> +       .remove         = sun8i_tcon_top_remove,
-> +       .driver         = {
-> +               .name           = "sun8i-tcon-top",
-> +               .of_match_table = sun8i_tcon_top_of_table,
-> +       },
-> +};
-> +module_platform_driver(sun8i_tcon_top_platform_driver);
-> +
-> +MODULE_AUTHOR("Jernej Skrabec <jernej.skrabec@siol.net>");
-> +MODULE_DESCRIPTION("Allwinner R40 TCON TOP driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.h b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-> new file mode 100644
-> index 000000000000..39838bbfeaee
-> --- /dev/null
-> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.h
-> @@ -0,0 +1,40 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/* Copyright (c) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
-> +
-> +#ifndef _SUN8I_TCON_TOP_H_
-> +#define _SUN8I_TCON_TOP_H_
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/reset.h>
-> +#include <linux/spinlock.h>
-> +
-> +#define TCON_TOP_TCON_TV_SETUP_REG     0x00
-> +
-> +#define TCON_TOP_PORT_SEL_REG          0x1C
-> +#define TCON_TOP_PORT_DE0_MSK                  GENMASK(1, 0)
-> +#define TCON_TOP_PORT_DE1_MSK                  GENMASK(5, 4)
-> +
-> +#define TCON_TOP_GATE_SRC_REG          0x20
-> +#define TCON_TOP_HDMI_SRC_MSK                  GENMASK(29, 28)
-> +#define TCON_TOP_TCON_TV1_GATE                 24
-> +#define TCON_TOP_TCON_TV0_GATE                 20
-> +#define TCON_TOP_TCON_DSI_GATE                 16
-> +
-> +#define CLK_NUM                                        3
-> +
-> +struct sun8i_tcon_top {
-> +       struct clk                      *bus;
-> +       struct clk_hw_onecell_data      *clk_data;
-> +       struct reset_control            *rst;
-> +
-> +       /*
-> +        * spinlock is used to synchronize access to same
-> +        * register where multiple clock gates can be set.
-> +        */
-> +       spinlock_t                      reg_lock;
-> +};
-> +
-> +extern const struct of_device_id sun8i_tcon_top_of_table[];
-> +
-> +#endif /* _SUN8I_TCON_TOP_H_ */
-> --
-> 2.18.0
+>>
+>> ChenYu
+>>
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> >
+>> >                 gic: interrupt-controller@1c81000 {
+>> >
+>> >                         compatible = "arm,gic-400";
+>> >                         reg = <0x01c81000 0x1000>,
+>> >
+>> > @@ -461,6 +685,51 @@
+>> >
+>> >                         #interrupt-cells = <3>;
+>> >                         interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
+>> >                         IRQ_TYPE_LEVEL_HIGH)>;
+>> >
+>> >                 };
+>> >
+>> > +
+>> > +               hdmi: hdmi@1ee0000 {
+>> > +                       compatible = "allwinner,sun8i-r40-dw-hdmi",
+>> > +                                    "allwinner,sun8i-a83t-dw-hdmi";
+>> > +                       reg = <0x01ee0000 0x10000>;
+>> > +                       reg-io-width = <1>;
+>> > +                       interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
+>> > +                       clocks = <&ccu CLK_BUS_HDMI0>, <&ccu
+>> > CLK_HDMI_SLOW>, +                                <&ccu CLK_HDMI>;
+>> > +                       clock-names = "iahb", "isfr", "tmds";
+>> > +                       resets = <&ccu RST_BUS_HDMI1>;
+>> > +                       reset-names = "ctrl";
+>> > +                       phys = <&hdmi_phy>;
+>> > +                       phy-names = "hdmi-phy";
+>> > +                       status = "disabled";
+>> > +
+>> > +                       ports {
+>> > +                               #address-cells = <1>;
+>> > +                               #size-cells = <0>;
+>> > +
+>> > +                               hdmi_in: port@0 {
+>> > +                                       reg = <0>;
+>> > +
+>> > +                                       hdmi_in_tcon_top: endpoint {
+>> > +                                               remote-endpoint =
+>> > <&tcon_top_hdmi_out_hdmi>; +                                       };
+>> > +                               };
+>> > +
+>> > +                               hdmi_out: port@1 {
+>> > +                                       reg = <1>;
+>> > +                               };
+>> > +                       };
+>> > +               };
+>> > +
+>> > +               hdmi_phy: hdmi-phy@1ef0000 {
+>> > +                       compatible = "allwinner,sun8i-r40-hdmi-phy",
+>> > +                                    "allwinner,sun50i-a64-hdmi-phy";
+>> > +                       reg = <0x01ef0000 0x10000>;
+>> > +                       clocks = <&ccu CLK_BUS_HDMI1>, <&ccu
+>> > CLK_HDMI_SLOW>, +                                <&ccu 7>, <&ccu 16>;
+>> > +                       clock-names = "bus", "mod", "pll-0", "pll-1";
+>> > +                       resets = <&ccu RST_BUS_HDMI0>;
+>> > +                       reset-names = "phy";
+>> > +                       #phy-cells = <0>;
+>> > +               };
+>> >
+>> >         };
+>> >
+>> >         timer {
+>> >
+>> > --
+>> > 2.18.0
 >
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
