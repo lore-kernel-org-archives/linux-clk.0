@@ -1,57 +1,108 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms@verge.net.au>, Phil Edworthy <phil.edworthy@renesas.com>, Michel
- Pollet <buserror+upstream@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>, "open
- list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-	<devicetree@vger.kernel.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl:
- documentation
-Date: Wed, 13 Jun 2018 06:38:25 +0000
-Message-ID: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 28 Jun 2018 08:52:18 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <anson.huang@nxp.com>
+Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+	"matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+Message-ID: <20180628005217.GC22683@dragon>
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+ <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+ <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDExIEp1bmUgMjAxOCAxMTowMSwgR2VlcnQgd3JvdGU6DQo+IEhpIE1p
-Y2hlbCwNCj4NCj4gT24gVHVlLCBKdW4gNSwgMjAxOCBhdCAxMDozNiBBTSBNaWNoZWwgUG9sbGV0
-DQo+IDxtaWNoZWwucG9sbGV0QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBUaGUgUmVuZXNh
-cyBSOUEwNkcwMzIgU1lTQ1RSTCBub2RlIGRlc2NyaXB0aW9uLg0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogTWljaGVsIFBvbGxldCA8bWljaGVsLnBvbGxldEBicC5yZW5lc2FzLmNvbT4NCj4NCj4g
-PiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRp
-bmdzL2Nsb2NrL3JlbmVzYXMscjlhMDZnMDMyLQ0KPiBzeXNjdHINCj4gPiArKysgbC50eHQNCj4g
-PiBAQCAtMCwwICsxLDMyIEBADQo+ID4gKyogUmVuZXNhcyBSOUEwNkcwMzIgU1lTQ1RSTA0KPiA+
-ICsNCj4gPiArUmVxdWlyZWQgUHJvcGVydGllczoNCj4gPiArDQo+ID4gKyAgLSBjb21wYXRpYmxl
-OiBNdXN0IGJlOg0KPiA+ICsgICAgLSAicmVuZXNhcyxyOWEwNmcwMzItc3lzY3RybCINCj4gPiAr
-ICAtIHJlZzogQmFzZSBhZGRyZXNzIGFuZCBsZW5ndGggb2YgdGhlIFNZU0NUUkwgSU8gYmxvY2su
-DQo+ID4gKyAgLSAjY2xvY2stY2VsbHM6IE11c3QgYmUgMQ0KPg0KPiAocmVwZWF0aW5nIG15c2Vs
-ZikgTm8gY2xvY2tzL2Nsb2NrLW5hbWVzIGZvciB0aGUgZXh0ZXJuYWwgY2xvY2sgaW5wdXRzPw0K
-Pg0KPiAiUlovTjEgaGFzIDMgY2xvY2sgc291cmNlcywgMSByZWZlcmVuY2UgY2xvY2sgaW5wdXRz
-IGZvciBSR01JSSwgYW5kIDINCj4gcmVmZXJlbmNlIGNsb2NrIG91dHB1dHMgZm9yIFJNSUkvTUlJ
-LiINCg0KV2VsbCwgSSdtIHRyeWluZyB0byBrZWVwIHRoZSBiaW5kaW5nIGFzIHNpbXBsZSBhcyBw
-b3NzaWJsZSwgdG8gZG9kZ2UgYW55DQpmdXJ0aGVyIGRpc2N1c3Npb24uIEFkZGluZyB0aGVzZSB3
-aWxsIGJlIHBvc3NpYmxlIGxhdGVyLCBJIGRvbid0IG5lZWQgdGhlbQ0KZm9yIHRoZSBtb21lbnQg
-YW55d2F5Lg0KDQo+DQo+IFRoZSByZXN0IGxvb2tzIGZpbmUgdG8gbWUuDQo+IFRoYW5rcyENCg0K
-RGlkIHlvdSBoYXZlIGEgY2hhbmNlIHRvIHJldmlldyB0aGUgY2xvY2sgZHJpdmVyIHByb3Blcj8g
-SSdtIHBvbmRlcmluZw0Kc2VuZGluZyBhIHY5IHNpbmNlIGl0J3MgYmVlbiBhIHdlZWsgKHdpdGgg
-dmVyeSBtaW5vciBjaGFuZ2VzKSAtLSBidXQgSQ0KZG9uJ3Qgd2FudCB0byBpbnRlcnJ1cHQgaWYg
-eW91IHdlcmUgaW4gdGhlIHByb2Nlc3Mgb2YgcmV2aWV3aW5nLi4uDQoNCkNoZWVycywNCk1pY2hl
-bA0KDQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAg
-ICBHZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9m
-IExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPg0KPiBJbiBw
-ZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2Vs
-ZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0
-IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBUb3J2YWxkcw0KDQoNCg0KUmVuZXNhcyBFbGVj
-dHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUg
-RW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQg
-JiBXYWxlcyB1bmRlciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
+> Gentle Ping...
+
+I cannot apply this dts patch until the clock patch is landed on
+mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
+created by clock patch.
+
+Shawn
+
+> > -----Original Message-----
+> > From: Anson Huang
+> > Sent: Sunday, June 3, 2018 9:44 AM
+> > To: shawnguo@kernel.org; kernel@pengutronix.de; Fabio Estevam
+> > <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+> > mturquette@baylibre.com; sboyd@kernel.org;
+> > michael@amarulasolutions.com; matteo.lisi@engicam.com
+> > Cc: dl-linux-imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linux-clk@vger.kernel.org
+> > Subject: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+> > 
+> > i.MX6UL has GPIO clock gates in CCM CCGR, add clock property for GPIO driver
+> > to make sure all GPIO banks work as expected.
+> > 
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> > 	no changes since V1.
+> >  arch/arm/boot/dts/imx6ul.dtsi | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+> > index 1241972..405e068 100644
+> > --- a/arch/arm/boot/dts/imx6ul.dtsi
+> > +++ b/arch/arm/boot/dts/imx6ul.dtsi
+> > @@ -437,6 +437,7 @@
+> >  				reg = <0x0209c000 0x4000>;
+> >  				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
+> >  					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clks IMX6UL_CLK_GPIO1>;
+> >  				gpio-controller;
+> >  				#gpio-cells = <2>;
+> >  				interrupt-controller;
+> > @@ -450,6 +451,7 @@
+> >  				reg = <0x020a0000 0x4000>;
+> >  				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
+> >  					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clks IMX6UL_CLK_GPIO2>;
+> >  				gpio-controller;
+> >  				#gpio-cells = <2>;
+> >  				interrupt-controller;
+> > @@ -462,6 +464,7 @@
+> >  				reg = <0x020a4000 0x4000>;
+> >  				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
+> >  					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clks IMX6UL_CLK_GPIO3>;
+> >  				gpio-controller;
+> >  				#gpio-cells = <2>;
+> >  				interrupt-controller;
+> > @@ -474,6 +477,7 @@
+> >  				reg = <0x020a8000 0x4000>;
+> >  				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
+> >  					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clks IMX6UL_CLK_GPIO4>;
+> >  				gpio-controller;
+> >  				#gpio-cells = <2>;
+> >  				interrupt-controller;
+> > @@ -486,6 +490,7 @@
+> >  				reg = <0x020ac000 0x4000>;
+> >  				interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
+> >  					     <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clks IMX6UL_CLK_GPIO5>;
+> >  				gpio-controller;
+> >  				#gpio-cells = <2>;
+> >  				interrupt-controller;
+> > --
+> > 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
