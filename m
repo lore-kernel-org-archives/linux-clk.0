@@ -1,82 +1,38 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46513 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752512AbeF1Ccf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:32:35 -0400
 MIME-Version: 1.0
-To: Chen-Yu Tsai <wens@csie.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
+In-Reply-To: <20180625120304.7543-22-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-22-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 10:32:12 +0800
+Message-ID: <CAGb2v66vEJZijF82u6cKf3j0J678=kNCCps5+=oj7iHCzM9n6g@mail.gmail.com>
+Subject: Re: [PATCH v3 21/24] drm: of: Export drm_crtc_port_mask()
+To: Jernej Skrabec <jernej.skrabec@siol.net>
 Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
- Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linux-clk <linux-clk@vger.kernel.org>
-References: <20180521115947.wqrnv2hczate65lz@flea>
- <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
- <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com>
-Message-ID: <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-Date: Tue, 12 Jun 2018 01:00:01 -0700
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Chen-Yu Tsai (2018-06-11 00:53:41)
-> Hi,
-> =
+On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Function is useful when drm_of_find_possible_crtcs() can't be used and
+> custom parsing is needed. This can happen for example when there is a
+> node with multiple muxes between crtc and encoder.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > Hi Maxime,
-> >
-> >
-> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
-> >> Hi Mike, Stephen,
-> >>
-> >> Please merge the following changes for the next merge window, thanks!
-> >>
-> >> Maxime
-> >>
-> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a2=
-43338:
-> >>
-> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> >>
-> >> are available in the Git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags=
-/sunxi-clk-for-4.18
-> >>
-> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc04=
-4:
-> >>
-> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (201=
-8-05-17 14:02:07 +0800)
-> >>
-> >> ----------------------------------------------------------------
-> >> Allwinner clock changes for 4.18
-> >>
-> >> Not a lot of changes for this release, but two quite important features
-> >> were added: the H6 PRCM clock support, and the needed changes to the R=
-40
-> >> clock driver to allow for the EMAC to operate.
-> >>
-> >> ----------------------------------------------------------------
-> >> Icenowy Zheng (3):
-> >>       clk: sunxi-ng: add support for H6 PRCM CCU
-> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
-> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
-> >>
-> >
-> >
-> >
-> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
-> > not included in the pull request?
-> >
-> >
-> > You said "I've picked it up"
-> > https://patchwork.kernel.org/patch/10348031/
-> =
-
-> It looks like it was accidentally dropped after a rebase.
-> Not quite sure what happened there. Maxime?
-> =
-
-
-I can directly pick and send as fix for clk-fixes targeting rc2.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
