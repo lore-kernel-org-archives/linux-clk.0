@@ -1,53 +1,43 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-Subject: Re: [PATCH v2 0/5] Tegra20 External Memory Controller driver
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180603223654.23324-1-digetx@gmail.com>
- <20180606104550.GK11810@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9ef678f2-2046-373f-5de4-dcfff5dfe6a6@gmail.com>
-Date: Wed, 6 Jun 2018 15:41:03 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f53.google.com ([209.85.208.53]:37312 "EHLO
+        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751958AbeF1Bvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 21:51:54 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180606104550.GK11810@ulmo>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180625120304.7543-10-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-10-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 09:51:31 +0800
+Message-ID: <CAGb2v64EkVK+AEngEuadBzAZagyU7eyOhHhBh0iFrxS+-BbCYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have
+ channel 0
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06.06.2018 13:45, Thierry Reding wrote:
-> On Mon, Jun 04, 2018 at 01:36:49AM +0300, Dmitry Osipenko wrote:
->> Hello,
->>
->> Couple years ago the Tegra20 EMC driver was removed from the kernel
->> due to incompatible changes in the Tegra's clock driver. This patchset
->> introduces a modernized EMC driver. Currently the sole purpose of the
->> driver is to initialize DRAM frequency to maximum rate during of the
->> kernels boot-up. Later we may consider implementing dynamic memory
->> frequency scaling, utilizing functionality provided by this driver.
->>
->> Changelog:
->>
->> v2:
->> 	- Minor code cleanups like consistent use of writel_relaxed instead
->> 	  of non-relaxed version, reworded error messages, etc.
->>
->> 	- Factored out use_pllm_ud bit checking into a standalone patch for
->> 	  consistency.
->>
->> Dmitry Osipenko (5):
->>   dt: bindings: tegra20-emc: Document interrupt property
->>   ARM: dts: tegra20: Add interrupt to External Memory Controller
->>   clk: tegra20: Turn EMC clock gate into divider
->>   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
->>   memory: tegra: Introduce Tegra20 EMC driver
-> 
-> I took a brief look and didn't spot any dependencies between the clk and
-> memory patches. Is it correct that these can be applied separately?
+On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
+> Because of that, all output endpoints on such TCON node will point to a
+> encoder which is part of component framework.
+>
+> Correct current graph traversing algorithm in such way that it doesn't
+> skip output enpoints with id 0 on TV TCONs.
 
-Yes, it is correct.
+No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
+have channel 0, it must be skipped.
+
+ChenYu
