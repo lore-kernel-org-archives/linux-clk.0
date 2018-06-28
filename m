@@ -1,182 +1,228 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	sboyd@kernel.org
+Cc: pn@denx.de,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com,
+	manivannan.sadhasivam@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 12/14] clk: qcom: Add safe switch hook for krait mux clocks
-Date: Tue, 19 Jun 2018 19:15:23 +0530
-Message-Id: <1529415925-28915-13-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for S700
+Date: Thu, 28 Jun 2018 21:18:03 +0200
+Message-Id: <20180628191805.3722-2-sravanhome@gmail.com>
+In-Reply-To: <20180628191805.3722-1-sravanhome@gmail.com>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When the Hfplls are reprogrammed during the rate change,
-the primary muxes which are sourced from the same hfpll
-for higher frequencies, needs to be switched to the 'safe
-secondary mux' as the parent for that small window. This
-is done by registering a clk notifier for the muxes and
-switching to the safe parent in the PRE_RATE_CHANGE notifier
-and back to the original parent in the POST_RATE_CHANGE notifier.
+Added clock management controller for S700
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- drivers/clk/qcom/clk-krait.c |  2 ++
- drivers/clk/qcom/clk-krait.h |  3 +++
- drivers/clk/qcom/krait-cc.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 61 insertions(+)
+ .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
+ arch/arm64/boot/dts/actions/s700.dtsi         |   8 ++
+ include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++++++++++++++++
+ 3 files changed, 136 insertions(+), 7 deletions(-)
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
 
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-index a651710..ee1076c 100644
---- a/drivers/clk/qcom/clk-krait.c
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -50,6 +50,8 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
- 	if (__clk_is_enabled(hw->clk))
- 		__krait_mux_set_sel(mux, sel);
- 
-+	mux->reparent = true;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
-index 441ba1e..9120bd2 100644
---- a/drivers/clk/qcom/clk-krait.h
-+++ b/drivers/clk/qcom/clk-krait.h
-@@ -12,6 +12,9 @@ struct krait_mux_clk {
- 	u32		shift;
- 	u32		en_mask;
- 	bool		lpl;
-+	u8		safe_sel;
-+	u8		old_index;
-+	bool		reparent;
- 
- 	struct clk_hw	hw;
- 	struct notifier_block   clk_nb;
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index 7c9dfb0..4d4b657 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -26,6 +26,49 @@
- 	0,
+diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+index ef79d7905f44..28f3f4a0f7f0 100644
+--- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
++++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+@@ -28,12 +28,6 @@
+ 		device_type = "memory";
+ 		reg = <0x1 0xe0000000 0x0 0x0>;
+ 	};
+-
+-	uart3_clk: uart3-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
  };
  
+ &timer {
+@@ -42,5 +36,4 @@
+ 
+ &uart3 {
+ 	status = "okay";
+-	clocks = <&uart3_clk>;
+ };
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 66dd5309f0a2..3530b705df90 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/actions,s700-cmu.h>
+ 
+ / {
+ 	compatible = "actions,s700";
+@@ -44,6 +45,12 @@
+ 		};
+ 	};
+ 
++	clock: clock-controller@e0168000 {
++		compatible = "actions,s700-cmu";
++		reg = <0 0xe0168000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -129,6 +136,7 @@
+ 			compatible = "actions,s900-uart", "actions,owl-uart";
+ 			reg = <0x0 0xe0126000 0x0 0x2000>;
+ 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&clock CLK_UART3>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
+new file mode 100644
+index 000000000000..e5b4ea130953
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s700-cmu.h
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Notifier function for switching the muxes to safe parent
-+ * while the hfpll is getting reprogrammed.
++ * Actions S700 clock driver
++ *
++ * Copyright (c) 2014 Actions Semi Inc.
++ * Author: David Liu <liuwei@actions-semi.com>
++ *
++ * Author: Pathiban Nallathambi <pn@denx.de>
++ * Author: Saravanan Sekar <sravanhome@gmail.com>
 + */
-+static int krait_notifier_cb(struct notifier_block *nb,
-+			     unsigned long event,
-+			     void *data)
-+{
-+	int ret = 0;
-+	struct krait_mux_clk *mux = container_of(nb, struct krait_mux_clk,
-+						 clk_nb);
-+	/* Switch to safe parent */
-+	if (event == PRE_RATE_CHANGE) {
-+		mux->old_index = krait_mux_clk_ops.get_parent(&mux->hw);
-+		ret = krait_mux_clk_ops.set_parent(&mux->hw, mux->safe_sel);
-+		mux->reparent = false;
-+	/*
-+	 * By the time POST_RATE_CHANGE notifier is called,
-+	 * clk framework itself would have changed the parent for the new rate.
-+	 * Only otherwise, put back to the old parent.
-+	 */
-+	} else if (event == POST_RATE_CHANGE) {
-+		if (!mux->reparent)
-+			ret = krait_mux_clk_ops.set_parent(&mux->hw,
-+							   mux->old_index);
-+	}
 +
-+	return notifier_from_errno(ret);
-+}
++#ifndef __DT_BINDINGS_CLOCK_S700_H
++#define __DT_BINDINGS_CLOCK_S700_H
 +
-+static int krait_notifier_register(struct device *dev, struct clk *clk,
-+				   struct krait_mux_clk *mux)
-+{
-+	int ret = 0;
++#define CLK_NONE			0
 +
-+	mux->clk_nb.notifier_call = krait_notifier_cb;
-+	ret = clk_notifier_register(clk, &mux->clk_nb);
-+	if (ret)
-+		dev_err(dev, "failed to register clock notifier: %d\n", ret);
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
 +
-+	return ret;
-+}
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_TVOUT_PLL			8
++#define CLK_CVBS_PLL			9
++#define CLK_AUDIO_PLL			10
++#define CLK_ETHERNET_PLL		11
 +
- static int
- krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
- {
-@@ -70,6 +113,7 @@
- krait_add_sec_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset, bool unique_aux)
- {
-+	int ret;
- 	struct krait_mux_clk *mux;
- 	static const char *sec_mux_list[] = {
- 		"acpu_aux",
-@@ -93,6 +137,7 @@
- 	mux->shift = 2;
- 	mux->parent_map = sec_mux_map;
- 	mux->hw.init = &init;
-+	mux->safe_sel = 0;
- 
- 	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
- 	if (!init.name)
-@@ -108,6 +153,11 @@
- 
- 	clk = devm_clk_register(dev, &mux->hw);
- 
-+	ret = krait_notifier_register(dev, clk, mux);
-+	if (ret)
-+		goto unique_aux;
 +
-+unique_aux:
- 	if (unique_aux)
- 		kfree(sec_mux_list[0]);
- err_aux:
-@@ -119,6 +169,7 @@
- krait_add_pri_mux(struct device *dev, int id, const char *s,
- 		  unsigned int offset)
- {
-+	int ret;
- 	struct krait_mux_clk *mux;
- 	const char *p_names[3];
- 	struct clk_init_data init = {
-@@ -139,6 +190,7 @@
- 	mux->lpl = id >= 0;
- 	mux->parent_map = pri_mux_map;
- 	mux->hw.init = &init;
-+	mux->safe_sel = 2;
- 
- 	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
- 	if (!init.name)
-@@ -164,6 +216,10 @@
- 
- 	clk = devm_clk_register(dev, &mux->hw);
- 
-+	ret = krait_notifier_register(dev, clk, mux);
-+	if (ret)
-+		goto err_p3;
-+err_p3:
- 	kfree(p_names[2]);
- err_p2:
- 	kfree(p_names[1]);
++/* system clock */
++#define CLK_SYS_BASE			12
++#define CLK_CPU				CLK_SYS_BASE
++#define CLK_DEV				(CLK_SYS_BASE+1)
++#define CLK_AHB				(CLK_SYS_BASE+2)
++#define CLK_APB				(CLK_SYS_BASE+3)
++#define CLK_DMAC			(CLK_SYS_BASE+4)
++#define CLK_NOC0_CLK_MUX		(CLK_SYS_BASE+5)
++#define CLK_NOC1_CLK_MUX		(CLK_SYS_BASE+6)
++#define CLK_HP_CLK_MUX			(CLK_SYS_BASE+7)
++#define CLK_HP_CLK_DIV			(CLK_SYS_BASE+8)
++#define CLK_NOC1_CLK_DIV		(CLK_SYS_BASE+9)
++#define CLK_NOC0			(CLK_SYS_BASE+10)
++#define CLK_NOC1			(CLK_SYS_BASE+11)
++#define CLK_SENOR_SRC			(CLK_SYS_BASE+12)
++
++/* peripheral device clock */
++#define CLK_PERIP_BASE			25
++#define CLK_GPIO			(CLK_PERIP_BASE)
++#define CLK_TIMER			(CLK_PERIP_BASE+1)
++#define CLK_DSI				(CLK_PERIP_BASE+2)
++#define CLK_CSI				(CLK_PERIP_BASE+3)
++#define CLK_SI				(CLK_PERIP_BASE+4)
++#define CLK_DE				(CLK_PERIP_BASE+5)
++#define CLK_HDE				(CLK_PERIP_BASE+6)
++#define CLK_VDE				(CLK_PERIP_BASE+7)
++#define CLK_VCE				(CLK_PERIP_BASE+8)
++#define CLK_NAND			(CLK_PERIP_BASE+9)
++#define CLK_SD0				(CLK_PERIP_BASE+10)
++#define CLK_SD1				(CLK_PERIP_BASE+11)
++#define CLK_SD2				(CLK_PERIP_BASE+12)
++
++#define CLK_UART0			(CLK_PERIP_BASE+13)
++#define CLK_UART1			(CLK_PERIP_BASE+14)
++#define CLK_UART2			(CLK_PERIP_BASE+15)
++#define CLK_UART3			(CLK_PERIP_BASE+16)
++#define CLK_UART4			(CLK_PERIP_BASE+17)
++#define CLK_UART5			(CLK_PERIP_BASE+18)
++#define CLK_UART6			(CLK_PERIP_BASE+19)
++
++#define CLK_PWM0			(CLK_PERIP_BASE+20)
++#define CLK_PWM1			(CLK_PERIP_BASE+21)
++#define CLK_PWM2			(CLK_PERIP_BASE+22)
++#define CLK_PWM3			(CLK_PERIP_BASE+23)
++#define CLK_PWM4			(CLK_PERIP_BASE+24)
++#define CLK_PWM5			(CLK_PERIP_BASE+25)
++#define CLK_GPU3D			(CLK_PERIP_BASE+26)
++
++#define CLK_I2C0			(CLK_PERIP_BASE+27)
++#define CLK_I2C1			(CLK_PERIP_BASE+28)
++#define CLK_I2C2			(CLK_PERIP_BASE+29)
++#define CLK_I2C3			(CLK_PERIP_BASE+30)
++
++
++#define CLK_SPI0			(CLK_PERIP_BASE+31)
++#define CLK_SPI1			(CLK_PERIP_BASE+32)
++#define CLK_SPI2			(CLK_PERIP_BASE+33)
++#define CLK_SPI3			(CLK_PERIP_BASE+34)
++
++#define CLK_USB3_480MPLL0		(CLK_PERIP_BASE+35)
++#define CLK_USB3_480MPHY0		(CLK_PERIP_BASE+36)
++#define CLK_USB3_5GPHY			(CLK_PERIP_BASE+37)
++#define CLK_USB3_CCE			(CLK_PERIP_BASE+48)
++#define CLK_USB3_MAC			(CLK_PERIP_BASE+49)
++
++
++#define CLK_LCD				(CLK_PERIP_BASE+50)
++#define CLK_HDMI_AUDIO			(CLK_PERIP_BASE+51)
++#define CLK_I2SRX			(CLK_PERIP_BASE+52)
++#define CLK_I2STX			(CLK_PERIP_BASE+53)
++
++#define CLK_SENSOR0			(CLK_PERIP_BASE+54)
++#define CLK_SENSOR1			(CLK_PERIP_BASE+55)
++
++#define CLK_HDMI_DEV			(CLK_PERIP_BASE+56)
++
++#define CLK_ETHERNET			(CLK_PERIP_BASE+59)
++#define CLK_RMII_REF			(CLK_PERIP_BASE+60)
++
++#define CLK_USB2H0_PLLEN		(CLK_PERIP_BASE+61)
++#define CLK_USB2H0_PHY			(CLK_PERIP_BASE+62)
++#define CLK_USB2H0_CCE			(CLK_PERIP_BASE+63)
++#define CLK_USB2H1_PLLEN		(CLK_PERIP_BASE+64)
++#define CLK_USB2H1_PHY			(CLK_PERIP_BASE+65)
++#define CLK_USB2H1_CCE			(CLK_PERIP_BASE+66)
++
++
++#define CLK_TVOUT			(CLK_PERIP_BASE+67)
++
++#define CLK_THERMAL_SENSOR		(CLK_PERIP_BASE+68)
++
++#define CLK_IRC_SWITCH			(CLK_PERIP_BASE+69)
++#define CLK_PCM1			(CLK_PERIP_BASE+70)
++#define CLK_NR_CLKS			(CLK_PCM1) /* update on adding new clk */
++
++#endif /* __DT_BINDINGS_CLOCK_S700_H */
 -- 
-1.9.1
+2.18.0
