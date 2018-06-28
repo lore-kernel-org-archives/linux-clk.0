@@ -1,105 +1,113 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] memory: tegra: Introduce Tegra20 EMC driver
-Date: Mon, 11 Jun 2018 16:38:52 +0300
-Message-ID: <2038303.qe2mJgr7in@dimapc>
-In-Reply-To: <20180611114133.GD31977@ulmo>
-References: <20180603223654.23324-1-digetx@gmail.com> <20180611113503.GC31977@ulmo> <20180611114133.GD31977@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 09/13] ARM: davinci: dm644x-evm: use aemif platform driver
+Date: Thu, 28 Jun 2018 11:57:44 +0200
+Message-Id: <20180628095748.4462-10-brgl@bgdev.pl>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, 11 June 2018 14:41:33 MSK Thierry Reding wrote:
-> On Mon, Jun 11, 2018 at 01:35:03PM +0200, Thierry Reding wrote:
-> > On Wed, Jun 06, 2018 at 04:42:01PM +0300, Dmitry Osipenko wrote:
-> > > On 06.06.2018 14:02, Thierry Reding wrote:
-> > > > On Mon, Jun 04, 2018 at 01:36:54AM +0300, Dmitry Osipenko wrote:
-> [...]
-> 
-> > > >> +	if (!child_count) {
-> > > >> +		dev_err(emc->dev, "no memory timings in DT node\n");
-> > > >> +		return -ENOENT;
-> > > >> +	}
-> > > >> +
-> > > >> +	emc->timings = devm_kcalloc(emc->dev, child_count, 
-sizeof(*timing),
-> > > >> +				    GFP_KERNEL);
-> > > >> +	if (!emc->timings)
-> > > >> +		return -ENOMEM;
-> > > >> +
-> > > >> +	emc->num_timings = child_count;
-> > > >> +	timing = emc->timings;
-> > > >> +
-> > > >> +	for_each_child_of_node(node, child) {
-> > > >> +		err = load_one_timing_from_dt(emc, timing++, child);
-> > > >> +		if (err) {
-> > > >> +			of_node_put(child);
-> > > >> +			return err;
-> > > >> +		}
-> > > >> +	}
-> > > >> +
-> > > >> +	sort(emc->timings, emc->num_timings, sizeof(*timing), 
-cmp_timings,
-> > > >> +	     NULL);
-> > > >> +
-> > > >> +	return 0;
-> > > >> +}
-> > > >> +
-> > > >> +static struct device_node *
-> > > >> +tegra_emc_find_node_by_ram_code(struct tegra_emc *emc, u32 ram_code)
-> > > >> +{
-> > > >> +	struct device_node *np;
-> > > >> +	int err;
-> > > >> +
-> > > >> +	for_each_child_of_node(emc->dev->of_node, np) {
-> > > >> +		u32 value;
-> > > >> +
-> > > >> +		err = of_property_read_u32(np, "nvidia,ram-code", &value);
-> > > >> +		if (err || value != ram_code)
-> > > >> +			continue;
-> > > >> +
-> > > >> +		return np;
-> > > >> +	}
-> > > >> +
-> > > >> +	dev_info(emc->dev, "no memory timings for RAM code %u found in
-> > > >> DT\n",
-> > > >> +		 ram_code);
-> > > > 
-> > > > This seems like it should be dev_warn() or perhaps even dev_err()
-> > > > given
-> > > > that the result of it is the driver failing to probe. dev_info() may
-> > > > go
-> > > > unnoticed.
-> > > 
-> > > Absence of memory timings is a valid case, hence dev_info() suit well
-> > > here.
-> > > 
-> > > I can't see anything wrong with returning a errno if driver has nothing
-> > > to do and prefer to keep it because in that case managed resources
-> > > would be free'd by the driver core, though returning '0' also would
-> > > work.
-> > 
-> > I disagree. A driver failing to probe will show up as a kernel log entry
-> > and is something that people will have to whitelist if they're filtering
-> > for error messages in the boot log.
-> > 
-> > I think it's more user-friendly to just let the driver succeed the probe
-> > in an expected case, even if that means there's really nothing to do. If
-> > you're really concerned about the managed resources staying around, I
-> > think you could probably get rid of them explicitly. By the looks of it
-> > devres_release_all() isn't an exported symbol, so it can't be called
-> > from driver code, but perhaps that's something that we can change.
-> 
-> Maybe an easier way to avoid keeping the managed resources around would
-> be to move the check a little further up. That way, we can abort earlier
-> if no EMC timings are available, before any resources are even
-> allocated.
-> 
-> The tegra_emc_find_node_by_ram_code() function would need to take a
-> struct device * instead of struct tegra_emc *, but otherwise it should
-> work fine.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Good point, thank you!
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in dm644x-evm.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-dm644x-evm.c | 55 ++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 738e443ab15f..e4a8f9225d16 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -42,6 +42,7 @@
+ #include <linux/platform_data/mmc-davinci.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_data/mtd-davinci-aemif.h>
++#include <linux/platform_data/ti-aemif.h>
+ 
+ #include "davinci.h"
+ 
+@@ -174,14 +175,47 @@ static struct resource davinci_evm_nandflash_resource[] = {
+ 	},
+ };
+ 
+-static struct platform_device davinci_evm_nandflash_device = {
+-	.name		= "davinci_nand",
+-	.id		= 0,
+-	.dev		= {
+-		.platform_data	= &davinci_evm_nandflash_data,
++static struct resource davinci_evm_aemif_resource[] = {
++	{
++		.start		= DM644X_ASYNC_EMIF_CONTROL_BASE,
++		.end		= DM644X_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
++		.flags		= IORESOURCE_MEM,
+ 	},
+-	.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
+-	.resource	= davinci_evm_nandflash_resource,
++};
++
++static struct aemif_abus_data davinci_evm_aemif_abus_data[] = {
++	{
++		.cs		= 1,
++	},
++};
++
++static struct platform_device davinci_evm_nandflash_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 0,
++		.dev		= {
++			.platform_data	= &davinci_evm_nandflash_data,
++		},
++		.num_resources	= ARRAY_SIZE(davinci_evm_nandflash_resource),
++		.resource	= davinci_evm_nandflash_resource,
++	},
++};
++
++static struct aemif_platform_data davinci_evm_aemif_pdata = {
++	.abus_data = davinci_evm_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(davinci_evm_aemif_abus_data),
++	.sub_devices = davinci_evm_nandflash_devices,
++	.num_sub_devices = ARRAY_SIZE(davinci_evm_nandflash_devices),
++};
++
++static struct platform_device davinci_evm_aemif_device = {
++	.name			= "ti-aemif",
++	.id			= -1,
++	.dev = {
++		.platform_data	= &davinci_evm_aemif_pdata,
++	},
++	.resource		= davinci_evm_aemif_resource,
++	.num_resources		= ARRAY_SIZE(davinci_evm_aemif_resource),
+ };
+ 
+ static u64 davinci_fb_dma_mask = DMA_BIT_MASK(32);
+@@ -795,12 +829,7 @@ static __init void davinci_evm_init(void)
+ 
+ 		/* only one device will be jumpered and detected */
+ 		if (HAS_NAND) {
+-			platform_device_register(&davinci_evm_nandflash_device);
+-
+-			if (davinci_aemif_setup(&davinci_evm_nandflash_device))
+-				pr_warn("%s: Cannot configure AEMIF\n",
+-					__func__);
+-
++			platform_device_register(&davinci_evm_aemif_device);
+ #ifdef CONFIG_I2C
+ 			evm_leds[7].default_trigger = "nand-disk";
+ #endif
+-- 
+2.17.1
