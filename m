@@ -1,104 +1,57 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v9 04/10] firmware: xilinx: Add query data API
-Date: Wed, 20 Jun 2018 10:40:29 -0700
-Message-ID: <1529516435-7315-5-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v10 00/14] Krait clocks + Krait CPUfreq
+To: Thierry Escande <thierry.escande@linaro.org>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+ mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+ andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux@arm.linux.org.uk, ctatlor97@gmail.com
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+ <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <410263b4-9434-ed49-626d-2a14efe350f0@codeaurora.org>
+Date: Thu, 28 Jun 2018 09:59:13 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <a58c2d2c-64d1-7223-dc98-8f749397375d@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Hi Thierry,
 
-Add ZynqMP firmware query data API to query platform
-specific information(clocks, pins) from firmware.
+On 6/27/2018 3:01 PM, Thierry Escande wrote:
+> Hi Sricharan,
+> 
+> On 19/06/2018 15:45, Sricharan R wrote:
+>> Sricharan R (2):
+>>    clk: qcom: Add safe switch hook for krait mux clocks
+>>    dt-bindings: cpufreq: Document operating-points-v2-krait-cpu
+>>
+>> Stephen Boyd (12):
+>>    ARM: Add Krait L2 register accessor functions
+>>    clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+>>    clk: qcom: Add HFPLL driver
+>>    dt-bindings: clock: Document qcom,hfpll
+>>    clk: qcom: Add MSM8960/APQ8064's HFPLLs
+>>    clk: qcom: Add IPQ806X's HFPLLs
+>>    clk: qcom: Add support for Krait clocks
+>>    clk: qcom: Add KPSS ACC/GCC driver
+>>    dt-bindings: arm: Document qcom,kpss-gcc
+>>    clk: qcom: Add Krait clock controller driver
+>>    dt-bindings: clock: Document qcom,krait-cc
+>>    cpufreq: Add module to register cpufreq on Krait CPUs
+> 
+> Tested on apq8064 (db600c).
+> 
+> Tested-By: Thierry Escande <thierry.escande@linaro.org>
+> 
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+  Thanks for testing this !!
+  I Will try to merge the kryo cpu-freq and this one if that looks neat.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 34c5ad5..86d9bb8 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
- 				   arg1, arg2, out);
- }
- 
-+/**
-+ * zynqmp_pm_query_data() - Get query data from firmware
-+ * @qdata:	Variable to the zynqmp_pm_query_data structure
-+ * @out:	Returned output value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				   qdata.arg2, qdata.arg3, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-+	.query_data = zynqmp_pm_query_data,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 2eec6e7..354385d 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -35,6 +35,7 @@
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
-+	PM_QUERY_DATA,
- };
- 
- /* PMU-FW return status codes */
-@@ -48,9 +49,28 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_query_id {
-+	PM_QID_INVALID,
-+};
-+
-+/**
-+ * struct zynqmp_pm_query_data - PM query data structure
-+ * @qid:	query ID
-+ * @arg1:	Argument 1 of query data
-+ * @arg2:	Argument 2 of query data
-+ * @arg3:	Argument 3 of query data
-+ */
-+struct zynqmp_pm_query_data {
-+	u32 qid;
-+	u32 arg1;
-+	u32 arg2;
-+	u32 arg3;
-+};
-+
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
-+	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+Regards,
+ Sricharan
+
 -- 
-2.7.4
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
