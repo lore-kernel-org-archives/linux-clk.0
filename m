@@ -1,144 +1,93 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs56.siol.net ([185.57.226.247]:47878 "EHLO
+Received: from mailoutvs54.siol.net ([185.57.226.245]:41171 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933436AbeFYMFE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Jun 2018 08:05:04 -0400
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v3 07/24] drm/sun4i: Split out code for enumerating endpoints in output port
-Date: Mon, 25 Jun 2018 14:02:47 +0200
-Message-Id: <20180625120304.7543-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180625120304.7543-1-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+        with ESMTP id S932131AbeF1Ewu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 00:52:50 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 15/24] dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+Date: Thu, 28 Jun 2018 06:51:22 +0200
+Message-ID: <1669385.k4L9lni8DF@jernej-laptop>
+In-Reply-To: <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-16-jernej.skrabec@siol.net> <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now, each node has one input port and one output port. However,
-with TCON TOP this is no longer true. It has 3 input and 3 output ports.
+Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
+> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+> > clock parents. It is compatible to other HDMI PHYs, like that found in
+> > R40.
+> > 
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+> > 84fe38dbb900..dc83f21ef188 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > @@ -101,6 +101,7 @@ DWC HDMI PHY
+> > 
+> >  Required properties:
+> >    - compatible: value must be one of:
+> > +    * allwinner,sun50i-a64-hdmi-phy
+> > 
+> >      * allwinner,sun8i-a83t-hdmi-phy
+> >      * allwinner,sun8i-h3-hdmi-phy
+> 
+> Nit: the list is sorted by family first, then SoC name, so it should
+> be the last on the list.
 
-In order to prepare to this situation, split out the code which checks
-all endpoints in input port and adds available components to fifo.
+I went alphabetically, since "5" is before "8"...
 
-This patch doesn't do any functional change.
+Best regards,
+Jernej
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun4i_drv.c | 84 +++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 38 deletions(-)
+> 
+> Otherwise,
+> 
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> >    - reg: base address and size of memory-mapped region
+> > 
+> > @@ -111,8 +112,9 @@ Required properties:
+> >    - resets: phandle to the reset controller driving the PHY
+> >    - reset-names: must be "phy"
+> > 
+> > -H3 HDMI PHY requires additional clock:
+> > 
+> > +H3 and A64 HDMI PHY require additional clocks:
+> >    - pll-0: parent of phy clock
+> > 
+> > +  - pll-1: second possible phy clock parent (A64 only)
+> > 
+> >  TV Encoder
+> >  ----------
+> > 
+> > --
+> > 2.18.0
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index e15fa2389e3f..20193d6f33ba 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -231,12 +231,55 @@ struct endpoint_list {
- 	DECLARE_KFIFO(fifo, struct device_node *, 16);
- };
- 
-+static void sun4i_drv_traverse_endpoints(struct endpoint_list *list,
-+					 struct device_node *node,
-+					 int port_id)
-+{
-+	struct device_node *ep, *remote, *port;
-+
-+	port = of_graph_get_port_by_id(node, port_id);
-+	if (!port) {
-+		DRM_DEBUG_DRIVER("No output to bind on port %d\n", port_id);
-+		return;
-+	}
-+
-+	for_each_available_child_of_node(port, ep) {
-+		remote = of_graph_get_remote_port_parent(ep);
-+		if (!remote) {
-+			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
-+			continue;
-+		}
-+
-+		/*
-+		 * If the node is our TCON, the first port is used for
-+		 * panel or bridges, and will not be part of the
-+		 * component framework.
-+		 */
-+		if (sun4i_drv_node_is_tcon(node)) {
-+			struct of_endpoint endpoint;
-+
-+			if (of_graph_parse_endpoint(ep, &endpoint)) {
-+				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
-+				of_node_put(remote);
-+				continue;
-+			}
-+
-+			if (!endpoint.id) {
-+				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
-+				of_node_put(remote);
-+				continue;
-+			}
-+		}
-+
-+		kfifo_put(&list->fifo, remote);
-+	}
-+}
-+
- static int sun4i_drv_add_endpoints(struct device *dev,
- 				   struct endpoint_list *list,
- 				   struct component_match **match,
- 				   struct device_node *node)
- {
--	struct device_node *port, *ep, *remote;
- 	int count = 0;
- 
- 	/*
-@@ -272,43 +315,8 @@ static int sun4i_drv_add_endpoints(struct device *dev,
- 		count++;
- 	}
- 
--	/* Inputs are listed first, then outputs */
--	port = of_graph_get_port_by_id(node, 1);
--	if (!port) {
--		DRM_DEBUG_DRIVER("No output to bind\n");
--		return count;
--	}
--
--	for_each_available_child_of_node(port, ep) {
--		remote = of_graph_get_remote_port_parent(ep);
--		if (!remote) {
--			DRM_DEBUG_DRIVER("Error retrieving the output node\n");
--			continue;
--		}
--
--		/*
--		 * If the node is our TCON, the first port is used for
--		 * panel or bridges, and will not be part of the
--		 * component framework.
--		 */
--		if (sun4i_drv_node_is_tcon(node)) {
--			struct of_endpoint endpoint;
--
--			if (of_graph_parse_endpoint(ep, &endpoint)) {
--				DRM_DEBUG_DRIVER("Couldn't parse endpoint\n");
--				of_node_put(remote);
--				continue;
--			}
--
--			if (!endpoint.id) {
--				DRM_DEBUG_DRIVER("Endpoint is our panel... skipping\n");
--				of_node_put(remote);
--				continue;
--			}
--		}
--
--		kfifo_put(&list->fifo, remote);
--	}
-+	/* each node has at least one output */
-+	sun4i_drv_traverse_endpoints(list, node, 1);
- 
- 	return count;
- }
--- 
-2.18.0
+
+
 
