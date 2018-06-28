@@ -1,97 +1,260 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 4/4] ARM: dts: fix PMC compatible
-Date: Thu,  7 Jun 2018 10:41:07 +0200
-Message-Id: <20180607084107.4461-5-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-References: <20180607084107.4461-1-alexandre.belloni@bootlin.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: devicetree@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Thu, 28 Jun 2018 10:54:53 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: linux@armlinux.org.uk, sboyd@codeaurora.org,
+        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] clk: clkdev - add managed versions of lookup registrations
+Message-ID: <20180628075453.GA7793@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Make each SoC dtsi use its soc specific PMc compatible string. This solves
-a potential issue on at91sam9261 and at91sam9263 when using suspend to RAM
+Add devm_clk_hw_register_clkdev, devm_clk_register_clkdev and
+devm_clk_release_clkdev as a first styep to clean up drivers which are
+leaking clkdev lookups at driver remove.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- arch/arm/boot/dts/at91sam9261.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9263.dtsi | 2 +-
- arch/arm/boot/dts/at91sam9rl.dtsi  | 2 +-
- arch/arm/boot/dts/sama5d4.dtsi     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sam9261.dtsi
-index 53c63d0a418a..33f09d5ea020 100644
---- a/arch/arm/boot/dts/at91sam9261.dtsi
-+++ b/arch/arm/boot/dts/at91sam9261.dtsi
-@@ -590,7 +590,7 @@
- 			};
+While searching for example on how clk drivers release clkdev at exit
+I found that many of those don't. Simple grep for clkdev under
+drivers/clk suggest that bunch of drivers which call clk_register_clkdev
+or clk_hw_register_clkdev never call clkdev_drop. In order to help
+cleaning this up I decided to add devm versions of clk_register_clkdev
+and clk_hw_register_clkdev. I hope this would allow simply converting
+bunch of calls to clk_register_clkdev and clk_hw_register_clkdev into
+managed versions without building further clean up logic.
+
+Please review this carefully. I have only performed some simple tests
+with my BD71837 driver. And as I have only limited understanding on
+clkdev lookups I may have done mistakes. Thanks!
+
+ drivers/clk/clkdev.c   | 165 +++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/clkdev.h |   8 +++
+ 2 files changed, 147 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 7513411140b6..4752a0004a6c 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -390,7 +390,7 @@ void clkdev_drop(struct clk_lookup *cl)
+ }
+ EXPORT_SYMBOL(clkdev_drop);
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc", "syscon";
-+				compatible = "atmel,at91sam9261-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9263.dtsi b/arch/arm/boot/dts/at91sam9263.dtsi
-index 87fb0660ab5d..af68a86c9973 100644
---- a/arch/arm/boot/dts/at91sam9263.dtsi
-+++ b/arch/arm/boot/dts/at91sam9263.dtsi
-@@ -93,7 +93,7 @@
- 			};
+-static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
++static struct clk_lookup *do_clk_register_clkdev(struct clk_hw *hw,
+ 						const char *con_id,
+ 						const char *dev_id, ...)
+ {
+@@ -404,6 +404,24 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ 	return cl;
+ }
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91rm9200-pmc", "syscon";
-+				compatible = "atmel,at91sam9263-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/at91sam9rl.dtsi b/arch/arm/boot/dts/at91sam9rl.dtsi
-index bd001cca25a4..8fb22030f00b 100644
---- a/arch/arm/boot/dts/at91sam9rl.dtsi
-+++ b/arch/arm/boot/dts/at91sam9rl.dtsi
-@@ -832,7 +832,7 @@
- 			};
++static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
++	const char *con_id, const char *dev_id)
++{
++	struct clk_lookup *cl;
++
++	/*
++	 * Since dev_id can be NULL, and NULL is handled specially, we must
++	 * pass it as either a NULL format string, or with "%s".
++	 */
++	if (dev_id)
++		cl = do_clk_register_clkdev(hw, con_id, "%s",
++					   dev_id);
++	else
++		cl = do_clk_register_clkdev(hw, con_id, NULL);
++
++	return cl;
++}
++
+ /**
+  * clk_register_clkdev - register one clock lookup for a struct clk
+  * @clk: struct clk to associate with all clk_lookups
+@@ -421,22 +439,18 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ 	const char *dev_id)
+ {
+-	struct clk_lookup *cl;
+-
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	int rval = 0;
  
- 			pmc: pmc@fffffc00 {
--				compatible = "atmel,at91sam9g45-pmc", "syscon";
-+				compatible = "atmel,at91sam9rl-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
-diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 0cf9beddd556..92a35a1942b6 100644
---- a/arch/arm/boot/dts/sama5d4.dtsi
-+++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -392,7 +392,7 @@
- 			};
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
+-					   dev_id);
+-	else
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
++	if (IS_ERR(clk)) {
++		rval = PTR_ERR(clk);
++	} else {
++		struct clk_lookup *cl;
  
- 			pmc: pmc@f0018000 {
--				compatible = "atmel,sama5d3-pmc", "syscon";
-+				compatible = "atmel,sama5d4-pmc", "syscon";
- 				reg = <0xf0018000 0x120>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				interrupt-controller;
+-	return cl ? 0 : -ENOMEM;
++		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, dev_id);
++		if (!cl)
++			rval = -ENOMEM;
++	}
++	return rval;
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
+ 
+@@ -456,21 +470,120 @@ EXPORT_SYMBOL(clk_register_clkdev);
+  */
+ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ 	const char *dev_id)
++{
++	int rval = 0;
++
++	if (IS_ERR(hw)) {
++		rval = PTR_ERR(hw);
++	} else {
++		struct clk_lookup *cl;
++
++		cl = __clk_register_clkdev(hw, con_id, dev_id);
++		if (!cl)
++			rval = -ENOMEM;
++	}
++
++	return rval;
++}
++EXPORT_SYMBOL(clk_hw_register_clkdev);
++
++static void devm_clkdev_release(struct device *dev, void *res)
++{
++	clkdev_drop(*(struct clk_lookup **)res);
++}
++
++static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
++{
++	struct clk_lookup **l = res;
++
++	if (!l || !*l) {
++		WARN_ON(!l || !*l);
++		return 0;
++	}
++
++	return *l == data;
++}
++
++/**
++ * devm_clk_release_clkdev - Resource managed clkdev lookup release
++ * @dev: device this lookup is bound
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev or
++ * with devm_clk_register_clkdev. Normally this function will not need to be
++ * called and the resource management code will ensure that the resource is
++ * freed.
++ */
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id)
+ {
+ 	struct clk_lookup *cl;
++	int rval;
++
++	cl = clk_find(dev_id, con_id);
++	WARN_ON(!cl);
++	rval = devres_release(dev, devm_clkdev_release,
++			      &devm_clk_match_clkdev, cl);
++	WARN_ON(rval);
++}
++EXPORT_SYMBOL(devm_clk_release_clkdev);
++
++/**
++ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
++ * @dev: device this lookup is bound
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
++ */
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id)
++{
++	struct clk_lookup **cl = NULL;
+ 
+ 	if (IS_ERR(hw))
+ 		return PTR_ERR(hw);
++	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
++	if (cl) {
++		*cl = __clk_register_clkdev(hw, con_id, dev_id);
++		if (*cl)
++			devres_add(dev, cl);
++		else
++			devres_free(cl);
++	}
++	return (cl && *cl) ? 0 : -ENOMEM;
++}
++EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
+ 
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
+-	else
+-		cl = __clk_register_clkdev(hw, con_id, NULL);
+-
+-	return cl ? 0 : -ENOMEM;
++/**
++ * devm_clk_register_clkdev - managed clk lookup registration for a struct clk
++ * @dev: device this lookup is bound
++ * @clk: struct clk to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clks
++ * from a previous clk_register() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_register().
++ */
++int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
++			     const char *con_id, const char *dev_id)
++{
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++	return devm_clk_hw_register_clkdev(dev, __clk_get_hw(clk), con_id,
++					   dev_id);
+ }
+-EXPORT_SYMBOL(clk_hw_register_clkdev);
++EXPORT_SYMBOL(devm_clk_register_clkdev);
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index 4890ff033220..27ebeae8ae26 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -52,4 +52,12 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+ int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
++int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
++			     const char *con_id, const char *dev_id);
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id);
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id);
++
++
+ #endif
 -- 
-2.17.1
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+2.14.3
