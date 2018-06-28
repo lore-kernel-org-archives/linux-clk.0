@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 1/7] dt-bindings: add compatible string for the A64 DE2 CCU
-Date: Fri, 22 Jun 2018 20:26:09 +0800
-Message-Id: <20180622122615.55836-2-icenowy@aosc.io>
-In-Reply-To: <20180622122615.55836-1-icenowy@aosc.io>
-References: <20180622122615.55836-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 03/13] clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
+Date: Thu, 28 Jun 2018 11:57:38 +0200
+Message-Id: <20180628095748.4462-4-brgl@bgdev.pl>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-The Allwinner A64 SoC has a DE2 CCU like the one in the DE2 of Allwinner
-H5 SoC.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a compatible string for it.
+We want to be able to get the clock both from the board file by its
+con_id and from the aemif driver by dev_id.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
-No changes since v1.
+ drivers/clk/davinci/psc-dm644x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index f2fa87c4765c..e94582e8b8a9 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -6,6 +6,7 @@ Required properties :
- 		- "allwinner,sun8i-a83t-de2-clk"
- 		- "allwinner,sun8i-h3-de2-clk"
- 		- "allwinner,sun8i-v3s-de2-clk"
-+		- "allwinner,sun50i-a64-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
- 
- - reg: Must contain the registers base address and length
+diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
+index fc0230e3a3d6..0cea6e0bd5f0 100644
+--- a/drivers/clk/davinci/psc-dm644x.c
++++ b/drivers/clk/davinci/psc-dm644x.c
+@@ -21,7 +21,8 @@ LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
+ 					"fck",		"davinci_mdio.0");
+ LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
+ LPSC_CLKDEV1(ide_clkdev,		NULL,		"palm_bk3710");
+-LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
++LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
++					NULL,		"ti-aemif");
+ LPSC_CLKDEV1(mmcsd_clkdev,		NULL,		"dm6441-mmc.0");
+ LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
+ LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
 -- 
 2.17.1
