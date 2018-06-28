@@ -1,85 +1,33 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh@kernel.org,
-	viresh.kumar@linaro.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	rjw@rjwysocki.net,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux@arm.linux.org.uk,
-	thierry.escande@linaro.org,
-	ctatlor97@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v10 11/14] dt-bindings: clock: Document qcom,krait-cc
-Date: Tue, 19 Jun 2018 19:15:22 +0530
-Message-Id: <1529415925-28915-12-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20180625120304.7543-21-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-21-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 10:30:47 +0800
+Message-ID: <CAGb2v64dC6xdVHCTnVODCubAYD=WQF+zVkaLXWTnrCoYtYuzag@mail.gmail.com>
+Subject: Re: [PATCH v3 20/24] drm/sun4i: Add support for A64 HDMI PHY
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> PHY is the same as in H3, except it can switch between two clock
+> parents.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- [v10] updated to include clocks and clock-names property newly
-
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..030ba60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,34 @@
-+Krait Clock Controller
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the clock parents of hfpll, secondary muxes.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
-+		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
-+		#clock-cells = <1>;
-+	};
--- 
-1.9.1
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
