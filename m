@@ -1,115 +1,98 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v8 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
-Date: Thu, 14 Jun 2018 11:27:32 -0700
-Message-ID: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528973829-25493-4-git-send-email-michel.pollet@bp.renesas.com>
+ <20180628120031.eq2yuysz4re2olwn@verge.net.au> <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+In-Reply-To: <20180628121609.jf4dp4azeowte7pb@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 28 Jun 2018 14:45:41 +0200
+Message-ID: <CAMuHMdWqowQjZ8Wsdj6ne-+UG8-OY_j6pi3R9JPP6L7ZgRhvBQ@mail.gmail.com>
+Subject: Re: [PATCH v9 3/5] ARM: dts: Renesas R9A06G032 base device tree file
+To: Simon Horman <horms@verge.net.au>
+Cc: Michel Pollet <michel.pollet@bp.renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Phil Edworthy <phil.edworthy@renesas.com>, Michel Pollet <buserror+upstream@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-v8:
- - corrected typo in clk Kconfig
- 
-v7:
- - Removed xilinx specific clock debugfs API support
- - Added reviewed-by tags for FW and clock bindings
- - Updated clock node name to clock-controller
+Hi Simon,
 
-v6:
- - Broke patch series to have base FW driver and Clock driver user
- - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10230759/
-	https://patchwork.kernel.org/patch/10250047/
+On Thu, Jun 28, 2018 at 2:16 PM Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Jun 28, 2018 at 02:00:32PM +0200, Simon Horman wrote:
+> > On Thu, Jun 14, 2018 at 11:56:32AM +0100, Michel Pollet wrote:
+> > > This adds the Renesas R9A06G032 bare bone support.
+> > >
+> > > This currently only handles the SYSCTRL block note,
+> > > generic parts (gic, architected timer) and a UART.
+> > >
+> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > Thanks, applied with the following appended:
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9d5eeff51b5f..4c85ac04872d 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1969,6 +1969,7 @@ S:      Supported
+> >  F:   arch/arm/boot/dts/emev2*
+> >  F:   arch/arm/boot/dts/r7s*
+> >  F:   arch/arm/boot/dts/r8a*
+> > +F:   arch/arm/boot/dts/r9a*
+> >  F:   arch/arm/boot/dts/sh*
+> >  F:   arch/arm/configs/shmobile_defconfig
+> >  F:   arch/arm/include/debug/renesas-scif.S
+>
+> One more update.
+>
+> dt-bindings/clock/r9a06g032-sysctrl.h is not present in v4.18-rc1,
+> current base of the renesas tree and likely base for the rest of the v4.19
+> development cycle.
+>
+> Accordingly I have removed the include of that header and replaced
+> the use of symbols it defines with numeric constants. The result is below.
 
-v5:
- - Added ATF version check support
- - Updated some functions to be static 
- - Minor function name corrections
+Oh right. Thanks!
 
-v4:
- - Changed clock setrate/getrate API prototype to support 64 bit rate
- - Defined macros for get_node_status return values
- - Moved DT node as a child of firmware
- - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
- - Minor changes to incorporate other review comments from v3 patch series
+> Please:
+> 1) Check that this is correct and
 
-v3:
- - added some fixes to firmware-ggs.c
- - updated pinmux get/set function argument names to specify function id instead of node id
- - added new pinctrl query macros
- - incorporated review comments from v2 patch series
+Looks good to me, except for the bogus "fixes" and "SoB" below
+(bad squash?)
 
-v2:
- - change SPDX-License-Identifier license text style
- - split patch into multiple patches
- - Updated copyrights
- - Added ABI documentation
- - incorporated logical review comments from previuos patch. Discussed below:
-	https://patchwork.kernel.org/patch/10150665/
+> From: Michel Pollet <michel.pollet@bp.renesas.com>
+> Subject: [PATCH] ARM: dts: Renesas R9A06G032 base device tree file
+>
+> This adds the Renesas R9A06G032 bare bone support.
+>
+> This currently only handles the SYSCTRL block note,
+> generic parts (gic, architected timer) and a UART.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [simon: updated MAINTAINERS file
+> [simon: do not use r9a06g032-sysctrl.h as it is not in the renesas tree yet]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> fixes
+  ^^^^^
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+  ^^^^
 
+Gr{oetje,eeting}s,
 
-Jolly Shah (1):
-  drivers: clk: Add ZynqMP clock driver
-
-Rajan Vaja (9):
-  dt-bindings: firmware: Add bindings for ZynqMP firmware
-  firmware: xilinx: Add Zynqmp firmware driver
-  firmware: xilinx: Add zynqmp IOCTL API for device control
-  firmware: xilinx: Add query data API
-  firmware: xilinx: Add clock APIs
-  firmware: xilinx: Add debugfs interface
-  firmware: xilinx: Add debugfs for IOCTL API
-  firmware: xilinx: Add debugfs for query data API
-  dt-bindings: clock: Add bindings for ZynqMP clock driver
-
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/zynqmp/Kconfig                         |  11 +
- drivers/clk/zynqmp/Makefile                        |   4 +
- drivers/clk/zynqmp/clk-gate-zynqmp.c               | 146 ++++
- drivers/clk/zynqmp/clk-mux-zynqmp.c                | 150 +++++
- drivers/clk/zynqmp/clk-zynqmp.h                    |  53 ++
- drivers/clk/zynqmp/clkc.c                          | 737 +++++++++++++++++++++
- drivers/clk/zynqmp/divider.c                       | 219 ++++++
- drivers/clk/zynqmp/pll.c                           | 345 ++++++++++
- drivers/firmware/Kconfig                           |   1 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/xilinx/Kconfig                    |  23 +
- drivers/firmware/xilinx/Makefile                   |   5 +
- drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
- drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
- drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
- include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
- include/linux/firmware/xlnx-zynqmp.h               | 115 ++++
- 21 files changed, 2844 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
- create mode 100644 drivers/clk/zynqmp/Kconfig
- create mode 100644 drivers/clk/zynqmp/Makefile
- create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
- create mode 100644 drivers/clk/zynqmp/clkc.c
- create mode 100644 drivers/clk/zynqmp/divider.c
- create mode 100644 drivers/clk/zynqmp/pll.c
- create mode 100644 drivers/firmware/xilinx/Kconfig
- create mode 100644 drivers/firmware/xilinx/Makefile
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
- create mode 100644 drivers/firmware/xilinx/zynqmp.c
- create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
- create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+                        Geert
 
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
