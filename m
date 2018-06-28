@@ -1,42 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <e1bf52a721005b2017434acc54ec5ddc152d6fe4.1528990947.git.mchehab+samsung@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-hwmon@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        alsa-devel@alsa-project.org, linux-fsdevel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-References: <cover.1528990947.git.mchehab+samsung@kernel.org>
- <e1bf52a721005b2017434acc54ec5ddc152d6fe4.1528990947.git.mchehab+samsung@kernel.org>
-Message-ID: <152909896651.16708.13481357388390831455@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 16/27] docs: Fix more broken references
-Date: Fri, 15 Jun 2018 14:42:46 -0700
+In-Reply-To: <20180625120304.7543-18-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-18-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 10:24:02 +0800
+Message-ID: <CAGb2v66Ew7bshwiObQsbep9CCNeVeQFzunYrDcQsw+F+7rffHQ@mail.gmail.com>
+Subject: Re: [PATCH v3 17/24] drm/sun4i: Don't change clock bits in DW HDMI
+ PHY driver
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mauro Carvalho Chehab (2018-06-14 09:09:01)
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
->         ./scripts/documentation-file-ref-check --fix
-> =
+On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> DW HDMI PHY driver and PHY clock driver share same registers. Make sure
+> that DW HDMI PHY setup code doesn't change any clock related bits.
+> During initialization, set PHY PLL parent bit to 0.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-> Manually checked that produced results are valid.
-> =
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  .../devicetree/bindings/clock/st/st,clkgen.txt |  8 ++++----
->  .../devicetree/bindings/clock/ti/gate.txt      |  2 +-
->  .../devicetree/bindings/clock/ti/interface.txt |  2 +-
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+and maybe a fixes tag?
