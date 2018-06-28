@@ -1,116 +1,107 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:23818 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750905AbeFGKai (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Jun 2018 06:30:38 -0400
-Subject: Re: [PATCH v4 1/7] dt-bindings: clk: at91: add an I2S mux clock
-To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Brown <broonie@kernel.org>
-CC: <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        <Cristian.Birsan@microchip.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-2-git-send-email-codrin.ciubotariu@microchip.com>
- <20180531005827.GA17203@rob-hp-laptop>
- <4f2e6e6a-df3a-b645-093c-b4467b3aa843@microchip.com>
- <CAL_JsqJ=T0p17hHg6=obtydt7T-yrAeOr7C2XAEnDFQ-c0b5XQ@mail.gmail.com>
- <152778070837.144038.4555982304713569160@swboyd.mtv.corp.google.com>
- <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Message-ID: <18f6871e-794d-3ea2-487e-32399a8b89b4@microchip.com>
-Date: Thu, 7 Jun 2018 13:30:14 +0300
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37093 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933361AbeF1HA4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 03:00:56 -0400
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJu6=ORfutZ5tAyNp2q2rH6P+fgJMRKw750RyFy=ptjPw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <1669385.k4L9lni8DF@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-16-jernej.skrabec@siol.net> <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
+ <1669385.k4L9lni8DF@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 15:00:32 +0800
+Message-ID: <CAGb2v67iRZZTQuTH8inwmPC6S0BRecFgPEpKrxgThQbsYaZgmQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 15/24] dt-bindings: display:
+ sun4i-drm: Add description of A64 HDMI PHY
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31.05.2018 18:56, Rob Herring wrote:
-> On Thu, May 31, 2018 at 10:31 AM, Stephen Boyd <sboyd@kernel.org> wrote:
->> Quoting Rob Herring (2018-05-31 07:20:57)
->>> On Thu, May 31, 2018 at 5:25 AM, Codrin Ciubotariu
->>> <codrin.ciubotariu@microchip.com> wrote:
->>>> On 31.05.2018 03:58, Rob Herring wrote:
->>>>>
->>>>> On Fri, May 25, 2018 at 03:34:22PM +0300, Codrin Ciubotariu wrote:
->>>>>>
->>>>>> The I2S mux clock can be used to select the I2S input clock. The
->>>>>> available parents are the peripheral and the generated clocks.
->>>>>>
->>>>>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->>>>>> ---
->>>>>>    .../devicetree/bindings/clock/at91-clock.txt       | 34
->>>>>> ++++++++++++++++++++++
->>>>>>    1 file changed, 34 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> index 51c259a..1c46b3c 100644
->>>>>> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> +++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
->>>>>> @@ -90,6 +90,8 @@ Required properties:
->>>>>>          "atmel,sama5d2-clk-audio-pll-pmc"
->>>>>>                  at91 audio pll output on AUDIOPLLCLK that feeds the PMC
->>>>>>                  and can be used by peripheral clock or generic clock
->>>>>> +       "atmel,sama5d2-clk-i2s-mux":
->>>>>> +               at91 I2S clock source selection
->>>>>
->>>>>
->>>>> Is this boolean or takes some values. If latter, what are valid values?
->>>>
->>>>
->>>> This is the compatible string of the clock driver.
->>>
->>> Ah, now I remember. AT91 uses fine grained clock nodes in DT. Is there
->>> still a plan to fix this?
+On Thu, Jun 28, 2018 at 12:51 PM, Jernej Škrabec
+<jernej.skrabec@siol.net> wrote:
+> Dne četrtek, 28. junij 2018 ob 04:19:55 CEST je Chen-Yu Tsai napisal(a):
+>> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+>> > clock parents. It is compatible to other HDMI PHYs, like that found in
+>> > R40.
+>> >
+>> > Acked-by: Rob Herring <robh@kernel.org>
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+>> >  1 file changed, 3 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt index
+>> > 84fe38dbb900..dc83f21ef188 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > @@ -101,6 +101,7 @@ DWC HDMI PHY
+>> >
+>> >  Required properties:
+>> >    - compatible: value must be one of:
+>> > +    * allwinner,sun50i-a64-hdmi-phy
+>> >
+>> >      * allwinner,sun8i-a83t-hdmi-phy
+>> >      * allwinner,sun8i-h3-hdmi-phy
 >>
->> I'm also interested in a plan.
->>
->>>>>
->>>>>> +               compatible = "atmel,sama5d2-clk-i2s-mux";
->>>>>> +               #address-cells = <1>;
->>>>>> +               #size-cells = <0>;
->>>>>
->>>>>
->>>>> How do you address this block? My guess is you don't because it is just
->>>>> part of some other block and you are just creating this node to
->>>>> instantiate a driver. Just make the node for the actual h/w block a
->>>>> clock provider and define the clock ids (0 and 1).
->>>>
->>>>
->>>> This block is not addressed, but its children are. The register we access in
->>>> this driver is not part of other block. It's a SFR register, accessed
->>>> through syscon and it has nothing to do with the I2S IP (see SAMA5D2 DS,
->>>> page 1256, fig. 44-1: I2SC Block Diagram) that is the consumer of this
->>>> clock. Adding a clock-id property in the I2S node would be just like v3 of
->>>> this series, with the difference that we use clock-id instead of alias id to
->>>> set the clock parent, which is not how you suggested back then.
->>>
->>> I wasn't suggesting a clock-id property, but a clock specifier (i.e.
->>> make #clock-cells 1).
->>>
->>> But AT91 clocks are all a mess, so I don't know what to tell you.
->>>
->>
->> If #clock-cells of 1 works then we should go with that. It's still weird
->> that we need random nodes to add more clks, but I guess that's how it's
->> going to be for each at91 clk driver until it changes to be one big
->> provider node.
-> 
-> Seems to me that clock additions could use a new binding and we start
-> with a new driver that handles these few clocks initially. But I
-> haven't looked whether both can coexist.
+>> Nit: the list is sorted by family first, then SoC name, so it should
+>> be the last on the list.
+>
+> I went alphabetically, since "5" is before "8"...
 
-Mark already applied to broonie/sound.git the I2S bindings that have a 
-phandle to this clock. If I am to change #clock-cells to 1, I will have 
-to change the bindings to include the clock-id.
-Which approach should I take now?
+I see. I think version sort applies here, given that sun50i is newer
+than sun8i.
 
-Thanks and best regards,
-Codrin
+ChenYu
+
+> Best regards,
+> Jernej
+>
+>>
+>> Otherwise,
+>>
+>> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>>
+>> >    - reg: base address and size of memory-mapped region
+>> >
+>> > @@ -111,8 +112,9 @@ Required properties:
+>> >    - resets: phandle to the reset controller driving the PHY
+>> >    - reset-names: must be "phy"
+>> >
+>> > -H3 HDMI PHY requires additional clock:
+>> >
+>> > +H3 and A64 HDMI PHY require additional clocks:
+>> >    - pll-0: parent of phy clock
+>> >
+>> > +  - pll-1: second possible phy clock parent (A64 only)
+>> >
+>> >  TV Encoder
+>> >  ----------
+>> >
+>> > --
+>> > 2.18.0
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
