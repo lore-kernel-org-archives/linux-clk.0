@@ -1,87 +1,131 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-In-Reply-To: <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
-References: <20180521115947.wqrnv2hczate65lz@flea> <CAK7LNASgetmPKKS8AhYXqSSEFCi+q0ASZ68M0SECJT5EbAU4XQ@mail.gmail.com>
- <CAGb2v67DOgnW=gesPxgmxZJWieZkzjPJm5mt7eW15HgUP3_SZg@mail.gmail.com> <152879040155.16708.9862482085365718831@swboyd.mtv.corp.google.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 12 Jun 2018 16:38:55 +0800
-Message-ID: <CAGb2v66MkLLqL=Ei5kMb_CzpgUANpkNN3E52mSHKrZ0L7rXAog@mail.gmail.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.18
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Maxime Ripard <maxime.ripard@bootlin.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 08/13] ARM: davinci: dm365-evm: use the ti-aemif soc driver
+Date: Thu, 28 Jun 2018 11:57:43 +0200
+Message-Id: <20180628095748.4462-9-brgl@bgdev.pl>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jun 12, 2018 at 4:00 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Chen-Yu Tsai (2018-06-11 00:53:41)
->> Hi,
->>
->> On Mon, Jun 11, 2018 at 10:00 AM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->> > Hi Maxime,
->> >
->> >
->> > 2018-05-21 20:59 GMT+09:00 Maxime Ripard <maxime.ripard@bootlin.com>:
->> >> Hi Mike, Stephen,
->> >>
->> >> Please merge the following changes for the next merge window, thanks!
->> >>
->> >> Maxime
->> >>
->> >> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
->> >>
->> >>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
->> >>
->> >> are available in the Git repository at:
->> >>
->> >>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-4.18
->> >>
->> >> for you to fetch changes up to 17de4c857b1f74b90967f7e7fd5ff81be61dc044:
->> >>
->> >>   clk: sunxi-ng: r40: export a regmap to access the GMAC register (2018-05-17 14:02:07 +0800)
->> >>
->> >> ----------------------------------------------------------------
->> >> Allwinner clock changes for 4.18
->> >>
->> >> Not a lot of changes for this release, but two quite important features
->> >> were added: the H6 PRCM clock support, and the needed changes to the R40
->> >> clock driver to allow for the EMAC to operate.
->> >>
->> >> ----------------------------------------------------------------
->> >> Icenowy Zheng (3):
->> >>       clk: sunxi-ng: add support for H6 PRCM CCU
->> >>       clk: sunxi-ng: r40: rewrite init code to a platform driver
->> >>       clk: sunxi-ng: r40: export a regmap to access the GMAC register
->> >>
->> >
->> >
->> >
->> > Why was my patch "clk: sunxi-ng: replace lib-y with obj-y"
->> > not included in the pull request?
->> >
->> >
->> > You said "I've picked it up"
->> > https://patchwork.kernel.org/patch/10348031/
->>
->> It looks like it was accidentally dropped after a rebase.
->> Not quite sure what happened there. Maxime?
->>
->
-> I can directly pick and send as fix for clk-fixes targeting rc2.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The patch can still be found in the sunxi/for-next branch of the
-sunxi repo on kernel.org:
+We now support board files in the aemif driver. Register a platform
+device instead of using the handcrafted API in dm365-evm.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/commit/?h=sunxi/for-next&id=d4a1496286b0c29fcace4e10c0047cca7cc79b25
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/mach-davinci/board-dm365-evm.c | 59 +++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 13 deletions(-)
 
-Or the original on patchwork:
-
-https://patchwork.kernel.org/patch/10348027/
-
-Thanks
-ChenYu
+diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
+index 307e88d99dd3..8143756ff38b 100644
+--- a/arch/arm/mach-davinci/board-dm365-evm.c
++++ b/arch/arm/mach-davinci/board-dm365-evm.c
+@@ -28,6 +28,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/eeprom.h>
+ #include <linux/v4l2-dv-timings.h>
++#include <linux/platform_data/ti-aemif.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -159,14 +160,47 @@ static struct resource davinci_nand_resources[] = {
+ 	},
+ };
+ 
+-static struct platform_device davinci_nand_device = {
+-	.name			= "davinci_nand",
+-	.id			= 0,
+-	.num_resources		= ARRAY_SIZE(davinci_nand_resources),
+-	.resource		= davinci_nand_resources,
+-	.dev			= {
+-		.platform_data	= &davinci_nand_data,
++static struct platform_device davinci_aemif_devices[] = {
++	{
++		.name		= "davinci_nand",
++		.id		= 0,
++		.num_resources	= ARRAY_SIZE(davinci_nand_resources),
++		.resource	= davinci_nand_resources,
++		.dev		= {
++			.platform_data	= &davinci_nand_data,
++		},
++	}
++};
++
++static struct resource davinci_aemif_resources[] = {
++	{
++		.start		= DM365_ASYNC_EMIF_CONTROL_BASE,
++		.end		= DM365_ASYNC_EMIF_CONTROL_BASE + SZ_4K - 1,
++		.flags		= IORESOURCE_MEM,
++	},
++};
++
++static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
++	{
++		.cs		= 1,
++	},
++};
++
++static struct aemif_platform_data davinci_aemif_pdata = {
++	.abus_data		= da850_evm_aemif_abus_data,
++	.num_abus_data		= ARRAY_SIZE(da850_evm_aemif_abus_data),
++	.sub_devices		= davinci_aemif_devices,
++	.num_sub_devices	= ARRAY_SIZE(davinci_aemif_devices),
++};
++
++static struct platform_device davinci_aemif_device = {
++	.name			= "ti-aemif",
++	.id			= -1,
++	.dev = {
++		.platform_data	= &davinci_aemif_pdata,
+ 	},
++	.resource		= davinci_aemif_resources,
++	.num_resources		= ARRAY_SIZE(davinci_aemif_resources),
+ };
+ 
+ static struct at24_platform_data eeprom_info = {
+@@ -537,10 +571,6 @@ static void __init evm_init_i2c(void)
+ 	i2c_register_board_info(1, i2c_info, ARRAY_SIZE(i2c_info));
+ }
+ 
+-static struct platform_device *dm365_evm_nand_devices[] __initdata = {
+-	&davinci_nand_device,
+-};
+-
+ static inline int have_leds(void)
+ {
+ #ifdef CONFIG_LEDS_CLASS
+@@ -628,6 +658,7 @@ static void __init evm_init_cpld(void)
+ 	u8 mux, resets;
+ 	const char *label;
+ 	struct clk *aemif_clk;
++	int rc;
+ 
+ 	/* Make sure we can configure the CPLD through CS1.  Then
+ 	 * leave it on for later access to MMC and LED registers.
+@@ -660,8 +691,10 @@ static void __init evm_init_cpld(void)
+ 		/* external keypad mux */
+ 		mux |= BIT(7);
+ 
+-		platform_add_devices(dm365_evm_nand_devices,
+-				ARRAY_SIZE(dm365_evm_nand_devices));
++		rc = platform_device_register(&davinci_aemif_device);
++		if (rc)
++			pr_warn("%s(): error registering the aemif device: %d\n",
++				__func__, rc);
+ 	} else {
+ 		/* no OneNAND support yet */
+ 	}
+-- 
+2.17.1
