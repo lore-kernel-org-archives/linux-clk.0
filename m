@@ -1,85 +1,349 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-Date: Fri, 1 Jun 2018 13:51:05 +0300
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v4 2/6] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180601105105.GD5150@localhost.localdomain>
-References: <cover.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <3b05ca98a671a762013c312f8b70543402ee7556.1527669443.git.matti.vaittinen@fi.rohmeurope.com>
- <20180531030129.GA16122@rob-hp-laptop>
- <20180531071717.GG13528@localhost.localdomain>
- <20180531102315.GA5150@localhost.localdomain>
- <CAL_Jsq+33G7zMEDOUXHQijxqqbvqykxZENLe1-52ECkXwo2o4g@mail.gmail.com>
- <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <152777867392.144038.18188452389972834689@swboyd.mtv.corp.google.com>
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 1/2] clk: qcom: Add support for RCG to register for DFS
+Date: Thu, 28 Jun 2018 17:17:30 +0530
+Message-Id: <1530186451-24648-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
+References: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, May 31, 2018 at 07:57:53AM -0700, Stephen Boyd wrote:
-> Quoting Rob Herring (2018-05-31 07:07:24)
-> > On Thu, May 31, 2018 at 5:23 AM, Matti Vaittinen
-> > <mazziesaccount@gmail.com> wrote:
-> > > On Thu, May 31, 2018 at 10:17:17AM +0300, Matti Vaittinen wrote:
-> > >> Hello Rob,
-> > >>
-> > >> Thanks for the review!
-> > >>
-> > >> On Wed, May 30, 2018 at 10:01:29PM -0500, Rob Herring wrote:
-> > >> > On Wed, May 30, 2018 at 11:42:03AM +0300, Matti Vaittinen wrote:
-> > >> > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > >> > > + - interrupts            : The interrupt line the device is connected to.
-> > >> > > + - interrupt-controller  : Marks the device node as an interrupt controller.
-> > >> >
-> > >> > What sub blocks have interrupts?
-> > >>
-> > >> The PMIC can generate interrupts from events which cause it to reset.
-> > >> Eg, irq from watchdog line change, power button pushes, reset request
-> > >> via register interface etc. I don't know any generic handling for these
-> > >> interrupts. In "normal" use-case this PMIC is powering the processor
-> > >> where driver is running and I do not see reasonable handling because
-> > >> power-reset is going to follow the irq.
-> > >>
-> > >
-> > > Oh, but when reading this I understand that the interrupt-controller
-> > > property should at least be optional.
-> > 
-> > I don't think it should. The h/w either has an interrupt controller or
-> > it doesn't. My concern is you added it but nothing uses it which tells
-> > me your binding is incomplete. I'd rather see complete bindings even
-> > if you don't have drivers. For example, as-is, there's not really any
-> > need for the clocks child node. You can just make the parent a clock
-> > provider. But we need a complete picture of the h/w to make that
-> > determination.
-> > 
-> 
-> I don't see a reason to have the clk subnode either.
+Dynamic Frequency switch is a feature of clock controller by which request
+from peripherals allows automatic switching frequency of input clock.
+There are various performance levels associated to a root clock generator.
+Register the root clock generators(RCG) to switch to use the dfs clock ops
+in the cases where DFS is enabled.
+The DFS clock ops would at runtime read the clock perf level registers to
+identify the frequencies supported and update the frequency table
+accordingly.
 
-After some pondering - do you mean I could:
-1. remove clk binfing document and clk node.
-2. add clock-output-names etc to pmic node (and describe them in pmic
-node binding document)
-3. use parent DT node in clk driver and do something like:
-	if (parent->of_node)
-		ret = of_clk_add_hw_provider(parent->of_node, of_clk_hw_simple_get,
-					     hw);
-4. remove the clkdev
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |   5 ++
+ drivers/clk/qcom/clk-rcg2.c | 214 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c   |  14 +--
+ drivers/clk/qcom/common.h   |  16 +---
+ 4 files changed, 224 insertions(+), 25 deletions(-)
 
-I will cook new set of patches with all suggested changes but it may be I don't
-get it ready for posting untill next week.
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b209a2f..05e3584 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -5,6 +5,7 @@
+ #define __QCOM_CLK_RCG_H__
 
-Br,
-	Matti Vaittinen
+ #include <linux/clk-provider.h>
++#include <linux/platform_device.h>
+ #include "clk-regmap.h"
+
+ struct freq_tbl {
+@@ -160,5 +161,9 @@ struct clk_rcg2 {
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_dfs_ops;
++
++extern int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
++			     struct clk_rcg2 **rcgs, int num_clks);
+
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 52208d4..25b0560 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -12,6 +12,7 @@
+ #include <linux/delay.h>
+ #include <linux/regmap.h>
+ #include <linux/math64.h>
++#include <linux/slab.h>
+
+ #include <asm/div64.h>
+
+@@ -40,6 +41,14 @@
+ #define N_REG			0xc
+ #define D_REG			0x10
+
++/* Dynamic Frequency Scaling */
++#define MAX_PERF_LEVEL		16
++#define SE_CMD_DFSR_OFFSET	0x14
++#define SE_CMD_DFS_EN		BIT(0)
++#define SE_PERF_DFSR(level)	(0x1c + 0x4 * (level))
++#define SE_PERF_M_DFSR(level)	(0x5c + 0x4 * (level))
++#define SE_PERF_N_DFSR(level)	(0x9c + 0x4 * (level))
++
+ enum freq_policy {
+ 	FLOOR,
+ 	CEIL,
+@@ -929,3 +938,208 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++
++/* Common APIs to be used for DFS based RCGR */
++static int clk_rcg2_calculate_m_and_n(struct clk_hw *hw, u32 *mode,
++		unsigned long *prate, int level, struct freq_tbl *f)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct clk_hw *phw;
++	u32 val, mask, cfg, m_off, n_off, offset;
++	int i, ret, num_parents;
++
++	offset = SE_PERF_DFSR(level);
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
++	if (ret)
++		return ret;
++
++	mask = BIT(rcg->hid_width) - 1;
++	f->pre_div = cfg & mask ? (cfg & mask) : 1;
++
++	*mode = cfg & CFG_MODE_MASK;
++	*mode >>= CFG_MODE_SHIFT;
++
++	cfg &= CFG_SRC_SEL_MASK;
++	cfg >>= CFG_SRC_SEL_SHIFT;
++
++	num_parents = clk_hw_get_num_parents(hw);
++	for (i = 0; i < num_parents; i++) {
++		if (cfg == rcg->parent_map[i].cfg) {
++			f->src = rcg->parent_map[i].src;
++			phw = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
++			*prate = clk_hw_get_rate(phw);
++		}
++	}
++
++	if (!*mode)
++		return 0;
++
++	/* Calculate M & N values */
++	m_off = SE_PERF_M_DFSR(level);
++	n_off = SE_PERF_N_DFSR(level);
++
++	mask = BIT(rcg->mnd_width) - 1;
++	ret =  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off, &val);
++	if (ret) {
++		pr_err("Failed to read M offset register\n");
++		return ret;
++	}
++	val &= mask;
++	f->m  = val;
++
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off, &val);
++	if (ret) {
++		pr_err("Failed to read N offset register\n");
++		return ret;
++	}
++	/* val ~(N-M) */
++	val = ~val;
++	val &= mask;
++	val += f->m;
++	f->n = val;
++
++	return 0;
++}
++
++static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
++{
++	struct freq_tbl *dfs_freq_tbl;
++	int i, j, ret = 0;
++	unsigned long calc_freq, prate = 0;
++	u32 mode = 0;
++
++	dfs_freq_tbl = kcalloc(MAX_PERF_LEVEL, sizeof(struct freq_tbl),
++				GFP_KERNEL);
++	if (!dfs_freq_tbl)
++		return -ENOMEM;
++
++	for (i = 0; i < MAX_PERF_LEVEL; i++) {
++		ret = clk_rcg2_calculate_m_and_n(&rcg->clkr.hw, &mode, &prate,
++						 i, &dfs_freq_tbl[i]);
++		if (ret) {
++			kfree(dfs_freq_tbl);
++			return ret;
++		}
++
++		calc_freq = calc_rate(prate, dfs_freq_tbl[i].m,
++					dfs_freq_tbl[i].n, mode,
++					dfs_freq_tbl[i].pre_div);
++
++		/* Check for duplicate frequencies to end table */
++		for (j = 0; j  < i; j++) {
++			if (dfs_freq_tbl[j].freq == calc_freq)
++				goto done;
++		}
++
++		dfs_freq_tbl[i].freq = calc_freq;
++	}
++done:
++	rcg->freq_tbl = dfs_freq_tbl;
++
++	return 0;
++}
++
++static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	int ret;
++
++	if (rcg->freq_tbl == NULL) {
++		ret = clk_rcg2_dfs_populate_freq_table(rcg);
++		if (ret) {
++			pr_err("Failed to update DFS tables\n");
++			return ret;
++		}
++	}
++
++	return clk_rcg2_shared_ops.determine_rate(hw, req);
++}
++
++static int clk_rcg2_dfs_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long prate)
++{
++	return 0;
++}
++
++static unsigned long
++clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	return 0;
++}
++
++const struct clk_ops clk_rcg2_dfs_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.recalc_rate = clk_rcg2_dfs_recalc_rate,
++	.determine_rate = clk_rcg2_dfs_determine_rate,
++	.set_rate = clk_rcg2_dfs_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_dfs_ops);
++
++static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct device *dev)
++{
++	struct regmap *regmap;
++	struct clk_init_data *init;
++	struct clk_rate_request req = { };
++	u32 val;
++	int ret;
++
++	regmap = dev_get_regmap(dev, NULL);
++	if (!regmap)
++		return -EINVAL;
++
++	init = kzalloc(sizeof(struct clk_init_data), GFP_KERNEL);
++	if (!init)
++		return -ENOMEM;
++
++	init->name = rcg->clkr.hw.init->name;
++	init->ops = &clk_rcg2_shared_ops;
++	init->flags = rcg->clkr.hw.init->flags;
++	init->parent_names = rcg->clkr.hw.init->parent_names;
++	init->num_parents = rcg->clkr.hw.init->num_parents;
++	rcg->clkr.hw.init = init;
++
++	ret = regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
++			  &val);
++	if (ret) {
++		dev_err(dev, "Failed to read DFS enable register\n");
++		return -EINVAL;
++	}
++
++	if (!(val & SE_CMD_DFS_EN))
++		return 0;
++
++	init->ops = &clk_rcg2_dfs_ops;
++	rcg->clkr.hw.init = init;
++	rcg->freq_tbl = NULL;
++
++	/*
++	 * In case the clocks are registered earlier than determine the dfs
++	 * rates.
++	 */
++	if (__clk_lookup(rcg->clkr.hw.init->name))
++		return clk_rcg2_dfs_determine_rate(&rcg->clkr.hw, &req);
++
++	return 0;
++}
++
++int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
++			    struct clk_rcg2 **rcgs, int num_clks)
++{
++	int i, ret = 0;
++
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_rcg2_enable_dfs(rcgs[i], &pdev->dev);
++		if (ret) {
++			const char *name = rcgs[i]->clkr.hw.init->name;
++
++			dev_err(&pdev->dev,
++				"%s DFS frequencies update failed\n", name);
++			break;
++		}
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 39ce64c..958d27c 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -1,15 +1,5 @@
+-/*
+- * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2013-2014, The Linux Foundation. All rights reserved. */
+
+ #include <linux/export.h>
+ #include <linux/module.h>
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 00196ee..52d2dce 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -1,15 +1,6 @@
+-/*
+- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- */
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2014, 2018, The Linux Foundation. All rights reserved. */
++
+ #ifndef __QCOM_CLK_COMMON_H__
+ #define __QCOM_CLK_COMMON_H__
+
+@@ -68,5 +59,4 @@ extern int qcom_cc_really_probe(struct platform_device *pdev,
+ 				struct regmap *regmap);
+ extern int qcom_cc_probe(struct platform_device *pdev,
+ 			 const struct qcom_cc_desc *desc);
+-
+ #endif
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
