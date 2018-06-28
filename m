@@ -1,81 +1,47 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45420 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752491AbeF1CW7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:22:59 -0400
 MIME-Version: 1.0
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Srinath Mannam <srinath.mannam@broadcom.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com>
-Message-ID: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
-Subject: Re: ACPI support in common clock framework
-Date: Fri, 15 Jun 2018 10:43:11 -0700
+In-Reply-To: <20180625120304.7543-17-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-17-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 10:22:36 +0800
+Message-ID: <CAGb2v65En4RbVdRu7c6MJUztVhC36dWr0kaO9bqc9PtuXAcsww@mail.gmail.com>
+Subject: Re: [PATCH v3 16/24] drm/sun4i: Enable DW HDMI PHY clock
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
-> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > +Cc: Rafael, ACPI ML
-> >
-> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
-> > <srinath.mannam@broadcom.com> wrote:
-> >> Hi Michael, Stephen,
-> >>
-> >> We are adding ACPI support in our Linux based platform.
-> >> At present our clock hierarchy using common clock framework through DT=
-S.
-> >> Now we required ACPI support in common clock framework to upgrade our =
-platform.
-> >>
-> >> For example, clk_get API called in many drivers to get clock device is
-> >> tightly coupled with DT framework.
-> >>
-> >> Please let us know, if anybody in Open Source community have plans to
-> >> add ACPI support for common clock framework.
-> =
+On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Current DW HDMI PHY code never prepares and enables PHY clock after it is
+> created. It's just used as it is. This may work in some cases, but it's
+> clearly wrong. Fix it by adding proper calls to enable/disable PHY
+> clock.
+>
+> Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-> There are no plans for doing that AFAICS.
-> =
+So why does it work on the H3? Because there's only one PLL that the whole
+display pipeline uses?
 
-> Moreover, it generally would not be consistent with ACPI power
-> management defined by the specification.
+We should probably tag this for stable. So,
 
-This matches my understanding.
-
-> =
-
-> >> If not please suggest us alternative method to use common clock
-> >> framework in ACPI use case.
-> =
-
-> The problem with using the clock framework on systems with ACPI is
-> that, in general, the clock manipulation is expected to be carried out
-> by ACPI power management and therefore it is "owned" by AML.
-> Currently, there are no defined methods for synchronizing the AML's
-> use of clocks for power management with what the OS may do with them
-> directly.
-> =
-
-> In theory, that can be worked around to some extent by representing
-> clocks as power resources in ASL (even though the provider information
-> would be missing then) and manipulating those power resources directly
-> from the OS.  I'm not aware of anyone doing that successfully,
-> however.
-> =
-
-> For simple power management it should be sufficient to let drivers
-> rely on the ACPI PM domain which should happen automatically in the
-> majority of cases anyway.
-> =
-
-
-Is this for clk_enable/disable? What about clk_set_rate() or
-clk_set_phase()? Is ACPI's AML taking care of that?
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
