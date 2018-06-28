@@ -1,69 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
-Cc: airlied@linux.ie, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 19/27] drm/sun4i: Enable DW HDMI PHY clock
-Date: Tue, 12 Jun 2018 22:00:28 +0200
-Message-Id: <20180612200036.21483-20-jernej.skrabec@siol.net>
-In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35587 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932090AbeF1CUS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:20:18 -0400
+MIME-Version: 1.0
+In-Reply-To: <20180625120304.7543-16-jernej.skrabec@siol.net>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-16-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 28 Jun 2018 10:19:55 +0800
+Message-ID: <CAGb2v66ytOrjMOK067URknens34jvYxJ1XoYmGMi4Ji0LYt9sQ@mail.gmail.com>
+Subject: Re: [PATCH v3 15/24] dt-bindings: display: sun4i-drm: Add description
+ of A64 HDMI PHY
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Current DW HDMI PHY code never prepares and enables PHY clock after it is
-created. It's just used as it is. This may work in some cases, but it's
-clearly wrong. Fix it by adding proper calls to enable/disable PHY
-clock.
+On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> A64 HDMI PHY is similar to H3 HDMI PHY except it has two possible PLL
+> clock parents. It is compatible to other HDMI PHYs, like that found in
+> R40.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 84fe38dbb900..dc83f21ef188 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -101,6 +101,7 @@ DWC HDMI PHY
+>
+>  Required properties:
+>    - compatible: value must be one of:
+> +    * allwinner,sun50i-a64-hdmi-phy
+>      * allwinner,sun8i-a83t-hdmi-phy
+>      * allwinner,sun8i-h3-hdmi-phy
 
-Fixes: 4f86e81748fe ("drm/sun4i: Add support for H3 HDMI PHY variant")
+Nit: the list is sorted by family first, then SoC name, so it should
+be the last on the list.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Otherwise,
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 5a52fc489a9d..966688f04741 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -477,13 +477,15 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 			dev_err(dev, "Couldn't create the PHY clock\n");
- 			goto err_put_clk_pll0;
- 		}
-+
-+		clk_prepare_enable(phy->clk_phy);
- 	}
- 
- 	phy->rst_phy = of_reset_control_get_shared(node, "phy");
- 	if (IS_ERR(phy->rst_phy)) {
- 		dev_err(dev, "Could not get phy reset control\n");
- 		ret = PTR_ERR(phy->rst_phy);
--		goto err_put_clk_pll0;
-+		goto err_disable_clk_phy;
- 	}
- 
- 	ret = reset_control_deassert(phy->rst_phy);
-@@ -514,6 +516,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node)
- 	reset_control_assert(phy->rst_phy);
- err_put_rst_phy:
- 	reset_control_put(phy->rst_phy);
-+err_disable_clk_phy:
-+	clk_disable_unprepare(phy->clk_phy);
- err_put_clk_pll0:
- 	if (phy->variant->has_phy_clk)
- 		clk_put(phy->clk_pll0);
-@@ -531,6 +535,7 @@ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi)
- 
- 	clk_disable_unprepare(phy->clk_mod);
- 	clk_disable_unprepare(phy->clk_bus);
-+	clk_disable_unprepare(phy->clk_phy);
- 
- 	reset_control_assert(phy->rst_phy);
- 
--- 
-2.17.1
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+
+>    - reg: base address and size of memory-mapped region
+> @@ -111,8 +112,9 @@ Required properties:
+>    - resets: phandle to the reset controller driving the PHY
+>    - reset-names: must be "phy"
+>
+> -H3 HDMI PHY requires additional clock:
+> +H3 and A64 HDMI PHY require additional clocks:
+>    - pll-0: parent of phy clock
+> +  - pll-1: second possible phy clock parent (A64 only)
+>
+>  TV Encoder
+>  ----------
+> --
+> 2.18.0
+>
