@@ -1,102 +1,142 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: imx6ul: remove clks_init_on array
-Date: Sun,  3 Jun 2018 11:00:47 +0800
-Message-Id: <1527994847-2363-4-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs12.siol.net ([185.57.226.203]:38710 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932131AbeF1EuS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 00:50:18 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
+Date: Thu, 28 Jun 2018 06:48:50 +0200
+Message-ID: <1812731.FQOhD8MfmX@jernej-laptop>
+In-Reply-To: <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-11-jernej.skrabec@siol.net> <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
+Dne četrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai napisal(a):
+> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Current "old" method to find engine worked pretty well for DE2. However,
+> > it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
+> > TOP has multiple input ports, but current engine search algorithm
+> > expects only one.
+> > 
+> > This can be fixed by first looking for output port id and selecting
+> > matching input by subtracting 1 for the next round. This work even if
+> > there is only one input and output.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
+> >  1 file changed, 18 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..264bcc43da11
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device
+> > *dev,
+> > 
+> >   */
+> >  
+> >  static struct sunxi_engine *
+> >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+> > 
+> > -                               struct device_node *node)
+> > +                               struct device_node *node,
+> > +                               u32 port_id)
+> > 
+> >  {
+> >  
+> >         struct device_node *port, *ep, *remote;
+> >         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
+> > 
+> > +       u32 reg = 0;
+> > 
+> > -       port = of_graph_get_port_by_id(node, 0);
+> > +       port = of_graph_get_port_by_id(node, port_id);
+> > 
+> >         if (!port)
+> >         
+> >                 return ERR_PTR(-EINVAL);
+> > 
+> > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv
+> > *drv,
+> > 
+> >                 if (remote == engine->node)
+> >                 
+> >                         goto out_put_remote;
+> > 
+> > +       /*
+> > +        * According to device tree binding input ports have even id
+> > +        * number and output ports have odd id. Since component with
+> > +        * more than one input and one output (TCON TOP) exits, correct
+> > +        * remote input id has to be calculated by subtracting 1 from
+> > +        * remote output id. If this for some reason can't be done, 0
+> > +        * is used as input port id.
+> > +        */
+> 
+> You need to call
+> 
+>     of_node_put(port);
+> 
+> to drop the reference to the original port.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-	This patch is based on "[V2,1/2] clk: imx6ul: add GPIO clock gates".
- drivers/clk/imx/clk-imx6ul.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+Thanks for noticing it. I guess I should send fix patch, since patches from 
+drm-misc-next can't be dropped.
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 3ea2d97..d3f7f4d 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -79,12 +79,6 @@ static const char *cko_sels[] = { "cko1", "cko2", };
- static struct clk *clks[IMX6UL_CLK_END];
- static struct clk_onecell_data clk_data;
- 
--static int const clks_init_on[] __initconst = {
--	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
--	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
--	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
--};
--
- static const struct clk_div_table clk_enet_ref_table[] = {
- 	{ .val = 0, .div = 20, },
- 	{ .val = 1, .div = 10, },
-@@ -129,7 +123,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
--	int i;
- 
- 	clks[IMX6UL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
- 
-@@ -336,8 +329,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_AHB]		= imx_clk_busy_divider("ahb",	    "periph",	base +  0x14, 10, 3,  base + 0x48, 1);
- 
- 	/* CCGR0 */
--	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2("aips_tz1",	"ahb",		base + 0x68,	0);
--	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2("aips_tz2",	"ahb",		base + 0x68,	2);
-+	clks[IMX6UL_CLK_AIPSTZ1]	= imx_clk_gate2_flags("aips_tz1", "ahb", base + 0x68, 0, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AIPSTZ2]	= imx_clk_gate2_flags("aips_tz2", "ahb", base + 0x68, 2, CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_APBHDMA]	= imx_clk_gate2("apbh_dma",	"bch_podf",	base + 0x68,	4);
- 	clks[IMX6UL_CLK_ASRC_IPG]	= imx_clk_gate2_shared("asrc_ipg",	"ahb",	base + 0x68,	6, &share_count_asrc);
- 	clks[IMX6UL_CLK_ASRC_MEM]	= imx_clk_gate2_shared("asrc_mem",	"ahb",	base + 0x68,	6, &share_count_asrc);
-@@ -412,9 +405,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPIO4]		= imx_clk_gate2("gpio4",	"ipg",		base + 0x74,	12);
- 	clks[IMX6UL_CLK_QSPI]		= imx_clk_gate2("qspi1",	"qspi1_podf",	base + 0x74,	14);
- 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
--	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20);
--	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2("mmdc_p0_ipg",	"ipg",		base + 0x74,	24);
--	clks[IMX6UL_CLK_AXI]		= imx_clk_gate("axi",	"axi_podf",	base + 0x74,	28);
-+	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg",	"ipg",		base + 0x74,	24, CLK_IS_CRITICAL);
-+	clks[IMX6UL_CLK_AXI]		= imx_clk_gate_flags("axi",	"axi_podf",	base + 0x74,	28, CLK_IS_CRITICAL);
- 
- 	/* CCGR4 */
- 	clks[IMX6UL_CLK_PER_BCH]	= imx_clk_gate2("per_bch",	"bch_podf",	base + 0x78,	12);
-@@ -428,7 +421,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6UL_CLK_GPMI_APB]	= imx_clk_gate2("gpmi_apb",	"bch_podf",	base + 0x78,	30);
- 
- 	/* CCGR5 */
--	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2("rom",		"ahb",		base + 0x7c,	0);
-+	clks[IMX6UL_CLK_ROM]		= imx_clk_gate2_flags("rom",	"ahb",		base + 0x7c,	0,	CLK_IS_CRITICAL);
- 	clks[IMX6UL_CLK_SDMA]		= imx_clk_gate2("sdma",		"ahb",		base + 0x7c,	6);
- 	clks[IMX6UL_CLK_KPP]		= imx_clk_gate2("kpp",		"ipg",		base + 0x7c,	8);
- 	clks[IMX6UL_CLK_WDOG2]		= imx_clk_gate2("wdog2",	"ipg",		base + 0x7c,	10);
-@@ -502,10 +495,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(clks[IMX6UL_CLK_ENET2_REF], 50000000);
- 	clk_set_rate(clks[IMX6UL_CLK_CSI], 24000000);
- 
--	/* keep all the clks on just for bringup */
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clks[clks_init_on[i]]);
--
- 	if (clk_on_imx6ull())
- 		clk_prepare_enable(clks[IMX6UL_CLK_AIPSTZ3]);
- 
--- 
-2.7.4
+Best regards,
+Jernej
+
+> Otherwise,
+> 
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> > +       port = of_graph_get_remote_port(ep);
+> > +       if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
+> > +               reg -= 1;
+> > +
+> > 
+> >         /* keep looking through upstream ports */
+> > 
+> > -       engine = sun4i_tcon_find_engine_traverse(drv, remote);
+> > +       engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
+> > 
+> >  out_put_remote:
+> >         of_node_put(remote);
+> > 
+> > @@ -950,7 +964,7 @@ static struct sunxi_engine
+> > *sun4i_tcon_find_engine(struct sun4i_drv *drv,> 
+> >         /* Fallback to old method by traversing input endpoints */
+> >         of_node_put(port);
+> > 
+> > -       return sun4i_tcon_find_engine_traverse(drv, node);
+> > +       return sun4i_tcon_find_engine_traverse(drv, node, 0);
+> > 
+> >  }
+> >  
+> >  static int sun4i_tcon_bind(struct device *dev, struct device *master,
+> > 
+> > --
+> > 2.18.0
+
+
+
+
