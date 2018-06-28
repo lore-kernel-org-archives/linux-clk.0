@@ -1,58 +1,76 @@
-Return-Path: <pmladek@suse.com>
-Date: Fri, 1 Jun 2018 17:19:05 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, baijiaju1990@gmail.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 0/4] lib/vsprintf: Remove atomic-unsafe support for
- printk format %pCr
-Message-ID: <20180601151905.yilldc6vbachfw4k@pathway.suse.cz>
-References: <1527845302-12159-1-git-send-email-geert+renesas@glider.be>
- <CA+55aFxHHSRnDbbNGq6SwNAwEt0EhX15n_pNqon3MzGYJgMJmA@mail.gmail.com>
- <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180601114738.kdoggkha2yosjgbv@pathway.suse.cz>
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	sboyd@kernel.org
+Cc: pn@denx.de,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	manivannan.sadhasivam@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	Saravanan Sekar <sravanhome@gmail.com>
+Subject: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock bindings
+Date: Thu, 28 Jun 2018 21:18:05 +0200
+Message-Id: <20180628191805.3722-4-sravanhome@gmail.com>
+In-Reply-To: <20180628191805.3722-1-sravanhome@gmail.com>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri 2018-06-01 13:47:38, Petr Mladek wrote:
-> On Fri 2018-06-01 06:00:47, Linus Torvalds wrote:
-> > On Fri, Jun 1, 2018 at 4:29 AM Geert Uytterhoeven
-> > <geert+renesas@glider.be> wrote:
-> > >
-> > > This patch series:
-> > >   - Changes all existing users of "%pCr" to print the result of
-> > >     clk_get_rate() directly, which is safe as they all do this in task
-> > >     context only,
-> > >   - Removes support for the "%pCr" printk format.
-> > 
-> > Looks good to me.
-> > 
-> > What tree will this go through? The normal printk one? Just checking
-> > that this doesn't end up falling through the cracks because nobody
-> > knows who would take it...
-> 
-> I will take it via printk.git. There already is bunch of vsprintf
-> changes for-4.18.
+Modify clock bindings common Actions Semi Soc family S700/S900.
 
-It is in printk.git, branch for-4.18-vsprintf-pcr-removal now.
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
 
-Also I have added Cc: stable@vger.kernel.org into the commit messages.
-
-Best Regards,
-Petr
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+similarity index 71%
+rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+index 93e4fb827cd6..8dc7edb4d198 100644
+--- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
++++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+@@ -1,12 +1,14 @@
+-* Actions S900 Clock Management Unit (CMU)
++* Actions S900/S700 Clock Management Unit (CMU)
+ 
+-The Actions S900 clock management unit generates and supplies clock to various
+-controllers within the SoC. The clock binding described here is applicable to
+-S900 SoC.
++The Actions S900/S700 clock management unit generates and supplies clock to
++various controllers within the SoC. The clock binding described here is
++applicable to S900/S700 SoC.
+ 
+ Required Properties:
+ 
+-- compatible: should be "actions,s900-cmu"
++- compatible: should be one of this
++	"actions,s900-cmu"
++	"actions,s700-cmu"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - clocks: Reference to the parent clocks ("hosc", "losc")
+@@ -15,9 +17,9 @@ Required Properties:
+ Each clock is assigned an identifier, and client nodes can use this identifier
+ to specify the clock which they consume.
+ 
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+-tree sources.
++All available clocks are defined as preprocessor macros in corresponding
++dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
++device tree sources.
+ 
+ External clocks:
+ 
+-- 
+2.18.0
