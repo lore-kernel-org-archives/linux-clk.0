@@ -1,78 +1,26 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/4] clk: imx6sl: remove clks_init_on array
-Date: Mon,  4 Jun 2018 09:06:44 +0800
-Message-Id: <1528074406-11735-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
-References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
+ kernel@pengutronix.de, mark.rutland@arm.com, matteo.lisi@engicam.com,
+ michael@amarulasolutions.com, mturquette@baylibre.com, robh+dt@kernel.org,
+ shawnguo@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Linux-imx@nxp.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <153029777187.143105.15648614335130166075@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 1/2] clk: imx6ul: add GPIO clock gates
+Date: Fri, 29 Jun 2018 11:42:51 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Clock framework will enable those clocks registered
-with CLK_IS_CRITICAL flag, so no need to have
-clks_init_on array during clock initialization now.
+Quoting Anson Huang (2018-06-02 18:44:04)
+> i.MX6UL has GPIO clock gates in CCM CCGR,
+> add them into clock tree for clock management.
+> =
 
-ARM clock is busy divider type which has the
-CLK_IS_CRITICAL flag set by default when registered.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-IPG clock has no clock gate and its parent AHB clock
-is busy divider type, so no need to add CLK_IS_CRITICAL
-flag for IPG clock.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V1:
-	improve commit log to explain why no need to add CLK_IS_CRITICAL flag for ARM and IPG clocks.
- drivers/clk/imx/clk-imx6sl.c | 12 ------------
- 1 file changed, 12 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 66b1dd1..eb6bcbf 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -104,10 +104,6 @@ static struct clk_onecell_data clk_data;
- static void __iomem *ccm_base;
- static void __iomem *anatop_base;
- 
--static const u32 clks_init_on[] __initconst = {
--	IMX6SL_CLK_IPG, IMX6SL_CLK_ARM, IMX6SL_CLK_MMDC_ROOT,
--};
--
- /*
-  * ERR005311 CCM: After exit from WAIT mode, unwanted interrupt(s) taken
-  *           during WAIT mode entry process could cause cache memory
-@@ -195,7 +191,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- {
- 	struct device_node *np;
- 	void __iomem *base;
--	int i;
- 	int ret;
- 
- 	clks[IMX6SL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
-@@ -426,13 +421,6 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 		pr_warn("%s: failed to set AHB clock rate %d!\n",
- 			__func__, ret);
- 
--	/*
--	 * Make sure those always on clocks are enabled to maintain the correct
--	 * usecount and enabling/disabling of parent PLLs.
--	 */
--	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
--		clk_prepare_enable(clks[clks_init_on[i]]);
--
- 	if (IS_ENABLED(CONFIG_USB_MXS_PHY)) {
- 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY1_GATE]);
- 		clk_prepare_enable(clks[IMX6SL_CLK_USBPHY2_GATE]);
--- 
-2.7.4
+Applied to clk-next
