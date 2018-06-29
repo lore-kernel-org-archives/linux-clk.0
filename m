@@ -1,46 +1,62 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 03/13] clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-Date: Tue, 26 Jun 2018 11:25:27 +0200
-Message-Id: <20180626092537.6737-4-brgl@bgdev.pl>
-In-Reply-To: <20180626092537.6737-1-brgl@bgdev.pl>
-References: <20180626092537.6737-1-brgl@bgdev.pl>
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to
+ register
+To: Mikko Perttunen <mperttunen@nvidia.com>, <pdeschrijver@nvidia.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <thierry.reding@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <swarren@nvidia.com>, <vbhadram@nvidia.com>
+References: <20180629143814.17950-1-mperttunen@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <f378f345-02db-f3fd-4c95-b1a2e8ecf3f5@nvidia.com>
+Date: Fri, 29 Jun 2018 15:41:45 +0100
+MIME-Version: 1.0
+In-Reply-To: <20180629143814.17950-1-mperttunen@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We want to be able to get the clock both from the board file by its
-con_id and from the aemif driver by dev_id.
+On 29/06/18 15:38, Mikko Perttunen wrote:
+> When registering clocks, we just skip any that fail to register
+> (leaving a NULL hole in the clock table). However, our of_xlate
+> function still tries to dereference each entry while looking for
+> the clock with the requested id, causing a crash if any clocks
+> failed to register. Add a check to of_xlate to skip any NULL
+> clocks.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-bpmp.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+> index a896692b74ec..01dada561c10 100644
+> --- a/drivers/clk/tegra/clk-bpmp.c
+> +++ b/drivers/clk/tegra/clk-bpmp.c
+> @@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
+>  	unsigned int id = clkspec->args[0], i;
+>  	struct tegra_bpmp *bpmp = data;
+>  
+> -	for (i = 0; i < bpmp->num_clocks; i++)
+> -		if (bpmp->clocks[i]->id == id)
+> -			return &bpmp->clocks[i]->hw;
+> +	for (i = 0; i < bpmp->num_clocks; i++) {
+> +		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
+> +
+> +		if (!clk)
+> +			continue;
+> +
+> +		if (clk->id == id)
+> +			return &clk->hw;
+> +	}
+>  
+>  	return NULL;
+>  }
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clk/davinci/psc-dm644x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/drivers/clk/davinci/psc-dm644x.c b/drivers/clk/davinci/psc-dm644x.c
-index fc0230e3a3d6..0cea6e0bd5f0 100644
---- a/drivers/clk/davinci/psc-dm644x.c
-+++ b/drivers/clk/davinci/psc-dm644x.c
-@@ -21,7 +21,8 @@ LPSC_CLKDEV2(emac_clkdev,		NULL,		"davinci_emac.1",
- 					"fck",		"davinci_mdio.0");
- LPSC_CLKDEV1(usb_clkdev,		"usb",		NULL);
- LPSC_CLKDEV1(ide_clkdev,		NULL,		"palm_bk3710");
--LPSC_CLKDEV1(aemif_clkdev,		"aemif",	NULL);
-+LPSC_CLKDEV2(aemif_clkdev,		"aemif",	NULL,
-+					NULL,		"ti-aemif");
- LPSC_CLKDEV1(mmcsd_clkdev,		NULL,		"dm6441-mmc.0");
- LPSC_CLKDEV1(asp0_clkdev,		NULL,		"davinci-mcbsp");
- LPSC_CLKDEV1(i2c_clkdev,		NULL,		"i2c_davinci.1");
+Cheers!
+Jon
+
 -- 
-2.17.1
+nvpublic
