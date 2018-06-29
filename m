@@ -1,116 +1,134 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 11 Jun 2018 18:05:19 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Make vde a child of pll_c3
-Message-ID: <20180611160519.GF31977@ulmo>
-References: <20180611082037.31796-1-thierry.reding@gmail.com>
- <5479310.ZEnOGiWBp7@dimapc>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>, Mike Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,  Andrew Lunn
+ <andrew@lunn.ch>,  Jason Cooper <jason@lakedaemon.net>,  Hua Jing
+ <jinghua@marvell.com>,  Antoine Tenart <antoine.tenart@bootlin.com>,
+  stable@vger.kernel.org,  Maxime Chevallier
+ <maxime.chevallier@bootlin.com>,  Nadav Haklai <nadavh@marvell.com>,  Ken
+ Ma <make@marvell.com>,  Victor Gu <xigu@marvell.com>,  Neta Zur
+ Hershkovits <neta@marvell.com>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  =?utf-8?Q?Miqu=C3=A8l?= Raynal
+ <miquel.raynal@bootlin.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson
+ Ding <dingwei@marvell.com>,  linux-arm-kernel@lists.infradead.org,
+  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+References: <20180619123446.694-1-gregory.clement@bootlin.com>
+	<20180619123446.694-2-gregory.clement@bootlin.com>
+Date: Fri, 29 Jun 2018 16:44:02 +0200
+In-Reply-To: <20180619123446.694-2-gregory.clement@bootlin.com> (Gregory
+	CLEMENT's message of "Tue, 19 Jun 2018 14:34:45 +0200")
+Message-ID: <87tvpl4pql.fsf@bootlin.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TU+u6i6jrDPzmlWF"
-In-Reply-To: <5479310.ZEnOGiWBp7@dimapc>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
+ 
+ On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
---TU+u6i6jrDPzmlWF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> respectively) to L0 frequency (1.2 Ghz) requires a significant amount
+> of time to let VDD stabilize to the appropriate voltage. This amount of
+> time is large enough that it cannot be covered by the hardware
+> countdown register. Due to this, the CPU might start operating at L0
+> before the voltage is stabilized, leading to CPU stalls.
+>
+> To work around this problem, we prevent switching directly from the
+> L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+> frequency in-between. The sequence therefore becomes:
+>
+> 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> 2. Sleep 20ms for stabling VDD voltage
+> 3. Then switch from L1(600MHZ) to L0(1200Mhz).
 
-On Mon, Jun 11, 2018 at 05:17:31PM +0300, Dmitry Osipenko wrote:
-> On Monday, 11 June 2018 11:20:37 MSK Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The current default is to leave the VDE clock's parent at the default,
-> > which is clk_m. However, that is not a configuration that will allow the
-> > VDE to function. Reparent it to pll_c3 instead to make sure the hardware
-> > can actually decode video content.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra124.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/tegra/clk-tegra124.c
-> > b/drivers/clk/tegra/clk-tegra124.c index f5048f82c0b9..b6cf28ca2ed2 100=
-644
-> > --- a/drivers/clk/tegra/clk-tegra124.c
-> > +++ b/drivers/clk/tegra/clk-tegra124.c
-> > @@ -1267,7 +1267,7 @@ static struct tegra_clk_init_table common_init_ta=
-ble[]
-> > __initdata =3D { { TEGRA124_CLK_I2S2, TEGRA124_CLK_PLL_A_OUT0, 11289600=
-, 0 },
-> >  	{ TEGRA124_CLK_I2S3, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-> >  	{ TEGRA124_CLK_I2S4, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
-> > -	{ TEGRA124_CLK_VDE, TEGRA124_CLK_CLK_MAX, 600000000, 0 },
-> > +	{ TEGRA124_CLK_VDE, TEGRA124_CLK_PLL_C3, 600000000, 0 },
-> >  	{ TEGRA124_CLK_HOST1X, TEGRA124_CLK_PLL_P, 136000000, 1 },
-> >  	{ TEGRA124_CLK_DSIALP, TEGRA124_CLK_PLL_P, 68000000, 0 },
-> >  	{ TEGRA124_CLK_DSIBLP, TEGRA124_CLK_PLL_P, 68000000, 0 },
->=20
-> If clk_m isn't a valid configuration, why VDE could select it? At least T=
-RM=20
-> lists clk_m as a valid source and clk_m is running on a safe 120 MHz, VDE=
- HW=20
-> should work fine. Sounds like a clock driver bug to me.
+Do you have any comment on this fix?
 
-I didn't say the configuration was invalid, I just said that it didn't
-work. clk_m runs at 12 MHz on the system that I was testing this on (and
-I think 12 MHz is the standard clk_m frequency for anything up to but
-not including Tegra210), and that is either much too slow or for some
-other reason causes VDE to malfunction. Also, I don't think "safe" in
-this case means that VDE should always work properly with it. The only
-things "safe" means is that the VDE can be accessed with that clock and
-frequency.
+Gregory
 
-The bottom line is that with the VDE parent set to clk_m I keep getting
-BSEV timeouts with no bytes from the bitstream getting consumed. Setting
-the parent to pll_c3 makes everything work just fine.
+>
+> It is based on the work done by Ken Ma <make@marvell.com>
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 2089dc33ea0e ("clk: mvebu: armada-37xx-periph: add DVFS support for cpu clocks")
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+> index 6860bd5a37c5..44e4e27eddad 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -35,6 +35,7 @@
+>  #define CLK_SEL		0x10
+>  #define CLK_DIS		0x14
+>  
+> +#define  ARMADA_37XX_DVFS_LOAD_1 1
+>  #define LOAD_LEVEL_NR	4
+>  
+>  #define ARMADA_37XX_NB_L0L1	0x18
+> @@ -507,6 +508,40 @@ static long clk_pm_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return -EINVAL;
+>  }
+>  
+> +/*
+> + * Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> + * respectively) to L0 frequency (1.2 Ghz) requires a significant
+> + * amount of time to let VDD stabilize to the appropriate
+> + * voltage. This amount of time is large enough that it cannot be
+> + * covered by the hardware countdown register. Due to this, the CPU
+> + * might start operating at L0 before the voltage is stabilized,
+> + * leading to CPU stalls.
+> + *
+> + * To work around this problem, we prevent switching directly from the
+> + * L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+> + * frequency in-between. The sequence therefore becomes:
+> + * 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> + * 2. Sleep 20ms for stabling VDD voltage
+> + * 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+> + */
+> +static void clk_pm_cpu_set_rate_wa(unsigned long rate, struct regmap *base)
+> +{
+> +	unsigned int cur_level;
+> +
+> +	if (rate != 1200 * 1000 * 1000)
+> +		return;
+> +
+> +	regmap_read(base, ARMADA_37XX_NB_CPU_LOAD, &cur_level);
+> +	cur_level &= ARMADA_37XX_NB_CPU_LOAD_MASK;
+> +	if (cur_level <= ARMADA_37XX_DVFS_LOAD_1)
+> +		return;
+> +
+> +	regmap_update_bits(base, ARMADA_37XX_NB_CPU_LOAD,
+> +			   ARMADA_37XX_NB_CPU_LOAD_MASK,
+> +			   ARMADA_37XX_DVFS_LOAD_1);
+> +	msleep(20);
+> +}
+> +
+>  static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			       unsigned long parent_rate)
+>  {
+> @@ -537,6 +572,9 @@ static int clk_pm_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			 */
+>  			reg = ARMADA_37XX_NB_CPU_LOAD;
+>  			mask = ARMADA_37XX_NB_CPU_LOAD_MASK;
+> +
+> +			clk_pm_cpu_set_rate_wa(rate, base);
+> +
+>  			regmap_update_bits(base, reg, mask, load_level);
+>  
+>  			return rate;
+> -- 
+> 2.17.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-> Seems VDE clock on should be ~366 MHz according to the T40/T124 TRM. See=
-=20
-> "5.3.8 PLLC, PLLC2, PLLC3, and PLLC4" of the T124 TRM.
-
-pll_c3 is automatically set to 300 MHz on boot. I haven't found any
-place where we hard-code it, so I'm not exactly sure why it's being set
-to that value.
-
-Peter, any ideas on where this default frequency of 300 MHz for pll_c3
-comes from?
-
-> Would be nice if you could adjust the VDE clock rate / parent-clock on al=
-l=20
-> Tegra's, i.e. explicitly set the parent clock and the rate to 300-400 MHz.
-
-=46rom what I can tell they should all be running at valid frequencies by
-default, except that on Tegra124 the parent is wrong.
-
-Thierry
-
---TU+u6i6jrDPzmlWF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlsenb0ACgkQ3SOs138+
-s6GheBAAhMth6v70Ljyf9VFOLgVg+gFVOPZVGlWkfq8HxdTMoR6m2AFq2GdlKO14
-Cv44TqYpW1sFgcGn0f1ADT7y4QfnPvQ6wasSEVyj5AWW5P9iAewaXTXKE5iQwfG/
-aQUGje7tIyD75SKgYzpXE8Y0K2HQ7o7uvqeIKahTpKwSOlE987WUV6wlxbT1iZPH
-mzwijchtupFCelDKzZlltmb2vWtz6rGzVB0WLWoz+mKz9T1ZJALVd8xKcAoPmxWm
-J+CJe5jMVFrRoWDk2pVKyaiNbmElSry75iLQDTBURU5I2x0yeWRfS4S2YZMGKQUG
-w8O0G/IWZ8bnKo+DgsKylvdEvSD3OuWttqRu4owf1ENQwx4cO8nsbrNNZyfrORsu
-gPBsrINIG+T8oOZFM+aFlnr/HggaEWKIujJCNe9XS8sqHa3VlTvZqJLcDeBdr9D7
-8gn3Izn/kTEKWfYTiEvAM0F+feuNO0d6ogKFiaat57fOVMtaGbfqK+Z+q5B3IXxT
-oLfWmRQMGFnGSe1WiEli7rlZ/V1J/Gq4QYPuQ5NOnkG8hhD/CIsCRourSLJWijQB
-seIVLvyiD0x4OeWpF4mWEpDBrBe3r5VUBVm9JXX0ym9O6EpJcEfLyWASZTGi6KwT
-3bXh/b1sL8rxQhfXP3bxUlDQUsC6eAl0VsIsvQ9izelB3EzlKtY=
-=jRdF
------END PGP SIGNATURE-----
-
---TU+u6i6jrDPzmlWF--
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
