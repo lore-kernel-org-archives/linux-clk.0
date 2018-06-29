@@ -1,57 +1,44 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:56836 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932528AbeFUILM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Jun 2018 04:11:12 -0400
-From: Keerthy <j-keerthy@ti.com>
-To: <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v2 0/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Thu, 21 Jun 2018 13:40:16 +0530
-Message-ID: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+Received: from mail.kernel.org ([198.145.29.99]:34226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966434AbeF2S0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Jun 2018 14:26:38 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Fabio Estevam <festevam@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1527948122-32092-1-git-send-email-festevam@gmail.com>
+Cc: michael@amarulasolutions.com, stefan.wahren@i2se.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, anson.huang@nxp.com, stefan@agner.ch,
+        Fabio Estevam <fabio.estevam@nxp.com>
+References: <1527948122-32092-1-git-send-email-festevam@gmail.com>
+Message-ID: <153029679730.143105.4116951376524374351@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: imx6ul: Do not change the clock
+ definition order
+Date: Fri, 29 Jun 2018 11:26:37 -0700
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
+Quoting Fabio Estevam (2018-06-02 07:02:02)
+> From: Fabio Estevam <fabio.estevam@nxp.com>
+> =
 
-Tested for DS0 on am437x-gp-evm
+> Commit f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled
+> by CCOSR") introduced the CLK_CLKO definitions, but didn't put them
+> at the end of the list, which may cause dtb breakage when running an old
+> dtb with a newer kernel.
+> =
 
-Based on top of linux-next
+> In order to avoid that, simply add the new CLK_CKO clock definitions
+> at the end of the list.
+> =
 
-Changes in v2:
+> Fixes: f5a4670de966 ("clk: imx: Add new clo01 and clo2 controlled by CCOS=
+R")
+> Reported-by: Stefan Wahren <stefan.wahren@i2se.com>
+> Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
 
-        * Renamed clk_dflt_restore to clk_gate_restore_context
-
-Keerthy (2):
-  clk: clk: Add clk_gate_restore_context function
-  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
-    setting
-
-Russ Dill (2):
-  clk: clk: Add functions to save/restore clock context en-masse
-  clk: ti: Add functions to save/restore clk context
-
- arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
- drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
- drivers/clk/ti/clock.h               |   2 +
- drivers/clk/ti/divider.c             |  36 ++++++++++
- drivers/clk/ti/dpll.c                |   6 ++
- drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c                |   3 +
- drivers/clk/ti/mux.c                 |  29 ++++++++
- drivers/soc/ti/pm33xx.c              |  13 ++++
- include/linux/clk-provider.h         |   9 +++
- include/linux/clk.h                  |  25 +++++++
- include/linux/clk/ti.h               |   6 ++
- include/linux/platform_data/pm33xx.h |   1 +
- 13 files changed, 362 insertions(+)
-
--- 
-1.9.1
+Applied to clk-fixes
 
