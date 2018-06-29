@@ -1,26 +1,35 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Fri, 29 Jun 2018 11:26:05 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org
+Cc: sboyd@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v8 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180629082605.GF2118@localhost.localdomain>
+References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <a7904544d51270f4d2230ceb1a336b57a06652c1.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Paul Cercueil <paul@crapouillou.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180520163117.14125-2-paul@crapouillou.net>
-Cc: James Hogan <jhogan@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-References: <20180520163117.14125-1-paul@crapouillou.net>
- <20180520163117.14125-2-paul@crapouillou.net>
-Message-ID: <152792062103.225090.8616356640432786461@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/6] clk: ingenic: Support specifying "wait for clock stable"
- delay
-Date: Fri, 01 Jun 2018 23:23:41 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <a7904544d51270f4d2230ceb1a336b57a06652c1.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-05-20 09:31:13)
-> Some clocks need a small delay after being ungated to run stable, as
-> using them too soon might result in hardware lockups.
-> =
+On Fri, Jun 29, 2018 at 11:23:42AM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+I kept the Reviewed-by: tag here as there is no changes from patch v6
+which was reviewed by Rob - hopefully this was not a violation of any
+sort...
 
-Applied to clk-next
+Best Regards
+    Matti Vaittinen
