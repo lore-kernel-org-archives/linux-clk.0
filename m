@@ -1,91 +1,44 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sat, 30 Jun 2018 15:02:02 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
-	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-	will.deacon@arm.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
- bindings
-Message-ID: <20180630093202.GB7320@Mani-XPS-13-9360>
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-4-sravanhome@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:36157 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964976AbeF2IeW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Jun 2018 04:34:22 -0400
+Received: by mail-lj1-f173.google.com with SMTP id o26-v6so6650360ljg.3
+        for <linux-clk@vger.kernel.org>; Fri, 29 Jun 2018 01:34:22 -0700 (PDT)
+Date: Fri, 29 Jun 2018 11:34:18 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180629083418.GG2118@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+ <20180612082354.GG20078@localhost.localdomain>
+ <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
+ <20180626081319.GA2118@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180628191805.3722-4-sravanhome@gmail.com>
+In-Reply-To: <20180626081319.GA2118@localhost.localdomain>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Saravanan,
-
-I agree with modifying the existing binding to accomodate other
-SoC's of the same family. But the binding should be
-"actions,owl-cmu.txt" since it reflects the family name.
-
-Andreas, what do you think?
-
-On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
-> Modify clock bindings common Actions Semi Soc family S700/S900.
+On Tue, Jun 26, 2018 at 11:13:19AM +0300, Matti Vaittinen wrote:
+> Hello Stephen, Rob and all others
 > 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
-> similarity index 71%
-> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
-> index 93e4fb827cd6..8dc7edb4d198 100644
-> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
-> @@ -1,12 +1,14 @@
-> -* Actions S900 Clock Management Unit (CMU)
-> +* Actions S900/S700 Clock Management Unit (CMU)
->  
+> Thanks again Stephen. I appreciate your help. And just to help you
+> sorting your inbox a bit - I have written patch series v6 and v7 before
+> receiving these comments. I will write v8 after I get some further input
+> from you and Rob on how to solve the issue with having the clk stuff in
+> parent node and usage of devm_of_clk_add_hw_provider where DT node is
+> fetched from dev pointer. 
 
-Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+Just for your information - I did send v8 without clk part as I was
+unsure how to proceed with it. I still wanted to get the MFD fixes sent
+before I start my vacations and family time. I will wait for input from
+you / Rob and continue the clk portion latest after 4 weeks. Sorry for
+long delay =(
 
-> -The Actions S900 clock management unit generates and supplies clock to various
-> -controllers within the SoC. The clock binding described here is applicable to
-> -S900 SoC.
-> +The Actions S900/S700 clock management unit generates and supplies clock to
-> +various controllers within the SoC. The clock binding described here is
-> +applicable to S900/S700 SoC.
->  
->  Required Properties:
->  
-> -- compatible: should be "actions,s900-cmu"
-> +- compatible: should be one of this
-
-Change to: compatible: should be one of the following:
-
-Thanks,
-Mani
-
-> +	"actions,s900-cmu"
-> +	"actions,s700-cmu"
->  - reg: physical base address of the controller and length of memory mapped
->    region.
->  - clocks: Reference to the parent clocks ("hosc", "losc")
-> @@ -15,9 +17,9 @@ Required Properties:
->  Each clock is assigned an identifier, and client nodes can use this identifier
->  to specify the clock which they consume.
->  
-> -All available clocks are defined as preprocessor macros in
-> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
-> -tree sources.
-> +All available clocks are defined as preprocessor macros in corresponding
-> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
-> +device tree sources.
->  
->  External clocks:
->  
-> -- 
-> 2.18.0
-> 
+Have a nice Summer
+-- Matti Vaittinen
