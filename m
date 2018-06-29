@@ -1,38 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46513 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752512AbeF1Ccf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Jun 2018 22:32:35 -0400
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180625120304.7543-22-jernej.skrabec@siol.net>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-22-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 28 Jun 2018 10:32:12 +0800
-Message-ID: <CAGb2v66vEJZijF82u6cKf3j0J678=kNCCps5+=oj7iHCzM9n6g@mail.gmail.com>
-Subject: Re: [PATCH v3 21/24] drm: of: Export drm_crtc_port_mask()
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Anson Huang <Anson.Huang@nxp.com>, fabio.estevam@nxp.com,
+ kernel@pengutronix.de, mturquette@baylibre.com, shawnguo@kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
+Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1528074406-11735-1-git-send-email-Anson.Huang@nxp.com>
+ <1528074406-11735-3-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <153029780620.143105.12394629192902595958@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 3/4] clk: imx6sx: remove clks_init_on array
+Date: Fri, 29 Jun 2018 11:43:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Function is useful when drm_of_find_possible_crtcs() can't be used and
-> custom parsing is needed. This can happen for example when there is a
-> node with multiple muxes between crtc and encoder.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Quoting Anson Huang (2018-06-03 18:06:45)
+> Clock framework will enable those clocks registered
+> with CLK_IS_CRITICAL flag, so no need to have
+> clks_init_on array during clock initialization now.
+> =
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> ARM clock is busy divider type which has the
+> CLK_IS_CRITICAL flag set by default when registered.
+> =
+
+> IPG clock has no clock gate and its parent AHB clock
+> is busy divider type, so no need to add CLK_IS_CRITICAL
+> flag for IPG clock.
+> =
+
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+
+Applied to clk-next
