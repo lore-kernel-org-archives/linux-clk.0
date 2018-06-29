@@ -1,256 +1,131 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [PATCH v7 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-6-o.rempel@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <503b7af3-6a6a-1ed9-e2b6-609da537c855@pengutronix.de>
-Date: Wed, 13 Jun 2018 14:03:01 +0200
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Fri, 29 Jun 2018 11:20:33 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org
+Cc: sboyd@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v8 0/2] mfd/regulator/clk/input: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20180517055014.6607-6-o.rempel@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP"
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP
-Content-Type: multipart/mixed; boundary="ebaSKat60fCA9TqMPHx77ey6XsIur2bCf";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>
-Message-ID: <503b7af3-6a6a-1ed9-e2b6-609da537c855@pengutronix.de>
-Subject: Re: [PATCH v7 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-6-o.rempel@pengutronix.de>
-In-Reply-To: <20180517055014.6607-6-o.rempel@pengutronix.de>
+Patch series adding support for ROHM BD71837 PMIC.
 
---ebaSKat60fCA9TqMPHx77ey6XsIur2bCf
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+BD71837 is a programmable Power Management IC for powering single-core,
+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
+low BOM cost and compact solution footprint. It integrates 8 buck
+regulators and 7 LDO’s to provide all the power rails required by the
+SoC and the commonly used peripherals.
 
-Hi Mark,
+This is reduced set of patches containing only the MFD and devicetree
+bindings. Devicetree bindings patch (2) is not changed. The MFD patch
+enables alrady applied regulator part and power button support using
+gpio-keys. Clock and reset support will be sent as separate set of
+patches - possibly only after my vacations. Sorry for longish delay
+which will follow.
 
-Rob ACKed DT bindings, Rafael ACKed export of pm_power_off_prepare. I
-need your OK for regulator patch.
+Changelog v8
+- Dropped clk-bd71837 from series (will send later)
+- Patch 2 is unchanged.
+- Dropped bd718xx-pwrkey driver and used gpio_keys instead.
+- Added power-button short/long press duration configuratio to MFD
+- Cleaned MFD driver according to comments from Enric Balletbo Serra.
+  (used devm, removed unnecessary header inclusions, removed redundant
+  assignment, styling issues, allow building MFD part as module, fixed
+  license mismatch).
 
-On 17.05.2018 07:50, Oleksij Rempel wrote:
-> On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMI=
-C
-> about state changes. In this case internal state of PMIC must be
-> preconfigured for upcomming state change.
-> It works fine with the current regulator framework, except with the
-> power-off case.
->=20
-> This patch is providing an optional pm_power_off_prepare handler
-> which will configure standby state of the PMIC to disable all power lin=
-es.
->=20
-> In my power consumption test on RIoTBoard, I got the following results:=
+Changelog v7
+- patch 1: Cleaned MFD probe since MFD no longer directly reads DT
+  properties.
+- patch 1/4: Moved power-key related definitions from powerkey patch (4)
+  to MFD patch (1) so that powerkey can be applied independently
+- Patch 2 is unchanged.
+- patch 3: Added missing allocation check back to clk probe
 
-> power off without this patch:	320 mA
-> power off with this patch:	2   mA
-> suspend to ram:			40  mA
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++=
+Changelog v6
+- Added power-key input driver
+Based on feedback from Rob Herring and Stephen Boyd
+- Added link to datasheet
+- Removed interrupt-controller from DT and fixed binding document
+- clk styling fixes
+- remove clkdev usage
+- add clk bindings to MFD documentation
+- removed clk binding document
 
->  1 file changed, 92 insertions(+)
->=20
-> diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator=
-/pfuze100-regulator.c
-> index 63922a2167e5..f6c276ed91d8 100644
-> --- a/drivers/regulator/pfuze100-regulator.c
-> +++ b/drivers/regulator/pfuze100-regulator.c
-> @@ -28,6 +28,7 @@
->  #include <linux/regulator/pfuze100.h>
->  #include <linux/i2c.h>
->  #include <linux/slab.h>
-> +#include <linux/kallsyms.h>
->  #include <linux/regmap.h>
-> =20
->  #define PFUZE_NUMREGS		128
-> @@ -42,11 +43,17 @@
-> =20
->  #define PFUZE100_COINVOL	0x1a
->  #define PFUZE100_SW1ABVOL	0x20
-> +#define PFUZE100_SW1ABMODE	0x23
->  #define PFUZE100_SW1CVOL	0x2e
-> +#define PFUZE100_SW1CMODE	0x31
->  #define PFUZE100_SW2VOL		0x35
-> +#define PFUZE100_SW2MODE	0x38
->  #define PFUZE100_SW3AVOL	0x3c
-> +#define PFUZE100_SW3AMODE	0x3f
->  #define PFUZE100_SW3BVOL	0x43
-> +#define PFUZE100_SW3BMODE	0x46
->  #define PFUZE100_SW4VOL		0x4a
-> +#define PFUZE100_SW4MODE	0x4d
->  #define PFUZE100_SWBSTCON1	0x66
->  #define PFUZE100_VREFDDRCON	0x6a
->  #define PFUZE100_VSNVSVOL	0x6b
-> @@ -57,6 +64,13 @@
->  #define PFUZE100_VGEN5VOL	0x70
->  #define PFUZE100_VGEN6VOL	0x71
-> =20
-> +#define PFUZE100_SWxMODE_MASK	0xf
-> +#define PFUZE100_SWxMODE_APS_APS	0x8
-> +#define PFUZE100_SWxMODE_APS_OFF	0x4
-> +
-> +#define PFUZE100_VGENxLPWR	BIT(6)
-> +#define PFUZE100_VGENxSTBY	BIT(5)
-> +
->  enum chips { PFUZE100, PFUZE200, PFUZE3000 =3D 3 };
-> =20
->  struct pfuze_regulator {
-> @@ -489,6 +503,69 @@ static inline struct device_node *match_of_node(in=
-t index)
->  }
->  #endif
-> =20
-> +static struct pfuze_chip *syspm_pfuze_chip;
-> +
-> +static void pfuze_power_off_prepare(void)
-> +{
-> +	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off"=
-);
-> +
-> +	/* Switch from default mode: APS/APS to APS/Off */
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
-> +			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
-> +
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
-> +			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
-> +			   PFUZE100_VGENxSTBY);
-> +}
-> +
-> +static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)=
+Changelog v5
+- dropped regulator patches which are already applied to Mark's tree
+Based on feedback from Rob Herring and Stephen Boyd
+- mfd bindings: explain why this can be interrupt-controller
+- mfd bindings: describe interrupts better
+- mfd bindings: require one cell interrupt specifier
+- mfd bindings: use generic node names in example
+- mfd driver:   ack masked interrupt once at init
+- clk bindings: use generic node names in example
+- clk driver:   use devm
+- clk driver:   use of_clk_add_hw_provider
+- clk driver:   change severity of print and how prints are emitted at
+                probe error path.
+- clk driver:   dropped forward declared functions
+- clk configs:  drop unnecessary dependencies
+- clk driver:   other styling issues
+- mfd/clk DT:   drop clk node.
 
-> +{
-> +	if (pfuze_chip->chip_id !=3D PFUZE100) {
-> +		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler fo=
-r not supported chip\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (pm_power_off_prepare) {
-> +		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registere=
-d.\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	if (syspm_pfuze_chip) {
-> +		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	syspm_pfuze_chip =3D pfuze_chip;
-> +	pm_power_off_prepare =3D pfuze_power_off_prepare;
-> +
-> +	return 0;
-> +}
-> +
->  static int pfuze_identify(struct pfuze_chip *pfuze_chip)
->  {
->  	unsigned int value;
-> @@ -659,6 +736,20 @@ static int pfuze100_regulator_probe(struct i2c_cli=
-ent *client,
->  		}
->  	}
-> =20
-> +	if (of_property_read_bool(client->dev.of_node,
-> +				  "fsl,pmic-stby-poweroff"))
-> +		return pfuze_power_off_prepare_init(pfuze_chip);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pfuze100_regulator_remove(struct i2c_client *client)
-> +{
-> +	if (syspm_pfuze_chip) {
-> +		syspm_pfuze_chip =3D NULL;
-> +		pm_power_off_prepare =3D NULL;
-> +	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -669,6 +760,7 @@ static struct i2c_driver pfuze_driver =3D {
->  		.of_match_table =3D pfuze_dt_ids,
->  	},
->  	.probe =3D pfuze100_regulator_probe,
-> +	.remove =3D pfuze100_regulator_remove,
->  };
->  module_i2c_driver(pfuze_driver);
-> =20
->=20
+Changelog v4
+- remove mutex from regulator state check as core prevents simultaneous
+  accesses
+- allow voltage change for bucks 1 to 4 when regulator is enabled
+- fix indentiation problems
+- properly correct SPDX comments
 
+Changelog v3
+- kill unused variable
+- kill unused definitions
+- use REGMAP_IRQ_REG
 
---ebaSKat60fCA9TqMPHx77ey6XsIur2bCf--
+Changelog v2
+Based on feedback from Mark Brown
+- Squashed code and buildfile changes to same patch
+- Fixed some styling issues
+- Changed SPDX comments to CPP style
+- Error out if voltage is changed when regulator is enabled instead of
+  Disabling the regulator for duration of change
+- Use devm_regulator_register
+- Remove compatible usage from regulators - use parent dev for config
+- Add a note about using regulator-boot-on for BUCK6 and 7
+- fixed warnings from kbuild test robot
 
---PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+patch 1:
+        MFD driver and definitions bringing interrupt support and
+        enabling clk, regulator and input subsystems.
+patch 2:
+        MFD driver DT bindings
 
------BEGIN PGP SIGNATURE-----
+This patch series is based on for-mfd-next
 
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlshB/UACgkQdQOiSHVI
-77TuZAgAtvxSvuq8V8Sv8A3kPzH5oxmZVqSxDGgjskOHCS4rZ6AAcw7zCxBC8xcH
-wrtXLKhetE1PmBn3qP78U3gS/VMdVdXuGV7qItRrprlmgO45cJ4EJ2fYVIMijHb2
-K4q3GPZZJhgwRd3s/Fs3JVZneWYWnPtqEbQeAxro+iJ1oPSr1foHmqQAJpkaWhN0
-CnSyDGHD9JER8p+KFg8BsUb3c5ypw/C0WPD0gjQLlPhID2fkgylpFuuFpWzngl4B
-v34Uh9Z51aKoXxLpOcVaSnp7UFX5ME7HVQjFsAkqi2Xq08oq3nFg1zc+e+9Jz8t3
-v79GIIzFPLIsasLHTd0vWCT0veApLQ==
-=yIkj
------END PGP SIGNATURE-----
+---
 
---PAdCPQPW3BM1XfBSmjcmXXJJqHNDNxnVP--
+Matti Vaittinen (2):
+  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  67 ++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/bd71837.c                              | 220 ++++++++++++
+ include/linux/mfd/bd71837.h                        | 391 +++++++++++++++++++++
+ 5 files changed, 692 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+ create mode 100644 drivers/mfd/bd71837.c
+ create mode 100644 include/linux/mfd/bd71837.h
+
+-- 
+2.14.3
