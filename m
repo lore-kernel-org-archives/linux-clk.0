@@ -1,51 +1,52 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v7 4/4] ARM: davinci: dts: add a reset control to the dsp node
-Date: Thu, 21 Jun 2018 09:37:06 +0200
-Message-Id: <20180621073706.22812-5-brgl@bgdev.pl>
-In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
+Return-Path: <mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: <pdeschrijver@nvidia.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <swarren@nvidia.com>, <vbhadram@nvidia.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to register
+Date: Fri, 29 Jun 2018 17:38:14 +0300
+Message-ID: <20180629143814.17950-1-mperttunen@nvidia.com>
+Return-Path: mperttunen@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+When registering clocks, we just skip any that fail to register
+(leaving a NULL hole in the clock table). However, our of_xlate
+function still tries to dereference each entry while looking for
+the clock with the requested id, causing a crash if any clocks
+failed to register. Add a check to of_xlate to skip any NULL
+clocks.
 
-The davinci-rproc driver will soon use the reset framework. Add the
-resets property to the dsp node in da850.dtsi.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-bpmp.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index 1bc0e4bc0697..225e0cf4b7bc 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -118,6 +118,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index a896692b74ec..01dada561c10 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -586,9 +586,15 @@ static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
+ 	unsigned int id = clkspec->args[0], i;
+ 	struct tegra_bpmp *bpmp = data;
+ 
+-	for (i = 0; i < bpmp->num_clocks; i++)
+-		if (bpmp->clocks[i]->id == id)
+-			return &bpmp->clocks[i]->hw;
++	for (i = 0; i < bpmp->num_clocks; i++) {
++		struct tegra_bpmp_clk *clk = bpmp->clocks[i];
++
++		if (!clk)
++			continue;
++
++		if (clk->id == id)
++			return &clk->hw;
++	}
+ 
+ 	return NULL;
+ }
 -- 
-2.17.1
+2.16.1
