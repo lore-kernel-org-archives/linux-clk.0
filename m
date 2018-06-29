@@ -1,142 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs12.siol.net ([185.57.226.203]:38710 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932131AbeF1EuS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Jun 2018 00:50:18 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
-Date: Thu, 28 Jun 2018 06:48:50 +0200
-Message-ID: <1812731.FQOhD8MfmX@jernej-laptop>
-In-Reply-To: <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <20180625120304.7543-11-jernej.skrabec@siol.net> <CAGb2v66ndyhVFKsOt=g45MJ-cBun8WvRrDsb9XO2hteSX2oe5A@mail.gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Saravanan Sekar <sravanhome@gmail.com>, afaerber@suse.de
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180628191805.3722-2-sravanhome@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ Saravanan Sekar <sravanhome@gmail.com>, catalin.marinas@arm.com,
+ mturquette@baylibre.com, will.deacon@arm.com, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, manivannan.sadhasivam@linaro.org, pn@denx.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-2-sravanhome@gmail.com>
+Message-ID: <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for S700
+Date: Fri, 29 Jun 2018 10:36:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai napisal(a):
-> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Current "old" method to find engine worked pretty well for DE2. However,
-> > it doesn't work when TCON TOP is between  mixer (engine) and TCON. TCON
-> > TOP has multiple input ports, but current engine search algorithm
-> > expects only one.
-> > 
-> > This can be fixed by first looking for output port id and selecting
-> > matching input by subtracting 1 for the next round. This work even if
-> > there is only one input and output.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
-> >  1 file changed, 18 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..264bcc43da11
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device
-> > *dev,
-> > 
-> >   */
-> >  
-> >  static struct sunxi_engine *
-> >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
-> > 
-> > -                               struct device_node *node)
-> > +                               struct device_node *node,
-> > +                               u32 port_id)
-> > 
-> >  {
-> >  
-> >         struct device_node *port, *ep, *remote;
-> >         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
-> > 
-> > +       u32 reg = 0;
-> > 
-> > -       port = of_graph_get_port_by_id(node, 0);
-> > +       port = of_graph_get_port_by_id(node, port_id);
-> > 
-> >         if (!port)
-> >         
-> >                 return ERR_PTR(-EINVAL);
-> > 
-> > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv
-> > *drv,
-> > 
-> >                 if (remote == engine->node)
-> >                 
-> >                         goto out_put_remote;
-> > 
-> > +       /*
-> > +        * According to device tree binding input ports have even id
-> > +        * number and output ports have odd id. Since component with
-> > +        * more than one input and one output (TCON TOP) exits, correct
-> > +        * remote input id has to be calculated by subtracting 1 from
-> > +        * remote output id. If this for some reason can't be done, 0
-> > +        * is used as input port id.
-> > +        */
-> 
-> You need to call
-> 
->     of_node_put(port);
-> 
-> to drop the reference to the original port.
+Quoting Saravanan Sekar (2018-06-28 12:18:03)
+> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm6=
+4/boot/dts/actions/s700-cubieboard7.dts
+> index ef79d7905f44..28f3f4a0f7f0 100644
+> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/=
+actions/s700.dtsi
+> index 66dd5309f0a2..3530b705df90 100644
+> --- a/arch/arm64/boot/dts/actions/s700.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
 
-Thanks for noticing it. I guess I should send fix patch, since patches from 
-drm-misc-next can't be dropped.
+Can the above part be split from the below part? I don't want to merge
+dts bits into clk tree, when those should normally go through arm-soc.
 
-Best regards,
-Jernej
-
-> Otherwise,
-> 
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> 
-> > +       port = of_graph_get_remote_port(ep);
-> > +       if (!of_property_read_u32(port, "reg", &reg) && reg > 0)
-> > +               reg -= 1;
-> > +
-> > 
-> >         /* keep looking through upstream ports */
-> > 
-> > -       engine = sun4i_tcon_find_engine_traverse(drv, remote);
-> > +       engine = sun4i_tcon_find_engine_traverse(drv, remote, reg);
-> > 
-> >  out_put_remote:
-> >         of_node_put(remote);
-> > 
-> > @@ -950,7 +964,7 @@ static struct sunxi_engine
-> > *sun4i_tcon_find_engine(struct sun4i_drv *drv,> 
-> >         /* Fallback to old method by traversing input endpoints */
-> >         of_node_put(port);
-> > 
-> > -       return sun4i_tcon_find_engine_traverse(drv, node);
-> > +       return sun4i_tcon_find_engine_traverse(drv, node, 0);
-> > 
-> >  }
-> >  
-> >  static int sun4i_tcon_bind(struct device *dev, struct device *master,
-> > 
-> > --
-> > 2.18.0
-
-
-
-
+> diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bi=
+ndings/clock/actions,s700-cmu.h
+> new file mode 100644
