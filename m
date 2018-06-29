@@ -1,43 +1,47 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-References: <1527994847-2363-1-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 3 Jun 2018 09:44:20 -0300
-Message-ID: <CAOMZO5CmgBsaaegVV9OjdyXv5_O0V9iTS2qYbtuH26qkG2_zrA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: imx6q: remove clks_init_on array
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <Linux-imx@nxp.com>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Saravanan Sekar <sravanhome@gmail.com>, afaerber@suse.de
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180628191805.3722-1-sravanhome@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ Saravanan Sekar <sravanhome@gmail.com>, catalin.marinas@arm.com,
+ mturquette@baylibre.com, will.deacon@arm.com, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org, manivannan.sadhasivam@linaro.org, pn@denx.de,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+Message-ID: <153029392426.143105.1931235700216822088@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 0/3] Add clock driver for Actions S700 SoC
+Date: Fri, 29 Jun 2018 10:38:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jun 3, 2018 at 12:00 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Clock framework will enable those clocks registered
-> with CLK_IS_CRITICAL flag, so no need to have
-> clks_init_on array during clock initialization now.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx6q.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-> index b9ea703..8754c61 100644
-> --- a/drivers/clk/imx/clk-imx6q.c
-> +++ b/drivers/clk/imx/clk-imx6q.c
-> @@ -96,12 +96,6 @@ static const char *pll7_bypass_sels[] = { "pll7", "pll7_bypass_src", };
->  static struct clk *clk[IMX6QDL_CLK_END];
->  static struct clk_onecell_data clk_data;
->
-> -static unsigned int const clks_init_on[] __initconst = {
-> -       IMX6QDL_CLK_MMDC_CH0_AXI,
-> -       IMX6QDL_CLK_ROM,
-> -       IMX6QDL_CLK_ARM,
+Quoting Saravanan Sekar (2018-06-28 12:18:02)
+> Changelog v2:
+> Fixed 0 day compilation warning
+> Modified existing dts Actions S900 clock bindings common to Actions
+> Soc family
+> =
 
- IMX6QDL_CLK_ARM does not have the CLK_IS_CRITICAL flag.
+> This patchset adds clock support for Actions Semi OWL series S700 SoC
+> with relevant clock bindings and device tree info. =
 
-Is this intended? If so, please mention in the commit log.
+> =
+
+> Changed the UART clock using CMU instance and changes are tested in
+> cubieboard7
+> =
+
+> Thanks and regards,
+> Saravanan,
+> Parthiban
+> =
+
+> Saravanan Sekar (3):
+>   arm64: dts: actions: Enable clock controller for S700
+>   clk: actions: Add S700 SoC clock support
+>   dt-bindings: clock: Modify Actions Soc clock bindings
+
+Normally this patch comes first, and then clk driver, and then dts bits.
+Also, the header file for the #define constants would be part of the
+bindings patch.
