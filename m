@@ -1,46 +1,27 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1529667246.2900.6.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/6] clk: meson: axg: add audio clock controller
- support
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Carlo Caione
- <carlo@caione.org>,  Kevin Hilman <khilman@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,  linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 22 Jun 2018 13:34:06 +0200
-In-Reply-To: <20180522163457.13834-1-jbrunet@baylibre.com>
-References: <20180522163457.13834-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1526641120-1585-1-git-send-email-geert+renesas@glider.be>
+Message-ID: <153029272800.143105.1065337298977850107@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clkdev: Remove duplicated negative index check from
+ __of_clk_get()
+Date: Fri, 29 Jun 2018 10:18:48 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-05-22 at 18:34 +0200, Jerome Brunet wrote:
-> The purpose of this patchset is to add support for the clock controller
-> dedicated to the audio subsystem found on A113 based SoCs
-> 
-> The series depends on the CLK_MUX_ROUND_CLOSEST fixes [merged in clk-next]
-> and the duty cycle support [1] making their way into CCF.
-> 
-> First patch is a clean-up of the meson clk Kconfig.
-> Then, there is 3 clock provider drivers for clocks found in the audio
-> The last 3 are for the clock controller itself.
-> 
-> Changes since v1: [2]
->  * Rebase clk-meson's next/drivers
->  * Correct typo in documentation and squash DT patches
-> 
-> [1]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
-> [2]: https://lkml.kernel.org/r/20180425163304.10852-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (6):
->   clk: meson: clean-up meson clock configuration
->   clk: meson: add clk-phase clock driver
->   clk: meson: add triple phase clock driver
->   clk: meson: add axg audio sclk divider driver
->   dt-bindings: clock: add meson axg audio clock controller bindings
->   clk: meson: axg: add the audio clock controller driver
+Quoting Geert Uytterhoeven (2018-05-18 03:58:40)
+> __of_clk_get() calls of_parse_phandle_with_args(), which rejects
+> negative indices since commit bd69f73f2c81eed9 ("of: Create function for
+> counting number of phandles in a property").
+> =
 
-Applied for next on top of mike's clk-core-duty-cycle branch.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+
+Applied to clk-next
