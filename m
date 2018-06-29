@@ -1,51 +1,116 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.emlix.com ([46.4.235.150]:56754 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933646AbeFKONA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Jun 2018 10:13:00 -0400
-Subject: Re: [PATCH] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-To: Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20180608101924.31195-1-pp@emlix.com>
- <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
-From: Philipp Puschmann <pp@emlix.com>
-Message-ID: <40261c5f-285f-66f3-41dc-7107c487a47e@emlix.com>
-Date: Mon, 11 Jun 2018 16:12:58 +0200
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize engine search algorithm
+Date: Fri, 29 Jun 2018 21:06:09 +0200
+Message-ID: <3257762.ZQzN8rrT6c@jernej-laptop>
+In-Reply-To: <20180628182543.yyja6hiry7rx7fu2@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <1812731.FQOhD8MfmX@jernej-laptop> <20180628182543.yyja6hiry7rx7fu2@flea>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5C8CA02V+oiag5tGpKBWN+UP28KwQ98jQ9PpQ2_aCq_bA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> Hi Philipp,
+Dne četrtek, 28. junij 2018 ob 20:25:43 CEST je Maxime Ripard napisal(a):
+> On Thu, Jun 28, 2018 at 06:48:50AM +0200, Jernej Škrabec wrote:
+> > Dne četrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai napisal(a):
+> > > On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
+> > > <jernej.skrabec@siol.net>
+> > 
+> > wrote:
+> > > > Current "old" method to find engine worked pretty well for DE2.
+> > > > However,
+> > > > it doesn't work when TCON TOP is between  mixer (engine) and TCON.
+> > > > TCON
+> > > > TOP has multiple input ports, but current engine search algorithm
+> > > > expects only one.
+> > > > 
+> > > > This can be fixed by first looking for output port id and selecting
+> > > > matching input by subtracting 1 for the next round. This work even if
+> > > > there is only one input and output.
+> > > > 
+> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > ---
+> > > > 
+> > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
+> > > >  1 file changed, 18 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..264bcc43da11
+> > > > 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct device
+> > > > *dev,
+> > > > 
+> > > >   */
+> > > >  
+> > > >  static struct sunxi_engine *
+> > > >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+> > > > 
+> > > > -                               struct device_node *node)
+> > > > +                               struct device_node *node,
+> > > > +                               u32 port_id)
+> > > > 
+> > > >  {
+> > > >  
+> > > >         struct device_node *port, *ep, *remote;
+> > > >         struct sunxi_engine *engine = ERR_PTR(-EINVAL);
+> > > > 
+> > > > +       u32 reg = 0;
+> > > > 
+> > > > -       port = of_graph_get_port_by_id(node, 0);
+> > > > +       port = of_graph_get_port_by_id(node, port_id);
+> > > > 
+> > > >         if (!port)
+> > > >         
+> > > >                 return ERR_PTR(-EINVAL);
+> > > > 
+> > > > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct sun4i_drv
+> > > > *drv,
+> > > > 
+> > > >                 if (remote == engine->node)
+> > > >                 
+> > > >                         goto out_put_remote;
+> > > > 
+> > > > +       /*
+> > > > +        * According to device tree binding input ports have even id
+> > > > +        * number and output ports have odd id. Since component with
+> > > > +        * more than one input and one output (TCON TOP) exits,
+> > > > correct
+> > > > +        * remote input id has to be calculated by subtracting 1 from
+> > > > +        * remote output id. If this for some reason can't be done, 0
+> > > > +        * is used as input port id.
+> > > > +        */
+> > > 
+> > > You need to call
+> > > 
+> > >     of_node_put(port);
+> > > 
+> > > to drop the reference to the original port.
+> > 
+> > Thanks for noticing it. I guess I should send fix patch, since patches
+> > from
+> > drm-misc-next can't be dropped.
 > 
-> On Fri, Jun 8, 2018 at 7:19 AM, Philipp Puschmann <pp@emlix.com> wrote:
->> q/dl datasheets list the 5th selection value for ck01_sel as
->> video_27M_clk_root.
->>
->> By replacing the dummy value we then can set IMX6QDL_CLK_VIDEO_27M
->> as parent for IMX6QDL_CLK_CKO1_SEL.
->>
->> Signed-off-by: Philipp Puschmann <pp@emlix.com>
-> 
-> You could still have added my Reviewed-by tag that I sent previously :-)
-> 
-> Here it goes:
-> 
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> 
-> Also in the future, when posting a new version of a patch, please mark
-> it as such:
-> 
-> [PATCH v2] clk: imx6: fix video_27m parent for IMX6QDL_CLK_CKO1_SEL
-> 
-> and write below the --- line what are the changes in this new version.
-> 
-> Thanks
-> 
+> Yeah, please send additional patches for all the issues pointed out by
+> Chen-Yu.
 
-Hi Fabio,
+Of course. I hope this can be resolved till the end of the next week. After 
+that, I will be away from PC for 2 weeks. Feel free to drop DT patches if you 
+think that it will come too close to merge window.
 
-thank you for your hints, next time i will do it that way
+Best regards,
+Jernej
