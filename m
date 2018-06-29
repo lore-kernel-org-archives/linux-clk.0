@@ -1,86 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55340 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754627AbeFYQE0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 25 Jun 2018 12:04:26 -0400
-Date: Mon, 25 Jun 2018 23:59:37 +0800
-In-Reply-To: <20180625155805.kds7bl3cburblwv6@flea>
-References: <20180622124540.56203-1-icenowy@aosc.io> <20180622124540.56203-2-icenowy@aosc.io> <20180625155805.kds7bl3cburblwv6@flea>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v2 3/7] bus: add bus driver for accessing Allwinner A64 DE2
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <4DFADAD6-3E17-425F-8B03-CAC4402BF14F@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vivek.gautam@codeaurora.org>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org
+Cc: andy.gross@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 1/1] clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
+Date: Fri, 29 Jun 2018 17:00:59 +0530
+Message-Id: <20180629113059.9406-1-vivek.gautam@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Patch (3a48ea5bbbc9 "clk: qcom: mmcc-msm8996: leave all mmagic gdscs
+and clocks always enabled") makes all mmgaic gdscs ALWAYS_ON.
+The mmagic_bimc_gdsc is also needed to be turned on to get display
+working on 8x96.
 
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/clk/qcom/mmcc-msm8996.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-于 2018年6月25日 GMT+08:00 下午11:58:05, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Fri, Jun 22, 2018 at 08:45:36PM +0800, Icenowy Zheng wrote:
->> The "Display Engine 2.0" (usually called DE2) on the Allwinner A64
->SoC
->> is different from the ones on other Allwinner SoCs. It requires a
->SRAM
->> region to be claimed, otherwise all DE2 subblocks won't be
->accessible.
->> 
->> Add a bus driver for the Allwinner A64 DE2 part which claims the SRAM
->> region when probing.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> No changes since v1.
->> 
->>  drivers/bus/Kconfig      | 10 ++++++++
->>  drivers/bus/Makefile     |  1 +
->>  drivers/bus/sun50i-de2.c | 49
->++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 60 insertions(+)
->>  create mode 100644 drivers/bus/sun50i-de2.c
->> 
->> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
->> index d1c0b60e9326..1851112ccc29 100644
->> --- a/drivers/bus/Kconfig
->> +++ b/drivers/bus/Kconfig
->> @@ -103,6 +103,16 @@ config SIMPLE_PM_BUS
->>  	  Controller (BSC, sometimes called "LBSC within Bus Bridge", or
->>  	  "External Bus Interface") as found on several Renesas ARM SoCs.
->>  
->> +config SUN50I_DE2_BUS
->> +	bool "Allwinner A64 DE2 Bus Driver"
->> +	  default ARM64
->> +	  depends on ARCH_SUNXI
->> +	  select SUNXI_SRAM
->> +	  help
->
->The alignment here should be one tab.
->
->> +static int sun50i_de2_bus_probe(struct platform_device *pdev)
->> +{
->> +	struct device_node *np = pdev->dev.of_node;
->> +	int ret;
->> +
->> +	ret = sunxi_sram_claim(&pdev->dev);
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "Error couldn't map SRAM to device\n");
->> +		return ret;
->> +	}
->> +
->> +	if (np)
->> +		of_platform_populate(np, NULL, NULL, &pdev->dev);
->
->Why do you need to test np here?
-
-Oh thanks. Currently it's only probeable via dt.
-
->
->Maxime
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index dfc5b4e431d3..38311a67e846 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -2910,6 +2910,7 @@ static struct gdsc mmagic_bimc_gdsc = {
+ 		.name = "mmagic_bimc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = ALWAYS_ON,
+ };
+ 
+ static struct gdsc mmagic_video_gdsc = {
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
