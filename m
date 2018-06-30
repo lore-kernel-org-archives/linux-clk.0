@@ -1,37 +1,91 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40310 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751869AbeFZIJQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Jun 2018 04:09:16 -0400
-Received: by mail-wr0-f193.google.com with SMTP id g18-v6so16203395wro.7
-        for <linux-clk@vger.kernel.org>; Tue, 26 Jun 2018 01:09:15 -0700 (PDT)
-Subject: Re: [PATCH 2/2] clk: meson: remove unused clk-audio-divider driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180620100610.29010-1-jbrunet@baylibre.com>
- <20180620100610.29010-3-jbrunet@baylibre.com>
-From: Neil Armstrong <narmstrong@baylibre.com>
-Message-ID: <2cdbc56d-a1e5-62f7-c3d5-9d5f37544118@baylibre.com>
-Date: Tue, 26 Jun 2018 10:09:12 +0200
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 30 Jun 2018 15:02:02 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
+ bindings
+Message-ID: <20180630093202.GB7320@Mani-XPS-13-9360>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-4-sravanhome@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180620100610.29010-3-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180628191805.3722-4-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 20/06/2018 12:06, Jerome Brunet wrote:
-> clk-audio-divider is no longer used, we can remove it.
+Hi Saravanan,
+
+I agree with modifying the existing binding to accomodate other
+SoC's of the same family. But the binding should be
+"actions,owl-cmu.txt" since it reflects the family name.
+
+Andreas, what do you think?
+
+On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
+> Modify clock bindings common Actions Semi Soc family S700/S900.
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 > ---
->  drivers/clk/meson/Makefile            |   2 +-
->  drivers/clk/meson/clk-audio-divider.c | 110 ----------------------------------
->  drivers/clk/meson/clkc.h              |   7 ---
->  3 files changed, 1 insertion(+), 118 deletions(-)
->  delete mode 100644 drivers/clk/meson/clk-audio-divider.c
+>  ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
 > 
-[...]
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> similarity index 71%
+> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> index 93e4fb827cd6..8dc7edb4d198 100644
+> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> @@ -1,12 +1,14 @@
+> -* Actions S900 Clock Management Unit (CMU)
+> +* Actions S900/S700 Clock Management Unit (CMU)
+>  
+
+Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+
+> -The Actions S900 clock management unit generates and supplies clock to various
+> -controllers within the SoC. The clock binding described here is applicable to
+> -S900 SoC.
+> +The Actions S900/S700 clock management unit generates and supplies clock to
+> +various controllers within the SoC. The clock binding described here is
+> +applicable to S900/S700 SoC.
+>  
+>  Required Properties:
+>  
+> -- compatible: should be "actions,s900-cmu"
+> +- compatible: should be one of this
+
+Change to: compatible: should be one of the following:
+
+Thanks,
+Mani
+
+> +	"actions,s900-cmu"
+> +	"actions,s700-cmu"
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
+>  - clocks: Reference to the parent clocks ("hosc", "losc")
+> @@ -15,9 +17,9 @@ Required Properties:
+>  Each clock is assigned an identifier, and client nodes can use this identifier
+>  to specify the clock which they consume.
+>  
+> -All available clocks are defined as preprocessor macros in
+> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+> -tree sources.
+> +All available clocks are defined as preprocessor macros in corresponding
+> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
+> +device tree sources.
+>  
+>  External clocks:
+>  
+> -- 
+> 2.18.0
+> 
