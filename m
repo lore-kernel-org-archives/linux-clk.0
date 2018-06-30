@@ -1,66 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:27633 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932120AbeFFGHv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Jun 2018 02:07:51 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
-        <paul@pwsan.com>, <t-kristo@ti.com>, <faiz_abbas@ti.com>,
-        <mark.rutland@arm.com>
-Subject: [PATCH v3 5/6] ARM: dts: Add generic interconnect target module node for MCAN
-Date: Wed, 6 Jun 2018 11:38:25 +0530
-Message-ID: <20180606060826.14671-6-faiz_abbas@ti.com>
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <3837144.KdEe8HRubn@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180625120304.7543-7-jernej.skrabec@siol.net>
+ <CAGb2v65dNvqcWa7MUMesrEeDGfEmd0xPpKQmbqJ60_FHe=Y_JA@mail.gmail.com>
+ <3837144.KdEe8HRubn@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 30 Jun 2018 09:09:57 +0800
+Message-ID: <CAGb2v65xZe8VM+dOd1fchXgekpgzvj1s75zdjz-6Met4K-5nBg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v3 06/24] drm/sun4i: Fix releasing node when
+ enumerating enpoints
+To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ devicetree <devicetree@vger.kernel.org>,
+ Maxime Ripard <maxime.ripard@bootlin.com>,
+ Gustavo Padovan <gustavo@padovan.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>,
+ linux-sunxi <linux-sunxi@googlegroups.com>, Rob Herring <robh+dt@kernel.org>,
+ Sean Paul <seanpaul@chromium.org>, linux-clk <linux-clk@vger.kernel.org>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The ti-sysc driver provides support for manipulating the idle modes
-and interconnect level resets.
-
-Add the generic interconnect target module node for MCAN to support
-the same.
-
-CC: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- arch/arm/boot/dts/dra76x.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index bfc82636999c..5157cc431574 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -11,6 +11,24 @@
- / {
- 	compatible = "ti,dra762", "ti,dra7";
- 
-+	ocp {
-+		target-module@42c01900 {
-+			compatible = "ti,sysc-dra7-mcan", "ti,sysc";
-+			ranges = <0x0 0x42c00000 0x2000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			reg = <0x42c01900 0x4>,
-+			      <0x42c01904 0x4>,
-+			      <0x42c01908 0x4>;
-+			reg-names = "rev", "sysc", "syss";
-+			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
-+					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
-+			ti,syss-mask = <1>;
-+			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
-+			clock-names = "fck";
-+		};
-+	};
-+
- };
- 
- /* MCAN interrupts are hard-wired to irqs 67, 68 */
--- 
-2.17.0
-
+T24gU2F0LCBKdW4gMzAsIDIwMTggYXQgMzoxNSBBTSwgSmVybmVqIMWga3JhYmVjIDxqZXJuZWou
+c2tyYWJlY0BzaW9sLm5ldD4gd3JvdGU6Cj4gRG5lIMSNZXRydGVrLCAyOC4ganVuaWogMjAxOCBv
+YiAwMzo1MzozNiBDRVNUIGplIENoZW4tWXUgVHNhaSBuYXBpc2FsKGEpOgo+PiBPbiBNb24sIEp1
+biAyNSwgMjAxOCBhdCA4OjAyIFBNLCBKZXJuZWogU2tyYWJlYyA8amVybmVqLnNrcmFiZWNAc2lv
+bC5uZXQ+Cj4gd3JvdGU6Cj4+ID4gc3VuNGlfZHJ2X2FkZF9lbmRwb2ludHMoKSBoYXMgYSBtZW1v
+cnkgbGVhayBzaW5jZSBpdCB1c2VzIG9mX25vZGVfcHV0KCkKPj4gPiB3aGVuIHJlbW90ZSBpcyBl
+cXVhbCB0byBOVUxMIGFuZCBkb2VzIG5vdGhpbmcgd2hlbiByZW1vdGUgaGFzIGEgdmFsaWQKPj4g
+PiBwb2ludGVyLgo+PiA+Cj4+ID4gSW52ZXJ0IHRoZSBsb2dpYyB0byBmaXggbWVtb3J5IGxlYWsu
+Cj4+ID4KPj4gPiBTaWduZWQtb2ZmLWJ5OiBKZXJuZWogU2tyYWJlYyA8amVybmVqLnNrcmFiZWNA
+c2lvbC5uZXQ+Cj4+Cj4+IEdpdmVuIHRoaXMgaXMgYSBmaXgsIGl0IHNob3VsZCBoYXZlIEZpeGVz
+IGFuZCBzdGFibGUgdGFncy4KPgo+IEhvdyBzaG91bGQgYmUgdGhpcyBoYW5kbGVkIGdpdmVuIHRo
+YXQgdGhlIHBhdGNoIGlzIGFscmVhZHkgbWVyZ2VkIGFuZCBjYW5ub3QKPiBiZSBkcm9wcGVkPwoK
+V2UgY2FuJ3QuIFdlJ2xsIGhhdmUgdG8gbWFudWFsbHkgc3VibWl0IGl0IGZvciBzdGFibGUgb25j
+ZSB0aGlzIGxhbmRzCmluIExpbnVzJyB0cmVlLgoKQ2hlbll1CgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlz
+dApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJh
+ZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
