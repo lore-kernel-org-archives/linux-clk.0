@@ -1,37 +1,112 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <gregkh@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
-Date: Tue, 24 Jul 2018 19:42:16 +0300
-Message-Id: <20180724164221.3307-4-digetx@gmail.com>
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.14 023/157] lib/vsprintf: Remove atomic-unsafe support for %pCr
+Date: Sun,  1 Jul 2018 18:21:35 +0200
+Message-Id: <20180701160853.418396263@linuxfoundation.org>
+In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
+References: <20180701160852.287307684@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Move tegra20-emc binding to the memory-controllers directory for
-consistency with the other Tegra memory bindings.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
+------------------
+
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+
+commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
+
+"%pCr" formats the current rate of a clock, and calls clk_get_rate().
+The latter obtains a mutex, hence it must not be called from atomic
+context.
+
+Remove support for this rarely-used format, as vsprintf() (and e.g.
+printk()) must be callable from any context.
+
+Any remaining out-of-tree users will start seeing the clock's name
+printed instead of its rate.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
+Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.1+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+ Documentation/printk-formats.txt |    3 +--
+ lib/vsprintf.c                   |    3 ---
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
--- 
-2.18.0
+--- a/Documentation/printk-formats.txt
++++ b/Documentation/printk-formats.txt
+@@ -397,11 +397,10 @@ struct clk
+ 
+ 	%pC	pll1
+ 	%pCn	pll1
+-	%pCr	1560000000
+ 
+ For printing struct clk structures. ``%pC`` and ``%pCn`` print the name
+ (Common Clock Framework) or address (legacy clock framework) of the
+-structure; ``%pCr`` prints the current clock rate.
++structure.
+ 
+ Passed by reference.
+ 
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1392,9 +1392,6 @@ char *clock(char *buf, char *end, struct
+ 		return string(buf, end, NULL, spec);
+ 
+ 	switch (fmt[1]) {
+-	case 'r':
+-		return number(buf, end, clk_get_rate(clk), spec);
+-
+ 	case 'n':
+ 	default:
+ #ifdef CONFIG_COMMON_CLK
