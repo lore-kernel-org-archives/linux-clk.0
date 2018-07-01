@@ -1,59 +1,110 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock
- controller
-To: Rob Herring <robh@kernel.org>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
- <20180712211244.11428-2-yixun.lan@amlogic.com>
- <20180724232917.GA27041@rob-hp-laptop>
-CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil
- Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
-	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <e797412b-55db-6678-82ba-3a10ac99db9f@amlogic.com>
-Date: Fri, 27 Jul 2018 22:14:28 +0800
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sun, 1 Jul 2018 23:07:06 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
+ bindings
+Message-ID: <20180701173706.GA15895@Mani-XPS-13-9360>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-4-sravanhome@gmail.com>
+ <20180630093202.GB7320@Mani-XPS-13-9360>
+ <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180724232917.GA27041@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-HI Rob
-
-On 07/25/2018 07:29 AM, Rob Herring wrote:
-> On Thu, Jul 12, 2018 at 09:12:43PM +0000, Yixun Lan wrote:
->> Document the MMC sub clock controller driver, the potential consumer
->> of this driver is MMC or NAND. Also add three clock bindings IDs which
->> provided by this driver.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
->>  .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
->>  2 files changed, 47 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+On Sun, Jul 01, 2018 at 07:26:20PM +0200, Saravanan Sekar wrote:
+> Hi Mani
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > 
+> On 06/30/18 11:32, Manivannan Sadhasivam wrote:
+> > Hi Saravanan,
+> > 
+> > I agree with modifying the existing binding to accomodate other
+> > SoC's of the same family. But the binding should be
+> > "actions,owl-cmu.txt" since it reflects the family name.
+> 
+> Agree, will modify the name
+> 
+> > Andreas, what do you think?
+> > 
+> > On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
+> > > Modify clock bindings common Actions Semi Soc family S700/S900.
+> > > 
+> > > Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> > > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> > > ---
+> > >   ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+> > >   1 file changed, 10 insertions(+), 8 deletions(-)
+> > >   rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> > > similarity index 71%
+> > > rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+> > > rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> > > index 93e4fb827cd6..8dc7edb4d198 100644
+> > > --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+> > > +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+> > > @@ -1,12 +1,14 @@
+> > > -* Actions S900 Clock Management Unit (CMU)
+> > > +* Actions S900/S700 Clock Management Unit (CMU)
+> > Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+> 
+> sure
+>
 
-Thanks for the review!
+During the review of I2C controller driver, Andreas pointed out that
+we should use Owl instead of OWL in all places and also Actions should
+be replaced by Actions Semiconductor. So, please change it in relevant
+places. For this binding, title should be:
 
-There is a discussion about dropping "meson-" prefix in the compatible
-string[1]
+Actions Semiconductor Owl SoC's Clock Management Unit (CMU).
 
-So, I will send another version with the new compatible name adjusted
-from "amlogic,meson-axg-mmc-clkc" to "amlogic,axg-mmc-clkc"..
-probably also rename the dt-bindings header file to amlogc,mmc-clkc.h
+Thanks,
+Mani
 
-[1]  https://lkml.kernel.org/r/7hk1prmg4w.fsf@baylibre.com
-
-
-Yixun
+> > > -The Actions S900 clock management unit generates and supplies clock to various
+> > > -controllers within the SoC. The clock binding described here is applicable to
+> > > -S900 SoC.
+> > > +The Actions S900/S700 clock management unit generates and supplies clock to
+> > > +various controllers within the SoC. The clock binding described here is
+> > > +applicable to S900/S700 SoC.
+> > >   Required Properties:
+> > > -- compatible: should be "actions,s900-cmu"
+> > > +- compatible: should be one of this
+> > Change to: compatible: should be one of the following:
+> 
+> sure
+> 
+> > Thanks,
+> > Mani
+> > 
+> > > +	"actions,s900-cmu"
+> > > +	"actions,s700-cmu"
+> > >   - reg: physical base address of the controller and length of memory mapped
+> > >     region.
+> > >   - clocks: Reference to the parent clocks ("hosc", "losc")
+> > > @@ -15,9 +17,9 @@ Required Properties:
+> > >   Each clock is assigned an identifier, and client nodes can use this identifier
+> > >   to specify the clock which they consume.
+> > > -All available clocks are defined as preprocessor macros in
+> > > -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+> > > -tree sources.
+> > > +All available clocks are defined as preprocessor macros in corresponding
+> > > +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
+> > > +device tree sources.
+> > >   External clocks:
+> > > -- 
+> > > 2.18.0
+> > > 
+> 
+> Thanks,
+> Saravanan
