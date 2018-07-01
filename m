@@ -1,67 +1,103 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-To: Sekhar Nori <nsekhar@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>,
- devicetree <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-clk <linux-clk@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
- <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
- <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
-Date: Mon, 2 Jul 2018 10:27:53 -0500
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
+ bindings
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
+ linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+ devicetree@vger.kernel.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-4-sravanhome@gmail.com>
+ <20180630093202.GB7320@Mani-XPS-13-9360>
+From: Saravanan Sekar <sravanhome@gmail.com>
+Message-ID: <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
+Date: Sun, 1 Jul 2018 19:26:20 +0200
 MIME-Version: 1.0
-In-Reply-To: <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
+In-Reply-To: <20180630093202.GB7320@Mani-XPS-13-9360>
 Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/2018 07:08 AM, Sekhar Nori wrote:
-> Hi Bjorn,
-> 
-> On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
->> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->>> Hi Bartosz,
->>>
->>> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> These are the remaining patches that still need to be merged in order
->>>> to complete the conversion of the davinci dsp driver to using the reset
->>>> framework.
->>>>
->>>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
->>>> merged.
->>>
->>> Series looks good to me.
->>>
->>> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
->>> and #2 ?
->>>
->>> Given the dependencies and to preserve bisect its easiest if I take the
->>> series with acks from remoteproc and clock maintainers.
->>>
->>> Open to other suggestions as well.
->>>
->>> Thanks,
->>> Sekhar
->>
->> Oops you're right about the order. Do you want me to resend?
-> 
-> With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
-> to you (on top of v4.18-rc1) for you to merge any further changes you
-> want to queue from your tree.
-> 
-> Bartosz, given the number of moving pieces, I think its better to keep
-> 2/4 for v4.20 release - once all other other dependencies have been merged.
+Hi Mani
 
-I was thinking the same thing as well. I will pick it up in a
-clk-davinci-4.20 branch if that sounds OK.
+
+On 06/30/18 11:32, Manivannan Sadhasivam wrote:
+> Hi Saravanan,
+>
+> I agree with modifying the existing binding to accomodate other
+> SoC's of the same family. But the binding should be
+> "actions,owl-cmu.txt" since it reflects the family name.
+
+Agree, will modify the name
+
+> Andreas, what do you think?
+>
+> On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
+>> Modify clock bindings common Actions Semi Soc family S700/S900.
+>>
+>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+>> ---
+>>   ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>   rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>> similarity index 71%
+>> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>> index 93e4fb827cd6..8dc7edb4d198 100644
+>> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>> @@ -1,12 +1,14 @@
+>> -* Actions S900 Clock Management Unit (CMU)
+>> +* Actions S900/S700 Clock Management Unit (CMU)
+>>   
+> Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+
+sure
+
+>> -The Actions S900 clock management unit generates and supplies clock to various
+>> -controllers within the SoC. The clock binding described here is applicable to
+>> -S900 SoC.
+>> +The Actions S900/S700 clock management unit generates and supplies clock to
+>> +various controllers within the SoC. The clock binding described here is
+>> +applicable to S900/S700 SoC.
+>>   
+>>   Required Properties:
+>>   
+>> -- compatible: should be "actions,s900-cmu"
+>> +- compatible: should be one of this
+> Change to: compatible: should be one of the following:
+
+sure
+
+> Thanks,
+> Mani
+>
+>> +	"actions,s900-cmu"
+>> +	"actions,s700-cmu"
+>>   - reg: physical base address of the controller and length of memory mapped
+>>     region.
+>>   - clocks: Reference to the parent clocks ("hosc", "losc")
+>> @@ -15,9 +17,9 @@ Required Properties:
+>>   Each clock is assigned an identifier, and client nodes can use this identifier
+>>   to specify the clock which they consume.
+>>   
+>> -All available clocks are defined as preprocessor macros in
+>> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+>> -tree sources.
+>> +All available clocks are defined as preprocessor macros in corresponding
+>> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
+>> +device tree sources.
+>>   
+>>   External clocks:
+>>   
+>> -- 
+>> 2.18.0
+>>
+
+Thanks,
+Saravanan
