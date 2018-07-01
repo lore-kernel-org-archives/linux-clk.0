@@ -1,66 +1,49 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Thu, 26 Jul 2018 21:20:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: afaerber@suse.de
-Cc: sravanhome@gmail.com, sboyd@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux@cubietech.com,
-	support@cubietech.com, catalin.marinas@arm.com,
-	mturquette@baylibre.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
-	darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
-Subject: Re: [PATCH v7 5/5] arm64: dts: actions: Set UART clock reference
- from CMU
-Message-ID: <20180726155025.GA5220@Mani-XPS-13-9360>
-References: <20180719090649.12460-1-sravanhome@gmail.com>
- <20180719090649.12460-6-sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+Subject: Re: [PATCH v2 0/3] Add clock driver for Actions S700 SoC
+To: Stephen Boyd <sboyd@kernel.org>, afaerber@suse.de
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ manivannan.sadhasivam@linaro.org, pn@denx.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <153029392426.143105.1931235700216822088@swboyd.mtv.corp.google.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+Message-ID: <f35c3ea6-7f3f-17d5-f772-803674f18bdb@gmail.com>
+Date: Sun, 1 Jul 2018 18:53:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180719090649.12460-6-sravanhome@gmail.com>
+In-Reply-To: <153029392426.143105.1931235700216822088@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andreas,
+Hi Stephen
 
-On Thu, Jul 19, 2018 at 11:06:49AM +0200, Saravanan Sekar wrote:
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
 
-Will you be queuing up the dts patches through actions tree?
+On 06/29/18 19:38, Stephen Boyd wrote:
+> Quoting Saravanan Sekar (2018-06-28 12:18:02)
+>> Changelog v2:
+>> Fixed 0 day compilation warning
+>> Modified existing dts Actions S900 clock bindings common to Actions
+>> Soc family
+>>
+>> This patchset adds clock support for Actions Semi OWL series S700 SoC
+>> with relevant clock bindings and device tree info.
+>>
+>> Changed the UART clock using CMU instance and changes are tested in
+>> cubieboard7
+>>
+>> Thanks and regards,
+>> Saravanan,
+>> Parthiban
+>>
+>> Saravanan Sekar (3):
+>>    arm64: dts: actions: Enable clock controller for S700
+>>    clk: actions: Add S700 SoC clock support
+>>    dt-bindings: clock: Modify Actions Soc clock bindings
+> Normally this patch comes first, and then clk driver, and then dts bits.
+> Also, the header file for the #define constants would be part of the
+> bindings patch.
 
-Thanks,
-Mani
-
->  arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> index ef79d7905f44..c08808ca3346 100644
-> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-> @@ -28,12 +28,6 @@
->  		device_type = "memory";
->  		reg = <0x1 0xe0000000 0x0 0x0>;
->  	};
-> -
-> -	uart3_clk: uart3-clk {
-> -		compatible = "fixed-clock";
-> -		clock-frequency = <921600>;
-> -		#clock-cells = <0>;
-> -	};
->  };
->  
->  &timer {
-> @@ -42,5 +36,5 @@
->  
->  &uart3 {
->  	status = "okay";
-> -	clocks = <&uart3_clk>;
-> +	clocks = <&cmu CLK_UART3>;
->  };
-> -- 
-> 2.14.4
-> 
+I will reorder the commit and split the patch
