@@ -1,69 +1,146 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org,
-	andy.gross@linaro.org
-Cc: tdas@codeaurora.org,
-	girishm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	anischal@codeaurora.org,
-	bjorn.andersson@linaro.org,
-	grahamr@codeaurora.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	David Brown <david.brown@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 0/2] clk: qcom: Quad SPI (qspi) clock support for sdm845
-Date: Tue, 24 Jul 2018 10:45:11 -0700
-Message-Id: <20180724174513.174018-1-dianders@chromium.org>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
+ bindings
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Saravanan Sekar <sravanhome@gmail.com>
+Cc: sboyd@kernel.org, pn@denx.de, linux-arm-kernel@lists.infradead.org,
+ mturquette@baylibre.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+ catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org,
+ Jeff Chen <jeff.chen@actions-semi.com>,
+ "Thomas C. Liau" <thomas.liau@actions-semi.com>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-4-sravanhome@gmail.com>
+ <20180630093202.GB7320@Mani-XPS-13-9360>
+ <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
+ <20180701173706.GA15895@Mani-XPS-13-9360>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <88ce01d4-2694-eca0-770e-d4bd2869a258@suse.de>
+Date: Sun, 1 Jul 2018 19:58:15 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180701173706.GA15895@Mani-XPS-13-9360>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
-This two-series patch adds the needed clock bits to use the Quad SPI
-(qspi) part on sdm845.  It's expected that the bindings part of this
-patch could land in the clock tree with an immutable git hash and then
-be pulled into the Qualcomm tree so it could be used by dts files.
+Am 01.07.2018 um 19:37 schrieb Manivannan Sadhasivam:
+> On Sun, Jul 01, 2018 at 07:26:20PM +0200, Saravanan Sekar wrote:
+>> Hi Mani
+>>
+>>
+>> On 06/30/18 11:32, Manivannan Sadhasivam wrote:
+>>> Hi Saravanan,
+>>>
+>>> I agree with modifying the existing binding to accomodate other
+>>> SoC's of the same family. But the binding should be
+>>> "actions,owl-cmu.txt" since it reflects the family name.
+>>
+>> Agree, will modify the name
+>>
+>>> Andreas, what do you think?
 
->From the reply to my v1, the clock plan for this clock is:
-- MinSVS@19.2
-- LowSVS@75
-- SVS@150
-- Nominal@300
-...and intermediate frequencies can be used at frequences less than
-300.  I didn't see a need for 75 MHz and it was unclear from previous
-replies if this should come from MAIN or EVEN so I left it out.  I
-have added 100 MHz here since it is useful (/ 4 = 25 MHz is a useful
-clock for SPI flash)
+I concur that sx00 is insufficient. Older models were called ATMxxxx.
+Unfortunately with owl- it then no longer matches the compatible, but I
+wouldn't mind.
 
-OTHER NOTES:
-- From probing lines, it appears that the Quad SPI block has a divide
-  by 4 somewhere inside it (probably so it can oversample the lines,
-  or possibly so it can generate phase-offset clocks).  Thus we need
-  the core to go 4 times faster than we'd expect to run the SPI bus.
-- SPI devices usually specify the MAX frequency they should be clocked
-  at, so it's important that we use the clk_rcg2_floor_ops here rather
-  than the clk_rcg2_ops
+>>> On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
+>>>> Modify clock bindings common Actions Semi Soc family S700/S900.
+>>>>
+>>>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+>>>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+>>>> ---
+>>>>   ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
+>>>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>>>   rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> similarity index 71%
+>>>> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>>>> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> index 93e4fb827cd6..8dc7edb4d198 100644
+>>>> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+>>>> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
+>>>> @@ -1,12 +1,14 @@
+>>>> -* Actions S900 Clock Management Unit (CMU)
+>>>> +* Actions S900/S700 Clock Management Unit (CMU)
+>>> Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
+>>
+>> sure
+>>
+> 
+> During the review of I2C controller driver, Andreas pointed out that
+> we should use Owl instead of OWL in all places and also Actions should
+> be replaced by Actions Semiconductor.
 
-Changes in v3:
-- Removed gcc_parent_names_9 which I had left in (doh!).
+Actually I was just asking to include the company name and not just say
+Owl. Whether it's Actions, Actions Semi or Actions Semiconductor is not
+that important to me - that would be for the Actions Semi colleagues to
+comment - which I see are not in CC... Please fix that! You don't need
+mp-cs I think, but the others please.
 
-Changes in v2:
-- Only 19.2, 100, 150, and 300 MHz now.
-- All clocks come from MAIN rather than EVEN.
-- Use parent map 0 instead of new parent map 9.
+> So, please change it in relevant
+> places. For this binding, title should be:
+> 
+> Actions Semiconductor Owl SoC's Clock Management Unit (CMU).
 
-Douglas Anderson (2):
-  clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
-  clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+"SoC's" looks weird there, do we have such precedence to add it?
+"Actions Owl Clock Management Unit (CMU)" might do?
 
- drivers/clk/qcom/gcc-sdm845.c               | 56 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h |  3 ++
- 2 files changed, 59 insertions(+)
+Saravanan, please compare other patch titles and adapt your subjects
+accordingly: "modify bindings" is not very meaningful, since a patch
+always modifies something and the prefix already indicates dt-bindings
+as target. "Soc" is misspelled. The time-saving information to put there
+would be addition of S700.
+
+>>>> -The Actions S900 clock management unit generates and supplies clock to various
+>>>> -controllers within the SoC. The clock binding described here is applicable to
+>>>> -S900 SoC.
+>>>> +The Actions S900/S700 clock management unit generates and supplies clock to
+>>>> +various controllers within the SoC. The clock binding described here is
+>>>> +applicable to S900/S700 SoC.
+
+"S900 and S700 SoCs"? (keep the slash above)
+
+>>>>   Required Properties:
+>>>> -- compatible: should be "actions,s900-cmu"
+>>>> +- compatible: should be one of this
+>>> Change to: compatible: should be one of the following:
+>>
+>> sure
+>>
+>>> Thanks,
+>>> Mani
+>>>
+>>>> +	"actions,s900-cmu"
+>>>> +	"actions,s700-cmu"
+
+Mani, should we order alphabetically? I.e., will S500 go before S900, or
+will people just always append at the end now? Not saying we have to,
+but keeping it consistent across Actions bindings would be desirable.
+
+>>>>   - reg: physical base address of the controller and length of memory mapped
+>>>>     region.
+>>>>   - clocks: Reference to the parent clocks ("hosc", "losc")
+>>>> @@ -15,9 +17,9 @@ Required Properties:
+>>>>   Each clock is assigned an identifier, and client nodes can use this identifier
+>>>>   to specify the clock which they consume.
+>>>> -All available clocks are defined as preprocessor macros in
+>>>> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+>>>> -tree sources.
+>>>> +All available clocks are defined as preprocessor macros in corresponding
+>>>> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
+
+actions,s700-cmu.h for humans please or at least ...,s700-cmu.h.
+
+>>>> +device tree sources.
+>>>>   External clocks:
+
+Thanks,
+Andreas
 
 -- 
-2.18.0.233.g985f88cf7e-goog
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
