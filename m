@@ -1,94 +1,39 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
-Date: Wed, 18 Jul 2018 21:36:54 +0800
-Message-Id: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+Subject: Re: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for
+ S700
+To: Stephen Boyd <sboyd@kernel.org>, afaerber@suse.de
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+ catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ manivannan.sadhasivam@linaro.org, pn@denx.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-2-sravanhome@gmail.com>
+ <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+Message-ID: <149ebcc4-1430-37a6-e222-4328e8481df9@gmail.com>
+Date: Sun, 1 Jul 2018 18:50:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+In-Reply-To: <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This is a rebased version of below patch series against latest clk tree.
-[PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-https://lkml.org/lkml/2018/3/16/310
+Hi Stephen,
 
-This patch series intends to add imx7ulp clk support.
-
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
-
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
-
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
-
-Change Log:
-v3->v4:
- * rebased to latest kernel
- * make scg and pcc separate nodes according to Rob's suggestion
-
-v2->v3:
- * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
-   Others no changes.
-
-v1->v2:
- * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
- * use clk_hw apis to register clocks
- * use of_clk_add_hw_provider
- * split the clocks register process into two parts: early part for possible
-   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
-   the left normal peripheral clocks registered by a platform driver.
-
-Dong Aisheng (9):
-  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: implement new clk_hw based APIs
-  clk: imx: add imx7ulp clk driver
-
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
- drivers/clk/clk-divider.c                          | 152 +++++++++++++++
- drivers/clk/clk-fractional-divider.c               |  10 +
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite.c                    |  85 +++++++++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 209 +++++++++++++++++++++
- drivers/clk/imx/clk-pfdv2.c                        | 201 ++++++++++++++++++++
- drivers/clk/imx/clk-pllv4.c                        | 182 ++++++++++++++++++
- drivers/clk/imx/clk.c                              |  22 +++
- drivers/clk/imx/clk.h                              |  92 ++++++++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++
- include/linux/clk-provider.h                       |  17 ++
- 14 files changed, 1166 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-
--- 
-2.7.4
+On 06/29/18 19:36, Stephen Boyd wrote:
+> Quoting Saravanan Sekar (2018-06-28 12:18:03)
+>> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+>> index ef79d7905f44..28f3f4a0f7f0 100644
+>> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+>> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+>> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+>> index 66dd5309f0a2..3530b705df90 100644
+>> --- a/arch/arm64/boot/dts/actions/s700.dtsi
+>> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
+> Can the above part be split from the below part? I don't want to merge
+> dts bits into clk tree, when those should normally go through arm-soc.
+Sure I will spilt into bindings commit
+>> diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
+>> new file mode 100644
