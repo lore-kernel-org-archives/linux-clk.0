@@ -1,56 +1,70 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 19/21] MIPS: CI20: Reduce system timer clock to 3 MHz
-Date: Wed, 25 Jul 2018 01:19:56 +0200
-Message-Id: <20180724231958.20659-20-paul@crapouillou.net>
-In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
-References: <20180724231958.20659-1-paul@crapouillou.net>
+Return-Path: <pn@denx.de>
+Subject: Re: [PATCH v2 0/3] Add clock driver for Actions S700 SoC
+To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+ Saravanan Sekar <sravanhome@gmail.com>
+Cc: sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
+ catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ manivannan.sadhasivam@linaro.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jeff Chen
+ <jeff.chen@actions-semi.com>, "Thomas C. Liau"
+ <thomas.liau@actions-semi.com>, Cubietech support <support@cubietech.com>,
+ linux <linux@cubietech.com>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <8503ae31-aaf3-e4ba-f385-859a6cd3f8d6@suse.de>
+From: Parthiban Nallathambi <pn@denx.de>
+Message-ID: <440c9eed-b930-5a4c-4320-11eec682add6@denx.de>
+Date: Sun, 1 Jul 2018 20:24:56 +0200
+MIME-Version: 1.0
+In-Reply-To: <8503ae31-aaf3-e4ba-f385-859a6cd3f8d6@suse.de>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-The default clock (48 MHz) is too fast for the system timer, which fails
-to report time accurately.
+Hello Andreas,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/ci20.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 07/01/2018 08:05 PM, Andreas Färber wrote:
+> Hi Saravannan,
+> 
+> Am 28.06.2018 um 21:18 schrieb Saravanan Sekar:
+>> Changelog v2:
+>> Fixed 0 day compilation warning
+>> Modified existing dts Actions S900 clock bindings common to Actions
+>> Soc family
+> 
+> Please post v3 without --in-reply-to. It's becoming messy to read.
+> 
+>> This patchset adds clock support for Actions Semi OWL series S700 SoC
+>> with relevant clock bindings and device tree info. 
+>>
+>> Changed the UART clock using CMU instance and changes are tested in
+>> cubieboard7
+> 
+> Did you find any better way of testing than my "reboot bootloader" from
+> preinstalled Android?
 
- v5: New patch
+Flashing bootloader.bin and u-boot-dtb.img at below offset trigger the
+automatic boot from SD. But ADFU needs to long pressed before connecting
+the power.
 
-diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
-index 50cff3cbcc6d..700cf28a52ec 100644
---- a/arch/mips/boot/dts/ingenic/ci20.dts
-+++ b/arch/mips/boot/dts/ingenic/ci20.dts
-@@ -238,3 +238,9 @@
- 		bias-disable;
- 	};
- };
-+
-+&tcu {
-+	/* 3 MHz for the system timer */
-+	assigned-clocks = <&tcu TCU_CLK_TIMER0>;
-+	assigned-clock-rates = <3000000>;
-+};
+sudo dd if=bootloader.bin of=/dev/sdX bs=512 seek=4097
+sudo dd if=u-boot-dtb.img of=/dev/sdX bs=1024 seek=3072
+
+With this is place, u-boot expects GPT layout by default. I am able to boot
+the kernel from FAT/ext by updating the bootcmd/u-boot env accordingly. 
+
+I haven't tried flashing/replacing u-boot in eMMC still.
+
+> 
+> In addition to missing Actions Semi you may want to CC Cubietech.
+
++Added cubitech linux group.
+
+> 
+> Thanks,
+> Andreas
+> 
+
 -- 
-2.11.0
+Thanks,
+Parthiban N
