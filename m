@@ -1,514 +1,563 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr30071.outbound.protection.outlook.com ([40.107.3.71]:50208
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726657AbeGNJHz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 14 Jul 2018 05:07:55 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-CC: Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-Date: Sat, 14 Jul 2018 08:49:28 +0000
-Message-ID: <AM0PR04MB42113A7842135CDB53698510805F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB421141DA6AD8E6EFB74A8D6E80590@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20180714070227.ifmpc5vxpehqxp6x@pengutronix.de>
-In-Reply-To: <20180714070227.ifmpc5vxpehqxp6x@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:47057 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752343AbeGAPfw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jul 2018 11:35:52 -0400
 MIME-Version: 1.0
+In-Reply-To: <1757847.226s5Z5USo@jernej-laptop>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <3055462.VmN8MJVs7V@jernej-laptop> <CAGb2v66y2NZexb94gZ9qa9rP7akdEFWSy43CU5G-UrGR2ad2BQ@mail.gmail.com>
+ <1757847.226s5Z5USo@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 1 Jul 2018 23:35:28 +0800
+Message-ID: <CAGb2v666uesMjm7HqOMmj2ij1+avedRPrQmxwHu-aY2JsSkUOw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> Sent: Saturday, July 14, 2018 3:02 PM
-> To: A.s. Dong <aisheng.dong@nxp.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org; dl-linux-
-> imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> kernel@pengutronix.de; linux-clk@vger.kernel.org
-> Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging uni=
-t
->=20
-> Hi,
->=20
-> Beside, what is equivalent of name and family name is in your name?
-> I know it is different in China, so I won't to avoid confusion with:
-> "Hi $name," format :)
->=20
+On Sun, Jul 1, 2018 at 11:13 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+> Dne nedelja, 01. julij 2018 ob 15:52:55 CEST je Chen-Yu Tsai napisal(a):
+>> On Sun, Jul 1, 2018 at 6:41 PM, Jernej Škrabec <jernej.skrabec@siol.net>
+> wrote:
+>> > Dne četrtek, 28. junij 2018 ob 08:51:07 CEST je Chen-Yu Tsai napisal(a):
+>> >> On Thu, Jun 28, 2018 at 1:15 PM, Jernej Škrabec <jernej.skrabec@siol.net>
+>> >
+>> > wrote:
+>> >> > Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai
+> napisal(a):
+>> >> >> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec
+>> >> >> <jernej.skrabec@siol.net>
+>> >> >
+>> >> > wrote:
+>> >> >> > Add all entries needed for HDMI to function properly.
+>> >> >> >
+>> >> >> > Since R40 has highly configurable pipeline, both mixers and both
+>> >> >> > TCON
+>> >> >> > TVs are added. Board specific DT should then connect them together
+>> >> >> > trough TCON TOP muxers to best fit the purpose of the board.
+>> >> >> >
+>> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> >> >> > ---
+>> >> >> >
+>> >> >> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269
+>> >> >> >  +++++++++++++++++++++++++++++++
+>> >> >> >  1 file changed, 269 insertions(+)
+>> >> >> >
+>> >> >> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
+>> >> >> > b/arch/arm/boot/dts/sun8i-r40.dtsi index 173dcc1652d2..a2a75fb04caf
+>> >> >> > 100644
+>> >> >> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+>> >> >> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+>> >> >> > @@ -42,8 +42,11 @@
+>> >> >> >
+>> >> >> >   */
+>> >> >> >
+>> >> >> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> >> >> >
+>> >> >> > +#include <dt-bindings/clock/sun8i-de2.h>
+>> >> >> >
+>> >> >> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
+>> >> >> >
+>> >> >> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
+>> >> >
+>> >> > Maxime, above line breaks compilation for build robot, sorry.
+>> >> >
+>> >> >> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
+>> >> >> >
+>> >> >> > +#include <dt-bindings/reset/sun8i-de2.h>
+>> >> >> >
+>> >> >> >  / {
+>> >> >> >
+>> >> >> >         #address-cells = <1>;
+>> >> >> >
+>> >> >> > @@ -99,12 +102,76 @@
+>> >> >> >
+>> >> >> >                 };
+>> >> >> >
+>> >> >> >         };
+>> >> >> >
+>> >> >> > +       de: display-engine {
+>> >> >> > +               compatible = "allwinner,sun8i-r40-display-engine",
+>> >> >> > +                            "allwinner,sun8i-h3-display-engine";
+>> >> >>
+>> >> >> Given that the display pipeline looks different, they should not be
+>> >> >> compatible.
+>> >> >
+>> >> > Ok.
+>> >> >
+>> >> >> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
+>> >> >> > +               status = "disabled";
+>> >> >> > +       };
+>> >> >> > +
+>> >> >> >
+>> >> >> >         soc {
+>> >> >> >
+>> >> >> >                 compatible = "simple-bus";
+>> >> >> >                 #address-cells = <1>;
+>> >> >> >                 #size-cells = <1>;
+>> >> >> >                 ranges;
+>> >> >> >
+>> >> >> > +               display_clocks: clock@1000000 {
+>> >> >> > +                       compatible = "allwinner,sun8i-r40-de2-clk",
+>> >> >> > +                                    "allwinner,sun8i-h3-de2-clk";
+>> >> >> > +                       reg = <0x01000000 0x100000>;
+>> >> >> > +                       clocks = <&ccu CLK_DE>,
+>> >> >> > +                                <&ccu CLK_BUS_DE>;
+>> >> >> > +                       clock-names = "mod",
+>> >> >> > +                                     "bus";
+>> >> >> > +                       resets = <&ccu RST_BUS_DE>;
+>> >> >> > +                       #clock-cells = <1>;
+>> >> >> > +                       #reset-cells = <1>;
+>> >> >> > +               };
+>> >> >> > +
+>> >> >> > +               mixer0: mixer@1100000 {
+>> >> >> > +                       compatible =
+>> >> >> > "allwinner,sun8i-r40-de2-mixer-0";
+>> >> >> > +                       reg = <0x01100000 0x100000>;
+>> >> >> > +                       clocks = <&display_clocks CLK_BUS_MIXER0>,
+>> >> >> > +                                <&display_clocks CLK_MIXER0>;
+>> >> >> > +                       clock-names = "bus",
+>> >> >> > +                                     "mod";
+>> >> >> > +                       resets = <&display_clocks RST_MIXER0>;
+>> >> >> > +
+>> >> >> > +                       ports {
+>> >> >> > +                               #address-cells = <1>;
+>> >> >> > +                               #size-cells = <0>;
+>> >> >> > +
+>> >> >> > +                               mixer0_out: port@1 {
+>> >> >> > +                                       reg = <1>;
+>> >> >> > +                                       mixer0_out_tcon_top:
+>> >> >> > endpoint {
+>> >> >> > +                                               remote-endpoint =
+>> >> >> > <&tcon_top_mixer0_in_mixer0>; +
+>> >> >> > };
+>> >> >> > +                               };
+>> >> >> > +                       };
+>> >> >> > +               };
+>> >> >> > +
+>> >> >> > +               mixer1: mixer@1200000 {
+>> >> >> > +                       compatible =
+>> >> >> > "allwinner,sun8i-r40-de2-mixer-1";
+>> >> >> > +                       reg = <0x01200000 0x100000>;
+>> >> >> > +                       clocks = <&display_clocks CLK_BUS_MIXER1>,
+>> >> >> > +                                <&display_clocks CLK_MIXER1>;
+>> >> >> > +                       clock-names = "bus",
+>> >> >> > +                                     "mod";
+>> >> >> > +                       resets = <&display_clocks RST_WB>;
+>> >> >> > +
+>> >> >> > +                       ports {
+>> >> >> > +                               #address-cells = <1>;
+>> >> >> > +                               #size-cells = <0>;
+>> >> >> > +
+>> >> >> > +                               mixer1_out: port@1 {
+>> >> >> > +                                       reg = <1>;
+>> >> >> > +                                       mixer1_out_tcon_top:
+>> >> >> > endpoint {
+>> >> >> > +                                               remote-endpoint =
+>> >> >> > <&tcon_top_mixer1_in_mixer1>; +
+>> >> >> > };
+>> >> >> > +                               };
+>> >> >> > +                       };
+>> >> >> > +               };
+>> >> >> > +
+>> >> >> >
+>> >> >> >                 nmi_intc: interrupt-controller@1c00030 {
+>> >> >> >
+>> >> >> >                         compatible = "allwinner,sun7i-a20-sc-nmi";
+>> >> >> >                         interrupt-controller;
+>> >> >> >
+>> >> >> > @@ -451,6 +518,163 @@
+>> >> >> >
+>> >> >> >                         #size-cells = <0>;
+>> >> >> >
+>> >> >> >                 };
+>> >> >> >
+>> >> >> > +               tcon_top: tcon-top@1c70000 {
+>> >> >> > +                       compatible = "allwinner,sun8i-r40-tcon-top";
+>> >> >> > +                       reg = <0x01c70000 0x1000>;
+>> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
+>> >> >> > +                                <&ccu CLK_TCON_TV0>,
+>> >> >> > +                                <&ccu CLK_TVE0>,
+>> >> >> > +                                <&ccu CLK_TCON_TV1>,
+>> >> >> > +                                <&ccu CLK_TVE1>,
+>> >> >> > +                                <&ccu CLK_DSI_DPHY>;
+>> >> >> > +                       clock-names = "bus",
+>> >> >> > +                                     "tcon-tv0",
+>> >> >> > +                                     "tve0",
+>> >> >> > +                                     "tcon-tv1",
+>> >> >> > +                                     "tve1",
+>> >> >> > +                                     "dsi";
+>> >> >> > +                       clock-output-names = "tcon-top-tv0",
+>> >> >> > +                                            "tcon-top-tv1",
+>> >> >> > +                                            "tcon-top-dsi";
+>> >> >> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
+>> >> >> > +                       #clock-cells = <1>;
+>> >> >> > +
+>> >> >> > +                       ports {
+>> >> >> > +                               #address-cells = <1>;
+>> >> >> > +                               #size-cells = <0>;
+>> >> >> > +
+>> >> >> > +                               tcon_top_mixer0_in: port@0 {
+>> >> >> > +                                       reg = <0>;
+>> >> >> > +
+>> >> >> > +                                       tcon_top_mixer0_in_mixer0:
+>> >> >> > endpoint { +
+>> >> >> > remote-endpoint = <&mixer0_out_tcon_top>; +
+>> >> >> >
+>> >> >> >         };
+>> >> >> >
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_top_mixer0_out: port@1 {
+>> >> >> > +                                       #address-cells = <1>;
+>> >> >> > +                                       #size-cells = <0>;
+>> >> >> > +                                       reg = <1>;
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer0_out_tcon_lcd0:
+>> >> >> > endpoint@0 { +                                               reg =
+>> >> >> > <0>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer0_out_tcon_lcd1:
+>> >> >> > endpoint@1 { +                                               reg =
+>> >> >> > <1>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer0_out_tcon_tv0:
+>> >> >> > endpoint@2 { +                                               reg =
+>> >> >> > <2>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer0_out_tcon_tv1:
+>> >> >> > endpoint@3 { +                                               reg =
+>> >> >> > <3>;
+>> >> >> > +                                       };
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_top_mixer1_in: port@2 {
+>> >> >> > +                                       reg = <2>;
+>> >> >> > +
+>> >> >> > +                                       tcon_top_mixer1_in_mixer1:
+>> >> >> > endpoint { +
+>> >> >> > remote-endpoint = <&mixer1_out_tcon_top>; +
+>> >> >> >
+>> >> >> >         };
+>> >> >> >
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_top_mixer1_out: port@3 {
+>> >> >> > +                                       #address-cells = <1>;
+>> >> >> > +                                       #size-cells = <0>;
+>> >> >> > +                                       reg = <3>;
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer1_out_tcon_lcd0:
+>> >> >> > endpoint@0 { +                                               reg =
+>> >> >> > <0>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer1_out_tcon_lcd1:
+>> >> >> > endpoint@1 { +                                               reg =
+>> >> >> > <1>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer1_out_tcon_tv0:
+>> >> >> > endpoint@2 { +                                               reg =
+>> >> >> > <2>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +
+>> >> >> > tcon_top_mixer1_out_tcon_tv1:
+>> >> >> > endpoint@3 { +                                               reg =
+>> >> >> > <3>;
+>> >> >> > +                                       };
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_top_hdmi_in: port@4 {
+>> >> >> > +                                       #address-cells = <1>;
+>> >> >> > +                                       #size-cells = <0>;
+>> >> >> > +                                       reg = <4>;
+>> >> >> > +
+>> >> >> > +                                       tcon_top_hdmi_in_tcon_tv0:
+>> >> >> > endpoint@0 { +                                               reg =
+>> >> >> > <0>;
+>> >> >> > +                                       };
+>> >> >> > +
+>> >> >> > +                                       tcon_top_hdmi_in_tcon_tv1:
+>> >> >> > endpoint@1 { +                                               reg =
+>> >> >> > <1>;
+>> >> >> > +                                       };
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_top_hdmi_out: port@5 {
+>> >> >> > +                                       reg = <5>;
+>> >> >> > +
+>> >> >> > +                                       tcon_top_hdmi_out_hdmi:
+>> >> >> > endpoint {
+>> >> >> > +                                               remote-endpoint =
+>> >> >> > <&hdmi_in_tcon_top>; +                                       };
+>> >> >> > +                               };
+>> >> >> > +                       };
+>> >> >> > +               };
+>> >> >> > +
+>> >> >> > +               tcon_tv0: lcd-controller@1c73000 {
+>> >> >> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+>> >> >> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+>> >> >> > +                       reg = <0x01c73000 0x1000>;
+>> >> >> > +                       interrupts = <GIC_SPI 51
+>> >> >> > IRQ_TYPE_LEVEL_HIGH>;
+>> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top
+>> >> >> > 0>;
+>> >> >> > +                       clock-names = "ahb", "tcon-ch1";
+>> >> >> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
+>> >> >> > +                       reset-names = "lcd";
+>> >> >> > +
+>> >> >> > +                       ports {
+>> >> >> > +                               #address-cells = <1>;
+>> >> >> > +                               #size-cells = <0>;
+>> >> >> > +
+>> >> >> > +                               tcon_tv0_in: port@0 {
+>> >> >> > +                                       reg = <0>;
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_tv0_out: port@1 {
+>> >> >> > +                                       reg = <1>;
+>> >> >> > +                               };
+>> >> >> > +                       };
+>> >> >> > +               };
+>> >> >> > +
+>> >> >> > +               tcon_tv1: lcd-controller@1c74000 {
+>> >> >> > +                       compatible = "allwinner,sun8i-r40-tcon-tv",
+>> >> >> > +                                    "allwinner,sun8i-a83t-tcon-tv";
+>> >> >> > +                       reg = <0x01c74000 0x1000>;
+>> >> >> > +                       interrupts = <GIC_SPI 52
+>> >> >> > IRQ_TYPE_LEVEL_HIGH>;
+>> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>, <&tcon_top
+>> >> >> > 1>;
+>> >> >> > +                       clock-names = "ahb", "tcon-ch1";
+>> >> >> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
+>> >> >> > +                       reset-names = "lcd";
+>> >> >> > +
+>> >> >> > +                       ports {
+>> >> >> > +                               #address-cells = <1>;
+>> >> >> > +                               #size-cells = <0>;
+>> >> >> > +
+>> >> >> > +                               tcon_tv1_in: port@0 {
+>> >> >> > +                                       reg = <0>;
+>> >> >> > +                               };
+>> >> >> > +
+>> >> >> > +                               tcon_tv1_out: port@1 {
+>> >> >> > +                                       reg = <1>;
+>> >> >>
+>> >> >> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
+>> >> >> connections. Also, on the driver side, there's no code to handle
+>> >> >> dynamically mapping mixers to the TCONs that are being used. In the
+>> >> >> past
+>> >> >> we
+>> >> >> had simple 1:1 mappings. This is no longer the case, and it needs to
+>> >> >> be
+>> >> >> dealt with.
+>> >> >
+>> >> > How would TCON TOP driver know how to set muxes? There are no
+>> >> > appropriate
+>> >> > bingings for muxes, except for V4L2 subsystem, which doesn't really
+>> >> > work
+>> >> > here.
+>> >>
+>> >> This will end up being a bunch of custom functions exported from the TCON
+>> >> TOP driver to the TCON driver. As for bindings, the stuff you already
+>> >> have
+>> >> is mostly enough. You do have to specify the endpoint ID vs component
+>> >> mapping, so you can find the correct one.
+>> >>
+>> >> For example, you would specify that the IDs for TCON LCDs be 0 and 1, and
+>> >> TCON TVs be 2 and 3. Matching the actual register values is a nice
+>> >> convenience. These would be used by the driver as the TCON ID.
+>> >
+>> > So something that's already done (minus full connections).
+>> >
+>> >> Also, we might want to consider them as two pairs of two TCONs (LCD +
+>> >> TV).
+>> >> The CRTC in DRM land is actually the mixer + TCON on our platform. This
+>> >> means we only have two CRTCs. So we could have CRTC 0 = mixer 0 + TCON
+>> >> LCD
+>> >> 0 + TCON TV 0. The "TCON_TVx_OUTSEL" and "DE_PORTx PERH Select" muxes
+>> >> would
+>> >> be set at run time in the mode set function, selecting either LCD or TV
+>> >> based on what encoder is attached.
+>> >
+>> > That proposal would still limit some combinations. For example, that would
+>> > put DSI always on mixer1, since it can be connected to only LCD TCON 1.
+>> > It can also cause undesired combination in laptop solutions. Consider
+>> > that PCB designer connected LCD1 pins to panel for some reason. Panel is
+>> > definetly main screen and should definetly be connected to mixer0, but in
+>> > that case, it would be to mixer1.
+>>
+>> There's no reason we can't have dynamically assigned mixer+tcon pairs, but
+>> that would mean implementing additional scheduling code that we don't have
+>> yet. The current sunxi-drm and CRTC code assume static mappings.
+>
+> I just remembered that your proposed solution while should work on R40,
+> doesn't really fit in H6 case (which is the main reason for this series).
+>
+> There are only LCD TCON 0 and TV TCON 0. Their HW IDs are the same as on R40
+> (1 and 3). Additionaly, there is also HDMI mux as on R40, although there is
+> only one TV TCON, which can be used only for HDMI (TV output is connected to
+> LCD TCON through AC200 bridge, put on same die or glued in same package, not
+> really sure and doesn't really matter).
 
-Dong is my family name. Either Hi A.S or Hi Dong is fine to me. :)
+OK. So even there's only one TV TCON, you still have to program all muxes with
+the correct value, to prevent a) a bad value left by the bootloader and b) bad
+reset default values.
 
-> On Thu, Jul 12, 2018 at 11:28:16AM +0000, A.s. Dong wrote:
-> > Hi Oleksij,
-> >
-> > > -----Original Message-----
-> > > From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> > > Sent: Friday, June 15, 2018 5:51 PM
-> > > To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> > > <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> > > Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>
-> > > Cc: Oleksij Rempel <o.rempel@pengutronix.de>;
-> kernel@pengutronix.de;
-> > > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > > linux- clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> > > Subject: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging
-> > > unit
-> > >
-> > > The Mailbox controller is able to send messages (up to 4 32 bit
-> > > words) between the endpoints.
-> > >
-> >
-> > This is not correct according to current implementation as we abstract
-> > them into 4 virtual channels while each 'channel' can send only one wor=
-d
-> one time.
-> > We probably need explain such limitation in commit message as well.
-> >
-> > I'm not strongly against this way. But it makes the controller lose
-> > the HW capability to send up to 4 words. I'd just like to know a bit
-> > history or reason why we decided to do that. Do we design it for specif=
-ic
-> users case for M4?
->=20
-> no, it is R&D.
->=20
+> I would like to write something which is also going to work for H6 out of the
+> box. For H6, following combination would work well:
+> mixer0 = LCD TCON 1 + TV TCON 0
+> mixer1 = LCD TCON 0 + TV TCON 1
+>
+> Or alternatively, we can leave that to mux callback in TCON which would take
+> care for best variant for given SoC.
 
-Got it
+I think that is the ultimate goal. However, the muxing would be a bit
+complicated. For all the past SoCs, we were dealing with muxing the
+downstream encoder. Now we will be muxing mixer and tcon connections
+as well. You would also have to dynamically switch around the mixer
+and/or tcon pointers in sun4i_crtc so existing code can still work.
 
-> > And are we assuming there will be no real users of multi words send
-> requirement?
->=20
-> no. In my experience, each imaginable Brainfuck configuration will actual=
-ly
-> happen some day in some design for $reasons.
-> So, no assumptions, just currently working configuration of my R&D projec=
-t.
->=20
+> Once we concur on that, I'll try to implement something.
+>
+>>
+>> We could do this as a second step if you're up to it.
+>
+> For my ultimate goal, which is 1st class Kodi experience on mainline, current
+> proposal works in any case (mixer1 is enough). I just don't like solutions
+> which are not universal.
+>
+>>
+>> > Additionaly, since HDMI would became floating between TV TCON 0 and 1,
+>> > whoever would write board DT would need to know this and enable only TV
+>> > TCON1 if LCD is desired to be connected to mixer0 (or vice versa).
+>>
+>> There's no reason not to have all TCONs enabled by default. We would
+>> consider the display-engine node controlling whether everything actually
+>> gets used.
+>> > If we really want universal solution with full connections, addtional
+>> > property has to be defined and used for that.
+>> >
+>> >> This limitation is a software one, and should not bleed over into the
+>> >> hardware representation.
+>> >>
+>> >> > Additionaly, how would HDMI know which TCON belongs to it to
+>> >> > appropriately
+>> >> > set possible_crtcs?
+>> >>
+>> >> HDMI is connected to the two TCON TVs through the TCON TOP mux. We handle
+>> >> TCON output muxing in the TCON driver, using the set_mux callback in the
+>> >> quirks. For R40, this callback would probably call into the TCON TOP
+>> >> driver
+>> >> asking it to set the mux to some value.
+>> >>
+>> >> > Currently, my idea is that board DT creates wanted connections. Since
+>> >> > there is only one valid connection for each mux, driver knows eactly
+>> >> > what
+>> >> > to write into mux register. HDMI driver can simply check which TCON
+>> >> > connection is valid in HDMI input mux and select it in possible_crtcs.
+>> >>
+>> >> But that is not how the actual hardware looks like. The device tree
+>> >> should
+>> >> model the hardware, not a subset of it just because one thinks the
+>> >> implementation is difficult or won't be used at all.
+>> >>
+>> >> Furthermore, I think you have it backwards. possible_crtcs is generated
+>> >> based on (in our case) the connections between TCON and HDMI based on the
+>> >> device tree graph. So if you have both hooked up, both will show up in
+>> >> possible_crtcs, but only one crtc will actually be selected to feed the
+>> >> HDMI encoder. If you really need to access the current crtc, the
+>> >> drm_encoder struct contains a pointer to it.
+>> >>
+>> >> In DE 1.0 driver, we leave all the muxing to the TCON driver. See
+>> >>
+>> >>
+>> >> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/sun4i/sun4
+>> >> i_
+>> >> tcon.c#L537
+>> >>
+>> >> So in a sense, the HDMI encoder should be and is hooked up to both TCONs,
+>> >> but only one is active at any given time.
+>> >
+>> > So something like that I had in v1 series. I'll implement something
+>> > similar. That would also mean we need R40 specific TV TCON compatible.
+>> > I'll restore that.
+>> >
+>> > Just a question on future situation when TVE driver will be implemented.
+>> > Suppose that R40 board has TVE0 and HDMI as outputs. This would mean that
+>> > TVE0 has possible crtcs set as 0b01 and HDMI 0b11. Will be DRM framework
+>> > smart enough that it will put HDMI on second crtc because TVE0 can be
+>> > connected to only to first crtc?
+>>
+>> Yes. If the possible_clones setting for the encoder is not set, the DRM
+>> framework will not do mirroring, and will keep each active encoder on a
+>> separate crtc.
+>>
+>> >> > Please also note that mixer0 and mixer1 don't have same capabilities
+>> >> > and
+>> >> > you generally want mixer0 to be connected to main output. This is in
+>> >> > contrast to DE1 SoCs, where both backends and both frontends have same
+>> >> > capability.
+>> >>
+>> >> Yes. But who's to say the two display outputs can't be reversed or
+>> >> swapped
+>> >> around? With fixed singular connections, you also rule out mirrored
+>> >> output.
+>> >
+>> > I don't think there is standard way to swap around mixers at runtime,
+>> > expecially if crtcs are represented as mixer + TCON pair.
+>>
+>> As I mentioned above, we will have to do this on our own.
+>>
+>> > I'm not sure what do you mean with mirrored output or at least why
+>> > singular
+>> > connections would prevent mirroring. HW mirroring needs DRM writeback
+>> > support which is currently in RFC phase if I'm not mistaken. Once
+>> > implemented in DRM framework and in sun4i-drm, it would be possible only
+>> > to mirror mixer0 -> mixer1, because mixer1 doesn't support writeback (at
+>> > least on existing SoCs).
+>> What I meant was it might be possible to drive two TCONs with one mixer, or
+>> two encoders with one TCON. I guess the latter is not possible since each
+>> TCON only has one channel. Not sure about the former.
+>
+> I think neither of this two variants are possible, because outputs would have
+> to have exactly the same resolution and in second case even the same pixel
+> clock, which is very unlikely.
 
-I'm fine with as it is currently. We don't have to address all possible
-Issues in one time.
+That is what mirroring is supposed to mean, right? For instance you could
+have VGA on one and HDMI on the other, at the same resolution and dotclock.
 
-> > > This driver was tested using the mailbox-test driver sending
-> > > messages between the Cortex-A7 and the Cortex-M4.
-> > >
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > >  drivers/mailbox/Kconfig       |   6 +
-> > >  drivers/mailbox/Makefile      |   2 +
-> > >  drivers/mailbox/imx-mailbox.c | 288
-> > > ++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 296 insertions(+)
-> > >  create mode 100644 drivers/mailbox/imx-mailbox.c
-> > >
-> > > diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig index
-> > > a2bb27446dce..e1d2738a2e4c 100644
-> > > --- a/drivers/mailbox/Kconfig
-> > > +++ b/drivers/mailbox/Kconfig
-> > > @@ -15,6 +15,12 @@ config ARM_MHU
-> > >  	  The controller has 3 mailbox channels, the last of which can be
-> > >  	  used in Secure mode only.
-> > >
-> > > +config IMX_MBOX
-> > > +	tristate "iMX Mailbox"
-> > > +	depends on SOC_IMX7D || COMPILE_TEST
-> >
-> > Better change to ARCH_MXC as other platform does.
->=20
-> ok
->=20
-> > > +	help
-> > > +	  Mailbox implementation for iMX7D Messaging Unit (MU).
-> >
-> > Ditto
->=20
-> ok
->=20
-> > > +
-> > >  config PLATFORM_MHU
-> > >  	tristate "Platform MHU Mailbox"
-> > >  	depends on OF
-> > > diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-> > > index
-> > > cc23c3a43fcd..ba2fe1b6dd62 100644
-> > > --- a/drivers/mailbox/Makefile
-> > > +++ b/drivers/mailbox/Makefile
-> > > @@ -7,6 +7,8 @@ obj-$(CONFIG_MAILBOX_TEST)	+=3D mailbox-test.o
-> > >
-> > >  obj-$(CONFIG_ARM_MHU)	+=3D arm_mhu.o
-> > >
-> > > +obj-$(CONFIG_IMX_MBOX)	+=3D imx-mailbox.o
-> > > +
-> > >  obj-$(CONFIG_PLATFORM_MHU)	+=3D platform_mhu.o
-> > >
-> > >  obj-$(CONFIG_PL320_MBOX)	+=3D pl320-ipc.o
-> > > diff --git a/drivers/mailbox/imx-mailbox.c
-> > > b/drivers/mailbox/imx-mailbox.c new file mode 100644 index
-> > > 000000000000..e3f621cb1d30
-> > > --- /dev/null
-> > > +++ b/drivers/mailbox/imx-mailbox.c
-> > > @@ -0,0 +1,288 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Copyright (c) 2018 Pengutronix, Oleksij Rempel
-> > > +<o.rempel@pengutronix.de>  */
-> > > +
-> > > +#include <linux/clk.h>
-> > > +#include <linux/interrupt.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/mailbox_controller.h> #include <linux/module.h>
-> > > +#include <linux/of_device.h>
-> > > +
-> > > +/* Transmit Register */
-> > > +#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
-> > > +/* Receive Register */
-> > > +#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
-> > > +/* Status Register */
-> > > +#define IMX_MU_xSR		0x20
-> > > +#define IMX_MU_xSR_TEn(x)	BIT(20 + (x))
-> > > +#define IMX_MU_xSR_RFn(x)	BIT(24 + (x))
-> > > +#define IMX_MU_xSR_BRDIP	BIT(9)
-> > > +
-> > > +/* Control Register */
-> > > +#define IMX_MU_xCR		0x24
-> > > +/* Transmit Interrupt Enable */
-> > > +#define IMX_MU_xCR_TIEn(x)	BIT(20 + (x))
-> > > +/* Receive Interrupt Enable */
-> > > +#define IMX_MU_xCR_RIEn(x)	BIT(24 + (x))
-> > > +
-> > > +#define IMX_MU_MAX_CHANS	4u
-> > > +
-> > > +struct imx_mu_priv;
-> > > +
-> > > +struct imx_mu_cfg {
-> > > +	unsigned int		chans;
-> > > +	void (*init_hw)(struct imx_mu_priv *priv); };
-> > > +
-> > > +struct imx_mu_con_priv {
-> > > +	int			irq;
-> > > +	unsigned int		bidx;
-> > > +	unsigned int		idx;
-> > > +};
-> > > +
-> > > +struct imx_mu_priv {
-> > > +	struct device		*dev;
-> > > +	const struct imx_mu_cfg	*dcfg;
-> > > +	void __iomem		*base;
-> > > +
-> > > +	struct mbox_controller	mbox;
-> > > +	struct mbox_chan	mbox_chans[IMX_MU_MAX_CHANS];
-> > > +
-> > > +	struct imx_mu_con_priv  con_priv[IMX_MU_MAX_CHANS];
-> > > +	struct clk		*clk;
-> > > +};
-> > > +
-> > > +static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller
-> > > +*mbox) {
-> > > +	return container_of(mbox, struct imx_mu_priv, mbox); }
-> > > +
-> > > +static void imx_mu_write(struct imx_mu_priv *priv, u32 val, u32 offs=
-) {
-> > > +	iowrite32(val, priv->base + offs); }
-> > > +
-> > > +static u32 imx_mu_read(struct imx_mu_priv *priv, u32 offs) {
-> > > +	return ioread32(priv->base + offs); }
-> > > +
-> > > +static u32 imx_mu_rmw(struct imx_mu_priv *priv, u32 offs, u32 set,
-> > > +u32
-> > > +clr) {
-> > > +	u32 val;
-> > > +
-> > > +	val =3D imx_mu_read(priv, offs);
-> > > +	val &=3D ~clr;
-> > > +	val |=3D set;
-> > > +	imx_mu_write(priv, val, offs);
-> > > +
-> > > +	return val;
-> > > +}
-> > > +
-> > > +static irqreturn_t imx_mu_isr(int irq, void *p) {
-> > > +	struct mbox_chan *chan =3D p;
-> > > +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> > > +	struct imx_mu_con_priv *cp =3D chan->con_priv;
-> > > +
-> > > +	u32 val, dat;
-> > > +
-> > > +	val =3D imx_mu_read(priv, IMX_MU_xSR);
-> > > +	val &=3D IMX_MU_xSR_TEn(cp->bidx) | IMX_MU_xSR_RFn(cp->bidx);
-> > > +	if (!val)
-> > > +		return IRQ_NONE;
-> > > +
-> > > +	if (val & IMX_MU_xSR_TEn(cp->bidx)) {
-> > > +		imx_mu_rmw(priv, IMX_MU_xCR, 0, IMX_MU_xCR_TIEn(cp-
-> > > >bidx));
-> > > +		mbox_chan_txdone(chan, 0);
-> > > +	}
-> > > +
-> > > +	if (val & IMX_MU_xSR_RFn(cp->bidx)) {
-> > > +		dat =3D imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
-> > > +		mbox_chan_received_data(chan, (void *)&dat);
-> > > +	}
-> > > +
-> > > +	return IRQ_HANDLED;
-> > > +}
-> > > +
-> > > +static bool imx_mu_last_tx_done(struct mbox_chan *chan) {
-> > > +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> > > +	struct imx_mu_con_priv *cp =3D chan->con_priv;
-> > > +	u32 val;
-> > > +
-> > > +	val =3D imx_mu_read(priv, IMX_MU_xSR);
-> > > +	/* test if transmit register is empty */
-> > > +	return (!!(val & IMX_MU_xSR_TEn(cp->bidx))); }
-> > > +
-> > > +static int imx_mu_send_data(struct mbox_chan *chan, void *data) {
-> > > +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> > > +	struct imx_mu_con_priv *cp =3D chan->con_priv;
-> > > +	u32 *arg =3D data;
-> > > +
-> > > +	if (!imx_mu_last_tx_done(chan))
-> > > +		return -EBUSY;
-> > > +
-> > > +	imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
-> > > +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int imx_mu_startup(struct mbox_chan *chan) {
-> > > +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> > > +	struct imx_mu_con_priv *cp =3D chan->con_priv;
-> > > +	int ret;
-> > > +
-> > > +	ret =3D request_irq(cp->irq, imx_mu_isr,
-> > > +			  IRQF_SHARED, "imx_mu_chan", chan);
-> >
-> > I guess no need to assign the irq for each cp as we have only one irq.
->=20
-> all irq chip controller have one sink and number of source limited to
-> imagination or amount of bits in a register. May be we will need some day=
- to
-> write a irqchip driver to make it work as chained irq controller.
->=20
-
-We do need write an irqchip driver later because MU still supports another
-four general purpose interrupts which will be used by SCU firmware.
-But I don't think it's necessary to abstract them for TX/RX interrutps.
-This makes thing simple.
-
-> So, I don't see any technical reason to not do it. Are you?
->=20
-> > > +	if (ret) {
-> > > +		dev_err(chan->mbox->dev,
-> > > +			"Unable to acquire IRQ %d\n", cp->irq);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xCR_RIEn(cp->bidx), 0);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void imx_mu_shutdown(struct mbox_chan *chan) {
-> > > +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> > > +	struct imx_mu_con_priv *cp =3D chan->con_priv;
-> > > +
-> > > +	imx_mu_rmw(priv, IMX_MU_xCR, 0,
-> > > +		   IMX_MU_xCR_TIEn(cp->bidx) | IMX_MU_xCR_RIEn(cp-
-> > > >bidx));
-> > > +
-> > > +	free_irq(cp->irq, chan);
-> > > +}
-> > > +
-> > > +static const struct mbox_chan_ops imx_mu_ops =3D {
-> > > +	.send_data =3D imx_mu_send_data,
-> > > +	.startup =3D imx_mu_startup,
-> > > +	.shutdown =3D imx_mu_shutdown,
-> > > +};
-> > > +
-> > > +static int imx_mu_probe(struct platform_device *pdev) {
-> > > +	struct device *dev =3D &pdev->dev;
-> > > +	struct resource *iomem;
-> > > +	struct imx_mu_priv *priv;
-> > > +	const struct imx_mu_cfg *dcfg;
-> > > +	unsigned int i, chans;
-> > > +	int irq, ret;
-> > > +
-> > > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > > +	if (!priv)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	dcfg =3D of_device_get_match_data(dev);
-> > > +	if (!dcfg)
-> > > +		return -EINVAL;
-> > > +
-> > > +	priv->dcfg =3D dcfg;
-> > > +	priv->dev =3D dev;
-> > > +
-> > > +	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +	priv->base =3D devm_ioremap_resource(&pdev->dev, iomem);
-> > > +	if (IS_ERR(priv->base))
-> > > +		return PTR_ERR(priv->base);
-> > > +
-> > > +	irq =3D platform_get_irq(pdev, 0);
-> > > +	if (irq <=3D 0)
-> > > +		return irq < 0 ? irq : -EINVAL;
-> > > +
-> > > +	priv->clk =3D devm_clk_get(dev, NULL);
-> > > +	if (IS_ERR(priv->clk)) {
-> > > +		if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
-> > > +			priv->clk =3D NULL;
-> > > +		} else {
-> > > +			dev_err(dev, "Failed to get clock\n");
-> >
-> > I guess we may not need print it for DEFER_PROBE error case.
->=20
-> ok.
->=20
-> > > +			return PTR_ERR(priv->clk);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	ret =3D clk_prepare_enable(priv->clk);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "Failed to enable clock\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	chans =3D min(dcfg->chans, IMX_MU_MAX_CHANS);
-> > > +	/* Initialize channel identifiers */
-> > > +	for (i =3D 0; i < chans; i++) {
-> > > +		struct imx_mu_con_priv *cp =3D &priv->con_priv[i];
-> > > +
-> > > +		cp->bidx =3D 3 - i;
-> >
-> > We may not need it if we improve the macro to calculate bidx by idx?
->=20
-> Are all implementation of NXP MU have reversed bit order?
-
-AFAIK NXP MU library is used for all known platforms with MUs.
-So I guess yes.
-
-> Will it fit good for one channel implementation?
-
-If you see the SCU MU patches I sent, you will see I also need
-convert the channel index to channel mask. But here you're
-using bidx where SCU MU does have. So have a common
-channel index to mask macro may be good for both using.
-
->=20
-> > > +		cp->idx =3D i;
-> > > +		cp->irq =3D irq;
-> > > +		priv->mbox_chans[i].con_priv =3D cp;
-> > > +	}
-> > > +
-> > > +	priv->mbox.dev =3D dev;
-> > > +	priv->mbox.ops =3D &imx_mu_ops;
-> > > +	priv->mbox.chans =3D priv->mbox_chans;
-> > > +	priv->mbox.num_chans =3D chans;
-> > > +	priv->mbox.txdone_irq =3D true;
-> > > +
-> > > +	platform_set_drvdata(pdev, priv);
-> > > +
-> > > +	if (priv->dcfg->init_hw)
-> > > +		priv->dcfg->init_hw(priv);
-> > > +
-> > > +	return mbox_controller_register(&priv->mbox);
-> > > +}
-> > > +
-> > > +static int imx_mu_remove(struct platform_device *pdev) {
-> > > +	struct imx_mu_priv *priv =3D platform_get_drvdata(pdev);
-> > > +
-> > > +	mbox_controller_unregister(&priv->mbox);
-> > > +	clk_disable_unprepare(priv->clk);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +
-> > > +static void imx_mu_init_imx7d_a(struct imx_mu_priv *priv) {
-> > > +	/* Set default config */
-> > > +	imx_mu_write(priv, 0, IMX_MU_xCR);
-> >
-> > This will reset both MU Side A and B.
-> > So we may need make sure Side B is initialized after A?
->=20
-> I assume it is implementation specific, as soon as it will be needed, we =
-may
-> introduce extra DT flag. No need to cover all possible cases if we don't =
-have
-> to.
->=20
-
-We shouldn't reset SCU side, but SCU MU is not using it. So I'm okay.
-We just need to know the limitation later. Probably a note added here
-is better.
-
-> > > +}
-> > > +
-> > > +static const struct imx_mu_cfg imx_mu_cfg_imx7d_a =3D {
-> > > +	.chans =3D IMX_MU_MAX_CHANS,
-> > > +	.init_hw =3D imx_mu_init_imx7d_a,
-> > > +};
-> > > +
-> > > +static const struct imx_mu_cfg imx_mu_cfg_imx7d_b =3D {
-> > > +	.chans =3D IMX_MU_MAX_CHANS,
-> > > +};
-> > > +
-> > > +static const struct of_device_id imx_mu_dt_ids[] =3D {
-> > > +	{ .compatible =3D "fsl,imx7s-mu-a", .data =3D &imx_mu_cfg_imx7d_a }=
-,
-> > > +	{ .compatible =3D "fsl,imx7s-mu-b", .data =3D &imx_mu_cfg_imx7d_b }=
-,
-> >
-> > I'm not sure whether we already have the decision to use fsl,<soc>-mu
-> > compatible String and use property to specify the mu side.
-> > Can you double check if we can switch to that way?
->=20
-> ok.
->=20
-> > And would you update the binding doc for M4 support according to the
-> > qxp mu one Which Is already signed by Rob's tag?
->=20
-> ok.
->=20
-> So, should I update my patch set including DT binding documentation prior=
- to
-> yours?
->=20
-
-I guess you can pick that patch and send with yours. Once your part is
-reviewed ok (should be quick) then I can send the SCU part based on your
-Patch series.
-
-Finally, I'm glad that we meet an agreement now. As we're trying to
-Speed up the mx8qxp support and targets to hit v4.19 kernel.
-So hopefully you could help send the updated patch series soon.
-Then I can follow up with my work. :)
+As far as I'm concerned, the software doesn't need to have all features
+covered. But that doesn't mean the hardware representation can lack
+features as well. We already did that once, and now we have some legacy
+graph parsing code to handle that.
 
 Regards
-Dong Aisheng
-
-> If yes, can you please contact Rob to avoid confusions.
->=20
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+ChenYu
