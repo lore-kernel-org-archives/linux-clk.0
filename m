@@ -1,58 +1,111 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
- <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
- <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
- <20180711080022.GB1636@tbergstrom-lnx.Nvidia.com>
- <ef90eb24-e993-9cc1-ac09-5afedeceba75@nvidia.com>
- <20180711111754.GC1636@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <7022b1f4-97ac-aa1b-5c60-d7041da6704b@nvidia.com>
-Date: Wed, 11 Jul 2018 16:14:13 +0100
+Return-Path: <gregkh@linuxfoundation.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	Jia-Ju Bai <baijiaju1990@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Eduardo Valentin <edubezval@gmail.com>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.14 022/157] clk: renesas: cpg-mssr: Stop using printk format %pCr
+Date: Sun,  1 Jul 2018 18:21:34 +0200
+Message-Id: <20180701160853.368381940@linuxfoundation.org>
+In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
+References: <20180701160852.287307684@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180711111754.GC1636@tbergstrom-lnx.Nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-On 11/07/18 12:17, Peter De Schrijver wrote:
-> On Wed, Jul 11, 2018 at 09:42:20AM +0100, Jon Hunter wrote:
->>
->> On 11/07/18 09:00, Peter De Schrijver wrote:
->>> On Tue, Jul 10, 2018 at 05:17:05PM +0100, Jon Hunter wrote:
->>>>
->>>> On 09/07/18 17:38, Aapo Vienamo wrote:
->>>>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>>>
->>>>> Move this to a separate file so it can be used to calculate the sdmmc
->>>>> clock dividers.
->>>>
->>>> Sorry for not commenting sooner, but what is the motivation for moving
->>>> this to its own file? I don't see why we need to do this in order to use
->>>> elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
->>>> and now we have a div71.c which seems quite specific.
->>>
->>> How else would you do it?
->>
->> Keep it in the same file?
->>
-> 
-> That seems odd. clk-divider.c is meant to implement a clock type, not
-> utility functions we happen to need in several types.
+------------------
 
-I see, then why not have a clk-utils.c for stuff like this. I am painting
-the bikeshed here, but div71.c seems very specific and I still don't
-understand the 7.1 bit.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cheers
-Jon
+commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
 
--- 
-nvpublic
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
+
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
+
+Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.5+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -248,8 +248,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
+ 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
+ 		       PTR_ERR(clk));
+ 	else
+-		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
+-			clkspec->args[0], clkspec->args[1], clk, clk);
++		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
++			clkspec->args[0], clkspec->args[1], clk,
++			clk_get_rate(clk));
+ 	return clk;
+ }
+ 
+@@ -314,7 +315,7 @@ static void __init cpg_mssr_register_cor
+ 	if (IS_ERR_OR_NULL(clk))
+ 		goto fail;
+ 
+-	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
++	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
+ 	return;
+ 
+@@ -380,7 +381,7 @@ static void __init cpg_mssr_register_mod
+ 	if (IS_ERR(clk))
+ 		goto fail;
+ 
+-	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
++	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
+ 	priv->clks[id] = clk;
+ 	return;
+ 
