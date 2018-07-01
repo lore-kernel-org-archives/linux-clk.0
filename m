@@ -1,41 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs62.siol.net ([185.57.226.253]:55459 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731823AbeGZTOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 15:14:52 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v3.1 03/10] drm/sun4i: Add support for A64 mixers
-Date: Thu, 26 Jul 2018 19:56:55 +0200
-Message-ID: <2948057.WQhAQCpXUX@jernej-laptop>
-In-Reply-To: <20180726171257.6688-4-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-4-icenowy@aosc.io>
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH v2 0/3] Add clock driver for Actions S700 SoC
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
+ catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+ linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+ manivannan.sadhasivam@linaro.org, pn@denx.de, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jeff Chen
+ <jeff.chen@actions-semi.com>, "Thomas C. Liau"
+ <thomas.liau@actions-semi.com>, Cubietech support <support@cubietech.com>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <8503ae31-aaf3-e4ba-f385-859a6cd3f8d6@suse.de>
+Date: Sun, 1 Jul 2018 20:05:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180628191805.3722-1-sravanhome@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 26. julij 2018 ob 19:12:50 CEST je Icenowy Zheng napisal(a):
-> From: Jagan Teki <jagan@amarulasolutions.com>
+Hi Saravannan,
+
+Am 28.06.2018 um 21:18 schrieb Saravanan Sekar:
+> Changelog v2:
+> Fixed 0 day compilation warning
+> Modified existing dts Actions S900 clock bindings common to Actions
+> Soc family
+
+Please post v3 without --in-reply-to. It's becoming messy to read.
+
+> This patchset adds clock support for Actions Semi OWL series S700 SoC
+> with relevant clock bindings and device tree info. 
 > 
-> Mixers in Allwinner have similar capabilities as others SoCs with DE2.
-> 
-> Add support for them.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: Add mixer0]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Changed the UART clock using CMU instance and changes are tested in
+> cubieboard7
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Did you find any better way of testing than my "reboot bootloader" from
+preinstalled Android?
 
-Best regards,
-Jernej
+In addition to missing Actions Semi you may want to CC Cubietech.
 
+Thanks,
+Andreas
 
-
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
