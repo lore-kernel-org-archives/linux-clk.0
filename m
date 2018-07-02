@@ -1,130 +1,184 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:42929 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387435AbeGLXCp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Jul 2018 19:02:45 -0400
-Date: Thu, 12 Jul 2018 18:38:36 -0400
-From: David Rivshin <drivshin@awxrd.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        "J, Keerthy" <j-keerthy@ti.com>
-Subject: Re: dmtimer fclk regression in 4.16?
-Message-ID: <20180712183836.62e88588.drivshin@awxrd.com>
-In-Reply-To: <20180620115321.5496761a.drivshin@awxrd.com>
-References: <20180619145339.08322293.drivshin@awxrd.com>
-        <1b9995a0-0a44-2896-4492-0d16e3fa2b53@ti.com>
-        <b37ee1e6-1b06-b82f-9948-ac66a06544ca@baylibre.com>
-        <20180620115321.5496761a.drivshin@awxrd.com>
+Received: from mail.bootlin.com ([62.4.15.54]:49511 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753428AbeGBI4d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Jul 2018 04:56:33 -0400
+Date: Mon, 2 Jul 2018 10:56:21 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc: linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize
+ engine search algorithm
+Message-ID: <20180702085621.aq6ksr3amwnj42jc@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net>
+ <20180628182543.yyja6hiry7rx7fu2@flea>
+ <3257762.ZQzN8rrT6c@jernej-laptop>
+ <7152481.kAipQ5gD38@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="weag3fumpaj4truu"
+In-Reply-To: <7152481.kAipQ5gD38@jernej-laptop>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 20 Jun 2018 11:53:21 -0400
-David Rivshin <drivshin@awxrd.com> wrote:
 
-> On Wed, 20 Jun 2018 09:11:19 +0200
-> Neil Armstrong <narmstrong@baylibre.com> wrote:
-> 
-> > Hi,
-> > 
-> > On 20/06/2018 08:30, Tero Kristo wrote:  
-> > > On 19/06/18 21:53, David Rivshin wrote:    
-> > >> I think I've run across a regression in 4.16 that resulted from the TI clock
-> > >> infrastructure changes. A bisect pointed to [1] as the first breaking commit.
-> > >>
-> > >> Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented
-> > >> by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with
-> > >> 4.16 that parenting fails in omap_dm_timer_set_source(), called from
-> > >> pwm_omap_dmtimer_probe, at this check:
-> > >>     if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
-> > >>         return 0;
-> > >> because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent
-> > >> is "timer7_fck".
-> > >>
-> > >> It seemed to me that timer->fclk should instead be "timer7_fck" (which has
-> > >> the desired set of possible parents). I tried following the lead set in [2]
-> > >> and added "clocks" and "clock-names" properties on timer7. However, that
-> > >> resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(),
-> > >> failing when it tries to parent "timer7_fck" to itself.
-> > >>
-> > >> The following change in omap_dm_timer_prepare() does seem to work:
-> > >> -        timer->fclk = clk_get(&timer->pdev->dev, "fck");
-> > >> +        timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));    
-> > > 
-> > > It seems omap_dm_timer_of_set_source() is actually completely broken and isn't doing anything useful. Neil, what was this function supposed to be doing, seeing you invented the initial patch for that (commit 31a7448f4fa8a528040e3df593e9781f55218183)?    
-> > 
-> > The original change was supposed to set the timer source clock by using the clock defined in the DT, but
-> > it was made to work when the code was in arch/arm and the fck was not found from DT.
-> > 
-> > 
-> > The omap_dm_timer_of_set_source() should be changed to get a specified clock name like "src":
-> > parent = clk_get(&timer->pdev->dev, "src");
-> > if (IS_ERR(parent))
-> > 	return -ENODEV;
-> > 
-> > And the fck clock should be added to all timer nodes.
-> > 
-> > For example ed839c3664cb308144fe70a3a95813ab59a03dfb or 521f9e5e3f871cdac3ecd2a583d14d0472278053 only adds fck to timer1/2, the 7 timers should have the fck clock.
-> > 
-> > @David: chan you test the omap_dm_timer_of_set_source() change and in DT update the timer7 node with :
-> > clocks = <&timer7_fck>, <&clkdiv32k_ck>;
-> > clock-names = "fck", "src";  
-> 
-> That didn't work as-is because clkdiv32k_ck isn't a direct parent of 
-> timer7_fck anymore. However, if I change it to 
-> 	<&l4_per_clkctrl AM3_CLKDIV32K_CLKCTRL 0> 
-> then all seems well.
-> 
-> Since pwm-dmtimer-omap sets the source clock explicitly anyways 
-> (based on the DT), using any of the parents of timer7_fck as 
-> the timer7 "src" clock works in my case.
-> 
-> Also, if I leave off the "src" clock entirely, then omap_dm_timer_prepare()
-> defaults it to using that same clock:
-> 	rc = omap_dm_timer_of_set_source(timer);
-> 	if (rc == -ENODEV)
-> 		return omap_dm_timer_set_source(timer, OMAP_TIMER_SRC_32_KHZ);
-> and that also works for me.
-> 
-> Thanks,
-> David Rivshin
-> 
+--weag3fumpaj4truu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+On Sun, Jul 01, 2018 at 09:09:47PM +0200, Jernej =C5=A0krabec wrote:
+> Dne petek, 29. junij 2018 ob 21:06:09 CEST je Jernej =C5=A0krabec napisal=
+(a):
+> > Dne =C4=8Detrtek, 28. junij 2018 ob 20:25:43 CEST je Maxime Ripard napi=
+sal(a):
+> > > On Thu, Jun 28, 2018 at 06:48:50AM +0200, Jernej =C5=A0krabec wrote:
+> > > > Dne =C4=8Detrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai n=
+apisal(a):
+> > > > > On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
+> > > > > <jernej.skrabec@siol.net>
+> > > >=20
+> > > > wrote:
+> > > > > > Current "old" method to find engine worked pretty well for DE2.
+> > > > > > However,
+> > > > > > it doesn't work when TCON TOP is between  mixer (engine) and TC=
+ON.
+> > > > > > TCON
+> > > > > > TOP has multiple input ports, but current engine search algorit=
+hm
+> > > > > > expects only one.
+> > > > > >=20
+> > > > > > This can be fixed by first looking for output port id and selec=
+ting
+> > > > > > matching input by subtracting 1 for the next round. This work e=
+ven
+> > > > > > if
+> > > > > > there is only one input and output.
+> > > > > >=20
+> > > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > > > ---
+> > > > > >=20
+> > > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
+> > > > > >  1 file changed, 18 insertions(+), 4 deletions(-)
+> > > > > >=20
+> > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
+> > > > > > 08747fc3ee71..264bcc43da11
+> > > > > > 100644
+> > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct
+> > > > > > device
+> > > > > > *dev,
+> > > > > >=20
+> > > > > >   */
+> > > > > > =20
+> > > > > >  static struct sunxi_engine *
+> > > > > >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
+> > > > > >=20
+> > > > > > -                               struct device_node *node)
+> > > > > > +                               struct device_node *node,
+> > > > > > +                               u32 port_id)
+> > > > > >=20
+> > > > > >  {
+> > > > > > =20
+> > > > > >         struct device_node *port, *ep, *remote;
+> > > > > >         struct sunxi_engine *engine =3D ERR_PTR(-EINVAL);
+> > > > > >=20
+> > > > > > +       u32 reg =3D 0;
+> > > > > >=20
+> > > > > > -       port =3D of_graph_get_port_by_id(node, 0);
+> > > > > > +       port =3D of_graph_get_port_by_id(node, port_id);
+> > > > > >=20
+> > > > > >         if (!port)
+> > > > > >        =20
+> > > > > >                 return ERR_PTR(-EINVAL);
+> > > > > >=20
+> > > > > > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct
+> > > > > > sun4i_drv
+> > > > > > *drv,
+> > > > > >=20
+> > > > > >                 if (remote =3D=3D engine->node)
+> > > > > >                =20
+> > > > > >                         goto out_put_remote;
+> > > > > >=20
+> > > > > > +       /*
+> > > > > > +        * According to device tree binding input ports have ev=
+en id
+> > > > > > +        * number and output ports have odd id. Since component=
+ with
+> > > > > > +        * more than one input and one output (TCON TOP) exits,
+> > > > > > correct
+> > > > > > +        * remote input id has to be calculated by subtracting 1
+> > > > > > from
+> > > > > > +        * remote output id. If this for some reason can't be d=
+one,
+> > > > > > 0
+> > > > > > +        * is used as input port id.
+> > > > > > +        */
+> > > > >=20
+> > > > > You need to call
+> > > > >=20
+> > > > >     of_node_put(port);
+> > > > >=20
+> > > > > to drop the reference to the original port.
+> > > >=20
+> > > > Thanks for noticing it. I guess I should send fix patch, since patc=
+hes
+> > > > from
+> > > > drm-misc-next can't be dropped.
+> > >=20
+> > > Yeah, please send additional patches for all the issues pointed out by
+> > > Chen-Yu.
+> >=20
+> > Of course. I hope this can be resolved till the end of the next week. A=
+fter
+> > that, I will be away from PC for 2 weeks. Feel free to drop DT patches =
+if
+> > you think that it will come too close to merge window.
+>=20
+> Actually, can you drop it anyway? It needs a lot of changes and keeping H=
+DMI=20
+> working would need some effort.
 
-Are you planning on submitting a patch with this fix? Or would you prefer 
-I spun one up? One concern I have is that while I use an am335x and feel 
-fairly confident on those DT changes, I'm not so confident about what 
-changes would be needed for other SoC's devicetrees. 
+No, we can't drop it, unfortunately.
 
+Maxime
 
-> > 
-> > Thanks,
-> > Neil
-> >   
-> > > 
-> > > -Tero
-> > >     
-> > >> but I'm very uncertain whether that's the right path.
-> > >> Should omap_dm_timer know that the clock returned is actually a child of the
-> > >> clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the
-> > >> timerN_fck in the first place? Or is the problem something else entirely?
-> > >>
-> > >> As I'm not sure how these pieces are all intended to fit together, any
-> > >> pointers would be appreciated.
-> > >>
-> > >> Thanks,
-> > >> David Rivshin
-> > >>
-> > >> [1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data")
-> > >> https://www.spinics.net/lists/linux-omap/msg139798.html
-> > >> [2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
-> > >> https://www.spinics.net/lists/linux-omap/msg140605.html
-> > >>    
-> > > 
-> > > -- 
-> > > Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki    
-> >   
-> 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--weag3fumpaj4truu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls56LQACgkQ0rTAlCFN
+r3SfOA//Rb53Vq1lID0WxKB9uSBs/bU3mPxug0skNSfmQpD3OJoS3aFabr41aoPS
+wIiPeeMRnkxZydAc5EdosY9vJb8MRV5aYbVsEmiGXTPL1n8YE+Ppe/z4793BbAkg
+QSF9DzukzzdIU0geZSX7IIOrQjzkBc1aV2CzQe/JOSqfQLKUZdZOKepRJy1wUWkm
+5OPpn0DPbBk0tpZT+FnBqH7nLKFvrMa+cZ0CdeSJ+4PlRgc3W77dHleXE+xnyICZ
+rDw65tJNZzhSlK3RBb3LjhBJn1Ez1C9iRZaBpBzkcezLpaIuoESOg3z+bnGLZYGn
+I/nmlmz7cqb4MjBjcb2zZd0ihYXVa0I6Mzsc+VzQECOxMmfhIZ/Sutw+BDH23Gqo
+wW1KIpJWJyIyU4SZHn/Z96+fQNzHXe7N+Qu1gcgp3DHxukXGjhp3U1BpUAuV6dJ3
+oiUrQCqES7WNlS7S0w3UTe1bubSKTsMFbI2tCXvnYXzGMKRM7zZF1H3hEQ8FRp/z
+aVXjUeqQ2QwtEglFOQpwhAIWBWUMhacEyPw5/ITt1T6cDZ2vXqUBeAT5LUXv6zEy
+R273T3N1rdym5glKXTK398Z7hUGCmzSPtJoVmKyJqZJvH3nzAmK43cLcoJ9wjG3S
+Y5CJmViV40CxlUisvMu7jZP7cb8bbY3IpnbZt4MJcDcIK8z+6aE=
+=z0jz
+-----END PGP SIGNATURE-----
+
+--weag3fumpaj4truu--
