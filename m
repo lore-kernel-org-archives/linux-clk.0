@@ -1,42 +1,38 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 12 Jul 2018 13:32:06 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180712123206.GI4641@dell>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+Date: Mon, 2 Jul 2018 17:58:21 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20180628095748.4462-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+Hi David, Stephen,
 
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
+On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> This series moves all aemif/nand users to using the ti-aemif platform
+> driver located in drivers/memory instead of the older API located in
+> mach-davinci.
+> 
+> First five patches add necessary changes to the clock driver. Next
+> seven convert the board files to using the ti-aemif driver. Last patch
+> removes now dead code.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+How do you want to handle this series? I can apply the series and
+provide you an immutable branch on v4.18-rc1 with the clock patches
+applied if that can work.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Sekhar
