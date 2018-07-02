@@ -1,216 +1,257 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 4 Jul 2018 11:39:11 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180704083911.GH2118@localhost.localdomain>
-References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Mon, 2 Jul 2018 08:03:11 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
+	linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+	will.deacon@arm.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for
+ S700
+Message-ID: <20180702023311.GB2654@Mani-XPS-13-9360>
+References: <20180626192820.28237-3-sravanhome@gmail.com>
+ <20180628191805.3722-1-sravanhome@gmail.com>
+ <20180628191805.3722-2-sravanhome@gmail.com>
+ <20180630094259.GC7320@Mani-XPS-13-9360>
+ <279840d3-a254-394d-7782-b3f837c59e57@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <279840d3-a254-394d-7782-b3f837c59e57@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Enric, Lee and others.
+Hi,
 
-Thanks again for taking the time to review the patch! I do appreciate
-the effort. Especially because I find reviewing to be quite hard work.
+On Sun, Jul 01, 2018 at 07:50:01PM +0200, Saravanan Sekar wrote:
+> Hi Mani,
+> 
+> 
+> On 06/30/18 11:42, Manivannan Sadhasivam wrote:
+> > On Thu, Jun 28, 2018 at 09:18:03PM +0200, Saravanan Sekar wrote:
+> > > Added clock management controller for S700
+> > > 
+> > > Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> > > Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> > > ---
+> > >   .../boot/dts/actions/s700-cubieboard7.dts     |   7 -
+> > >   arch/arm64/boot/dts/actions/s700.dtsi         |   8 ++
+> > >   include/dt-bindings/clock/actions,s700-cmu.h  | 128 ++++++++++++++++++
+> > >   3 files changed, 136 insertions(+), 7 deletions(-)
+> > >   create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> > > index ef79d7905f44..28f3f4a0f7f0 100644
+> > > --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> > > +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> > > @@ -28,12 +28,6 @@
+> > >   		device_type = "memory";
+> > >   		reg = <0x1 0xe0000000 0x0 0x0>;
+> > >   	};
+> > > -
+> > > -	uart3_clk: uart3-clk {
+> > > -		compatible = "fixed-clock";
+> > > -		clock-frequency = <921600>;
+> > > -		#clock-cells = <0>;
+> > > -	};
+> > Sourcing CMU clock for UART should be in a separate patch.
+> 
+> sure
+> 
+> > >   };
+> > >   &timer {
+> > > @@ -42,5 +36,4 @@
+> > >   &uart3 {
+> > >   	status = "okay";
+> > > -	clocks = <&uart3_clk>;
+> > >   };
+> > > diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+> > > index 66dd5309f0a2..3530b705df90 100644
+> > > --- a/arch/arm64/boot/dts/actions/s700.dtsi
+> > > +++ b/arch/arm64/boot/dts/actions/s700.dtsi
+> > > @@ -4,6 +4,7 @@
+> > >    */
+> > >   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > +#include <dt-bindings/clock/actions,s700-cmu.h>
+> > >   / {
+> > >   	compatible = "actions,s700";
+> > > @@ -44,6 +45,12 @@
+> > >   		};
+> > >   	};
+> > > +	clock: clock-controller@e0168000 {
+> > > +		compatible = "actions,s700-cmu";
+> > > +		reg = <0 0xe0168000 0 0x1000>;
+> > > +		#clock-cells = <1>;
+> > > +	};
+> > > +
+> > There is no fixed rate clock like losc?
+> 
+> losc is 32k, I will add it
+> 
+> > >   	reserved-memory {
+> > >   		#address-cells = <2>;
+> > >   		#size-cells = <2>;
+> > > @@ -129,6 +136,7 @@
+> > >   			compatible = "actions,s900-uart", "actions,owl-uart";
+> > >   			reg = <0x0 0xe0126000 0x0 0x2000>;
+> > >   			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			clocks = <&clock CLK_UART3>;
+> > >   			status = "disabled";
+> > >   		};
+> > > diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
+> > > new file mode 100644
+> > > index 000000000000..e5b4ea130953
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/clock/actions,s700-cmu.h
+> > > @@ -0,0 +1,128 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +/*
+> > > + * Actions S700 clock driver
+> > > + *
+> > > + * Copyright (c) 2014 Actions Semi Inc.
+> > > + * Author: David Liu <liuwei@actions-semi.com>
+> > > + *
+> > > + * Author: Pathiban Nallathambi <pn@denx.de>
+> > > + * Author: Saravanan Sekar <sravanhome@gmail.com>
+> > > + */
+> > > +
+> > > +#ifndef __DT_BINDINGS_CLOCK_S700_H
+> > > +#define __DT_BINDINGS_CLOCK_S700_H
+> > > +
+> > > +#define CLK_NONE			0
+> > > +
+> > > +/* fixed rate clocks */
+> > > +#define CLK_LOSC			1
+> > > +#define CLK_HOSC			2
+> > > +
+> > > +/* pll clocks */
+> > > +#define CLK_CORE_PLL			3
+> > > +#define CLK_DEV_PLL			4
+> > > +#define CLK_DDR_PLL			5
+> > > +#define CLK_NAND_PLL			6
+> > > +#define CLK_DISPLAY_PLL			7
+> > > +#define CLK_TVOUT_PLL			8
+> > > +#define CLK_CVBS_PLL			9
+> > > +#define CLK_AUDIO_PLL			10
+> > > +#define CLK_ETHERNET_PLL		11
+> > > +
+> > Remove extra new line please.
+> > 
+> > > +
+> > > +/* system clock */
+> > > +#define CLK_SYS_BASE			12
+> > > +#define CLK_CPU				CLK_SYS_BASE
+> > > +#define CLK_DEV				(CLK_SYS_BASE+1)
+> > > +#define CLK_AHB				(CLK_SYS_BASE+2)
+> > > +#define CLK_APB				(CLK_SYS_BASE+3)
+> > > +#define CLK_DMAC			(CLK_SYS_BASE+4)
+> > > +#define CLK_NOC0_CLK_MUX		(CLK_SYS_BASE+5)
+> > > +#define CLK_NOC1_CLK_MUX		(CLK_SYS_BASE+6)
+> > > +#define CLK_HP_CLK_MUX			(CLK_SYS_BASE+7)
+> > > +#define CLK_HP_CLK_DIV			(CLK_SYS_BASE+8)
+> > > +#define CLK_NOC1_CLK_DIV		(CLK_SYS_BASE+9)
+> > > +#define CLK_NOC0			(CLK_SYS_BASE+10)
+> > > +#define CLK_NOC1			(CLK_SYS_BASE+11)
+> > > +#define CLK_SENOR_SRC			(CLK_SYS_BASE+12)
+> > > +
+> > > +/* peripheral device clock */
+> > > +#define CLK_PERIP_BASE			25
+> > > +#define CLK_GPIO			(CLK_PERIP_BASE)
+> > > +#define CLK_TIMER			(CLK_PERIP_BASE+1)
+> > > +#define CLK_DSI				(CLK_PERIP_BASE+2)
+> > > +#define CLK_CSI				(CLK_PERIP_BASE+3)
+> > > +#define CLK_SI				(CLK_PERIP_BASE+4)
+> > > +#define CLK_DE				(CLK_PERIP_BASE+5)
+> > > +#define CLK_HDE				(CLK_PERIP_BASE+6)
+> > > +#define CLK_VDE				(CLK_PERIP_BASE+7)
+> > > +#define CLK_VCE				(CLK_PERIP_BASE+8)
+> > > +#define CLK_NAND			(CLK_PERIP_BASE+9)
+> > > +#define CLK_SD0				(CLK_PERIP_BASE+10)
+> > > +#define CLK_SD1				(CLK_PERIP_BASE+11)
+> > > +#define CLK_SD2				(CLK_PERIP_BASE+12)
+> > > +
+> > > +#define CLK_UART0			(CLK_PERIP_BASE+13)
+> > > +#define CLK_UART1			(CLK_PERIP_BASE+14)
+> > > +#define CLK_UART2			(CLK_PERIP_BASE+15)
+> > > +#define CLK_UART3			(CLK_PERIP_BASE+16)
+> > > +#define CLK_UART4			(CLK_PERIP_BASE+17)
+> > > +#define CLK_UART5			(CLK_PERIP_BASE+18)
+> > > +#define CLK_UART6			(CLK_PERIP_BASE+19)
+> > > +
+> > > +#define CLK_PWM0			(CLK_PERIP_BASE+20)
+> > > +#define CLK_PWM1			(CLK_PERIP_BASE+21)
+> > > +#define CLK_PWM2			(CLK_PERIP_BASE+22)
+> > > +#define CLK_PWM3			(CLK_PERIP_BASE+23)
+> > > +#define CLK_PWM4			(CLK_PERIP_BASE+24)
+> > > +#define CLK_PWM5			(CLK_PERIP_BASE+25)
+> > > +#define CLK_GPU3D			(CLK_PERIP_BASE+26)
+> > > +
+> > > +#define CLK_I2C0			(CLK_PERIP_BASE+27)
+> > > +#define CLK_I2C1			(CLK_PERIP_BASE+28)
+> > > +#define CLK_I2C2			(CLK_PERIP_BASE+29)
+> > > +#define CLK_I2C3			(CLK_PERIP_BASE+30)
+> > > +
+> > > +
+> > > +#define CLK_SPI0			(CLK_PERIP_BASE+31)
+> > > +#define CLK_SPI1			(CLK_PERIP_BASE+32)
+> > > +#define CLK_SPI2			(CLK_PERIP_BASE+33)
+> > > +#define CLK_SPI3			(CLK_PERIP_BASE+34)
+> > > +
+> > > +#define CLK_USB3_480MPLL0		(CLK_PERIP_BASE+35)
+> > > +#define CLK_USB3_480MPHY0		(CLK_PERIP_BASE+36)
+> > > +#define CLK_USB3_5GPHY			(CLK_PERIP_BASE+37)
+> > > +#define CLK_USB3_CCE			(CLK_PERIP_BASE+48)
+> > > +#define CLK_USB3_MAC			(CLK_PERIP_BASE+49)
+> > > +
+> > > +
+> > > +#define CLK_LCD				(CLK_PERIP_BASE+50)
+> > > +#define CLK_HDMI_AUDIO			(CLK_PERIP_BASE+51)
+> > > +#define CLK_I2SRX			(CLK_PERIP_BASE+52)
+> > > +#define CLK_I2STX			(CLK_PERIP_BASE+53)
+> > > +
+> > > +#define CLK_SENSOR0			(CLK_PERIP_BASE+54)
+> > > +#define CLK_SENSOR1			(CLK_PERIP_BASE+55)
+> > > +
+> > > +#define CLK_HDMI_DEV			(CLK_PERIP_BASE+56)
+> > > +
+> > > +#define CLK_ETHERNET			(CLK_PERIP_BASE+59)
+> > > +#define CLK_RMII_REF			(CLK_PERIP_BASE+60)
+> > > +
+> > > +#define CLK_USB2H0_PLLEN		(CLK_PERIP_BASE+61)
+> > > +#define CLK_USB2H0_PHY			(CLK_PERIP_BASE+62)
+> > > +#define CLK_USB2H0_CCE			(CLK_PERIP_BASE+63)
+> > > +#define CLK_USB2H1_PLLEN		(CLK_PERIP_BASE+64)
+> > > +#define CLK_USB2H1_PHY			(CLK_PERIP_BASE+65)
+> > > +#define CLK_USB2H1_CCE			(CLK_PERIP_BASE+66)
+> > > +
+> > > +
+> > > +#define CLK_TVOUT			(CLK_PERIP_BASE+67)
+> > > +
+> > > +#define CLK_THERMAL_SENSOR		(CLK_PERIP_BASE+68)
+> > > +
+> > > +#define CLK_IRC_SWITCH			(CLK_PERIP_BASE+69)
+> > > +#define CLK_PCM1			(CLK_PERIP_BASE+70)
+> > > +#define CLK_NR_CLKS			(CLK_PCM1) /* update on adding new clk */
+> > > +
+> > Since the index starts from 0, CLK_NR_CLKS should be CLK_PCM1 + 1
+> 
+> 0 is for CLK_NONE, so actual clock starts from 1
+> 
 
-You spotted some obvious things to change but additionally commented on
-things which I would rather not change. (Namely the platdata usage and
-replacing gotos with in-pklace returns). I would like to get opinion
-from Lee on these before implementing the changes. So I will cook new
-åatch only after I know what changes are required. Please see my view on
-suggested changes below.
+yes, but the clk register only happens till (CLK_NR_CLKS - 1). Please see
+[1] the associated code. With your logic, CLK_PCM1 will never get
+registered.
 
-On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
-> One doubt regarding the probe function and few comments.
+Thanks,
+Mani
 
-> 
-> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> dia dv., 29 de juny 2018 a les 11:47:
-> >
-> > ROHM BD71837 PMIC MFD driver providing interrupts and support
-> > for three subsystems:
-> > - clk
-> > - Regulators
-> > - input/power-key
-> >
-> > fix too long lines
-> 
-> I guess that this message is not intended to be here.
+[1] https://github.com/torvalds/linux/blob/master/drivers/clk/actions/owl-common.c#L69
 
-Right. That's a leftover from squash commit. Good catch!
+> > Thanks,
+> > Mani
+> > 
+> > > +#endif /* __DT_BINDINGS_CLOCK_S700_H */
+> > > -- 
+> > > 2.18.0
+> > > 
 > 
-> > +static int bd71837_i2c_probe(struct i2c_client *i2c,
-> > +                           const struct i2c_device_id *id)
-> > +{
-> > +       struct bd71837 *bd71837;
-> > +       struct bd71837_board *board_info;
-> > +       int ret = -EINVAL;
-> > +
-> > +       board_info = dev_get_platdata(&i2c->dev);
-> 
-> Sorry in advance if I am missing something, but isn't this always NULL?
-At the moment, yes. But the idea is that one using this PMIC could
-relatively easily get rid of the "depends on OF" if the PMIC is controlled
-for example using X86 family chips. So platdata is a mechanism that
-could be used to bring in for example the irq information - or perhaps
-the chip type when I add support to BD71847. I can remove the platdata
-for now if it really bothers - but if it does not, then I would like to
-keep it in.
-> 
-> > +
-> > +       if (!board_info) {
-> 
-> then this check is not required
-
-Yes. But as I said, I would like to keep this so that platdata could be
-used for giving the HW information to driver on certain architectures,
-But as I said - if this is a problem it can be removed. Please let me
-know if platdata usage is a "show stopper" here.
-> 
-> > +               board_info = devm_kzalloc(&i2c->dev, sizeof(*board_info),
-> > +                                         GFP_KERNEL);
-> > +               if (!board_info) {
-> > +                       ret = -ENOMEM;
-> > +                       goto err_out;
-> 
-> Now that you use devm calls and you don't need to unwind things I
-> think is better to use plain returns. So,
-> 
-> return -ENOMEM;
-
-I have never really understood why use of gotos in error handling is
-discouraged. Personally I would always choose single point of exit from
-a function when it is simple enough to achieve (like in this case). I've
-written and fixed way too many functions which leak resources or
-accidentally keep a lock when exiting from error branches. But I know
-many colleagues like you who prefer not to have gotos but  in place returns
-instead. So I guess I'll leave the final call on this to the one who is
-maintainer for this code. And it is true there is no things to unwind
-now - which does not mean that next updater won't add such. But as I
-said, I know plenty of people share your view - and even though I rather
-maintain code with only one exit the final call is on subsystem maintainer
-here.
-> 
-> > +               } else if (i2c->irq) {
-> 
-> IMO this else is confusing, also maybe you want to warn about the
-> missing interrupt.
-
-Right. The else is completely unnecessary as we have goto in previous
-if. Nicely spotted-
-
-> 
-> if (!i2c->irq) {
->     dev_err(&i2c->dev, "No IRQ configured!);
->     return -EINVAL;
-> }
-> 
-> > +                       board_info->gpio_intr = i2c->irq;
-> 
-> Is board_info really necessary?
-> 
-
-As explained before the idea of board info is to be able to provide the
-HW description without device-tree. It could be used for example to provide
-the regulator information to sub device(s). I have not tested/used this
-mechanism as my development setup relies on DT - but I like to keep this
-as an option for those who need to work on archs which do not have DT
-support.
-
-> > +               } else {
-> > +                       ret = -ENOENT;
-> > +                       goto err_out;
-> > +               }
-> 
-> and remove the else
-> 
-> > +       }
-> > +
-> > +       if (!board_info)
-> > +               goto err_out;
-> > +
-> 
-> This is redundant.
-
-Right. We have alloc check abowe and goto error there.
- 
-> > +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-> > +       if (bd71837 == NULL)
-> 
-> if (!bd71837)
-> 
-
-Right.
-
-> > +               return -ENOMEM;
-> > +
-> > +       i2c_set_clientdata(i2c, bd71837);
-> > +       bd71837->dev = &i2c->dev;
-> > +       bd71837->i2c_client = i2c;
-> > +       bd71837->chip_irq = board_info->gpio_intr;
-> 
-> bd71837->chip_irq = i2c->irq;
-> 
-
-Maybe not if we want to keep the platdata support, right?
-
-> > +
-> > +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-> > +       if (IS_ERR(bd71837->regmap)) {
-> > +               ret = PTR_ERR(bd71837->regmap);
-> > +               dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
-> > +               goto err_out;
-> 
->     dev_err(bd71837->dev, "regmap initialization failed: %d\n", ret);
->     return PTR_ERR(bd71837->regmap);
-> 
-
-This goes back to the discussion on whether to prefer single point of
-exit or not.
-
-> > +       }
-> > +
-> > +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
-> > +       if (ret < 0) {
-> > +               dev_err(bd71837->dev,
-> > +                       "%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
-> 
-> __func__ part is redundant.
-> 
-
-Indeed. Thanks.
-
-> > +               goto err_out;
-> return ret;
-
-Rest of the comments can be fixed if we choose to add multpile exit
-points. But as I said, I would prefer having only one so let's wait for
-another opinion, Ok?
-
-Best Regards,
-	Matti Vaittinen
