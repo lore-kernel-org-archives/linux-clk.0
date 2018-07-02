@@ -1,60 +1,64 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 11/21] pwm: jz4740: Drop dependency on MACH_INGENIC, use COMPILE_TEST
-Date: Wed, 25 Jul 2018 01:19:48 +0200
-Message-Id: <20180724231958.20659-12-paul@crapouillou.net>
-In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
-References: <20180724231958.20659-1-paul@crapouillou.net>
+Return-Path: <daniel@zonque.org>
+Subject: Re: [PATCH v4 0/2] clk: Add driver for MAX9485
+To: mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org
+References: <20180617120535.2529-1-daniel@zonque.org>
+From: Daniel Mack <daniel@zonque.org>
+Message-ID: <da1c76ab-0c83-d160-24d9-96c8ec93821e@zonque.org>
+Date: Mon, 2 Jul 2018 09:58:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180617120535.2529-1-daniel@zonque.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Depending on MACH_INGENIC prevent us from creating a generic kernel that
-works on more than one MIPS board. Instead, we just depend on MIPS being
-set.
+Hi,
 
-On other architectures, this driver can still be built, thanks to
-COMPILE_TEST. This is used by automated tools to find bugs, for
-instance.
+On Sunday, June 17, 2018 02:05 PM, Daniel Mack wrote:
+> This is v4 of the driver for Maxim's MAX9485 programmable audio clock
+> generator.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/pwm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is there a chance to get this merged for 4.19?
 
- v5: New patch
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 58359bf22b96..e53ad662ef87 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -201,7 +201,7 @@ config PWM_IMX
- 
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
--	depends on MACH_INGENIC
-+	depends on MIPS || COMPILE_TEST
- 	depends on COMMON_CLK
- 	select INGENIC_TIMER
- 	help
--- 
-2.11.0
+Thanks,
+Daniel
+
+
+> 
+> v3 → v4:
+> * Rebased to 4.18-rc1
+> 
+> v2 → v3:
+> 
+> * Addressed a lot of issues pointed out by Stephen Boyd:
+>    * Dropped local register caching
+>    * Implement own OF clk_hw getter in favor of the onecell helper
+>    * Implemented recalc_rate() properly by reading from the hardware
+>    * Dropped input clock frequency validation
+>    * Style issues
+> 
+> * Fixed a gpio line handling bug in resume
+> * Added Rob's Revied-by to 1/2
+> 
+> v1 → v2:
+> 
+> * Now served as two patches, one for the DT bits, and one for the actual
+>    implementation. The DT bits are put in the 1st patch because the
+>    implementation depends on the shared header file.
+> 
+> * Added support for suspend/resume
+> 
+> Daniel Mack (2):
+>    dts: clk: add devicetree bindings for MAX9485
+>    clk: Add driver for MAX9485
+> 
+>   .../bindings/clock/maxim,max9485.txt          |  59 +++
+>   drivers/clk/Kconfig                           |   6 +
+>   drivers/clk/Makefile                          |   1 +
+>   drivers/clk/clk-max9485.c                     | 402 ++++++++++++++++++
+>   include/dt-bindings/clock/maxim,max9485.h     |  18 +
+>   5 files changed, 486 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/maxim,max9485.txt
+>   create mode 100644 drivers/clk/clk-max9485.c
+>   create mode 100644 include/dt-bindings/clock/maxim,max9485.h
+> 
