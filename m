@@ -1,73 +1,98 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>
-CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark
- Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David
- Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Linux ARM
-	<linux-arm-kernel@lists.infradead.org>,
-        devicetree
-	<devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <20180621073706.22812-2-brgl@bgdev.pl> <20180731042539.GE5090@builder>
- <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c3484965-1efe-2425-86e0-ecb78ea189dd@ti.com>
-Date: Tue, 31 Jul 2018 15:34:33 +0530
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 3 Jul 2018 07:56:48 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: matti.vaittinen@fi.rohmeurope.com,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180703065648.GB20176@dell>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180626112455.GC2118@localhost.localdomain>
+ <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
+ <20180626120306.GD2118@localhost.localdomain>
+ <CAFqH_52v3-L1xLL12hzyGCbuooX5T52Lm7BXHM3sBX1ERWmhiQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAFqH_52v3-L1xLL12hzyGCbuooX5T52Lm7BXHM3sBX1ERWmhiQ@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Bjorn,
+On Tue, 26 Jun 2018, Enric Balletbo Serra wrote:
 
-On Tuesday 31 July 2018 01:25 PM, Bartosz Golaszewski wrote:
-> 2018-07-31 6:25 GMT+02:00 Bjorn Andersson <bjorn.andersson@linaro.org>:
->> On Thu 21 Jun 00:37 PDT 2018, Bartosz Golaszewski wrote:
->>
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> Switch to using the reset framework instead of handcoded reset routines
->>> we used so far.
->>>
->>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
->>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->>
->> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
+> Hi Matti,
 > 
-> Sekhar,
+> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> dia dt., 26 de juny 2018 a les 14:03:
+> >
+> > Hello Again Eric,
+> >
+> > On Tue, Jun 26, 2018 at 01:40:40PM +0200, Enric Balletbo Serra wrote:
+> > > Hi Matti,
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dt., 26 de juny 2018 a les 13:25:
+> > > > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > > > dia dt., 19 de juny 2018 a les 12:57:
+> > > >
+> > > > > > +static const struct of_device_id bd71837_of_match[] = {
+> > > > > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > > > > +       { },
+> > > > >
+> > > > > nit: { /* sentinel */ }
+> > > >
+> > > > I am sorry but I didn't quite get the point here. Could you please
+> > > > explain what did you expect to be added here?
+> > > >
+> > >
+> > > It's a nit but It is a good practice to specify that the last entry is
+> > > a sentinel. Just this.
+> > >
+> > > +static const struct of_device_id bd71837_of_match[] = {
+> > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > +       { /* sentinel */ }
+> > > +};
+> >
+> > Oh, I see. Finally something I can disagree =) I quickly opened few
+> > random drivers which declare match table. None of them practiced this
+> > good practice. So I guess it is not such a standard after all. And I
+> > guess the meaning of last entry in match table should be quite obvious.
+> > Adding the comment /* sentinel */ sounds like stating the obvious at
+> > best - at worst it gets one just to wonder what the "sentinel" means =)
+> >
 > 
-> can you take this through your tree or is it already too late?
+> git grep "/\* sentinel \*/"
+> 
+> Anyway, I marked this change as a nit, so you don't need to change. I
+> just commented because at some point I received a "complain" when I
+> didn't add it. But this is up to the maintainer and I am not sure if
+> the "complain" was received in this subsystem :)
 
-The last -rc is already tagged and I am not sure ARM-SoC will be open to
-new stuff now (there is also a bit of lag after I send my pull request).
+Certainly not from me.  I don't agree with the practice.
 
-Is this something you can take in your tree along with Suman's patch?
+I'd like to know who is enforcing this!
 
-There are no build dependencies with my tree, so it will be safe to
-queue from your tree. It will be great if this can be merged late in the
-cycle though to avoid breaking remoteproc even for short while during
-the merge window.
-
-Or if you okay with it, it will be safest to send it soon after
-v4.19-rc1 is tagged.
-
-Let me know.
-
-Thanks,
-Sekhar
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
