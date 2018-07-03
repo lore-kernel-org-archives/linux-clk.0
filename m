@@ -1,101 +1,72 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 5 Jul 2018 17:32:58 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-	kstewart@linuxfoundation.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org, eballetbo@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:38100 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753554AbeGCH2Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jul 2018 03:28:24 -0400
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <20180606060826.14671-5-faiz_abbas@ti.com>
+ <20180607073530.GH5738@atomide.com>
+ <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+ <20180611060957.GN5738@atomide.com>
+ <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
+ <20180611062904.GO5738@atomide.com>
+ <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
+ <20180611070332.GP5738@atomide.com> <20180703070743.GG112168@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <ee54c3ea-6200-33dd-83da-491f5fdd9f5c@ti.com>
+Date: Tue, 3 Jul 2018 12:59:34 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20180703070743.GG112168@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+Hi,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+On Tuesday 03 July 2018 12:37 PM, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [180611 07:06]:
+>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:48]:
+>>> Hi,
+>>>
+>>> On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
+>>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
+>>>>> Great. I thought I completely misunderstood you. But I don't see what
+>>>>> adding another function will accomplish. A QUIRK flag used in the same
+>>>>> function would work well enough>
+>>>> Fine with me as long as the function stays simple for both
+>>>> syss and sysc reset.
+>>>>
+>>>
+>>>
+>>> In general a reset status bit being in sysstatus is the norm and it
+>>> being in sysconfig should be the "quirk" for which a flag needs to be
+>>> added. What do you think?
+>>
+>> Sure makes sense to me.
+>>
+>>> As an aside, naming bitshifts by the name of the platform they were
+>>> originally added in seems weird. There should be some generic mask
+>>> saying "soft reset is the 0th bit". Currently I am using
+>>> SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
+>>> different sysconfig types we have.
+>>
+>> Sure we could have a macro for that.
+> 
+> So what's the conclusion on this one? Are you going to do one
+> more version of the ti-sysc driver patch?
+> 
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..3ca56fdb5ffe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,62 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDOs to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missing
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+	rtc@0 {
-+		compatible = "company,my-rtc";
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+Yes. I have just now been able to get back to this. Will post a v4 by
+tomorrow.
+
+Thanks,
+Faiz
