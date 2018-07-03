@@ -1,32 +1,84 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
+ reset framework
+To: David Lechner <david@lechnology.com>,
+        Bjorn Andersson
+	<bjorn.andersson@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen
+	<ohad@wizery.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
+ <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
+ <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
+ <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <03256c00-c23f-68c4-c62b-fb4b85547551@ti.com>
+Date: Tue, 3 Jul 2018 10:12:55 +0530
 MIME-Version: 1.0
-To: Vivek Gautam <vivek.gautam@codeaurora.org>, linux-clk@vger.kernel.org,
- mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180629113640.11888-1-vivek.gautam@codeaurora.org>
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20180629113640.11888-1-vivek.gautam@codeaurora.org>
-Message-ID: <153090148164.143105.10101604037427005480@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH RESEND 1/1] clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
-Date: Fri, 06 Jul 2018 11:24:41 -0700
+In-Reply-To: <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Vivek Gautam (2018-06-29 04:36:40)
-> Patch (7705bb7176b9 clk: qcom: mmcc-msm8996: leave all mmagic gdscs
-> and clocks always enabled") makes all mmgaic gdscs ALWAYS_ON.
-> The mmagic_bimc_gdsc is also needed to be turned on to get display
-> working on 8x96.
-> =
+On Monday 02 July 2018 08:57 PM, David Lechner wrote:
+> On 07/02/2018 07:08 AM, Sekhar Nori wrote:
+>> Hi Bjorn,
+>>
+>> On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
+>>> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>>>> Hi Bartosz,
+>>>>
+>>>> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
+>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>
+>>>>> These are the remaining patches that still need to be merged in order
+>>>>> to complete the conversion of the davinci dsp driver to using the
+>>>>> reset
+>>>>> framework.
+>>>>>
+>>>>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
+>>>>> merged.
+>>>>
+>>>> Series looks good to me.
+>>>>
+>>>> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
+>>>> and #2 ?
+>>>>
+>>>> Given the dependencies and to preserve bisect its easiest if I take the
+>>>> series with acks from remoteproc and clock maintainers.
+>>>>
+>>>> Open to other suggestions as well.
+>>>>
+>>>> Thanks,
+>>>> Sekhar
+>>>
+>>> Oops you're right about the order. Do you want me to resend?
+>>
+>> With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
+>> to you (on top of v4.18-rc1) for you to merge any further changes you
+>> want to queue from your tree.
+>>
+>> Bartosz, given the number of moving pieces, I think its better to keep
+>> 2/4 for v4.20 release - once all other other dependencies have been
+>> merged.
+> 
+> I was thinking the same thing as well. I will pick it up in a
+> clk-davinci-4.20 branch if that sounds OK.
 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+Sounds good. Just check that there really are no users of that API
+before queuing :)
 
-Applied to clk-fixes
+Regards,
+Sekhar
