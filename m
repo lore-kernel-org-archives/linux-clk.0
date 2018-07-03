@@ -1,58 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:48048 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeGaHem (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 31 Jul 2018 03:34:42 -0400
-From: Amit Daniel Kachhap <amit.kachhap@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@arm.com>
-Subject: [PATCH] clk: scmi: Fix the rounding of clock rate
-Date: Tue, 31 Jul 2018 11:25:55 +0530
-Message-Id: <1533016555-3731-1-git-send-email-amit.kachhap@arm.com>
-In-Reply-To: <153296797329.17365.14490424418553594815@swboyd.mtv.corp.google.com>
-References: <153296797329.17365.14490424418553594815@swboyd.mtv.corp.google.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1530604912.2900.152.camel@baylibre.com>
+Subject: [GIT PULL] Amlogic clock fixes for v4.18-rc
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, linux-clk
+	 <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
+	 <linux-amlogic@lists.infradead.org>
+Date: Tue, 03 Jul 2018 10:01:52 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This fix rounds the clock rate properly by using quotient and not
-remainder in the calculation. This issue was found while testing HDMI
-in the Juno platform.
+Dear clock maintainers,
 
-Fixes: 6d6a1d82eaef7 ("clk: add support for clocks provided by SCMI")
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
----
- drivers/clk/clk-scmi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Below is a request to pull amlogic clock fixes for v4.18.
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index bb2a6f2..a985bf5 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -38,7 +38,6 @@ static unsigned long scmi_clk_recalc_rate(struct clk_hw *hw,
- static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long *parent_rate)
- {
--	int step;
- 	u64 fmin, fmax, ftmp;
- 	struct scmi_clk *clk = to_scmi_clk(hw);
- 
-@@ -60,9 +59,9 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ftmp = rate - fmin;
- 	ftmp += clk->info->range.step_size - 1; /* to round up */
--	step = do_div(ftmp, clk->info->range.step_size);
-+	do_div(ftmp, clk->info->range.step_size);
- 
--	return step * clk->info->range.step_size + fmin;
-+	return ftmp * clk->info->range.step_size + fmin;
- }
- 
- static int scmi_clk_set_rate(struct clk_hw *hw, unsigned long rate,
--- 
-2.7.4
+These are two simple fixes, yet the first one is quite important as it solves
+boots hangs we've been having when FDIV2 gets disabled. This did not show up
+before because this particular clock is heavily used and only gets disabled for
+a very short period of time before modules (such as ethernet or emmc) probe.
 
+Cheers
+Jerome
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-fixes-4.18-1
+
+for you to fetch changes up to 7813c14c9475dbebcd7f41bd498426d01255acf9:
+
+  clk: meson: audio-divider is one based (2018-06-21 10:10:50 +0200)
+
+----------------------------------------------------------------
+- fix boot issue with gxbb and gxl platforms
+- fix racalculation error in the clk_audio_divider
+
+----------------------------------------------------------------
+Jerome Brunet (1):
+      clk: meson: audio-divider is one based
+
+Neil Armstrong (1):
+      clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+
+ drivers/clk/meson/clk-audio-divider.c | 2 +-
+ drivers/clk/meson/gxbb.c              | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
