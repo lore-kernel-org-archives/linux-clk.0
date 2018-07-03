@@ -1,95 +1,104 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	lee.jones@linaro.org,
-	arnd@arndb.de
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 02/10] arm64: dts: actions: Convert Owl SoCs clock-controller nodes to syscon
-Date: Wed,  1 Aug 2018 09:09:07 +0530
-Message-Id: <20180801033915.15880-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
-References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1530605373.2900.158.camel@baylibre.com>
+Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Boris Brezillon
+	 <boris.brezillon@bootlin.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
+ <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+ <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+ <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Tue, 03 Jul 2018 10:09:33 +0200
+In-Reply-To: <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
+	 <20180703145716.31860-3-yixun.lan@amlogic.com>
+	 <20180703092107.51497a8f@bbrezillon>
+	 <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Since clock and reset management units are sharing the same memory map,
-Owl SoCs clock-controller nodes needs to be converted to syscon so that
-the corresponding reset drivers can also reuse the same memory region.
+On Tue, 2018-07-03 at 15:36 +0800, Yixun Lan wrote:
+> Hi Broris
+> 
+>  thanks for your quick response, and see my comments below
+> 
+> On 07/03/18 15:21, Boris Brezillon wrote:
+> > On Tue, 3 Jul 2018 14:57:15 +0000
+> > Yixun Lan <yixun.lan@amlogic.com> wrote:
+> > 
+> > > Add two clock bindings IDs which provided by the EMMC clock controller,
+> > > These two clocks will be used by EMMC or NAND driver.
+> > > 
+> > > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> > > ---
+> > >  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
+> > >  1 file changed, 14 insertions(+)
+> > >  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
+> > > 
+> > > diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
+> > > new file mode 100644
+> > > index 000000000000..d9972c400e58
+> > > --- /dev/null
+> > > +++ b/include/dt-bindings/clock/emmc-clkc.h
+> > > @@ -0,0 +1,14 @@
+> > > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> > > +/*
+> > > + * Meson EMMC sub clock tree IDs
+> > > + *
+> > > + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> > > + */
+> > > +
+> > > +#ifndef __EMMC_CLKC_H
+> > > +#define __EMMC_CLKC_H
+> > > +
+> > > +#define CLKID_EMMC_C_MUX				0
+> > 
+> > Looks like the MUX clk is the parent of the DIV one, and I guess the clk
+> > driver is able to select the best parent+div pair for a requested rate.
+> > Do you really need to expose the MUX to users?
+> > 
+> 
+> Yes, It's true, the mux is parent of the div clock.
+> 
+> while testing for the NAND driver, I find it's kind of loose about the
+> parent of the clock, so selecting the div (and let CCF decide freely) is
+> actually works fine
+> 
+> but for the EMMC driver, especially when running at high clock, it's
+> kind of picky about the parent of the clock, 
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/actions/s700.dtsi | 12 ++++++++----
- arch/arm64/boot/dts/actions/s900.dtsi | 12 ++++++++----
- 2 files changed, 16 insertions(+), 8 deletions(-)
+It would be nice to get an explanation about this behavior.
+it seems that even of the rate provided by CLKID_SD_EMMC_X_CLK0 (main clock
+controller) is correct, the eMMC cannot reliably tune with it.
 
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index 59d29e4ca404..a57f54587164 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -160,11 +160,15 @@
- 			status = "disabled";
- 		};
- 
--		cmu: clock-controller@e0168000 {
--			compatible = "actions,s700-cmu";
-+		sysctrl: system-controller@e0168000 {
-+			compatible = "syscon", "simple-mfd";
- 			reg = <0x0 0xe0168000 0x0 0x1000>;
--			clocks = <&hosc>, <&losc>;
--			#clock-cells = <1>;
-+
-+			cmu: clock-controller {
-+				compatible = "actions,s700-cmu";
-+				clocks = <&hosc>, <&losc>;
-+				#clock-cells = <1>;
-+			};
- 		};
- 
- 		sps: power-controller@e01b0100 {
-diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-index aa3a49b0d646..d239033f9599 100644
---- a/arch/arm64/boot/dts/actions/s900.dtsi
-+++ b/arch/arm64/boot/dts/actions/s900.dtsi
-@@ -167,11 +167,15 @@
- 			status = "disabled";
- 		};
- 
--		cmu: clock-controller@e0160000 {
--			compatible = "actions,s900-cmu";
-+		sysctrl: system-controller@e0160000 {
-+			compatible = "syscon", "simple-mfd";
- 			reg = <0x0 0xe0160000 0x0 0x1000>;
--			clocks = <&hosc>, <&losc>;
--			#clock-cells = <1>;
-+
-+			cmu: clock-controller {
-+				compatible = "actions,s900-cmu";
-+				clocks = <&hosc>, <&losc>;
-+				#clock-cells = <1>;
-+			};
- 		};
- 
- 		pinctrl: pinctrl@e01b0000 {
--- 
-2.17.1
+Could you elaborate on this ?
+
+> so the driver may want to
+> manually choose the parent of the mux clock (example fclk_div2 here).
+> That's why I'm exporting this clock ID.
+
+ATM the EMMC driver will not use this provider. If this is the only reason, it
+could be done later.
+
+Is the NAND driver "picky" as well ?
+
+> 
+> 
+> > > +#define CLKID_EMMC_C_DIV				1
+> > > +
+> > > +#endif
+> > 
+> > .
+> > 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
