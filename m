@@ -1,69 +1,30 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/11] clk: renesas: r8a77995: Correct RCLK handling
-Date: Wed, 11 Jul 2018 16:20:58 +0200
-Message-Id: <20180711142100.3765-10-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1528699095-17930-1-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1528699095-17930-1-git-send-email-anischal@codeaurora.org>
+Message-ID: <153063789182.143105.16360820917715643212@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3] clk: qcom: Enable clocks which needs to be always on for
+ SDM845
+Date: Tue, 03 Jul 2018 10:11:31 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car D3 has the
-RCLK Frequency Control Register (RCKCR), which determines the OSC and
-RINT predivider values, and selection of the RCLK clock source between
-RINT and the On-Chip Oscillator.
+Quoting Amit Nischal (2018-06-10 23:38:15)
+> There are certain clocks which needs to be always enabled for system
+> operation. Add support for the same by adding 'CLK_IS_CRITICAL' flag
+> for such clocks.
+> =
 
-Hence change the OSC and RINT clock definitions to use the RCKCR
-divider, and add the missing On-Chip Oscillator and RCLK clock source
-switching logic.
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As Figure 8.1f "Block Diagram of CPG (R-Car D3)" shows 1/61 and 1/4
-dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
----
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index ea4cafbe6e851aca..b242d01fd21e8c09 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -46,6 +46,8 @@ enum clk_ids {
- 	CLK_S3,
- 	CLK_SDSRC,
- 	CLK_SSPSRC,
-+	CLK_RINT,
-+	CLK_OCO,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -90,8 +92,8 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 
- 	DEF_FIXED("cl",        R8A77995_CLK_CL,    CLK_PLL1,      48, 1),
- 	DEF_FIXED("cp",        R8A77995_CLK_CP,    CLK_EXTAL,      2, 1),
--	DEF_FIXED("osc",       R8A77995_CLK_OSC,   CLK_EXTAL,    384, 1),
--	DEF_FIXED("r",         R8A77995_CLK_R,     CLK_EXTAL,   1536, 1),
-+	DEF_DIV6_RO("osc",     R8A77995_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
-+	DEF_DIV6_RO("r_int",   CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
- 
- 	DEF_GEN3_PE("s1d4c",   R8A77995_CLK_S1D4C, CLK_S1, 4, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d1c",   R8A77995_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
-@@ -102,6 +104,9 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 
- 	DEF_DIV6P1("canfd",    R8A77995_CLK_CANFD, CLK_PLL0D3,    0x244),
- 	DEF_DIV6P1("mso",      R8A77995_CLK_MSO,   CLK_PLL1D2,    0x014),
-+
-+	DEF_RATE("oco",        CLK_OCO,            8 * 1000 * 1000),
-+	DEF_GEN3_RCKSEL("r",   R8A77995_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
- };
- 
- static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
--- 
-2.17.1
+Applied to clk-next
