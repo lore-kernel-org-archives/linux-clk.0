@@ -1,40 +1,215 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18635 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbeGZJl4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 05:41:56 -0400
-Subject: Re: [PATCH v2 1/2] clk: tegra: Fix const for clk_out parents
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <thierry.reding@gmail.com>
-References: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
- <1532010175-28364-2-git-send-email-pdeschrijver@nvidia.com>
- <153255865491.48062.12433123815126033090@swboyd.mtv.corp.google.com>
- <20180726081947.GR1636@tbergstrom-lnx.Nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <65a80a3a-192c-c1d6-279e-782ec390a1e9@nvidia.com>
-Date: Thu, 26 Jul 2018 09:26:08 +0100
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180726081947.GR1636@tbergstrom-lnx.Nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+References: <20180703145716.31860-1-yixun.lan@amlogic.com> <20180703145716.31860-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180703145716.31860-4-yixun.lan@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 3 Jul 2018 20:58:13 +0200
+Message-ID: <CAFBinCCFQr+_k7bkda0a3wVQdyG8DzEyim6v_OBikUifCxyVXg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: meson: add sub EMMC clock controller driver
+To: yixun.lan@amlogic.com
+Cc: jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com,
+	carlo@caione.org, mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+	liang.yang@amlogic.com, qiufang.dai@amlogic.com, jian.hu@amlogic.com,
+	linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Yixun,
 
-On 26/07/18 09:19, Peter De Schrijver wrote:
-> On Wed, Jul 25, 2018 at 03:44:14PM -0700, Stephen Boyd wrote:
->> Quoting Peter De Schrijver (2018-07-19 07:22:54)
->>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>
->> Please add a commit text here. Maybe why this patch is sent to the list?
-> 
-> See description of the series.
+apart from what Jerome found this looks good to me.
+one small "issue" and a question are inline below
 
-There still needs to be a commit message for the patch.
+On Tue, Jul 3, 2018 at 9:00 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>
+> This patch will add a EMMC clock controller driver support,
+> It provide a mux and divider clock.
+>
+> This clock driver can be protentially used by either EMMC and
+> NAND driver.
+>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  drivers/clk/meson/Kconfig     |   9 +++
+>  drivers/clk/meson/Makefile    |   1 +
+>  drivers/clk/meson/emmc-clkc.c | 136 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 146 insertions(+)
+>  create mode 100644 drivers/clk/meson/emmc-clkc.c
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index efaa70f682b4..2f27ff08e4eb 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
+>         select COMMON_CLK_REGMAP_MESON
+>         select RESET_CONTROLLER
+>
+> +config COMMON_CLK_EMMC_MESON
+> +       tristate "Meson EMMC Sub Clock Controller Driver"
+> +       depends on COMMON_CLK_AMLOGIC
+> +       select MFD_SYSCON
+> +       select REGMAP
+> +       help
+> +         Support for the EMMC sub clock controller on AmLogic Meson Platform,
+> +         Say Y if you want this clock enabled.
+> +
+>  config COMMON_CLK_REGMAP_MESON
+>         bool
+>         select REGMAP
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 72ec8c40d848..2f04f77ba4de 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB)   += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>  obj-$(CONFIG_COMMON_CLK_AXG)    += axg.o axg-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)     += axg-audio.o
+> +obj-$(CONFIG_COMMON_CLK_EMMC_MESON)    += emmc-clkc.o
+>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)  += clk-regmap.o
+> diff --git a/drivers/clk/meson/emmc-clkc.c b/drivers/clk/meson/emmc-clkc.c
+> new file mode 100644
+> index 000000000000..cf5bb9f34327
+> --- /dev/null
+> +++ b/drivers/clk/meson/emmc-clkc.c
+> @@ -0,0 +1,136 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Amlogic Meson EMMC Sub Clock Controller Driver
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/init.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/emmc-clkc.h>
+> +
+> +#include "clkc.h"
+> +
+> +#define SD_EMMC_CLOCK          0
+> +#define MUX_CLK_NUM_PARENTS    2
+> +#define EMMC_MAX_CLKS          2
+> +#define CLK_NAME_LEN           48
+> +
+> +static struct clk_regmap_mux_data emmc_clkc_mux_data = {
+> +       .offset = SD_EMMC_CLOCK,
+> +       .mask = 0x3,
+> +       .shift = 6,
+> +};
+> +
+> +static struct clk_regmap_div_data emmc_clkc_div_data = {
+> +       .offset = SD_EMMC_CLOCK,
+> +       .shift = 0,
+> +       .width = 6,
+> +       .flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
+> +};
+> +
+> +static const struct of_device_id clkc_match_table[] = {
+> +       { .compatible = "amlogic,emmc-clkc" },
+shouldn't this be "amlogic,meson-axg-emmc-clkc" (and optionally also
+"amlogic,meson-gx-emmc-clkc")?
 
-Cheers
-Jon
+> +       {}
+> +};
+> +
+> +static int emmc_clkc_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct clk_regmap *mux, *div;
+> +       struct regmap *map;
+> +       struct clk *clk;
+> +       int i, ret;
+> +       const char *parent_names[MUX_CLK_NUM_PARENTS];
+> +       struct clk_init_data init;
+> +       char mux_name[CLK_NAME_LEN], div_name[CLK_NAME_LEN];
+> +       struct clk_hw_onecell_data *onecell_data;
+> +
+> +       map = syscon_node_to_regmap(dev->of_node);
+> +
+> +       mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+> +       div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+> +
+> +       onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
+> +                                   sizeof(*onecell_data->hws) * EMMC_MAX_CLKS,
+> +                                   GFP_KERNEL);
+> +
+> +       if (!mux || !div || !onecell_data)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
+> +               char name[8];
+> +
+> +               snprintf(name, sizeof(name), "clkin%d", i);
+> +               clk = devm_clk_get(dev, name);
+> +               if (IS_ERR(clk)) {
+> +                       if (clk != ERR_PTR(-EPROBE_DEFER))
+> +                               dev_err(dev, "Missing clock %s\n", name);
+> +                       return PTR_ERR(clk);
+> +               }
+> +
+> +               parent_names[i] = __clk_get_name(clk);
+> +       }
+> +
+> +       mux->map = map;
+> +       mux->data = &emmc_clkc_mux_data;
+> +
+> +       snprintf(mux_name, CLK_NAME_LEN, "%s#emmc_mux", dev_name(dev));
+> +
+> +       init.name = mux_name;
+> +       init.ops = &clk_regmap_mux_ops;
+> +       init.flags = CLK_SET_RATE_PARENT;
+> +       init.parent_names = parent_names;
+> +       init.num_parents = MUX_CLK_NUM_PARENTS;
+> +
+> +       mux->hw.init = &init;
+> +       ret = devm_clk_hw_register(dev, &mux->hw);
+> +       if (ret) {
+> +               dev_err(dev, "Mux clock registration failed\n");
+> +               return ret;
+> +       }
+> +
+> +       parent_names[0] = mux_name;
+> +       div->map = map;
+> +       div->data = &emmc_clkc_div_data;
+> +
+> +       snprintf(div_name, CLK_NAME_LEN, "%s#emmc_div", dev_name(dev));
+> +
+> +       init.name = div_name;
+> +       init.ops = &clk_regmap_divider_ops;
+> +       init.flags = CLK_SET_RATE_PARENT;
+> +       init.parent_names = parent_names;
+> +       init.num_parents = 1;
+> +
+> +       div->hw.init = &init;
+> +       ret = devm_clk_hw_register(dev, &div->hw);
+> +       if (ret) {
+> +               dev_err(dev, "Div clock registration failed\n");
+> +               return ret;
+> +       }
+> +
+> +       onecell_data->hws[CLKID_EMMC_C_MUX] = &mux->hw,
+> +       onecell_data->hws[CLKID_EMMC_C_DIV] = &div->hw,
+> +       onecell_data->num = EMMC_MAX_CLKS;
+you are describing the mux and the divider here
+however, meson-gx-mmc.c has a few more clock related bits:
+- CLK_CORE_PHASE_MASK
+- CLK_TX_PHASE_MASK
+- CLK_RX_PHASE_MASK
+- CLK_V2_TX_DELAY_MASK / CLK_V3_TX_DELAY_MASK
+- CLK_V2_RX_DELAY_MASK / CLK_V3_RX_DELAY_MASK
+- CLK_V2_ALWAYS_ON / CLK_V3_ALWAYS_ON
 
--- 
-nvpublic
+are these used for the MMC clock or are some of these routed to the
+NAND pins as well?
+
+
+Regards
+Martin
