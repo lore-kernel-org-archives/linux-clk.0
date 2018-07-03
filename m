@@ -1,28 +1,33 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 3 Jul 2018 13:31:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	fabio.estevam@nxp.com, mark.rutland@arm.com,
+	mturquette@baylibre.com, sboyd@kernel.org, aisheng.dong@nxp.com,
+	ping.bai@nxp.com, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
+Message-ID: <20180703193146.GA29496@rob-hp-laptop>
+References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Aapo Vienamo <avienamo@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- Aapo Vienamo <avienamo@nvidia.com>
-References: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
-Message-ID: <153114852903.143105.5065461144159249219@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/4] clk: tegra: Fix includes required by fence_udelay()
-Date: Mon, 09 Jul 2018 08:02:09 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Aapo Vienamo (2018-07-09 05:17:37)
-> Add the missing linux/delay.h include statement for udelay() used by
-> fence_udelay() macro.
-> =
+On Fri, Jun 22, 2018 at 02:32:33PM +0800, Anson Huang wrote:
+> According to Reference Manual Rev.0, 06/2017,
+> there are GPIO LPCGs defined in CCM CCGRs,
+> add them into clock tree.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6sll.c             | 6 ++++++
 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+>  include/dt-bindings/clock/imx6sll-clock.h | 9 ++++++++-
 
-Please send cover letters for multi-patch series, and always include a
-change log indicating what changed between versions of the series.
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  2 files changed, 14 insertions(+), 1 deletion(-)
