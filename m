@@ -1,148 +1,226 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Sean Wang <sean.wang@mediatek.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531908387.8953.147.camel@mtkswgap22>
-Cc: mark.rutland@arm.com, airlied@linux.ie, mturquette@baylibre.com,
- dri-devel@lists.freedesktop.org, ulrich.hecht+renesas@gmail.com,
- lee.jones@linaro.org, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- ck.hu@mediatek.com, robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mchehab@kernel.org,
- linux-arm-kernel@lists.infradead.org, Matthias Brugger <mbrugger@suse.com>,
- gregkh@linuxfoundation.org, rdunlap@infradead.org, sboyd@codeaurora.org,
- linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
- matthias.bgg@kernel.org, pi-cheng.chen@linaro.org, davem@davemloft.net
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
- <20180717220328.792-5-matthias.bgg@kernel.org>
- <1531882655.8953.83.camel@mtkswgap22> <51066716.k5MkZnrqCl@avalon>
- <1531908387.8953.147.camel@mtkswgap22>
-Message-ID: <153259051470.48062.4735087631606629738@swboyd.mtv.corp.google.com>
-Subject: Re: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys through a pdev
-Date: Thu, 26 Jul 2018 00:35:14 -0700
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	sboyd@kernel.org,
+	manivannan.sadhasivam@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	support@cubietech.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	linux@cubietech.com,
+	darren@cubietech.com,
+	mp-cs@actions-semi.com,
+	pn@denx.de,
+	sravanhome@gmail.com
+Subject: [PATCH v3 1/5] dt-bindings: clock: Rename document generic to Actions Semi Soc's
+Date: Tue,  3 Jul 2018 11:25:20 +0200
+Message-Id: <20180703092524.1697111-2-sravanhome@gmail.com>
+In-Reply-To: <20180703092524.1697111-1-sravanhome@gmail.com>
+References: <20180703092524.1697111-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Sean Wang (2018-07-18 03:06:27)
-> On Wed, 2018-07-18 at 11:05 +0300, Laurent Pinchart wrote:
-> > Hi Sean,
-> > =
+Rename document generic to Actions Semi Owl S700/S900 Soc's.
+Add clock bindings constants for action S700
 
-> > On Wednesday, 18 July 2018 05:57:35 EEST Sean Wang wrote:
-> > > On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
-> > > > From: Matthias Brugger <mbrugger@suse.com>
-> > > > =
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ .../{actions,s900-cmu.txt => actions,owl-cmu.txt}  |  20 ++--
+ include/dt-bindings/clock/actions,s700-cmu.h       | 128 +++++++++++++++++++++
+ 2 files changed, 139 insertions(+), 9 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
 
-> > > > The MMSYS subsystem includes clocks and drm components.
-> > > > This patch adds an initailization path through a platform device
-> > > > for the clock part, so that both drivers get probed from the same
-> > > > device tree compatible.
-> > > =
-
-> > > Sorry for that I should have a response earlier for the series.
-> > > =
-
-> > > Some points I felt they're not exactly right and should be fixed up
-> > > before we're moving on
-> > > =
-
-> > > Currently, drm driver have a wrong reference to the dt-binding,
-> > > "mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys", they should be all
-> > > for the subsystem exporting clock and reset line such common resource=
- to
-> > > its sub-devices. Every subsystem has a similar shape. I hope mmsys
-> > > shouldn't be an exception.
-> > > =
-
-> > > DRM device needs to have its own dt-binding show how connections betw=
-een
-> > > DRM components being made and its node should be put under mmsys node.
-> > > =
-
-> > > In this way, it becomes easy to see how the topology of the subsystem=
- is
-> > > and grows, like a tree "device tree", instead of hiding the details in
-> > > the implementation.
-> > > =
-
-> > > The similar example we already did for audsys on mt2701 and mt7623 as
-> > > below
-> > > =
-
-> > >     audsys: clock-controller@11220000 {
-> > >             =
-
-> > compatible =3D "mediatek,mt7623-audsys",
-> > >             =
-
-> >            "mediatek,mt2701-audsys",
-> > >             =
-
-> >            "syscon";
-> > >             =
-
-> >       ...
-> > > =
-
-> > >             =
-
-> > afe: audio-controller {
-> > >             =
-
-> >       compatible =3D "mediatek,mt7623-audio",
-> > >             =
-
-> >               =
-
-> >      "mediatek,mt2701-audio";
-> > > =
-
-> > >             =
-
-> >       ...
-> > >             =
-
-> > };
-> > >     };
-> > =
-
-> > This looks very strange to me. I'm not familiar with the hardware =
-
-> > architecture, but a clock controller that includes an audio controller =
-seems =
-
-> > like a very weird design. It's usually the other way around, you have a=
-n audio
-> =
-
-> yes, naming audsys as clock controller is really not good. it should be
-> worth a better naming.
-> =
-
-> mtk subsystem AFAIK works as a container, at least provides clocks,
-> reset, syscon access, these common resource to these devices running on
-> the subsystem. It also has a power gate independent from other
-> subsystem, that can be controlled when these devices all powered down
-> or once up.
-> =
-
-> And it should be better that we don't assume what exact devices are
-> running on since it is possible that there're different devices running
-> on the same subsystem per SoC. mtk has many subsystem working in this
-> way. mmsys is just a case. we can see in [1]
-> =
-
-> =
-
-> [1]
-> https://elixir.bootlin.com/linux/v4.18-rc5/source/Documentation/devicetre=
-e/bindings/arm/mediatek
->  =
-
-
-Sean, is this an ack for this patch series? I think the consensus is to
-not modify DT to add a subnode for the "clk" part of the hardware, but
-instead either register the clks from the device driver that has the clk
-hardware inside of it, or do what this patch series does and register a
-device in software from the "parent" device driver so that logically clk
-things are contained in drivers/clk/
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+similarity index 67%
+rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+rename to Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+index 93e4fb827cd6..d737ea74a450 100644
+--- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
++++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+@@ -1,12 +1,14 @@
+-* Actions S900 Clock Management Unit (CMU)
++* Actions Semi Owl Clock Management Unit (CMU)
+ 
+-The Actions S900 clock management unit generates and supplies clock to various
+-controllers within the SoC. The clock binding described here is applicable to
+-S900 SoC.
++The Actions Semi S900/S700 clock management unit generates and supplies clock
++to various controllers within the SoC. The clock binding described here is
++applicable to S900 and S700 SoC's.
+ 
+ Required Properties:
+ 
+-- compatible: should be "actions,s900-cmu"
++- compatible: should be one of the following,
++	"actions,s900-cmu"
++	"actions,s700-cmu"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - clocks: Reference to the parent clocks ("hosc", "losc")
+@@ -15,16 +17,16 @@ Required Properties:
+ Each clock is assigned an identifier, and client nodes can use this identifier
+ to specify the clock which they consume.
+ 
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+-tree sources.
++All available clocks are defined as preprocessor macros in corresponding
++dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
++used in device tree sources.
+ 
+ External clocks:
+ 
+ The hosc clock used as input for the plls is generated outside the SoC. It is
+ expected that it is defined using standard clock bindings as "hosc".
+ 
+-Actions S900 CMU also requires one more clock:
++Actions Semi S900 CMU also requires one more clock:
+  - "losc" - internal low frequency oscillator
+ 
+ Example: Clock Management Unit node:
+diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
+new file mode 100644
+index 000000000000..b8b8baa34613
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s700-cmu.h
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Actions S700 clock driver
++ *
++ * Copyright (c) 2014 Actions Semi Inc.
++ * Author: David Liu <liuwei@actions-semi.com>
++ *
++ * Author: Pathiban Nallathambi <pn@denx.de>
++ * Author: Saravanan Sekar <sravanhome@gmail.com>
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_S700_H
++#define __DT_BINDINGS_CLOCK_S700_H
++
++#define CLK_NONE			0
++
++/* fixed rate clocks */
++#define CLK_LOSC			1
++#define CLK_HOSC			2
++
++/* pll clocks */
++#define CLK_CORE_PLL			3
++#define CLK_DEV_PLL			4
++#define CLK_DDR_PLL			5
++#define CLK_NAND_PLL			6
++#define CLK_DISPLAY_PLL			7
++#define CLK_TVOUT_PLL			8
++#define CLK_CVBS_PLL			9
++#define CLK_AUDIO_PLL			10
++#define CLK_ETHERNET_PLL		11
++
++
++/* system clock */
++#define CLK_SYS_BASE			12
++#define CLK_CPU				CLK_SYS_BASE
++#define CLK_DEV				(CLK_SYS_BASE+1)
++#define CLK_AHB				(CLK_SYS_BASE+2)
++#define CLK_APB				(CLK_SYS_BASE+3)
++#define CLK_DMAC			(CLK_SYS_BASE+4)
++#define CLK_NOC0_CLK_MUX		(CLK_SYS_BASE+5)
++#define CLK_NOC1_CLK_MUX		(CLK_SYS_BASE+6)
++#define CLK_HP_CLK_MUX			(CLK_SYS_BASE+7)
++#define CLK_HP_CLK_DIV			(CLK_SYS_BASE+8)
++#define CLK_NOC1_CLK_DIV		(CLK_SYS_BASE+9)
++#define CLK_NOC0			(CLK_SYS_BASE+10)
++#define CLK_NOC1			(CLK_SYS_BASE+11)
++#define CLK_SENOR_SRC			(CLK_SYS_BASE+12)
++
++/* peripheral device clock */
++#define CLK_PERIP_BASE			25
++#define CLK_GPIO			(CLK_PERIP_BASE)
++#define CLK_TIMER			(CLK_PERIP_BASE+1)
++#define CLK_DSI				(CLK_PERIP_BASE+2)
++#define CLK_CSI				(CLK_PERIP_BASE+3)
++#define CLK_SI				(CLK_PERIP_BASE+4)
++#define CLK_DE				(CLK_PERIP_BASE+5)
++#define CLK_HDE				(CLK_PERIP_BASE+6)
++#define CLK_VDE				(CLK_PERIP_BASE+7)
++#define CLK_VCE				(CLK_PERIP_BASE+8)
++#define CLK_NAND			(CLK_PERIP_BASE+9)
++#define CLK_SD0				(CLK_PERIP_BASE+10)
++#define CLK_SD1				(CLK_PERIP_BASE+11)
++#define CLK_SD2				(CLK_PERIP_BASE+12)
++
++#define CLK_UART0			(CLK_PERIP_BASE+13)
++#define CLK_UART1			(CLK_PERIP_BASE+14)
++#define CLK_UART2			(CLK_PERIP_BASE+15)
++#define CLK_UART3			(CLK_PERIP_BASE+16)
++#define CLK_UART4			(CLK_PERIP_BASE+17)
++#define CLK_UART5			(CLK_PERIP_BASE+18)
++#define CLK_UART6			(CLK_PERIP_BASE+19)
++
++#define CLK_PWM0			(CLK_PERIP_BASE+20)
++#define CLK_PWM1			(CLK_PERIP_BASE+21)
++#define CLK_PWM2			(CLK_PERIP_BASE+22)
++#define CLK_PWM3			(CLK_PERIP_BASE+23)
++#define CLK_PWM4			(CLK_PERIP_BASE+24)
++#define CLK_PWM5			(CLK_PERIP_BASE+25)
++#define CLK_GPU3D			(CLK_PERIP_BASE+26)
++
++#define CLK_I2C0			(CLK_PERIP_BASE+27)
++#define CLK_I2C1			(CLK_PERIP_BASE+28)
++#define CLK_I2C2			(CLK_PERIP_BASE+29)
++#define CLK_I2C3			(CLK_PERIP_BASE+30)
++
++
++#define CLK_SPI0			(CLK_PERIP_BASE+31)
++#define CLK_SPI1			(CLK_PERIP_BASE+32)
++#define CLK_SPI2			(CLK_PERIP_BASE+33)
++#define CLK_SPI3			(CLK_PERIP_BASE+34)
++
++#define CLK_USB3_480MPLL0		(CLK_PERIP_BASE+35)
++#define CLK_USB3_480MPHY0		(CLK_PERIP_BASE+36)
++#define CLK_USB3_5GPHY			(CLK_PERIP_BASE+37)
++#define CLK_USB3_CCE			(CLK_PERIP_BASE+48)
++#define CLK_USB3_MAC			(CLK_PERIP_BASE+49)
++
++
++#define CLK_LCD				(CLK_PERIP_BASE+50)
++#define CLK_HDMI_AUDIO			(CLK_PERIP_BASE+51)
++#define CLK_I2SRX			(CLK_PERIP_BASE+52)
++#define CLK_I2STX			(CLK_PERIP_BASE+53)
++
++#define CLK_SENSOR0			(CLK_PERIP_BASE+54)
++#define CLK_SENSOR1			(CLK_PERIP_BASE+55)
++
++#define CLK_HDMI_DEV			(CLK_PERIP_BASE+56)
++
++#define CLK_ETHERNET			(CLK_PERIP_BASE+59)
++#define CLK_RMII_REF			(CLK_PERIP_BASE+60)
++
++#define CLK_USB2H0_PLLEN		(CLK_PERIP_BASE+61)
++#define CLK_USB2H0_PHY			(CLK_PERIP_BASE+62)
++#define CLK_USB2H0_CCE			(CLK_PERIP_BASE+63)
++#define CLK_USB2H1_PLLEN		(CLK_PERIP_BASE+64)
++#define CLK_USB2H1_PHY			(CLK_PERIP_BASE+65)
++#define CLK_USB2H1_CCE			(CLK_PERIP_BASE+66)
++
++
++#define CLK_TVOUT			(CLK_PERIP_BASE+67)
++
++#define CLK_THERMAL_SENSOR		(CLK_PERIP_BASE+68)
++
++#define CLK_IRC_SWITCH			(CLK_PERIP_BASE+69)
++#define CLK_PCM1			(CLK_PERIP_BASE+70)
++#define CLK_NR_CLKS			(CLK_PCM1+1) /* update on adding new clk */
++
++#endif /* __DT_BINDINGS_CLOCK_S700_H */
+-- 
+2.14.4
