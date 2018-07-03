@@ -1,67 +1,131 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
+To: Jerome Brunet <jbrunet@baylibre.com>, Boris Brezillon
+	<boris.brezillon@bootlin.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
+ <20180703145716.31860-3-yixun.lan@amlogic.com>
+ <20180703092107.51497a8f@bbrezillon>
+ <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
+ <1530605373.2900.158.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>, Kevin
+ Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
+ Herring <robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <1aedbb15-1373-adde-f5bb-bce3701d50b0@amlogic.com>
+Date: Tue, 3 Jul 2018 17:56:40 +0800
 MIME-Version: 1.0
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- John Crispin <john@phrozen.org>, Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180723142314.1183-1-john@phrozen.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, Christian Lamparter <chunkeey@googlemail.com>,
- Christian Lamparter <chunkeey@gmail.com>, John Crispin <john@phrozen.org>
-References: <20180723142314.1183-1-john@phrozen.org>
-Message-ID: <153256230312.48062.3889968337420324100@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: fix apss cpu overclocking
-Date: Wed, 25 Jul 2018 16:45:03 -0700
+In-Reply-To: <1530605373.2900.158.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting John Crispin (2018-07-23 07:23:14)
-> From: Christian Lamparter <chunkeey@googlemail.com>
-> =
+Hi Jerome:
 
-> There's an interaction issue between the clk changes:"
-> clk: qcom: ipq4019: Add the apss cpu pll divider clock node
-> clk: qcom: ipq4019: remove fixed clocks and add pll clocks
-> " and the cpufreq-dt.
-> =
 
-> cpufreq-dt is now spamming the kernel-log with the following:
-> =
+On 07/03/18 16:09, Jerome Brunet wrote:
+> On Tue, 2018-07-03 at 15:36 +0800, Yixun Lan wrote:
+>> Hi Broris
+>>
+>>  thanks for your quick response, and see my comments below
+>>
+>> On 07/03/18 15:21, Boris Brezillon wrote:
+>>> On Tue, 3 Jul 2018 14:57:15 +0000
+>>> Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>>
+>>>> Add two clock bindings IDs which provided by the EMMC clock controller,
+>>>> These two clocks will be used by EMMC or NAND driver.
+>>>>
+>>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>>> ---
+>>>>  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
+>>>>  1 file changed, 14 insertions(+)
+>>>>  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
+>>>>
+>>>> diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
+>>>> new file mode 100644
+>>>> index 000000000000..d9972c400e58
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/clock/emmc-clkc.h
+>>>> @@ -0,0 +1,14 @@
+>>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>>>> +/*
+>>>> + * Meson EMMC sub clock tree IDs
+>>>> + *
+>>>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#ifndef __EMMC_CLKC_H
+>>>> +#define __EMMC_CLKC_H
+>>>> +
+>>>> +#define CLKID_EMMC_C_MUX				0
+>>>
+>>> Looks like the MUX clk is the parent of the DIV one, and I guess the clk
+>>> driver is able to select the best parent+div pair for a requested rate.
+>>> Do you really need to expose the MUX to users?
+>>>
+>>
+>> Yes, It's true, the mux is parent of the div clock.
+>>
+>> while testing for the NAND driver, I find it's kind of loose about the
+>> parent of the clock, so selecting the div (and let CCF decide freely) is
+>> actually works fine
+>>
+>> but for the EMMC driver, especially when running at high clock, it's
+>> kind of picky about the parent of the clock, 
+> 
+> It would be nice to get an explanation about this behavior.
+> it seems that even of the rate provided by CLKID_SD_EMMC_X_CLK0 (main clock
+> controller) is correct, the eMMC cannot reliably tune with it.
+> 
+> Could you elaborate on this ?
+> 
+It's during my own test in AXG platform, I found clock path
+a) fclk_div2 -> sd_emmc_c_clk0_sel -> sd_emmc_c_clk0_div ->
+sd_emmc_c_clk0 -> sd_emmc_c_mux -> sd_emmc_c_div
 
-> [ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
-> for freq 761142857 (-34)
-> =
+b) fclk_div2 -> sd_emmc_c_mux -> sd_emmc_c_div
 
-> This only happens on certain devices like the Compex WPJ428
-> and AVM FritzBox!4040. However, other devices like the Asus
-> RT-AC58U and Meraki MR33 work just fine.
-> =
+path a) doesn't work in EMMC driver, even both clock parent of them from
+the same fclk_div2 source.
 
-> The issue stem from the fact that all higher CPU-Clocks
-> are achieved by switching the clock-parent to the P_DDRPLLAPSS
-> (ddrpllapss). Which is set by Qualcomm's proprietary bootcode
-> as part of the DDR calibration.
-> =
+ sd_emmc_c_mux -> sd_emmc_c_div is the clock from the EMMC register base.
+I believe it's ASIC design issue
 
-> For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
-> at round 533 MHz (ddrpllsdcc =3D 190285714 Hz).
-> =
+>> so the driver may want to
+>> manually choose the parent of the mux clock (example fclk_div2 here).
+>> That's why I'm exporting this clock ID.
+> 
+> ATM the EMMC driver will not use this provider. If this is the only reason, it
+> could be done later.
+> 
+sure, I'm fine with this.. we could certainly adjust it later.
 
-> whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
-> clocked at a slightly higher 537 MHz ( ddrpllsdcc =3D 192000000 Hz).
-> =
+I will fix this in next patch version
 
-> This patch attempts to fix the issue by modifying
-> clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate=
-()
-> to use a new qcom_find_freq_close() function, which returns the closest
-> matching frequency, instead of the next higher. This way, the SoC in
-> the FB4040 (with its max clock speed of 710.4 MHz) will no longer
-> try to overclock to 761 MHz.
-> =
+> Is the NAND driver "picky" as well ?
+> 
+No, since the NAND is running at much low clock speed, and during my
+tests, it works fine with various clock parent
 
-> Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clo=
-ck node")
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> Signed-off-by: John Crispin <john@phrozen.org>
-
-Why can't you specify the right frequency in the OPP tables?
+>>
+>>
+>>>> +#define CLKID_EMMC_C_DIV				1
+>>>> +
+>>>> +#endif
+>>>
+>>> .
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> .
+> 
