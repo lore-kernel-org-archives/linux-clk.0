@@ -1,61 +1,54 @@
-Return-Path: <avienamo@nvidia.com>
-From: Aapo Vienamo <avienamo@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v4 0/4] Multiplex sdmmc low jitter clock path
-Date: Mon, 9 Jul 2018 19:38:54 +0300
-Message-ID: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
+Date: Tue, 3 Jul 2018 14:57:15 +0000
+Message-ID: <20180703145716.31860-3-yixun.lan@amlogic.com>
+In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: avienamo@nvidia.com
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-divider to achieve better jitter performance with high speed signaling
-modes. The clock path with the divider is needed by some of the slower
-signaling modes. This series automatically multiplexes the LJ and
-non-LJ clock paths based on the requested frequency.
+Add two clock bindings IDs which provided by the EMMC clock controller,
+These two clocks will be used by EMMC or NAND driver.
 
-Changelog:
-v4:
-	- Add a changelog
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 include/dt-bindings/clock/emmc-clkc.h
 
-v3:
-	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-	  do_div()
-	- Use SPDX tags for new files
-	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-	- Make tegra_clk_sdmmc_mux_ops static
-	- Fix the includes for fence_udelay() in a separate patch
-
-v2:
-	- Fix the type compatibility error on do_div
-
-Aapo Vienamo (1):
-  clk: tegra: Fix includes required by fence_udelay()
-
-Peter De Schrijver (1):
-  clk: tegra: refactor 7.1 div calculation
-
-Peter De-Schrijver (2):
-  clk: tegra: Add sdmmc mux divider clock
-  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-
- drivers/clk/tegra/Makefile           |   2 +
- drivers/clk/tegra/clk-divider.c      |  30 +----
- drivers/clk/tegra/clk-id.h           |   2 -
- drivers/clk/tegra/clk-sdmmc-mux.c    | 250 +++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |  11 --
- drivers/clk/tegra/clk-tegra210.c     |  14 +-
- drivers/clk/tegra/clk.h              |  30 +++++
- drivers/clk/tegra/div71.c            |  43 ++++++
- 8 files changed, 342 insertions(+), 40 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
- create mode 100644 drivers/clk/tegra/div71.c
-
+diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
+new file mode 100644
+index 000000000000..d9972c400e58
+--- /dev/null
++++ b/include/dt-bindings/clock/emmc-clkc.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson EMMC sub clock tree IDs
++ *
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ */
++
++#ifndef __EMMC_CLKC_H
++#define __EMMC_CLKC_H
++
++#define CLKID_EMMC_C_MUX				0
++#define CLKID_EMMC_C_DIV				1
++
++#endif
 -- 
-2.7.4
+2.18.0
