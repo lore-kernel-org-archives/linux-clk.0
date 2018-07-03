@@ -1,65 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0047.outbound.protection.outlook.com ([104.47.37.47]:11508
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730030AbeGZOUL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 10:20:11 -0400
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of
- failure
-Date: Thu, 26 Jul 2018 13:03:16 +0000
-Message-ID: <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
-References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
- <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
-In-Reply-To: <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v2 2/2] clk: meson-axg: add clocks required by pcie driver
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+References: <20180702213118.19222-1-yixun.lan@amlogic.com>
+ <20180702213118.19222-3-yixun.lan@amlogic.com>
+ <1530609862.2900.187.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, Jianxin Qin <jianxin.qin@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
+Date: Tue, 3 Jul 2018 18:17:00 +0800
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <1530609862.2900.187.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
-aGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiAyNSBKdWx5IDIwMTgg
-MTA6MTEgUE0NCj4gVG86IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgbXR1cnF1ZXR0
-ZUBiYXlsaWJyZS5jb20NCj4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFJhamFuIFZhamENCj4gPFJBSkFOVkB4aWxpbnguY29tPg0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIXSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IENsZWFyIE9GX1BP
-UFVMQVRFRCBmbGFnIGluIGNhc2Ugb2YNCj4gZmFpbHVyZQ0KPiANCj4gUXVvdGluZyBSYWphbiBW
-YWphICgyMDE4LTA3LTE3IDA2OjE3OjAwKQ0KPiA+IEZpeGVkIGZhY3RvciBjbG9jayBoYXMgdHdv
-IGluaXRpYWxpemF0aW9ucyBhdCBvZl9jbGtfaW5pdCgpIHRpbWUNCj4gPiBhbmQgZHVyaW5nIHBs
-YXRmb3JtIGRyaXZlciBwcm9iZS4gQmVmb3JlIG9mX2Nsa19pbml0KCkgY2FsbCwNCj4gPiBub2Rl
-IGlzIG1hcmtlZCBhcyBwb3B1bGF0ZWQgYW5kIHNvIGl0cyBwcm9iZSBuZXZlciBnZXRzIGNhbGxl
-ZC4NCj4gPg0KPiA+IER1cmluZyBvZl9jbGtfaW5pdCgpIGZpeGVkIGZhY3RvciBjbG9jayByZWdp
-c3RyYXRpb24gbWF5IGZhaWwgaWYNCj4gPiBhbnkgb2YgaXRzIHBhcmVudCBjbG9jayBpcyBub3Qg
-cmVnaXN0ZXJlZC4gSW4gdGhpcyBjYXNlLCBpdCBkb2Vzbid0DQo+ID4gZ2V0IGNoYW5jZSB0byBy
-ZXRyeSByZWdpc3RyYXRpb24gZnJvbSBwcm9iZS4gQ2xlYXIgT0ZfUE9QVUxBVEVEDQo+ID4gZmxh
-ZyBpZiBmaXhlZCBmYWN0b3IgY2xvY2sgcmVnaXN0cmF0aW9uIGZhaWxzIHNvIHRoYXQgY2xvY2sN
-Cj4gPiByZWdpc3RyYXRpb24gaXMgYXR0ZW1wdGVkIGFnYWluIGZyb20gcHJvYmUuDQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBSYWphbiBWYWphIDxyYWphbi52YWphQHhpbGlueC5jb20+DQo+ID4g
-LS0tDQo+ID4gIGRyaXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYyB8IDkgKysrKysrKystDQo+
-ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0K
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFjdG9yLmMgYi9kcml2ZXJz
-L2Nsay9jbGstZml4ZWQtZmFjdG9yLmMNCj4gPiBpbmRleCBkNzJlZjJkLi5mM2FlNGZmIDEwMDY0
-NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYw0KPiA+ICsrKyBiL2Ry
-aXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYw0KPiA+IEBAIC0xNzcsOCArMTc3LDE1IEBAIHN0
-YXRpYyBzdHJ1Y3QgY2xrICpfb2ZfZml4ZWRfZmFjdG9yX2Nsa19zZXR1cChzdHJ1Y3QNCj4gZGV2
-aWNlX25vZGUgKm5vZGUpDQo+ID4NCj4gPiAgICAgICAgIGNsayA9IGNsa19yZWdpc3Rlcl9maXhl
-ZF9mYWN0b3IoTlVMTCwgY2xrX25hbWUsIHBhcmVudF9uYW1lLCBmbGFncywNCj4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbXVsdCwgZGl2KTsNCj4gPiAtICAgICAg
-IGlmIChJU19FUlIoY2xrKSkNCj4gPiArICAgICAgIGlmIChJU19FUlIoY2xrKSkgew0KPiA+ICsg
-ICAgICAgICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICAgKiBJZiBwYXJlbnQgY2xvY2sg
-aXMgbm90IHJlZ2lzdGVyZWQsIHJlZ2lzdHJhdGlvbiB3b3VsZCBmYWlsLg0KPiA+ICsgICAgICAg
-ICAgICAgICAgKiBDbGVhciBPRl9QT1BVTEFURUQgZmxhZyBzbyB0aGF0IGNsb2NrIHJlZ2lzdHJh
-dGlvbiBjYW4gYmUNCj4gPiArICAgICAgICAgICAgICAgICogYXR0ZW1wdGVkIGFnYWluIGZyb20g
-cHJvYmUgZnVuY3Rpb24uDQo+ID4gKyAgICAgICAgICAgICAgICAqLw0KPiA+ICsgICAgICAgICAg
-ICAgICBvZl9ub2RlX2NsZWFyX2ZsYWcobm9kZSwgT0ZfUE9QVUxBVEVEKTsNCj4gPiAgICAgICAg
-ICAgICAgICAgcmV0dXJuIGNsazsNCj4gPiArICAgICAgIH0NCj4gDQo+IEJUVywgdGhpcyBwYXRj
-aCB3YXMgc2VyaW91c2x5IG1hbmdsZWQgZm9yIG1lIHNvIEkgaGFkIHRvIGFwcGx5IGl0IGJ5DQo+
-IGhhbmQuIFBsZWFzZSBiZSBtb3JlIGNhcmVmdWwgbmV4dCB0aW1lIGFuZCBjb25zaWRlciB1c2lu
-ZyBzb21ldGhpbmcgbGlrZQ0KPiBnaXQtc2VuZC1lbWFpbCBhbmQgZ2l0LWZvcm1hdC1wYXRjaCB0
-byBzZW5kIHBhdGNoZXMuDQpbUmFqYW5dIEkgdXNlZCBnaXQtc2VuZC1lbWFpbCBvbmx5IGFuZCBz
-ZW50IHNhbWUgd2F5IGFzIEkgdXNlZCB0byBzZW5kIG90aGVyIHBhdGNoZXMuIE5vdCBzdXJlIHdo
-ZXJlIHdhcyBpc3N1ZS4NClNvcnJ5IGZvciB0aGUgaW5jb252ZW5pZW5jZS4gIA0KDQo=
+Hi Jerome:
+
+
+On 07/03/18 17:24, Jerome Brunet wrote:
+> On Mon, 2018-07-02 at 21:31 +0000, Yixun Lan wrote:
+>> Adding clocks for the pcie driver. Due to the ASIC design,
+>> the pcie controller re-use part of the mipi clock logic,
+>> so the mipi clock is also added.
+>>
+>> Tested-by: Jianxin Qin <jianxin.qin@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  drivers/clk/meson/axg.c | 148 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/meson/axg.h |   6 +-
+>>  2 files changed, 153 insertions(+), 1 deletion(-)
+>>
+>>
+> 
+> [...]
+> 
+>> +
+>> +/* skip the partent 0, it's for debug only */
+>> +static u32 mux_table_pcie_ref[]	= { 1 };
+>> +static const char * const pcie_ref_parent_names[] = { "pcie_mux" };
+> 
+> Dropped these symbols.
+> 
+>> +
+>> +static struct clk_regmap axg_pcie_ref = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = HHI_PCIE_PLL_CNTL6,
+>> +		.mask = 0x1,
+>> +		.shift = 1,
+>> +		.table = mux_table_pcie_ref,
+> 
+> Replaced with the table itself
+> 
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pcie_ref",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_names = pcie_ref_parent_names,
+>> +		.num_parents = ARRAY_SIZE(pcie_ref_parent_names),
+> 
+> Replaced with the table itself and applied. Thx
+> 
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+
+I'm seeing you already applied this patch, so would you like to
+fix/amend the patch for me, or want me send another patch version?
+
+thanks
