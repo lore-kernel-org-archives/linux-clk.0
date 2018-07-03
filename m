@@ -1,87 +1,130 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58102 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbeGZScl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:32:41 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 03/10] drm/sun4i: Add support for A64 mixers
-Date: Fri, 27 Jul 2018 01:12:50 +0800
-Message-Id: <20180726171257.6688-4-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 3 Jul 2018 08:04:16 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: matthias.bgg@kernel.org, ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com, ck.hu@mediatek.com,
+	p.zabel@pengutronix.de, airlied@linux.ie, robh+dt@kernel.org,
+	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
+	davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
+	rdunlap@infradead.org, sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
+Message-ID: <20180703070416.GD20176@dell>
+References: <cover.1524820923.git.mbrugger@suse.com>
+ <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
+ <20180430103029.GD5147@dell>
+ <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+On Mon, 25 Jun 2018, Matthias Brugger wrote:
 
-Mixers in Allwinner have similar capabilities as others SoCs with DE2.
+> 
+> 
+> On 30/04/18 12:30, Lee Jones wrote:
+> > On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+> > 
+> >> From: Matthias Brugger <mbrugger@suse.com>
+> >>
+> >> Add binding description for the mmsys mfd for some Mediatek
+> >> devices. mmsys has some registers to control clock gates (which is
+> >> used in the clk driver) and some registers to set the routing and enable
+> >> the differnet blocks of the display subsystem.
+> >>
+> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> >> ---
+> >>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
+> >>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+> >>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
+> >>  3 files changed, 28 insertions(+), 3 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> index 4eb8bbe15c01..4468345f8b1a 100644
+> >> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
+> >>  Required Properties:
+> >>  
+> >>  - compatible: Should be one of:
+> >> -	- "mediatek,mt2701-mmsys", "syscon"
+> >>  	- "mediatek,mt2712-mmsys", "syscon"
+> >>  	- "mediatek,mt6797-mmsys", "syscon"
+> >> -	- "mediatek,mt8173-mmsys", "syscon"
+> >>  - #clock-cells: Must be 1
+> >>  
+> >>  The mmsys controller uses the common clk binding from
+> >> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> >> index 383183a89164..85a3b4ec06cd 100644
+> >> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> >> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> >> @@ -9,7 +9,7 @@ function block.
+> >>  
+> >>  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
+> >>  For a description of the MMSYS_CONFIG binding, see
+> >> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
+> >> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+> >>  
+> >>  DISP function blocks
+> >>  ====================
+> >> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+> >> new file mode 100644
+> >> index 000000000000..2331ae16917e
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+> >> @@ -0,0 +1,27 @@
+> >> +MediaTek MMSYS Multifunction Device Driver
+> > 
+> > What is "MMSYS"?
+> > 
+> > "Multi-Function Driver"s are specific to Linux.
+> > 
+> > What actually is the device?
+> 
+> It's includes all the DRM parts of the SoC together with the clocks for the
+> device. MMSYS IMHO stands for Multi-Media-System.
 
-Add support for them.
+Please update the document with that information.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: Add mixer0]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v3.1:
-- Add mixer0
-Changes for v3:
-- none 
-Changes for v2:
-- New patch
+Is there a datasheet I can view?
 
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> >> +MMSYS is a multifunction device with the following sub modules:
+> >> +- clocks for the multi-media subsystem
+> >> +- central node for the DRM subsystem.
+> >> +
+> >> +This document describes the binding for MFD device. The MFD takes care to initailize
+> >> +the clock driver and the DRM driver. More info see
+> >> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> >> +
+> >> +Required properties:
+> >> +- compatible: Should be one of:
+> >> +	- "mediatek,mt2701-mmsys", "syscon"
+> >> +	- "mediatek,mt8173-mmsys", "syscon"
+> >> +- #clock-cells: Must be 1
+> >> +
+> >> +Optional properties:
+> >> +- power-domains: list of powerdomains needed for the subsystem to work
+> >> +
+> >> +Example:
+> >> +
+> >> +mmsys: clock-controller@14000000 {
+> >> +	compatible = "mediatek,mt8173-mmsys", "syscon";
+> >> +	reg = <0 0x14000000 0 0x1000>;
+> >> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
+> >> +	#clock-cells = <1>;
+> >> +};
+> > 
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index fc3713608f78..8b3d02b146b7 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -569,6 +569,22 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.mod_rate = 150000000,
- };
- 
-+static const struct sun8i_mixer_cfg sun50i_a64_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
-+
-+static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
-@@ -594,6 +610,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-mixer-0",
-+		.data = &sun50i_a64_mixer0_cfg,
-+	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
-+		.data = &sun50i_a64_mixer1_cfg,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
 -- 
-2.18.0
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
