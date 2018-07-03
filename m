@@ -1,105 +1,103 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"keescook@chromium.org" <keescook@chromium.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, Michal Simek
-	<michals@xilinx.com>, "mingo@kernel.org" <mingo@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>
-CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Tejas Patel <TEJASP@xilinx.com>, Shubhrajyoti
- Datta <shubhraj@xilinx.com>
-Subject: RE: [PATCH v9 10/10] drivers: clk: Add ZynqMP clock driver
-Date: Tue, 17 Jul 2018 20:09:01 +0000
-Message-ID: 
- <SN1PR02MB37589FF7DBAFBD0C070F690EB85C0@SN1PR02MB3758.namprd02.prod.outlook.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
- <1529516435-7315-11-git-send-email-jollys@xilinx.com>
- <153111401693.143105.16925315512459949259@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <153111401693.143105.16925315512459949259@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 3 Jul 2018 07:53:29 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: matti.vaittinen@fi.rohmeurope.com,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	andrew.smirnov@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180703065329.GA20176@dell>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180626112455.GC2118@localhost.localdomain>
+ <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAFqH_52NERfORwSkBh0stW+mvzRpw0to9CiWPwLB9mFo_TsW_w@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3LA0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
-cmddDQo+IFNlbnQ6IFN1bmRheSwgSnVseSAwOCwgMjAxOCAxMDoyNyBQTQ0KPiBUbzogSm9sbHkg
-U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+OyBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOw0KPiBk
-bWl0cnkudG9yb2tob3ZAZ21haWwuY29tOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsNCj4g
-aGthbGx3ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsgbGludXgtY2xrQHZn
-ZXIua2VybmVsLm9yZzsNCj4gbWFyay5ydXRsYW5kQGFybS5jb207IG1hdHRAY29kZWJsdWVwcmlu
-dC5jby51azsgTWljaGFsIFNpbWVrDQo+IDxtaWNoYWxzQHhpbGlueC5jb20+OyBtaW5nb0BrZXJu
-ZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4gcm9iaCtkdEBrZXJuZWwub3JnOyBz
-Ym95ZEBjb2RlYXVyb3JhLm9yZzsgc3VkZWVwLmhvbGxhQGFybS5jb20NCj4gQ2M6IFJhamFuIFZh
-amEgPFJBSkFOVkB4aWxpbnguY29tPjsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2Vy
-bmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA8Sk9MTFlTQHhpbGlueC5jb20+OyBUZWphcyBQYXRlbCA8
-VEVKQVNQQHhpbGlueC5jb20+OyBTaHViaHJhanlvdGkgRGF0dGENCj4gPHNodWJocmFqQHhpbGlu
-eC5jb20+OyBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCB2OSAxMC8xMF0gZHJpdmVyczogY2xrOiBBZGQgWnlucU1QIGNsb2NrIGRyaXZlcg0KPiAN
-Cj4gPiArLyoqDQo+ID4gKyAqIHp5bnFtcF9wbV9jbG9ja19nZXRfcGFyZW50cygpIC0gR2V0IHRo
-ZSBmaXJzdCAzIHBhcmVudHMgb2YgY2xvY2sgZm9yIGdpdmVuDQo+IGlkDQo+ID4gKyAqIEBjbG9j
-a19pZDogIENsb2NrIElEDQo+ID4gKyAqIEBpbmRleDogICAgIFBhcmVudCBpbmRleA0KPiA+ICsg
-KiBAcGFyZW50czogICAzIHBhcmVudHMgb2YgdGhlIGdpdmVuIGNsb2NrDQo+ID4gKyAqDQo+ID4g
-KyAqIFRoaXMgZnVuY3Rpb24gaXMgdXNlZCB0byBnZXQgMyBwYXJlbnRzIGZvciB0aGUgY2xvY2sg
-c3BlY2lmaWVkIGJ5DQo+ID4gKyAqIGdpdmVuIGNsb2NrIElELg0KPiA+ICsgKg0KPiA+ICsgKiBU
-aGlzIEFQSSB3aWxsIHJldHVybiAzIHBhcmVudHMgd2l0aCBhIHNpbmdsZSByZXNwb25zZS4gVG8g
-Z2V0DQo+ID4gKyAqIG90aGVyIHBhcmVudHMsIG1hc3RlciBzaG91bGQgY2FsbCBzYW1lIEFQSSBp
-biBsb29wIHdpdGggbmV3DQo+ID4gKyAqIHBhcmVudCBpbmRleCB0aWxsIGVycm9yIGlzIHJldHVy
-bmVkLiBFLmcgRmlyc3QgY2FsbCBzaG91bGQgaGF2ZQ0KPiA+ICsgKiBpbmRleCAwIHdoaWNoIHdp
-bGwgcmV0dXJuIHBhcmVudHMgMCwxIGFuZCAyLiBOZXh0IGNhbGwsIGluZGV4DQo+ID4gKyAqIHNo
-b3VsZCBiZSAzIHdoaWNoIHdpbGwgcmV0dXJuIHBhcmVudCAzLDQgYW5kIDUgYW5kIHNvIG9uLg0K
-PiA+ICsgKg0KPiA+ICsgKiBSZXR1cm46IFJldHVybnMgc3RhdHVzLCBlaXRoZXIgc3VjY2VzcyBv
-ciBlcnJvcityZWFzb24NCj4gPiArICovDQo+ID4gK3N0YXRpYyBpbnQgenlucW1wX3BtX2Nsb2Nr
-X2dldF9wYXJlbnRzKHUzMiBjbG9ja19pZCwgdTMyIGluZGV4LCB1MzINCj4gKnBhcmVudHMpDQo+
-ID4gK3sNCj4gPiArICAgICAgIHN0cnVjdCB6eW5xbXBfcG1fcXVlcnlfZGF0YSBxZGF0YSA9IHsw
-fTsNCj4gPiArICAgICAgIHUzMiByZXRfcGF5bG9hZFtQQVlMT0FEX0FSR19DTlRdOw0KPiANCj4g
-V2hhdCdzIHRoZSBlbmRpYW5uZXNzIG9mIHRoaXMgcGF5bG9hZD8gSXMgaXQgbGl0dGxlIGVuZGlh
-bj8gT3IgZG8gdGhlDQo+IGVlbWlfb3BzIGNvbnZlcnQgdG8gQ1BVIG5hdGl2ZSBlbmRpYW5uZXNz
-Pw0KDQpJdHMgbGl0dGxlIGVuZGlhbg0KDQo+ID4gKw0KPiA+ICsvKioNCj4gPiArICogenlucW1w
-X2Nsb2NrX2luaXQoKSAtIEluaXRpYWxpemUgenlucW1wIGNsb2Nrcw0KPiA+ICsgKg0KPiA+ICsg
-KiBSZXR1cm46IDAgb24gc3VjY2VzcyBlbHNlIGVycm9yIGNvZGUNCj4gPiArICovDQo+ID4gK3N0
-YXRpYyBpbnQgX19pbml0IHp5bnFtcF9jbG9ja19pbml0KHZvaWQpDQo+ID4gK3sNCj4gPiArICAg
-ICAgIGludCByZXQ7DQo+ID4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wOw0KPiA+ICsN
-Cj4gPiArICAgICAgIG5wID0gb2ZfZmluZF9jb21wYXRpYmxlX25vZGUoTlVMTCwgTlVMTCwgInhs
-bngsenlucW1wIik7DQo+ID4gKyAgICAgICBpZiAoIW5wKQ0KPiA+ICsgICAgICAgICAgICAgICBy
-ZXR1cm4gLUVOT0VOVDsNCj4gPiArICAgICAgIG9mX25vZGVfcHV0KG5wKTsNCj4gPiArDQo+ID4g
-KyAgICAgICBucCA9IG9mX2ZpbmRfY29tcGF0aWJsZV9ub2RlKE5VTEwsIE5VTEwsICJ4bG54LHp5
-bnFtcC1jbGsiKTsNCj4gDQo+IFdoeSBjYW4ndCB0aGlzIGJlIGEgcGxhdGZvcm0gZGV2aWNlIGRy
-aXZlcj8NCg0KUGxhdGZvcm0gZHJpdmVyIG1heSBwcm9iZSBsYXRlcihhbiBhY3R1YWxseSBwcm9i
-aW5nIGxhdGVyIGluIG91ciBjYXNlKS4gVGhpcyB3aWxsIHJlc3VsdHMgaW4gY2xvY2sgZ2V0IGZh
-aWx1cmUgaW4gY2xvY2sgY29uc3VtZXIgcGVyaXBoZXJhbHMuIFNvIGNsb2NrIHJlZ2lzdHJhdGlv
-biBuZWVkcyB0byBiZSBkb25lIGVhcmxpZXIuDQoNCj4gDQo+ID4gKyAgICAgICAgICAgICAgIG0g
-PSByYXRlX2RpdiAvIEZSQUNfRElWOw0KPiA+ICsgICAgICAgICAgICAgICBmID0gcmF0ZV9kaXYg
-JSBGUkFDX0RJVjsNCj4gPiArICAgICAgICAgICAgICAgbSA9IGNsYW1wX3QodTMyLCBtLCAoUExM
-X0ZCRElWX01JTiksIChQTExfRkJESVZfTUFYKSk7DQo+ID4gKyAgICAgICAgICAgICAgIHJhdGUg
-PSBwYXJlbnRfcmF0ZSAqIG07DQo+ID4gKyAgICAgICAgICAgICAgIGZyYWMgPSAocGFyZW50X3Jh
-dGUgKiBmKSAvIEZSQUNfRElWOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gZWVt
-aV9vcHMtPmNsb2NrX3NldGRpdmlkZXIoY2xrX2lkLCBtKTsNCj4gPiArICAgICAgICAgICAgICAg
-aWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBwcl93YXJuX29uY2UoIiVzKCkg
-c2V0IGRpdmlkZXIgZmFpbGVkIGZvciAlcywgcmV0ID0gJWRcbiIsDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIF9fZnVuY19fLCBjbGtfbmFtZSwgcmV0KTsNCj4gPiAr
-DQo+ID4gKyAgICAgICAgICAgICAgIGRhdGEgPSAoRlJBQ19ESVYgKiBmKSAvIEZSQUNfRElWOw0K
-PiANCj4gRmVlbHMgbGlrZSB0aGVyZSBtdXN0IGJlIHNvbWUgbWFjcm8gZm9yIHRoaXMgaWRpb20g
-YnV0IEkgZmFpbGVkIHRvIGZpbmQNCj4gaXQuIHJvdW5kX3NvbWV0aGluZygpPw0KSXQgd2FzIG5v
-dCBuZWVkZWQuIFJlbW92ZWQgaW4gdjEwLg0KDQo+IA0KPiA+ICsgICAgICAgcGxsLT5ody5pbml0
-ID0gJmluaXQ7DQo+ID4gKyAgICAgICBwbGwtPmNsa19pZCA9IGNsa19pZDsNCj4gPiArDQo+ID4g
-KyAgICAgICBodyA9ICZwbGwtPmh3Ow0KPiA+ICsgICAgICAgcmV0ID0gY2xrX2h3X3JlZ2lzdGVy
-KGRldiwgaHcpOw0KPiA+ICsgICAgICAgaWYgKHJldCkgew0KPiA+ICsgICAgICAgICAgICAgICBr
-ZnJlZShwbGwpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUihyZXQpOw0KPiA+
-ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIGNsa19od19zZXRfcmF0ZV9yYW5nZShodywg
-UFNfUExMX1ZDT19NSU4sIFBTX1BMTF9WQ09fTUFYKTsNCj4gDQo+IFdoeSBpcyB0aGlzIG5lY2Vz
-c2FyeT8NClRoaXMgaXMgcmFuZ2Ugb2YgcmF0ZSBzdXBwb3J0ZWQgYnkgaGFyZHdhcmUgZm9yIFBM
-TC4NCg0KPiANCj4gPiArICAgICAgIGlmIChyZXQgPCAwKQ0KPiA+ICsgICAgICAgICAgICAgICBw
-cl9lcnIoIiVzOkVSUk9SIGNsa19zZXRfcmF0ZV9yYW5nZSBmYWlsZWQgJWRcbiIsIG5hbWUsIHJl
-dCk7DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIGh3Ow0KPiA+ICt9DQoNCg0KUmVzdCBhbGwg
-Y29tbWVudHMgdGFrZW4gY2FyZSBpbiB2MTAgc2VyaWVzKHBvc3RlZCB0b2RheSkuIA0KDQpUaGFu
-a3MsDQpKb2xseSBTaGFoDQoNCg==
+On Tue, 26 Jun 2018, Enric Balletbo Serra wrote:
+
+> Hi Matti,
+> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> dia dt., 26 de juny 2018 a les 13:25:
+> >
+> > Hello Eric,
+> >
+> > Thanks for the comments! I'll be addressing these in patch series v8
+> > - except the regmap wrapper one which will be taken care of by another
+> > patch set.
+> >
+> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > Hi Matti,
+> > >
+> > > Thanks for the patch, a few comments below, some are feedback I
+> > > received when I sent some patches to this subsystem.
+> > >
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dt., 19 de juny 2018 a les 12:57:
+> > > >
+> > > > ROHM BD71837 PMIC MFD driver providing interrupts and support
+> > > > for two subsystems:
+> > > > - clk
+> > > > - Regulators
+> > > >
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > ---
+> > > >  drivers/mfd/Kconfig         |  13 ++
+> > > >  drivers/mfd/Makefile        |   1 +
+> > > >  drivers/mfd/bd71837.c       | 221 ++++++++++++++++++++++++++
+> > > >  include/linux/mfd/bd71837.h | 367 ++++++++++++++++++++++++++++++++++++++++++++
+> > > >  4 files changed, 602 insertions(+)
+> > > >  create mode 100644 drivers/mfd/bd71837.c
+> > > >  create mode 100644 include/linux/mfd/bd71837.h
+
+[...]
+
+> > > > +static const struct of_device_id bd71837_of_match[] = {
+> > > > +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> > > > +       { },
+> > >
+> > > nit: { /* sentinel */ }
+> >
+> > I am sorry but I didn't quite get the point here. Could you please
+> > explain what did you expect to be added here?
+> >
+> 
+> It's a nit but It is a good practice to specify that the last entry is
+> a sentinel. Just this.
+> 
+> +static const struct of_device_id bd71837_of_match[] = {
+> +       { .compatible = "rohm,bd71837", .data = (void *)0},
+> +       { /* sentinel */ }
+> +};
+
+I would not say this is "good practice" at all.
+
+We all know what empty brackets mean.  No need for obvious comments.
+
+When authors put this, I let it go because "sentinel" is a cool word -
+and nothing more! ;)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
