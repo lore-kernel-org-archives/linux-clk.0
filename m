@@ -1,57 +1,35 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 08/18] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
-Date: Wed, 18 Jul 2018 16:24:48 +0530
-Message-Id: <20180718105458.22304-9-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <tony@atomide.com>
+Date: Tue, 3 Jul 2018 00:39:44 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Adam Ford <aford173@gmail.com>
+Cc: adam.ford@logicpd.com, woods.technical@gmail.com,
+	linux-clk@vger.kernel.org, sboyd@codeaurora.org,
+	mturquette@baylibre.com, linux-omap@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH V3] ARM: dts: omap3: Fix am3517 mdio and emac clock
+ references
+Message-ID: <20180703073944.GR112168@atomide.com>
+References: <20180625124133.21839-1-aford173@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180625124133.21839-1-aford173@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
-as default.
+* Adam Ford <aford173@gmail.com> [180625 05:44]:
+> A previous patch removed OMAP clock aliases that were perceived
+> to be unnecessary.  Unfortunately, it broke the ethernet on the
+> am3517-evm.  This patch enables the MDIO clock and EMAC clock.
+> 
+> Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+> Cc: stable@vger.kernel.org #4.16+
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> V3:  Fix subject heading since we're no longer modifying the clk driver
+> 
+> V2:  Instead of modifying clk-3xxx.c, this patch modifie the device tree
+>      to work like the original patch intended.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- none
-Changes for v2:
-- Enable for MACH_SUN8I
+Thanks applying into omap-for-v4.18/fixes.
 
- drivers/clk/sunxi-ng/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 826674d090fd..e20182aa9748 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
- 
- config SUN8I_DE2_CCU
- 	bool "Support for the Allwinner SoCs DE2 CCU"
-+	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
-+	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
- 
- config SUN8I_R40_CCU
- 	bool "Support for the Allwinner R40 CCU"
--- 
-2.17.1
+Tony
