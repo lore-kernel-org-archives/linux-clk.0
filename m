@@ -1,42 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38479 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388008AbeGTSfa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 14:35:30 -0400
-Date: Fri, 20 Jul 2018 11:46:09 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
-Subject: Re: [PATCH v5 04/11] soc: mediatek: add MT6765 scpsys support
-Message-ID: <20180720174609.GA679@rob-hp-laptop>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
- <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Tue, 3 Jul 2018 09:17:11 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+ <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel
+ Raynal <miquel.raynal@bootlin.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
+ Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+ <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 0/3] clk: meson: add a sub EMMC clock controller support
+Message-ID: <20180703091711.1d52c278@bbrezillon>
+In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 17, 2018 at 04:52:25PM +0800, Mars Cheng wrote:
-> This adds scpsys support for MT6765
+On Tue, 3 Jul 2018 14:57:13 +0000
+Yixun Lan <yixun.lan@amlogic.com> wrote:
+
+> This driver will add a EMMC clock controller driver support.
+> The original idea about adding a clock controller is during the
+> discussion in the NAND driver mainline effort[1].
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c        |   88 ++++++++++++++++++++++++++++++
->  include/dt-bindings/power/mt6765-power.h |   14 +++++
+> I've tested this in the S400 board (AXG platform) by using NAND driver.
+> 
+> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
 
-This file goes in the binding patch.
+This is much better :-).
 
->  2 files changed, 102 insertions(+)
->  create mode 100644 include/dt-bindings/power/mt6765-power.h
+> 
+> Yixun Lan (3):
+>   clk: meson: add DT documentation for emmc clock controller
+>   clk: meson: add sub EMMC clock dt-bindings IDs
+>   clk: meson: add sub EMMC clock controller driver
+> 
+>  .../bindings/clock/amlogic,emmc-clkc.txt      |  45 ++++++
+>  drivers/clk/meson/Kconfig                     |   9 ++
+>  drivers/clk/meson/Makefile                    |   1 +
+>  drivers/clk/meson/emmc-clkc.c                 | 136 ++++++++++++++++++
+>  include/dt-bindings/clock/emmc-clkc.h         |  14 ++
+>  5 files changed, 205 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
+>  create mode 100644 drivers/clk/meson/emmc-clkc.c
+>  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
+> 
