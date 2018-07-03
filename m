@@ -1,41 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:35044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeGZQkQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 12:40:16 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, jonathanh@nvidia.co,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
-Message-ID: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
-Subject: Re: [Linux-kernel] tegra clock updates and fixes
-Date: Thu, 26 Jul 2018 08:22:55 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1530628963.2900.207.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] clk: meson-axg: add clocks required by pcie
+ driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu
+ <jian.hu@amlogic.com>, Jianxin Qin <jianxin.qin@amlogic.com>,
+ linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Date: Tue, 03 Jul 2018 16:42:43 +0200
+In-Reply-To: <f23be559-4a64-7fbd-a7f7-4bdc2b6aabac@amlogic.com>
+References: <20180702213118.19222-1-yixun.lan@amlogic.com>
+	 <20180702213118.19222-3-yixun.lan@amlogic.com>
+	 <1530609862.2900.187.camel@baylibre.com>
+	 <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
+	 <1530615672.2900.205.camel@baylibre.com>
+	 <f23be559-4a64-7fbd-a7f7-4bdc2b6aabac@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ben Dooks (2018-07-26 06:32:29)
-> On 2018-07-20 14:45, Ben Dooks wrote:
-> > Hi, this is a set of clock updates and fixes we did when developing
-> > the tegra20/tegra30 auto support. The audio change is due to using
-> > the tegra in clock-slave mode (this hasn't been done before)
-> > =
+On Tue, 2018-07-03 at 22:05 +0800, Yixun Lan wrote:
+> Sorry, I'm asking..
+> 
+> because as I checked the clk-meson[1] tree, branch  - next/drivers,
+> it's not updated which it's still my original version..
+> 
+> Yixun
 
-> > We have also implemented the clock reset status callback as it is
-> > used by some of the driver work we did.
-> =
-
-> Is it possible to look at applying the bits of the series that are
-> not currently under discussion? If so should I post a smaller series?
-> =
-
-
-Just send it again please. I'd prefer to see some reviewed-by tags from
-Nvidia folks on bits that are good to merge.
-
+Indeed. It pushed now.
