@@ -1,118 +1,355 @@
-Return-Path: <mbrugger@suse.com>
-Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, matthias.bgg@kernel.org,
- ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
- robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
- sboyd@codeaurora.org, davem@davemloft.net, gregkh@linuxfoundation.org,
- mchehab@kernel.org, rdunlap@infradead.org, sean.wang@mediatek.com,
- linux-clk@vger.kernel.org, linux@armlinux.org.uk,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <cover.1524820923.git.mbrugger@suse.com>
- <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
- <20180430101826.GC5147@dell> <5269ccfd-0274-3c12-7eeb-5de923197d92@gmail.com>
- <20180703071103.GE20176@dell> <b6301691-a9f6-64fe-dd8a-ffe51fad6799@suse.com>
- <20180704164540.GH496@dell> <92a851a9-a12c-e773-5f43-007f4d08b7e3@suse.com>
- <20180705122223.GO496@dell>
-From: Matthias Brugger <mbrugger@suse.com>
-Message-ID: <9c368450-b89b-825b-4763-90825e93b656@suse.com>
-Date: Fri, 6 Jul 2018 15:18:44 +0200
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH 2/3] clk: tegra: Add sdmmc mux divider clock
+Date: Tue, 3 Jul 2018 14:35:20 +0300
+Message-ID: <1530617721-5767-2-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
+References: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180705122223.GO496@dell>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
+Add a clock type to model the sdmmc switch divider clocks which have paths
+to source clocks bypassing the divider (Low Jitter paths). These
+are handled by selecting the lj path when the divider is 1 (ie the
+rate is the parent rate), otherwise the normal path with divider
+will be selected. Otherwise this clock behaves as a normal peripheral
+clock.
 
-On 05/07/18 14:22, Lee Jones wrote:
-> On Thu, 05 Jul 2018, Matthias Brugger wrote:
->> On 04/07/18 18:45, Lee Jones wrote:
->>> On Wed, 04 Jul 2018, Matthias Brugger wrote:
->>>> On 03/07/18 09:11, Lee Jones wrote:
->>>>> On Mon, 25 Jun 2018, Matthias Brugger wrote:
->>>>>> On 30/04/18 12:18, Lee Jones wrote:
->>>>>>> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-[...]
->>>>>>>> +static int mmsys_probe(struct platform_device *pdev)
->>>>>>>> +{
->>>>>>>> +	const struct mfd_cell *mmsys_cells;
->>>>>>>> +	int nr_cells;
->>>>>>>> +	long id;
->>>>>>>> +	int ret;
->>>>>>>> +
->>>>>>>> +	id = (long) of_device_get_match_data(&pdev->dev);
->>>>>>>> +	if (!id) {
->>>>>>>> +		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
->>>>>>>> +		return -EINVAL;
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	switch (id) {
->>>>>>>> +	case MMSYS_MT2701:
->>>>>>>> +		mmsys_cells = mmsys_mt2701_devs;
->>>>>>>> +		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
->>>>>>>> +		break;
->>>>>>>> +	default:
->>>>>>>> +		return -ENODEV;
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
->>>>>>>> +					NULL, 0, NULL);
->>>>>>>> +	if (ret) {
->>>>>>>> +		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
->>>>>>>> +		return ret;
->>>>>>>> +	}
->>>>>>>> +
->>>>>>>> +	return 0;
->>>>>>>> +};
->>>>>>>
->>>>>>> This driver is pretty pointless.  It doesn't actually do anything.
->>>>>>>
->>>>>>> I think you just want to use "simple-mfd" instead.
->>>>>>>
->>>>>>
->>>>>> I think the problem is, that right now we have two drivers which use the same
->>>>>> devicetree binding, which are clk and drm driver. With a simple-mfd we would
->>>>>> need two compatibles, and this would break backwards compatibility.
->>>>>
->>>>> So what functionality does this driver provide you with that you do
->>>>> not have currently?
->>>>>
->>>>
->>>> I'm not sure if I get your question. Point is, that the MMSYS implementation for
->>>> mt8173 is broken, as it assumes that we can probe two drivers with the
->>>> mediatek,mt8173-mmsys compatible. Somehow it used to work, but from what I
->>>> understand it was a bug. So older devicetrees use just on mt8173-mmsys
->>>> compatible in ther DTB.
->>>
->>> Okay, that is what I was getting at.  Thanks for the explanation.
->>>
->>> Do you have a datasheet I can look at?
->>>
->>
->> Unfortunately there is no datasheet you can get without a NDA. The only public
->> available information I'm aware of is for the (not upstream supported) 96board
->> [1]. And it's only the register description. You can find some more explanation
->> about the MMSYS in older threads which tried to solve the very same problem [2]
->>
->> [1]
->> https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_2.pdf
->> [2] http://lists.infradead.org/pipermail/linux-mediatek/2017-October/010979.html
-> 
-> And now we have some history.  Thanks for providing those.
-> 
-> So my initial reaction is the one I have just confirmed for myself.
-> MFD is being used as a work-around in this odd use-case and really
-> isn't the right place for it.
-> 
-> If you're adamant that you do not wish to change the Device Tree, my
-> suggestion is to either move the clk functionality into the DRM
-> driver, or register the clk driver from DRM using standard
-> platform_device_register() API.
-> 
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/clk/tegra/Makefile        |   1 +
+ drivers/clk/tegra/clk-sdmmc-mux.c | 254 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h           |  27 ++++
+ 3 files changed, 282 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
 
-Ok, I'll try to come up with a solution with a platform device for the clocks.
-Stay tuened. Thanks for your feedback!
-
-Matthias
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 6d4f563..916f65b 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
+ obj-y					+= clk-periph-gate.o
+ obj-y					+= clk-pll.o
+ obj-y					+= clk-pll-out.o
++obj-y					+= clk-sdmmc-mux.o
+ obj-y					+= clk-super.o
+ obj-y					+= clk-tegra-audio.o
+ obj-y					+= clk-tegra-periph.o
+diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+new file mode 100644
+index 0000000..8e19cb3
+--- /dev/null
++++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+@@ -0,0 +1,254 @@
++/*
++ * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
++ *
++ * based on clk-mux.c
++
++ * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
++ * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
++ * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/types.h>
++
++#include "clk.h"
++
++#define DIV_MASK GENMASK(7, 0)
++#define MUX_SHIFT 29
++#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
++
++#define get_max_div(d) DIV_MASK
++#define get_div_field(val) ((val) & DIV_MASK)
++#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
++
++static const char * const mux_sdmmc_parents[] = { "pll_p", "pll_c4_out2",
++						  "pll_c4_out0", "pll_c4_out1",
++						   "clk_m" };
++static u8 mux_lj_idx[] = { [0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6 };
++static u8 mux_non_lj_idx[] = { [0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6 };
++
++static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int num_parents, i;
++	u32 src, val;
++	u8 *mux_idx;
++
++	num_parents = clk_hw_get_num_parents(hw);
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	src = get_mux_field(val);
++	if (get_div_field(val))
++		mux_idx = mux_non_lj_idx;
++	else
++		mux_idx = mux_lj_idx;
++
++	for (i = 0; i < num_parents; i++) {
++		if (mux_idx[i] == src)
++			return i;
++	}
++
++	WARN(1, "Unknown parent selector %d\n", src);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	if (get_div_field(val))
++		index = mux_non_lj_idx[index];
++	else
++		index = mux_lj_idx[index];
++
++	val &= ~MUX_MASK;
++	val |= index << MUX_SHIFT;
++
++	writel(val, sdmmc_mux->reg);
++
++	return 0;
++}
++
++static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++	int div, mul;
++	u64 rate = parent_rate;
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	div = get_div_field(val);
++
++	mul = 2;
++	div += mul;
++
++	rate *= mul;
++	rate += div - 1;
++	do_div(rate, div);
++
++	return rate;
++}
++
++static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div, mul;
++	unsigned long output_rate = req->best_parent_rate;
++
++	req->rate = max(req->rate, req->min_rate);
++	req->rate = min(req->rate, req->max_rate);
++
++	if (!req->rate)
++		return output_rate;
++
++	div = div71_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		div = 0;
++
++	mul = 2;
++	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
++		req->rate =  DIV_ROUND_UP(output_rate * mul, div + mul);
++	else
++		req->rate =  output_rate * mul / (div + mul);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div;
++	unsigned long flags = 0;
++	u32 val;
++	u8 src;
++
++	div = div71_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		return div;
++
++	if (sdmmc_mux->lock)
++		spin_lock_irqsave(sdmmc_mux->lock, flags);
++
++	src = clk_sdmmc_mux_get_parent(hw);
++	if (div)
++		src = mux_non_lj_idx[src];
++	else
++		src = mux_lj_idx[src];
++
++	val = src << MUX_SHIFT;
++	val |= div;
++	writel(val, sdmmc_mux->reg);
++	fence_udelay(2, sdmmc_mux->reg);
++
++	if (sdmmc_mux->lock)
++		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return gate_ops->is_enabled(gate_hw);
++}
++
++static int clk_sdmmc_mux_enable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return  gate_ops->enable(gate_hw);
++}
++
++static void clk_sdmmc_mux_disable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	gate_ops->disable(gate_hw);
++}
++
++const struct clk_ops tegra_clk_sdmmc_mux_ops = {
++	.get_parent = clk_sdmmc_mux_get_parent,
++	.set_parent = clk_sdmmc_mux_set_parent,
++	.determine_rate = clk_sdmmc_mux_determine_rate,
++	.recalc_rate = clk_sdmmc_mux_recalc_rate,
++	.set_rate = clk_sdmmc_mux_set_rate,
++	.is_enabled = clk_sdmmc_mux_is_enabled,
++	.enable = clk_sdmmc_mux_enable,
++	.disable = clk_sdmmc_mux_disable,
++};
++
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++	unsigned long flags, void *lock)
++{
++	struct clk *clk;
++	struct clk_init_data init;
++	const struct tegra_clk_periph_regs *bank;
++	struct tegra_sdmmc_mux *sdmmc_mux;
++
++	init.ops = &tegra_clk_sdmmc_mux_ops;
++	init.name = name;
++	init.flags = flags;
++	init.parent_names = mux_sdmmc_parents;
++	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
++
++	bank = get_reg_bank(clk_num);
++	if (!bank)
++		return ERR_PTR(-EINVAL);
++
++	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
++	if (!sdmmc_mux)
++		return ERR_PTR(-ENOMEM);
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	sdmmc_mux->hw.init = &init;
++	sdmmc_mux->reg = clk_base + offset;
++	sdmmc_mux->lock = lock;
++	sdmmc_mux->gate.clk_base = clk_base;
++	sdmmc_mux->gate.regs = bank;
++	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
++	sdmmc_mux->gate.clk_num = clk_num;
++	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
++	sdmmc_mux->div_flags = div_flags;
++	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
++
++	clk = clk_register(NULL, &sdmmc_mux->hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	sdmmc_mux->gate.hw.clk = clk;
++
++	return clk;
++}
++
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f14e136..4c3d0f5 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -19,6 +19,7 @@
+ 
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
++#include <linux/delay.h>
+ 
+ /**
+  * struct tegra_clk_sync_source - external clock source from codec
+@@ -705,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		spinlock_t *lock);
++
++/**
++ * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @reg:	register controlling mux and divider
++ * @flags:	hardware-specific flags
++ * @lock:	optional register lock
++ * @gate:	gate clock
++ * @gate_ops:	gate clock ops
++ */
++struct tegra_sdmmc_mux {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	spinlock_t		*lock;
++	const struct clk_ops	*gate_ops;
++	struct tegra_clk_periph_gate	gate;
++	u8			div_flags;
++};
++
++#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
++
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++		unsigned long flags, void *lock);
++
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
+-- 
+2.7.4
