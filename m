@@ -1,61 +1,71 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org,
-	andy.gross@linaro.org
-Cc: tdas@codeaurora.org,
-	girishm@codeaurora.org,
-	anischal@codeaurora.org,
-	bjorn.andersson@linaro.org,
-	Douglas Anderson <dianders@chromium.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	sboyd@kernel.org,
+	manivannan.sadhasivam@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Brown <david.brown@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC PATCH 0/2] clk: qcom: Quad SPI (qspi) clock support for sdm845
-Date: Wed, 18 Jul 2018 11:04:28 -0700
-Message-Id: <20180718180431.48580-1-dianders@chromium.org>
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	devicetree@vger.kernel.org,
+	support@cubietech.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	linux@cubietech.com,
+	darren@cubietech.com,
+	mp-cs@actions-semi.com,
+	pn@denx.de,
+	sravanhome@gmail.com
+Subject: [PATCH v3 0/5] Add clock driver for Actions S700 SoC
+Date: Tue,  3 Jul 2018 11:25:19 +0200
+Message-Id: <20180703092524.1697111-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Changelog v3:
+- Splitted uart clock DTS changes into separate patch
+- Splitted REGMAP Kconfig selection into separate patch
+- General naming convention as "Actions Semi" in dt-binding documentation
+- Patch re-oredering
+- Cleanup and fixed review findings
 
-This two-series patch adds the needed clock bits to use the Quad SPI
-(qspi) part on sdm845.  It's expected that the bindings part of this
-patch could land in the clock tree with an immutable git hash and then
-be pulled into the Qualcomm tree so it could be used by dts files.
+Changelog v2:
+Fixed 0 day compilation warning
+Modified existing dts Actions S900 clock bindings common to Actions
+Soc family
 
-NOTE: though I seem to have some register defines for these clocks, I
-don't actually have a clock plan that includes them.  I also didn't
-see any use of Quad SPI in the sdm845 Android tree I looked at.  Thus
-the frequency table here is totally made up.  Specifically:
-- I know that GPLL0 is running at 600 MHz and that I can have parents
-  of GPLL0, GPLL0_EVEN (AKA 300 MHz), and TCXO (AKA 19.2 MHz).
-- It seemed sane to add an entry in the table to come straight from
-  BI_TCXO.
-- From probing lines, it appears that the Quad SPI block has a divide
-  by 4 somewhere inside it (probably so it can oversample the lines,
-  or possibly so it can generate phase-offset clocks).  Thus we need
-  the core to go 4 times faster than we'd expect to run the SPI bus.
-- At least one SPI flash part I looked at supported a clock frequency
-  of 104 MHz, so it semeed nice to add clocks up to ~400 MHz.
+This patchset adds clock support for Actions Semi OWL series S700 SoC
+with relevant clock bindings and device tree info. 
 
-This is the first time I've tried to map Qualcomm register definition
-into the clock driver, so it'd be nice if someone could double-check
-and make sure I mapped all the numbers correctly.  If nothing else it
-does appear to work though.
+Changed the UART clock using CMU instance and changes are tested in
+cubieboard7
 
+Thanks and regards,
+Saravanan,
+Parthiban
 
-Douglas Anderson (2):
-  clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
-  clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+Saravanan Sekar (5):
+  dt-bindings: clock: Rename document generic to Actions Semi Soc's
+  clk: actions: Add S700 SoC clock support
+  clk: actions: Add REGMAP as dependency
+  arm64: dts: actions: Enable clock controller for S700
+  arm64: dts: actions: Set UART clock reference from CMU
 
- drivers/clk/qcom/gcc-sdm845.c               | 73 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h |  3 +
- 2 files changed, 76 insertions(+)
+ .../{actions,s900-cmu.txt => actions,owl-cmu.txt}  |  20 +-
+ arch/arm64/boot/dts/actions/s700-cubieboard7.dts   |   8 +-
+ arch/arm64/boot/dts/actions/s700.dtsi              |  14 +
+ drivers/clk/actions/Kconfig                        |  14 +
+ drivers/clk/actions/Makefile                       |   1 +
+ drivers/clk/actions/owl-s700.c                     | 610 +++++++++++++++++++++
+ include/dt-bindings/clock/actions,s700-cmu.h       | 128 +++++
+ 7 files changed, 779 insertions(+), 16 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
+ create mode 100644 drivers/clk/actions/owl-s700.c
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
 
 -- 
-2.18.0.233.g985f88cf7e-goog
+2.14.4
