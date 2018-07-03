@@ -1,162 +1,123 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH 3/3] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+Date: Tue, 3 Jul 2018 14:35:21 +0300
+Message-ID: <1530617721-5767-3-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
+References: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180731042539.GE5090@builder>
-References: <20180621073706.22812-1-brgl@bgdev.pl> <20180621073706.22812-2-brgl@bgdev.pl>
- <20180731042539.GE5090@builder>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 31 Jul 2018 09:55:24 +0200
-Message-ID: <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Sekhar Nori <nsekhar@ti.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-07-31 6:25 GMT+02:00 Bjorn Andersson <bjorn.andersson@linaro.org>:
-> On Thu 21 Jun 00:37 PDT 2018, Bartosz Golaszewski wrote:
->
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> Switch to using the reset framework instead of handcoded reset routines
->> we used so far.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-Sekhar,
+These clock have low jitter paths to certain parents. To model these
+correctly, use the sdmmc mux divider clock type.
 
-can you take this through your tree or is it already too late?
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/clk/tegra/clk-id.h           |  2 --
+ drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
+ drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
-Bart
-
-> Regards,
-> Bjorn
->
->> ---
->>  drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++----
->>  1 file changed, 29 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
->> index b668e32996e2..76c06b70a1c6 100644
->> --- a/drivers/remoteproc/da8xx_remoteproc.c
->> +++ b/drivers/remoteproc/da8xx_remoteproc.c
->> @@ -10,6 +10,7 @@
->>
->>  #include <linux/bitops.h>
->>  #include <linux/clk.h>
->> +#include <linux/reset.h>
->>  #include <linux/err.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/io.h>
->> @@ -20,8 +21,6 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/remoteproc.h>
->>
->> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
->> -
->>  #include "remoteproc_internal.h"
->>
->>  static char *da8xx_fw_name;
->> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->>       struct da8xx_rproc_mem *mem;
->>       int num_mems;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void (*ack_fxn)(struct irq_data *data);
->>       struct irq_data *irq_data;
->>       void __iomem *chipsig;
->> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>       struct device *dev = rproc->dev.parent;
->>       struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->>       struct clk *dsp_clk = drproc->dsp_clk;
->> +     struct reset_control *dsp_reset = drproc->dsp_reset;
->>       int ret;
->>
->>       /* hw requires the start (boot) address be on 1KB boundary */
->> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>               return ret;
->>       }
->>
->> -     davinci_clk_reset_deassert(dsp_clk);
->> +     ret = reset_control_deassert(dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
->> +             clk_disable_unprepare(dsp_clk);
->> +             return ret;
->> +     }
->>
->>       return 0;
->>  }
->> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->>  static int da8xx_rproc_stop(struct rproc *rproc)
->>  {
->>       struct da8xx_rproc *drproc = rproc->priv;
->> +     struct device *dev = rproc->dev.parent;
->> +     int ret;
->> +
->> +     ret = reset_control_assert(drproc->dsp_reset);
->> +     if (ret) {
->> +             dev_err(dev, "reset_control_assert() failed: %d\n", ret);
->> +             return ret;
->> +     }
->>
->> -     davinci_clk_reset_assert(drproc->dsp_clk);
->>       clk_disable_unprepare(drproc->dsp_clk);
->>
->>       return 0;
->> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>       struct resource *bootreg_res;
->>       struct resource *chipsig_res;
->>       struct clk *dsp_clk;
->> +     struct reset_control *dsp_reset;
->>       void __iomem *chipsig;
->>       void __iomem *bootreg;
->>       int irq;
->> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>               return PTR_ERR(dsp_clk);
->>       }
->>
->> +     dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
->> +     if (IS_ERR(dsp_reset)) {
->> +             if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
->> +                     dev_err(dev, "unable to get reset control: %ld\n",
->> +                             PTR_ERR(dsp_reset));
->> +
->> +             return PTR_ERR(dsp_reset);
->> +     }
->> +
->>       if (dev->of_node) {
->>               ret = of_reserved_mem_device_init(dev);
->>               if (ret) {
->> @@ -287,6 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>       drproc = rproc->priv;
->>       drproc->rproc = rproc;
->>       drproc->dsp_clk = dsp_clk;
->> +     drproc->dsp_reset = dsp_reset;
->>       rproc->has_iommu = false;
->>
->>       ret = da8xx_rproc_get_internal_memories(pdev, drproc);
->> @@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->>        * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->>        * held in reset at the time it is called.
->>        */
->> -     ret = davinci_clk_reset_assert(drproc->dsp_clk);
->> +     ret = reset_control_assert(dsp_reset);
->>       if (ret)
->>               goto free_rproc;
->>
->> --
->> 2.17.1
->>
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index b616e33..de466b4 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -227,13 +227,11 @@ enum clk_id {
+ 	tegra_clk_sdmmc1_9,
+ 	tegra_clk_sdmmc2,
+ 	tegra_clk_sdmmc2_8,
+-	tegra_clk_sdmmc2_9,
+ 	tegra_clk_sdmmc3,
+ 	tegra_clk_sdmmc3_8,
+ 	tegra_clk_sdmmc3_9,
+ 	tegra_clk_sdmmc4,
+ 	tegra_clk_sdmmc4_8,
+-	tegra_clk_sdmmc4_9,
+ 	tegra_clk_se,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_soc_therm_8,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2acba29..38c4eb2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
+ 	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
+ };
+ 
+-static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
+-	"pll_p",
+-	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
+-	"pll_c4_out2", "pll_c4_out1",
+-	"pll_c4_out1",			/* LJ input */
+-	"clk_m", "pll_c4_out0"
+-};
+-#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
+-
+ static const char *mux_pllp_pllc2_c_c3_clkm[] = {
+ 	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
+ };
+@@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
+ 	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
+ 	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
+-	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
+ 	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
+-	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
+ 	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
+ 	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
+ 	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5435d01..9eb1cb1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -44,6 +44,8 @@
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_SOR1 0x410
+ #define CLK_SOURCE_LA 0x1f8
++#define CLK_SOURCE_SDMMC2 0x154
++#define CLK_SOURCE_SDMMC4 0x164
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
+ 	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
+-	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
+ 	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
+ 	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
+ 	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
+-	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
+ 	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
+ 	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
+@@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 				0, NULL);
+ 	clks[TEGRA210_CLK_ACLK] = clk;
+ 
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
++					    CLK_SOURCE_SDMMC2, 9,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC2] = clk;
++
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
++					    CLK_SOURCE_SDMMC4, 15,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC4] = clk;
++
+ 	for (i = 0; i < ARRAY_SIZE(tegra210_periph); i++) {
+ 		struct tegra_periph_init_data *init = &tegra210_periph[i];
+ 		struct clk **clkp;
+-- 
+2.7.4
