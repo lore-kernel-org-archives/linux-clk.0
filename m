@@ -1,152 +1,211 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1531737045.12853.47.camel@baylibre.com>
-Subject: Re: [RESEND PATCH v2 1/2] dt-bindings: clk: meson-g12a: Add G12A EE
- Clock Bindings
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Rob Herring <robh@kernel.org>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
- <yixun.lan@amlogic.com>,  Qiufang Dai <qiufang.dai@amlogic.com>, "Bo.yang"
- <bo.yang@amlogic.com>, "Xingyu.chen" <xingyu.chen@amlogic.com>,
- "Qianggui,song" <qianggui.song@amlogic.com>,  "Sunny.luo"
- <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Mon, 16 Jul 2018 12:30:45 +0200
-In-Reply-To: <1531728707-192230-2-git-send-email-jian.hu@amlogic.com>
-References: <1531728707-192230-1-git-send-email-jian.hu@amlogic.com>
-	 <1531728707-192230-2-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/3] clk: meson: add sub EMMC clock controller driver
+Date: Tue, 3 Jul 2018 14:57:16 +0000
+Message-ID: <20180703145716.31860-4-yixun.lan@amlogic.com>
+In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
+References: <20180703145716.31860-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-07-16 at 16:11 +0800, Jian Hu wrote:
-> Add new clock controller compatible and dt-bingdings headers
-> for the Everything-Else domain of the g12a SoC
-> 
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
+This patch will add a EMMC clock controller driver support,
+It provide a mux and divider clock.
 
-Extra new line above - please fix next time
-Below, comment on alignement on v1 remains un-answered.
-Some goes for patch 2.
+This clock driver can be protentially used by either EMMC and
+NAND driver.
 
->  .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
->  include/dt-bindings/clock/g12a-clkc.h              | 92 ++++++++++++++++++++++
->  2 files changed, 93 insertions(+)
->  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> index e950599..0833006 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->  		"amlogic,gxbb-clkc" for GXBB SoC,
->  		"amlogic,gxl-clkc" for GXL and GXM SoC,
->  		"amlogic,axg-clkc" for AXG SoC.
-> +		"amlogic,g12a-clkc" for G12A SoC.
->  
->  - #clock-cells: should be 1.
->  
-> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-> new file mode 100644
-> index 0000000..9796720
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/g12a-clkc.h
-> @@ -0,0 +1,92 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Meson-G12A clock tree IDs
-> + *
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __G12A_CLKC_H
-> +#define __G12A_CLKC_H
-> +
-> +#define CLKID_SYS_PLL				0
-> +#define CLKID_FIXED_PLL				1
-> +#define CLKID_FCLK_DIV2				2
-> +#define CLKID_FCLK_DIV3				3
-> +#define CLKID_FCLK_DIV4				4
-> +#define CLKID_FCLK_DIV5				5
-> +#define CLKID_FCLK_DIV7				6
-> +#define CLKID_GP0_PLL				7
-> +#define CLKID_CLK81					10
-> +#define CLKID_MPLL0					11
-> +#define CLKID_MPLL1					12
-> +#define CLKID_MPLL2					13
-> +#define CLKID_MPLL3					14
-> +#define CLKID_DDR					15
-> +#define CLKID_DOS					16
-> +#define CLKID_AUDIO_LOCKER			17
-> +#define CLKID_MIPI_DSI_HOST			18
-> +#define CLKID_ETH_PHY				19
-> +#define CLKID_ISA					20
-> +#define CLKID_PL301					21
-> +#define CLKID_PERIPHS				22
-> +#define CLKID_SPICC0				23
-> +#define CLKID_I2C					24
-> +#define CLKID_SANA					25
-> +#define CLKID_SD					26
-> +#define CLKID_RNG0					27
-> +#define CLKID_UART0					28
-> +#define CLKID_SPICC1				29
-> +#define CLKID_HIU_IFACE				30
-> +#define CLKID_MIPI_DSI_PHY			31
-> +#define CLKID_ASSIST_MISC			32
-> +#define CLKID_SD_EMMC_A				33
-> +#define CLKID_SD_EMMC_B				34
-> +#define CLKID_SD_EMMC_C				35
-> +#define CLKID_AUDIO_CODEC			36
-> +#define CLKID_AUDIO					37
-> +#define CLKID_ETH					38
-> +#define CLKID_DEMUX					39
-> +#define CLKID_AUDIO_IFIFO			40
-> +#define CLKID_ADC					41
-> +#define CLKID_UART1					42
-> +#define CLKID_G2D					43
-> +#define CLKID_RESET					44
-> +#define CLKID_PCIE_COMB				45
-> +#define CLKID_PARSER				46
-> +#define CLKID_USB					47
-> +#define CLKID_PCIE_PHY				48
-> +#define CLKID_AHB_ARB0				49
-> +#define CLKID_AHB_DATA_BUS			50
-> +#define CLKID_AHB_CTRL_BUS			51
-> +#define CLKID_HTX_HDCP22			52
-> +#define CLKID_HTX_PCLK				53
-> +#define CLKID_BT656					54
-> +#define CLKID_USB1_DDR_BRIDGE		55
-> +#define CLKID_MMC_PCLK				56
-> +#define CLKID_UART2					57
-> +#define CLKID_VPU_INTR				58
-> +#define CLKID_GIC					59
-> +#define CLKID_SD_EMMC_B_CLK0		60
-> +#define CLKID_SD_EMMC_C_CLK0		61
-> +#define CLKID_HIFI_PLL				71
-> +#define CLKID_VCLK2_VENCI0			77
-> +#define CLKID_VCLK2_VENCI1			78
-> +#define CLKID_VCLK2_VENCP0			79
-> +#define CLKID_VCLK2_VENCP1			80
-> +#define CLKID_VCLK2_VENCT0			81
-> +#define CLKID_VCLK2_VENCT1			82
-> +#define CLKID_VCLK2_OTHER			83
-> +#define CLKID_VCLK2_ENCI			84
-> +#define CLKID_VCLK2_ENCP			85
-> +#define CLKID_DAC_CLK				86
-> +#define CLKID_AOCLK					87
-> +#define CLKID_IEC958				88
-> +#define CLKID_ENC480P				89
-> +#define CLKID_RNG1					90
-> +#define CLKID_VCLK2_ENCT			91
-> +#define CLKID_VCLK2_ENCL			92
-> +#define CLKID_VCLK2_VENCLMMC		93
-> +#define CLKID_VCLK2_VENCL			94
-> +#define CLKID_VCLK2_OTHER1			95
-> +
-> +#endif /* __G12A_CLKC_H */
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/Kconfig     |   9 +++
+ drivers/clk/meson/Makefile    |   1 +
+ drivers/clk/meson/emmc-clkc.c | 136 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 146 insertions(+)
+ create mode 100644 drivers/clk/meson/emmc-clkc.c
+
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index efaa70f682b4..2f27ff08e4eb 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
+ 	select COMMON_CLK_REGMAP_MESON
+ 	select RESET_CONTROLLER
+ 
++config COMMON_CLK_EMMC_MESON
++	tristate "Meson EMMC Sub Clock Controller Driver"
++	depends on COMMON_CLK_AMLOGIC
++	select MFD_SYSCON
++	select REGMAP
++	help
++	  Support for the EMMC sub clock controller on AmLogic Meson Platform,
++	  Say Y if you want this clock enabled.
++
+ config COMMON_CLK_REGMAP_MESON
+ 	bool
+ 	select REGMAP
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 72ec8c40d848..2f04f77ba4de 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
++obj-$(CONFIG_COMMON_CLK_EMMC_MESON) 	+= emmc-clkc.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/emmc-clkc.c b/drivers/clk/meson/emmc-clkc.c
+new file mode 100644
+index 000000000000..cf5bb9f34327
+--- /dev/null
++++ b/drivers/clk/meson/emmc-clkc.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Amlogic Meson EMMC Sub Clock Controller Driver
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Yixun Lan <yixun.lan@amlogic.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/init.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/emmc-clkc.h>
++
++#include "clkc.h"
++
++#define SD_EMMC_CLOCK		0
++#define MUX_CLK_NUM_PARENTS	2
++#define EMMC_MAX_CLKS		2
++#define CLK_NAME_LEN		48
++
++static struct clk_regmap_mux_data emmc_clkc_mux_data = {
++	.offset = SD_EMMC_CLOCK,
++	.mask = 0x3,
++	.shift = 6,
++};
++
++static struct clk_regmap_div_data emmc_clkc_div_data = {
++	.offset = SD_EMMC_CLOCK,
++	.shift = 0,
++	.width = 6,
++	.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
++};
++
++static const struct of_device_id clkc_match_table[] = {
++	{ .compatible = "amlogic,emmc-clkc" },
++	{}
++};
++
++static int emmc_clkc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_regmap *mux, *div;
++	struct regmap *map;
++	struct clk *clk;
++	int i, ret;
++	const char *parent_names[MUX_CLK_NUM_PARENTS];
++	struct clk_init_data init;
++	char mux_name[CLK_NAME_LEN], div_name[CLK_NAME_LEN];
++	struct clk_hw_onecell_data *onecell_data;
++
++	map = syscon_node_to_regmap(dev->of_node);
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
++
++	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
++				    sizeof(*onecell_data->hws) * EMMC_MAX_CLKS,
++				    GFP_KERNEL);
++
++	if (!mux || !div || !onecell_data)
++		return -ENOMEM;
++
++	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
++		char name[8];
++
++		snprintf(name, sizeof(name), "clkin%d", i);
++		clk = devm_clk_get(dev, name);
++		if (IS_ERR(clk)) {
++			if (clk != ERR_PTR(-EPROBE_DEFER))
++				dev_err(dev, "Missing clock %s\n", name);
++			return PTR_ERR(clk);
++		}
++
++		parent_names[i] = __clk_get_name(clk);
++	}
++
++	mux->map = map;
++	mux->data = &emmc_clkc_mux_data;
++
++	snprintf(mux_name, CLK_NAME_LEN, "%s#emmc_mux", dev_name(dev));
++
++	init.name = mux_name;
++	init.ops = &clk_regmap_mux_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = parent_names;
++	init.num_parents = MUX_CLK_NUM_PARENTS;
++
++	mux->hw.init = &init;
++	ret = devm_clk_hw_register(dev, &mux->hw);
++	if (ret) {
++		dev_err(dev, "Mux clock registration failed\n");
++		return ret;
++	}
++
++	parent_names[0] = mux_name;
++	div->map = map;
++	div->data = &emmc_clkc_div_data;
++
++	snprintf(div_name, CLK_NAME_LEN, "%s#emmc_div", dev_name(dev));
++
++	init.name = div_name;
++	init.ops = &clk_regmap_divider_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = parent_names;
++	init.num_parents = 1;
++
++	div->hw.init = &init;
++	ret = devm_clk_hw_register(dev, &div->hw);
++	if (ret) {
++		dev_err(dev, "Div clock registration failed\n");
++		return ret;
++	}
++
++	onecell_data->hws[CLKID_EMMC_C_MUX] = &mux->hw,
++	onecell_data->hws[CLKID_EMMC_C_DIV] = &div->hw,
++	onecell_data->num = EMMC_MAX_CLKS;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   onecell_data);
++}
++
++static struct platform_driver emmc_clkc_driver = {
++	.probe		= emmc_clkc_probe,
++	.driver		= {
++		.name	= "emmc-clkc",
++		.of_match_table = clkc_match_table,
++	},
++};
++
++builtin_platform_driver(emmc_clkc_driver);
+-- 
+2.18.0
