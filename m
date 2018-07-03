@@ -1,33 +1,35 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 3 Jul 2018 13:31:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	fabio.estevam@nxp.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, sboyd@kernel.org, aisheng.dong@nxp.com,
-	ping.bai@nxp.com, Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
-Message-ID: <20180703193146.GA29496@rob-hp-laptop>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1530609640.2900.184.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/2] clk: meson-axg: add pcie and mipi clock bindings
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu
+ <jian.hu@amlogic.com>, Jianxin Qin <jianxin.qin@amlogic.com>,
+ linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Tue, 03 Jul 2018 11:20:40 +0200
+In-Reply-To: <20180702213118.19222-2-yixun.lan@amlogic.com>
+References: <20180702213118.19222-1-yixun.lan@amlogic.com>
+	 <20180702213118.19222-2-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jun 22, 2018 at 02:32:33PM +0800, Anson Huang wrote:
-> According to Reference Manual Rev.0, 06/2017,
-> there are GPIO LPCGs defined in CCM CCGRs,
-> add them into clock tree.
+On Mon, 2018-07-02 at 21:31 +0000, Yixun Lan wrote:
+> Add the pcie and mipi clock dt-bindings for the pcie driver.
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Since the mipi clock isalso used by the pcie driver,
+> we add it together in this patch.
+> 
+> Tested-by: Jianxin Qin <jianxin.qin@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 > ---
->  drivers/clk/imx/clk-imx6sll.c             | 6 ++++++
+>  include/dt-bindings/clock/axg-clkc.h | 3 +++
+>  1 file changed, 3 insertions(+)
 
->  include/dt-bindings/clock/imx6sll-clock.h | 9 ++++++++-
-
-Acked-by: Rob Herring <robh@kernel.org>
-
->  2 files changed, 14 insertions(+), 1 deletion(-)
+Applied. Thx
