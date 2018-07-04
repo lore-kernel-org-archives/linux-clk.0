@@ -1,55 +1,81 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shengjiu.wang@nxp.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH V2 2/2] ARM: dts: imx6sx: add ocram_s support
-Date: Wed, 11 Jul 2018 08:58:59 +0800
-Message-Id: <1531270739-3075-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
-References: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <eballetbo@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com> <20180704145623.zgei3ehrwdpcu26r@penguin>
+In-Reply-To: <20180704145623.zgei3ehrwdpcu26r@penguin>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Wed, 4 Jul 2018 18:57:39 +0200
+Message-ID: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: matti.vaittinen@fi.rohmeurope.com,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6SX has a 16KB always-on ocram bank called
-ocram_s, enable it as another mmio sram.
+Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
+de jul. 2018 a les 17:10:
+>
+> Hi Enric,
+>
+> On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > Hi Matti,
+> >
+> > Thanks for the patch, a few comments below, some are feedback I
+> > received when I sent some patches to this subsystem.
+> >
+> > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > dia dt., 19 de juny 2018 a les 12:57:
+> > > +};
+> > > +
+> > > +/* bd71837 multi function cells */
+> > > +static struct mfd_cell bd71837_mfd_cells[] = {
+> > > +       {
+> > > +               .name = "bd71837-clk",
+> > > +       }, {
+> > > +               .name = "bd718xx-pwrkey",
+> > > +               .resources = &irqs[0],
+> > > +               .num_resources = ARRAY_SIZE(irqs),
+> > > +       }, {
+> > > +               .name = "bd71837-pmic",
+> > > +       },
+> > nit: no comma at the end
+>
+> Actually, trailing comma is preferred on structures/arrays without
+> sentinels, because if one needs to add a new entry/new member, then in
+> the diff there will have only one new line added, instead of one line
+> being changed (adding now necessary comma) and one added.
+>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-changes since V1:
-	resort the ocram_s and ocram node by address from low to high.
- arch/arm/boot/dts/imx6sx.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Many thanks for sharing your knowledge! That looks to me a good
+reason. I did this comment because at some point I received this
+comment. I try to mark this kind of things as nitpicks because
+sometimes there are differences between maintainers. E.g: some
+maintainers prefer 'if (something == NULL)', others 'if (!something)';
+others are fine using goto even there is nothing to unwind, other
+prefer plain returns, etc.
 
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 596763c..f4d982c 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -166,6 +166,12 @@
- 		interrupt-parent = <&gpc>;
- 		ranges;
- 
-+		ocram_s: sram@8f8000 {
-+			compatible = "mmio-sram";
-+			reg = <0x008f8000 0x4000>;
-+			clocks = <&clks IMX6SX_CLK_OCRAM_S>;
-+		};
-+
- 		ocram: sram@900000 {
- 			compatible = "mmio-sram";
- 			reg = <0x00900000 0x20000>;
--- 
-2.7.4
+Matti, I don't want to beat about the bush with these nitpicks. It is
+not my intention. So I'd say, do what the maintainer wants :)
+
+Dmitry, I really appreciate this kind of comments, especially when
+there is a justification, so I can learn more and more to do better
+patches.
+
+Thanks,
+  Enric
+> Thanks.
+>
+> --
+> Dmitry
