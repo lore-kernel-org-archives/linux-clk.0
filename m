@@ -1,147 +1,82 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
-	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
-	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [RESEND PATCH v2 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-Date: Mon, 16 Jul 2018 16:11:46 +0800
-Message-ID: <1531728707-192230-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1531728707-192230-1-git-send-email-jian.hu@amlogic.com>
-References: <1531728707-192230-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: <vkoul@kernel.org>
+From: Vinod Koul <vkoul@kernel.org>
+To: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clock
+Date: Wed,  4 Jul 2018 17:49:01 +0530
+Message-Id: <20180704121901.30755-1-vkoul@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new clock controller compatible and dt-bingdings headers
-for the Everything-Else domain of the g12a SoC
+Commit 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS
+clocks") marked BRANCH_HALT_SKIP for ufs tx clocks, but missed ufs rx
+clocks. The result of that is kernel warnings at reboot:
 
+[  105.624283] gcc_ufs_tx_symbol_0_clk status stuck at 'on'
+[  105.624311] WARNING: CPU: 1 PID: 1 at drivers/clk/qcom/clk-branch.c:100 clk_branch_toggle+0x190/0x1b0
+[  105.633235] Modules linked in:
+[  105.645118] CPU: 1 PID: 1 Comm: systemd-shutdow Tainted: G        W         4.18.0-rc2-00002-g2bfbe52a53a3 #11
+[  105.647988] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
+[  105.657966] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[  105.664127] pc : clk_branch_toggle+0x190/0x1b0
+[  105.668900] lr : clk_branch_toggle+0x190/0x1b0
+[  105.673324] sp : ffff00000805bb40
+[  105.677751] x29: ffff00000805bb40 x28: 0000000000000000
+[  105.681140] x27: ffff8000d947cc60 x26: 0000000000000001
+[  105.686520] x25: ffff000008f71900 x24: 0000000000000000
+[  105.691816] x23: ffff00000925e338 x22: ffff00000855f8e0
+[  105.697114] x21: 0000000000000000 x20: 0000000000000000
+[  105.702407] x19: ffff0000091c9000 x18: ffffffffffffffff
+[  105.707702] x17: 0000ffffac148c58 x16: ffff000008b82928
+[  105.712998] x15: ffff0000091c96c8 x14: ffff0000893817c7
+[  105.718293] x13: ffff0000093817d5 x12: ffff0000091c9940
+[  105.723587] x11: ffff0000085e3e70 x10: ffff00000805b780
+[  105.728884] x9 : ffff00000805bb40 x8 : 7320737574617473
+[  105.734179] x7 : 206b6c635f305f6c x6 : 00000000000001e5
+[  105.739472] x5 : 0000000000000000 x4 : 0000000000000000
+[  105.744769] x3 : ffffffffffffffff x2 : ffff0000091e2658
+[  105.750063] x1 : a7c4712dd5e09c00 x0 : 0000000000000000
+[  105.755360] Call trace:
+[  105.760652]  clk_branch_toggle+0x190/0x1b0
+[  105.762824]  clk_branch2_disable+0x18/0x20
+[  105.766994]  clk_core_disable+0x58/0xa8
+[  105.771069]  clk_core_disable_lock+0x20/0x38
+[  105.774803]  clk_disable+0x1c/0x28
+[  105.779320]  __ufshcd_setup_clocks+0x298/0x308
+[  105.782529]  ufshcd_suspend+0x160/0x308
+[  105.786953]  ufshcd_shutdown+0x38/0xa0
+[  105.790690]  ufshcd_pltfrm_shutdown+0x10/0x18
+[  105.794512]  platform_drv_shutdown+0x20/0x30
+[  105.798935]  device_shutdown+0x110/0x1e8
+[  105.803278]  kernel_restart_prepare+0x34/0x40
+[  105.807181]  kernel_restart+0x14/0x78
+[  105.811434]  sys_reboot+0x200/0x248
+[  105.815081]  el0_svc_naked+0x30/0x34
+[  105.818378] ---[ end trace 8d2322276b27879c ]---
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Mark gcc_ufs_tx_symbol_0_clk as BRANCH_HALT_SKIP as well.
+
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
- include/dt-bindings/clock/g12a-clkc.h              | 92 ++++++++++++++++++++++
- 2 files changed, 93 insertions(+)
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+ drivers/clk/qcom/gcc-msm8996.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index e950599..0833006 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 		"amlogic,gxbb-clkc" for GXBB SoC,
- 		"amlogic,gxl-clkc" for GXL and GXM SoC,
- 		"amlogic,axg-clkc" for AXG SoC.
-+		"amlogic,g12a-clkc" for G12A SoC.
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 9f35b3fe1d97..ff8d66fd94e6 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -2781,6 +2781,7 @@ static struct clk_branch gcc_ufs_rx_cfg_clk = {
  
- - #clock-cells: should be 1.
- 
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-new file mode 100644
-index 0000000..9796720
---- /dev/null
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -0,0 +1,92 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson-G12A clock tree IDs
-+ *
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __G12A_CLKC_H
-+#define __G12A_CLKC_H
-+
-+#define CLKID_SYS_PLL				0
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				2
-+#define CLKID_FCLK_DIV3				3
-+#define CLKID_FCLK_DIV4				4
-+#define CLKID_FCLK_DIV5				5
-+#define CLKID_FCLK_DIV7				6
-+#define CLKID_GP0_PLL				7
-+#define CLKID_CLK81					10
-+#define CLKID_MPLL0					11
-+#define CLKID_MPLL1					12
-+#define CLKID_MPLL2					13
-+#define CLKID_MPLL3					14
-+#define CLKID_DDR					15
-+#define CLKID_DOS					16
-+#define CLKID_AUDIO_LOCKER			17
-+#define CLKID_MIPI_DSI_HOST			18
-+#define CLKID_ETH_PHY				19
-+#define CLKID_ISA					20
-+#define CLKID_PL301					21
-+#define CLKID_PERIPHS				22
-+#define CLKID_SPICC0				23
-+#define CLKID_I2C					24
-+#define CLKID_SANA					25
-+#define CLKID_SD					26
-+#define CLKID_RNG0					27
-+#define CLKID_UART0					28
-+#define CLKID_SPICC1				29
-+#define CLKID_HIU_IFACE				30
-+#define CLKID_MIPI_DSI_PHY			31
-+#define CLKID_ASSIST_MISC			32
-+#define CLKID_SD_EMMC_A				33
-+#define CLKID_SD_EMMC_B				34
-+#define CLKID_SD_EMMC_C				35
-+#define CLKID_AUDIO_CODEC			36
-+#define CLKID_AUDIO					37
-+#define CLKID_ETH					38
-+#define CLKID_DEMUX					39
-+#define CLKID_AUDIO_IFIFO			40
-+#define CLKID_ADC					41
-+#define CLKID_UART1					42
-+#define CLKID_G2D					43
-+#define CLKID_RESET					44
-+#define CLKID_PCIE_COMB				45
-+#define CLKID_PARSER				46
-+#define CLKID_USB					47
-+#define CLKID_PCIE_PHY				48
-+#define CLKID_AHB_ARB0				49
-+#define CLKID_AHB_DATA_BUS			50
-+#define CLKID_AHB_CTRL_BUS			51
-+#define CLKID_HTX_HDCP22			52
-+#define CLKID_HTX_PCLK				53
-+#define CLKID_BT656					54
-+#define CLKID_USB1_DDR_BRIDGE		55
-+#define CLKID_MMC_PCLK				56
-+#define CLKID_UART2					57
-+#define CLKID_VPU_INTR				58
-+#define CLKID_GIC					59
-+#define CLKID_SD_EMMC_B_CLK0		60
-+#define CLKID_SD_EMMC_C_CLK0		61
-+#define CLKID_HIFI_PLL				71
-+#define CLKID_VCLK2_VENCI0			77
-+#define CLKID_VCLK2_VENCI1			78
-+#define CLKID_VCLK2_VENCP0			79
-+#define CLKID_VCLK2_VENCP1			80
-+#define CLKID_VCLK2_VENCT0			81
-+#define CLKID_VCLK2_VENCT1			82
-+#define CLKID_VCLK2_OTHER			83
-+#define CLKID_VCLK2_ENCI			84
-+#define CLKID_VCLK2_ENCP			85
-+#define CLKID_DAC_CLK				86
-+#define CLKID_AOCLK					87
-+#define CLKID_IEC958				88
-+#define CLKID_ENC480P				89
-+#define CLKID_RNG1					90
-+#define CLKID_VCLK2_ENCT			91
-+#define CLKID_VCLK2_ENCL			92
-+#define CLKID_VCLK2_VENCLMMC		93
-+#define CLKID_VCLK2_VENCL			94
-+#define CLKID_VCLK2_OTHER1			95
-+
-+#endif /* __G12A_CLKC_H */
+ static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+ 	.halt_reg = 0x75018,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x75018,
+ 		.enable_mask = BIT(0),
 -- 
-1.9.1
+2.14.4
