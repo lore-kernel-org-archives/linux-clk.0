@@ -1,230 +1,72 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 4 Jul 2018 13:34:30 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180704103430.GA13087@localhost.localdomain>
-References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
- <20180704083911.GH2118@localhost.localdomain>
- <20180704095257.GJ2118@localhost.localdomain>
- <20180704101102.GA496@dell>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180704101102.GA496@dell>
+In-Reply-To: <CAJZ5v0gFJiHcUke4EntF76Rudo7DrOb5_61Qf-U8-z50zDEqeQ@mail.gmail.com>
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+ <20180704065522.p4qpfnpayeobaok3@vireshk-i7> <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+ <CAJZ5v0gFJiHcUke4EntF76Rudo7DrOb5_61Qf-U8-z50zDEqeQ@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 4 Jul 2018 14:58:46 +0200
+Message-ID: <CAPDyKFqpL22RX4-4ZnKZTe3cyzU7Y3kcXjwwKSY-RVvPUKqULg@mail.gmail.com>
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
+	linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Mike Turquette <mturquette@baylibre.com>,
+	Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 04, 2018 at 11:11:02AM +0100, Lee Jones wrote:
-> On Wed, 04 Jul 2018, Matti Vaittinen wrote:
-> 
-> > On Wed, Jul 04, 2018 at 11:39:11AM +0300, Matti Vaittinen wrote:
-> > > On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
-> > > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> > > > dia dv., 29 de juny 2018 a les 11:47:
-> > > > 
-> > > > Now that you use devm calls and you don't need to unwind things I
-> > > > think is better to use plain returns. So,
-> > > > 
-> > > > return -ENOMEM;
-> > > 
-> > > I have never really understood why use of gotos in error handling is
-> > > discouraged.
-> 
-> They're not.
-> 
-> > > Personally I would always choose single point of exit from
-> > > a function when it is simple enough to achieve (like in this case). I've
-> > > written and fixed way too many functions which leak resources or
-> > > accidentally keep a lock when exiting from error branches. But I know
-> > > many colleagues like you who prefer not to have gotos but  in place returns
-> > > instead. So I guess I'll leave the final call on this to the one who is
-> > > maintainer for this code. And it is true there is no things to unwind
-> > > now - which does not mean that next updater won't add such. But as I
-> > > said, I know plenty of people share your view - and even though I rather
-> > > maintain code with only one exit the final call is on subsystem maintainer
-> > > here.
-> 
-> Please use gotos in the error path.
-> 
-> IMO, it's the nicest way to unwind (as you call it).
+On 4 July 2018 at 14:54, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Wed, Jul 4, 2018 at 2:50 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> [...]
+>>
+>>>> The third problem is that semantically using OPP for requesting
+>>>> specific functional frequencies (i.e. for a  serial bus) is an abuse of that
+>>>> framework.  It requires the clients to find the "performance level" that
+>>>> matches the specific frequency they require, then request that performance
+>>>> level - when what they really want is to "set rate" on the clock to a
+>>>> specific, known, frequency.
+>>>
+>>> This is the prototype of that routine:
+>>>
+>>> int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+>>>
+>>> All we need is the target frequency and not an OPP.
+>>>
+>>> Maybe we can solve the problems you raised with the OPP core like
+>>> this:
+>>>
+>>> - On a call to dev_pm_opp_set_rate(), we check the currently cached
+>>>   frequency value. If it is unknown or 0, we call clk_enable() as
+>>>   well..
+>>>
+>>> - When the drivers want things to shut down, they call
+>>>   dev_pm_opp_set_rate(dev, 0) and on this we drop regulator vote, etc,
+>>>   and call clk_disable().
+>>>
+>>> Will that be acceptable to everyone ?
+>>
+>> For a cross SoC driver, the device may not be hooked up to an OPP
+>> table. Then it needs to manage the clock anyways. I guess we can do
+>> that for those cases that needs it.
+>>
+>> Another option is to use the ->runtime_suspend|resume() callbacks at
+>> the genpd level. In principle when the device enters runtime suspend,
+>> genpd can decide to drop the votes for the device (if some exist). At
+>> runtime resume, genpd then should re-store the votes for the device it
+>> had before it became runtime suspended (or if the vote became updated
+>> in-between).
+>>
+>> In that way, the driver only needs to call dev_pm_opp_set_rate() when
+>> it calls clk_set_rate().
+>
+> You'd need that for system-wide PM too I guess.
 
-I'll keep the gotos but clean other stuff for patch v9 then.
-> 
-> > Actually, If it was completely my call the probe would look something
-> > like this:
-> > 
-> > +static int bd71837_i2c_probe(struct i2c_client *i2c,
-> > +                           const struct i2c_device_id *id)
-> > +{
-> > +       struct bd71837 *bd71837;
-> > +       struct bd71837_board *board_info;
-> > +       int gpio_intr = 0;
-> > +
-> > +       const char *errstr = "No IRQ configured";
-> > +       int ret = -EINVAL;
-> > +
-> > +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-> > +
-> > +       if (bd71837 == NULL)
-> > +               return -ENOMEM;
-> > +
-> > +       board_info = dev_get_platdata(&i2c->dev);
-> > +
-> > +       if (!board_info)
-> > +               gpio_intr = i2c->irq;
-> > +       else
-> > +               gpio_intr = board_info->gpio_intr;
-> > +
-> > +       if (!gpio_intr)
-> > +               goto err_out;
-> > +
-> > +       i2c_set_clientdata(i2c, bd71837);
-> > +       bd71837->dev = &i2c->dev;
-> > +       bd71837->i2c_client = i2c;
-> > +       bd71837->chip_irq = gpio_intr;
-> > +
-> > +       errstr = "regmap initialization failed";
-> > +
-> > +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-> > +       ret = PTR_ERR(bd71837->regmap);
-> > +       if (IS_ERR(bd71837->regmap))
-> > +               goto err_out;
-> > +
-> > +       errstr = "Read BD71837_REG_DEVICE failed";
-> > +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to add irq_chip";
-> > +       ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
-> > +                                      bd71837->chip_irq, IRQF_ONESHOT, 0,
-> > +                                      &bd71837_irq_chip, &bd71837->irq_data);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to configure button short press timeout";
-> > +       ret = regmap_update_bits(bd71837->regmap,
-> > +                                BD71837_REG_PWRONCONFIG0,
-> > +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> > +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       /* According to BD71847 datasheet the HW default for long press
-> > +        * detection is 10ms. So lets change it to 10 sec so we can actually
-> > +        * get the short push and allow gracefull shut down
-> > +        */
-> > +       ret = regmap_update_bits(bd71837->regmap,
-> > +                                BD71837_REG_PWRONCONFIG1,
-> > +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
-> > +                                BD718XX_PWRBTN_LONG_PRESS_10S);
-> > +
-> > +       errstr = "Failed to configure button long press timeout";
-> > +       if (ret < 0)
-> > +               goto err_out;
-> > +
-> > +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
-> > +                                         BD71837_INT_PWRBTN_S);
-> > +
-> > +       errstr = "Failed to get the IRQ";
-> > +       ret = btns[0].irq;
-> > +       if (btns[0].irq < 0)
-> > +               goto err_out;
-> > +
-> > +       errstr = "Failed to create subdevices";
-> > +       ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-> > +                                  bd71837_mfd_cells,
-> > +                                  ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
-> > +                                  regmap_irq_get_domain(bd71837->irq_data));
-> > +       if (ret) {
-> > +err_out:
-> > +               if (errstr)
-> > +                       dev_err(&i2c->dev, "%s (%d)\n", errstr, ret);
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > 
-> > What do you think of this? To my eye it is nice. It keeps single point of
-> > exit and introduces only simple if-statements without the need of curly
-> > brackets. And finally the error prints string works as a comment too.
-> > I've seen bunch of constructs like this on the networking side but I
-> > have no idea if this is frowned on this subsystem =) Oh, and probe abowe
-> > is just to illustrate the idea, I did not even try compiling it yet.
-> 
-> That is horrible.  I nearly vomited on my keyboard. 
+Yep, but I don't think it's that critical as I think the PM domain
+will be powered off anyways for that scenario. Of course, unless it
+stays powered on because of some wakeup settings, but I doubt that.
 
-Note to self: Never to buy second hand keyboard from Lee =)
-
-> It doesn't flow
-> anywhere nearly as nicely has sorting out all of the error handling
-> *after* it has been detected.  You're sacrificing readability to save
-> a single line and do not save any *actual* lines of code, only a brace.
-
-I was expecting something like this comment =) But the truth is that one
-gets used to reading this quickly. Well, this still sounds like I should
-not try convincing you - so you can stay heretic ;)
-> 
-> Landing a goto in the middle of a statement is messy and unsightly.
-
-This is another thing one gets used to. I've actually seen plenty of
-code using
-
-	if (0) {
-error_label:
-	....
-	}
-
-for error handling. But again - you can keep your view and I'll adopt to
-it here =)
-
-> What happens when you have some resources to free?  The last few lines
-> will become very messy, very quickly.
-
-One can just build the usual clean-up sequence inside the last if (ret)
-using different goto lables. Eg:
-
-	if (ret) {
-err_unwind_X:
-		undo_x();
-err_unwind_Y:
-		undo_y();
-err_out:
-		dev_err(...);
-	}
-> 
-> Nit: "something == NULL" is better written as "!something".
-
-Oh, I personally liked the !foo more as Enric - but I will write the
-NULL in case it won't make line too long. This is not a big deal to me.
-
-> Nit: Please use proper multi-line comments as per the Coding Style.
-
-Will do.
-
-Thanks for quick reply! I will send new version today or tomorrow.
-
-Best Regards
-    Matti Vaittinen
+Kind regards
+Uffe
