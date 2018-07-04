@@ -1,100 +1,114 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:35633 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbeGPOmz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Jul 2018 10:42:55 -0400
-Date: Mon, 16 Jul 2018 16:15:04 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
-        boris.brezillon@bootlin.com, robh+dt@kernel.org,
-        broonie@kernel.org, sboyd@kernel.org,
-        Cristian.Birsan@microchip.com,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: Re: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S
- controllers
-Message-ID: <20180716141504.GB3180@piout.net>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
- <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
- <20180706193923.GC16084@piout.net>
- <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42281 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751735AbeGDNsw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jul 2018 09:48:52 -0400
+Received: by mail-qt0-f196.google.com with SMTP id y31-v6so4545746qty.9
+        for <linux-clk@vger.kernel.org>; Wed, 04 Jul 2018 06:48:52 -0700 (PDT)
+From: Fabio Estevam <festevam@gmail.com>
+To: sboyd@kernel.org
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: [PATCH] clk: imx51-imx53: Annotate critical clocks as CLK_IS_CRITICAL
+Date: Wed,  4 Jul 2018 10:49:23 -0300
+Message-Id: <1530712163-16130-1-git-send-email-festevam@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-On 09/07/2018 16:29:43+0300, Codrin Ciubotariu wrote:
-> On 06.07.2018 22:39, Alexandre Belloni wrote:
-> > Hi Codrin,
-> > 
-> > On 18/06/2018 17:12:38+0300, Codrin Ciubotariu wrote:
-> > > From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> > > 
-> > > This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
-> > > each I2S node.
-> > > 
-> > > Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-> > > [codrin.ciubotariu@microchip.com: added phandle to new mux clock]
-> > > Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-> > > ---
-> > > 
-> > > The bindings for the I2S node are applied to broonie/sound.git .
-> > > 
-> > > Changes in v5:
-> > > 	- the previous name was:
-> > > 	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
-> > > 
-> > >   arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 34 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-> > > index eeb6afa1cda7..eca73ce40bc5 100644
-> > > --- a/arch/arm/boot/dts/sama5d2.dtsi
-> > > +++ b/arch/arm/boot/dts/sama5d2.dtsi
-> > > @@ -58,6 +58,8 @@
-> > >   		serial1 = &uart3;
-> > >   		tcb0 = &tcb0;
-> > >   		tcb1 = &tcb1;
-> > > +		i2s0 = &i2s0;
-> > > +		i2s1 = &i2s1;
-> > >   	};
-> > >   	cpus {
-> > > @@ -1313,6 +1315,22 @@
-> > >   				clocks = <&clk32k>;
-> > >   			};
-> > > +			i2s0: i2s@f8050000 {
-> > > +				compatible = "atmel,sama5d2-i2s";
-> > > +				reg = <0xf8050000 0x100>;
-> > > +				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
-> > > +				dmas = <&dma0
-> > > +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> > > +					 AT91_XDMAC_DT_PERID(31))>,
-> > > +				       <&dma0
-> > > +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
-> > > +					 AT91_XDMAC_DT_PERID(32))>;
-> > > +				dma-names = "tx", "rx";
-> > > +				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
-> > > +				clock-names = "pclk", "gclk", "aclk", "muxclk";
-> > > +				status = "disabled";
-> > > +			};
-> > > +
-> > 
-> > Can you resend the DTS patches after removing the unnecessary clocks?
-> 
-> I will. Should I also make the "muxclk" clock an assigned clock to assign
-> its parent ?
-> 
+Instead of explicitly enabling critical clocks via clk_prepare_enable(),
+let's use the standard CLK_IS_CRITICAL flag instead, which makes the code
+a bit shorter.
 
-It would be better if that allows to remove the corresponding code in
-the driver.
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+---
+ drivers/clk/imx/clk-imx51-imx53.c | 43 +++++++++++++--------------------------
+ 1 file changed, 14 insertions(+), 29 deletions(-)
 
-
+diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
+index caa8bd4..346a53b 100644
+--- a/drivers/clk/imx/clk-imx51-imx53.c
++++ b/drivers/clk/imx/clk-imx51-imx53.c
+@@ -175,13 +175,13 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 	clk[IMX5_CLK_PER_ROOT]		= imx_clk_mux("per_root", MXC_CCM_CBCMR, 0, 1,
+ 						per_root_sel, ARRAY_SIZE(per_root_sel));
+ 	clk[IMX5_CLK_AHB]		= imx_clk_divider("ahb", "main_bus", MXC_CCM_CBCDR, 10, 3);
+-	clk[IMX5_CLK_AHB_MAX]		= imx_clk_gate2("ahb_max", "ahb", MXC_CCM_CCGR0, 28);
+-	clk[IMX5_CLK_AIPS_TZ1]		= imx_clk_gate2("aips_tz1", "ahb", MXC_CCM_CCGR0, 24);
+-	clk[IMX5_CLK_AIPS_TZ2]		= imx_clk_gate2("aips_tz2", "ahb", MXC_CCM_CCGR0, 26);
+-	clk[IMX5_CLK_TMAX1]		= imx_clk_gate2("tmax1", "ahb", MXC_CCM_CCGR1, 0);
+-	clk[IMX5_CLK_TMAX2]		= imx_clk_gate2("tmax2", "ahb", MXC_CCM_CCGR1, 2);
+-	clk[IMX5_CLK_TMAX3]		= imx_clk_gate2("tmax3", "ahb", MXC_CCM_CCGR1, 4);
+-	clk[IMX5_CLK_SPBA]		= imx_clk_gate2("spba", "ipg", MXC_CCM_CCGR5, 0);
++	clk[IMX5_CLK_AHB_MAX]		= imx_clk_gate2_flags("ahb_max", "ahb", MXC_CCM_CCGR0, 28, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_AIPS_TZ1]		= imx_clk_gate2_flags("aips_tz1", "ahb", MXC_CCM_CCGR0, 24, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_AIPS_TZ2]		= imx_clk_gate2_flags("aips_tz2", "ahb", MXC_CCM_CCGR0, 26, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_TMAX1]		= imx_clk_gate2_flags("tmax1", "ahb", MXC_CCM_CCGR1, 0, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_TMAX2]		= imx_clk_gate2_flags("tmax2", "ahb", MXC_CCM_CCGR1, 2, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_TMAX3]		= imx_clk_gate2_flags("tmax3", "ahb", MXC_CCM_CCGR1, 4, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_SPBA]		= imx_clk_gate2_flags("spba", "ipg", MXC_CCM_CCGR5, 0, CLK_IS_CRITICAL);
+ 	clk[IMX5_CLK_IPG]		= imx_clk_divider("ipg", "ahb", MXC_CCM_CBCDR, 8, 2);
+ 	clk[IMX5_CLK_AXI_A]		= imx_clk_divider("axi_a", "main_bus", MXC_CCM_CBCDR, 16, 3);
+ 	clk[IMX5_CLK_AXI_B]		= imx_clk_divider("axi_b", "main_bus", MXC_CCM_CBCDR, 19, 3);
+@@ -252,8 +252,8 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 	clk[IMX5_CLK_ECSPI2_PER_GATE]	= imx_clk_gate2("ecspi2_per_gate", "ecspi_podf", MXC_CCM_CCGR4, 24);
+ 	clk[IMX5_CLK_CSPI_IPG_GATE]	= imx_clk_gate2("cspi_ipg_gate", "ipg", MXC_CCM_CCGR4, 26);
+ 	clk[IMX5_CLK_SDMA_GATE]		= imx_clk_gate2("sdma_gate", "ipg", MXC_CCM_CCGR4, 30);
+-	clk[IMX5_CLK_EMI_FAST_GATE]	= imx_clk_gate2("emi_fast_gate", "dummy", MXC_CCM_CCGR5, 14);
+-	clk[IMX5_CLK_EMI_SLOW_GATE]	= imx_clk_gate2("emi_slow_gate", "emi_slow_podf", MXC_CCM_CCGR5, 16);
++	clk[IMX5_CLK_EMI_FAST_GATE]	= imx_clk_gate2_flags("emi_fast_gate", "dummy", MXC_CCM_CCGR5, 14, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_EMI_SLOW_GATE]	= imx_clk_gate2_flags("emi_slow_gate", "emi_slow_podf", MXC_CCM_CCGR5, 16, CLK_IS_CRITICAL);
+ 	clk[IMX5_CLK_IPU_SEL]		= imx_clk_mux("ipu_sel", MXC_CCM_CBCMR, 6, 2, ipu_sel, ARRAY_SIZE(ipu_sel));
+ 	clk[IMX5_CLK_IPU_GATE]		= imx_clk_gate2("ipu_gate", "ipu_sel", MXC_CCM_CCGR5, 10);
+ 	clk[IMX5_CLK_NFC_GATE]		= imx_clk_gate2("nfc_gate", "nfc_podf", MXC_CCM_CCGR5, 20);
+@@ -267,7 +267,7 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 	clk[IMX5_CLK_VPU_SEL]		= imx_clk_mux("vpu_sel", MXC_CCM_CBCMR, 14, 2, vpu_sel, ARRAY_SIZE(vpu_sel));
+ 	clk[IMX5_CLK_VPU_GATE]		= imx_clk_gate2("vpu_gate", "vpu_sel", MXC_CCM_CCGR5, 6);
+ 	clk[IMX5_CLK_VPU_REFERENCE_GATE] = imx_clk_gate2("vpu_reference_gate", "osc", MXC_CCM_CCGR5, 8);
+-	clk[IMX5_CLK_GPC_DVFS]		= imx_clk_gate2("gpc_dvfs", "dummy", MXC_CCM_CCGR5, 24);
++	clk[IMX5_CLK_GPC_DVFS]		= imx_clk_gate2_flags("gpc_dvfs", "dummy", MXC_CCM_CCGR5, 24, CLK_IS_CRITICAL);
+ 
+ 	clk[IMX5_CLK_SSI_APM]		= imx_clk_mux("ssi_apm", MXC_CCM_CSCMR1, 8, 2, ssi_apm_sels, ARRAY_SIZE(ssi_apm_sels));
+ 	clk[IMX5_CLK_SSI1_ROOT_SEL]	= imx_clk_mux("ssi1_root_sel", MXC_CCM_CSCMR1, 14, 2, ssi_clk_sels, ARRAY_SIZE(ssi_clk_sels));
+@@ -316,21 +316,6 @@ static void __init mx5_clocks_common_init(void __iomem *ccm_base)
+ 
+ 	/* move usb phy clk to 24MHz */
+ 	clk_set_parent(clk[IMX5_CLK_USB_PHY_SEL], clk[IMX5_CLK_OSC]);
+-
+-	clk_prepare_enable(clk[IMX5_CLK_GPC_DVFS]);
+-	clk_prepare_enable(clk[IMX5_CLK_AHB_MAX]); /* esdhc3 */
+-	clk_prepare_enable(clk[IMX5_CLK_AIPS_TZ1]);
+-	clk_prepare_enable(clk[IMX5_CLK_AIPS_TZ2]); /* fec */
+-	clk_prepare_enable(clk[IMX5_CLK_SPBA]);
+-	clk_prepare_enable(clk[IMX5_CLK_EMI_FAST_GATE]); /* fec */
+-	clk_prepare_enable(clk[IMX5_CLK_EMI_SLOW_GATE]); /* eim */
+-	clk_prepare_enable(clk[IMX5_CLK_MIPI_HSC1_GATE]);
+-	clk_prepare_enable(clk[IMX5_CLK_MIPI_HSC2_GATE]);
+-	clk_prepare_enable(clk[IMX5_CLK_MIPI_ESC_GATE]);
+-	clk_prepare_enable(clk[IMX5_CLK_MIPI_HSP_GATE]);
+-	clk_prepare_enable(clk[IMX5_CLK_TMAX1]);
+-	clk_prepare_enable(clk[IMX5_CLK_TMAX2]); /* esdhc2, fec */
+-	clk_prepare_enable(clk[IMX5_CLK_TMAX3]); /* esdhc1, esdhc4 */
+ }
+ 
+ static void __init mx50_clocks_init(struct device_node *np)
+@@ -442,10 +427,10 @@ static void __init mx51_clocks_init(struct device_node *np)
+ 	clk[IMX5_CLK_ESDHC4_PER_GATE]	= imx_clk_gate2("esdhc4_per_gate", "esdhc_d_sel", MXC_CCM_CCGR3, 14);
+ 	clk[IMX5_CLK_USB_PHY_GATE]	= imx_clk_gate2("usb_phy_gate", "usb_phy_sel", MXC_CCM_CCGR2, 0);
+ 	clk[IMX5_CLK_HSI2C_GATE]	= imx_clk_gate2("hsi2c_gate", "ipg", MXC_CCM_CCGR1, 22);
+-	clk[IMX5_CLK_MIPI_HSC1_GATE]	= imx_clk_gate2("mipi_hsc1_gate", "ipg", MXC_CCM_CCGR4, 6);
+-	clk[IMX5_CLK_MIPI_HSC2_GATE]	= imx_clk_gate2("mipi_hsc2_gate", "ipg", MXC_CCM_CCGR4, 8);
+-	clk[IMX5_CLK_MIPI_ESC_GATE]	= imx_clk_gate2("mipi_esc_gate", "ipg", MXC_CCM_CCGR4, 10);
+-	clk[IMX5_CLK_MIPI_HSP_GATE]	= imx_clk_gate2("mipi_hsp_gate", "ipg", MXC_CCM_CCGR4, 12);
++	clk[IMX5_CLK_MIPI_HSC1_GATE]	= imx_clk_gate2_flags("mipi_hsc1_gate", "ipg", MXC_CCM_CCGR4, 6, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_MIPI_HSC2_GATE]	= imx_clk_gate2_flags("mipi_hsc2_gate", "ipg", MXC_CCM_CCGR4, 8, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_MIPI_ESC_GATE]	= imx_clk_gate2_flags("mipi_esc_gate", "ipg", MXC_CCM_CCGR4, 10, CLK_IS_CRITICAL);
++	clk[IMX5_CLK_MIPI_HSP_GATE]	= imx_clk_gate2_flags("mipi_hsp_gate", "ipg", MXC_CCM_CCGR4, 12, CLK_IS_CRITICAL);
+ 	clk[IMX5_CLK_SPDIF_XTAL_SEL]	= imx_clk_mux("spdif_xtal_sel", MXC_CCM_CSCMR1, 2, 2,
+ 						mx51_spdif_xtal_sel, ARRAY_SIZE(mx51_spdif_xtal_sel));
+ 	clk[IMX5_CLK_SPDIF1_SEL]	= imx_clk_mux("spdif1_sel", MXC_CCM_CSCMR2, 2, 2,
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.7.4
+
