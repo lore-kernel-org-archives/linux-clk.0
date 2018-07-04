@@ -1,81 +1,161 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
- SDM845
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sandeep Panda <spanda@codeaurora.org>,
- Abhinav Kumar <abhinavk@codeaurora.org>, ryadav@codeaurora.org
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
- <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
- <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
- <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
- <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
- <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
- <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
-Date: Thu, 12 Jul 2018 22:51:33 +0530
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
+Date: Wed, 4 Jul 2018 13:17:33 +0300
+Message-ID: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-++ Display driver team,
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-On 7/9/2018 8:36 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-09 02:34:07)
->>
->>
->> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-07-09 00:07:21)
->>>>
->>>>
->>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
->>>>>>
->>>>>>     > Why is the nocache flag needed? Applies to all clks in this file.
->>>>>>     >
->>>>>>
->>>>>> This flag is required for all RCGs whose PLLs are controlled outside the
->>>>>> clock controller. The display code would require the recalculated rate
->>>>>> always.
->>>>>
->>>>> Right. Why is the PLL controlled outside of the clock controller? The
->>>>> rate should propagate upward to the PLL from here, so who's going
->>>>> outside of that?
->>>>>
->>>> The DSI0/1 PLL are not part of the display clock controller, but in the
->>>> display subsystem which are managed by the DRM drivers. When DRM drivers
->>>> query for the rate clock driver should always return the non cached rates.
->>>
->>> Why? Is the DSI PLL changing rate all the time, randomly, without going
->>> through the clk APIs to do so?
->>>
->>
->> Hmm, I am afraid I do not have an answer for this, but this was the
->> requirement to always return the non cached rates from the clock driver.
->>
-> 
-> Ok. Who knows about this requirement? Can we add someone from the
-> display driver to understand more?
-> 
-As per my discussions offline with the display teams,
+Move this to a separate file so it can be used to calculate the sdmmc
+clock dividers.
 
-There is a use-case where the clock framework is unaware of the PLL VCO 
-frequency change and thus the drivers would query to get the actual HW 
-frequency rather than the cached one.
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/clk/tegra/Makefile      |  1 +
+ drivers/clk/tegra/clk-divider.c | 30 ++++-------------------
+ drivers/clk/tegra/clk.h         |  3 +++
+ drivers/clk/tegra/div71.c       | 54 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 63 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/clk/tegra/div71.c
 
-Do you think keeping these flags would have any impact other than always 
-getting the non-cached rates?
-
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index b716923..6d4f563 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+ obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
++obj-y					+= div71.o
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee..ad87858 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -32,35 +32,15 @@
+ static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+ 		   unsigned long parent_rate)
+ {
+-	u64 divider_ux1 = parent_rate;
+-	u8 flags = divider->flags;
+-	int mul;
+-
+-	if (!rate)
+-		return 0;
+-
+-	mul = get_mul(divider);
+-
+-	if (!(flags & TEGRA_DIVIDER_INT))
+-		divider_ux1 *= mul;
+-
+-	if (flags & TEGRA_DIVIDER_ROUND_UP)
+-		divider_ux1 += rate - 1;
+-
+-	do_div(divider_ux1, rate);
+-
+-	if (flags & TEGRA_DIVIDER_INT)
+-		divider_ux1 *= mul;
++	int div;
+ 
+-	divider_ux1 -= mul;
++	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
++			divider->flags);
+ 
+-	if ((s64)divider_ux1 < 0)
++	if (div < 0)
+ 		return 0;
+ 
+-	if (divider_ux1 > get_max_div(divider))
+-		return get_max_div(divider);
+-
+-	return divider_ux1;
++	return div;
+ }
+ 
+ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e1f8846..f14e136 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -811,6 +811,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags);
++
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
+diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+new file mode 100644
+index 0000000..1a5e04c
+--- /dev/null
++++ b/drivers/clk/tegra/div71.c
+@@ -0,0 +1,54 @@
++/*
++ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/kernel.h>
++
++#include "clk.h"
++
++#define div_mask(w) ((1 << (w)) - 1)
++
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags)
++{
++	u64 divider_ux1 = parent_rate;
++	int mul;
++
++	if (!rate)
++		return 0;
++
++	mul = 1 << frac_width;
++
++	if (!(flags & TEGRA_DIVIDER_INT))
++		divider_ux1 *= mul;
++
++	if (flags & TEGRA_DIVIDER_ROUND_UP)
++		divider_ux1 += rate - 1;
++
++	do_div(divider_ux1, rate);
++
++	if (flags & TEGRA_DIVIDER_INT)
++		divider_ux1 *= mul;
++
++	if (divider_ux1 < mul)
++		return 0;
++
++	divider_ux1 -= mul;
++
++	if (divider_ux1 > div_mask(width))
++		return div_mask(width);
++
++	return divider_ux1;
++}
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.7.4
