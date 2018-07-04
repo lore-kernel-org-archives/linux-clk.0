@@ -1,74 +1,71 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 00/11] clk: renesas: rcar-gen3: OSC and RCLK improvements
-Date: Thu, 26 Jul 2018 17:35:06 +0200
-Message-Id: <20180726153517.10020-1-geert+renesas@glider.be>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 4 Jul 2018 10:21:09 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 0/4] mfd/regulator/clk/input: bd71837: ROHM BD71837
+ PMIC driver
+Message-ID: <20180704092109.GT20176@dell>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180621103400.GB6076@localhost.localdomain>
+ <20180703070200.GC20176@dell>
+ <20180704084715.GI2118@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180704084715.GI2118@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
+On Wed, 04 Jul 2018, Matti Vaittinen wrote:
 
-This patch series contains various improvements for OSC and RCLK
-handling on R-Car Gen3 SoCs.
+> On Tue, Jul 03, 2018 at 08:02:00AM +0100, Lee Jones wrote:
+> > On Thu, 21 Jun 2018, Matti Vaittinen wrote:
+> > 
+> > > On Tue, Jun 19, 2018 at 01:55:31PM +0300, Matti Vaittinen wrote:
+> > > > Patch series adding support for ROHM BD71837 PMIC.
+> > > > 
+> > > What is the preferred way when I send updated patches:
+> > > 
+> > > 1. always resend _all_ unapplied patches even if there is no changes to
+> > >    some of them. (patch-vN mail thread contains _all_ unapplied patches)
+> > > 2. only resend changed patches (patch-vN mail thread contains only
+> > >    patches that were changed from patch-vN-1)
+> > > 
+> > > I have currently used approach 1 - so that no patches would be
+> > > accidentally forgotten - but downside is that people need to check if
+> > > they have already reviewed some of the patches. I'd rather not caused
+> > > any extra work. What is the most convenient way for you guys?
+> > 
+> > Option 1 is preferred.
+> > 
+> > Just ensure you apply any tags you have collected so reviewers can see
+> > which patches are pending a review.  It's also a good idea to keep a
+> > succinct change log between the "--" marker and the diff stat where
+> > you can state "v4: No change" or the like.
+> 
+> Right. Thanks. Just one question - what if I get reviewed-by for a
+> patch which I later rework? Like this MFD patch where I got reviewed-by
+> from Linus Walleij for v6 - but which I reworked due to comments from
+> Enric and Dmitry. I have not kept the reviewed-by as the patch is not
+> exactly the same Linus was originally reviewing. I guess the tags should
+> be only kept for patches which are unchanged, right?
 
-Changes compared to v1:
-  - Add Reviewed-by,
-  - Fix OSC predivider for 27 MHz EXTAL on R-Car V3H,
-  - Rename "r_int" to ".r", and "oco" to ".oco", as they are internal
-    clocks,
-  - Gain a dependency on "[PATCH] clk: renesas: rcar-gen3: Rename rint
-    to .r".
+That is the $64,000 question.  The answer is "it depends".  You should
+use your common sense.  Did your re-work taint the code that your
+reviewer provided his tag for?  If so, drop it.  If not, keep it.
 
-This has been tested on R-Car H3 ES1.0/ES2.0, R-Car M3-W ES1.0, R-Car
-D3, and R-Car E3.
-The R-Car V3H (r8a77980) patches were compile-tested only due to lack of
-hardware.
-
-I intend to queue this in clk-renesas-for-v4.20.
-
-Thanks!
-
-Geert Uytterhoeven (11):
-  clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-  clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77980: Add OSC predivider configuration and clock
-  clk: renesas: cpg-mssr: Add support for fixed rate clocks
-  clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-  clk: renesas: r8a77990: Correct RCLK handling
-  clk: renesas: r8a77995: Correct RCLK handling
-  clk: renesas: rcar-gen3: Add support for mode pin clock selection
-  clk: renesas: r8a77980: Add RCLK for watchdog timer
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 28 ++++++-----
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 12 ++++-
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 12 ++++-
- drivers/clk/renesas/rcar-gen3-cpg.c     | 40 +++++++++++----
- drivers/clk/renesas/rcar-gen3-cpg.h     | 24 +++++++--
- drivers/clk/renesas/renesas-cpg-mssr.c  |  5 ++
- drivers/clk/renesas/renesas-cpg-mssr.h  |  3 ++
- 10 files changed, 194 insertions(+), 128 deletions(-)
+There are no hard and fast rules about these kinds of things.
 
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
