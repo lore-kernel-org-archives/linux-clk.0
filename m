@@ -1,105 +1,38 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
+Subject: Re: [PATCH v3 0/4] clk: rockchip: support clock controller for px30 SoC
+Date: Wed, 04 Jul 2018 12:08:15 +0200
+Message-ID: <19643053.9AiPb2dtV0@phil>
+In-Reply-To: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
+References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
 MIME-Version: 1.0
-To: Abhinav Kumar <abhinavk@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Sandeep Panda <spanda@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- ryadav@codeaurora.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
- <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
- <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
- <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
- <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
- <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
- <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
- <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
-Message-ID: <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for SDM845
-Date: Thu, 12 Jul 2018 12:41:36 -0700
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-07-12 10:21:33)
-> ++ Display driver team,
-> =
+Hi Elaine,
 
-> On 7/9/2018 8:36 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-07-09 02:34:07)
-> >>
-> >>
-> >> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2018-07-09 00:07:21)
-> >>>>
-> >>>>
-> >>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
-> >>>>>>
-> >>>>>>     > Why is the nocache flag needed? Applies to all clks in this =
-file.
-> >>>>>>     >
-> >>>>>>
-> >>>>>> This flag is required for all RCGs whose PLLs are controlled outsi=
-de the
-> >>>>>> clock controller. The display code would require the recalculated =
-rate
-> >>>>>> always.
-> >>>>>
-> >>>>> Right. Why is the PLL controlled outside of the clock controller? T=
-he
-> >>>>> rate should propagate upward to the PLL from here, so who's going
-> >>>>> outside of that?
-> >>>>>
-> >>>> The DSI0/1 PLL are not part of the display clock controller, but in =
-the
-> >>>> display subsystem which are managed by the DRM drivers. When DRM dri=
-vers
-> >>>> query for the rate clock driver should always return the non cached =
-rates.
-> >>>
-> >>> Why? Is the DSI PLL changing rate all the time, randomly, without goi=
-ng
-> >>> through the clk APIs to do so?
-> >>>
-> >>
-> >> Hmm, I am afraid I do not have an answer for this, but this was the
-> >> requirement to always return the non cached rates from the clock drive=
-r.
-> >>
-> > =
+Am Freitag, 15. Juni 2018, 04:16:47 CEST schrieb Elaine Zhang:
+> Change in V3:
+> [PATCH v3 1/4]: Correct description
+> [PATCH v3 2/4]: Use an SPDX tag instead.
+> [PATCH v3 3/4]: Use an SPDX tag instead,
+> 		parent_rate might overflow and fix it.
+> 		fix up the checkpatch warning.
+> 		add more CMPOSITE_xxx_HALFdiv.
+> 
+> Change in V2:
+> [PATCH v2 2/4]: modify the Author name
+> [PATCH v2 3/4]: provide a bit more explanation for commit message
+> 
+> Elaine Zhang (4):
+>   dt-bindings: add bindings for px30 clock controller
+>   clk: rockchip: add dt-binding header for px30
+>   clk: rockchip: add support for half divider
+>   clk: rockchip: add clock controller for px30
 
-> > Ok. Who knows about this requirement? Can we add someone from the
-> > display driver to understand more?
-> > =
+I've applied the set for 4.19 but dropped the panic-notifier
+dump function from the px30 clock driver.
 
-> As per my discussions offline with the display teams,
-> =
-
-> There is a use-case where the clock framework is unaware of the PLL VCO =
-
-> frequency change and thus the drivers would query to get the actual HW =
-
-> frequency rather than the cached one.
-> =
-
-> Do you think keeping these flags would have any impact other than always =
-
-> getting the non-cached rates?
-> =
-
-
-The flag will make it so clk_get_rate() works in spite of something
-changing the frequency behind the framework's back, but I want to
-understand what and why it's changing without framework involvement. We
-shouldn't need the flag here, because this flag is typically for clks
-that are controlled by some other entity that the kernel doesn't have
-control over. In this case, it seems like we have full control of the
-clk tree for the display PLL down to this clk, so it should be perfectly
-fine to not have this flag. The presence of the flag means that the
-display driver is doing something wrong.
+Heiko
