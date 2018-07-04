@@ -1,550 +1,190 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:37314 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbeGUVKW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jul 2018 17:10:22 -0400
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 4 Jul 2018 11:11:02 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sboyd@kernel.org,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180704101102.GA496@dell>
+References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+ <20180704083911.GH2118@localhost.localdomain>
+ <20180704095257.GJ2118@localhost.localdomain>
 MIME-Version: 1.0
-References: <20180717095617.12240-1-jbrunet@baylibre.com> <20180717095617.12240-4-jbrunet@baylibre.com>
- <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
-In-Reply-To: <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sat, 21 Jul 2018 22:16:13 +0200
-Message-ID: <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll tables
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180704095257.GJ2118@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 19, 2018 at 10:44 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 17/07/2018 11:56, Jerome Brunet wrote:
-> > Putting hard-coded rates inside the parameter tables assumes that
-> > the parent is known and will never change. That's a big assumption
-> > we should not make.
-> >
-> > We have everything we need to recalculate the output rate using
-> > the parent rate and the rest of the parameters. Let's do so and
-> > drop the rates from the tables.
-> >
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/clk/meson/axg.c     |  73 +++++++++++++--------------
-> >  drivers/clk/meson/clk-pll.c |  69 ++++++++++++++++---------
-> >  drivers/clk/meson/clkc.h    |   8 ++-
-> >  drivers/clk/meson/gxbb.c    | 120 ++++++++++++++++++++++----------------------
-> >  drivers/clk/meson/meson8b.c |  34 ++++++-------
-> >  5 files changed, 162 insertions(+), 142 deletions(-)
-> >
-> > diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> > index 572358062459..d34954bd8c5e 100644
-> > --- a/drivers/clk/meson/axg.c
-> > +++ b/drivers/clk/meson/axg.c
-> > @@ -130,36 +130,36 @@ static struct clk_regmap axg_sys_pll = {
-> >       },
-> >  };
-> >
-> > -static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
-> > -     PLL_RATE(960000000, 40, 1),
-> > -     PLL_RATE(984000000, 41, 1),
-> > -     PLL_RATE(1008000000, 42, 1),
-> > -     PLL_RATE(1032000000, 43, 1),
-> > -     PLL_RATE(1056000000, 44, 1),
-> > -     PLL_RATE(1080000000, 45, 1),
-> > -     PLL_RATE(1104000000, 46, 1),
-> > -     PLL_RATE(1128000000, 47, 1),
-> > -     PLL_RATE(1152000000, 48, 1),
-> > -     PLL_RATE(1176000000, 49, 1),
-> > -     PLL_RATE(1200000000, 50, 1),
-> > -     PLL_RATE(1224000000, 51, 1),
-> > -     PLL_RATE(1248000000, 52, 1),
-> > -     PLL_RATE(1272000000, 53, 1),
-> > -     PLL_RATE(1296000000, 54, 1),
-> > -     PLL_RATE(1320000000, 55, 1),
-> > -     PLL_RATE(1344000000, 56, 1),
-> > -     PLL_RATE(1368000000, 57, 1),
-> > -     PLL_RATE(1392000000, 58, 1),
-> > -     PLL_RATE(1416000000, 59, 1),
-> > -     PLL_RATE(1440000000, 60, 1),
-> > -     PLL_RATE(1464000000, 61, 1),
-> > -     PLL_RATE(1488000000, 62, 1),
-> > -     PLL_RATE(1512000000, 63, 1),
-> > -     PLL_RATE(1536000000, 64, 1),
-> > -     PLL_RATE(1560000000, 65, 1),
-> > -     PLL_RATE(1584000000, 66, 1),
-> > -     PLL_RATE(1608000000, 67, 1),
-> > -     PLL_RATE(1632000000, 68, 1),
-> > +static const struct pll_params_table axg_gp0_pll_params_table[] = {
-> > +     PLL_PARAMS(40, 1),
-> > +     PLL_PARAMS(41, 1),
-> > +     PLL_PARAMS(42, 1),
-> > +     PLL_PARAMS(43, 1),
-> > +     PLL_PARAMS(44, 1),
-> > +     PLL_PARAMS(45, 1),
-> > +     PLL_PARAMS(46, 1),
-> > +     PLL_PARAMS(47, 1),
-> > +     PLL_PARAMS(48, 1),
-> > +     PLL_PARAMS(49, 1),
-> > +     PLL_PARAMS(50, 1),
-> > +     PLL_PARAMS(51, 1),
-> > +     PLL_PARAMS(52, 1),
-> > +     PLL_PARAMS(53, 1),
-> > +     PLL_PARAMS(54, 1),
-> > +     PLL_PARAMS(55, 1),
-> > +     PLL_PARAMS(56, 1),
-> > +     PLL_PARAMS(57, 1),
-> > +     PLL_PARAMS(58, 1),
-> > +     PLL_PARAMS(59, 1),
-> > +     PLL_PARAMS(60, 1),
-> > +     PLL_PARAMS(61, 1),
-> > +     PLL_PARAMS(62, 1),
-> > +     PLL_PARAMS(63, 1),
-> > +     PLL_PARAMS(64, 1),
-> > +     PLL_PARAMS(65, 1),
-> > +     PLL_PARAMS(66, 1),
-> > +     PLL_PARAMS(67, 1),
-> > +     PLL_PARAMS(68, 1),
-> >       { /* sentinel */ },
-> >  };
-> >
-> > @@ -203,7 +203,7 @@ static struct clk_regmap axg_gp0_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = axg_gp0_pll_rate_table,
-> > +             .table = axg_gp0_pll_params_table,
-> >               .init_regs = axg_gp0_init_regs,
-> >               .init_count = ARRAY_SIZE(axg_gp0_init_regs),
-> >       },
-> > @@ -271,7 +271,7 @@ static struct clk_regmap axg_hifi_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = axg_gp0_pll_rate_table,
-> > +             .table = axg_gp0_pll_params_table,
-> >               .init_regs = axg_hifi_init_regs,
-> >               .init_count = ARRAY_SIZE(axg_hifi_init_regs),
-> >               .flags = CLK_MESON_PLL_ROUND_CLOSEST,
-> > @@ -627,11 +627,10 @@ static struct clk_regmap axg_mpll3 = {
-> >       },
-> >  };
-> >
-> > -static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
-> > +static const struct pll_params_table axg_pcie_pll_params_table[] = {
-> >       {
-> > -             .rate   = 1600000000,
-> > -             .m      = 200,
-> > -             .n      = 3,
-> > +             .m = 200,
-> > +             .n = 3,
-> >       },
-> >       { /* sentinel */ },
-> >  };
-> > @@ -678,7 +677,7 @@ static struct clk_regmap axg_pcie_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = axg_pcie_pll_rate_table,
-> > +             .table = axg_pcie_pll_params_table,
-> >               .init_regs = axg_pcie_init_regs,
-> >               .init_count = ARRAY_SIZE(axg_pcie_init_regs),
-> >       },
-> > diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> > index 348a866f09eb..f5b5b3fabe3c 100644
-> > --- a/drivers/clk/meson/clk-pll.c
-> > +++ b/drivers/clk/meson/clk-pll.c
-> > @@ -45,7 +45,7 @@ meson_clk_pll_data(struct clk_regmap *clk)
-> >  }
-> >
-> >  static unsigned long __pll_params_to_rate(unsigned long parent_rate,
-> > -                                       const struct pll_rate_table *pllt,
-> > +                                       const struct pll_params_table *pllt,
-> >                                         u16 frac,
-> >                                         struct meson_clk_pll_data *pll)
-> >  {
-> > @@ -66,7 +66,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
-> >  {
-> >       struct clk_regmap *clk = to_clk_regmap(hw);
-> >       struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-> > -     struct pll_rate_table pllt;
-> > +     struct pll_params_table pllt;
-> >       u16 frac;
-> >
-> >       pllt.n = meson_parm_read(clk->map, &pll->n);
-> > @@ -81,7 +81,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
-> >
-> >  static u16 __pll_params_with_frac(unsigned long rate,
-> >                                 unsigned long parent_rate,
-> > -                               const struct pll_rate_table *pllt,
-> > +                               const struct pll_params_table *pllt,
-> >                                 struct meson_clk_pll_data *pll)
-> >  {
-> >       u16 frac_max = (1 << pll->frac.width);
-> > @@ -97,29 +97,50 @@ static u16 __pll_params_with_frac(unsigned long rate,
-> >       return min((u16)val, (u16)(frac_max - 1));
-> >  }
-> >
-> > -static const struct pll_rate_table *
-> > +static bool meson_clk_pll_is_better(unsigned long rate,
-> > +                                 unsigned long best,
-> > +                                 unsigned long now,
-> > +                                 struct meson_clk_pll_data *pll)
-> > +{
-> > +     if (!(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
-> > +         MESON_PARM_APPLICABLE(&pll->frac)) {
-> > +             /* Round down */
-> > +             if (now < rate && best < now)
-> > +                     return true;
-> > +     } else {
-> > +             /* Round Closest */
-> > +             if (abs(now - rate) < abs(best - rate))
-> > +                     return true;
-> > +     }
-> > +
-> > +     return false;
-> > +}
-> > +
-> > +static const struct pll_params_table *
-> >  meson_clk_get_pll_settings(unsigned long rate,
-> > +                        unsigned long parent_rate,
-> >                          struct meson_clk_pll_data *pll)
-> >  {
-> > -     const struct pll_rate_table *table = pll->table;
-> > -     unsigned int i = 0;
-> > +     const struct pll_params_table *table = pll->table;
-> > +     unsigned long best = 0, now = 0;
-> > +     unsigned int i, best_i = 0;
-> >
-> >       if (!table)
-> >               return NULL;
-> >
-> > -     /* Find the first table element exceeding rate */
-> > -     while (table[i].rate && table[i].rate <= rate)
-> > -             i++;
-> > +     for (i = 0; table[i].n; i++) {
-> > +             now = __pll_params_to_rate(parent_rate, &table[i], 0, pll);
-> >
-> > -     if (i != 0) {
-> > -             if (MESON_PARM_APPLICABLE(&pll->frac) ||
-> > -                 !(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
-> > -                 (abs(rate - table[i - 1].rate) <
-> > -                  abs(rate - table[i].rate)))
-> > -                     i--;
-> > +             /* If we get an exact match, don't bother any further */
-> > +             if (now == rate) {
-> > +                     return &table[i];
-> > +             } else if (meson_clk_pll_is_better(rate, best, now, pll)) {
-> > +                     best = now;
-> > +                     best_i = i;
-> > +             }
-> >       }
-> >
-> > -     return (struct pll_rate_table *)&table[i];
-> > +     return (struct pll_params_table *)&table[best_i];
-> >  }
-> >
-> >  static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> > @@ -127,16 +148,18 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-> >  {
-> >       struct clk_regmap *clk = to_clk_regmap(hw);
-> >       struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-> > -     const struct pll_rate_table *pllt =
-> > -             meson_clk_get_pll_settings(rate, pll);
-> > +     const struct pll_params_table *pllt =
-> > +             meson_clk_get_pll_settings(rate, *parent_rate, pll);
-> > +     unsigned long round;
-> >       u16 frac;
-> >
-> >       if (!pllt)
-> >               return meson_clk_pll_recalc_rate(hw, *parent_rate);
-> >
-> > -     if (!MESON_PARM_APPLICABLE(&pll->frac)
-> > -         || rate == pllt->rate)
-> > -             return pllt->rate;
-> > +     round = __pll_params_to_rate(*parent_rate, pllt, 0, pll);
-> > +
-> > +     if (!MESON_PARM_APPLICABLE(&pll->frac) || rate == round)
-> > +             return round;
-> >
-> >       /*
-> >        * The rate provided by the setting is not an exact match, let's
-> > @@ -214,7 +237,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  {
-> >       struct clk_regmap *clk = to_clk_regmap(hw);
-> >       struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-> > -     const struct pll_rate_table *pllt;
-> > +     const struct pll_params_table *pllt;
-> >       unsigned int enabled;
-> >       unsigned long old_rate;
-> >       u16 frac = 0;
-> > @@ -224,7 +247,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> >
-> >       old_rate = rate;
-> >
-> > -     pllt = meson_clk_get_pll_settings(rate, pll);
-> > +     pllt = meson_clk_get_pll_settings(rate, parent_rate, pll);
-> >       if (!pllt)
-> >               return -EINVAL;
-> >
-> > diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> > index a2245e857f70..6b96d55c047d 100644
-> > --- a/drivers/clk/meson/clkc.h
-> > +++ b/drivers/clk/meson/clkc.h
-> > @@ -43,15 +43,13 @@ static inline void meson_parm_write(struct regmap *map, struct parm *p,
-> >  }
-> >
-> >
-> > -struct pll_rate_table {
-> > -     unsigned long   rate;
-> > +struct pll_params_table {
-> >       u16             m;
-> >       u16             n;
-> >  };
-> >
-> > -#define PLL_RATE(_r, _m, _n)                                         \
-> > +#define PLL_PARAMS(_m, _n)                                           \
-> >       {                                                               \
-> > -             .rate           = (_r),                                 \
-> >               .m              = (_m),                                 \
-> >               .n              = (_n),                                 \
-> >       }
-> > @@ -67,7 +65,7 @@ struct meson_clk_pll_data {
-> >       struct parm rst;
-> >       const struct reg_sequence *init_regs;
-> >       unsigned int init_count;
-> > -     const struct pll_rate_table *table;
-> > +     const struct pll_params_table *table;
-> >       u8 flags;
-> >  };
-> >
-> > diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> > index e2d94498f098..9ac03c7bfbaa 100644
-> > --- a/drivers/clk/meson/gxbb.c
-> > +++ b/drivers/clk/meson/gxbb.c
-> > @@ -18,67 +18,67 @@
-> >
-> >  static DEFINE_SPINLOCK(meson_clk_lock);
-> >
-> > -static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
-> > -     PLL_RATE(768000000, 32, 1),
-> > -     PLL_RATE(792000000, 33, 1),
-> > -     PLL_RATE(816000000, 34, 1),
-> > -     PLL_RATE(840000000, 35, 1),
-> > -     PLL_RATE(864000000, 36, 1),
-> > -     PLL_RATE(888000000, 37, 1),
-> > -     PLL_RATE(912000000, 38, 1),
-> > -     PLL_RATE(936000000, 39, 1),
-> > -     PLL_RATE(960000000, 40, 1),
-> > -     PLL_RATE(984000000, 41, 1),
-> > -     PLL_RATE(1008000000, 42, 1),
-> > -     PLL_RATE(1032000000, 43, 1),
-> > -     PLL_RATE(1056000000, 44, 1),
-> > -     PLL_RATE(1080000000, 45, 1),
-> > -     PLL_RATE(1104000000, 46, 1),
-> > -     PLL_RATE(1128000000, 47, 1),
-> > -     PLL_RATE(1152000000, 48, 1),
-> > -     PLL_RATE(1176000000, 49, 1),
-> > -     PLL_RATE(1200000000, 50, 1),
-> > -     PLL_RATE(1224000000, 51, 1),
-> > -     PLL_RATE(1248000000, 52, 1),
-> > -     PLL_RATE(1272000000, 53, 1),
-> > -     PLL_RATE(1296000000, 54, 1),
-> > -     PLL_RATE(1320000000, 55, 1),
-> > -     PLL_RATE(1344000000, 56, 1),
-> > -     PLL_RATE(1368000000, 57, 1),
-> > -     PLL_RATE(1392000000, 58, 1),
-> > -     PLL_RATE(1416000000, 59, 1),
-> > -     PLL_RATE(1440000000, 60, 1),
-> > -     PLL_RATE(1464000000, 61, 1),
-> > -     PLL_RATE(1488000000, 62, 1),
-> > +static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
-> > +     PLL_PARAMS(32, 1),
-> > +     PLL_PARAMS(33, 1),
-> > +     PLL_PARAMS(34, 1),
-> > +     PLL_PARAMS(35, 1),
-> > +     PLL_PARAMS(36, 1),
-> > +     PLL_PARAMS(37, 1),
-> > +     PLL_PARAMS(38, 1),
-> > +     PLL_PARAMS(39, 1),
-> > +     PLL_PARAMS(40, 1),
-> > +     PLL_PARAMS(41, 1),
-> > +     PLL_PARAMS(42, 1),
-> > +     PLL_PARAMS(43, 1),
-> > +     PLL_PARAMS(44, 1),
-> > +     PLL_PARAMS(45, 1),
-> > +     PLL_PARAMS(46, 1),
-> > +     PLL_PARAMS(47, 1),
-> > +     PLL_PARAMS(48, 1),
-> > +     PLL_PARAMS(49, 1),
-> > +     PLL_PARAMS(50, 1),
-> > +     PLL_PARAMS(51, 1),
-> > +     PLL_PARAMS(52, 1),
-> > +     PLL_PARAMS(53, 1),
-> > +     PLL_PARAMS(54, 1),
-> > +     PLL_PARAMS(55, 1),
-> > +     PLL_PARAMS(56, 1),
-> > +     PLL_PARAMS(57, 1),
-> > +     PLL_PARAMS(58, 1),
-> > +     PLL_PARAMS(59, 1),
-> > +     PLL_PARAMS(60, 1),
-> > +     PLL_PARAMS(61, 1),
-> > +     PLL_PARAMS(62, 1),
-> >       { /* sentinel */ },
-> >  };
-> >
-> > -static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
-> > -     PLL_RATE(1008000000, 42, 1),
-> > -     PLL_RATE(1032000000, 43, 1),
-> > -     PLL_RATE(1056000000, 44, 1),
-> > -     PLL_RATE(1080000000, 45, 1),
-> > -     PLL_RATE(1104000000, 46, 1),
-> > -     PLL_RATE(1128000000, 47, 1),
-> > -     PLL_RATE(1152000000, 48, 1),
-> > -     PLL_RATE(1176000000, 49, 1),
-> > -     PLL_RATE(1200000000, 50, 1),
-> > -     PLL_RATE(1224000000, 51, 1),
-> > -     PLL_RATE(1248000000, 52, 1),
-> > -     PLL_RATE(1272000000, 53, 1),
-> > -     PLL_RATE(1296000000, 54, 1),
-> > -     PLL_RATE(1320000000, 55, 1),
-> > -     PLL_RATE(1344000000, 56, 1),
-> > -     PLL_RATE(1368000000, 57, 1),
-> > -     PLL_RATE(1392000000, 58, 1),
-> > -     PLL_RATE(1416000000, 59, 1),
-> > -     PLL_RATE(1440000000, 60, 1),
-> > -     PLL_RATE(1464000000, 61, 1),
-> > -     PLL_RATE(1488000000, 62, 1),
-> > -     PLL_RATE(1512000000, 63, 1),
-> > -     PLL_RATE(1536000000, 64, 1),
-> > -     PLL_RATE(1560000000, 65, 1),
-> > -     PLL_RATE(1584000000, 66, 1),
-> > +static const struct pll_params_table gxl_gp0_pll_params_table[] = {
-> > +     PLL_PARAMS(42, 1),
-> > +     PLL_PARAMS(43, 1),
-> > +     PLL_PARAMS(44, 1),
-> > +     PLL_PARAMS(45, 1),
-> > +     PLL_PARAMS(46, 1),
-> > +     PLL_PARAMS(47, 1),
-> > +     PLL_PARAMS(48, 1),
-> > +     PLL_PARAMS(49, 1),
-> > +     PLL_PARAMS(50, 1),
-> > +     PLL_PARAMS(51, 1),
-> > +     PLL_PARAMS(52, 1),
-> > +     PLL_PARAMS(53, 1),
-> > +     PLL_PARAMS(54, 1),
-> > +     PLL_PARAMS(55, 1),
-> > +     PLL_PARAMS(56, 1),
-> > +     PLL_PARAMS(57, 1),
-> > +     PLL_PARAMS(58, 1),
-> > +     PLL_PARAMS(59, 1),
-> > +     PLL_PARAMS(60, 1),
-> > +     PLL_PARAMS(61, 1),
-> > +     PLL_PARAMS(62, 1),
-> > +     PLL_PARAMS(63, 1),
-> > +     PLL_PARAMS(64, 1),
-> > +     PLL_PARAMS(65, 1),
-> > +     PLL_PARAMS(66, 1),
-> >       { /* sentinel */ },
-> >  };
-> >
-> > @@ -374,7 +374,7 @@ static struct clk_regmap gxbb_gp0_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = gxbb_gp0_pll_rate_table,
-> > +             .table = gxbb_gp0_pll_params_table,
-> >               .init_regs = gxbb_gp0_init_regs,
-> >               .init_count = ARRAY_SIZE(gxbb_gp0_init_regs),
-> >       },
-> > @@ -427,7 +427,7 @@ static struct clk_regmap gxl_gp0_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = gxl_gp0_pll_rate_table,
-> > +             .table = gxl_gp0_pll_params_table,
-> >               .init_regs = gxl_gp0_init_regs,
-> >               .init_count = ARRAY_SIZE(gxl_gp0_init_regs),
-> >       },
-> > diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> > index 17bcf0be56ba..30ae849ff53f 100644
-> > --- a/drivers/clk/meson/meson8b.c
-> > +++ b/drivers/clk/meson/meson8b.c
-> > @@ -29,22 +29,22 @@ struct meson8b_clk_reset {
-> >       void __iomem *base;
-> >  };
-> >
-> > -static const struct pll_rate_table sys_pll_rate_table[] = {
-> > -     PLL_RATE(1200000000, 50, 1),
-> > -     PLL_RATE(1224000000, 51, 1),
-> > -     PLL_RATE(1248000000, 52, 1),
-> > -     PLL_RATE(1272000000, 53, 1),
-> > -     PLL_RATE(1296000000, 54, 1),
-> > -     PLL_RATE(1320000000, 55, 1),
-> > -     PLL_RATE(1344000000, 56, 1),
-> > -     PLL_RATE(1368000000, 57, 1),
-> > -     PLL_RATE(1392000000, 58, 1),
-> > -     PLL_RATE(1416000000, 59, 1),
-> > -     PLL_RATE(1440000000, 60, 1),
-> > -     PLL_RATE(1464000000, 61, 1),
-> > -     PLL_RATE(1488000000, 62, 1),
-> > -     PLL_RATE(1512000000, 63, 1),
-> > -     PLL_RATE(1536000000, 64, 1),
-> > +static const struct pll_params_table sys_pll_params_table[] = {
-> > +     PLL_PARAMS(50, 1),
-> > +     PLL_PARAMS(51, 1),
-> > +     PLL_PARAMS(52, 1),
-> > +     PLL_PARAMS(53, 1),
-> > +     PLL_PARAMS(54, 1),
-> > +     PLL_PARAMS(55, 1),
-> > +     PLL_PARAMS(56, 1),
-> > +     PLL_PARAMS(57, 1),
-> > +     PLL_PARAMS(58, 1),
-> > +     PLL_PARAMS(59, 1),
-> > +     PLL_PARAMS(60, 1),
-> > +     PLL_PARAMS(61, 1),
-> > +     PLL_PARAMS(62, 1),
-> > +     PLL_PARAMS(63, 1),
-> > +     PLL_PARAMS(64, 1),
-> >       { /* sentinel */ },
-> >  };
-> >
-> > @@ -195,7 +195,7 @@ static struct clk_regmap meson8b_sys_pll_dco = {
-> >                       .shift   = 29,
-> >                       .width   = 1,
-> >               },
-> > -             .table = sys_pll_rate_table,
-> > +             .table = sys_pll_params_table,
-> >       },
-> >       .hw.init = &(struct clk_init_data){
-> >               .name = "sys_pll_dco",
-> >
->
-> We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
-I had a look at the sys_pll settings on Meson8b, here's what
-Meson8/Meson8b/Meson8m2 support for sys_pll:
-- 50..74
-- 76
-- 78
-- 80
-- 82
-- 84
-- 86
-- 88
-- 90
-- 92
-- 94
-- 96
-- 98
+On Wed, 04 Jul 2018, Matti Vaittinen wrote:
 
-(I'm providing this info because it may help finding a decision
-whether ranges are good or not. I have no preference)
+> On Wed, Jul 04, 2018 at 11:39:11AM +0300, Matti Vaittinen wrote:
+> > On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dv., 29 de juny 2018 a les 11:47:
+> > > 
+> > > Now that you use devm calls and you don't need to unwind things I
+> > > think is better to use plain returns. So,
+> > > 
+> > > return -ENOMEM;
+> > 
+> > I have never really understood why use of gotos in error handling is
+> > discouraged.
 
+They're not.
 
-Regards
-Martin
+> > Personally I would always choose single point of exit from
+> > a function when it is simple enough to achieve (like in this case). I've
+> > written and fixed way too many functions which leak resources or
+> > accidentally keep a lock when exiting from error branches. But I know
+> > many colleagues like you who prefer not to have gotos but  in place returns
+> > instead. So I guess I'll leave the final call on this to the one who is
+> > maintainer for this code. And it is true there is no things to unwind
+> > now - which does not mean that next updater won't add such. But as I
+> > said, I know plenty of people share your view - and even though I rather
+> > maintain code with only one exit the final call is on subsystem maintainer
+> > here.
 
+Please use gotos in the error path.
 
-[0] https://github.com/endlessm/linux-meson/blob/master/arch/arm/mach-meson8/clock.c#L140
+IMO, it's the nicest way to unwind (as you call it).
+
+> Actually, If it was completely my call the probe would look something
+> like this:
+> 
+> +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> +                           const struct i2c_device_id *id)
+> +{
+> +       struct bd71837 *bd71837;
+> +       struct bd71837_board *board_info;
+> +       int gpio_intr = 0;
+> +
+> +       const char *errstr = "No IRQ configured";
+> +       int ret = -EINVAL;
+> +
+> +       bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
+> +
+> +       if (bd71837 == NULL)
+> +               return -ENOMEM;
+> +
+> +       board_info = dev_get_platdata(&i2c->dev);
+> +
+> +       if (!board_info)
+> +               gpio_intr = i2c->irq;
+> +       else
+> +               gpio_intr = board_info->gpio_intr;
+> +
+> +       if (!gpio_intr)
+> +               goto err_out;
+> +
+> +       i2c_set_clientdata(i2c, bd71837);
+> +       bd71837->dev = &i2c->dev;
+> +       bd71837->i2c_client = i2c;
+> +       bd71837->chip_irq = gpio_intr;
+> +
+> +       errstr = "regmap initialization failed";
+> +
+> +       bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
+> +       ret = PTR_ERR(bd71837->regmap);
+> +       if (IS_ERR(bd71837->regmap))
+> +               goto err_out;
+> +
+> +       errstr = "Read BD71837_REG_DEVICE failed";
+> +       ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
+> +       if (ret < 0)
+> +               goto err_out;
+> +
+> +       errstr = "Failed to add irq_chip";
+> +       ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
+> +                                      bd71837->chip_irq, IRQF_ONESHOT, 0,
+> +                                      &bd71837_irq_chip, &bd71837->irq_data);
+> +       if (ret < 0)
+> +               goto err_out;
+> +
+> +       errstr = "Failed to configure button short press timeout";
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG0,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_SHORT_PRESS_10MS);
+> +       if (ret < 0)
+> +               goto err_out;
+> +
+> +       /* According to BD71847 datasheet the HW default for long press
+> +        * detection is 10ms. So lets change it to 10 sec so we can actually
+> +        * get the short push and allow gracefull shut down
+> +        */
+> +       ret = regmap_update_bits(bd71837->regmap,
+> +                                BD71837_REG_PWRONCONFIG1,
+> +                                BD718XX_PWRBTN_PRESS_DURATION_MASK,
+> +                                BD718XX_PWRBTN_LONG_PRESS_10S);
+> +
+> +       errstr = "Failed to configure button long press timeout";
+> +       if (ret < 0)
+> +               goto err_out;
+> +
+> +       btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
+> +                                         BD71837_INT_PWRBTN_S);
+> +
+> +       errstr = "Failed to get the IRQ";
+> +       ret = btns[0].irq;
+> +       if (btns[0].irq < 0)
+> +               goto err_out;
+> +
+> +       errstr = "Failed to create subdevices";
+> +       ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
+> +                                  bd71837_mfd_cells,
+> +                                  ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
+> +                                  regmap_irq_get_domain(bd71837->irq_data));
+> +       if (ret) {
+> +err_out:
+> +               if (errstr)
+> +                       dev_err(&i2c->dev, "%s (%d)\n", errstr, ret);
+> +       }
+> +
+> +       return ret;
+> +}
+> 
+> What do you think of this? To my eye it is nice. It keeps single point of
+> exit and introduces only simple if-statements without the need of curly
+> brackets. And finally the error prints string works as a comment too.
+> I've seen bunch of constructs like this on the networking side but I
+> have no idea if this is frowned on this subsystem =) Oh, and probe abowe
+> is just to illustrate the idea, I did not even try compiling it yet.
+
+That is horrible.  I nearly vomited on my keyboard.  It doesn't flow
+anywhere nearly as nicely has sorting out all of the error handling
+*after* it has been detected.  You're sacrificing readability to save
+a single line and do not save any *actual* lines of code, only a brace.
+
+Landing a goto in the middle of a statement is messy and unsightly.
+
+What happens when you have some resources to free?  The last few lines
+will become very messy, very quickly.
+
+Nit: "something == NULL" is better written as "!something".
+Nit: Please use proper multi-line comments as per the Coding Style.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
