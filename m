@@ -1,39 +1,67 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-Subject: Re: [PATCH v2 1/3] arm64: dts: actions: Enable clock controller for
- S700
-To: Stephen Boyd <sboyd@kernel.org>, afaerber@suse.de
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
- catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- manivannan.sadhasivam@linaro.org, pn@denx.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-2-sravanhome@gmail.com>
- <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-Message-ID: <149ebcc4-1430-37a6-e222-4328e8481df9@gmail.com>
-Date: Sun, 1 Jul 2018 18:50:30 +0200
-MIME-Version: 1.0
-In-Reply-To: <153029379879.143105.2037926027438984922@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.19
+Date: Wed,  4 Jul 2018 11:45:52 +0200
+Message-Id: <20180704094552.16235-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+	Hi Mike, Stephen,
 
-On 06/29/18 19:36, Stephen Boyd wrote:
-> Quoting Saravanan Sekar (2018-06-28 12:18:03)
->> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> index ef79d7905f44..28f3f4a0f7f0 100644
->> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
->> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
->> index 66dd5309f0a2..3530b705df90 100644
->> --- a/arch/arm64/boot/dts/actions/s700.dtsi
->> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> Can the above part be split from the below part? I don't want to merge
-> dts bits into clk tree, when those should normally go through arm-soc.
-Sure I will spilt into bindings commit
->> diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
->> new file mode 100644
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.19-tag1
+
+for you to fetch changes up to 4c3d88526eba214357150764a0e3e5308acbef4a:
+
+  clk: renesas: Renesas R9A06G032 clock driver (2018-06-25 11:17:13 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.19
+
+  - Add support for Crypto Engine clocks on R-Car H3,
+  - Add support for the new RZ/N1D SoC.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      clk: renesas: r8a7795: Add CR clock
+
+Gilad Ben-Yossef (1):
+      clk: renesas: r8a7795: Add CCREE clock
+
+Michel Pollet (3):
+      dt-bindings: clock: Add the r9a06g032-sysctrl.h file
+      dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+      clk: renesas: Renesas R9A06G032 clock driver
+
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |  43 +
+ drivers/clk/renesas/Kconfig                        |   6 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +
+ drivers/clk/renesas/r9a06g032-clocks.c             | 893 +++++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h      | 148 ++++
+ 6 files changed, 1093 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+ create mode 100644 drivers/clk/renesas/r9a06g032-clocks.c
+ create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
