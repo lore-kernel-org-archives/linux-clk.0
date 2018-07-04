@@ -1,88 +1,194 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:31336 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731745AbeGTNOE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 09:14:04 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
-Date: Fri, 20 Jul 2018 12:26:00 +0000
-Message-ID: <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
- <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
-In-Reply-To: <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <b6301691-a9f6-64fe-dd8a-ffe51fad6799@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com> <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
+ <20180430101826.GC5147@dell> <5269ccfd-0274-3c12-7eeb-5de923197d92@gmail.com>
+ <20180703071103.GE20176@dell> <b6301691-a9f6-64fe-dd8a-ffe51fad6799@suse.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 5 Jul 2018 00:52:23 +0800
+Message-ID: <CAGb2v65DX5hS1c93a1ouQsi4R2xaKKkkwKfHqzE_VKPq-TwrBA@mail.gmail.com>
+Subject: Re: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
+To: Matthias Brugger <mbrugger@suse.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>, Sean Wang <sean.wang@mediatek.com>,
+	David Airlie <airlied@linux.ie>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mike Turquette <mturquette@baylibre.com>, Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Boyd <sboyd@codeaurora.org>, Russell King <linux@armlinux.org.uk>,
+	dri-devel <dri-devel@lists.freedesktop.org>, linux-clk <linux-clk@vger.kernel.org>,
+	ck.hu@mediatek.com, Rob Herring <robh+dt@kernel.org>,
+	"moderated list:ARM/Mediatek SoC..." <linux-mediatek@lists.infradead.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	matthias.bgg@kernel.org, ulrich.hecht+renesas@gmail.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, David Miller <davem@davemloft.net>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMzoxMiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjA2IFBNIFBoaWwgRWR3b3J0aHkgIHdy
-b3RlOg0KPiA+IE9uIDIwIEp1bHkgMjAxOCAxMjoyMSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3Rl
-Og0KPiA+ID4gT24gV2VkLCBKdWwgMTgsIDIwMTggYXQgNDozNCBQTSBQaGlsIEVkd29ydGh5IHdy
-b3RlOg0KPiA+ID4gPiBUbyBhdm9pZCBhbGwgU29DIHBlcmlwaGVyYWwgZHJpdmVycyBkZWZlcnJp
-bmcgdGhlaXIgcHJvYmVzLCBib3RoDQo+ID4gPiA+IGNsb2NrIGFuZCBwaW5jdHJsIGRyaXZlcnMg
-c2hvdWxkIGFscmVhZHkgYmUgcHJvYmVkLiBTaW5jZSB0aGUNCj4gPiA+ID4gcGluY3RybCBkcml2
-ZXIgcmVxdWlyZXMgYSBjbG9jayB0byBhY2Nlc3MgdGhlIHJlZ2lzdGVycywgdGhlIGNsb2NrDQo+
-ID4gPiA+IGRyaXZlciBzaG91bGQgYmUgcHJvYmVkIGJlZm9yZSB0aGUgcGluY3RybCBkcml2ZXIu
-DQo+ID4gPiA+DQo+ID4gPiA+IFRoZXJlZm9yZSwgbW92ZSB0aGUgY2xvY2sgZHJpdmVyIGZyb20g
-c3Vic3lzX2luaXRjYWxsIHRvIGNvcmVfaW5pdGNhbGwuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25l
-ZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+ID4g
-Pg0KPiA+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+IFRoYW5rcyBmb3IgeW91ciByZXZp
-ZXchDQo+ID4NCj4gPiA+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRyaXZlciB1
-c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KPiA+IE5vLCB0aGUgcGluY3RybCBkcml2
-ZXIgdXNlcyBzdWJzeXNfaW5pdGNhbGwsIGJ1dCBwb3N0Y29yZV9pbml0Y2FsbCBvcg0KPiA+IGFy
-Y2hfaW5pdGNhbGwgbWF5IGJlIGJldHRlciB0byBtYWtlIGl0IGNsZWFyIGFib3V0IHRoZSBkZXBl
-bmRlbmNpZXMuDQo+IA0KPiBpZiB0aGUgcGluY3RybCBkcml2ZXIgdXNlcyBzdWJzeXNfaW5pdGNh
-bGwoKSwgLi4uDQo+IA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA2ZzAz
-Mi1jbG9ja3MuYw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA2ZzAzMi1j
-bG9ja3MuYw0KPiA+ID4gPiBAQCAtODc3LDE3ICs4NzcsMTggQEAgc3RhdGljIGNvbnN0IHN0cnVj
-dCBvZl9kZXZpY2VfaWQNCj4gPiA+IHI5YTA2ZzAzMl9tYXRjaFtdID0gew0KPiA+ID4gPiAgICAg
-ICAgIHsgfQ0KPiA+ID4gPiAgfTsNCj4gPiA+ID4NCj4gPiA+ID4gLXN0YXRpYyBzdHJ1Y3QgcGxh
-dGZvcm1fZHJpdmVyIHI5YTA2ZzAzMl9jbG9ja19kcml2ZXIgPSB7DQo+ID4gPiA+ICtzdGF0aWMg
-c3RydWN0IHBsYXRmb3JtX2RyaXZlciByOWEwNmcwMzJfY2xvY2tfZHJpdmVyIF9fcmVmZGF0YSA9
-DQo+ID4gPiA+ICt7DQo+ID4gPiA+ICAgICAgICAgLmRyaXZlciAgICAgICAgID0gew0KPiA+ID4g
-PiAgICAgICAgICAgICAgICAgLm5hbWUgICA9ICJyZW5lc2FzLHI5YTA2ZzAzMi1zeXNjdHJsIiwN
-Cj4gPiA+ID4gICAgICAgICAgICAgICAgIC5vZl9tYXRjaF90YWJsZSA9IHI5YTA2ZzAzMl9tYXRj
-aCwNCj4gPiA+ID4gICAgICAgICB9LA0KPiA+ID4gPiArICAgICAgIC5wcm9iZSA9IHI5YTA2ZzAz
-Ml9jbG9ja3NfcHJvYmUsDQo+ID4gPiA+ICB9Ow0KPiA+ID4gPg0KPiA+ID4gPiAgc3RhdGljIGlu
-dCBfX2luaXQgcjlhMDZnMDMyX2Nsb2Nrc19pbml0KHZvaWQpICB7DQo+ID4gPiA+IC0gICAgICAg
-cmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9wcm9iZSgmcjlhMDZnMDMyX2Nsb2NrX2RyaXZlciwNCj4g
-PiA+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgcjlhMDZnMDMyX2Nsb2Nrc19wcm9iZSk7DQo+
-ID4gPiA+ICsgICAgICAgcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZyOWEwNmcwMzJfY2xvY2tf
-ZHJpdmVyKTsNCj4gPiA+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiBUaGF0IHNob3VsZCBiZToN
-Cj4gPiArICAgICAgIHJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJnI5YTA2ZzAzMl9j
-bG9ja19kcml2ZXIpOw0KPiA+DQo+ID4gPiA+ICB9DQo+ID4gPg0KPiA+ID4gV2h5IGFyZSBhbGwg
-b2YgdGhlIGFib3ZlIGNoYW5nZXMgbmVlZGVkPw0KPiA+ID4gU2hvdWxkbid0IHRoZSBwbGF0Zm9y
-bV9kcml2ZXJfcHJvYmUoKSBrZWVwIG9uIHdvcmtpbmc/DQo+ID4gPiBJZiBpdCBkb2VzIG5vdCwg
-aXQgbWVhbnMgdGhlIGNsb2NrIGRyaXZlciBoYXMgc29tZSBvdGhlciBkZXBlbmRlbmN5LA0KPiA+
-ID4gYW5kIGNhbm5vdCBiZSBib3VuZCBpbW1lZGlhdGVseS4gIFRoaXMgaXMgcG90ZW50aWFsbHkg
-YSBkYW5nZXJvdXMNCj4gPiA+IHNpdHVhdGlvbiwgYXMNCj4gPiA+IHI5YTA2ZzAzMl9jbG9ja3Nf
-cHJvYmUoKSBpcyBfX2luaXQsIGJ1dCBjYW4gc3RpbGwgYmUgY2FsbGVkIGF0IGFueSB0aW1lIGxh
-dGVyLg0KPiA+ID4gSGVuY2UgdXNpbmcgcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCkgaXMgdGhlIHNh
-ZmUgdGhpbmcgdG8gZG8sDQo+ID4gPiBwb3NzaWJseSB3aXRoIGEgZGlmZmVyZW50IHJlc2h1ZmZs
-aW5nIG9mIHRoZSBjbG9jayBhbmQgcGluY3RybCBpbml0Y2FsbA0KPiBwcmlvcml0aWVzLg0KPiA+
-IE5vLCB5b3UgY2Fubm90IGNhbGwgcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCkgZnJvbSBjb3JlX2lu
-aXRjYWxsLg0KPiA+IEFsbCBkcml2ZXJzIHRoYXQgYXJlIGluIGNvcmVfaW5pdGNhbGwgY2FsbCBw
-bGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoKS4NCj4gDQo+IEhlbmNlIHRoZXkgY2Fubm90IGhhdmUg
-dGhlaXIgcHJvYmUgZnVuY3Rpb24gX19pbml0Lg0KPiANCj4gPg0KPiA+IFRoYW5rcw0KPiA+IFBo
-aWwNCj4gPg0KPiA+ID4gPiAtc3Vic3lzX2luaXRjYWxsKHI5YTA2ZzAzMl9jbG9ja3NfaW5pdCk7
-DQo+ID4gPiA+ICtjb3JlX2luaXRjYWxsKHI5YTA2ZzAzMl9jbG9ja3NfaW5pdCk7DQo+IA0KPiAu
-Li4gdXNpbmcgcG9zdGNvcmVfaW5pdGNhbGwoKSBvciBhcmNoX2luaXRjYWxsKCkgaGVyZSwgc2hv
-dWxkIHdvcmsgd2l0aA0KPiBwbGF0Zm9ybV9kcml2ZXJfcHJvYmUoKT8NCk5vcGUsIHlvdSBoYXZl
-IHRvIHVzZSBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoKSBmb3IgRFQgYmFzZWQgZHJpdmVycy4N
-CnN1YnN5c19pbml0Y2FsbCBpcyB0aGUgZWFybGllc3QgeW91IGNhbiB1c2UgcGxhdGZvcm1fZHJp
-dmVyX3Byb2JlKCkuDQoNClRoYW5rcw0KUGhpbA0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiAN
-Cj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRl
-cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
-dXgtDQo+IG02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
-aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRh
-bGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5n
-IGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBU
-b3J2YWxkcw0K
+On Thu, Jul 5, 2018 at 12:17 AM, Matthias Brugger <mbrugger@suse.com> wrote:
+>
+>
+> On 03/07/18 09:11, Lee Jones wrote:
+>> On Mon, 25 Jun 2018, Matthias Brugger wrote:
+>>> On 30/04/18 12:18, Lee Jones wrote:
+>>>> On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+>>>>
+>>>>> From: Matthias Brugger <mbrugger@suse.com>
+>>>>>
+>>>>> The MMSYS subsystem includes clocks and drm components.
+>>>>> This patch adds a MFD device to probe both drivers from the same
+>>>>> device tree compatible.
+>>>>>
+>>>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>>>>> ---
+>>>>>  drivers/mfd/Kconfig     |  9 ++++++
+>>>>>  drivers/mfd/Makefile    |  2 ++
+>>>>>  drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>  3 files changed, 90 insertions(+)
+>>>>>  create mode 100644 drivers/mfd/mtk-mmsys.c
+>>>>>
+>>>>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>>>>> index b860eb5aa194..d23a3b9a2c58 100644
+>>>>> --- a/drivers/mfd/Kconfig
+>>>>> +++ b/drivers/mfd/Kconfig
+>>>>> @@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
+>>>>>    help
+>>>>>      Select this if your MC13xxx is connected via an I2C bus.
+>>>>>
+>>>>> +config MFD_MEDIATEK_MMSYS
+>>>>> +  tristate "Mediatek MMSYS interface"
+>>>>> +  select MFD_CORE
+>>>>> +  select REGMAP_MMIO
+>>>>> +  help
+>>>>> +    Select this if you have a MMSYS subsystem in your SoC. The
+>>>>> +    MMSYS subsystem has at least a clock driver part and some
+>>>>> +    DRM components.
+>>>>> +
+>>>>>  config MFD_MXS_LRADC
+>>>>>    tristate "Freescale i.MX23/i.MX28 LRADC"
+>>>>>    depends on ARCH_MXS || COMPILE_TEST
+>>>>> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+>>>>> index d9d2cf0d32ef..b96118bd68d9 100644
+>>>>> --- a/drivers/mfd/Makefile
+>>>>> +++ b/drivers/mfd/Makefile
+>>>>> @@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)        += mc13xxx-core.o
+>>>>>  obj-$(CONFIG_MFD_MC13XXX_SPI)     += mc13xxx-spi.o
+>>>>>  obj-$(CONFIG_MFD_MC13XXX_I2C)     += mc13xxx-i2c.o
+>>>>>
+>>>>> +obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
+>>>>> +
+>>>>>  obj-$(CONFIG_MFD_CORE)            += mfd-core.o
+>>>>>
+>>>>>  obj-$(CONFIG_EZX_PCAP)            += ezx-pcap.o
+>>>>> diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+>>>>> new file mode 100644
+>>>>> index 000000000000..c802343fb1c6
+>>>>> --- /dev/null
+>>>>> +++ b/drivers/mfd/mtk-mmsys.c
+>>>>> @@ -0,0 +1,79 @@
+>>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>>> +
+>>>>> +/*
+>>>>> + * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
+>>>>> + *
+>>>>> + * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
+>>>>> + *
+>>>>> + * Author: Matthias Brugger <matthias.bgg@gmail.com>
+>>>>> + */
+>>>>> +
+>>>>> +#include <linux/module.h>
+>>>>> +#include <linux/init.h>
+>>>>> +#include <linux/mfd/core.h>
+>>>>> +#include <linux/of.h>
+>>>>> +#include <linux/of_address.h>
+>>>>> +#include <linux/of_device.h>
+>>>>> +#include <linux/platform_device.h>
+>>>>> +#include <linux/regmap.h>
+>>>>> +
+>>>>> +enum {
+>>>>> +  MMSYS_MT2701 = 1,
+>>>>> +};
+>>>>> +
+>>>>> +static const struct mfd_cell mmsys_mt2701_devs[] = {
+>>>>> +  { .name = "clk-mt2701-mm", },
+>>>>> +  { .name = "drm-mt2701-mm", },
+>>>>> +};
+>>>>> +
+>>>>> +static int mmsys_probe(struct platform_device *pdev)
+>>>>> +{
+>>>>> +  const struct mfd_cell *mmsys_cells;
+>>>>> +  int nr_cells;
+>>>>> +  long id;
+>>>>> +  int ret;
+>>>>> +
+>>>>> +  id = (long) of_device_get_match_data(&pdev->dev);
+>>>>> +  if (!id) {
+>>>>> +          dev_err(&pdev->dev, "of_device_get match_data() failed\n");
+>>>>> +          return -EINVAL;
+>>>>> +  }
+>>>>> +
+>>>>> +  switch (id) {
+>>>>> +  case MMSYS_MT2701:
+>>>>> +          mmsys_cells = mmsys_mt2701_devs;
+>>>>> +          nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
+>>>>> +          break;
+>>>>> +  default:
+>>>>> +          return -ENODEV;
+>>>>> +  }
+>>>>> +
+>>>>> +  ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
+>>>>> +                                  NULL, 0, NULL);
+>>>>> +  if (ret) {
+>>>>> +          dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
+>>>>> +          return ret;
+>>>>> +  }
+>>>>> +
+>>>>> +  return 0;
+>>>>> +};
+>>>>
+>>>> This driver is pretty pointless.  It doesn't actually do anything.
+>>>>
+>>>> I think you just want to use "simple-mfd" instead.
+>>>>
+>>>
+>>> I think the problem is, that right now we have two drivers which use the same
+>>> devicetree binding, which are clk and drm driver. With a simple-mfd we would
+>>> need two compatibles, and this would break backwards compatibility.
+>>
+>> So what functionality does this driver provide you with that you do
+>> not have currently?
+>>
+>
+> I'm not sure if I get your question. Point is, that the MMSYS implementation for
+> mt8173 is broken, as it assumes that we can probe two drivers with the
+> mediatek,mt8173-mmsys compatible. Somehow it used to work, but from what I
+> understand it was a bug. So older devicetrees use just on mt8173-mmsys
+> compatible in ther DTB.
+
+This works probably because the clk driver is using CLK_OF_DECLARE, which
+does not use the device model (i.e. no attached struct dev). So later on,
+when the device model scans and adds this device, it's considered not
+probed yet, and the drm driver will probe.
+
+This breaks horribly if you try to move the clk driver to a platform
+device driver based implementation. On the other hand, if you need the
+clk in early init, you can't use a platform or mfd device.
+
+Regards
+ChenYu
+
+>
+> I would like to keep backwards compatibility for the device tree, that's why I
+> was searching for a solution where we can probe two drivers and came up with
+> this mfd solution.
+>
+> So no new functionality, the clk driver provides the clock the drm components need.
+>
+> Regards,
+> Matthias
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
