@@ -1,69 +1,123 @@
-Return-Path: <Jian.Hu@amlogic.com>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-To: Jerome Brunet <jbrunet@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC: Neil Armstrong <narmstrong@baylibre.com>, <qianggui.song@amlogic.com>,
-	<sboyd@kernel.org>, <khilman@baylibre.com>, <mturquette@baylibre.com>,
-	<linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
-	<qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
-	<carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
-	<sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<xingyu.chen@amlogic.com>, Rob Herring <robh@kernel.org>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
- <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
- <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
- <1531216472.2708.71.camel@baylibre.com>
- <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
- <1531316752.2708.113.camel@baylibre.com>
-From: Jian Hu <jian.hu@amlogic.com>
-Message-ID: <d00bfbac-a041-3dc9-0cda-9a6eef5f3216@amlogic.com>
-Date: Mon, 16 Jul 2018 13:58:58 +0800
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v2 3/3] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+Date: Wed, 4 Jul 2018 13:17:35 +0300
+Message-ID: <1530699455-27654-3-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1531316752.2708.113.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Return-Path: jian.hu@amlogic.com
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jerome
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-On 2018/7/11 21:45, Jerome Brunet wrote:
-> On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
->>>>>> +static struct clk_regmap g12a_mpll0 = {
->>>>>> +       .data = &(struct clk_regmap_gate_data){
->>>>>> +               .offset = HHI_MPLL_CNTL1,
->>>>>> +               .bit_idx = 31,
->>>>>> +       },
->>>>>> +       .hw.init = &(struct clk_init_data){
->>>>>> +               .name = "mpll0",
->>>>>> +               .ops = &clk_regmap_gate_ops,
->>>>>> +               .parent_names = (const char *[]){ "mpll0_div" },
->>>>>> +               .num_parents = 1,
->>>>>> +               .flags = CLK_SET_RATE_PARENT,
->>>>>> +       },
->>>>>> +};
->>>
->>> The previous had a predivider (1 or 2) in front of these mpll. Even if the
->>> predivider is usually set to be a passthrough, it is better to model the tree
->>> correctly.
->>>
->>> Is this SoC any different ?
->>>
->>
->> I am not sure the difference, I will confirm with IC design guys.
-> 
-> I suggest that you have a look at the (upstream) axg and gxbb clock driver for
-> this
-> 
-> Same goes for the fdiv gates.
-> 
-> Last, please trim your replies a bit. It will make easier to see what you are
-> replying to.
-> 
-> .
-> 
+These clock have low jitter paths to certain parents. To model these
+correctly, use the sdmmc mux divider clock type.
 
-I have confirmed with IC design guys, axg and gxbb clock driver have a 
-prediver in frount  of these mpll, according to the Spec, we can get the 
-prediver function in HHI_MPLL_CNTL5 bit12, the G12A SoC have not the 
-prediver function.
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/clk/tegra/clk-id.h           |  2 --
+ drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
+ drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
+ 3 files changed, 12 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index b616e33..de466b4 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -227,13 +227,11 @@ enum clk_id {
+ 	tegra_clk_sdmmc1_9,
+ 	tegra_clk_sdmmc2,
+ 	tegra_clk_sdmmc2_8,
+-	tegra_clk_sdmmc2_9,
+ 	tegra_clk_sdmmc3,
+ 	tegra_clk_sdmmc3_8,
+ 	tegra_clk_sdmmc3_9,
+ 	tegra_clk_sdmmc4,
+ 	tegra_clk_sdmmc4_8,
+-	tegra_clk_sdmmc4_9,
+ 	tegra_clk_se,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_soc_therm_8,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2acba29..38c4eb2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
+ 	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
+ };
+ 
+-static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
+-	"pll_p",
+-	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
+-	"pll_c4_out2", "pll_c4_out1",
+-	"pll_c4_out1",			/* LJ input */
+-	"clk_m", "pll_c4_out0"
+-};
+-#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
+-
+ static const char *mux_pllp_pllc2_c_c3_clkm[] = {
+ 	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
+ };
+@@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
+ 	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
+ 	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
+-	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
+ 	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
+-	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
+ 	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
+ 	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
+ 	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5435d01..9eb1cb1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -44,6 +44,8 @@
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_SOR1 0x410
+ #define CLK_SOURCE_LA 0x1f8
++#define CLK_SOURCE_SDMMC2 0x154
++#define CLK_SOURCE_SDMMC4 0x164
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
+ 	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
+-	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
+ 	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
+ 	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
+ 	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
+-	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
+ 	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
+ 	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
+@@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 				0, NULL);
+ 	clks[TEGRA210_CLK_ACLK] = clk;
+ 
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
++					    CLK_SOURCE_SDMMC2, 9,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC2] = clk;
++
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
++					    CLK_SOURCE_SDMMC4, 15,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC4] = clk;
++
+ 	for (i = 0; i < ARRAY_SIZE(tegra210_periph); i++) {
+ 		struct tegra_periph_init_data *init = &tegra210_periph[i];
+ 		struct clk **clkp;
+-- 
+2.7.4
