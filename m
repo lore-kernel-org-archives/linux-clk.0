@@ -1,158 +1,110 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	lee.jones@linaro.org,
-	arnd@arndb.de
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 04/10] dt-bindings: reset: Add Actions Semi S900 SoC RMU support
-Date: Wed,  1 Aug 2018 09:09:09 +0530
-Message-Id: <20180801033915.15880-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
-References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Wed, 4 Jul 2018 11:53:06 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sboyd@kernel.org,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v8 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180704105002.GD496@dell>
+References: <cover.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <18a04e42debb2a23aec855cac3bcf3d6ab6c55fd.1530259815.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_533te3UuY9V9U+Z0yxTkW==3wsK22uzB4G=aWGour7Quw@mail.gmail.com>
+ <20180704083911.GH2118@localhost.localdomain>
+ <20180704095257.GJ2118@localhost.localdomain>
+ <20180704101102.GA496@dell>
+ <20180704103430.GA13087@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180704103430.GA13087@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RMU (Reset Management Unit) support for the Actions Semi S900
-SoC which is a part of the Actions Semi Owl family series.
+On Wed, 04 Jul 2018, Matti Vaittinen wrote:
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- .../bindings/reset/actions,owl-reset.txt      | 33 ++++++++++
- include/dt-bindings/reset/actions,s900-rmu.h  | 65 +++++++++++++++++++
- 2 files changed, 98 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/actions,owl-reset.txt
- create mode 100644 include/dt-bindings/reset/actions,s900-rmu.h
+> On Wed, Jul 04, 2018 at 11:11:02AM +0100, Lee Jones wrote:
+> > On Wed, 04 Jul 2018, Matti Vaittinen wrote:
+> > 
+> > > On Wed, Jul 04, 2018 at 11:39:11AM +0300, Matti Vaittinen wrote:
+> > > > On Tue, Jul 03, 2018 at 11:26:00AM +0200, Enric Balletbo Serra wrote:
+> > > > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > > > dia dv., 29 de juny 2018 a les 11:47:
+> > > > > 
+> > > > > Now that you use devm calls and you don't need to unwind things I
+> > > > > think is better to use plain returns. So,
+> > > > > 
+> > > > > return -ENOMEM;
+> > > > 
+> > > > I have never really understood why use of gotos in error handling is
+> > > > discouraged.
+> > 
+> > They're not.
+> > 
+> > > > Personally I would always choose single point of exit from
+> > > > a function when it is simple enough to achieve (like in this case). I've
+> > > > written and fixed way too many functions which leak resources or
+> > > > accidentally keep a lock when exiting from error branches. But I know
+> > > > many colleagues like you who prefer not to have gotos but  in place returns
+> > > > instead. So I guess I'll leave the final call on this to the one who is
+> > > > maintainer for this code. And it is true there is no things to unwind
+> > > > now - which does not mean that next updater won't add such. But as I
+> > > > said, I know plenty of people share your view - and even though I rather
+> > > > maintain code with only one exit the final call is on subsystem maintainer
+> > > > here.
+> > 
+> > Please use gotos in the error path.
+> > 
+> > IMO, it's the nicest way to unwind (as you call it).
+> 
+> I'll keep the gotos but clean other stuff for patch v9 then.
 
-diff --git a/Documentation/devicetree/bindings/reset/actions,owl-reset.txt b/Documentation/devicetree/bindings/reset/actions,owl-reset.txt
-new file mode 100644
-index 000000000000..38e2c7051d86
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/actions,owl-reset.txt
-@@ -0,0 +1,33 @@
-+Actions Semi Owl SoCs Reset Management Unit (RMU)
-+=================================================
-+
-+Please also refer to reset.txt in this directory for common reset
-+controller binding usage.
-+
-+The RMU registers are part of the system-controller block on Owl SoCs.
-+
-+Required properties:
-+- compatible: Should be "actions,s900-rmu"
-+- #reset-cells: Should be 1
-+
-+All available resets are defined as preprocessor macros in corresponding
-+dt-bindings/reset/actions,s900-rmu.h header and can be used in device
-+tree sources.
-+
-+Parent node should have the following properties :
-+- compatible: "syscon", "simple-mfd"
-+- reg: physical base address of the system controller and length of
-+  memory mapped region.
-+
-+Example:
-+
-+        sysctrl: system-controller@e0160000 {
-+                compatible = "syscon", "simple-mfd";
-+                reg = <0x0 0xe0160000 0x0 0x1000>;
-+
-+                rmu: reset-controller {
-+                        compatible = "actions,s900-rmu";
-+                        #reset-cells = <1>;
-+                };
-+        };
-+
-diff --git a/include/dt-bindings/reset/actions,s900-rmu.h b/include/dt-bindings/reset/actions,s900-rmu.h
-new file mode 100644
-index 000000000000..09e6dca46936
---- /dev/null
-+++ b/include/dt-bindings/reset/actions,s900-rmu.h
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+//
-+// Device Tree binding constants for Actions Semi S900 Reset Management Unit
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+
-+#ifndef _DT_BINDINGS_ACTIONS_S900_RESET_H
-+#define _DT_BINDINGS_ACTIONS_S900_RESET_H
-+
-+#define S900_RESET_CHIPID		0
-+#define S900_RESET_CPU_SCNT		1
-+#define S900_RESET_SRAMI		2
-+#define S900_RESET_DDR_CTL_PHY		3
-+#define S900_RESET_DMAC			4
-+#define S900_RESET_GPIO			5
-+#define S900_RESET_BISP_AXI		6
-+#define S900_RESET_CSI0			7
-+#define S900_RESET_CSI1			8
-+#define S900_RESET_DE			9
-+#define S900_RESET_DSI			10
-+#define S900_RESET_GPU3D_PA		11
-+#define S900_RESET_GPU3D_PB		12
-+#define S900_RESET_HDE			13
-+#define S900_RESET_I2C0			14
-+#define S900_RESET_I2C1			15
-+#define S900_RESET_I2C2			16
-+#define S900_RESET_I2C3			17
-+#define S900_RESET_I2C4			18
-+#define S900_RESET_I2C5			19
-+#define S900_RESET_IMX			20
-+#define S900_RESET_NANDC0		21
-+#define S900_RESET_NANDC1		22
-+#define S900_RESET_SD0			23
-+#define S900_RESET_SD1			24
-+#define S900_RESET_SD2			25
-+#define S900_RESET_SD3			26
-+#define S900_RESET_SPI0			27
-+#define S900_RESET_SPI1			28
-+#define S900_RESET_SPI2			29
-+#define S900_RESET_SPI3			30
-+#define S900_RESET_UART0		31
-+#define S900_RESET_UART1		32
-+#define S900_RESET_UART2		33
-+#define S900_RESET_UART3		34
-+#define S900_RESET_UART4		35
-+#define S900_RESET_UART5		36
-+#define S900_RESET_UART6		37
-+#define S900_RESET_HDMI			38
-+#define S900_RESET_LVDS			39
-+#define S900_RESET_EDP			40
-+#define S900_RESET_USB2HUB		41
-+#define S900_RESET_USB2HSIC		42
-+#define S900_RESET_USB3			43
-+#define S900_RESET_PCM1			44
-+#define S900_RESET_AUDIO		45
-+#define S900_RESET_PCM0			46
-+#define S900_RESET_SE			47
-+#define S900_RESET_GIC			48
-+#define S900_RESET_DDR_CTL_PHY_AXI	49
-+#define S900_RESET_CMU_DDR		50
-+#define S900_RESET_DMM			51
-+#define S900_RESET_HDCP2TX		52
-+#define S900_RESET_ETHERNET		53
-+
-+#endif /* _DT_BINDINGS_ACTIONS_S900_RESET_H */
+Sounds good.
+
+> > > Actually, If it was completely my call the probe would look something
+> > > like this:
+> > > 
+> > > +static int bd71837_i2c_probe(struct i2c_client *i2c,
+> > > +                           const struct i2c_device_id *id)
+> > > +{
+
+[...]
+
+> > > +}
+> > > 
+> > > What do you think of this? To my eye it is nice. It keeps single point of
+> > > exit and introduces only simple if-statements without the need of curly
+> > > brackets. And finally the error prints string works as a comment too.
+> > > I've seen bunch of constructs like this on the networking side but I
+> > > have no idea if this is frowned on this subsystem =) Oh, and probe abowe
+> > > is just to illustrate the idea, I did not even try compiling it yet.
+> > 
+> > That is horrible.  I nearly vomited on my keyboard. 
+> 
+> Note to self: Never to buy second hand keyboard from Lee =)
+
+That is sound advice.
+
+Not sure I would buy 2nd-hand keyboard from anyone - ewe! :\
+
 -- 
-2.17.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
