@@ -1,51 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42801 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728610AbeGQK2J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 06:28:09 -0400
-Received: by mail-wr1-f67.google.com with SMTP id e7-v6so597195wrs.9
-        for <linux-clk@vger.kernel.org>; Tue, 17 Jul 2018 02:56:21 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/3] clk: meson: clk-pll driver update
-Date: Tue, 17 Jul 2018 11:56:14 +0200
-Message-Id: <20180717095617.12240-1-jbrunet@baylibre.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To: David Lechner <david@lechnology.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+ <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+ <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+Date: Wed, 4 Jul 2018 12:05:29 +0530
+MIME-Version: 1.0
+In-Reply-To: <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is yet another round of update to the amlogic pll driver.
+Hi David,
 
- 1) Enable bit is added so we don't rely on the bootloader or the init
-    value to enable to pll device.
- 2) OD post dividers are removed from the pll driver. This simplify the
-    driver and let us provide the clocks which exist between those
-    dividera. Some device are actually using these clocks.
- 3) The rates hard coded in parameter tables are remove. Instead, we
-    only rely on the parent rate and the parameters to calculate the
-    output rate, which is a lot better.
+On Monday 02 July 2018 09:02 PM, David Lechner wrote:
+> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
+>> Hi David, Stephen,
+>>
+>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> This series moves all aemif/nand users to using the ti-aemif platform
+>>> driver located in drivers/memory instead of the older API located in
+>>> mach-davinci.
+>>>
+>>> First five patches add necessary changes to the clock driver. Next
+>>> seven convert the board files to using the ti-aemif driver. Last patch
+>>> removes now dead code.
+>>
+>> How do you want to handle this series? I can apply the series and
+>> provide you an immutable branch on v4.18-rc1 with the clock patches
+>> applied if that can work.
+> 
+> Sounds good to me. But I'm new to this maintainer thing, so maybe
+> there is something to consider that I haven't thought of?
 
-This series has been tested on the gxl libretech cc and axg s400.
-I did not test it on meson8b yet.
+I don't think there is more to it. Ultimately there should not be two
+commits for the same patch. Either you can apply and share the commit to
+use or I can do that as well. I am equally fine either way.
 
-Jerome Brunet (3):
-  clk: meson: clk-pll: add enable bit
-  clk: meson: clk-pll: remove od parameters
-  clk: meson: clk-pll: drop hard-coded rates from pll tables
-
- drivers/clk/meson/axg.c     | 320 ++++++++++++++++------------
- drivers/clk/meson/axg.h     |   8 +-
- drivers/clk/meson/clk-pll.c | 156 +++++++++-----
- drivers/clk/meson/clkc.h    |  16 +-
- drivers/clk/meson/gxbb.c    | 504 ++++++++++++++++++++++----------------------
- drivers/clk/meson/gxbb.h    |  10 +-
- drivers/clk/meson/meson8b.c | 167 ++++++++-------
- drivers/clk/meson/meson8b.h |   5 +-
- 8 files changed, 648 insertions(+), 538 deletions(-)
-
--- 
-2.14.4
-
+Regards,
+Sekhar
