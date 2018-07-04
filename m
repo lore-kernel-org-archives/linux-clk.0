@@ -1,88 +1,90 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v10 03/10] firmware: xilinx: Add zynqmp IOCTL API for device control
-Date: Tue, 17 Jul 2018 12:59:00 -0700
-Message-ID: <1531857547-16652-4-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52142 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752933AbeGDNfP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Jul 2018 09:35:15 -0400
+Subject: Re: [PATCH v3 4/6] bus: ti-sysc: Add support for software reset
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <mark.rutland@arm.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <robh+dt@kernel.org>,
+        <bcousson@baylibre.com>
+References: <a169ba7f-53f2-cf9a-a9ee-daffd6b53279@ti.com>
+ <20180608062158.GI5738@atomide.com>
+ <acdfef83-8778-e8f4-e423-ed04a9a8a649@ti.com>
+ <20180611060957.GN5738@atomide.com>
+ <f460481f-85a9-2a41-a894-6f25122dee8a@ti.com>
+ <20180611062904.GO5738@atomide.com>
+ <89d55b0b-fe9e-793b-2694-25755ac2bc15@ti.com>
+ <20180611070332.GP5738@atomide.com> <20180703070743.GG112168@atomide.com>
+ <ee54c3ea-6200-33dd-83da-491f5fdd9f5c@ti.com>
+ <20180703073139.GN112168@atomide.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <1138704c-b7a4-391f-3404-e1bd25a4a0ff@ti.com>
+Date: Wed, 4 Jul 2018 19:06:35 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180703073139.GN112168@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Hi,
 
-Add ZynqMP firmware IOCTL API to control and configure
-devices like PLLs, SD, Gem, etc.
+On Tuesday 03 July 2018 01:01 PM, Tony Lindgren wrote:
+> * Faiz Abbas <faiz_abbas@ti.com> [180703 07:31]:
+>> Hi,
+>>
+>> On Tuesday 03 July 2018 12:37 PM, Tony Lindgren wrote:
+>>> * Tony Lindgren <tony@atomide.com> [180611 07:06]:
+>>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:48]:
+>>>>> Hi,
+>>>>>
+>>>>> On Monday 11 June 2018 11:59 AM, Tony Lindgren wrote:
+>>>>>> * Faiz Abbas <faiz_abbas@ti.com> [180611 06:28]:
+>>>>>>> Great. I thought I completely misunderstood you. But I don't see what
+>>>>>>> adding another function will accomplish. A QUIRK flag used in the same
+>>>>>>> function would work well enough>
+>>>>>> Fine with me as long as the function stays simple for both
+>>>>>> syss and sysc reset.
+>>>>>>
+>>>>>
+>>>>>
+>>>>> In general a reset status bit being in sysstatus is the norm and it
+>>>>> being in sysconfig should be the "quirk" for which a flag needs to be
+>>>>> added. What do you think?
+>>>>
+>>>> Sure makes sense to me.
+>>>>
+>>>>> As an aside, naming bitshifts by the name of the platform they were
+>>>>> originally added in seems weird. There should be some generic mask
+>>>>> saying "soft reset is the 0th bit". Currently I am using
+>>>>> SYSC_OMAP4_SOFTRESET for a dra76x module. I guess it depends on how many
+>>>>> different sysconfig types we have.
+>>>>
+>>>> Sure we could have a macro for that.
+>>>
+>>> So what's the conclusion on this one? Are you going to do one
+>>> more version of the ti-sysc driver patch?
+>>>
+>>
+>> Yes. I have just now been able to get back to this. Will post a v4 by
+>> tomorrow.
+> 
+> OK thanks!
+> 
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  2 ++
- 2 files changed, 22 insertions(+)
+After taking a second look at this thread, I don't see anything big to
+be modified.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index edbb84e..24cfd9e 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -241,8 +241,28 @@ static int get_set_conduit_method(struct device_node *np)
- 	return 0;
- }
- 
-+/**
-+ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
-+ * @node_id:	Node ID of the device
-+ * @ioctl_id:	ID of the requested IOCTL
-+ * @arg1:	Argument 1 to requested IOCTL call
-+ * @arg2:	Argument 2 to requested IOCTL call
-+ * @out:	Returned output value
-+ *
-+ * This function calls IOCTL to firmware for device control and configuration.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-+			   u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
-+				   arg1, arg2, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
-+	.ioctl = zynqmp_pm_ioctl,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index cb63bed..2eec6e7 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -34,6 +34,7 @@
- 
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
-+	PM_IOCTL = 34,
- };
- 
- /* PMU-FW return status codes */
-@@ -49,6 +50,7 @@ enum pm_ret_status {
- 
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
-+	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+We both agree that "reset status bit in sysconfig register" is the quirk
+case which can be added once such an IP is discovered in ti-sysc.
+
+All I need to change is SYSC_OMAP4_SOFTRESET to SYSC_SOFT_RESET_SHIFT_0
+for better readability and rebase it to the latest mainline.
+
+Do reply if you differ on the above.
+
+Thanks,
+Faiz
