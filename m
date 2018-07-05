@@ -1,452 +1,123 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Thu, 26 Jul 2018 20:03:00 +0200
-Message-ID: <1571011.jY5lUBhtiX@jernej-laptop>
-In-Reply-To: <20180726171257.6688-11-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 3/6] bus: ti-sysc: Add support for using ti-sysc for MCAN
+ on dra76x
+Date: Thu, 5 Jul 2018 19:53:16 +0530
+Message-ID: <20180705142319.19583-4-faiz_abbas@ti.com>
+In-Reply-To: <20180705142319.19583-1-faiz_abbas@ti.com>
+References: <20180705142319.19583-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, paul@pwsan.com, tony@atomide.com, faiz_abbas@ti.com,
+ t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 26. julij 2018 ob 19:12:57 CEST je Icenowy Zheng napisal(a):
-> From: Jagan Teki <jagan@amarulasolutions.com>
-> 
-> Enable all necessary device tree nodes and add connector node to device
-> trees for all supported A64 boards with HDMI.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: squash all board patches altogether and change supply name]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes in v3,1:
-> - Squash all enablement patches altogether.
-> - Change supply name to match DT binding & driver change.
-> Changes for v3:
-> - Enable all pipeline components
-> Changes for v2:
-> - none
-> 
->  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
->  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
->  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
->  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
->  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
->  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
->  6 files changed, 204 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> 094cfed13df9..0d8f5571d574 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> @@ -60,6 +60,17 @@
->  		stdout-path = "serial0:115200n8";
->  	};
-> 
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +
->  	leds {
->  		compatible = "gpio-leds";
-> 
-> @@ -86,6 +97,10 @@
->  	};
->  };
-> 
-> +&de {
-> +	status = "okay";
-> +};
-> +
->  &ehci0 {
->  	status = "okay";
->  };
-> @@ -103,6 +118,17 @@
->  	status = "okay";
->  };
-> 
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
->  &i2c1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&i2c1_pins>;
-> @@ -120,6 +146,10 @@
->  	};
->  };
-> 
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc0_pins>;
-> @@ -300,6 +330,10 @@
->  	vcc-hdmi-supply = <&reg_dldo1>;
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins_a>;
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts index
-> 98dbff19f5cc..2bcf02f46366 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-> @@ -57,6 +57,21 @@
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&de {
-> +	status = "okay";
->  };
-> 
->  &ehci0 {
-> @@ -67,6 +82,17 @@
->  	status = "okay";
->  };
-> 
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
->  /* i2c1 connected with gpio headers like pine64, bananapi */
->  &i2c1 {
->  	pinctrl-names = "default";
-> @@ -78,6 +104,10 @@
->  	bias-pull-up;
->  };
-> 
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc0_pins>;
-> @@ -199,6 +229,10 @@
->  	vcc-hdmi-supply = <&reg_dldo1>;
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins_a>;
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts index
-> 3f531393eaee..5445a7a1db51 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> @@ -58,12 +58,42 @@
->  		stdout-path = "serial0:115200n8";
->  	};
-> 
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +
->  	wifi_pwrseq: wifi_pwrseq {
->  		compatible = "mmc-pwrseq-simple";
->  		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->  	};
->  };
-> 
-> +&de {
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc0_pins>;
-> @@ -218,6 +248,10 @@
->  	vcc-hdmi-supply = <&reg_dldo1>;
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins_a>;
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts index
-> 1221764f5719..81a8f92c6c35 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-> @@ -57,12 +57,42 @@
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&de {
-> +	status = "okay";
->  };
-> 
->  &ehci1 {
->  	status = "okay";
->  };
-> 
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc0_pins>;
-> @@ -195,6 +225,10 @@
->  	vcc-hdmi-supply = <&reg_dldo1>;
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins_a>;
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts index
-> 1b9b92e541d2..1b972bade9f6 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> @@ -62,6 +62,21 @@
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&de {
-> +	status = "okay";
->  };
-> 
->  &ehci0 {
-> @@ -82,6 +97,17 @@
-> 
->  };
-> 
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
->  &i2c1 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&i2c1_pins>;
-> @@ -99,6 +125,10 @@
->  	};
->  };
-> 
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc0_pins>;
-> @@ -238,6 +268,10 @@
->  	status = "disabled";
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  /* On Exp and Euler connectors */
->  &uart0 {
->  	pinctrl-names = "default";
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts index
-> c21f2331add6..eff44b069b1d 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-> @@ -61,6 +61,17 @@
->  		stdout-path = "serial0:115200n8";
->  	};
-> 
-> +	connector {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +
->  	reg_vcc1v8: vcc1v8 {
->  		compatible = "regulator-fixed";
->  		regulator-name = "vcc1v8";
-> @@ -69,6 +80,10 @@
->  	};
->  };
-> 
-> +&de {
-> +	status = "okay";
-> +};
-> +
->  &ehci0 {
->  	status = "okay";
->  };
-> @@ -86,6 +101,17 @@
->  	status = "okay";
->  };
-> 
-> +&hdmi {
-> +	hdmi-supply = <&reg_dldo1>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
->  &mdio {
->  	ext_rgmii_phy: ethernet-phy@1 {
->  		compatible = "ethernet-phy-ieee802.3-c22";
-> @@ -93,6 +119,10 @@
->  	};
->  };
-> 
-> +&mixer1 {
-> +	status = "okay";
-> +};
-> +
->  &mmc2 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&mmc2_pins>;
-> @@ -138,6 +168,10 @@
->  	vcc-hdmi-supply = <&reg_dldo1>;
+The dra76x MCAN generic interconnect module has a its own
+format for the bits in the control registers.
 
-How is it possible to have vcc-hdmi-supply already defined? Did I miss some 
-patch?
+Therefore add a new module type, new regbits and new capabilities
+specific to the MCAN module.
 
-Best regards,
-Jernej
+Acked-by: Rob Herring <robh@kernel.org>
+CC: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ .../devicetree/bindings/bus/ti-sysc.txt        |  1 +
+ drivers/bus/ti-sysc.c                          | 18 ++++++++++++++++++
+ include/dt-bindings/bus/ti-sysc.h              |  2 ++
+ include/linux/platform_data/ti-sysc.h          |  1 +
+ 4 files changed, 22 insertions(+)
 
->  };
-> 
-> +&tcon1 {
-> +	status = "okay";
-> +};
-> +
->  &uart0 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart0_pins_a>;
+diff --git a/Documentation/devicetree/bindings/bus/ti-sysc.txt b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+index d8ed5b780ed9..91dc2333af01 100644
+--- a/Documentation/devicetree/bindings/bus/ti-sysc.txt
++++ b/Documentation/devicetree/bindings/bus/ti-sysc.txt
+@@ -36,6 +36,7 @@ Required standard properties:
+ 		"ti,sysc-omap-aes"
+ 		"ti,sysc-mcasp"
+ 		"ti,sysc-usb-host-fs"
++		"ti,sysc-dra7-mcan"
+ 
+ - reg		shall have register areas implemented for the interconnect
+ 		target module in question such as revision, sysc and syss
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index 1cc29629d238..ad1cd6888757 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -1552,6 +1552,23 @@ static const struct sysc_capabilities sysc_omap4_usb_host_fs = {
+ 	.regbits = &sysc_regbits_omap4_usb_host_fs,
+ };
+ 
++static const struct sysc_regbits sysc_regbits_dra7_mcan = {
++	.dmadisable_shift = -ENODEV,
++	.midle_shift = -ENODEV,
++	.sidle_shift = -ENODEV,
++	.clkact_shift = -ENODEV,
++	.enwkup_shift = 4,
++	.srst_shift = 0,
++	.emufree_shift = -ENODEV,
++	.autoidle_shift = -ENODEV,
++};
++
++static const struct sysc_capabilities sysc_dra7_mcan = {
++	.type = TI_SYSC_DRA7_MCAN,
++	.sysc_mask = SYSC_DRA7_MCAN_ENAWAKEUP | SYSC_OMAP4_SOFTRESET,
++	.regbits = &sysc_regbits_dra7_mcan,
++};
++
+ static int sysc_init_pdata(struct sysc *ddata)
+ {
+ 	struct ti_sysc_platform_data *pdata = dev_get_platdata(ddata->dev);
+@@ -1743,6 +1760,7 @@ static const struct of_device_id sysc_match[] = {
+ 	{ .compatible = "ti,sysc-mcasp", .data = &sysc_omap4_mcasp, },
+ 	{ .compatible = "ti,sysc-usb-host-fs",
+ 	  .data = &sysc_omap4_usb_host_fs, },
++	{ .compatible = "ti,sysc-dra7-mcan", .data = &sysc_dra7_mcan, },
+ 	{  },
+ };
+ MODULE_DEVICE_TABLE(of, sysc_match);
+diff --git a/include/dt-bindings/bus/ti-sysc.h b/include/dt-bindings/bus/ti-sysc.h
+index 2c005376ac0e..7138384e2ef9 100644
+--- a/include/dt-bindings/bus/ti-sysc.h
++++ b/include/dt-bindings/bus/ti-sysc.h
+@@ -15,6 +15,8 @@
+ /* SmartReflex sysc found on 36xx and later */
+ #define SYSC_OMAP3_SR_ENAWAKEUP		(1 << 26)
+ 
++#define SYSC_DRA7_MCAN_ENAWAKEUP	(1 << 4)
++
+ /* SYSCONFIG STANDBYMODE/MIDLEMODE/SIDLEMODE supported by hardware */
+ #define SYSC_IDLE_FORCE			0
+ #define SYSC_IDLE_NO			1
+diff --git a/include/linux/platform_data/ti-sysc.h b/include/linux/platform_data/ti-sysc.h
+index 990aad477458..2efa3470a451 100644
+--- a/include/linux/platform_data/ti-sysc.h
++++ b/include/linux/platform_data/ti-sysc.h
+@@ -14,6 +14,7 @@ enum ti_sysc_module_type {
+ 	TI_SYSC_OMAP4_SR,
+ 	TI_SYSC_OMAP4_MCASP,
+ 	TI_SYSC_OMAP4_USB_HOST_FS,
++	TI_SYSC_DRA7_MCAN,
+ };
+ 
+ struct ti_sysc_cookie {
+-- 
+2.17.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
