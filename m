@@ -1,263 +1,154 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs2.siol.net ([185.57.226.193]:46858 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730250AbeGZTTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 15:19:08 -0400
+Received: from mailoutvs21.siol.net ([185.57.226.212]:34651 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754045AbeGEUFZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jul 2018 16:05:25 -0400
 From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v3.1 07/10] arm64: dts: allwinner: a64: Add display pipeline
-Date: Thu, 26 Jul 2018 20:01:10 +0200
-Message-ID: <1705510.X61WvWzHFo@jernej-laptop>
-In-Reply-To: <20180726171257.6688-8-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-8-icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have channel 0
+Date: Thu, 05 Jul 2018 22:03:35 +0200
+Message-ID: <1699738.FoQmAThxyL@jernej-laptop>
+In-Reply-To: <20180705070358.7ng4shuo3pxp62q6@flea>
+References: <20180625120304.7543-1-jernej.skrabec@siol.net> <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com> <20180705070358.7ng4shuo3pxp62q6@flea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 26. julij 2018 ob 19:12:54 CEST je Icenowy Zheng napisal(a):
-> From: Jagan Teki <jagan@amarulasolutions.com>
+Dne četrtek, 05. julij 2018 ob 09:03:58 CEST je Maxime Ripard napisal(a):
+> On Sun, Jul 01, 2018 at 11:11:06PM +0800, Chen-Yu Tsai wrote:
+> > On Sun, Jul 1, 2018 at 4:27 PM, Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > > Dne četrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai napisal(a):
+> > >> On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
+> > >> 
+> > >> <jernej.skrabec@siol.net> wrote:
+> > >> > Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai 
+napisal(a):
+> > >> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
+> > >> >> <jernej.skrabec@siol.net>
+> > >> > 
+> > >> > wrote:
+> > >> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI
+> > >> >> > encoder.
+> > >> >> > Because of that, all output endpoints on such TCON node will point
+> > >> >> > to a
+> > >> >> > encoder which is part of component framework.
+> > >> >> > 
+> > >> >> > Correct current graph traversing algorithm in such way that it
+> > >> >> > doesn't
+> > >> >> > skip output enpoints with id 0 on TV TCONs.
+> > >> >> 
+> > >> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that
+> > >> >> don't
+> > >> >> have channel 0, it must be skipped.
+> > >> > 
+> > >> > I'm not sure where this is stated. I read TCON binding again. Can you
+> > >> > please point me to it?
+> > >> 
+> > >> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree
+> > >> /bind ings/display/sunxi/sun4i-drm.txt#L169
+> > >> 
+> > >> Our TCON driver still expects RGB or LVDS panel / bridges on endpoint
+> > >> 0.
+> > > 
+> > > Yes, but that can only happen on TCON which has channel 0. TV TCONs
+> > > (those
+> > > with channel 1 only) can't have panels or bridges connected to them,
+> > > because they are internally always connected to either HDMI or TV
+> > > encoder or both. Actually, R40 is the only SoC, where same TV TCON can
+> > > be connected to TV encoder or HDMI. Others have specialized TV TCONs,
+> > > which are connect to only one encoder.
+> > > 
+> > > IMO TV TCONs are really just stripped down LCD TCONs to support one (or
+> > > max
+> > > two) specific encoder.
+> > 
+> > I agree. We've seen these first in the H3, and the reverse, TCONs only
+> > with
+> > LCD, on the A23/A33.
+> > 
+> > >> So I guess this was sort of implied historically. It's no longer true.
+> > >> This is something we should probably fix.
+> > > 
+> > > Fixed in what way? You mean update bindings to mention that TCON output
+> > > endpoint 0 is reserved for panels or bridges?
+> > 
+> > Either that, or have the drm driver look at other endpoints. I guess we
+> > should ask Maxime if this is already done or not, since the DSI driver
+> > isn't endpoint 0 in the A33 dtsi.
 > 
-> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-> TCON is connected to LCD and the second is to HDMI.
-> 
-> The HDMI controller/PHY pair is similar to the one on H3/H5, but have
-> two video PLLs selectable.
-> 
-> Add all required device tree nodes of the display pipeline, including
-> the TCON0 LCD one and the TCON1 HDMI one.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: refactor commit message and add 1st pipeline]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes for v3.1:
-> - Refactor commit message to make it more clear.
-> - Added first pipeline (mixer0 -> tcon0)
-> Changes for v3:
-> - Squash all pipeline components in one patch
-> - Add status for mixer1 and tcon1
-> Changes for v2:
-> - Change compatibles and other based on previous patch changes
-> 
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 169 ++++++++++++++++++
->  1 file changed, 169 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi index
-> d3daf90a8715..fe9cc673fe07 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -112,6 +112,12 @@
->  		};
->  	};
-> 
-> +	de: display-engine {
-> +		compatible = "allwinner,sun50i-a64-display-engine";
-> +		allwinner,pipelines = <&mixer1>;
-> +		status = "disabled";
-> +	};
-> +
->  	osc24M: osc24M_clk {
->  		#clock-cells = <0>;
->  		compatible = "fixed-clock";
-> @@ -194,6 +200,55 @@
->  				#clock-cells = <1>;
->  				#reset-cells = <1>;
->  			};
-> +
-> +			mixer0: mixer@100000 {
-> +				compatible = "allwinner,sun50i-a64-de2-mixer-0";
-> +				reg = <0x100000 0x100000>;
-> +				clocks = <&display_clocks CLK_BUS_MIXER0>,
-> +					 <&display_clocks CLK_MIXER0>;
-> +				clock-names = "bus",
-> +					      "mod";
-> +				resets = <&display_clocks RST_MIXER0>;
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					mixer0_out: port@1 {
-> +						reg = <1>;
-> +
-> +						mixer0_out_tcon0: endpoint {
-> +							remote-endpoint = <&tcon0_in_mixer0>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +
-> +			mixer1: mixer@200000 {
-> +				compatible = "allwinner,sun50i-a64-de2-mixer-1";
-> +				reg = <0x200000 0x100000>;
-> +				clocks = <&display_clocks CLK_BUS_MIXER1>,
-> +					 <&display_clocks CLK_MIXER1>;
-> +				clock-names = "bus",
-> +					      "mod";
-> +				/* The reset line is shared */
-> +				resets = <&display_clocks RST_WB>;
-> +				status = "disabled";
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					mixer1_out: port@1 {
-> +						reg = <1>;
-> +
-> +						mixer1_out_tcon1: endpoint {
-> +							remote-endpoint = <&tcon1_in_mixer1>;
-> +						};
-> +					};
-> +				};
-> +			};
->  		};
-> 
->  		syscon: syscon@1c00000 {
-> @@ -228,6 +283,76 @@
->  			#dma-cells = <1>;
->  		};
-> 
-> +		tcon0: lcd-controller@1c0c000 {
-> +			compatible = "allwinner,sun50i-a64-tcon-lcd",
-> +				     "allwinner,sun8i-a83t-tcon-lcd";
-> +			reg = <0x01c0c000 0x1000>;
-> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-> +			clock-names = "ahb", "tcon-ch0";
-> +			clock-output-names = "tcon-pixel-clock";
-> +			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
-> +			reset-names = "lcd", "lvds";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				tcon0_in: port@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0>;
-> +
-> +					tcon0_in_mixer0: endpoint@0 {
-> +						reg = <0>;
-> +						remote-endpoint = <&mixer0_out_tcon0>;
-> +					};
-> +				};
-> +
-> +				tcon0_out: port@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		tcon1: lcd-controller@1c0d000 {
-> +			compatible = "allwinner,sun50i-a64-tcon-tv",
-> +				     "allwinner,sun8i-a83t-tcon-tv";
-> +			reg = <0x01c0d000 0x1000>;
-> +			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-> +			clock-names = "ahb", "tcon-ch1";
-> +			resets = <&ccu RST_BUS_TCON1>;
-> +			reset-names = "lcd";
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				tcon1_in: port@0 {
-> +					reg = <0>;
-> +
-> +					tcon1_in_mixer1: endpoint {
-> +						remote-endpoint = <&mixer1_out_tcon1>;
-> +					};
-> +				};
-> +
-> +				tcon1_out: port@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <1>;
-> +
-> +					tcon1_out_hdmi: endpoint@1 {
-> +						reg = <1>;
-> +						remote-endpoint = <&hdmi_in_tcon1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->  		mmc0: mmc@1c0f000 {
->  			compatible = "allwinner,sun50i-a64-mmc";
->  			reg = <0x01c0f000 0x1000>;
-> @@ -686,6 +811,50 @@
->  			status = "disabled";
->  		};
-> 
-> +		hdmi: hdmi@1ee0000 {
-> +			compatible = "allwinner,sun50i-a64-dw-hdmi",
-> +				     "allwinner,sun8i-a83t-dw-hdmi";
-> +			reg = <0x01ee0000 0x10000>;
-> +			reg-io-width = <1>;
-> +			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-> +				 <&ccu CLK_HDMI>;
-> +			clock-names = "iahb", "isfr", "tmds";
-> +			resets = <&ccu RST_BUS_HDMI1>;
-> +			reset-names = "ctrl";
-> +			phys = <&hdmi_phy>;
-> +			phy-names = "hdmi-phy";
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				hdmi_in: port@0 {
-> +					reg = <0>;
-> +
-> +					hdmi_in_tcon1: endpoint {
-> +						remote-endpoint = <&tcon1_out_hdmi>;
-> +					};
-> +				};
-> +
-> +				hdmi_out: port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		hdmi_phy: hdmi-phy@1ef0000 {
-> +			compatible = "allwinner,sun50i-a64-hdmi-phy";
-> +			reg = <0x01ef0000 0x10000>;
-> +			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-> +				 <&ccu CLK_PLL_VIDEO0>, <&ccu CLK_PLL_VIDEO1>;
+> The DSI driver isn't really a good example for this, since the panel
+> isn't described as part of the OF graph, but DSI binding require that
+> it's a child of the DSI controller node.
 
-You should use numbers directly for easier merging through different trees.
+So should be new behaviour reverted? I mean ignoring endpoint 0 on TV TCONs.
+
+For me, it doesn't make sense to check for panel or bridges on TV TCONs, 
+because they are never exposed on physical pins. They are always connected to 
+TVE or HDMI encoder internally.
+
+> 
+> > >> In practice our drivers don't look at it (yet), but rely on the
+> > >> downstream
+> > >> encoder type to determine which channel to use.
+> > >> 
+> > >> But please add the "allwinner,tcon-channel" property as specified in
+> > >> the binding.
+> > > 
+> > > It's my understanding of TCON binding documentation that property
+> > > "allwinner,tcon-channel" is needed only if TCON supports both channels.
+> > > TV
+> > > TCON clearly supports only channel 1. In that case, there is no doubt to
+> > > which channel output endpoint belongs.
+> > > 
+> > > If that's not true, dt bindings documentation should be reworded to
+> > > contain
+> > > word "needed" or something similar. Currently, no DT for newer SoC
+> > > contains
+> > > that property (for example, A83T, H3, H5 or even A33).
+> 
+> Yeah, but that's mainly because we have a single output enabled for
+> each channel on those newer SoCs. When / if we enable the RGB and LVDS
+> output for example, we will have to set this.
+
+So just to be clear, before I send follow up series, I have to add 
+"allwinner,tcon-channel" property to DT, because both TV TCONs can be 
+connected to either TVE or HDMI (trough TCON TOP)?
+
+BTW, since this property is not used at all in the code, why not just simply 
+deprecate it and remove it from existing DTs? I noticed this is standard 
+practice for obsolete properties.
 
 Best regards,
 Jernej
 
-> +			clock-names = "bus", "mod", "pll-0", "pll-1";
-> +			resets = <&ccu RST_BUS_HDMI0>;
-> +			reset-names = "phy";
-> +			#phy-cells = <0>;
-> +		};
-> +
->  		rtc: rtc@1f00000 {
->  			compatible = "allwinner,sun6i-a31-rtc";
->  			reg = <0x01f00000 0x54>;
-
+> 
+> > > On A33 this is even more interesting, since tcon0 has only channel
+> > > 0 and has DSI output endpoint with number 1. According to TCON
+> > > binding docs, if "allwinner,tcon-channel" is not preset, endpoint
+> > > number represent channel. So, that would mean DSI needs channel 1
+> > > on tcon which supports clearly only channel 0. So either there
+> > > TCON bindings documentation needs updates or DT for A33 has to be
+> > > updated.
+> > 
+> > Maxime? You did the A33 DSI stuff.
+> 
+> I guess it's missing on the A33 DSI endpoint.
+> 
+> Maxime
 
 
 
