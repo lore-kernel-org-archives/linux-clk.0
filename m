@@ -1,61 +1,34 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 5 Jul 2018 14:39:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705203921.GA28410@rob-hp-laptop>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-To: Aapo Vienamo <avienamo@nvidia.com>, Peter Geis <pgwipeout@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180704105148.1e32d307@dhcp-10-21-25-168>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
- <46bc7178-f8a4-cc4e-ebe3-507671ffb735@gmail.com>
- <20180704105148.1e32d307@dhcp-10-21-25-168>
-Message-ID: <153089700685.143105.9967468507381208265@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/3] clk: tegra: refactor 7.1 div calculation
-Date: Fri, 06 Jul 2018 10:10:06 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Aapo Vienamo (2018-07-04 00:51:48)
-> On Tue, 3 Jul 2018 11:10:21 -0400
-> Peter Geis <pgwipeout@gmail.com> wrote:
-> =
+On Thu, Jul 05, 2018 at 05:32:58PM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-> > Good Morning,
-> > =
-
-> > Just a heads up.
-> > During compilation with your patches, I get the following warning:
-> > =
-
-> > In file included from ./arch/arm/include/asm/div64.h:127:0,
-> >                   from ./include/linux/kernel.h:174,
-> >                   from drivers/clk/tegra/div71.c:17:
-> > drivers/clk/tegra/div71.c: In function =E2=80=98div71_get=E2=80=99:
-> > ./include/asm-generic/div64.h:222:28: warning: comparison of distinct =
-
-> > pointer types lacks a cast
-> >    (void)(((typeof((n)) *)0) =3D=3D ((uint64_t *)0)); \
-> >                              ^
-> > drivers/clk/tegra/div71.c:40:2: note: in expansion of macro =E2=80=98do=
-_div=E2=80=99
-> >    do_div(divider_ux1, rate);
-> >    ^~~~~~
-> > =
-
-> > Very Respectfully,
-> > Peter Geis
-> > =
-
->  =
-
-> That's indeed true. Looks like this warning is produced only on 32-bit
-> arm as it uses a different variant of the do_div macro than arm64.
-> =
-
-
-divider_ux1 is an s64, but the generic do_div() macro is checking to
-make sure that's compatible with a u64, and it isn't. Maybe you should
-use a function like div64_long()?
+Reviewed-by: Rob Herring <robh@kernel.org>
