@@ -1,59 +1,80 @@
-Return-Path: <greg@kroah.com>
-Date: Thu, 26 Jul 2018 17:32:43 +0200
-From: Greg KH <greg@kroah.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: stable@vger.kernel.org, jbrunet@baylibre.com, sboyd@kernel.org,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-Message-ID: <20180726153243.GB8327@kroah.com>
-References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
- <5153040b-1f38-a17a-d78d-fec833c1c223@baylibre.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 0/6] Add MCAN Support for dra76x
+Date: Thu, 5 Jul 2018 19:53:13 +0530
+Message-ID: <20180705142319.19583-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <5153040b-1f38-a17a-d78d-fec833c1c223@baylibre.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: mark.rutland@arm.com, paul@pwsan.com, tony@atomide.com, faiz_abbas@ti.com,
+ t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 26, 2018 at 05:24:09PM +0200, Neil Armstrong wrote:
-> Hi Stable Team,
-> 
-> On 13/06/2018 14:20, Neil Armstrong wrote:
-> > On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
-> > seems to be dependent on the FCLK_DIV2 to be operationnal.
-> > 
-> > The issue occured since v4.17-rc1 by freezing the kernel boot when
-> > the 'schedutil' cpufreq governor was selected as default :
-> > 
-> >   [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
-> >   domain-0 init dvfs: 4
-> >   [   12.087757] hctosys: unable to open rtc device (rtc0)
-> >   [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-> >   [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-> > 
-> > But when disabling the MMC driver, the boot finished but cpufreq failed to
-> > change the CPU frequency :
-> > 
-> >   [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
-> > 
-> > A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
-> > the first bad commit.
-> > This commit added support for the missing clock gates before the fixed PLL
-> > fixed dividers (FCLK_DIVx) and the clock framework basically disabled
-> > all the unused fixed dividers, thus disabled a critical clock path for
-> > the SCPI Co-Processor.
-> > 
-> > This patch simply sets the FCLK_DIV2 gate as critical to ensure
-> > nobody can disable it.
-> > 
-> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> 
-> 
-> This patch hit linux master with commit id c987ac6f1f088663b6dad39281071aeb31d450a8
-> 
-> Could this be backported to the next 4.17 stable release ?
+The following patches add dts and sysconfig support
+for MCAN on TI's dra76 SOCs
 
-Now queued up, thanks,
+Changes in v4:
+ 1. Rebased to latest kernel
+ 2. Using ddata->cfg.syss_mask instead of ddata->cfg.quirks
+    for checking if poll on reset status is required.
 
-greg k-h
+Changes in v3:
+ 1. Added reset functionality to the ti-sysc
+    driver. This enables me to drop the hwmod
+    data patch as everything is being done in dt.
+
+ 2. Dropped ti,hwmods from the dts nodes
+
+ 3. Fixed the unit address of target-module
+    and mcan
+
+ 4. Removed the status="disabled" in dtsi
+    followed by status="okay" in dts.
+
+Changes in v2:
+ 1. Added Support for mcan in the ti-sysc driver
+    Also added the target-module node for the same
+
+ 2. Added clkctrl data for mcan clocks
+
+Faiz Abbas (4):
+  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
+  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
+  bus: ti-sysc: Add support for software reset
+  ARM: dts: Add generic interconnect target module node for MCAN
+
+Franklin S Cooper Jr (1):
+  ARM: dts: dra76x: Add MCAN node
+
+Lokesh Vutla (1):
+  ARM: dts: dra762: Add MCAN clock support
+
+ .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
+ arch/arm/boot/dts/dra76-evm.dts               |  6 ++
+ arch/arm/boot/dts/dra76x.dtsi                 | 64 +++++++++++++++++++
+ drivers/bus/ti-sysc.c                         | 57 +++++++++++++++++
+ drivers/clk/ti/clk-7xx.c                      |  1 +
+ include/dt-bindings/bus/ti-sysc.h             |  2 +
+ include/dt-bindings/clock/dra7.h              |  1 +
+ include/linux/platform_data/ti-sysc.h         |  1 +
+ 8 files changed, 133 insertions(+)
+
+-- 
+2.17.0
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
