@@ -1,314 +1,691 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V4 1/9] clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-Date: Wed, 18 Jul 2018 21:36:55 +0800
-Message-Id: <1531921023-18497-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 5 Jul 2018 10:46:35 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com
+Cc: sboyd@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v9 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-For dividers with zero indicating clock is disabled, instead of giving a
-warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
-set" in exist code, we'd like to introduce enable/disable function for it.
-e.g.
-000b - Clock disabled
-001b - Divide by 1
-010b - Divide by 2
-...
+ROHM BD71837 PMIC MFD driver providing interrupts and support
+for three subsystems:
+- clk
+- Regulators
+- input/power-key
 
-Set rate when the clk is disabled will cache the rate request and only
-when the clk is enabled will the driver actually program the hardware to
-have the requested divider value. Similarly, when the clk is disabled we'll
-write a 0 there, but when the clk is enabled we'll restore whatever rate
-(divider) was chosen last.
-
-It does mean that recalc rate will be sort of odd, because when the clk is
-off it will return 0, and when the clk is on it will return the right rate.
-So to make things work, we'll need to return the cached rate in recalc rate
-when the clk is off and read the hardware when the clk is on.
-
-NOTE for the default off divider, the recalc rate will still return 0 as
-there's still no proper preset rate. Enable such divider will give user
-a reminder error message.
-
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
-ChangeLog:
-v3->v4:
- * no changes
-v2->v3:
- * split normal and gate ops
- * fix the possible racy
-v1->v2:
- * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
----
- drivers/clk/clk-divider.c    | 152 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |   9 +++
- 2 files changed, 161 insertions(+)
+ drivers/mfd/Kconfig         |  13 ++
+ drivers/mfd/Makefile        |   1 +
+ drivers/mfd/bd71837.c       | 215 ++++++++++++++++++++++++
+ include/linux/mfd/bd71837.h | 391 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 620 insertions(+)
+ create mode 100644 drivers/mfd/bd71837.c
+ create mode 100644 include/linux/mfd/bd71837.h
 
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index b6234a5..b3566fd 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -122,6 +122,9 @@ unsigned long divider_recalc_rate(struct clk_hw *hw, unsigned long parent_rate,
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..d01a279f5e4a 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1787,6 +1787,19 @@ config MFD_STW481X
+ 	  in various ST Microelectronics and ST-Ericsson embedded
+ 	  Nomadik series.
  
- 	div = _get_div(table, val, flags, width);
- 	if (!div) {
-+		if (flags & CLK_DIVIDER_ZERO_GATE)
-+			return 0;
++config MFD_BD71837
++	tristate "BD71837 Power Management chip"
++	depends on I2C=y
++	depends on OF
++	select REGMAP_I2C
++	select REGMAP_IRQ
++	select MFD_CORE
++	help
++	  Select this option to get support for the ROHM BD71837
++	  Power Management chips. BD71837 is designed to power processors like
++	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
++	  and emergency shut down as well as 32,768KHz clock output.
 +
- 		WARN(!(flags & CLK_DIVIDER_ALLOW_ZERO),
- 			"%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
- 			clk_hw_get_name(hw));
-@@ -145,6 +148,34 @@ static unsigned long clk_divider_recalc_rate(struct clk_hw *hw,
- 				   divider->flags, divider->width);
- }
+ config MFD_STM32_LPTIMER
+ 	tristate "Support for STM32 Low-Power Timer"
+ 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index e9fd20dba18d..09dc9eb3782c 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
+ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+ obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+ obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
++obj-$(CONFIG_MFD_BD71837)	+= bd71837.o
  
-+static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	unsigned int val;
+diff --git a/drivers/mfd/bd71837.c b/drivers/mfd/bd71837.c
+new file mode 100644
+index 000000000000..677097bcea17
+--- /dev/null
++++ b/drivers/mfd/bd71837.c
+@@ -0,0 +1,215 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright (C) 2018 ROHM Semiconductors
++// bd71837.c -- ROHM BD71837MWV mfd driver
++//
++// Datasheet available from
++// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
 +
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
++#include <linux/i2c.h>
++#include <linux/input.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/bd71837.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/gpio_keys.h>
 +
-+	if (!clk_hw_is_enabled(hw)) {
-+		val = divider->cached_val;
-+	} else {
-+		val = clk_readl(divider->reg) >> divider->shift;
-+		val &= clk_div_mask(divider->width);
-+	}
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return divider_recalc_rate(hw, parent_rate, val, divider->table,
-+				   divider->flags, divider->width);
-+}
-+
- static bool _is_valid_table_div(const struct clk_div_table *table,
- 							 unsigned int div)
- {
-@@ -437,6 +468,108 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	int value;
-+	u32 val;
-+
-+	value = divider_get_val(rate, parent_rate, divider->table,
-+				divider->width, divider->flags);
-+	if (value < 0)
-+		return value;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	if (clk_hw_is_enabled(hw)) {
-+		if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
-+			val = clk_div_mask(divider->width) << (divider->shift + 16);
-+		} else {
-+			val = clk_readl(divider->reg);
-+			val &= ~(clk_div_mask(divider->width) << divider->shift);
-+		}
-+		val |= (u32)value << divider->shift;
-+		clk_writel(val, divider->reg);
-+	} else {
-+		divider->cached_val = value;
-+	}
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static int clk_divider_enable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	if (!divider->cached_val) {
-+		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* restore div val */
-+	val = clk_readl(divider->reg);
-+	val |= divider->cached_val << divider->shift;
-+	clk_writel(val, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+
-+	return 0;
-+}
-+
-+static void clk_divider_disable(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	u32 val;
-+
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
-+
-+	/* store the current div val */
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= clk_div_mask(divider->width);
-+	divider->cached_val = val;
-+	clk_writel(0, divider->reg);
-+
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
-+}
-+
-+static int clk_divider_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	u32 val;
-+
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= clk_div_mask(divider->width);
-+
-+	return val ? 1 : 0;
-+}
-+
- const struct clk_ops clk_divider_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -444,6 +577,16 @@ const struct clk_ops clk_divider_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_divider_ops);
- 
-+const struct clk_ops clk_divider_gate_ops = {
-+	.recalc_rate = clk_divider_gate_recalc_rate,
-+	.round_rate = clk_divider_round_rate,
-+	.set_rate = clk_divider_gate_set_rate,
-+	.enable = clk_divider_enable,
-+	.disable = clk_divider_disable,
-+	.is_enabled = clk_divider_is_enabled,
++static struct gpio_keys_button btns[] = {
++	{
++		.code = KEY_POWER,
++		.gpio = -1,
++		.type = EV_KEY,
++	},
 +};
-+EXPORT_SYMBOL_GPL(clk_divider_gate_ops);
 +
- const struct clk_ops clk_divider_ro_ops = {
- 	.recalc_rate = clk_divider_recalc_rate,
- 	.round_rate = clk_divider_round_rate,
-@@ -459,6 +602,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	struct clk_divider *div;
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	u32 val;
- 	int ret;
- 
- 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-@@ -476,6 +620,8 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	init.name = name;
- 	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
- 		init.ops = &clk_divider_ro_ops;
-+	else if (clk_divider_flags & CLK_DIVIDER_ZERO_GATE)
-+		init.ops = &clk_divider_gate_ops;
- 	else
- 		init.ops = &clk_divider_ops;
- 	init.flags = flags | CLK_IS_BASIC;
-@@ -491,6 +637,12 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- 	div->hw.init = &init;
- 	div->table = table;
- 
-+	if (div->flags & CLK_DIVIDER_ZERO_GATE) {
-+		val = clk_readl(reg) >> shift;
-+		val &= clk_div_mask(width);
-+		div->cached_val = val;
++static struct gpio_keys_platform_data bd718xx_powerkey_data = {
++	.buttons = &btns[0],
++	.nbuttons = ARRAY_SIZE(btns),
++	.name = "bd718xx-pwrkey",
++};
++
++static struct mfd_cell bd71837_mfd_cells[] = {
++	{
++		.name = "bd71837-clk",
++	}, {
++		.name = "gpio-keys",
++		.platform_data = &bd718xx_powerkey_data,
++		.pdata_size = sizeof(bd718xx_powerkey_data),
++	}, {
++		.name = "bd71837-pmic",
++	},
++};
++
++static const struct regmap_irq bd71837_irqs[] = {
++	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
++	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
++};
++
++static struct regmap_irq_chip bd71837_irq_chip = {
++	.name = "bd71837-irq",
++	.irqs = bd71837_irqs,
++	.num_irqs = ARRAY_SIZE(bd71837_irqs),
++	.num_regs = 1,
++	.irq_reg_stride = 1,
++	.status_base = BD71837_REG_IRQ,
++	.mask_base = BD71837_REG_MIRQ,
++	.ack_base = BD71837_REG_IRQ,
++	.init_ack_masked = true,
++	.mask_invert = false,
++};
++
++static const struct regmap_range pmic_status_range = {
++	.range_min = BD71837_REG_IRQ,
++	.range_max = BD71837_REG_POW_STATE,
++};
++
++static const struct regmap_access_table volatile_regs = {
++	.yes_ranges = &pmic_status_range,
++	.n_yes_ranges = 1,
++};
++
++static const struct regmap_config bd71837_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.volatile_table = &volatile_regs,
++	.max_register = BD71837_MAX_REGISTER - 1,
++	.cache_type = REGCACHE_RBTREE,
++};
++
++static const struct of_device_id bd71837_of_match[] = {
++	{ .compatible = "rohm,bd71837", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, bd71837_of_match);
++
++static int bd71837_i2c_probe(struct i2c_client *i2c,
++			    const struct i2c_device_id *id)
++{
++	struct bd71837 *bd71837;
++	struct bd71837_board *board_info;
++	int ret = -EINVAL;
++
++	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
++
++	if (!bd71837)
++		return -ENOMEM;
++
++	board_info = dev_get_platdata(&i2c->dev);
++
++	if (!board_info)
++		bd71837->chip_irq = i2c->irq;
++	else
++		bd71837->chip_irq = board_info->gpio_intr;
++
++	if (!bd71837->chip_irq) {
++		dev_err(&i2c->dev, "No IRQ configured\n");
++		goto err_out;
 +	}
 +
- 	/* register the clock */
- 	hw = &div->hw;
- 	ret = clk_hw_register(dev, hw);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 08b1aa7..08f135a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -387,6 +387,7 @@ struct clk_div_table {
-  * @shift:	shift to the divider bit field
-  * @width:	width of the divider bit field
-  * @table:	array of value/divider pairs, last entry should have div = 0
-+ * @cached_val: cached div hw value used for CLK_DIVIDER_ZERO_GATE
-  * @lock:	register lock
-  *
-  * Clock with an adjustable divider affecting its output frequency.  Implements
-@@ -415,6 +416,12 @@ struct clk_div_table {
-  * CLK_DIVIDER_MAX_AT_ZERO - For dividers which are like CLK_DIVIDER_ONE_BASED
-  *	except when the value read from the register is zero, the divisor is
-  *	2^width of the field.
-+ * CLK_DIVIDER_ZERO_GATE - For dividers which are like CLK_DIVIDER_ONE_BASED
-+ *	when the value read from the register is zero, it means the divisor
-+ *	is gated. For this case, the cached_val will be used to store the
-+ *	intermediate div for the normal rate operation, like set_rate/get_rate/
-+ *	recalc_rate. When the divider is ungated, the driver will actually
-+ *	program the hardware to have the requested divider value.
-  */
- struct clk_divider {
- 	struct clk_hw	hw;
-@@ -423,6 +430,7 @@ struct clk_divider {
- 	u8		width;
- 	u8		flags;
- 	const struct clk_div_table	*table;
-+	u32		cached_val;
- 	spinlock_t	*lock;
- };
- 
-@@ -436,6 +444,7 @@ struct clk_divider {
- #define CLK_DIVIDER_ROUND_CLOSEST	BIT(4)
- #define CLK_DIVIDER_READ_ONLY		BIT(5)
- #define CLK_DIVIDER_MAX_AT_ZERO		BIT(6)
-+#define CLK_DIVIDER_ZERO_GATE		BIT(7)
- 
- extern const struct clk_ops clk_divider_ops;
- extern const struct clk_ops clk_divider_ro_ops;
++	bd71837->dev = &i2c->dev;
++	bd71837->i2c_client = i2c;
++	i2c_set_clientdata(i2c, bd71837);
++
++	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
++	if (IS_ERR(bd71837->regmap)) {
++		ret = PTR_ERR(bd71837->regmap);
++		dev_err(&i2c->dev, "regmap initialization failed\n");
++		goto err_out;
++	}
++
++	ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
++	if (ret < 0) {
++		dev_err(&i2c->dev, "Read BD71837_REG_DEVICE failed\n");
++		goto err_out;
++	}
++
++	ret = devm_regmap_add_irq_chip(&i2c->dev, bd71837->regmap,
++				       bd71837->chip_irq, IRQF_ONESHOT, 0,
++				       &bd71837_irq_chip, &bd71837->irq_data);
++	if (ret < 0) {
++		dev_err(&i2c->dev, "Failed to add irq_chip\n");
++		goto err_out;
++	}
++
++	ret = regmap_update_bits(bd71837->regmap,
++				 BD71837_REG_PWRONCONFIG0,
++				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
++				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
++	if (ret < 0) {
++		dev_err(&i2c->dev, "Failed to configure button short press timeout\n");
++		goto err_out;
++	}
++
++	/*
++	 * According to BD71847 datasheet the HW default for long press
++	 * detection is 10ms. So lets change it to 10 sec so we can actually
++	 * get the short push and allow gracefull shut down
++	 */
++	ret = regmap_update_bits(bd71837->regmap,
++				 BD71837_REG_PWRONCONFIG1,
++				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
++				 BD718XX_PWRBTN_LONG_PRESS_10S);
++
++	if (ret < 0) {
++		dev_err(&i2c->dev, "Failed to configure button long press timeout\n");
++		goto err_out;
++	}
++
++	btns[0].irq = regmap_irq_get_virq(bd71837->irq_data,
++					  BD71837_INT_PWRBTN_S);
++
++	if (btns[0].irq < 0) {
++		ret = btns[0].irq;
++		dev_err(&i2c->dev, "Failed to get the IRQ\n");
++		goto err_out;
++	}
++
++	ret = devm_mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
++				   bd71837_mfd_cells,
++				   ARRAY_SIZE(bd71837_mfd_cells), NULL, 0,
++				   regmap_irq_get_domain(bd71837->irq_data));
++	if (ret)
++		dev_err(&i2c->dev, "Failed to create subdevices\n");
++err_out:
++
++	return ret;
++}
++
++static const struct i2c_device_id bd71837_i2c_id[] = {
++	{ .name = "bd71837", },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, bd71837_i2c_id);
++
++static struct i2c_driver bd71837_i2c_driver = {
++	.driver = {
++		.name = "bd71837-mfd",
++		.of_match_table = bd71837_of_match,
++	},
++	.probe = bd71837_i2c_probe,
++	.id_table = bd71837_i2c_id,
++};
++
++static int __init bd71837_i2c_init(void)
++{
++	return i2c_add_driver(&bd71837_i2c_driver);
++}
++/*
++ * init early so consumer devices can complete system boot
++ */
++subsys_initcall(bd71837_i2c_init);
++
++static void __exit bd71837_i2c_exit(void)
++{
++	i2c_del_driver(&bd71837_i2c_driver);
++}
++module_exit(bd71837_i2c_exit);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD71837 chip multi-function driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
+new file mode 100644
+index 000000000000..10b0dfe90f27
+--- /dev/null
++++ b/include/linux/mfd/bd71837.h
+@@ -0,0 +1,391 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (C) 2018 ROHM Semiconductors */
++
++/*
++ * ROHM BD71837MWV header file
++ */
++
++#ifndef __LINUX_MFD_BD71837_H__
++#define __LINUX_MFD_BD71837_H__
++
++#include <linux/regmap.h>
++
++enum {
++	BD71837_BUCK1	=	0,
++	BD71837_BUCK2,
++	BD71837_BUCK3,
++	BD71837_BUCK4,
++	BD71837_BUCK5,
++	BD71837_BUCK6,
++	BD71837_BUCK7,
++	BD71837_BUCK8,
++	BD71837_LDO1,
++	BD71837_LDO2,
++	BD71837_LDO3,
++	BD71837_LDO4,
++	BD71837_LDO5,
++	BD71837_LDO6,
++	BD71837_LDO7,
++	BD71837_REGULATOR_CNT,
++};
++
++#define BD71837_BUCK1_VOLTAGE_NUM	0x40
++#define BD71837_BUCK2_VOLTAGE_NUM	0x40
++#define BD71837_BUCK3_VOLTAGE_NUM	0x40
++#define BD71837_BUCK4_VOLTAGE_NUM	0x40
++
++#define BD71837_BUCK5_VOLTAGE_NUM	0x08
++#define BD71837_BUCK6_VOLTAGE_NUM	0x04
++#define BD71837_BUCK7_VOLTAGE_NUM	0x08
++#define BD71837_BUCK8_VOLTAGE_NUM	0x40
++
++#define BD71837_LDO1_VOLTAGE_NUM	0x04
++#define BD71837_LDO2_VOLTAGE_NUM	0x02
++#define BD71837_LDO3_VOLTAGE_NUM	0x10
++#define BD71837_LDO4_VOLTAGE_NUM	0x10
++#define BD71837_LDO5_VOLTAGE_NUM	0x10
++#define BD71837_LDO6_VOLTAGE_NUM	0x10
++#define BD71837_LDO7_VOLTAGE_NUM	0x10
++
++enum {
++	BD71837_REG_REV                = 0x00,
++	BD71837_REG_SWRESET            = 0x01,
++	BD71837_REG_I2C_DEV            = 0x02,
++	BD71837_REG_PWRCTRL0           = 0x03,
++	BD71837_REG_PWRCTRL1           = 0x04,
++	BD71837_REG_BUCK1_CTRL         = 0x05,
++	BD71837_REG_BUCK2_CTRL         = 0x06,
++	BD71837_REG_BUCK3_CTRL         = 0x07,
++	BD71837_REG_BUCK4_CTRL         = 0x08,
++	BD71837_REG_BUCK5_CTRL         = 0x09,
++	BD71837_REG_BUCK6_CTRL         = 0x0A,
++	BD71837_REG_BUCK7_CTRL         = 0x0B,
++	BD71837_REG_BUCK8_CTRL         = 0x0C,
++	BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
++	BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
++	BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
++	BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
++	BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
++	BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
++	BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
++	BD71837_REG_BUCK5_VOLT         = 0x14,
++	BD71837_REG_BUCK6_VOLT         = 0x15,
++	BD71837_REG_BUCK7_VOLT         = 0x16,
++	BD71837_REG_BUCK8_VOLT         = 0x17,
++	BD71837_REG_LDO1_VOLT          = 0x18,
++	BD71837_REG_LDO2_VOLT          = 0x19,
++	BD71837_REG_LDO3_VOLT          = 0x1A,
++	BD71837_REG_LDO4_VOLT          = 0x1B,
++	BD71837_REG_LDO5_VOLT          = 0x1C,
++	BD71837_REG_LDO6_VOLT          = 0x1D,
++	BD71837_REG_LDO7_VOLT          = 0x1E,
++	BD71837_REG_TRANS_COND0        = 0x1F,
++	BD71837_REG_TRANS_COND1        = 0x20,
++	BD71837_REG_VRFAULTEN          = 0x21,
++	BD71837_REG_MVRFLTMASK0        = 0x22,
++	BD71837_REG_MVRFLTMASK1        = 0x23,
++	BD71837_REG_MVRFLTMASK2        = 0x24,
++	BD71837_REG_RCVCFG             = 0x25,
++	BD71837_REG_RCVNUM             = 0x26,
++	BD71837_REG_PWRONCONFIG0       = 0x27,
++	BD71837_REG_PWRONCONFIG1       = 0x28,
++	BD71837_REG_RESETSRC           = 0x29,
++	BD71837_REG_MIRQ               = 0x2A,
++	BD71837_REG_IRQ                = 0x2B,
++	BD71837_REG_IN_MON             = 0x2C,
++	BD71837_REG_POW_STATE          = 0x2D,
++	BD71837_REG_OUT32K             = 0x2E,
++	BD71837_REG_REGLOCK            = 0x2F,
++	BD71837_REG_OTPVER             = 0xFF,
++	BD71837_MAX_REGISTER           = 0x100,
++};
++
++#define REGLOCK_PWRSEQ	0x1
++#define REGLOCK_VREG	0x10
++
++/* Generic BUCK control masks */
++#define BD71837_BUCK_SEL	0x02
++#define BD71837_BUCK_EN		0x01
++#define BD71837_BUCK_RUN_ON	0x04
++
++/* Generic LDO masks */
++#define BD71837_LDO_SEL		0x80
++#define BD71837_LDO_EN		0x40
++
++/* BD71837 BUCK ramp rate CTRL reg bits */
++#define BUCK_RAMPRATE_MASK	0xC0
++#define BUCK_RAMPRATE_10P00MV	0x0
++#define BUCK_RAMPRATE_5P00MV	0x1
++#define BUCK_RAMPRATE_2P50MV	0x2
++#define BUCK_RAMPRATE_1P25MV	0x3
++
++/* BD71837_REG_BUCK1_VOLT_RUN bits */
++#define BUCK1_RUN_MASK		0x3F
++#define BUCK1_RUN_DEFAULT	0x14
++
++/* BD71837_REG_BUCK1_VOLT_SUSP bits */
++#define BUCK1_SUSP_MASK		0x3F
++#define BUCK1_SUSP_DEFAULT	0x14
++
++/* BD71837_REG_BUCK1_VOLT_IDLE bits */
++#define BUCK1_IDLE_MASK		0x3F
++#define BUCK1_IDLE_DEFAULT	0x14
++
++/* BD71837_REG_BUCK2_VOLT_RUN bits */
++#define BUCK2_RUN_MASK		0x3F
++#define BUCK2_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK2_VOLT_IDLE bits */
++#define BUCK2_IDLE_MASK		0x3F
++#define BUCK2_IDLE_DEFAULT	0x14
++
++/* BD71837_REG_BUCK3_VOLT_RUN bits */
++#define BUCK3_RUN_MASK		0x3F
++#define BUCK3_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK4_VOLT_RUN bits */
++#define BUCK4_RUN_MASK		0x3F
++#define BUCK4_RUN_DEFAULT	0x1E
++
++/* BD71837_REG_BUCK5_VOLT bits */
++#define BUCK5_MASK		0x07
++#define BUCK5_DEFAULT		0x02
++
++/* BD71837_REG_BUCK6_VOLT bits */
++#define BUCK6_MASK		0x03
++#define BUCK6_DEFAULT		0x03
++
++/* BD71837_REG_BUCK7_VOLT bits */
++#define BUCK7_MASK		0x07
++#define BUCK7_DEFAULT		0x03
++
++/* BD71837_REG_BUCK8_VOLT bits */
++#define BUCK8_MASK		0x3F
++#define BUCK8_DEFAULT		0x1E
++
++/* BD71837_REG_IRQ bits */
++#define IRQ_SWRST		0x40
++#define IRQ_PWRON_S		0x20
++#define IRQ_PWRON_L		0x10
++#define IRQ_PWRON		0x08
++#define IRQ_WDOG		0x04
++#define IRQ_ON_REQ		0x02
++#define IRQ_STBY_REQ		0x01
++
++/* BD71837_REG_OUT32K bits */
++#define BD71837_OUT32K_EN	0x01
++
++/* BD71837 gated clock rate */
++#define BD71837_CLK_RATE 32768
++
++/* BD71837 irqs */
++enum {
++	BD71837_INT_STBY_REQ,
++	BD71837_INT_ON_REQ,
++	BD71837_INT_WDOG,
++	BD71837_INT_PWRBTN,
++	BD71837_INT_PWRBTN_L,
++	BD71837_INT_PWRBTN_S,
++	BD71837_INT_SWRST
++};
++
++/* BD71837 interrupt masks */
++#define BD71837_INT_SWRST_MASK		0x40
++#define BD71837_INT_PWRBTN_S_MASK	0x20
++#define BD71837_INT_PWRBTN_L_MASK	0x10
++#define BD71837_INT_PWRBTN_MASK		0x8
++#define BD71837_INT_WDOG_MASK		0x4
++#define BD71837_INT_ON_REQ_MASK		0x2
++#define BD71837_INT_STBY_REQ_MASK	0x1
++
++/* BD71837_REG_LDO1_VOLT bits */
++#define LDO1_MASK		0x03
++
++/* BD71837_REG_LDO1_VOLT bits */
++#define LDO2_MASK		0x20
++
++/* BD71837_REG_LDO3_VOLT bits */
++#define LDO3_MASK		0x0F
++
++/* BD71837_REG_LDO4_VOLT bits */
++#define LDO4_MASK		0x0F
++
++/* BD71837_REG_LDO5_VOLT bits */
++#define LDO5_MASK		0x0F
++
++/* BD71837_REG_LDO6_VOLT bits */
++#define LDO6_MASK		0x0F
++
++/* BD71837_REG_LDO7_VOLT bits */
++#define LDO7_MASK		0x0F
++
++/* Register write induced reset settings */
++
++/* Even though the bit zero is not SWRESET type we still want to write zero
++ * to it when changing type. Bit zero is 'SWRESET' trigger bit and if we
++ * write 1 to it we will trigger the action. So always write 0 to it when
++ * changning SWRESET action - no matter what we read from it.
++ */
++#define BD71837_SWRESET_TYPE_MASK 7
++#define BD71837_SWRESET_TYPE_DISABLED 0
++#define BD71837_SWRESET_TYPE_COLD 4
++#define BD71837_SWRESET_TYPE_WARM 6
++
++#define BD71837_SWRESET_RESET_MASK 1
++#define BD71837_SWRESET_RESET 1
++
++/* Poweroff state transition conditions */
++
++#define BD718XX_ON_REQ_POWEROFF_MASK 1
++#define BD718XX_SWRESET_POWEROFF_MASK 2
++#define BD718XX_WDOG_POWEROFF_MASK 4
++#define BD718XX_KEY_L_POWEROFF_MASK 8
++
++#define BD718XX_POWOFF_TO_SNVS 0
++#define BD718XX_POWOFF_TO_RDY 0xF
++
++#define BD718XX_POWOFF_TIME_MASK 0xF0
++enum {
++	BD718XX_POWOFF_TIME_5MS = 0,
++	BD718XX_POWOFF_TIME_10MS,
++	BD718XX_POWOFF_TIME_15MS,
++	BD718XX_POWOFF_TIME_20MS,
++	BD718XX_POWOFF_TIME_25MS,
++	BD718XX_POWOFF_TIME_30MS,
++	BD718XX_POWOFF_TIME_35MS,
++	BD718XX_POWOFF_TIME_40MS,
++	BD718XX_POWOFF_TIME_45MS,
++	BD718XX_POWOFF_TIME_50MS,
++	BD718XX_POWOFF_TIME_75MS,
++	BD718XX_POWOFF_TIME_100MS,
++	BD718XX_POWOFF_TIME_250MS,
++	BD718XX_POWOFF_TIME_500MS,
++	BD718XX_POWOFF_TIME_750MS,
++	BD718XX_POWOFF_TIME_1500MS
++};
++
++/* Poweron sequence state transition conditions */
++
++#define BD718XX_RDY_TO_SNVS_MASK 0xF
++#define BD718XX_SNVS_TO_RUN_MASK 0xF0
++
++#define BD718XX_PWR_TRIG_KEY_L 1
++#define BD718XX_PWR_TRIG_KEY_S 2
++#define BD718XX_PWR_TRIG_PMIC_ON 4
++#define BD718XX_PWR_TRIG_VSYS_UVLO 8
++#define BD718XX_RDY_TO_SNVS_SIFT 0
++#define BD718XX_SNVS_TO_RUN_SIFT 4
++
++
++#define BD718XX_PWRBTN_PRESS_DURATION_MASK 0xF
++
++/* Timeout value for detecting short press */
++
++enum {
++	BD718XX_PWRBTN_SHORT_PRESS_10MS = 0,
++	BD718XX_PWRBTN_SHORT_PRESS_500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_1000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_1500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_2000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_2500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_3000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_3500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_4000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_4500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_5000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_5500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_6000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_6500MS,
++	BD718XX_PWRBTN_SHORT_PRESS_7000MS,
++	BD718XX_PWRBTN_SHORT_PRESS_7500MS
++};
++
++/* Timeout value for detecting LONG press */
++
++enum {
++	BD718XX_PWRBTN_LONG_PRESS_10MS = 0,
++	BD718XX_PWRBTN_LONG_PRESS_1S,
++	BD718XX_PWRBTN_LONG_PRESS_2S,
++	BD718XX_PWRBTN_LONG_PRESS_3S,
++	BD718XX_PWRBTN_LONG_PRESS_4S,
++	BD718XX_PWRBTN_LONG_PRESS_5S,
++	BD718XX_PWRBTN_LONG_PRESS_6S,
++	BD718XX_PWRBTN_LONG_PRESS_7S,
++	BD718XX_PWRBTN_LONG_PRESS_8S,
++	BD718XX_PWRBTN_LONG_PRESS_9S,
++	BD718XX_PWRBTN_LONG_PRESS_10S,
++	BD718XX_PWRBTN_LONG_PRESS_11S,
++	BD718XX_PWRBTN_LONG_PRESS_12S,
++	BD718XX_PWRBTN_LONG_PRESS_13S,
++	BD718XX_PWRBTN_LONG_PRESS_14S,
++	BD718XX_PWRBTN_LONG_PRESS_15S
++};
++
++
++
++struct bd71837;
++struct bd71837_pmic;
++struct bd71837_clk;
++struct bd718xx_pwrkey;
++
++/*
++ * Board platform data may be used to initialize regulators.
++ */
++
++struct bd71837_board {
++	struct regulator_init_data *init_data[BD71837_REGULATOR_CNT];
++	int	gpio_intr;
++};
++
++struct bd71837 {
++	struct device *dev;
++	struct i2c_client *i2c_client;
++	struct regmap *regmap;
++	unsigned long int id;
++
++	int chip_irq;
++	struct regmap_irq_chip_data *irq_data;
++
++	struct bd71837_pmic *pmic;
++	struct bd71837_clk *clk;
++	struct bd718xx_pwrkey *pwrkey;
++};
++
++/*
++ * bd71837 sub-driver chip access routines
++ */
++
++static inline int bd71837_reg_read(struct bd71837 *bd71837, u8 reg)
++{
++	int r, val;
++
++	r = regmap_read(bd71837->regmap, reg, &val);
++	if (r < 0)
++		return r;
++	return val;
++}
++
++static inline int bd71837_reg_write(struct bd71837 *bd71837, u8 reg,
++				    unsigned int val)
++{
++	return regmap_write(bd71837->regmap, reg, val);
++}
++
++static inline int bd71837_set_bits(struct bd71837 *bd71837, u8 reg, u8 mask)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, mask);
++}
++
++static inline int bd71837_clear_bits(struct bd71837 *bd71837, u8 reg,
++				     u8 mask)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, 0);
++}
++
++static inline int bd71837_update_bits(struct bd71837 *bd71837, u8 reg,
++				      u8 mask, u8 val)
++{
++	return regmap_update_bits(bd71837->regmap, reg, mask, val);
++}
++
++#endif /* __LINUX_MFD_BD71837_H__ */
 -- 
-2.7.4
+2.14.3
