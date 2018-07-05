@@ -1,112 +1,66 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.14 023/157] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date: Sun,  1 Jul 2018 18:21:35 +0200
-Message-Id: <20180701160853.418396263@linuxfoundation.org>
-In-Reply-To: <20180701160852.287307684@linuxfoundation.org>
-References: <20180701160852.287307684@linuxfoundation.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39706 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754060AbeGEOWN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jul 2018 10:22:13 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <mark.rutland@arm.com>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH v4 5/6] ARM: dts: Add generic interconnect target module node for MCAN
+Date: Thu, 5 Jul 2018 19:53:18 +0530
+Message-ID: <20180705142319.19583-6-faiz_abbas@ti.com>
+In-Reply-To: <20180705142319.19583-1-faiz_abbas@ti.com>
+References: <20180705142319.19583-1-faiz_abbas@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+The ti-sysc driver provides support for manipulating the idle modes
+and interconnect level resets.
 
-------------------
+Add the generic interconnect target module node for MCAN to support
+the same.
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
-
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.
-
-Remove support for this rarely-used format, as vsprintf() (and e.g.
-printk()) must be callable from any context.
-
-Any remaining out-of-tree users will start seeing the clock's name
-printed instead of its rate.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
-Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.1+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+CC: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 ---
- Documentation/printk-formats.txt |    3 +--
- lib/vsprintf.c                   |    3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ arch/arm/boot/dts/dra76x.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- a/Documentation/printk-formats.txt
-+++ b/Documentation/printk-formats.txt
-@@ -397,11 +397,10 @@ struct clk
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index bfc82636999c..5157cc431574 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -11,6 +11,24 @@
+ / {
+ 	compatible = "ti,dra762", "ti,dra7";
  
- 	%pC	pll1
- 	%pCn	pll1
--	%pCr	1560000000
++	ocp {
++		target-module@42c01900 {
++			compatible = "ti,sysc-dra7-mcan", "ti,sysc";
++			ranges = <0x0 0x42c00000 0x2000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x42c01900 0x4>,
++			      <0x42c01904 0x4>,
++			      <0x42c01908 0x4>;
++			reg-names = "rev", "sysc", "syss";
++			ti,sysc-mask = <(SYSC_OMAP4_SOFTRESET |
++					 SYSC_DRA7_MCAN_ENAWAKEUP)>;
++			ti,syss-mask = <1>;
++			clocks = <&wkupaon_clkctrl DRA7_ADC_CLKCTRL 0>;
++			clock-names = "fck";
++		};
++	};
++
+ };
  
- For printing struct clk structures. ``%pC`` and ``%pCn`` print the name
- (Common Clock Framework) or address (legacy clock framework) of the
--structure; ``%pCr`` prints the current clock rate.
-+structure.
- 
- Passed by reference.
- 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1392,9 +1392,6 @@ char *clock(char *buf, char *end, struct
- 		return string(buf, end, NULL, spec);
- 
- 	switch (fmt[1]) {
--	case 'r':
--		return number(buf, end, clk_get_rate(clk), spec);
--
- 	case 'n':
- 	default:
- #ifdef CONFIG_COMMON_CLK
+ /* MCAN interrupts are hard-wired to irqs 67, 68 */
+-- 
+2.17.0
+
