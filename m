@@ -1,69 +1,81 @@
 Return-Path: <lee.jones@linaro.org>
 Return-Path: <lee.jones@linaro.org>
-Date: Thu, 5 Jul 2018 13:44:34 +0100
+Date: Thu, 5 Jul 2018 06:52:26 +0100
 From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-	arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
-	chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	matti.vaittinen@fi.rohmeurope.com,
+	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>,
+	chenjh@rock-chips.com, Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
 	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
 	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180705124434.GP496@dell>
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <20180705092444.GL496@dell>
- <20180705103919.GB8426@localhost.localdomain>
- <20180705104919.GM496@dell>
- <20180705115143.GC8426@localhost.localdomain>
+Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180705055226.GJ496@dell>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+ <20180704145623.zgei3ehrwdpcu26r@penguin>
+ <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180705115143.GC8426@localhost.localdomain>
+In-Reply-To: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+On Wed, 04 Jul 2018, Enric Balletbo Serra wrote:
 
-> On Thu, Jul 05, 2018 at 11:49:19AM +0100, Lee Jones wrote:
-> > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
-> > > On Thu, Jul 05, 2018 at 10:24:44AM +0100, Lee Jones wrote:
-> > > > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
-> > > > 
-> > > > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
-> > > > > 
-> > > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > ---
-> > > > >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
-> > > > >  1 file changed, 67 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> > > > > +		clock-names = "my-clock";
-> > > > > +		clocks = <&pmic>;
-> > > > > +	};
-> > > > 
-> > > > Do you have a real example to give?
-> > > 
-> > > For clock consumer? Sorry, no I don't.
-> > 
-> > Might be better to drop it for the time being then.
-> 
-> I have tested the clk driver using this dummy consumer. So in a sense it
-> "works" and can be used as an example on how to write a real clock
-> consumer node. Thus I see some value in this example node - even if it
-> does not match to any real world HW. If I had to use the clk from this
-> PMIC and write HW description I would appreciate this dummy exaple. I
-> can drop it if you insist - but I would at least like to hear what is
-> the downside on having it here?
+> Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
+> de jul. 2018 a les 17:10:
+> >
+> > Hi Enric,
+> >
+> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
+> > > Hi Matti,
+> > >
+> > > Thanks for the patch, a few comments below, some are feedback I
+> > > received when I sent some patches to this subsystem.
+> > >
+> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
+> > > dia dt., 19 de juny 2018 a les 12:57:
+> > > > +};
+> > > > +
+> > > > +/* bd71837 multi function cells */
+> > > > +static struct mfd_cell bd71837_mfd_cells[] = {
+> > > > +       {
+> > > > +               .name = "bd71837-clk",
+> > > > +       }, {
+> > > > +               .name = "bd718xx-pwrkey",
+> > > > +               .resources = &irqs[0],
+> > > > +               .num_resources = ARRAY_SIZE(irqs),
+> > > > +       }, {
+> > > > +               .name = "bd71837-pmic",
+> > > > +       },
+> > > nit: no comma at the end
+> >
+> > Actually, trailing comma is preferred on structures/arrays without
+> > sentinels, because if one needs to add a new entry/new member, then in
+> > the diff there will have only one new line added, instead of one line
+> > being changed (adding now necessary comma) and one added.
 
-My suggestion then would be to make it look as authentic as possible.
+[...]
 
-It is only an example, so it doesn't *really* matter, but the current
-foo,bar one just looks a bit crumby.
+> Dmitry, I really appreciate this kind of comments, especially when
+> there is a justification, so I can learn more and more to do better
+> patches.
+
++1
 
 -- 
 Lee Jones [李琼斯]
