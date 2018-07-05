@@ -1,100 +1,137 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:16317 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388197AbeGWPaK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 11:30:10 -0400
-Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To: Kevin Hilman <khilman@baylibre.com>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-2-yixun.lan@amlogic.com>
- <20180711194346.GA32414@rob-hp-laptop>
- <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
- <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
- <5442a2e8-eb49-2aa8-e53e-8db88cd0bd58@amlogic.com>
- <CAL_Jsq+r+7BaJAPBn3L26sdxATVyDiuC=V3xE+yz0-27q0RJhA@mail.gmail.com>
- <8bf565d3-dbfd-e06d-7076-ba78d7a2e766@amlogic.com>
- <7hbmay3ut6.fsf@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <405ff057-a14e-f9eb-19e0-8d467dda35a1@amlogic.com>
-Date: Mon, 23 Jul 2018 22:28:36 +0800
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 5 Jul 2018 10:24:44 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+	arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
+	chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705092444.GL496@dell>
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <7hbmay3ut6.fsf@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Kevin
+On Thu, 05 Jul 2018, Matti Vaittinen wrote:
 
-On 07/23/2018 10:12 PM, Kevin Hilman wrote:
-> Yixun Lan <yixun.lan@amlogic.com> writes:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
 > 
-> [...]
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 > 
->>>
->>>> Second, we might like to convert eMMC driver to also use mmc-clkc model.
->>>
->>> IMO, this should be done as part of merging this series. Otherwise, we
->>> have duplicated code for the same thing.
->>
->> IMO, I'd leave this out of this series, since this patch series is quite
->> complete as itself. Although, the downside is code duplication.
->>
->> Still, I need to hear Jerome, or Kevin's option, to see if or how we
->> should proceed the eMMC's clock conversion.
->>
->> I could think of three option myself
->> 1) don't do the conversion, downside is code duplication, upside is NO
->> DT change, no compatibility issue
->> 2) add a syscon node into eMMC DT node, then only convert clock part
->> into this mmc-clkc model, while still leave other eMMC register access
->> as the usual iomap way (still no race condition)
->> 3) convert all eMMC register access by using regmap interface.
->>
->> both 2) and 3) need to update the DT.
->>
->> and probably 2) is a compromise way, and 1) is also OK, 3) is probably
->> the worst way due to dramatically change (I think this was already
->> rejected in the previous discussion)
-> 
-> Because the devices (NAND and eMMC_C) are mutually exclusive, taking the
-> step-by-step approach is fine (and preferred) by me.
-> 
-> Phase 1:
-> - add new mmc-clk provider
-> - add NAND driver using new mmc-clk provider
-> - boards using NAND should ensure emmc_c is disabled in DT
-> 
-> This allows us to not touch the MMC driver or existing upstream
-> bindings.  Yes, this means there is duplicate code in the MMC driver and
-> the new mmc-clk provider, but that can be removed in the next phase.
-> 
-Great, the approach to address this issue is reasonable.
-We'd like to focus on phase 1 first, thanks
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> new file mode 100644
+> index 000000000000..67f2616288d9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> @@ -0,0 +1,67 @@
+> +* ROHM BD71837 Power Management Integrated Circuit bindings
+> +
+> +BD71837MWV is a programmable Power Management IC for powering single-core,
+> +dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
 
-> Phase 2:
-> - convert MMC driver to use new mmc-clk provider
-> - update MMC users in DT and bindings
-> 
-Ok.
+Nit: s/SOC's/SOCs/
 
+> +low BOM cost and compact solution footprint. It integrates 8 Buck
+> +egulators and 7 LDO’s to provide all the power rails required by the SoC and
 
-Yixun
+Nit: s/LDO's/LDOs/
+
+> +the commonly used peripherals.
+> +
+> +Datasheet for PMIC is available at:
+> +https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+> +
+> +Required properties:
+> + - compatible		: Should be "rohm,bd71837".
+> + - reg			: I2C slave address.
+> + - interrupt-parent	: Phandle to the parent interrupt controller.
+> + - interrupts		: The interrupt line the device is connected to.
+> + - clocks		: The parent clock connected to PMIC. If this is missng
+
+s/missng/missing/
+
+> +			  32768 KHz clock is assumed.
+> + - #clock-cells		: Should be 0
+> + - regulators:		: List of child nodes that specify the regulators
+
+By your convention, the bottom two entries are missing '.'s.
+
+> +			  Please see ../regulator/rohm,bd71837-regulator.txt
+> +
+> +Optional properties:
+> +- clock-output-names	: Should contain name for output clock.
+> +
+> +Example:
+> +
+> +	/* external oscillator node */
+
+Uppercase character to start a sentence.
+
+> +	osc: oscillator {
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <1>;
+> +		clock-frequency  = <32768>;
+> +		clock-output-names = "osc";
+> +	};
+> +
+> +	/* PMIC node */
+
+Is this comment really necessary?  The node is called "pmic".
+
+> +	pmic: pmic@4b {
+> +		compatible = "rohm,bd71837";
+> +		reg = <0x4b>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <29 GPIO_ACTIVE_LOW>;
+> +		interrupt-names = "irq";
+> +		#clock-cells = <0>;
+> +		clocks = <&osc 0>;
+> +		clock-output-names = "bd71837-32k-out";
+> +
+> +		regulators {
+> +			buck1: BUCK1 {
+> +				regulator-name = "buck1";
+> +				regulator-min-microvolt = <700000>;
+> +				regulator-max-microvolt = <1300000>;
+> +				regulator-boot-on;
+> +				regulator-ramp-delay = <1250>;
+> +			};
+> +			/* ... */
+> +		};
+> +	};
+> +
+> +	/* Clock consumer node */
+> +
+> +	foo@0 {
+> +		compatible = "bar,foo";
+> +		/* ... */
+
+No need for this line.  Additional properties are always expected.
+
+> +		clock-names = "my-clock";
+> +		clocks = <&pmic>;
+> +	};
+
+Do you have a real example to give?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
