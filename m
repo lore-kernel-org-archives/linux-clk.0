@@ -1,130 +1,136 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	robin.murphy@arm.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Yao <markyao0591@gmail.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Brian Norris <briannorris@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Jeffy Chen <jeffy.chen@rock-chips.com>,
-	Nickey Yang <nickey.yang@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	Klaus Goger <klaus.goger@theobroma-systems.com>,
-	Randy Li <ayaka@soulik.info>,
-	Chris Zhong <zyw@rock-chips.com>,
-	Shunqian Zheng <zhengsq@rock-chips.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 0/8] Add support for drm/rockchip to dynamically control the DDR frequency.
-Date: Mon, 30 Jul 2018 10:11:16 +0200
-Message-Id: <20180730081124.30698-1-enric.balletbo@collabora.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 5 Jul 2018 10:45:32 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
+	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com
+Cc: sboyd@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v9 0/2] mfd/regulator/clk/input: bd71837: ROHM BD71837 PMIC
+ driver
+Message-ID: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear all,
+Patch series adding support for ROHM BD71837 PMIC.
 
-The rk3399 platform has a DFI controller that can monitor DDR load and a
-DMC driver that talks with the TF-A (Trusted Firmware-A) to dynamically
-set the DDR frequency with following flow.
+BD71837 is a programmable Power Management IC for powering single-core,
+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
+low BOM cost and compact solution footprint. It integrates 8 buck
+regulators and 7 LDO’s to provide all the power rails required by the
+SoC and the commonly used peripherals.
 
-             kernel                          Trusted Firmware-A
-                                                  (bl31)
-        monitor ddr load
-                |
-                |
-        get_target_rate
-                |
-                |           pass rate to TF-A
-        clk_set_rate(ddr) --------------------->run ddr dvs flow
-                                                    |
-                                                    |
-                 <------------------------------end ddr dvs flow
-                |
-                |
-              return
+This is reduced set of patches containing only the MFD and devicetree
+bindings. This enables alrady applied regulator part and power button
+support using gpio-keys. Clock and reset support will be sent as separate
+set of patches - possibly only after my vacations. Sorry for longish delay
+which will follow.
 
-These patches add support for devfreq to dynamically control the DDR
-frequency into the drm rockchip driver. By default it uses the
-'simple_ondemand' governor which can adjust the frequency based on the
-DDR load.
+Changelog v9
+Fixes initiated by feedback from Enric Balletbo Serra, Lee and Dmitry.
+- Simplified control flow for probe
+- Removed accidentally left squash commit message
+- Some comma presence toggling after last member in an array =)
+- Styling of multi line comments.
 
-Waiting for your feedback.
+Changelog v8
+- Dropped clk-bd71837 from series (will send later)
+- Dropped bd718xx-pwrkey driver and used gpio_keys instead.
+- Added power-button short/long press duration configuratio to MFD
+- Cleaned MFD driver according to comments from Enric Balletbo Serra.
+  (used devm, removed unnecessary header inclusions, removed redundant
+  assignment, styling issues, allow building MFD part as module, fixed
+  license mismatch).
 
-Best regards,
- Enric
+Changelog v7
+- patch 1: Cleaned MFD probe since MFD no longer directly reads DT
+  properties.
+- patch 1/4: Moved power-key related definitions from powerkey patch (4)
+  to MFD patch (1) so that powerkey can be applied independently
+- Patch 2 is unchanged.
+- patch 3: Added missing allocation check back to clk probe
 
-Changes in v1:
-- [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-- [RFC 1/10] s/Generic/General/ (Robin Murphy)
-- [RFC 2/10] Add reviewed and acked tags from Chanwoo Choi and Rob Herring
-- [RFC 3/10] Add an explanation for platform SIP calls.
-- [RFC 3/10] Change if statement for a switch.
-- [RFC 3/10] Rename ddr_flag to odt_enable to be more clear.
-- [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
-- [RFC 7/10] Removed from the series. I did not found a use case where this matters.
-- [RFC 8/10] Move rk3399-dram.h to dt-includes.
-- [RFC 8/10] Put sdram default values under the dmc node.
-- [RFC 8/10] Removed rk3399-dram-default-timing.dts
+Changelog v6
+- Added power-key input driver
+Based on feedback from Rob Herring and Stephen Boyd
+- Added link to datasheet
+- Removed interrupt-controller from DT and fixed binding document
+- clk styling fixes
+- remove clkdev usage
+- add clk bindings to MFD documentation
+- removed clk binding document
 
-Derek Basehore (2):
-  devfreq: rk3399_dmc / clk: rockchip: Sync with vblank in the kernel
-    for DDRfreq.
-  devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on
-    suspend.
+Changelog v5
+- dropped regulator patches which are already applied to Mark's tree
+Based on feedback from Rob Herring and Stephen Boyd
+- mfd bindings: explain why this can be interrupt-controller
+- mfd bindings: describe interrupts better
+- mfd bindings: require one cell interrupt specifier
+- mfd bindings: use generic node names in example
+- mfd driver:   ack masked interrupt once at init
+- clk bindings: use generic node names in example
+- clk driver:   use devm
+- clk driver:   use of_clk_add_hw_provider
+- clk driver:   change severity of print and how prints are emitted at
+                probe error path.
+- clk driver:   dropped forward declared functions
+- clk configs:  drop unnecessary dependencies
+- clk driver:   other styling issues
+- mfd/clk DT:   drop clk node.
 
-Enric Balletbo i Serra (3):
-  devfreq: rockchip-dfi: Move GRF definitions to a common place.
-  dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
-  devfreq: rk3399_dmc: Pass ODT and auto power down parameters to TF-A.
+Changelog v4
+- remove mutex from regulator state check as core prevents simultaneous
+  accesses
+- allow voltage change for bucks 1 to 4 when regulator is enabled
+- fix indentiation problems
+- properly correct SPDX comments
 
-Lin Huang (2):
-  arm64: dts: rk3399: Add dfi and dmc nodes.
-  arm64: dts: rockchip: Enable dmc and dfi nodes on gru.
+Changelog v3
+- kill unused variable
+- kill unused definitions
+- use REGMAP_IRQ_REG
 
-Sean Paul (1):
-  drm: rockchip: Add DDR devfreq support.
+Changelog v2
+Based on feedback from Mark Brown
+- Squashed code and buildfile changes to same patch
+- Fixed some styling issues
+- Changed SPDX comments to CPP style
+- Error out if voltage is changed when regulator is enabled instead of
+  Disabling the regulator for duration of change
+- Use devm_regulator_register
+- Remove compatible usage from regulators - use parent dev for config
+- Add a note about using regulator-boot-on for BUCK6 and 7
+- fixed warnings from kbuild test robot
 
- .../bindings/devfreq/rk3399_dmc.txt           |   2 +
- arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  21 ++
- .../boot/dts/rockchip/rk3399-op1-opp.dtsi     |  29 +++
- arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  51 ++++-
- drivers/clk/rockchip/clk-ddr.c                | 157 +++++++++++--
- drivers/clk/rockchip/clk.c                    |   2 +-
- drivers/clk/rockchip/clk.h                    |   3 +-
- drivers/devfreq/event/rockchip-dfi.c          |  23 +-
- drivers/devfreq/rk3399_dmc.c                  | 209 +++++++++++++++---
- drivers/devfreq/rk3399_dmc_priv.h             |  16 ++
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  46 ++++
- drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |   9 +
- drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |  35 +++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  34 +++
- include/dt-bindings/power/rk3399-dram.h       |  73 ++++++
- include/soc/rockchip/rk3399_dmc.h             |  42 ++++
- include/soc/rockchip/rk3399_grf.h             |  21 ++
- include/soc/rockchip/rockchip_sip.h           |   1 +
- 18 files changed, 704 insertions(+), 70 deletions(-)
- create mode 100644 drivers/devfreq/rk3399_dmc_priv.h
- create mode 100644 include/dt-bindings/power/rk3399-dram.h
- create mode 100644 include/soc/rockchip/rk3399_dmc.h
- create mode 100644 include/soc/rockchip/rk3399_grf.h
+patch 1:
+        MFD driver and definitions bringing interrupt support and
+        enabling clk, regulator and input subsystems.
+patch 2:
+        MFD driver DT bindings
+
+This patch series is based on for-mfd-next
+
+---
+
+Matti Vaittinen (2):
+  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
+
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  67 ++++
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/bd71837.c                              | 215 +++++++++++
+ include/linux/mfd/bd71837.h                        | 391 +++++++++++++++++++++
+ 5 files changed, 687 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+ create mode 100644 drivers/mfd/bd71837.c
+ create mode 100644 include/linux/mfd/bd71837.h
 
 -- 
-2.18.0
+2.14.3
