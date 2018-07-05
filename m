@@ -1,80 +1,304 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:36555 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728384AbeG0OVT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:21:19 -0400
-Date: Fri, 27 Jul 2018 14:59:12 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3.1 00/10] arm64: allwinner: Add A64 DE2 HDMI support
-Message-ID: <20180727125912.e5js7krmthto6gmz@flea>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="anrqhmutbeiy5itt"
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rohitkr@codeaurora.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v2 2/2] clk: qcom: Add lpass clock controller driver for SDM845
+Date: Thu,  5 Jul 2018 12:25:21 +0530
+Message-Id: <1530773721-14668-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
 
---anrqhmutbeiy5itt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig          |   9 ++
+ drivers/clk/qcom/lpasscc-sdm845.c | 243 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 252 insertions(+)
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
 
-On Fri, Jul 27, 2018 at 01:12:47AM +0800, Icenowy Zheng wrote:
-> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
-/H3/H5.
->=20
-> A64 behaviour similar to Allwinner A83T where
-> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
-> Mixer1 =3D> TCON1 =3D> HDMI
-> as per Display System Block Diagram from the A64 user manual.
->=20
-> This is third patch-set followed with previous RFC[1], first and second
-> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
-> rest will add eventually.
->=20
-> I just rebased and slightly re-integrated the patchset according to the
-> requirments of the maintainer, and added the mixer0->tcon0 pipeline.
-> The further maintainship of the patchset still needs to be discussed
-> between I and Jagan.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 9c3480d..06b3f2e 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -245,6 +245,15 @@ config SDM_VIDEOCC_845
+ 	  Say Y if you want to support video devices and functionality such as
+ 	  video encode and decode.
 
-Beside the comment on the pine64, it looks good to me. Can you
-resubmit those patches after rc1 is out?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---anrqhmutbeiy5itt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbFx8ACgkQ0rTAlCFN
-r3Rh4w//YULFl9J+chHjxWnvahKtcxglkDFlvK0R3Ht0O0wkegqgZci5c425DsnK
-1ISyKxPobr41n6NRuwAje2hqwZte2DoSM3E/TQ749KtzcJGqJHc6jk07+t5oz7CT
-JKi3xip659H/78FOhE/gXxc6XfgKVT+YzH2FbBAJL/Q8wid0O3INJiy+3oqX0ffV
-RUtk23mAMLPe74ku8lvJKxlISZxaapB8W5515IN7oqJBoOfvTJVapQB2Mc/GJXN/
-VsfbDvKKeYLUH9nd+no7iLVkbsb4Jr4byU2pxDCol/jh/t/91AXi7pbLaL4rzfko
-XNiQzohYBbYoTnVIjmxVgYiL8bCI4MUFJ1FH0MCQiP2w0c4bxVSVKZEXzXIqtPaL
-GfZDKGKYUHqiUz8+4LKgV6oNi2xhpD10dXS2H30Rd7rcpbQN9ROibBrdf+0iIvay
-I0+upoQSS1AQcgUGyREum0dQq3QA0dqFeAV76LxXIntcXt2IZ4hw30GwDNBqhi3D
-v/q2NceMeYxM12aAzVg9pkZwY6XGjn9ftdmvXzLLr2OR8+h22Y75dhA7FSEzEPLz
-chxk4lAOyQWDezye0o0+wbEQXii7jxb/E3QLb7JF2EZ6awEG+7aakAuySkG1HJsG
-518FmSA41GV4a/Wtc2+xrThNOr1MIBtgEFiZYzn/V4Kf4bRiV84=
-=/5kr
------END PGP SIGNATURE-----
-
---anrqhmutbeiy5itt--
++config SDM_LPASSCC_845
++	tristate "SDM845 LPASS Clock Controller"
++	depends on COMMON_CLK_QCOM
++	select SDM_GCC_845
++	help
++	  Support for the LPASS clock controller on SDM845 devices.
++	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
++	  controller to reset the LPASS subsystem.
++
+ config SPMI_PMIC_CLKDIV
+ 	tristate "SPMI PMIC clkdiv Support"
+ 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+new file mode 100644
+index 0000000..5285b26
+--- /dev/null
++++ b/drivers/clk/qcom/lpasscc-sdm845.c
+@@ -0,0 +1,243 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,lpass-sdm845.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++
++static struct clk_branch gcc_lpass_q6_axi_clk = {
++	.halt_reg = 0x0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_q6_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_lpass_sway_clk = {
++	.halt_reg = 0x8,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_sway_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_audio_wrapper_aon_clk = {
++	.halt_reg = 0x098,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x098,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_audio_wrapper_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
++	.halt_reg = 0x12000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x12000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_q6ss_ahbm_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
++	.halt_reg = 0x1f000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1f000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_q6ss_ahbs_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_qdsp6ss_xo_clk = {
++	.halt_reg = 0x18,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x18,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_xo_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_qdsp6ss_sleep_clk = {
++	.halt_reg = 0x1c,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x1c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_sleep_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_qdsp6ss_core_clk = {
++	.halt_reg = 0x0,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_core_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct regmap_config lpass_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++};
++
++static struct clk_regmap *lpass_gcc_sdm845_clocks[] = {
++	[GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
++	[GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
++};
++
++static const struct qcom_cc_desc lpass_gcc_sdm845_desc = {
++	.config = &lpass_regmap_config,
++	.clks = lpass_gcc_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(lpass_gcc_sdm845_clocks),
++};
++
++static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
++	[LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
++	[LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
++	[LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
++};
++
++static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
++	.config = &lpass_regmap_config,
++	.clks = lpass_cc_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
++};
++
++static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
++	[LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
++	[LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
++	[LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
++};
++
++static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
++	.config = &lpass_regmap_config,
++	.clks = lpass_qdsp6ss_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
++};
++
++static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
++				     const struct qcom_cc_desc *desc)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct regmap *regmap;
++	struct resource res;
++	void __iomem *base;
++
++	if (of_address_to_resource(np, index, &res))
++		return -ENOMEM;
++
++	base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
++	if (IS_ERR(base))
++		return -ENOMEM;
++
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	return qcom_cc_really_probe(pdev, desc, regmap);
++}
++
++/* LPASS CC clock controller */
++static const struct of_device_id lpass_cc_sdm845_match_table[] = {
++	{ .compatible = "qcom,sdm845-lpasscc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
++
++static int lpass_cc_sdm845_probe(struct platform_device *pdev)
++{
++	const struct qcom_cc_desc *desc;
++	struct device_node *np;
++	int ret, index;
++
++	np = pdev->dev.of_node;
++
++	lpass_regmap_config.name = "lpass_gcc";
++	desc = &lpass_gcc_sdm845_desc;
++	index = of_property_match_string(np, "reg-names", "lpass_gcc");
++
++	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
++	if (ret)
++		return ret;
++
++	lpass_regmap_config.name = "lpass_cc";
++	desc = &lpass_cc_sdm845_desc;
++	index = of_property_match_string(np, "reg-names", "lpass_cc");
++
++	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
++	if (ret)
++		return ret;
++
++	lpass_regmap_config.name = "lpass_qdsp6ss";
++	desc = &lpass_qdsp6ss_sdm845_desc;
++	index = of_property_match_string(np, "reg-names", "lpass_qdsp6ss");
++
++	ret = lpass_clocks_sdm845_probe(pdev, index, desc);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static struct platform_driver lpass_cc_sdm845_driver = {
++	.probe		= lpass_cc_sdm845_probe,
++	.driver		= {
++		.name	= "sdm845-lpasscc",
++		.of_match_table = lpass_cc_sdm845_match_table,
++	},
++};
++
++static int __init lpass_cc_sdm845_init(void)
++{
++	return platform_driver_register(&lpass_cc_sdm845_driver);
++}
++subsys_initcall(lpass_cc_sdm845_init);
++
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
