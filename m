@@ -1,52 +1,103 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 5 Jul 2018 10:49:33 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/8] dt: bindings: tegra20-emc: Document clock property
-Date: Thu, 19 Jul 2018 16:21:26 +0300
-Message-Id: <20180719132132.16153-3-digetx@gmail.com>
-In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
-References: <20180719132132.16153-1-digetx@gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Disable halt check on UFS clock
+Message-ID: <20180705174933.GG2050@tuxbook-pro>
+References: <20180704121901.30755-1-vkoul@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180704121901.30755-1-vkoul@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Embedded memory controller has a corresponding clock, document the clock
-property.
+On Wed 04 Jul 05:19 PDT 2018, Vinod Koul wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks Vinod, sorry for missing the tx clock.
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index a6fe401d0d48..add95367640b 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -11,6 +11,7 @@ Properties:
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
- - interrupts : Should contain EMC General interrupt.
-+- clocks : Should contain EMC clock.
- 
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -22,6 +23,7 @@ Example:
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
- 		interrupts = <0 78 0x04>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 	}
- 
- 
--- 
-2.18.0
+> Commit 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS
+> clocks") marked BRANCH_HALT_SKIP for ufs tx clocks, but missed ufs rx
+> clocks. The result of that is kernel warnings at reboot:
+
+"rx clocks"..."tx clock".
+
+and it wouldn't be unreasonable to have a Fixes: tag.
+
+
+Apart from that, you have my:
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> 
+> [  105.624283] gcc_ufs_tx_symbol_0_clk status stuck at 'on'
+> [  105.624311] WARNING: CPU: 1 PID: 1 at drivers/clk/qcom/clk-branch.c:100 clk_branch_toggle+0x190/0x1b0
+> [  105.633235] Modules linked in:
+> [  105.645118] CPU: 1 PID: 1 Comm: systemd-shutdow Tainted: G        W         4.18.0-rc2-00002-g2bfbe52a53a3 #11
+> [  105.647988] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
+> [  105.657966] pstate: 60000085 (nZCv daIf -PAN -UAO)
+> [  105.664127] pc : clk_branch_toggle+0x190/0x1b0
+> [  105.668900] lr : clk_branch_toggle+0x190/0x1b0
+> [  105.673324] sp : ffff00000805bb40
+> [  105.677751] x29: ffff00000805bb40 x28: 0000000000000000
+> [  105.681140] x27: ffff8000d947cc60 x26: 0000000000000001
+> [  105.686520] x25: ffff000008f71900 x24: 0000000000000000
+> [  105.691816] x23: ffff00000925e338 x22: ffff00000855f8e0
+> [  105.697114] x21: 0000000000000000 x20: 0000000000000000
+> [  105.702407] x19: ffff0000091c9000 x18: ffffffffffffffff
+> [  105.707702] x17: 0000ffffac148c58 x16: ffff000008b82928
+> [  105.712998] x15: ffff0000091c96c8 x14: ffff0000893817c7
+> [  105.718293] x13: ffff0000093817d5 x12: ffff0000091c9940
+> [  105.723587] x11: ffff0000085e3e70 x10: ffff00000805b780
+> [  105.728884] x9 : ffff00000805bb40 x8 : 7320737574617473
+> [  105.734179] x7 : 206b6c635f305f6c x6 : 00000000000001e5
+> [  105.739472] x5 : 0000000000000000 x4 : 0000000000000000
+> [  105.744769] x3 : ffffffffffffffff x2 : ffff0000091e2658
+> [  105.750063] x1 : a7c4712dd5e09c00 x0 : 0000000000000000
+> [  105.755360] Call trace:
+> [  105.760652]  clk_branch_toggle+0x190/0x1b0
+> [  105.762824]  clk_branch2_disable+0x18/0x20
+> [  105.766994]  clk_core_disable+0x58/0xa8
+> [  105.771069]  clk_core_disable_lock+0x20/0x38
+> [  105.774803]  clk_disable+0x1c/0x28
+> [  105.779320]  __ufshcd_setup_clocks+0x298/0x308
+> [  105.782529]  ufshcd_suspend+0x160/0x308
+> [  105.786953]  ufshcd_shutdown+0x38/0xa0
+> [  105.790690]  ufshcd_pltfrm_shutdown+0x10/0x18
+> [  105.794512]  platform_drv_shutdown+0x20/0x30
+> [  105.798935]  device_shutdown+0x110/0x1e8
+> [  105.803278]  kernel_restart_prepare+0x34/0x40
+> [  105.807181]  kernel_restart+0x14/0x78
+> [  105.811434]  sys_reboot+0x200/0x248
+> [  105.815081]  el0_svc_naked+0x30/0x34
+> [  105.818378] ---[ end trace 8d2322276b27879c ]---
+> 
+> Mark gcc_ufs_tx_symbol_0_clk as BRANCH_HALT_SKIP as well.
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8996.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+> index 9f35b3fe1d97..ff8d66fd94e6 100644
+> --- a/drivers/clk/qcom/gcc-msm8996.c
+> +++ b/drivers/clk/qcom/gcc-msm8996.c
+> @@ -2781,6 +2781,7 @@ static struct clk_branch gcc_ufs_rx_cfg_clk = {
+>  
+>  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+>  	.halt_reg = 0x75018,
+> +	.halt_check = BRANCH_HALT_SKIP,
+>  	.clkr = {
+>  		.enable_reg = 0x75018,
+>  		.enable_mask = BIT(0),
+> -- 
+> 2.14.4
+> 
