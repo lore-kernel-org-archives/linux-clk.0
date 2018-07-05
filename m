@@ -1,112 +1,168 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 016/101] lib/vsprintf: Remove atomic-unsafe support for %pCr
-Date: Sun,  1 Jul 2018 18:21:02 +0200
-Message-Id: <20180701160757.782482744@linuxfoundation.org>
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Thu, 5 Jul 2018 14:43:48 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Aapo Vienamo <avienamo@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
+Message-ID: <20180705114348.GB27696@tbergstrom-lnx.Nvidia.com>
+References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Jul 04, 2018 at 01:17:33PM +0300, Aapo Vienamo wrote:
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Move this to a separate file so it can be used to calculate the sdmmc
+> clock dividers.
+> 
 
-------------------
+Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-commit 666902e42fd8344b923c02dc5b0f37948ff4f225 upstream.
-
-"%pCr" formats the current rate of a clock, and calls clk_get_rate().
-The latter obtains a mutex, hence it must not be called from atomic
-context.
-
-Remove support for this rarely-used format, as vsprintf() (and e.g.
-printk()) must be callable from any context.
-
-Any remaining out-of-tree users will start seeing the clock's name
-printed instead of its rate.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Fixes: 900cca2944254edd ("lib/vsprintf: add %pC{,n,r} format specifiers for clocks")
-Link: http://lkml.kernel.org/r/1527845302-12159-5-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.1+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- Documentation/printk-formats.txt |    3 +--
- lib/vsprintf.c                   |    3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
-
---- a/Documentation/printk-formats.txt
-+++ b/Documentation/printk-formats.txt
-@@ -279,11 +279,10 @@ struct clk:
- 
- 	%pC	pll1
- 	%pCn	pll1
--	%pCr	1560000000
- 
- 	For printing struct clk structures. '%pC' and '%pCn' print the name
- 	(Common Clock Framework) or address (legacy clock framework) of the
--	structure; '%pCr' prints the current clock rate.
-+	structure.
- 
- 	Passed by reference.
- 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1391,9 +1391,6 @@ char *clock(char *buf, char *end, struct
- 		return string(buf, end, NULL, spec);
- 
- 	switch (fmt[1]) {
--	case 'r':
--		return number(buf, end, clk_get_rate(clk), spec);
--
- 	case 'n':
- 	default:
- #ifdef CONFIG_COMMON_CLK
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>  drivers/clk/tegra/Makefile      |  1 +
+>  drivers/clk/tegra/clk-divider.c | 30 ++++-------------------
+>  drivers/clk/tegra/clk.h         |  3 +++
+>  drivers/clk/tegra/div71.c       | 54 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 63 insertions(+), 25 deletions(-)
+>  create mode 100644 drivers/clk/tegra/div71.c
+> 
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index b716923..6d4f563 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+>  obj-y					+= cvb.o
+>  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+>  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> +obj-y					+= div71.o
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee..ad87858 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -32,35 +32,15 @@
+>  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+>  		   unsigned long parent_rate)
+>  {
+> -	u64 divider_ux1 = parent_rate;
+> -	u8 flags = divider->flags;
+> -	int mul;
+> -
+> -	if (!rate)
+> -		return 0;
+> -
+> -	mul = get_mul(divider);
+> -
+> -	if (!(flags & TEGRA_DIVIDER_INT))
+> -		divider_ux1 *= mul;
+> -
+> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> -		divider_ux1 += rate - 1;
+> -
+> -	do_div(divider_ux1, rate);
+> -
+> -	if (flags & TEGRA_DIVIDER_INT)
+> -		divider_ux1 *= mul;
+> +	int div;
+>  
+> -	divider_ux1 -= mul;
+> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
+> +			divider->flags);
+>  
+> -	if ((s64)divider_ux1 < 0)
+> +	if (div < 0)
+>  		return 0;
+>  
+> -	if (divider_ux1 > get_max_div(divider))
+> -		return get_max_div(divider);
+> -
+> -	return divider_ux1;
+> +	return div;
+>  }
+>  
+>  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index e1f8846..f14e136 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -811,6 +811,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+>  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+>  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+>  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags);
+> +
+>  
+>  /* Combined read fence with delay */
+>  #define fence_udelay(delay, reg)	\
+> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> new file mode 100644
+> index 0000000..1a5e04c
+> --- /dev/null
+> +++ b/drivers/clk/tegra/div71.c
+> @@ -0,0 +1,54 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +
+> +#include "clk.h"
+> +
+> +#define div_mask(w) ((1 << (w)) - 1)
+> +
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags)
+> +{
+> +	u64 divider_ux1 = parent_rate;
+> +	int mul;
+> +
+> +	if (!rate)
+> +		return 0;
+> +
+> +	mul = 1 << frac_width;
+> +
+> +	if (!(flags & TEGRA_DIVIDER_INT))
+> +		divider_ux1 *= mul;
+> +
+> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> +		divider_ux1 += rate - 1;
+> +
+> +	do_div(divider_ux1, rate);
+> +
+> +	if (flags & TEGRA_DIVIDER_INT)
+> +		divider_ux1 *= mul;
+> +
+> +	if (divider_ux1 < mul)
+> +		return 0;
+> +
+> +	divider_ux1 -= mul;
+> +
+> +	if (divider_ux1 > div_mask(width))
+> +		return div_mask(width);
+> +
+> +	return divider_ux1;
+> +}
+> -- 
+> 2.7.4
+> 
