@@ -1,50 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1532206010.26720.84.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll
- tables
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date: Sat, 21 Jul 2018 22:46:50 +0200
-In-Reply-To: <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
-References: <20180717095617.12240-1-jbrunet@baylibre.com>
-         <20180717095617.12240-4-jbrunet@baylibre.com>
-         <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
-         <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC: <robh+dt@kernel.org>, <bcousson@baylibre.com>, <tony@atomide.com>,
+        <paul@pwsan.com>, <t-kristo@ti.com>, <mark.rutland@arm.com>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH v4 1/6] ARM: dts: dra762: Add MCAN clock support
+Date: Thu, 5 Jul 2018 19:53:14 +0530
+Message-ID: <20180705142319.19583-2-faiz_abbas@ti.com>
+In-Reply-To: <20180705142319.19583-1-faiz_abbas@ti.com>
+References: <20180705142319.19583-1-faiz_abbas@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
-> > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
-> 
-> I had a look at the sys_pll settings on Meson8b, here's what
-> Meson8/Meson8b/Meson8m2 support for sys_pll:
-> - 50..74
-> - 76
-> - 78
-> - 80
-> - 82
-> - 84
-> - 86
-> - 88
-> - 90
-> - 92
-> - 94
-> - 96
-> - 98
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-Are those values with the same predivider (n) value ?
-I suspect the ability of the DCO to lock might depends on its input rate and an
-m range
+MCAN is clocked by H14 divider of DPLL_GMAC. Unlike other
+DPLL dividers this DPLL_GMAC H14 divider is controlled by
+control module. Adding support for these clocks.
 
-So if n change, it might possible that the m range will be different.
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ arch/arm/boot/dts/dra76x.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-... at least, that's my guess :)
-
-> 
-> (I'm providing this info because it may help finding a decision
-> whether ranges are good or not. I have no preference)
+diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
+index 1c88c581ff18..bfc82636999c 100644
+--- a/arch/arm/boot/dts/dra76x.dtsi
++++ b/arch/arm/boot/dts/dra76x.dtsi
+@@ -17,3 +17,36 @@
+ &crossbar_mpu {
+ 	ti,irqs-skip = <10 67 68 133 139 140>;
+ };
++
++&scm_conf_clocks {
++	dpll_gmac_h14x2_ctrl_ck: dpll_gmac_h14x2_ctrl_ck@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,divider-clock";
++		clocks = <&dpll_gmac_x2_ck>;
++		ti,max-div = <63>;
++		reg = <0x03fc>;
++		ti,bit-shift=<20>;
++		ti,latch-bit=<26>;
++		assigned-clocks = <&dpll_gmac_h14x2_ctrl_ck>;
++		assigned-clock-rates = <80000000>;
++	};
++
++	dpll_gmac_h14x2_ctrl_mux_ck: dpll_gmac_h14x2_ctrl_mux_ck@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,mux-clock";
++		clocks = <&dpll_gmac_ck>, <&dpll_gmac_h14x2_ctrl_ck>;
++		reg = <0x3fc>;
++		ti,bit-shift = <29>;
++		ti,latch-bit=<26>;
++		assigned-clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
++		assigned-clock-parents = <&dpll_gmac_h14x2_ctrl_ck>;
++	};
++
++	mcan_clk: mcan_clk@3fc {
++		#clock-cells = <0>;
++		compatible = "ti,gate-clock";
++		clocks = <&dpll_gmac_h14x2_ctrl_mux_ck>;
++		ti,bit-shift = <27>;
++		reg = <0x3fc>;
++	};
++};
+-- 
+2.17.0
