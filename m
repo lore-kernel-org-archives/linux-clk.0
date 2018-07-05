@@ -1,181 +1,61 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 2/2] clk: Add functions to get optional clocks
-Date: Mon, 30 Jul 2018 09:36:08 +0100
-Message-Id: <1532939768-7018-3-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
-References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 5 Jul 2018 14:51:43 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
+	arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
+	chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180705115143.GC8426@localhost.localdomain>
+References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180705092444.GL496@dell>
+ <20180705103919.GB8426@localhost.localdomain>
+ <20180705104919.GM496@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180705104919.GM496@dell>
 List-ID: <linux-clk.vger.kernel.org>
 
-Behaves the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+On Thu, Jul 05, 2018 at 11:49:19AM +0100, Lee Jones wrote:
+> On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> > On Thu, Jul 05, 2018 at 10:24:44AM +0100, Lee Jones wrote:
+> > > On Thu, 05 Jul 2018, Matti Vaittinen wrote:
+> > > 
+> > > > Document devicetree bindings for ROHM BD71837 PMIC MFD.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > >  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+> > > >  1 file changed, 67 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> > > > +		clock-names = "my-clock";
+> > > > +		clocks = <&pmic>;
+> > > > +	};
+> > > 
+> > > Do you have a real example to give?
+> > 
+> > For clock consumer? Sorry, no I don't.
+> 
+> Might be better to drop it for the time being then.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/clk/clk-devres.c | 18 ++++++++++++++++--
- drivers/clk/clkdev.c     | 17 +++++++++++++++--
- include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+), 4 deletions(-)
+I have tested the clk driver using this dummy consumer. So in a sense it
+"works" and can be used as an example on how to write a real clock
+consumer node. Thus I see some value in this example node - even if it
+does not match to any real world HW. If I had to use the clk from this
+PMIC and write HW description I would appreciate this dummy exaple. I
+can drop it if you insist - but I would at least like to hear what is
+the downside on having it here?
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..a2bb01a 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
- 	clk_put(*(struct clk **)res);
- }
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
-+static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
- {
- 	struct clk **ptr, *clk;
- 
-@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk = clk_get(dev, id);
-+	if (!optional)
-+		clk = clk_get(dev, id);
-+	else
-+		clk = clk_get_optional(dev, id);
- 	if (!IS_ERR(clk)) {
- 		*ptr = clk;
- 		devres_add(dev, ptr);
-@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 
- 	return clk;
- }
-+
-+struct clk *devm_clk_get(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, false);
-+}
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, true);
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index c1b7262..484a444 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -217,21 +217,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
--struct clk *clk_get(struct device *dev, const char *con_id)
-+static struct clk *internal_clk_get(struct device *dev, const char *con_id,
-+				    bool optional)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
-+					   optional);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
- 
- 	return clk_get_sys(dev_id, con_id);
- }
-+
-+struct clk *clk_get(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, false);
-+}
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, true);
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 8cb5455..22040ea 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-  * @num_clks: the number of clk_bulk_data
-@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
- /**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-  * @dev: device for clock "consumer"
-@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
--- 
-2.7.4
+Best regards,
+    Matti Vaittinen
