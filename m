@@ -1,162 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34516 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbeGVMwB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Jul 2018 08:52:01 -0400
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>, pdeschrijver@nvidia.com,
-        jonathanh@nvidia.co, thierry.reding@gmail.com
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pgaikwad@nvidia.com,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-Date: Sun, 22 Jul 2018 14:55:31 +0300
-Message-ID: <1721645.6LMGIEI4vR@dimapc>
-In-Reply-To: <20180720134532.13148-7-ben.dooks@codethink.co.uk>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk> <20180720134532.13148-7-ben.dooks@codethink.co.uk>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-clk-owner@vger.kernel.org
+To: Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180626110918.35c13653@xps13>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Antoine Tenart <antoine.tenart@bootlin.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ Nadav Haklai <nadavh@marvell.com>, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
+ <20180421142344.25944-2-miquel.raynal@bootlin.com>
+ <87in868202.fsf@bootlin.com> <20180626110918.35c13653@xps13>
+Message-ID: <153089271821.143105.13475046419256564594@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume support
+Date: Fri, 06 Jul 2018 08:58:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
-> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
-> clocks by making a 2D and 3D mux, and split the divider into the
-> standard 2D/3D ones and 2D/3D idle clocks.
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  drivers/clk/tegra/clk-id.h              |  4 ++++
->  drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
->  drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
->  include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
->  4 files changed, 39 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> index b616e33c5255..0d202a70ce66 100644
-> --- a/drivers/clk/tegra/clk-id.h
-> +++ b/drivers/clk/tegra/clk-id.h
-> @@ -91,8 +91,12 @@ enum clk_id {
->  	tegra_clk_fuse_burn,
->  	tegra_clk_gpu,
->  	tegra_clk_gr2d,
-> +	tegra_clk_gr2d_mux,
-> +	tegra_clk_gr2d_idle,
->  	tegra_clk_gr2d_8,
->  	tegra_clk_gr3d,
-> +	tegra_clk_gr3d_mux,
-> +	tegra_clk_gr3d_idle,
->  	tegra_clk_gr3d_8,
->  	tegra_clk_hclk,
->  	tegra_clk_hda,
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c
-> b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
-> 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -263,6 +263,21 @@
->  		.flags = _flags,					\
->  	}
-> 
-> +#define GATE_DIV(_name, _parent_name, _offset,				\
-> +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
-> +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
-> +	{								\
-> +		.name = _name,						\
-> +		.clk_id = _clk_id,					\
-> +		.offset = _offset,					\
-> +		.p.parent_name =  _parent_name,				\
-> +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
-> +					   _div_shift, _div_width,	\
-> +					   _div_frac_width, _div_flags, \
-> +				_clk_num, _gate_flags, NULL, NULL),	\
-> +		.flags = _flags						\
-> +	}
-> +
->  #define PLLP_BASE 0xa0
->  #define PLLP_MISC 0xac
->  #define PLLP_MISC1 0x680
-> @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
->  	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, 
-tegra_clk_epp),
-> MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
-> tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
-> 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 
-21,
-> 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 
-24,
-> 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla, 
-CLK_SOURCE_2D,
-> 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
-> tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
-> TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
-> "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
-> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
-> +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
-> TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
-> tegra_clk_gr3d_mux), +	GATE_DIV("3d", "3d_mux", CLK_SOURCE_3D, 0, 8, 1,
-> TEGRA_DIVIDER_ROUND_UP, 24, 0, tegra_clk_gr3d, 0), +	GATE_DIV("3d_idle",
-> "3d_mux", CLK_SOURCE_3D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
-> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr3d_idle, 0),
-> INT8("vde", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_VDE, 61, 0,
-> tegra_clk_vde_8), INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI,
-> 20, 0, tegra_clk_vi_8), INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla_pllc4,
-> CLK_SOURCE_VI, 20, 0, tegra_clk_vi_9), diff --git
-> a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c index
-> acfe661b2ae7..227d3643ecca 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -658,8 +658,12 @@ static struct tegra_devclk devclks[] __initdata = {
->  	{ .dev_id = "mpe", .dt_id = TEGRA30_CLK_MPE },
->  	{ .dev_id = "host1x", .dt_id = TEGRA30_CLK_HOST1X },
->  	{ .dev_id = "3d", .dt_id = TEGRA30_CLK_GR3D },
-> +	{ .dev_id = "3d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR3D_MUX },
-> +	{ .dev_id = "3d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR3D_IDLE },
->  	{ .dev_id = "3d2", .dt_id = TEGRA30_CLK_GR3D2 },
->  	{ .dev_id = "2d", .dt_id = TEGRA30_CLK_GR2D },
-> +	{ .dev_id = "2d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR2D_MUX },
-> +	{ .dev_id = "2d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR2D_IDLE },
->  	{ .dev_id = "se", .dt_id = TEGRA30_CLK_SE },
->  	{ .dev_id = "mselect", .dt_id = TEGRA30_CLK_MSELECT },
->  	{ .dev_id = "tegra-nor", .dt_id = TEGRA30_CLK_NOR },
-> @@ -762,6 +766,10 @@ static struct tegra_clk tegra30_clks[tegra_clk_max]
-> __initdata = { [tegra_clk_host1x] = { .dt_id = TEGRA30_CLK_HOST1X, .present
-> = true }, [tegra_clk_gr2d] = { .dt_id = TEGRA30_CLK_GR2D, .present = true
-> }, [tegra_clk_gr3d] = { .dt_id = TEGRA30_CLK_GR3D, .present = true },
-> +	[tegra_clk_gr2d_mux] = { .dt_id = TEGRA30_CLK_GR2D_MUX, .present = true
-> }, +	[tegra_clk_gr3d_mux] = { .dt_id = TEGRA30_CLK_GR3D_MUX, .present =
-> true }, +	[tegra_clk_gr2d_idle] = { .dt_id = TEGRA30_CLK_GR2D_IDLE,
-> .present = true }, +	[tegra_clk_gr3d_idle] = { .dt_id =
-> TEGRA30_CLK_GR3D_IDLE, .present = true }, [tegra_clk_mselect] = { .dt_id =
-> TEGRA30_CLK_MSELECT, .present = true }, [tegra_clk_nor] = { .dt_id =
-> TEGRA30_CLK_NOR, .present = true }, [tegra_clk_sdmmc1] = { .dt_id =
-> TEGRA30_CLK_SDMMC1, .present = true }, diff --git
+Quoting Miquel Raynal (2018-06-26 02:09:18)
+> Hi Gregory,
+> =
 
-According to TRM, Tegra20 and Tegra114 have these "idle-mode" clock dividers 
-as well. Why only T30 should have them?
+> On Wed, 02 May 2018 18:18:37 +0200, Gregory CLEMENT
+> <gregory.clement@bootlin.com> wrote:
+> >  On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wrot=
+e:
+> > >  =
 
-> a/include/dt-bindings/clock/tegra30-car.h
-> b/include/dt-bindings/clock/tegra30-car.h index 3c90f1535551..eda4ca60351e
-> 100644
-> --- a/include/dt-bindings/clock/tegra30-car.h
-> +++ b/include/dt-bindings/clock/tegra30-car.h
-> @@ -269,6 +269,11 @@
->  #define TEGRA30_CLK_AUDIO3_MUX 306
->  #define TEGRA30_CLK_AUDIO4_MUX 307
->  #define TEGRA30_CLK_SPDIF_MUX 308
-> -#define TEGRA30_CLK_CLK_MAX 309
-> +
-> +#define TEGRA30_CLK_GR2D_MUX	309
-> +#define TEGRA30_CLK_GR3D_MUX	310
-> +#define TEGRA30_CLK_GR2D_IDLE	311
-> +#define TEGRA30_CLK_GR3D_IDLE	312
-> +#define TEGRA30_CLK_CLK_MAX 313
-> 
->  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
+> > > +#if defined(CONFIG_PM)  =
 
-IIUC, that "idle-mode" divisor is just some kind of power-safe feature, is 
-there any real use-case for these clocks? Why not to just pre-configure the 
-"idle-mode" bits during the clocks initialization?
+> > =
+
+> > I think you could get rid of this conditional code. Have a look on what
+> > is done in others drivers around DEV_PM_OPS and __maybe_unused.
+> =
+
+> Thanks for pointing it.
+> =
+
+> Actually most implementations do not use __maybe_unused but do
+> something like:
+> =
+
+> #if defined(CONFIG_PM)
+> =
+
+> static int xxx_pm_suspend() { ... }
+> =
+
+> static void xxx_pm_resume() { ... }
+> =
+
+> static struct pm_ops ops;
+> #define XXX_DEV_PM_OPS &ops
+> #else
+> #define XXX_DEV_PM_OPS NULL
+> #endif /* CONFIG_PM */ =
+
+> =
+
+> And then in the platform_driver structure:
+> =
+
+>         .pm =3D XXX_DEV_PM_OPS,
+> =
+
+> This way, the only #if/#endif is "out" of the current code and the
+> ".pm =3D" line is free of preprocessor macros.
+> =
 
 
-
+Yes, less preprocessor conditionals throughout the code is better for
+code readability and maintainability. Please remove the conditionals and
+use __maybe_unused instead. Sadly, we'll waste 48 bytes on the
+save/restore registers, but that's OK.
