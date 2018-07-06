@@ -1,73 +1,39 @@
-Return-Path: <yibin.gong@nxp.com>
-From: Robin Gong <yibin.gong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez
-	<leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell
- King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>, "A.s. Dong"
-	<aisheng.dong@nxp.com>
-Subject: RE: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-Date: Thu, 26 Jul 2018 09:51:13 +0000
-Message-ID: 
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
-In-Reply-To: <20180726092220.17250-2-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
+Subject: Re: [PATCH v3 3/4] clk: rockchip: add support for half divider
+Date: Fri, 06 Jul 2018 19:19:11 +0200
+Message-ID: <5208192.saTfdjLqfi@phil>
+In-Reply-To: <153089585197.143105.10633953093490493144@swboyd.mtv.corp.google.com>
+References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com> <1529029011-15021-4-git-send-email-zhangqing@rock-chips.com> <153089585197.143105.10633953093490493144@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogT2xla3NpaiBSZW1wZWwg
-W21haWx0bzpvLnJlbXBlbEBwZW5ndXRyb25peC5kZV0NCj4gU2VudDogMjAxOMTqN9TCMjbI1SAx
-NzoyMg0KPiBUbzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgTWFyayBCcm93biA8
-YnJvb25pZUBrZXJuZWwub3JnPjsNCj4gUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29j
-a2lAaW50ZWwuY29tPg0KPiBDYzogT2xla3NpaiBSZW1wZWwgPG8ucmVtcGVsQHBlbmd1dHJvbml4
-LmRlPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1jbGtAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBBbmRyZXcgTW9ydG9u
-DQo+IDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgTGlhbSBHaXJkd29vZCA8bGdpcmR3b29k
-QGdtYWlsLmNvbT47DQo+IExlb25hcmQgQ3Jlc3RleiA8bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+
-OyBSb2IgSGVycmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJr
-LnJ1dGxhbmRAYXJtLmNvbT47IE1pY2hhZWwNCj4gVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxp
-YnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBGYWJpbyBF
-c3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSdXNzZWxsDQo+IEtpbmcgPGxpbnV4QGFy
-bWxpbnV4Lm9yZy51az47IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+OyBSb2JpbiBH
-b25nDQo+IDx5aWJpbi5nb25nQG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAu
-Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0ggdjggMS82XSBBUk06IGlteDZxOiBwcm92aWRlIGRvY3Vt
-ZW50YXRpb24gZm9yIG5ldw0KPiBmc2wscG1pYy1zdGJ5LXBvd2Vyb2ZmIHByb3BlcnR5DQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBPbGVrc2lqIFJlbXBlbCA8by5yZW1wZWxAcGVuZ3V0cm9uaXguZGU+
-DQo+IEFja2VkLWJ5OiBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiAtLS0NCj4gIERv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2cS1jbG9jay50eHQgfCA4
-ICsrKysrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2lteDZxLWNs
-b2NrLnR4dA0KPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2
-cS1jbG9jay50eHQNCj4gaW5kZXggYTQ1Y2E2N2E5ZDVmLi5lMTMwODM0NmUwMGQgMTAwNjQ0DQo+
-IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pbXg2cS1jbG9j
-ay50eHQNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2lt
-eDZxLWNsb2NrLnR4dA0KPiBAQCAtNiw2ICs2LDE0IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+
-ICAtIGludGVycnVwdHM6IFNob3VsZCBjb250YWluIENDTSBpbnRlcnJ1cHQNCj4gIC0gI2Nsb2Nr
-LWNlbGxzOiBTaG91bGQgYmUgPDE+DQo+IA0KPiArT3B0aW9uYWwgcHJvcGVydGllczoNCj4gKy0g
-ZnNsLHBtaWMtc3RieS1wb3dlcm9mZjogQ29uZmlndXJlIENDTSB0byBhc3NlcnQgUE1JQ19TVEJZ
-X1JFUSBzaWduYWwNCj4gKyAgb24gcG93ZXIgb2ZmLg0KPiArICBVc2UgdGhpcyBwcm9wZXJ0eSBp
-ZiB0aGUgU29DIHNob3VsZCBiZSBwb3dlcmVkIG9mZiBieSBleHRlcm5hbCBwb3dlcg0KPiArICBt
-YW5hZ2VtZW50IElDIChQTUlDKSB0cmlnZ2VyZWQgdmlhIFBNSUNfU1RCWV9SRVEgc2lnbmFsLg0K
-UE1JQ19PTl9SRVEgZGlkbid0IGNvbm5lY3QgdG8gYW55IHBpbiBvZiBQTUlDIGluIHlvdXIgY2Fz
-ZT8gRG9uJ3QgdW5kZXJzdGFuZA0Kd2h5IG5vdCBmb2xsb3cgbm9ybWFsIGJvYXJkIGRlc2lnbiBn
-dWlkZSB0byBwb3dlciBvZmYgcG1pYyBieSBQTUlDX09OX1JFUS4NCkhvdyB0byBwb3dlciBvbiBi
-b2FyZCBhZ2FpbiB0aGVuPw0KPiArICBCb2FyZHMgdGhhdCBhcmUgZGVzaWduZWQgdG8gaW5pdGlh
-dGUgcG93ZXJvZmYgb24gUE1JQ19PTl9SRVEgc2lnbmFsDQo+ICtzaG91bGQNCj4gKyAgYmUgdXNp
-bmcgInN5c2Nvbi1wb3dlcm9mZiIgZHJpdmVyIGluc3RlYWQuDQo+ICsNCj4gIFRoZSBjbG9jayBj
-b25zdW1lciBzaG91bGQgc3BlY2lmeSB0aGUgZGVzaXJlZCBjbG9jayBieSBoYXZpbmcgdGhlIGNs
-b2NrICBJRCBpbg0KPiBpdHMgImNsb2NrcyIgcGhhbmRsZSBjZWxsLiAgU2VlIGluY2x1ZGUvZHQt
-YmluZGluZ3MvY2xvY2svaW14NnFkbC1jbG9jay5oDQo+ICBmb3IgdGhlIGZ1bGwgbGlzdCBvZiBp
-Lk1YNiBRdWFkIGFuZCBEdWFsTGl0ZSBjbG9jayBJRHMuDQo+IC0tDQo+IDIuMTguMA0KDQo=
+Am Freitag, 6. Juli 2018, 18:50:51 CEST schrieb Stephen Boyd:
+> Quoting Elaine Zhang (2018-06-14 19:16:50)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
+> > new file mode 100644
+> > index 000000000000..fb7a6501e0c1
+> > --- /dev/null
+> > +++ b/drivers/clk/rockchip/clk-half-divider.c
+> > @@ -0,0 +1,230 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 Fuzhou Rockchip Electronics Co., Ltd
+> > + */
+> > +
+> > +#include <linux/slab.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/clk.h>
+> 
+> Is this include used?
+
+nope, and so are bitops and regmap as well.
+I've amended the commit patch accordingly.
+
+
+Heiko
