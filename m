@@ -1,61 +1,88 @@
-Return-Path: <dianders@google.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
-References: <20180723215404.74296-1-dianders@chromium.org> <20180723215404.74296-3-dianders@chromium.org>
- <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 23 Jul 2018 20:30:21 -0700
-Message-ID: <CAD=FV=WkC5BsreD8t8_+-5J3ztFp5nAFAA+HSwHVvYW3ED3yiA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>, grahamr@codeaurora.org,
-	Girish Mahadevan <girishm@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	David Brown <david.brown@linaro.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Aapo Vienamo <avienamo@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Aapo Vienamo <avienamo@nvidia.com>
+References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+Message-ID: <153090127889.143105.9965550219605167700@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
+Date: Fri, 06 Jul 2018 11:21:18 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Quoting Aapo Vienamo (2018-07-04 03:17:33)
+> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> new file mode 100644
+> index 0000000..1a5e04c
+> --- /dev/null
+> +++ b/drivers/clk/tegra/div71.c
+> @@ -0,0 +1,54 @@
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify =
+it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/kernel.h>
 
-On Mon, Jul 23, 2018 at 7:22 PM, Taniya Das <tdas@codeaurora.org> wrote:
->
->
-> On 7/24/2018 3:24 AM, Douglas Anderson wrote:
->>
->> Add both the interface and core clock.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->> Changes in v2:
->> - Only 19.2, 100, 150, and 300 MHz now.
->> - All clocks come from MAIN rather than EVEN.
->> - Use parent map 0 instead of new parent map 9.
->>
->>   drivers/clk/qcom/gcc-sdm845.c | 63 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index 0f694ed4238a..5bca634e277a 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -162,6 +162,13 @@ static const char * const gcc_parent_names_10[] = {
->>         "core_bi_pll_test_se",
->>   };
->>   +static const char * const gcc_parent_names_9[] = {
->> +       "bi_tcxo",
->> +       "gpll0",
->> +       "gpll0_out_even",
->> +       "core_pi_sleep_clk",
->> +};
->> +
->
->
-> Please remove this.
+You can include <asm/div64.h> instead.
 
-Oops, that's embarrassing.  Please stay tuned for v3.
+> +
+> +#include "clk.h"
+> +
+> +#define div_mask(w) ((1 << (w)) - 1)
+> +
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +             u8 frac_width, u8 flags)
+> +{
+> +       u64 divider_ux1 =3D parent_rate;
 
--Doug
+Hmm ok, now it's unsigned. That's works too.
+
+> +       int mul;
+> +
+> +       if (!rate)
+> +               return 0;
+> +
+> +       mul =3D 1 << frac_width;
+> +
+> +       if (!(flags & TEGRA_DIVIDER_INT))
+> +               divider_ux1 *=3D mul;
+> +
+> +       if (flags & TEGRA_DIVIDER_ROUND_UP)
+> +               divider_ux1 +=3D rate - 1;
+> +
+> +       do_div(divider_ux1, rate);
+> +
+> +       if (flags & TEGRA_DIVIDER_INT)
+> +               divider_ux1 *=3D mul;
+> +
+> +       if (divider_ux1 < mul)
+> +               return 0;
+> +
+> +       divider_ux1 -=3D mul;
+> +
+> +       if (divider_ux1 > div_mask(width))
+> +               return div_mask(width);
+> +
+> +       return divider_ux1;
+> +}
