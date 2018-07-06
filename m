@@ -1,63 +1,29 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 6 Jul 2018 11:56:33 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180706105633.GX496@dell>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
- <20180706060913.GU496@dell>
- <20180706102312.GB11209@localhost.localdomain>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180706102312.GB11209@localhost.localdomain>
+To: Joel Stanley <joel@jms.id.au>, Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180607070959.31995-1-joel@jms.id.au>
+Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20180607070959.31995-1-joel@jms.id.au>
+Message-ID: <153091009365.143105.4953968802856253539@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+Date: Fri, 06 Jul 2018 13:48:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 06 Jul 2018, Matti Vaittinen wrote:
+Quoting Joel Stanley (2018-06-07 00:09:59)
+> This is used by the host to talk to the BMC's PCIe slave device. The BMC
+> is not involved, but the clock needs to be enabled so the host can use
+> the device.
+> =
 
-> On Fri, Jul 06, 2018 at 07:09:13AM +0100, Lee Jones wrote:
-> 
-> [snip]
-> '
-> > page trying to find your response was a little painful.  TIA.
-> 
-> Acronyms can be confusing for non native english speakers like me.
-> Luckily we have the internet =)
-> 
-> https://www.acronymfinder.com/Slang/TIA.html
-> 
-> From these options I would go for:
-> "This Is Awkward" or "That Is Alright" - depending on my mood =] Or
-> maybe it was "Today I Ate"?
+> Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+> Cc: stable@vger.kernel.org # 4.15
+> Acked-by: Andrew Jeffery <andrew@aj.id.au>
+> Tested-by: Lei YU <mine260309@gmail.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-Ha, fair point.
-
-In this instance it means, "thanks in advance". :)
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Applied to clk-fixes
