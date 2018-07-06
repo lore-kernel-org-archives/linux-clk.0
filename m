@@ -1,48 +1,38 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:46158 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752074AbeFFKJl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Jun 2018 06:09:41 -0400
-Date: Wed, 6 Jun 2018 03:09:37 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
-        mark.rutland@arm.com
-Subject: Re: [PATCH v3 0/6] Add MCAN Support for dra76x
-Message-ID: <20180606100937.GF5738@atomide.com>
-References: <20180606060826.14671-1-faiz_abbas@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180606060826.14671-1-faiz_abbas@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: , Michael Turquette <mturquette@baylibre.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87d0w2gsa5.fsf@belgarion.home>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20180627194124.26366-1-robert.jarzmik@free.fr>
+ <87d0w2gsa5.fsf@belgarion.home>
+Message-ID: <153091032623.143105.13689700534218065371@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 1/2] clk: pxa: export 32kHz PLL
+Date: Fri, 06 Jul 2018 13:52:06 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180606 06:09]:
-> The following patches add dts and sysconfig support
-> for MCAN on TI's dra76 SOCs
-> 
-> The patches depend on the following series:
-> https://patchwork.kernel.org/patch/10221105/
-> 
-> Changes in v3:
->  1. Added reset functionality to the ti-sysc
->     driver. This enables me to drop the hwmod
->     data patch as everything is being done in dt.
->
->  2. Dropped ti,hwmods from the dts nodes
+Quoting Robert Jarzmik (2018-07-04 22:34:10)
+> Robert Jarzmik <robert.jarzmik@free.fr> writes:
+> =
 
-Cool good to hear that works :)
+> > This clock is especially used by the RTC driver, so export it so that
+> > devicetree users can use it.
+> >
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> > ---
+> > Since v2: fix missing parenthesis in clk-pxa25x.c and clk-pxa3xx.c
+> =
 
->  4. Removed the status="disabled" in dtsi
->     followed by status="okay" in dts.
+> Hi Michael and Stephen,
+> =
 
-Hmm okay is the default and is not needed. I did not notice
-okay in this set based on a quick glance so maybe you already
-dropped it?
+> Could you have a look please ?
+> =
 
-Regards,
 
-Tony
+I'll apply patch 1, and leave patch 2 to someone else?
