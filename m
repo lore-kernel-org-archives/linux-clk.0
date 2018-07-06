@@ -1,84 +1,47 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-To: David Lechner <david@lechnology.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen
-	<ohad@wizery.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
- <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
- <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
- <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <03256c00-c23f-68c4-c62b-fb4b85547551@ti.com>
-Date: Tue, 3 Jul 2018 10:12:55 +0530
-MIME-Version: 1.0
-In-Reply-To: <345aed22-629a-abf6-df22-adee88a43df6@lechnology.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934414AbeGFRxe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Jul 2018 13:53:34 -0400
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Benjamin Herrenschmidt <benh@linux.vnet.ibm.com>,
+        linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <c31c3652829e8e7064f750d219237c4eb32773e4.camel@linux.vnet.ibm.com>
+Cc: Eddie James <eajames@linux.vnet.ibm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-aspeed@lists.ozlabs.org
+References: <c31c3652829e8e7064f750d219237c4eb32773e4.camel@linux.vnet.ibm.com>
+Message-ID: <153089961364.143105.3583653247951877648@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: aspeed: Treat a gate in reset as disabled
+Date: Fri, 06 Jul 2018 10:53:33 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 02 July 2018 08:57 PM, David Lechner wrote:
-> On 07/02/2018 07:08 AM, Sekhar Nori wrote:
->> Hi Bjorn,
->>
->> On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
->>> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->>>> Hi Bartosz,
->>>>
->>>> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
->>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>
->>>>> These are the remaining patches that still need to be merged in order
->>>>> to complete the conversion of the davinci dsp driver to using the
->>>>> reset
->>>>> framework.
->>>>>
->>>>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
->>>>> merged.
->>>>
->>>> Series looks good to me.
->>>>
->>>> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
->>>> and #2 ?
->>>>
->>>> Given the dependencies and to preserve bisect its easiest if I take the
->>>> series with acks from remoteproc and clock maintainers.
->>>>
->>>> Open to other suggestions as well.
->>>>
->>>> Thanks,
->>>> Sekhar
->>>
->>> Oops you're right about the order. Do you want me to resend?
->>
->> With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
->> to you (on top of v4.18-rc1) for you to merge any further changes you
->> want to queue from your tree.
->>
->> Bartosz, given the number of moving pieces, I think its better to keep
->> 2/4 for v4.20 release - once all other other dependencies have been
->> merged.
-> 
-> I was thinking the same thing as well. I will pick it up in a
-> clk-davinci-4.20 branch if that sounds OK.
+Quoting Benjamin Herrenschmidt (2018-07-03 00:24:47)
+> On some systems, we come out of the bootloader with some
+> gates set with the clock "enabled" but the reset also
+> asserted.
+> =
 
-Sounds good. Just check that there really are no users of that API
-before queuing :)
+> Since 8a53fc511c5e "clk: aspeed: Prevent reset if clock is enabled"
+> we check that enabled bit in aspeed_clk_enabled(), and do
+> nothing if already set.
+> =
 
-Regards,
-Sekhar
+> This breaks when the above scenario occurs, as the clock
+> is enabled, but the reset still needs to be lifted.
+> =
+
+> This patch fixes it by also checking the reset bit (if any)
+> and treating a gate in "reset" as being disabled.
+> =
+
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Fixes: 8a53fc511c5e "clk: aspeed: Prevent reset if clock is enabled"
+> CC: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+
+Applied to clk-fixes
+
