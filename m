@@ -1,74 +1,36 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sangbeom Kim <sbkim73@samsung.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 2/3] ARM: dts: exynos: Add compatible for s2mps11 clocks node on Exynos542x
-Date: Wed, 25 Jul 2018 17:55:16 +0200
-Message-Id: <20180725155517.4872-3-krzk@kernel.org>
-In-Reply-To: <20180725155517.4872-1-krzk@kernel.org>
-References: <20180725155517.4872-1-krzk@kernel.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Joel Stanley <joel@jms.id.au>, Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180628231540.26633-1-joel@jms.id.au>
+Cc: linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180628231540.26633-1-joel@jms.id.au>
+Message-ID: <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
+Date: Fri, 06 Jul 2018 10:55:07 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The bindings for s2mps11/s5m8767 clocks driver require a compatible for
-clocks node.  Parent MFD sec-core driver will also use it when
-instantiating children.
+Quoting Joel Stanley (2018-06-28 16:15:40)
+> The HPLL can be configured through a register (SCU24), however some
+> platforms chose to configure it through the strapping settings and do
+> not use the register. This was not noticed as the logic for bit 18 in
+> SCU24 was confused: set means programmed, but the driver read it as set
+> means strapped.
+> =
 
-The compatible is not needed for proper working because device will be
-anyway created by parent MFD device.  Add it for correctness.
+> This gives us the correct HPLL value on Palmetto systems, from which
+> most of the peripheral clocks are generated.
+> =
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 1 +
- arch/arm/boot/dts/exynos5420-smdk5420.dts     | 1 +
- arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 1 +
- 3 files changed, 3 insertions(+)
+> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
+> Cc: stable@vger.kernel.org # v4.15
+> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index cdda614e417e..3447160e1fbf 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -89,6 +89,7 @@
- 		pinctrl-0 = <&s2mps11_irq>;
- 
- 		s2mps11_osc: clocks {
-+			compatible = "samsung,s2mps11-clk";
- 			#clock-cells = <1>;
- 			clock-output-names = "s2mps11_ap",
- 					"s2mps11_cp", "s2mps11_bt";
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 831c7336f237..3cf905047893 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -141,6 +141,7 @@
- 		reg = <0x66>;
- 
- 		s2mps11_osc: clocks {
-+			compatible = "samsung,s2mps11-clk";
- 			#clock-cells = <1>;
- 			clock-output-names = "s2mps11_ap",
- 					"s2mps11_cp", "s2mps11_bt";
-diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-index 2f4f40882dab..a368c73a1e48 100644
---- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
-@@ -141,6 +141,7 @@
- 		pinctrl-0 = <&s2mps11_irq>;
- 
- 		s2mps11_osc: clocks {
-+			compatible = "samsung,s2mps11-clk";
- 			#clock-cells = <1>;
- 			clock-output-names = "s2mps11_ap",
- 					"s2mps11_cp", "s2mps11_bt";
--- 
-2.14.1
+Do you want this merged for -rc5? It sounds like on some systems this is
+a problem, but I don't know if these systems are supposed to work yet or
+not, so priority of this fix is not easy for me to understand.
