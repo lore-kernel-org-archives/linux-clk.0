@@ -1,76 +1,66 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <sboyd@kernel.org>
+From: sboyd@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 02/18] drm/sun4i: Add support for A64 mixer1
-Date: Wed, 18 Jul 2018 16:24:42 +0530
-Message-Id: <20180718105458.22304-3-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.18-rc3
+Date: Fri,  6 Jul 2018 10:52:54 -0700
+Message-Id: <20180706175254.174724-1-sboyd@kernel.org>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Mixers in Allwinner have similar capabilities as others SoCs with DE2.
+From: Stephen Boyd <sboyd@kernel.org>
 
-Mixer1 has 1 VI and 1 UI planes and supports HW scaling on all
-planes.
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- none 
-Changes for v2:
-- New patch
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+are available in the Git repository at:
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index f76a5576c0e6..756280194f94 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -578,6 +578,14 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.mod_rate = 150000000,
- };
- 
-+static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
-@@ -603,6 +611,10 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
-+		.data = &sun50i_a64_mixer1_cfg,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 9cc63791fad6d2624878c93f3415da77780e68a7:
+
+  Merge branch 'clk-fix-imx6ul-defs' into clk-fixes (2018-06-29 11:40:29 -0700)
+
+----------------------------------------------------------------
+The usual collection of driver fixlets:
+
+ - Build cleanup/fix for the sunxi makefile that tried to save size
+   but failed and prevented dead code elimination from working
+
+ - Two Davinci clk driver fixes for a typo causing build failures
+   in different configurations and an error check that checks
+   the wrong variable.
+
+ - Undo the DT ABI breaking imx6ul binding header shuffle that got
+   merged this cycle.
+
+----------------------------------------------------------------
+Bartosz Golaszewski (1):
+      clk: davinci: fix a typo (which leads to build failures)
+
+Dan Carpenter (1):
+      clk: davinci: cfgchip: testing the wrong variable
+
+Fabio Estevam (1):
+      dt-bindings: clock: imx6ul: Do not change the clock definition order
+
+Masahiro Yamada (1):
+      clk: sunxi-ng: replace lib-y with obj-y
+
+Stephen Boyd (2):
+      Merge tag 'clk-davinci-fixes-4.18' of https://github.com/dlech/linux into clk-fixes
+      Merge branch 'clk-fix-imx6ul-defs' into clk-fixes
+
+ drivers/clk/Makefile                     |  2 +-
+ drivers/clk/davinci/da8xx-cfgchip.c      |  2 +-
+ drivers/clk/davinci/psc.h                |  2 +-
+ drivers/clk/sunxi-ng/Makefile            | 39 ++++++++++++-------------------
+ include/dt-bindings/clock/imx6ul-clock.h | 40 +++++++++++++++-----------------
+ 5 files changed, 37 insertions(+), 48 deletions(-)
+
 -- 
-2.17.1
+Sent by a computer through tubes
