@@ -1,28 +1,55 @@
-Return-Path: <sudeep.holla@arm.com>
-Date: Mon, 30 Jul 2018 12:36:52 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
-Message-ID: <20180730113652.GA16266@e107155-lin>
-References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1530773721-14668-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rohitkr@codeaurora.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+ <1530773721-14668-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
+Date: Fri, 06 Jul 2018 16:42:25 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 27, 2018 at 07:31:52PM +0530, Amit Daniel Kachhap wrote:
-> This fix rounds the clock rate properly by using quotient and not
-> remainder in the calculation. This issue was found while testing HDMI
-> in the Juno platform.
->
-Good find, thanks.
+Quoting Taniya Das (2018-07-04 23:55:20)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/D=
+ocumentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> new file mode 100644
+> index 0000000..fe7378b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> @@ -0,0 +1,22 @@
+> +Qualcomm LPASS Clock Controller Binding
+> +-----------------------------------------------
+> +
+> +Required properties :
+> +- compatible   : shall contain "qcom,sdm845-lpasscc"
+> +- #clock-cells : from common clock binding, shall contain 1.
+> +- reg          : shall contain base register address and size.
+> +- reg-names    : shall contain the register names of LPASS domain
+> +                       "lpass_gcc", "lpass_cc", "lpass_qdsp6ss".
+> +
+> +Example:
+> +
+> +The below node has to be defined in the cases where the LPASS peripheral=
+ loader
+> +would bring the subsystem out of reset.
+> +
+> +       lpasscc: clock-controller {
+> +               compatible =3D "qcom,sdm845-lpasscc";
+> +               reg =3D <0x00147000 0x20>, <0x17014000 0x1f004>,
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+This first reg is inside GCC though? Why isn't it added to the gcc
+sdm845 driver? And then the next two might make sense as a different
+region, but the reg property ending in 20 looks really weird.
 
---
-Regards,
-Sudeep
+> +                       <0x17300020 0x20>;
+> +               reg-names =3D "lpass_gcc", "lpass_cc", "lpass_qdsp6ss";
+> +               #clock-cells =3D <1>;
+> +       };
