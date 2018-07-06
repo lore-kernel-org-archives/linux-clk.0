@@ -1,39 +1,51 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
- SoCs
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, linux-clk@vger.kernel.org, liuwei@actions-semi.com,
- mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
- thomas.liau@actions-semi.com, jeff.chen@actions-semi.com, pn@denx.de,
- edgar.righi@lsitec.org.br, sravanhome@gmail.com
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
-Date: Mon, 30 Jul 2018 12:26:07 +0200
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
+Sender: joel.stan@gmail.com
+In-Reply-To: <20180607070959.31995-1-joel@jms.id.au>
+References: <20180607070959.31995-1-joel@jms.id.au>
+From: Joel Stanley <joel@jms.id.au>
+Date: Fri, 6 Jul 2018 10:58:43 +1000
+Message-ID: <CACPK8XeN6g1PW8ZvBMev=5it6z7sDJPd=pCwkcp+2fLsQ4_rmA@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mani,
+On 7 June 2018 at 17:09, Joel Stanley <joel@jms.id.au> wrote:
+> This is used by the host to talk to the BMC's PCIe slave device. The BMC
+> is not involved, but the clock needs to be enabled so the host can use
+> the device.
+>
+> Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
+> Cc: stable@vger.kernel.org # 4.15
+> Acked-by: Andrew Jeffery <andrew@aj.id.au>
+> Tested-by: Lei YU <mine260309@gmail.com>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
-> This patchset adds Reset Controller (RMU) support for Actions Semi
-> Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-> the clock subsystem in hardware. Hence, in software we integrate RMU
-> support into common clock driver inorder to maintain compatibility.
+Ping?
 
-Can this not be placed into drivers/reset/ by using mfd-simple with a
-sub-node in DT?
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+> ---
+>  drivers/clk/clk-aspeed.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+> index 4d425594999d..c17032bc853a 100644
+> --- a/drivers/clk/clk-aspeed.c
+> +++ b/drivers/clk/clk-aspeed.c
+> @@ -91,8 +91,8 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+>         [ASPEED_CLK_GATE_GCLK] =        {  1,  7, "gclk-gate",          NULL,   0 }, /* 2D engine */
+>         [ASPEED_CLK_GATE_MCLK] =        {  2, -1, "mclk-gate",          "mpll", CLK_IS_CRITICAL }, /* SDRAM */
+>         [ASPEED_CLK_GATE_VCLK] =        {  3,  6, "vclk-gate",          NULL,   0 }, /* Video Capture */
+> -       [ASPEED_CLK_GATE_BCLK] =        {  4,  8, "bclk-gate",          "bclk", 0 }, /* PCIe/PCI */
+> -       [ASPEED_CLK_GATE_DCLK] =        {  5, -1, "dclk-gate",          NULL,   0 }, /* DAC */
+> +       [ASPEED_CLK_GATE_BCLK] =        {  4,  8, "bclk-gate",          "bclk", CLK_IS_CRITICAL }, /* PCIe/PCI */
+> +       [ASPEED_CLK_GATE_DCLK] =        {  5, -1, "dclk-gate",          NULL,   CLK_IS_CRITICAL }, /* DAC */
+>         [ASPEED_CLK_GATE_REFCLK] =      {  6, -1, "refclk-gate",        "clkin", CLK_IS_CRITICAL },
+>         [ASPEED_CLK_GATE_USBPORT2CLK] = {  7,  3, "usb-port2-gate",     NULL,   0 }, /* USB2.0 Host port 2 */
+>         [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",          NULL,   0 }, /* LPC */
+> --
+> 2.17.1
+>
