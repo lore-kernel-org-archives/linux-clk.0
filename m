@@ -1,26 +1,52 @@
-Return-Path: <festevam@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Fri, 6 Jul 2018 13:23:12 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-clk@vger.kernel.org,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180706102312.GB11209@localhost.localdomain>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+ <20180706060913.GU496@dell>
 MIME-Version: 1.0
-In-Reply-To: <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de> <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 26 Jul 2018 12:04:36 -0300
-Message-ID: <CAOMZO5AtZDLiVu_qwmACXXx-o9qKAoj9yZh8ZG54are6U44XPQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>, Stefan Wahren <stefan.wahren@i2se.com>,
-	linux-clk <linux-clk@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180706060913.GU496@dell>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Uwe,
+On Fri, Jul 06, 2018 at 07:09:13AM +0100, Lee Jones wrote:
 
-On Thu, Jul 26, 2018 at 11:32 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
+[snip]
+'
+> page trying to find your response was a little painful.  TIA.
 
-> Fabio: Doesn't that look bad enough to let the hardware guys at NXP
-> look into that?
+Acronyms can be confusing for non native english speakers like me.
+Luckily we have the internet =)
 
-Yes, I think we should ask for their help on this problem.
+https://www.acronymfinder.com/Slang/TIA.html
+
+>From these options I would go for:
+"This Is Awkward" or "That Is Alright" - depending on my mood =] Or
+maybe it was "Today I Ate"?
+
+--Matti
