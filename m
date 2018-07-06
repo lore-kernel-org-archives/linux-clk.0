@@ -1,90 +1,63 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	linux-imx@nxp.com,
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Fri, 6 Jul 2018 11:56:33 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Enric Balletbo Serra <eballetbo@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard clock handles
-Date: Tue, 31 Jul 2018 12:20:08 +0200
-Message-Id: <20180731102009.6710-2-l.stach@pengutronix.de>
-In-Reply-To: <20180731102009.6710-1-l.stach@pengutronix.de>
-References: <20180731102009.6710-1-l.stach@pengutronix.de>
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
+Message-ID: <20180706105633.GX496@dell>
+References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+ <20180706060913.GU496@dell>
+ <20180706102312.GB11209@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180706102312.GB11209@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-When specifying external clock inputs to the CCM the current code
-requires the clocks to be in a "clocks" child node of the DT root.
-This is not really conformant with DT best practices.
+On Fri, 06 Jul 2018, Matti Vaittinen wrote:
 
-To avoid the need to deviate from those best practices, allow the
-clock inputs to be specifies via standard clock handles. This is
-in line with how drivers of the later CCM driver revisions on
-newer i.MX SoCs handle this.
+> On Fri, Jul 06, 2018 at 07:09:13AM +0100, Lee Jones wrote:
+> 
+> [snip]
+> '
+> > page trying to find your response was a little painful.  TIA.
+> 
+> Acronyms can be confusing for non native english speakers like me.
+> Luckily we have the internet =)
+> 
+> https://www.acronymfinder.com/Slang/TIA.html
+> 
+> From these options I would go for:
+> "This Is Awkward" or "That Is Alright" - depending on my mood =] Or
+> maybe it was "Today I Ate"?
 
-As we can't retroactively change the DT binding, allow this as an
-option with a fallback to the old way of how this has been handled.
+Ha, fair point.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
- .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
- drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
- 2 files changed, 22 insertions(+), 5 deletions(-)
+In this instance it means, "thanks in advance". :)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-index a45ca67a9d5f..ce6aa9920c05 100644
---- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-@@ -6,6 +6,11 @@ Required properties:
- - interrupts: Should contain CCM interrupt
- - #clock-cells: Should be <1>
- 
-+Optional properties:
-+- clocks: list of clock specifiers, must contain an entry for each entry
-+          in clock-names
-+- clock-names: valid names are "osc", "ckil", "ckil", "anaclk1" and "anaclk2"
-+
- The clock consumer should specify the desired clock by having the clock
- ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
- for the full list of i.MX6 Quad and DualLite clock IDs.
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 9059a369ae95..f64f0fe76658 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -421,12 +421,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	int ret;
- 
- 	clk[IMX6QDL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
--	clk[IMX6QDL_CLK_CKIL] = imx_obtain_fixed_clock("ckil", 0);
--	clk[IMX6QDL_CLK_CKIH] = imx_obtain_fixed_clock("ckih1", 0);
--	clk[IMX6QDL_CLK_OSC] = imx_obtain_fixed_clock("osc", 0);
-+	clk[IMX6QDL_CLK_CKIL] = of_clk_get_by_name(ccm_node, "ckil");
-+	if (IS_ERR(clk[IMX6QDL_CLK_CKIL]))
-+		clk[IMX6QDL_CLK_CKIL] = imx_obtain_fixed_clock("ckil", 0);
-+	clk[IMX6QDL_CLK_CKIH] = of_clk_get_by_name(ccm_node, "ckih1");
-+	if (IS_ERR(clk[IMX6QDL_CLK_CKIH]))
-+		clk[IMX6QDL_CLK_CKIH] = imx_obtain_fixed_clock("ckih1", 0);
-+	clk[IMX6QDL_CLK_OSC] = of_clk_get_by_name(ccm_node, "osc");
-+	if (IS_ERR(clk[IMX6QDL_CLK_OSC]))
-+		clk[IMX6QDL_CLK_OSC] = imx_obtain_fixed_clock("osc", 0);
-+
- 	/* Clock source from external clock via CLK1/2 PADs */
--	clk[IMX6QDL_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
--	clk[IMX6QDL_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
-+	clk[IMX6QDL_CLK_ANACLK1] = of_clk_get_by_name(ccm_node, "anaclk1");
-+	if (IS_ERR(clk[IMX6QDL_CLK_ANACLK1]))
-+		clk[IMX6QDL_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
-+
-+	clk[IMX6QDL_CLK_ANACLK2] = of_clk_get_by_name(ccm_node, "anaclk2");
-+	if (IS_ERR(clk[IMX6QDL_CLK_ANACLK2]))
-+		clk[IMX6QDL_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
- 	anatop_base = base = of_iomap(np, 0);
 -- 
-2.18.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
