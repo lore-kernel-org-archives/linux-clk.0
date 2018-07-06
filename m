@@ -1,29 +1,21 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Mikko Perttunen <mperttunen@nvidia.com>, jonathanh@nvidia.com,
- mturquette@baylibre.com, pdeschrijver@nvidia.com, thierry.reding@gmail.com
+To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180629143814.17950-1-mperttunen@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, swarren@nvidia.com, vbhadram@nvidia.com,
- Mikko Perttunen <mperttunen@nvidia.com>
-References: <20180629143814.17950-1-mperttunen@nvidia.com>
-Message-ID: <153109419548.143105.6202239165158958607@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: tegra: bpmp: Don't crash when a clock fails to register
-Date: Sun, 08 Jul 2018 16:56:35 -0700
+In-Reply-To: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
+Cc: dinguyen@kernel.org, mturquette@baylibre.com
+References: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
+Message-ID: <153090061568.143105.11421489091672128596@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/2] clk: socfpga: stratix10: fix the parents of mpu_free_clk
+Date: Fri, 06 Jul 2018 11:10:15 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Mikko Perttunen (2018-06-29 07:38:14)
-> When registering clocks, we just skip any that fail to register
-> (leaving a NULL hole in the clock table). However, our of_xlate
-> function still tries to dereference each entry while looking for
-> the clock with the requested id, causing a crash if any clocks
-> failed to register. Add a check to of_xlate to skip any NULL
-> clocks.
+Quoting Dinh Nguyen (2018-06-26 06:28:09)
+> Add a clock mux that is used as a parent for the mpu_free_clk.
 > =
 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
 
 Applied to clk-next
