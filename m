@@ -1,43 +1,64 @@
-Return-Path: <hofrat@osadl.org>
-From: Nicholas Mc Guire <hofrat@osadl.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Kees Cook <keescook@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH 1/2] drivers: clk: st: warn on iomap failure
-Date: Sun, 15 Jul 2018 12:18:23 +0200
-Message-Id: <1531649904-6072-1-git-send-email-hofrat@osadl.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Shawn Guo <shawnguo@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180701021947.GA4348@dragon>
+Cc: Anson Huang <anson.huang@nxp.com>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ Fabio Estevam <fabio.estevam@nxp.com>,
+ "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+ <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+ <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <20180628005217.GC22683@dragon>
+ <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
+ <20180701021947.GA4348@dragon>
+Message-ID: <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+Date: Fri, 06 Jul 2018 10:15:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
- While the return value of clkgen_get_register_base() is being checked
-at the call site, there is no indication of failure cause thus making
-diagnosis of the issues hard. The WARN_ON() allows to determine the
-cause of failure.
+Quoting Shawn Guo (2018-06-30 19:19:49)
+> On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
+> > Quoting Shawn Guo (2018-06-27 17:52:18)
+> > > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
+> > > > Gentle Ping...
+> > > =
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+> > > I cannot apply this dts patch until the clock patch is landed on
+> > > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
+> > > created by clock patch.
+> > > =
 
-Problem found by an experimental coccinelle script
+> > =
 
-Patch was compile tested with: multi_v7_defconfig (implies
-CONFIG_ARCH_STI=y)
+> > Does it matter if that clk ID changes across branches? Or is everything
+> > good if it just exists as some number?
+> =
 
-Patch is against 4.18-rc4 (localversion-next is next-20180713)
+> We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
+> it doesn't matter if IMX6UL_CLK_GPIO1 changes.
+> =
 
- drivers/clk/st/clkgen-pll.c | 1 +
- 1 file changed, 1 insertion(+)
+> > The patch adding the define
+> > conflicts with another patch to fix the numbering scheme to be
+> > incremental instead of changing IMX6UL and IMX6ULL which is annoying.
+> > I'll probably make a topic branch just for the fix and merge it into
+> > clk-fixes and this branch so you can pick it up from there if you like.
+> =
 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index cbb5184..aeb30ab 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -647,6 +647,7 @@ static void __iomem * __init clkgen_get_register_base(
- 		return NULL;
- 
- 	reg = of_iomap(pnode, 0);
-+	WARN_ON(!reg);
- 
- 	of_node_put(pnode);
- 	return reg;
--- 
-2.1.4
+> It will be good if you can have a topic branch.  Otherwise, we are also
+> fine to wait till the clock patches lands on mainline.
+> =
+
+
+Ok. The topic branch is out there as clk-imx-gpio-gates
