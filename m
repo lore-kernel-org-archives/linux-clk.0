@@ -1,53 +1,26 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:50488 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753519AbeGFKfp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:35:45 -0400
-Date: Fri, 6 Jul 2018 03:35:41 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
-        mark.rutland@arm.com
-Subject: Re: [PATCH v4 4/6] bus: ti-sysc: Add support for software reset
-Message-ID: <20180706103541.GC112168@atomide.com>
-References: <20180705142319.19583-1-faiz_abbas@ti.com>
- <20180705142319.19583-5-faiz_abbas@ti.com>
- <20180705154758.GA112168@atomide.com>
- <cf8652a1-019c-d423-9b44-0d62006734f8@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cf8652a1-019c-d423-9b44-0d62006734f8@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180627194124.26366-1-robert.jarzmik@free.fr>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20180627194124.26366-1-robert.jarzmik@free.fr>
+Message-ID: <153091043355.143105.4051882411997045585@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 1/2] clk: pxa: export 32kHz PLL
+Date: Fri, 06 Jul 2018 13:53:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180706 10:05]:
-> Hi,
-> 
-> On Thursday 05 July 2018 09:17 PM, Tony Lindgren wrote:
-> > * Faiz Abbas <faiz_abbas@ti.com> [180705 14:24]:
-> >> +static int sysc_reset(struct sysc *ddata)
-> >> +{
-> >> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
-> >> +	int val = sysc_read(ddata, offset);
-> > 
-> > Can you please just warn and return early for now if no
-> > syss_mask is specified? Otherwise we'll have mysterious
-> > errors if somebody leaves out "ti,hwmods" for module types
-> > we do not yet support reset for.
-> 
-> RESET write to sysconfig can still happen even if there's no syss_mask
-> right? Not all modules need to poll on reset status.
+Quoting Robert Jarzmik (2018-06-27 12:41:23)
+> This clock is especially used by the RTC driver, so export it so that
+> devicetree users can use it.
+> =
 
-It can but we currently don't have anything similar to
-srst_udelay like we have in _ocp_softreset(). And we don't
-currently have suport for sysc reset done bit.
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
 
-So we want to warn and return error except in the known
-working case for now.
-
-Regards,
-
-Tony
+Applied to clk-next
