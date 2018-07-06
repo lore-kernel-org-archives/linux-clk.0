@@ -1,138 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs39.siol.net ([185.57.226.230]:35025 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388075AbeG0RHd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jul 2018 13:07:33 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Fri, 27 Jul 2018 17:44:59 +0200
-Message-ID: <2190272.845Jehz4jH@jernej-laptop>
-In-Reply-To: <7e1dcd8796e417924072f14b2a50af73@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180727140032.go6f3dwzxrzfstzj@flea> <7e1dcd8796e417924072f14b2a50af73@aosc.io>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
+References: <20180704130103.31790-1-geert+renesas@glider.be> <153088993646.143105.11674939438681531758@swboyd.mtv.corp.google.com>
+In-Reply-To: <153088993646.143105.11674939438681531758@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 6 Jul 2018 17:18:09 +0200
+Message-ID: <CAMuHMdWKsC74T5EZ-iPaWK6d+ZZQLXp4dzbXb3PFA1+hprcbKg@mail.gmail.com>
+Subject: Re: [PATCH] clk: Really show symbolic clock flags in debugfs
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne petek, 27. julij 2018 ob 17:42:08 CEST je Icenowy Zheng napisal(a):
-> 在 2018-07-27 22:00，Maxime Ripard 写道：
-> 
-> > On Fri, Jul 27, 2018 at 09:26:11PM +0800, Icenowy Zheng wrote:
-> >> 于 2018年7月27日 GMT+08:00 下午8:56:15, Maxime Ripard
-> >> 
-> >> <maxime.ripard@bootlin.com> 写到:
-> >> >On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
-> >> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> >
-> >> >b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> >
-> >> >> index 1b9b92e541d2..1b972bade9f6 100644
-> >> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> >> @@ -62,6 +62,21 @@
-> >> >> 
-> >> >>  	chosen {
-> >> >>  	
-> >> >>  		stdout-path = "serial0:115200n8";
-> >> >>  	
-> >> >>  	};
-> >> >> 
-> >> >> +
-> >> >> +	connector {
-> >> >> +		compatible = "hdmi-connector";
-> >> >> +		type = "a";
-> >> >> +
-> >> >> +		port {
-> >> >> +			hdmi_con_in: endpoint {
-> >> >> +				remote-endpoint = <&hdmi_out_con>;
-> >> >> +			};
-> >> >> +		};
-> >> >> +	};
-> >> >> +};
-> >> >> +
-> >> >> +&de {
-> >> >> +	status = "okay";
-> >> >> 
-> >> >>  };
-> >> >>  
-> >> >>  &ehci0 {
-> >> >> 
-> >> >> @@ -82,6 +97,17 @@
-> >> >> 
-> >> >>  };
-> >> >> 
-> >> >> +&hdmi {
-> >> >> +	hdmi-supply = <&reg_dldo1>;
-> >> >> +	status = "okay";
-> >> >> +};
-> >> >> +
-> >> >> +&hdmi_out {
-> >> >> +	hdmi_out_con: endpoint {
-> >> >> +		remote-endpoint = <&hdmi_con_in>;
-> >> >> +	};
-> >> >> +};
-> >> >> +
-> >> >> 
-> >> >>  &i2c1 {
-> >> >>  
-> >> >>  	pinctrl-names = "default";
-> >> >>  	pinctrl-0 = <&i2c1_pins>;
-> >> >> 
-> >> >> @@ -99,6 +125,10 @@
-> >> >> 
-> >> >>  	};
-> >> >>  
-> >> >>  };
-> >> >> 
-> >> >> +&mixer1 {
-> >> >> +	status = "okay";
-> >> >> +};
-> >> >> +
-> >> >> 
-> >> >>  &mmc0 {
-> >> >>  
-> >> >>  	pinctrl-names = "default";
-> >> >>  	pinctrl-0 = <&mmc0_pins>;
-> >> >> 
-> >> >> @@ -238,6 +268,10 @@
-> >> >> 
-> >> >>  	status = "disabled";
-> >> >>  
-> >> >>  };
-> >> >> 
-> >> >> +&tcon1 {
-> >> >> +	status = "okay";
-> >> >> +};
-> >> >
-> >> >Is it working or not on the pine64?
-> >> 
-> >> Not tested yet, as my main A64 device is Pine A64-LTS now.
-> > 
-> > It was last reported as broken, so it's better to leave it out of that
-> > patch until someone figures it out.
-> 
-> Sorry, I did find a bug. Although after fixing it HDMI on Pine A64+
-> works fine.
-> 
-> Will fix the bug when sending v3.2 (resending after rc1).
+Hi Stephen,
 
-Why don't you simply send v4, with all patches and changelogs? It would be 
-easier to comprehend.
+On Fri, Jul 6, 2018 at 5:12 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-07-04 06:01:03)
+> > The last-minute fold-in of the ENTRY() macro did change behavior:
+> > instead of printing the symbolic name (e.g. "CLK_IS_BASIC"), it prints
+> > the expansion of it (e.g. "(1UL << (5))").
+> >
+> > Use "#" instead of  __stringify() to fix this.
+>
+> Do we need the stringify.h include anymore then?
 
-Best regards,
-Jernej
+No we don't. I had planned to remove it, but forgot in the end :-(
 
-> 
-> > Thanks!
-> > Maxime
+Thanks, v2 sent.
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
