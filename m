@@ -1,78 +1,77 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58078 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbeGZScX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:32:23 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 02/10] dt-bindings: display: Add compatible for A64 DE2 display pipeline
-Date: Fri, 27 Jul 2018 01:12:49 +0800
-Message-Id: <20180726171257.6688-3-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <daniel@zonque.org>
+Subject: Re: [PATCH v5 1/1] clk: Add driver for MAX9485
+To: Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org
+References: <20180706185303.27936-1-daniel@zonque.org>
+ <20180706185303.27936-2-daniel@zonque.org>
+ <153090987181.143105.15058390396658193120@swboyd.mtv.corp.google.com>
+From: Daniel Mack <daniel@zonque.org>
+Message-ID: <5679f9c9-16d0-ff43-760d-f980644a6841@zonque.org>
+Date: Sat, 7 Jul 2018 00:12:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <153090987181.143105.15058390396658193120@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
 
-Allwinner A64 has a DE2 display pipeline. The TCONs are similar to the
-ones in A83T, but the mixers are new (similar to the later R40 SoC).
 
-This patch adds dt-binding documentation for A64 DE2 display pipeline.
+On 07/06/2018 10:44 PM, Stephen Boyd wrote:
+> Quoting Daniel Mack (2018-07-06 11:53:03)
+>> This patch adds a driver for MAX9485, a programmable audio clock generator.
+>>
+>> The device requires a 27.000 MHz clock input. It can provide a gated
+>> buffered output of its input clock and two gated outputs of a PLL that can
+>> generate one out of 16 discrete frequencies. There is only one PLL however,
+>> so the two gated outputs will always have the same frequency but they can
+>> be switched individually.
+>>
+>> The driver for this device exposes 4 clocks in total:
+>>
+>> - MAX9485_MCLKOUT:      A gated, buffered output of the input clock
+>> - MAX9485_CLKOUT:       A PLL that can be configured to 16 different
+>>                         discrete frequencies
+>> - MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
+>>
+>> Some PLL output frequencies can be achieved with different register
+>> settings. The driver will select the one with lowest jitter in such cases.
+>>
+>> Signed-off-by: Daniel Mack <daniel@zonque.org>
+>> ---
+> 
+> BTW, I squashed in this to make things a little cleaner:
+> 
+> ---8<----
+> diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
+> index ae9d3c20a513..5e80f3d090f3 100644
+> --- a/drivers/clk/clk-max9485.c
+> +++ b/drivers/clk/clk-max9485.c
+> @@ -149,10 +149,11 @@ static unsigned long max9485_clkout_recalc_rate(struct clk_hw *hw,
+>  {
+>  	struct max9485_clk_hw *clk_hw = to_max9485_clk(hw);
+>  	struct max9485_driver_data *drvdata = clk_hw->drvdata;
+> +	u8 val = drvdata->reg_value & MAX9485_FREQ_MASK;
+>  	const struct max9485_rate *entry;
+>  
+>  	for (entry = max9485_rates; entry->out != 0; entry++)
+> -		if ((drvdata->reg_value & MAX9485_FREQ_MASK) == entry->reg_value)
+> +		if (val == entry->reg_value)
+>  			return entry->out;
+>  
+>  	return 0;
+> @@ -244,7 +245,8 @@ static const struct max9485_clk max9485_clks[MAX9485_NUM_CLKS] = {
+>  	},
+>  };
+>  
+> -static struct clk_hw *max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
+> +static struct clk_hw *
+> +max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
+>  {
+>  	struct max9485_driver_data *drvdata = data;
+>  	unsigned int idx = clkspec->args[0];
+> 
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-[Icenowy: Refactor and also cover TCON0]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v3.1:
-- added mixer0 and TCON0
-Changes for v3:
-- collect Rob r-w-b tag
-Changes for v2:
-- Add fallback compatible for tcon1
-- Add separate compatible for mixer1 
+Sure, that's fine.
 
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f8773ecb7525..7b79c5e3dffc 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -151,6 +151,8 @@ Required properties:
-    * allwinner,sun8i-v3s-tcon
-    * allwinner,sun9i-a80-tcon-lcd
-    * allwinner,sun9i-a80-tcon-tv
-+   * "allwinner,sun50i-a64-tcon-lcd", "allwinner,sun8i-a83t-tcon-lcd"
-+   * "allwinner,sun50i-a64-tcon-tv", "allwinner,sun8i-a83t-tcon-tv"
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON.
-@@ -370,6 +372,8 @@ Required properties:
-     * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun50i-a64-de2-mixer-0
-+    * allwinner,sun50i-a64-de2-mixer-1
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
-@@ -403,6 +407,7 @@ Required properties:
-     * allwinner,sun8i-r40-display-engine
-     * allwinner,sun8i-v3s-display-engine
-     * allwinner,sun9i-a80-display-engine
-+    * allwinner,sun50i-a64-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
-     frontends (DE 1.0) or mixers (DE 2.0) available.
--- 
-2.18.0
-
+Thanks,
+Daniel
