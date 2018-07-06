@@ -1,69 +1,84 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Mon, 30 Jul 2018 11:24:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+Return-Path: <vkoul@kernel.org>
+From: Vinod Koul <vkoul@kernel.org>
+To: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	"A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-Message-ID: <20180730102452.GH5789@sirena.org.uk>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-6-o.rempel@pengutronix.de>
- <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <06313062-70db-9c10-048e-78ca267da959@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ewQ5hdP4CtoTt3oD"
-In-Reply-To: <06313062-70db-9c10-048e-78ca267da959@pengutronix.de>
+	Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v2] clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
+Date: Fri,  6 Jul 2018 10:25:40 +0530
+Message-Id: <20180706045540.1579-1-vkoul@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Commit 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS
+clocks") marked BRANCH_HALT_SKIP for ufs rx clocks, but missed ufs tx
+clocks. The result of that is kernel warnings at reboot:
 
---ewQ5hdP4CtoTt3oD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[  105.624283] gcc_ufs_tx_symbol_0_clk status stuck at 'on'
+[  105.624311] WARNING: CPU: 1 PID: 1 at drivers/clk/qcom/clk-branch.c:100 clk_branch_toggle+0x190/0x1b0
+[  105.633235] Modules linked in:
+[  105.645118] CPU: 1 PID: 1 Comm: systemd-shutdow Tainted: G        W         4.18.0-rc2-00002-g2bfbe52a53a3 #11
+[  105.647988] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
+[  105.657966] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[  105.664127] pc : clk_branch_toggle+0x190/0x1b0
+[  105.668900] lr : clk_branch_toggle+0x190/0x1b0
+[  105.673324] sp : ffff00000805bb40
+[  105.677751] x29: ffff00000805bb40 x28: 0000000000000000
+[  105.681140] x27: ffff8000d947cc60 x26: 0000000000000001
+[  105.686520] x25: ffff000008f71900 x24: 0000000000000000
+[  105.691816] x23: ffff00000925e338 x22: ffff00000855f8e0
+[  105.697114] x21: 0000000000000000 x20: 0000000000000000
+[  105.702407] x19: ffff0000091c9000 x18: ffffffffffffffff
+[  105.707702] x17: 0000ffffac148c58 x16: ffff000008b82928
+[  105.712998] x15: ffff0000091c96c8 x14: ffff0000893817c7
+[  105.718293] x13: ffff0000093817d5 x12: ffff0000091c9940
+[  105.723587] x11: ffff0000085e3e70 x10: ffff00000805b780
+[  105.728884] x9 : ffff00000805bb40 x8 : 7320737574617473
+[  105.734179] x7 : 206b6c635f305f6c x6 : 00000000000001e5
+[  105.739472] x5 : 0000000000000000 x4 : 0000000000000000
+[  105.744769] x3 : ffffffffffffffff x2 : ffff0000091e2658
+[  105.750063] x1 : a7c4712dd5e09c00 x0 : 0000000000000000
+[  105.755360] Call trace:
+[  105.760652]  clk_branch_toggle+0x190/0x1b0
+[  105.762824]  clk_branch2_disable+0x18/0x20
+[  105.766994]  clk_core_disable+0x58/0xa8
+[  105.771069]  clk_core_disable_lock+0x20/0x38
+[  105.774803]  clk_disable+0x1c/0x28
+[  105.779320]  __ufshcd_setup_clocks+0x298/0x308
+[  105.782529]  ufshcd_suspend+0x160/0x308
+[  105.786953]  ufshcd_shutdown+0x38/0xa0
+[  105.790690]  ufshcd_pltfrm_shutdown+0x10/0x18
+[  105.794512]  platform_drv_shutdown+0x20/0x30
+[  105.798935]  device_shutdown+0x110/0x1e8
+[  105.803278]  kernel_restart_prepare+0x34/0x40
+[  105.807181]  kernel_restart+0x14/0x78
+[  105.811434]  sys_reboot+0x200/0x248
+[  105.815081]  el0_svc_naked+0x30/0x34
+[  105.818378] ---[ end trace 8d2322276b27879c ]---
 
-On Mon, Jul 30, 2018 at 09:50:55AM +0200, Oleksij Rempel wrote:
-> On 27.07.2018 11:32, Robin Gong wrote:
+Mark gcc_ufs_tx_symbol_0_clk as BRANCH_HALT_SKIP as well.
 
-> >>  #include <linux/slab.h>
-> >> +#include <linux/kallsyms.h>
+Fixes: 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS clocks")
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > Is it necessary?
-
-> yes, for pm_power_off_prepare
-
-That's a *weird* header to have to use for that symbol, are you sure
-there isn't something more specific - if there isn't there should be.
-
---ewQ5hdP4CtoTt3oD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlte53MACgkQJNaLcl1U
-h9BsBAf9HfE13YI9qSd1GydHPbPMZnDKSMXtshjnwDivfR+hXUdAlsfgURLvs0V8
-f/iR74SQjrH99baF0Fo9tSGQPkWxv4riSx2J+n4Kk7CxdcxK9OviyIdH4Ecg4uks
-TdgBaVcRXwVgiRx3gIj9ij6xlEfljCPQt5uOBL/42JeJ+kH8Qt11P9BbudUvBR1R
-CbjNPFILD4P5HJ+tIl3fyRru9+Q1rJAof1nP8iTczZRMutPmNGidM47Dg0/z5k/f
-cr+pkjguyjyYCD6gD0S9+oAG6jcmYa6ddGPIT+47Qu+eTWpAHi+PVlzzhJ69L59K
-BqyDpG9Pitz6iJDZYY51xye0o+fI3g==
-=/6WQ
------END PGP SIGNATURE-----
-
---ewQ5hdP4CtoTt3oD--
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 9f35b3fe1d97..ff8d66fd94e6 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -2781,6 +2781,7 @@ static struct clk_branch gcc_ufs_rx_cfg_clk = {
+ 
+ static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+ 	.halt_reg = 0x75018,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x75018,
+ 		.enable_mask = BIT(0),
+-- 
+2.14.4
