@@ -1,109 +1,112 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58365 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbeGZSgd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:36:33 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 09/10] drm/sun4i: Add support for HDMI voltage regulator
-Date: Fri, 27 Jul 2018 01:12:56 +0800
-Message-Id: <20180726171257.6688-10-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+Message-ID: <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for SDM845
+Date: Sun, 08 Jul 2018 16:54:45 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+Quoting Taniya Das (2018-06-23 07:19:27)
+> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-s=
+dm845.c
+> new file mode 100644
+> index 0000000..af437e0
+> --- /dev/null
+> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> @@ -0,0 +1,674 @@
+> +// SPDX-License-Identifier: GPL-2.0
+[...]
+> +static struct clk_alpha_pll disp_cc_pll0 =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr =3D {
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "disp_cc_pll0",
+> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src =3D {
+> +       .cmd_rcgr =3D 0x20d0,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_0,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_byte0_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
 
-Some boards have HDMI VCC pin connected to voltage regulator which may
-not be turned on by default.
+Why is there the no cache flag? Last time I asked I don't think I got
+any answer, and there isn't a comment here so please at least add a
+comment to the code so we don't forget.
 
-Add support for such boards by adding voltage regulator handling code to
-HDMI driver.
+> +               .ops =3D &clk_byte2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_byte1_clk_src =3D {
+> +       .cmd_rcgr =3D 0x20ec,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_0,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_byte1_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +               .ops =3D &clk_byte2_ops,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_esc0_clk_src =3D {
+> +       .cmd_rcgr =3D 0x2108,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_esc0_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_esc0_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_esc1_clk_src =3D {
+> +       .cmd_rcgr =3D 0x2120,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D disp_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_disp_cc_mdss_esc0_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "disp_cc_mdss_esc1_clk_src",
+> +               .parent_names =3D disp_cc_parent_names_0,
+> +               .num_parents =3D 4,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+[...]
+> +
+> +MODULE_LICENSE("GPL v2");
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3.1:
-- New patch. (Replaced "drm: sun4i: add support for HVCC regulator
-  for DWC HDMI glue" by Icenowy.)
-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 17 ++++++++++++++++-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
- 2 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 31875b636434..bf7bf4f2fb29 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -125,10 +125,22 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 		return PTR_ERR(hdmi->clk_tmds);
- 	}
- 
-+	hdmi->regulator = devm_regulator_get(dev, "hdmi");
-+	if (IS_ERR(hdmi->regulator)) {
-+		dev_err(dev, "Couldn't get regulator\n");
-+		return PTR_ERR(hdmi->regulator);
-+	}
-+
-+	ret = regulator_enable(hdmi->regulator);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable regulator\n");
-+		return ret;
-+	}
-+
- 	ret = reset_control_deassert(hdmi->rst_ctrl);
- 	if (ret) {
- 		dev_err(dev, "Could not deassert ctrl reset control\n");
--		return ret;
-+		goto err_disable_regulator;
- 	}
- 
- 	ret = clk_prepare_enable(hdmi->clk_tmds);
-@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	clk_disable_unprepare(hdmi->clk_tmds);
- err_assert_ctrl_reset:
- 	reset_control_assert(hdmi->rst_ctrl);
-+err_disable_regulator:
-+	regulator_disable(hdmi->regulator);
- 
- 	return ret;
- }
-@@ -196,6 +210,7 @@ static void sun8i_dw_hdmi_unbind(struct device *dev, struct device *master,
- 	sun8i_hdmi_phy_remove(hdmi);
- 	clk_disable_unprepare(hdmi->clk_tmds);
- 	reset_control_assert(hdmi->rst_ctrl);
-+	regulator_disable(hdmi->regulator);
- }
- 
- static const struct component_ops sun8i_dw_hdmi_ops = {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index aadbe0a10b0c..7fdc1ecd2892 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -10,6 +10,7 @@
- #include <drm/drm_encoder.h>
- #include <linux/clk.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- 
- #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
-@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
- 	struct drm_encoder		encoder;
- 	struct sun8i_hdmi_phy		*phy;
- 	struct dw_hdmi_plat_data	plat_data;
-+	struct regulator		*regulator;
- 	struct reset_control		*rst_ctrl;
- };
- 
--- 
-2.18.0
-
+MODULE_DESCRIPTION?
