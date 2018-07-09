@@ -1,78 +1,36 @@
-Return-Path: <edgar.righi@lsitec.org.br>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:46202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754214AbeGIGWB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:22:01 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date: Wed, 18 Jul 2018 12:54:44 -0300
-Message-ID: <CADHB5bDhdXonoSUahgxqV8_rcUwYxvh3t9WDNN4YO8g7KSt07Q@mail.gmail.com>
-Subject: [PATCH v1 03/04] arm: dts: actions: Enable clock controller for
- Actions Semi S500 SoC
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
-	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
-	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
-	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
-	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
-	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
-Content-Type: text/plain; charset="UTF-8"
+To: "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180615095107.24610-2-o.rempel@pengutronix.de>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
+References: <20180615095107.24610-1-o.rempel@pengutronix.de>
+ <20180615095107.24610-2-o.rempel@pengutronix.de>
+Message-ID: <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
+Date: Sun, 08 Jul 2018 23:22:00 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable clock controller for Actions Semi S500 SoC on owl-s500 device tree.
-Tested on a Lemaker Guitar board.
+Quoting Oleksij Rempel (2018-06-15 02:51:04)
+> This clock is needed for iMX mailbox driver
+> =
 
-File(s) updated: "/arch/arm/boot/dts/owl-s500.dtsi"
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-diff -uprN -X vanilla/Documentation/dontdiff
-vanilla/arch/arm/boot/dts/owl-s500.dtsi
-linux/arch/arm/boot/dts/owl-s500.dtsi
---- vanilla/arch/arm/boot/dts/owl-s500.dtsi    2018-07-17
-13:07:15.675710000 -0300
-+++ linux/arch/arm/boot/dts/owl-s500.dtsi    2018-07-18 12:51:07.875364441 =
--0300
-@@ -2,12 +2,14 @@
-  * Actions Semi S500 SoC
-  *
-  * Copyright (c) 2016-2017 Andreas F=C3=A4rber
-+ * Copyright (c) 2018-2018 Edgar Bernardi Righi
-  *
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
-
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/owl-s500-powergate.h>
-+#include <dt-bindings/clock/actions,s500-cmu.h>
-
- / {
-     compatible =3D "actions,s500";
-@@ -71,6 +73,12 @@
-         #clock-cells =3D <0>;
-     };
-
-+    losc: losc {
-+        compatible =3D "fixed-clock";
-+        clock-frequency =3D <32678>;
-+        #clock-cells =3D <0>;
-+    };
-+
-     soc {
-         compatible =3D "simple-bus";
-         #address-cells =3D <1>;
-@@ -170,6 +178,13 @@
-             status =3D "disabled";
-         };
-
-+        cmu: clock-controller@b0160000 {
-+            compatible =3D "actions,s500-cmu";
-+            reg =3D <0xb0160000 0x8000>;
-+            clocks =3D <&hosc>, <&losc>;
-+            #clock-cells =3D <1>;
-+        };
-+
-         timer: timer@b0168000 {
-             compatible =3D "actions,s500-timer";
-             reg =3D <0xb0168000 0x8000>;
+but I think you'll want some imx maintainer to review it still.
