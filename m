@@ -1,134 +1,50 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
- SDM845
-To: spanda@codeaurora.org, Stephen Boyd <sboyd@kernel.org>
-Cc: Abhinav Kumar <abhinavk@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>, ryadav@codeaurora.org,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
- <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
- <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
- <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
- <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
- <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
- <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
- <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
- <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
- <9509c88c112d59874e28459d8f87509f@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <9210818b-ed68-bbfc-2140-a872a6621f0e@codeaurora.org>
-Date: Mon, 16 Jul 2018 11:27:48 +0530
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <9509c88c112d59874e28459d8f87509f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1528285308-25477-4-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-4-git-send-email-anischal@codeaurora.org>
+Message-ID: <153111468812.143105.11066074667783322403@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Introduce QCOM Graphics clock bindings
+Date: Sun, 08 Jul 2018 22:38:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+Quoting Amit Nischal (2018-06-06 04:41:47)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Doc=
+umentation/devicetree/bindings/clock/qcom,gpucc.txt
+> new file mode 100644
+> index 0000000..e311219
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+> @@ -0,0 +1,18 @@
+> +Qualcomm Graphics Clock & Reset Controller Binding
+> +--------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,sdm845-gpucc".
+> +- reg : shall contain base register location and length.
+> +- #clock-cells : from common clock binding, shall contain 1.
+> +- #reset-cells : from common reset binding, shall contain 1.
+> +- #power-domain-cells : from generic power domain binding, shall contain=
+ 1.
+> +
+> +Example:
+> +       gpucc: clock-controller@@5090000 {
 
-On 7/13/2018 1:55 PM, spanda@codeaurora.org wrote:
-> On 2018-07-13 01:11, Stephen Boyd wrote:
->> Quoting Taniya Das (2018-07-12 10:21:33)
->>> ++ Display driver team,
->>>
->>> On 7/9/2018 8:36 PM, Stephen Boyd wrote:
->>> > Quoting Taniya Das (2018-07-09 02:34:07)
->>> >>
->>> >>
->>> >> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
->>> >>> Quoting Taniya Das (2018-07-09 00:07:21)
->>> >>>>
->>> >>>>
->>> >>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
->>> >>>>>>
->>> >>>>>>     > Why is the nocache flag needed? Applies to all clks in 
->>> this file.
->>> >>>>>>     >
->>> >>>>>>
->>> >>>>>> This flag is required for all RCGs whose PLLs are controlled 
->>> outside the
->>> >>>>>> clock controller. The display code would require the 
->>> recalculated rate
->>> >>>>>> always.
->>> >>>>>
->>> >>>>> Right. Why is the PLL controlled outside of the clock 
->>> controller? The
->>> >>>>> rate should propagate upward to the PLL from here, so who's going
->>> >>>>> outside of that?
->>> >>>>>
->>> >>>> The DSI0/1 PLL are not part of the display clock controller, but 
->>> in the
->>> >>>> display subsystem which are managed by the DRM drivers. When DRM 
->>> drivers
->>> >>>> query for the rate clock driver should always return the non 
->>> cached rates.
->>> >>>
->>> >>> Why? Is the DSI PLL changing rate all the time, randomly, without 
->>> going
->>> >>> through the clk APIs to do so?
->>> >>>
->>> >>
->>> >> Hmm, I am afraid I do not have an answer for this, but this was the
->>> >> requirement to always return the non cached rates from the clock 
->>> driver.
->>> >>
->>> >
->>> > Ok. Who knows about this requirement? Can we add someone from the
->>> > display driver to understand more?
->>> >
->>> As per my discussions offline with the display teams,
->>>
->>> There is a use-case where the clock framework is unaware of the PLL VCO
->>> frequency change and thus the drivers would query to get the actual HW
->>> frequency rather than the cached one.
->>>
->>> Do you think keeping these flags would have any impact other than always
->>> getting the non-cached rates?
->>>
->>
->> The flag will make it so clk_get_rate() works in spite of something
->> changing the frequency behind the framework's back, but I want to
->> understand what and why it's changing without framework involvement. We
->> shouldn't need the flag here, because this flag is typically for clks
->> that are controlled by some other entity that the kernel doesn't have
->> control over. In this case, it seems like we have full control of the
->> clk tree for the display PLL down to this clk, so it should be perfectly
->> fine to not have this flag. The presence of the flag means that the
->> display driver is doing something wrong.
-> 
-> These clocks are sourced from DSI PLL. In dsi command mode there is an 
-> idle use case when there
-> is no activity on display, we switch of the source DSI PLL to save power 
-> by calling clk_disable_unprepare().
-> In this scenario if some client queries the clk_get_rate(), then if 
-> NO_CACHE flag is used the clk
-> driver will return the cached rate which is some non-zero value set when 
-> we last called clk_set_rate(),
-> before enabling the clock, whereas actually in HW this clk is disabled. 
-> So we used the NO_CACHE flag
-> for the call to land in clk_recalc_rate and we return zero if the PLL is 
-> disabled.
-> I remember some customer had scripts that runs through all the clocks 
-> during idle screen scenario
-> and call clk_get_rate(), where they complained display clk_get_rate 
-> returns none zero value.
-> 
-> 
+Drop the double '@'
 
-Do you think the clock driver needs any update for flag for the next series?
-
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> +               compatible =3D "qcom,sdm845-gpucc";
+> +               reg =3D <0x5090000 0x9000>;
+> +               #clock-cells =3D <1>;
+> +               #reset-cells =3D <1>;
+> +               #power-domain-cells =3D <1>;
+> +       };
