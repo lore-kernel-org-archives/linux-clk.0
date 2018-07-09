@@ -1,60 +1,153 @@
-Return-Path: <anischal@codeaurora.org>
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v3 2/4] clk: tegra: refactor 7.1 div calculation
+Date: Mon, 9 Jul 2018 15:17:38 +0300
+Message-ID: <1531138660-9071-2-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
+References: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Thu, 12 Jul 2018 18:02:25 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
- Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
- Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH 3/4] dt-bindings: clock: Introduce QCOM Graphics clock
- bindings
-In-Reply-To: <153111468812.143105.11066074667783322403@swboyd.mtv.corp.google.com>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-4-git-send-email-anischal@codeaurora.org>
- <153111468812.143105.11066074667783322403@swboyd.mtv.corp.google.com>
-Message-ID: <d502fe124cb7ba447c81a2a76b925aff@codeaurora.org>
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-07-09 11:08, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-06-06 04:41:47)
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt 
->> b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
->> new file mode 100644
->> index 0000000..e311219
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
->> @@ -0,0 +1,18 @@
->> +Qualcomm Graphics Clock & Reset Controller Binding
->> +--------------------------------------------------
->> +
->> +Required properties :
->> +- compatible : shall contain "qcom,sdm845-gpucc".
->> +- reg : shall contain base register location and length.
->> +- #clock-cells : from common clock binding, shall contain 1.
->> +- #reset-cells : from common reset binding, shall contain 1.
->> +- #power-domain-cells : from generic power domain binding, shall 
->> contain 1.
->> +
->> +Example:
->> +       gpucc: clock-controller@@5090000 {
-> 
-> Drop the double '@'
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Oh. I will fix this in next patch series.
+Move this to a separate file so it can be used to calculate the sdmmc
+clock dividers.
 
-> 
->> +               compatible = "qcom,sdm845-gpucc";
->> +               reg = <0x5090000 0x9000>;
->> +               #clock-cells = <1>;
->> +               #reset-cells = <1>;
->> +               #power-domain-cells = <1>;
->> +       };
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/Makefile      |  1 +
+ drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+ drivers/clk/tegra/clk.h         |  3 +++
+ drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/clk/tegra/div71.c
+
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index b716923..6d4f563 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+ obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
++obj-y					+= div71.o
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee..ad87858 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -32,35 +32,15 @@
+ static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+ 		   unsigned long parent_rate)
+ {
+-	u64 divider_ux1 = parent_rate;
+-	u8 flags = divider->flags;
+-	int mul;
+-
+-	if (!rate)
+-		return 0;
+-
+-	mul = get_mul(divider);
+-
+-	if (!(flags & TEGRA_DIVIDER_INT))
+-		divider_ux1 *= mul;
+-
+-	if (flags & TEGRA_DIVIDER_ROUND_UP)
+-		divider_ux1 += rate - 1;
+-
+-	do_div(divider_ux1, rate);
+-
+-	if (flags & TEGRA_DIVIDER_INT)
+-		divider_ux1 *= mul;
++	int div;
+ 
+-	divider_ux1 -= mul;
++	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
++			divider->flags);
+ 
+-	if ((s64)divider_ux1 < 0)
++	if (div < 0)
+ 		return 0;
+ 
+-	if (divider_ux1 > get_max_div(divider))
+-		return get_max_div(divider);
+-
+-	return divider_ux1;
++	return div;
+ }
+ 
+ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e3b9c22..149cc70 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags);
++
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
+diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+new file mode 100644
+index 0000000..1eecc84
+--- /dev/null
++++ b/drivers/clk/tegra/div71.c
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#include <asm/div64.h>
++
++#include "clk.h"
++
++#define div_mask(w) ((1 << (w)) - 1)
++
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags)
++{
++	u64 divider_ux1 = parent_rate;
++	int mul;
++
++	if (!rate)
++		return 0;
++
++	mul = 1 << frac_width;
++
++	if (!(flags & TEGRA_DIVIDER_INT))
++		divider_ux1 *= mul;
++
++	if (flags & TEGRA_DIVIDER_ROUND_UP)
++		divider_ux1 += rate - 1;
++
++	do_div(divider_ux1, rate);
++
++	if (flags & TEGRA_DIVIDER_INT)
++		divider_ux1 *= mul;
++
++	if (divider_ux1 < mul)
++		return 0;
++
++	divider_ux1 -= mul;
++
++	if (divider_ux1 > div_mask(width))
++		return div_mask(width);
++
++	return divider_ux1;
++}
+-- 
+2.7.4
