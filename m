@@ -1,179 +1,71 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Wed, 11 Jul 2018 11:00:22 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-Message-ID: <20180711080022.GB1636@tbergstrom-lnx.Nvidia.com>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
- <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
- <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Andrew Lunn <andrew@lunn.ch>,  Jason
+ Cooper <jason@lakedaemon.net>,  Hua Jing <jinghua@marvell.com>,  Antoine
+ Tenart <antoine.tenart@bootlin.com>,  stable@vger.kernel.org,  Maxime
+ Chevallier <maxime.chevallier@bootlin.com>,  Nadav Haklai
+ <nadavh@marvell.com>,  Ken Ma <make@marvell.com>,  Victor Gu
+ <xigu@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,  =?utf-8?Q?Miqu=C3=A8l?= Raynal
+ <miquel.raynal@bootlin.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson
+ Ding <dingwei@marvell.com>,  linux-arm-kernel@lists.infradead.org,
+  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+References: <20180619123446.694-1-gregory.clement@bootlin.com>
+	<20180619123446.694-2-gregory.clement@bootlin.com>
+	<87tvpl4pql.fsf@bootlin.com>
+	<153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
+Date: Mon, 09 Jul 2018 17:42:31 +0200
+In-Reply-To: <153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
+	(Stephen Boyd's message of "Fri, 06 Jul 2018 16:44:44 -0700")
+Message-ID: <87va9oct5k.fsf@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 10, 2018 at 05:17:05PM +0100, Jon Hunter wrote:
-> 
-> On 09/07/18 17:38, Aapo Vienamo wrote:
-> > From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > 
-> > Move this to a separate file so it can be used to calculate the sdmmc
-> > clock dividers.
-> 
-> Sorry for not commenting sooner, but what is the motivation for moving
-> this to its own file? I don't see why we need to do this in order to use
-> elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
-> and now we have a div71.c which seems quite specific.
+Hi Stephen,
+ 
+ On ven., juil. 06 2018, Stephen Boyd <sboyd@kernel.org> wrote:
 
-How else would you do it?
+> Quoting Gregory CLEMENT (2018-06-29 07:44:02)
+>> Hi,
+>>  
+>>  On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+>> 
+>> > Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+>> > respectively) to L0 frequency (1.2 Ghz) requires a significant amount
+>> > of time to let VDD stabilize to the appropriate voltage. This amount of
+>> > time is large enough that it cannot be covered by the hardware
+>> > countdown register. Due to this, the CPU might start operating at L0
+>> > before the voltage is stabilized, leading to CPU stalls.
+>> >
+>> > To work around this problem, we prevent switching directly from the
+>> > L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+>> > frequency in-between. The sequence therefore becomes:
+>> >
+>> > 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+>> > 2. Sleep 20ms for stabling VDD voltage
+>> > 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+>> 
+>> Do you have any comment on this fix?
+>> 
+>
+> Looks good. Is it crashing right now? I can throw it into clk-fixes if
+> it's fixing pain.
 
-Peter.
+Yes for the SoC capable to run at 1200Mhz it crashes. At the time the
+initial support was provided, my SoC version only ran at 1000MHz, so the
+problem was not noticed.
 
-> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/Makefile      |  1 +
-> >  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
-> >  drivers/clk/tegra/clk.h         |  3 +++
-> >  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 52 insertions(+), 25 deletions(-)
-> >  create mode 100644 drivers/clk/tegra/div71.c
-> > 
-> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> > index b716923..6d4f563 100644
-> > --- a/drivers/clk/tegra/Makefile
-> > +++ b/drivers/clk/tegra/Makefile
-> > @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
-> >  obj-y					+= cvb.o
-> >  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
-> >  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> > +obj-y					+= div71.o
-> > diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> > index 16e0aee..ad87858 100644
-> > --- a/drivers/clk/tegra/clk-divider.c
-> > +++ b/drivers/clk/tegra/clk-divider.c
-> > @@ -32,35 +32,15 @@
-> >  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
-> >  		   unsigned long parent_rate)
-> >  {
-> > -	u64 divider_ux1 = parent_rate;
-> > -	u8 flags = divider->flags;
-> > -	int mul;
-> > -
-> > -	if (!rate)
-> > -		return 0;
-> > -
-> > -	mul = get_mul(divider);
-> > -
-> > -	if (!(flags & TEGRA_DIVIDER_INT))
-> > -		divider_ux1 *= mul;
-> > -
-> > -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> > -		divider_ux1 += rate - 1;
-> > -
-> > -	do_div(divider_ux1, rate);
-> > -
-> > -	if (flags & TEGRA_DIVIDER_INT)
-> > -		divider_ux1 *= mul;
-> > +	int div;
-> >  
-> > -	divider_ux1 -= mul;
-> > +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> > +			divider->flags);
-> >  
-> > -	if ((s64)divider_ux1 < 0)
-> > +	if (div < 0)
-> >  		return 0;
-> >  
-> > -	if (divider_ux1 > get_max_div(divider))
-> > -		return get_max_div(divider);
-> > -
-> > -	return divider_ux1;
-> > +	return div;
-> >  }
-> >  
-> >  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index e3b9c22..149cc70 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
-> >  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
-> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
-> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> > +	      u8 frac_width, u8 flags);
-> > +
-> >  
-> >  /* Combined read fence with delay */
-> >  #define fence_udelay(delay, reg)	\
-> > diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> > new file mode 100644
-> > index 0000000..1eecc84
-> > --- /dev/null
-> > +++ b/drivers/clk/tegra/div71.c
-> > @@ -0,0 +1,43 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> > + */
-> > +
-> > +#include <asm/div64.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define div_mask(w) ((1 << (w)) - 1)
-> > +
-> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> > +	      u8 frac_width, u8 flags)
-> > +{
-> > +	u64 divider_ux1 = parent_rate;
-> > +	int mul;
-> > +
-> > +	if (!rate)
-> > +		return 0;
-> > +
-> > +	mul = 1 << frac_width;
-> > +
-> > +	if (!(flags & TEGRA_DIVIDER_INT))
-> > +		divider_ux1 *= mul;
-> > +
-> > +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> > +		divider_ux1 += rate - 1;
-> > +
-> > +	do_div(divider_ux1, rate);
-> > +
-> > +	if (flags & TEGRA_DIVIDER_INT)
-> > +		divider_ux1 *= mul;
-> > +
-> > +	if (divider_ux1 < mul)
-> > +		return 0;
-> > +
-> > +	divider_ux1 -= mul;
-> > +
-> > +	if (divider_ux1 > div_mask(width))
-> > +		return div_mask(width);
-> > +
-> > +	return divider_ux1;
-> > +}
-> 
-> I don't see anything in the above that makes this 7.1? It seems that the
-> fractional width is being passed meaning it could be m.n unless I am missing
-> something.
-> 
-> Cheers
-> Jon
-> 
-> -- 
-> nvpublic
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+
+Gregory
+
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
