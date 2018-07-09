@@ -1,111 +1,132 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.17 032/220] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Sun,  1 Jul 2018 18:20:56 +0200
-Message-Id: <20180701160909.674646762@linuxfoundation.org>
-In-Reply-To: <20180701160908.272447118@linuxfoundation.org>
-References: <20180701160908.272447118@linuxfoundation.org>
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>, Qiufang
+ Dai <qiufang.dai@amlogic.com>, Bo.yang <bo.yang@amlogic.com>, Xingyu.chen
+	<xingyu.chen@amlogic.com>, "Qianggui,song" <qianggui.song@amlogic.com>,
+	Sunny.luo <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+Date: Mon, 9 Jul 2018 19:12:46 +0800
+Message-ID: <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
+In-Reply-To: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Add dt-bindings headers for the Meson-G12A's Everything-Else
+part clock controller.
 
-------------------
-
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-
-commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
-
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
-
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -258,8 +258,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
- }
- 
-@@ -326,7 +327,7 @@ static void __init cpg_mssr_register_cor
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
-@@ -392,7 +393,7 @@ static void __init cpg_mssr_register_mod
- 	if (IS_ERR(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	priv->smstpcr_saved[clock->index / 32].mask |= BIT(clock->index % 32);
- 	return;
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+new file mode 100644
+index 0000000..1473225
+--- /dev/null
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -0,0 +1,93 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson-G12A clock tree IDs
++ *
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ */
++
++#ifndef __G12A_CLKC_H
++#define __G12A_CLKC_H
++
++#define CLKID_SYS_PLL				0
++#define CLKID_FIXED_PLL				1
++#define CLKID_FCLK_DIV2				2
++#define CLKID_FCLK_DIV3				3
++#define CLKID_FCLK_DIV4				4
++#define CLKID_FCLK_DIV5				5
++#define CLKID_FCLK_DIV7				6
++#define CLKID_GP0_PLL				7
++#define CLKID_CLK81					10
++#define CLKID_MPLL0					11
++#define CLKID_MPLL1					12
++#define CLKID_MPLL2					13
++#define CLKID_MPLL3					14
++#define CLKID_DDR					15
++#define CLKID_DOS					16
++#define CLKID_AUDIO_LOCKER			17
++#define CLKID_MIPI_DSI_HOST			18
++#define CLKID_ETH_PHY				19
++#define CLKID_ISA					20
++#define CLKID_PL301					21
++#define CLKID_PERIPHS				22
++#define CLKID_SPICC0				23
++#define CLKID_I2C					24
++#define CLKID_SANA					25
++#define CLKID_SD					26
++#define CLKID_RNG0					27
++#define CLKID_UART0					28
++#define CLKID_SPICC1				29
++#define CLKID_HIU_IFACE				30
++#define CLKID_MIPI_DSI_PHY			31
++#define CLKID_ASSIST_MISC			32
++#define CLKID_SD_EMMC_A				33
++#define CLKID_SD_EMMC_B				34
++#define CLKID_SD_EMMC_C				35
++#define CLKID_AUDIO_CODEC			36
++#define CLKID_AUDIO					37
++#define CLKID_ETH					38
++#define CLKID_DEMUX					39
++#define CLKID_AUDIO_IFIFO			40
++#define CLKID_ADC					41
++#define CLKID_UART1					42
++#define CLKID_G2D					43
++#define CLKID_RESET					44
++#define CLKID_PCIE_COMB				45
++#define CLKID_PARSER				46
++#define CLKID_USB					47
++#define CLKID_PCIE_PHY				48
++#define CLKID_AHB_ARB0				49
++#define CLKID_AHB_DATA_BUS			50
++#define CLKID_AHB_CTRL_BUS			51
++#define CLKID_HTX_HDCP22			52
++#define CLKID_HTX_PCLK				53
++#define CLKID_BT656					54
++#define CLKID_USB1_DDR_BRIDGE		55
++#define CLKID_MMC_PCLK				56
++#define CLKID_UART2					57
++#define CLKID_VPU_INTR				58
++#define CLKID_GIC					59
++#define CLKID_SD_EMMC_B_CLK0		60
++#define CLKID_SD_EMMC_C_CLK0		61
++#define CLKID_HIFI_PLL				71
++
++#define CLKID_VCLK2_VENCI0			77
++#define CLKID_VCLK2_VENCI1			78
++#define CLKID_VCLK2_VENCP0			79
++#define CLKID_VCLK2_VENCP1			80
++#define CLKID_VCLK2_VENCT0			81
++#define CLKID_VCLK2_VENCT1			82
++#define CLKID_VCLK2_OTHER			83
++#define CLKID_VCLK2_ENCI			84
++#define CLKID_VCLK2_ENCP			85
++#define CLKID_DAC_CLK				86
++#define CLKID_AOCLK					87
++#define CLKID_IEC958				88
++#define CLKID_ENC480P				89
++#define CLKID_RNG1					90
++#define CLKID_VCLK2_ENCT			91
++#define CLKID_VCLK2_ENCL			92
++#define CLKID_VCLK2_VENCLMMC		93
++#define CLKID_VCLK2_VENCL			94
++#define CLKID_VCLK2_OTHER1			95
++
++#endif /* __G12A_CLKC_H */
+-- 
+1.9.1
