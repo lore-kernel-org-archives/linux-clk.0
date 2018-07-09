@@ -1,153 +1,82 @@
-Return-Path: <avienamo@nvidia.com>
-From: Aapo Vienamo <avienamo@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v3 2/4] clk: tegra: refactor 7.1 div calculation
-Date: Mon, 9 Jul 2018 15:17:38 +0300
-Message-ID: <1531138660-9071-2-git-send-email-avienamo@nvidia.com>
-In-Reply-To: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
-References: <1531138660-9071-1-git-send-email-avienamo@nvidia.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr30053.outbound.protection.outlook.com ([40.107.3.53]:42910
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753933AbeGIISn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Jul 2018 04:18:43 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
+Date: Mon, 9 Jul 2018 08:18:40 +0000
+Message-ID: <AM0PR04MB4211C3AFCCF832121B88492B80440@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180615095107.24610-1-o.rempel@pengutronix.de>
+ <20180615095107.24610-2-o.rempel@pengutronix.de>
+In-Reply-To: <20180615095107.24610-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: avienamo@nvidia.com
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> -----Original Message-----
+> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
+> Sent: Friday, June 15, 2018 5:51 PM
+> To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
+> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
+> Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>
+> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
+> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> Subject: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
+>=20
+> This clock is needed for iMX mailbox driver
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Move this to a separate file so it can be used to calculate the sdmmc
-clock dividers.
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/Makefile      |  1 +
- drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
- drivers/clk/tegra/clk.h         |  3 +++
- drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 25 deletions(-)
- create mode 100644 drivers/clk/tegra/div71.c
+I think this can go separately through CLK tree.
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index b716923..6d4f563 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
- obj-y					+= cvb.o
- obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
- obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-+obj-y					+= div71.o
-diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-index 16e0aee..ad87858 100644
---- a/drivers/clk/tegra/clk-divider.c
-+++ b/drivers/clk/tegra/clk-divider.c
-@@ -32,35 +32,15 @@
- static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
- 		   unsigned long parent_rate)
- {
--	u64 divider_ux1 = parent_rate;
--	u8 flags = divider->flags;
--	int mul;
--
--	if (!rate)
--		return 0;
--
--	mul = get_mul(divider);
--
--	if (!(flags & TEGRA_DIVIDER_INT))
--		divider_ux1 *= mul;
--
--	if (flags & TEGRA_DIVIDER_ROUND_UP)
--		divider_ux1 += rate - 1;
--
--	do_div(divider_ux1, rate);
--
--	if (flags & TEGRA_DIVIDER_INT)
--		divider_ux1 *= mul;
-+	int div;
- 
--	divider_ux1 -= mul;
-+	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-+			divider->flags);
- 
--	if ((s64)divider_ux1 < 0)
-+	if (div < 0)
- 		return 0;
- 
--	if (divider_ux1 > get_max_div(divider))
--		return get_max_div(divider);
--
--	return divider_ux1;
-+	return div;
- }
- 
- static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e3b9c22..149cc70 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
- u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
- int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags);
-+
- 
- /* Combined read fence with delay */
- #define fence_udelay(delay, reg)	\
-diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-new file mode 100644
-index 0000000..1eecc84
---- /dev/null
-+++ b/drivers/clk/tegra/div71.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <asm/div64.h>
-+
-+#include "clk.h"
-+
-+#define div_mask(w) ((1 << (w)) - 1)
-+
-+int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-+	      u8 frac_width, u8 flags)
-+{
-+	u64 divider_ux1 = parent_rate;
-+	int mul;
-+
-+	if (!rate)
-+		return 0;
-+
-+	mul = 1 << frac_width;
-+
-+	if (!(flags & TEGRA_DIVIDER_INT))
-+		divider_ux1 *= mul;
-+
-+	if (flags & TEGRA_DIVIDER_ROUND_UP)
-+		divider_ux1 += rate - 1;
-+
-+	do_div(divider_ux1, rate);
-+
-+	if (flags & TEGRA_DIVIDER_INT)
-+		divider_ux1 *= mul;
-+
-+	if (divider_ux1 < mul)
-+		return 0;
-+
-+	divider_ux1 -= mul;
-+
-+	if (divider_ux1 > div_mask(width))
-+		return div_mask(width);
-+
-+	return divider_ux1;
-+}
--- 
-2.7.4
+Regards
+Dong Aisheng
+
+> ---
+>  drivers/clk/imx/clk-imx7d.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c in=
+dex
+> 975a20d3cc94..c7159bfac77a 100644
+> --- a/drivers/clk/imx/clk-imx7d.c
+> +++ b/drivers/clk/imx/clk-imx7d.c
+> @@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct
+> device_node *ccm_node)
+>  	clks[IMX7D_DRAM_ALT_ROOT_CLK] =3D
+> imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0)=
+;
+>  	clks[IMX7D_OCOTP_CLK] =3D imx_clk_gate4("ocotp_clk",
+> "ipg_root_clk", base + 0x4230, 0);
+>  	clks[IMX7D_SNVS_CLK] =3D imx_clk_gate4("snvs_clk", "ipg_root_clk",
+> base + 0x4250, 0);
+> +	clks[IMX7D_MU_ROOT_CLK] =3D imx_clk_gate4("mu_root_clk",
+> "ipg_root_clk",
+> +base + 0x4270, 0);
+>  	clks[IMX7D_CAAM_CLK] =3D imx_clk_gate4("caam_clk", "ipg_root_clk",
+> base + 0x4240, 0);
+>  	clks[IMX7D_USB_HSIC_ROOT_CLK] =3D
+> imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0)=
+;
+>  	clks[IMX7D_SDMA_CORE_CLK] =3D imx_clk_gate4("sdma_root_clk",
+> "ahb_root_clk", base + 0x4480, 0);
+> --
+> 2.17.1
+
