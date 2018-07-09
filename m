@@ -1,36 +1,57 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-To: Joel Stanley <joel@jms.id.au>, Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180628231540.26633-1-joel@jms.id.au>
-Cc: linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180628231540.26633-1-joel@jms.id.au>
-Message-ID: <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
-Date: Fri, 06 Jul 2018 10:55:07 -0700
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com> <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
+In-Reply-To: <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 9 Jul 2018 23:57:49 +0200
+Message-ID: <CAFBinCBJp1xzo-CNW1HU-Odhrug31yQ7c3khB+XwvsNXp5-gTA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A SoC
+To: jian.hu@amlogic.com, robh@kernel.org
+Cc: jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
+	qianggui.song@amlogic.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+	khilman@baylibre.com, mturquette@baylibre.com, yixun.lan@amlogic.com,
+	linux-kernel@vger.kernel.org, bo.yang@amlogic.com, qiufang.dai@amlogic.com,
+	linux-arm-kernel@lists.infradead.org, carlo@caione.org,
+	linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
+	linux-clk@vger.kernel.org, xingyu.chen@amlogic.com
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Joel Stanley (2018-06-28 16:15:40)
-> The HPLL can be configured through a register (SCU24), however some
-> platforms chose to configure it through the strapping settings and do
-> not use the register. This was not noticed as the logic for bit 18 in
-> SCU24 was confused: set means programmed, but the driver read it as set
-> means strapped.
-> =
+adding Rob Herring so it doesn't get lost on the devicetree mailing list
 
-> This gives us the correct HPLL value on Palmetto systems, from which
-> most of the peripheral clocks are generated.
-> =
-
-> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
-> Cc: stable@vger.kernel.org # v4.15
-> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
+>
+> Add new binding for Meson-G12A SoC Everything-Else part
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 > ---
+>  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> index e950599..0833006 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> @@ -9,6 +9,7 @@ Required Properties:
+>                 "amlogic,gxbb-clkc" for GXBB SoC,
+>                 "amlogic,gxl-clkc" for GXL and GXM SoC,
+>                 "amlogic,axg-clkc" for AXG SoC.
+> +               "amlogic,g12a-clkc" for G12A SoC.
+should this be "amlogic,meson-g12a-clkc" instead?
+that would make it consistent with virtually all other bindings which
+use the schema "amlogic,meson<chip>-<ip-block>" (where chip is 8, 8b,
+8m2, -gxbb, -gxl, ...)
 
-Do you want this merged for -rc5? It sounds like on some systems this is
-a problem, but I don't know if these systems are supposed to work yet or
-not, so priority of this fix is not easy for me to understand.
+see also: $ grep -R "amlogic," Documentation/devicetree/bindings/
+
+>
+>  - #clock-cells: should be 1.
+>
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
