@@ -1,65 +1,32 @@
-Return-Path: <michals@xilinx.com>
-Return-Path: michal.simek@xilinx.com
-Subject: Re: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for
- ZynqMP core
-To: Stephen Boyd <sboyd@kernel.org>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"keescook@chromium.org" <keescook@chromium.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "mingo@kernel.org"
-	<mingo@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Jolly
- Shah <JOLLYS@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rajan Vaja
-	<RAJANV@xilinx.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
- <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
- <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
- <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
- <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
-From: Michal Simek <michal.simek@xilinx.com>
-Message-ID: <e5448935-770a-5c14-438c-23a652b17822@xilinx.com>
-Date: Mon, 30 Jul 2018 14:50:42 +0200
-MIME-Version: 1.0
-In-Reply-To: <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jerome Brunet <jbrunet@baylibre.com>, Jian Hu <jian.hu@amlogic.com>,
+ Neil Armstrong <narmstrong@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+Cc: "Qianggui, song" <qianggui.song@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Yixun Lan <yixun.lan@amlogic.com>, linux-kernel@vger.kernel.org,
+ "Bo.yang" <bo.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ Jian Hu <jian.hu@amlogic.com>, linux-arm-kernel@lists.infradead.org,
+ Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
+ "Sunny.luo" <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
+ "Xingyu.chen" <xingyu.chen@amlogic.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+ <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+Message-ID: <153114832204.143105.10370402875563713577@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+Date: Mon, 09 Jul 2018 07:58:42 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26.7.2018 18:36, Stephen Boyd wrote:
-> Quoting Michal Simek (2018-07-25 02:51:14)
->> On 24.7.2018 20:14, Jolly Shah wrote:
->>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
->>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp.c  create mode
->>>>> 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
->>>>>  create mode 100644 include/linux/firmware/xlnx-zynqmp.h
->>>>>
->>>>
->>>> It looks pretty calm over the last several series that's why when I get an answer
->>>> from Stephen or Mike I will take this series via my tree and arm-soc tree.
->>>>
->>>> I have applied 01-08 here
->>>>  https://github.com/Xilinx/linux-xlnx/commits/zynqmp/soc
->>>>
->>>> Thanks,
->>>> Michal
->>>
->>>
->>> Thanks for merging the patches. 
->>> By mistake I added “Reviewed-by: Stephen Boyd sboyd@kernel.org” for firmware bindings (Patch01).  Stephen had reviewed clock bindings only.  Please suggest if I should send a new version with that fix.
->>
->> I have fixed that in my branch and I have asked Shephen to look at clk
->> over chat.
->>
-> 
-> I have some unresolved review comments on v9. I'll give reviewed-by when
-> that discussion is resolved.
+Quoting Jian Hu (2018-07-09 04:12:47)
+> Add a Clock driver for the Everyting-Else part
 
-ok. Do you want to take them via clk tree or via arm-soc tree?
+Everything instead of Everyting?
 
-Thanks,
-Michal
+> of the Amlogic Meson-G12A SoC.
+> =
+
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
