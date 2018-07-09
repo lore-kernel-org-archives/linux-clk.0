@@ -1,74 +1,84 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Fri, 6 Jul 2018 07:09:13 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: matti.vaittinen@fi.rohmeurope.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh+dt@kernel.org>, sboyd@kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180706060913.GU496@dell>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <e737bb13d17b75ea5e55f59005ef3181d428e704.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAFqH_53DbfFTRt2xST6RXg_qu0+LayXjQL2y024We1LHGB3yQA@mail.gmail.com>
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1528285308-25477-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <153111447519.143105.17241493270191899078@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks
+ with GDSC
+Date: Sun, 08 Jul 2018 22:34:35 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 05 Jul 2018, Enric Balletbo Serra wrote:
+Quoting Amit Nischal (2018-06-06 04:41:45)
+> For some of the GDSCs, there is a requirement to enable/disable the
+> few clocks before turning on/off the gdsc power domain. Add support
 
-> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> dia dj., 5 de jul. 2018 a les 16:32:
-> >
-> > ROHM BD71837 PMIC MFD driver providing interrupts and support
-> > for three subsystems:
-> > - clk
-> > - Regulators
-> > - input/power-key
-> >
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/mfd/Kconfig              |  13 ++
-> >  drivers/mfd/Makefile             |   1 +
-> >  drivers/mfd/rohm-bd718x7.c       | 198 +++++++++++++++++++++++
-> >  include/linux/mfd/rohm-bd718x7.h | 333 +++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 545 insertions(+)
-> >  create mode 100644 drivers/mfd/rohm-bd718x7.c
-> >  create mode 100644 include/linux/mfd/rohm-bd718x7.h
+Why is there a requirement? Do the clks need to be in hw control mode or
+they can't be turned off when the GDSC is off? It's hard for me to
+understand with these vague statements.
 
-[snipping ~550 lines of code]
+> for the same by specifying a list of clk_hw pointers per gdsc and
+> enable/disable them along with power domain on/off callbacks.
+> =
 
-> The main changes I requested are done so I think you can maintain my
-> reviewed-by.
-> 
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/gdsc.h |  5 +++++
+>  2 files changed, 49 insertions(+)
+> =
 
-Thanks for your review, it's much appreciated.
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a077133..b6adca1 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -12,6 +12,8 @@
+>   */
+> =
 
-In future would you mind trimming your mails back to only include
-relevant sections please?  Going through ~550 lines of code page by
-page trying to find your response was a little painful.  TIA.
+>  #include <linux/bitops.h>
+> +#include <linux/clk.h>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Ugh.
+
+> +#include <linux/clk-provider.h>
+
+Both, really?
+
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/jiffies.h>
+> @@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gds=
+c *sc)
+>         regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+>                            GMEM_RESET_MASK, 0);
+>  }
+> +
+> +static int gdsc_clk_prepare_enable(struct gdsc *sc)
+> +{
+> +       int i, ret;
+> +
+> +       for (i =3D 0; i < sc->clk_count; i++) {
+> +               ret =3D clk_prepare_enable(sc->clk_hws[i]->clk);
+> +               if (ret) {
+> +                       for (i--; i >=3D 0; i--)
+> +                               clk_disable_unprepare(sc->clk_hws[i]->clk=
+);
+> +                       return ret;
+> +               }
+> +       }
+> +       return 0;
+> +}
+> +
+
+Looks an awful lot like bulk_enable clk API.
