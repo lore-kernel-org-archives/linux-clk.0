@@ -1,131 +1,106 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to platform device probing
-Date: Wed, 18 Jul 2018 00:03:25 +0200
-Message-Id: <20180717220328.792-3-matthias.bgg@kernel.org>
-In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1531140923.2708.19.camel@baylibre.com>
+Subject: [GIT PULL]  clk: meson: updates for v4.19
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, "open list:ARM/Amlogic Meson..."
+ <linux-amlogic@lists.infradead.org>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Date: Mon, 09 Jul 2018 14:55:23 +0200
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+Dear clock maintainers,
 
-Switch probing for the MMSYS to support invocation to a plain
-paltform device. The driver will be probed by the DRM subsystem.
+Below is a request to pull a first round of Amlogic  clock updates for
+v4.19. It is based on our previous fixes PR (meson-clk-fixes-4.18-1) to
+avoid conflicts while removing the audio divider driver.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/clk/mediatek/clk-mt2701-mm.c | 42 ++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 12 deletions(-)
+Also, we had to pull your 'clk-core-duty-cycle' branch because the audio
+sclk divider driver implements duty cycle operation. This explains the
+changes reported in CCF core files in the summary below. 
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index fe1f85072fc5..200b1842b94b 100644
---- a/drivers/clk/mediatek/clk-mt2701-mm.c
-+++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -12,14 +12,20 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/module.h>
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
- #include <dt-bindings/clock/mt2701-clk.h>
- 
-+struct clk_mt2701_mm_priv {
-+	struct clk_onecell_data *clk_data;
-+};
-+
- static const struct mtk_gate_regs disp0_cg_regs = {
- 	.set_ofs = 0x0104,
- 	.clr_ofs = 0x0108,
-@@ -87,23 +93,25 @@ static const struct mtk_gate mm_clks[] = {
- 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
- };
- 
--static const struct of_device_id of_match_clk_mt2701_mm[] = {
--	{ .compatible = "mediatek,mt2701-mmsys", },
--	{}
--};
--
- static int clk_mt2701_mm_probe(struct platform_device *pdev)
- {
--	struct clk_onecell_data *clk_data;
- 	int r;
--	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *node = pdev->dev.parent->of_node;
-+	struct clk_mt2701_mm_priv *private;
-+
-+	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
-+	if (!private)
-+		return -ENOMEM;
- 
--	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
-+	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR);
-+
-+	platform_set_drvdata(pdev, private);
- 
- 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
--						clk_data);
-+					private->clk_data);
- 
--	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get,
-+					private->clk_data);
- 	if (r)
- 		dev_err(&pdev->dev,
- 			"could not register clock provider: %s: %d\n",
-@@ -112,12 +120,22 @@ static int clk_mt2701_mm_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt2701_mm_remove(struct platform_device *pdev)
-+{
-+	struct clk_mt2701_mm_priv *private = platform_get_drvdata(pdev);
-+
-+	kfree(private->clk_data);
-+	kfree(private);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt2701_mm_drv = {
- 	.probe = clk_mt2701_mm_probe,
-+	.remove = clk_mt2701_mm_remove,
- 	.driver = {
- 		.name = "clk-mt2701-mm",
--		.of_match_table = of_match_clk_mt2701_mm,
- 	},
- };
- 
--builtin_platform_driver(clk_mt2701_mm_drv);
-+module_platform_driver(clk_mt2701_mm_drv);
--- 
-2.17.1
+Thanks for pulling.
+Cheers
+
+Jerome
+
+The following changes since commit 7813c14c9475dbebcd7f41bd498426d01255acf9:
+
+  clk: meson: audio-divider is one based (2018-06-21 10:10:50 +0200)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-4.19-1
+
+for you to fetch changes up to 7df533a7e3d2216e860ecf147ae8cee49bf133e9:
+
+  clk: meson: add gen_clk (2018-07-09 13:49:31 +0200)
+
+----------------------------------------------------------------
+First round of updates for meson clocks targeted at v4.19
+
+* Remove legacy register access (finish moving to syscon)
+* Clean up configuration flags
+* Add axg PCIe clocks
+* Add GEN CLK on gxbb, gxl and axg
+* Remove clk_audio_divider driver
+* Add axg audio clock controller
+
+----------------------------------------------------------------
+Jerome Brunet (15):
+      clk: add duty cycle support
+      dt-bindings: clock: add meson axg audio clock controller bindings
+      clk: meson: expose GEN_CLK clkid
+      clk: meson: remove obsolete register access
+      clk: meson: clean-up meson clock configuration
+      Merge branch 'next/dt' into next/drivers
+      clk: meson: add clk-phase clock driver
+      clk: meson: add triple phase clock driver
+      Merge remote-tracking branch 'clk/clk-core-duty-cycle' into next/drivers
+      clk: meson: add axg audio sclk divider driver
+      clk: meson: axg: add the audio clock controller driver
+      clk: meson: stop rate propagation for audio clocks
+      clk: meson: remove unused clk-audio-divider driver
+      clk: meson: gxbb: remove HHI_GEN_CLK_CTNL duplicate definition
+      clk: meson: add gen_clk
+
+Yixun Lan (2):
+      clk: meson-axg: add pcie and mipi clock bindings
+      clk: meson-axg: add clocks required by pcie driver
+
+ .../bindings/clock/amlogic,axg-audio-clkc.txt      |  56 ++
+ drivers/clk/clk.c                                  | 199 ++++-
+ drivers/clk/meson/Kconfig                          |  28 +-
+ drivers/clk/meson/Makefile                         |   4 +-
+ drivers/clk/meson/axg-audio.c                      | 845 +++++++++++++++++++++
+ drivers/clk/meson/axg-audio.h                      | 127 ++++
+ drivers/clk/meson/axg.c                            | 244 +++++-
+ drivers/clk/meson/axg.h                            |   8 +-
+ drivers/clk/meson/clk-audio-divider.c              | 110 ---
+ drivers/clk/meson/clk-phase.c                      |  63 ++
+ drivers/clk/meson/clk-triphase.c                   |  68 ++
+ drivers/clk/meson/clkc-audio.h                     |  28 +
+ drivers/clk/meson/clkc.h                           |  11 +-
+ drivers/clk/meson/gxbb.c                           | 118 +--
+ drivers/clk/meson/gxbb.h                           |   5 +-
+ drivers/clk/meson/sclk-div.c                       | 243 ++++++
+ include/dt-bindings/clock/axg-audio-clkc.h         |  94 +++
+ include/dt-bindings/clock/axg-clkc.h               |   4 +
+ include/dt-bindings/clock/gxbb-clkc.h              |   1 +
+ include/linux/clk-provider.h                       |  26 +
+ include/linux/clk.h                                |  33 +
+ include/trace/events/clk.h                         |  36 +
+ 22 files changed, 2140 insertions(+), 211 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 drivers/clk/meson/axg-audio.c
+ create mode 100644 drivers/clk/meson/axg-audio.h
+ delete mode 100644 drivers/clk/meson/clk-audio-divider.c
+ create mode 100644 drivers/clk/meson/clk-phase.c
+ create mode 100644 drivers/clk/meson/clk-triphase.c
+ create mode 100644 drivers/clk/meson/clkc-audio.h
+ create mode 100644 drivers/clk/meson/sclk-div.c
+ create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
