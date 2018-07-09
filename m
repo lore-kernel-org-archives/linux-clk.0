@@ -1,84 +1,91 @@
-Return-Path: <vkoul@kernel.org>
-From: Vinod Koul <vkoul@kernel.org>
-To: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v2] clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
-Date: Fri,  6 Jul 2018 10:25:40 +0530
-Message-Id: <20180706045540.1579-1-vkoul@kernel.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+Message-ID: <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for SDM845
+Date: Sun, 08 Jul 2018 23:16:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS
-clocks") marked BRANCH_HALT_SKIP for ufs rx clocks, but missed ufs tx
-clocks. The result of that is kernel warnings at reboot:
+Quoting Taniya Das (2018-07-08 20:38:03)
+> Hello Stephen,
+> =
 
-[  105.624283] gcc_ufs_tx_symbol_0_clk status stuck at 'on'
-[  105.624311] WARNING: CPU: 1 PID: 1 at drivers/clk/qcom/clk-branch.c:100 clk_branch_toggle+0x190/0x1b0
-[  105.633235] Modules linked in:
-[  105.645118] CPU: 1 PID: 1 Comm: systemd-shutdow Tainted: G        W         4.18.0-rc2-00002-g2bfbe52a53a3 #11
-[  105.647988] Hardware name: Qualcomm Technologies, Inc. DB820c (DT)
-[  105.657966] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[  105.664127] pc : clk_branch_toggle+0x190/0x1b0
-[  105.668900] lr : clk_branch_toggle+0x190/0x1b0
-[  105.673324] sp : ffff00000805bb40
-[  105.677751] x29: ffff00000805bb40 x28: 0000000000000000
-[  105.681140] x27: ffff8000d947cc60 x26: 0000000000000001
-[  105.686520] x25: ffff000008f71900 x24: 0000000000000000
-[  105.691816] x23: ffff00000925e338 x22: ffff00000855f8e0
-[  105.697114] x21: 0000000000000000 x20: 0000000000000000
-[  105.702407] x19: ffff0000091c9000 x18: ffffffffffffffff
-[  105.707702] x17: 0000ffffac148c58 x16: ffff000008b82928
-[  105.712998] x15: ffff0000091c96c8 x14: ffff0000893817c7
-[  105.718293] x13: ffff0000093817d5 x12: ffff0000091c9940
-[  105.723587] x11: ffff0000085e3e70 x10: ffff00000805b780
-[  105.728884] x9 : ffff00000805bb40 x8 : 7320737574617473
-[  105.734179] x7 : 206b6c635f305f6c x6 : 00000000000001e5
-[  105.739472] x5 : 0000000000000000 x4 : 0000000000000000
-[  105.744769] x3 : ffffffffffffffff x2 : ffff0000091e2658
-[  105.750063] x1 : a7c4712dd5e09c00 x0 : 0000000000000000
-[  105.755360] Call trace:
-[  105.760652]  clk_branch_toggle+0x190/0x1b0
-[  105.762824]  clk_branch2_disable+0x18/0x20
-[  105.766994]  clk_core_disable+0x58/0xa8
-[  105.771069]  clk_core_disable_lock+0x20/0x38
-[  105.774803]  clk_disable+0x1c/0x28
-[  105.779320]  __ufshcd_setup_clocks+0x298/0x308
-[  105.782529]  ufshcd_suspend+0x160/0x308
-[  105.786953]  ufshcd_shutdown+0x38/0xa0
-[  105.790690]  ufshcd_pltfrm_shutdown+0x10/0x18
-[  105.794512]  platform_drv_shutdown+0x20/0x30
-[  105.798935]  device_shutdown+0x110/0x1e8
-[  105.803278]  kernel_restart_prepare+0x34/0x40
-[  105.807181]  kernel_restart+0x14/0x78
-[  105.811434]  sys_reboot+0x200/0x248
-[  105.815081]  el0_svc_naked+0x30/0x34
-[  105.818378] ---[ end trace 8d2322276b27879c ]---
+> Thanks for your review comments.
+> =
 
-Mark gcc_ufs_tx_symbol_0_clk as BRANCH_HALT_SKIP as well.
+> On 7/9/2018 5:24 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-06-23 07:19:27)
+> >> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispc=
+c-sdm845.c
+> >> new file mode 100644
+> >> index 0000000..af437e0
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> >> @@ -0,0 +1,674 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> > [...]
+> >> +static struct clk_alpha_pll disp_cc_pll0 =3D {
+> >> +       .offset =3D 0x0,
+> >> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> >> +       .clkr =3D {
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "disp_cc_pll0",
+> >> +                       .parent_names =3D (const char *[]){ "bi_tcxo" =
+},
+> >> +                       .num_parents =3D 1,
+> >> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+> >> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src =3D {
+> >> +       .cmd_rcgr =3D 0x20d0,
+> >> +       .mnd_width =3D 0,
+> >> +       .hid_width =3D 5,
+> >> +       .parent_map =3D disp_cc_parent_map_0,
+> >> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >> +               .name =3D "disp_cc_mdss_byte0_clk_src",
+> >> +               .parent_names =3D disp_cc_parent_names_0,
+> >> +               .num_parents =3D 4,
+> >> +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> > =
 
-Fixes: 12d807cd34b8 ("clk: qcom: gcc-msm8996: Disable halt check on UFS clocks")
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/gcc-msm8996.c | 1 +
- 1 file changed, 1 insertion(+)
+> > Why is there the no cache flag? Last time I asked I don't think I got
+> > any answer, and there isn't a comment here so please at least add a
+> > comment to the code so we don't forget.
+> >
+> =
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 9f35b3fe1d97..ff8d66fd94e6 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -2781,6 +2781,7 @@ static struct clk_branch gcc_ufs_rx_cfg_clk = {
- 
- static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
- 	.halt_reg = 0x75018,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x75018,
- 		.enable_mask = BIT(0),
--- 
-2.14.4
+> I think you missed my comment from the earlier email. I would add the =
+
+> comment and submit again.
+
+Hmm.. ok.
+
+> =
+
+>  > Why is the nocache flag needed? Applies to all clks in this file.
+>  >
+> =
+
+> This flag is required for all RCGs whose PLLs are controlled outside the =
+
+> clock controller. The display code would require the recalculated rate =
+
+> always.
+
+Right. Why is the PLL controlled outside of the clock controller? The
+rate should propagate upward to the PLL from here, so who's going
+outside of that?
