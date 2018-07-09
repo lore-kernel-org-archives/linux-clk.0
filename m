@@ -1,55 +1,61 @@
-Return-Path: <robh@kernel.org>
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v4 0/4] Multiplex sdmmc low jitter clock path
+Date: Mon, 9 Jul 2018 19:38:54 +0300
+Message-ID: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-References: <20180712211244.11428-1-yixun.lan@amlogic.com> <20180712211244.11428-2-yixun.lan@amlogic.com>
- <20180724232917.GA27041@rob-hp-laptop> <e797412b-55db-6678-82ba-3a10ac99db9f@amlogic.com>
-In-Reply-To: <e797412b-55db-6678-82ba-3a10ac99db9f@amlogic.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 30 Jul 2018 11:23:06 -0600
-Message-ID: <CAL_JsqLrO+UMjhgSnaO+Ch-zpLj2-gjkuO=v1PRpMemYmcO2pQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock controller
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	=?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
-	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic@lists.infradead.org,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 27, 2018 at 8:14 AM Yixun Lan <yixun.lan@amlogic.com> wrote:
->
->
-> HI Rob
->
-> On 07/25/2018 07:29 AM, Rob Herring wrote:
-> > On Thu, Jul 12, 2018 at 09:12:43PM +0000, Yixun Lan wrote:
-> >> Document the MMC sub clock controller driver, the potential consumer
-> >> of this driver is MMC or NAND. Also add three clock bindings IDs which
-> >> provided by this driver.
-> >>
-> >> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> >> ---
-> >>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
-> >>  .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
-> >>  2 files changed, 47 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> >>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
->
-> Thanks for the review!
->
-> There is a discussion about dropping "meson-" prefix in the compatible
-> string[1]
->
-> So, I will send another version with the new compatible name adjusted
-> from "amlogic,meson-axg-mmc-clkc" to "amlogic,axg-mmc-clkc"..
-> probably also rename the dt-bindings header file to amlogc,mmc-clkc.h
+The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
+divider to achieve better jitter performance with high speed signaling
+modes. The clock path with the divider is needed by some of the slower
+signaling modes. This series automatically multiplexes the LJ and
+non-LJ clock paths based on the requested frequency.
 
-Okay, you can keep my R-by.
+Changelog:
+v4:
+	- Add a changelog
+
+v3:
+	- Use <asm/div64.h> include instead of <linux/kernel.h> for
+	  do_div()
+	- Use SPDX tags for new files
+	- Make mux_lj_idx[] and mux_non_lj_idx[] const
+	- Make tegra_clk_sdmmc_mux_ops static
+	- Fix the includes for fence_udelay() in a separate patch
+
+v2:
+	- Fix the type compatibility error on do_div
+
+Aapo Vienamo (1):
+  clk: tegra: Fix includes required by fence_udelay()
+
+Peter De Schrijver (1):
+  clk: tegra: refactor 7.1 div calculation
+
+Peter De-Schrijver (2):
+  clk: tegra: Add sdmmc mux divider clock
+  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+
+ drivers/clk/tegra/Makefile           |   2 +
+ drivers/clk/tegra/clk-divider.c      |  30 +----
+ drivers/clk/tegra/clk-id.h           |   2 -
+ drivers/clk/tegra/clk-sdmmc-mux.c    | 250 +++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra-periph.c |  11 --
+ drivers/clk/tegra/clk-tegra210.c     |  14 +-
+ drivers/clk/tegra/clk.h              |  30 +++++
+ drivers/clk/tegra/div71.c            |  43 ++++++
+ 8 files changed, 342 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+ create mode 100644 drivers/clk/tegra/div71.c
+
+-- 
+2.7.4
