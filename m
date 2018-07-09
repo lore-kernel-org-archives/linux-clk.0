@@ -1,40 +1,91 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH v8 0/6] provide power off support for iMX6 with external
- PMIC
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Shawn Guo
- <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
- yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- linux-imx@nxp.com, kernel@pengutronix.de, "A.s. Dong"
- <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Leonard Crestez <leonard.crestez@nxp.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <650c8289-f3a1-8bb1-2e4b-876100f9ae21@i2se.com>
-Date: Thu, 26 Jul 2018 11:48:47 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:26559 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932666AbeGIN3t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jul 2018 09:29:49 -0400
+Subject: Re: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S
+ controllers
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <robh+dt@kernel.org>, <broonie@kernel.org>, <sboyd@kernel.org>,
+        <Cristian.Birsan@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+ <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
+ <20180706193923.GC16084@piout.net>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
+Date: Mon, 9 Jul 2018 16:29:43 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180706193923.GC16084@piout.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Oleksij,
+On 06.07.2018 22:39, Alexandre Belloni wrote:
+> Hi Codrin,
+> 
+> On 18/06/2018 17:12:38+0300, Codrin Ciubotariu wrote:
+>> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+>>
+>> This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
+>> each I2S node.
+>>
+>> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+>> [codrin.ciubotariu@microchip.com: added phandle to new mux clock]
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+>>
+>> The bindings for the I2S node are applied to broonie/sound.git .
+>>
+>> Changes in v5:
+>> 	- the previous name was:
+>> 	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+>>
+>>   arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+>> index eeb6afa1cda7..eca73ce40bc5 100644
+>> --- a/arch/arm/boot/dts/sama5d2.dtsi
+>> +++ b/arch/arm/boot/dts/sama5d2.dtsi
+>> @@ -58,6 +58,8 @@
+>>   		serial1 = &uart3;
+>>   		tcb0 = &tcb0;
+>>   		tcb1 = &tcb1;
+>> +		i2s0 = &i2s0;
+>> +		i2s1 = &i2s1;
+>>   	};
+>>   
+>>   	cpus {
+>> @@ -1313,6 +1315,22 @@
+>>   				clocks = <&clk32k>;
+>>   			};
+>>   
+>> +			i2s0: i2s@f8050000 {
+>> +				compatible = "atmel,sama5d2-i2s";
+>> +				reg = <0xf8050000 0x100>;
+>> +				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +				dmas = <&dma0
+>> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+>> +					 AT91_XDMAC_DT_PERID(31))>,
+>> +				       <&dma0
+>> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+>> +					 AT91_XDMAC_DT_PERID(32))>;
+>> +				dma-names = "tx", "rx";
+>> +				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
+>> +				clock-names = "pclk", "gclk", "aclk", "muxclk";
+>> +				status = "disabled";
+>> +			};
+>> +
+> 
+> Can you resend the DTS patches after removing the unnecessary clocks?
 
-Am 26.07.2018 um 11:22 schrieb Oleksij Rempel:
-> 2018.07.26:
-> v8 is a rebase against kernel v4.18-rc6. No other changes are made.
-> Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
+I will. Should I also make the "muxclk" clock an assigned clock to 
+assign its parent ?
 
-your patches won't apply to regulator-next or linux-next because 
-"regulator: pfuze100: add pfuze3001 support" has been merged before.
-
-Since the pfuze3001 doesn't support standby, it would be nice to make 
-the driver take care of this.
-
-Best regards
-Stefan
+Thanks and best regards,
+Codrin
