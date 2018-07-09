@@ -1,166 +1,126 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <seanpaul@chromium.org>
+Return-Path: <seanpaul@chromium.org>
+From: Sean Paul <seanpaul@chromium.org>
+To: abhinavk@codeaurora.org,
+	architt@codeaurora.org,
+	chandanu@codeaurora.org,
+	jsanka@codeaurora.org,
+	jcrouse@codeaurora.org,
+	ryadav@codeaurora.org,
+	seanpaul@chromium.org,
+	skolluku@codeaurora.org,
+	dri-devel@lists.freedesktop.org,
+	robdclark@gmail.com,
+	airlied@linux.ie,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	nganji@codeaurora.org,
+	hoegsberg@chromium.org,
+	dovizu@chromium.org,
+	robh+dt@kernel.org
+Cc: Taniya Das <tdas@codeaurora.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Tue, 31 Jul 2018 13:10:59 +0100
-Message-Id: <1533039060-18779-2-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
-References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
+	devicetree@vger.kernel.org
+Subject: [PATCH 02/21] dt-bindings: clock: Introduce QCOM Display clock bindings
+Date: Mon,  9 Jul 2018 13:31:38 -0400
+Message-Id: <20180709173200.238457-3-seanpaul@chromium.org>
+In-Reply-To: <20180709173200.238457-1-seanpaul@chromium.org>
+References: <20180709173200.238457-1-seanpaul@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quite a few drivers get an optional clock, e.g. a clock required
-to access peripheral's registers that is always enabled on some
-devices.
+From: Taniya Das <tdas@codeaurora.org>
 
-This function behaves the same as of_clk_get_by_name() except that
-it will return NULL instead of -ENOENT.
+Add device tree bindings for display clock controller for Qualcomm
+Technology Inc's SDM845 SoCs.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 ---
-v4:
- - For optional named clocks of_property_match_string() will return
-   -EINVAL if the "clock-names" property is missing, or -ENODATA if
-   the specified clock name in the "clock-names" property is missing.
-   If we then call __of_clk_get() with these errors as the index, we
-   get clk = -EINVAL. This is then filtered later on so users don't
-   see it. However, if the clock is not named, __of_clk_get() will
-   return -ENOENT is the clock provide is not there.
-   So for optional named clocks, use index to determine if the clock
-   provider is there or not, and for unnamed clocks, simply check if
-   __of_clk_get() returns -ENOENT.
+ .../devicetree/bindings/clock/qcom,dispcc.txt | 19 ++++++++
+ .../dt-bindings/clock/qcom,dispcc-sdm845.h    | 45 +++++++++++++++++++
+ 2 files changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
-v3:
- - Fix check for clock not present. __of_clk_get() returns -EINVAL
-   if it's not there. Cover case of when there is no clock name.
- - of_clk_get_by_name_optional() should return NULL if !np.
- - Add dummy version of of_clk_get_by_name_optional() for the
-   !OF || !COMMON_CLK case.
----
- drivers/clk/clkdev.c | 43 +++++++++++++++++++++++++++++++++++++++----
- include/linux/clk.h  |  6 ++++++
- 2 files changed, 45 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8..f8f6ba9 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	struct clk *clk = ERR_PTR(-ENOENT);
- 
-@@ -70,6 +71,12 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
- 		if (name)
- 			index = of_property_match_string(np, "clock-names", name);
- 		clk = __of_clk_get(np, index, dev_id, name);
-+		if (optional && (index == -EINVAL || index == -ENODATA ||
-+		    PTR_ERR(clk) == -ENOENT)) {
-+			clk = NULL;
-+			pr_info("optional clock is not present %pOF:%s\n", np,
-+				name ? name : "");
-+		}
- 		if (!IS_ERR(clk)) {
- 			break;
- 		} else if (name && index >= 0) {
-@@ -89,6 +96,12 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
- 			break;
- 	}
- 
-+	if (optional && PTR_ERR(clk) == -ENOENT) {
-+		clk = NULL;
-+		pr_info("optional clock is not present %pOF:%s\n", np,
-+			name ? name : "");
-+	}
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.txt b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+new file mode 100644
+index 000000000000..d639e18d0b85
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+@@ -0,0 +1,19 @@
++Qualcomm Technologies, Inc. Display Clock Controller Binding
++------------------------------------------------------------
 +
- 	return clk;
- }
- 
-@@ -106,15 +119,37 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get_by_name(np, np->full_name, name, false);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- 
-+/**
-+ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
-+ * by a device node
-+ * @np: pointer to clock consumer node
-+ * @name: name of consumer's clock input, or NULL for the first clock reference
-+ *
-+ * This function parses the clocks and clock-names properties, and uses them to
-+ * look up the struct clk from the registered list of clock providers.
-+ * It behaves the same as of_clk_get_by_name(), except when np is NULL or no
-+ * clock provider is found, when it then returns NULL.
++Required properties :
++
++- compatible : shall contain "qcom,sdm845-dispcc"
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	dispcc: clock-controller@af00000 {
++		compatible = "qcom,sdm845-dispcc";
++		reg = <0xaf00000 0x100000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+new file mode 100644
+index 000000000000..11eed4bc9646
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
 + */
-+struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+					const char *name)
-+{
-+	if (!np)
-+		return NULL;
 +
-+	return __of_clk_get_by_name(np, np->full_name, name, true);
-+}
-+EXPORT_SYMBOL(of_clk_get_by_name_optional);
++#ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
 +
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -197,7 +232,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..de0e5e0 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-+struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
- #else
- static inline struct clk *of_clk_get(struct device_node *np, int index)
-@@ -788,6 +789,11 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
- {
- 	return ERR_PTR(-ENOENT);
- }
-+static inline struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+						      const char *name)
-+{
-+	return NULL;
-+}
- static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
- 	return ERR_PTR(-ENOENT);
++/* DISP_CC clock registers */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AXI_CLK					1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				4
++#define DISP_CC_MDSS_BYTE1_CLK					5
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				7
++#define DISP_CC_MDSS_ESC0_CLK					8
++#define DISP_CC_MDSS_ESC0_CLK_SRC				9
++#define DISP_CC_MDSS_ESC1_CLK					10
++#define DISP_CC_MDSS_ESC1_CLK_SRC				11
++#define DISP_CC_MDSS_MDP_CLK					12
++#define DISP_CC_MDSS_MDP_CLK_SRC				13
++#define DISP_CC_MDSS_MDP_LUT_CLK				14
++#define DISP_CC_MDSS_PCLK0_CLK					15
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				16
++#define DISP_CC_MDSS_PCLK1_CLK					17
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				18
++#define DISP_CC_MDSS_ROT_CLK					19
++#define DISP_CC_MDSS_ROT_CLK_SRC				20
++#define DISP_CC_MDSS_RSCC_AHB_CLK				21
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				22
++#define DISP_CC_MDSS_VSYNC_CLK					23
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				24
++#define DISP_CC_PLL0						25
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
++
++/* DISP_CC Reset */
++#define DISP_CC_MDSS_RSCC_BCR					0
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++
++#endif
 -- 
-2.7.4
+Sean Paul, Software Engineer, Google / Chromium OS
