@@ -1,125 +1,205 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org,
-	andy.gross@linaro.org
-Cc: tdas@codeaurora.org,
-	girishm@codeaurora.org,
-	linux-arm-msm@vger.kernel.org,
-	anischal@codeaurora.org,
-	bjorn.andersson@linaro.org,
-	grahamr@codeaurora.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	David Brown <david.brown@linaro.org>
-Subject: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-Date: Tue, 24 Jul 2018 10:45:13 -0700
-Message-Id: <20180724174513.174018-3-dianders@chromium.org>
-In-Reply-To: <20180724174513.174018-1-dianders@chromium.org>
-References: <20180724174513.174018-1-dianders@chromium.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:49152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754214AbeGIGdp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:33:45 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: linux@armlinux.org.uk, matti.vaittinen@fi.rohmeurope.com,
+        mazziesaccount@gmail.com, sboyd@codeaurora.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180628075453.GA7793@localhost.localdomain>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <20180628075453.GA7793@localhost.localdomain>
+Message-ID: <153111802456.143105.16373079820431081414@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: clkdev - add managed versions of lookup registrations
+Date: Sun, 08 Jul 2018 23:33:44 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add both the interface and core clock.
+Quoting Matti Vaittinen (2018-06-28 00:54:53)
+> Add devm_clk_hw_register_clkdev, devm_clk_register_clkdev and
+> devm_clk_release_clkdev as a first styep to clean up drivers which are
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-(am from https://lore.kernel.org/patchwork/patch/966680/mbox)
+s/styep/step/
 
----
+> leaking clkdev lookups at driver remove.
+> =
 
-Changes in v3:
-- Removed gcc_parent_names_9 which I had left in (doh!).
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+> =
 
-Changes in v2:
-- Only 19.2, 100, 150, and 300 MHz now.
-- All clocks come from MAIN rather than EVEN.
-- Use parent map 0 instead of new parent map 9.
+>  drivers/clk/clkdev.c   | 165 +++++++++++++++++++++++++++++++++++++++++--=
+------
+>  include/linux/clkdev.h |   8 +++
 
- drivers/clk/qcom/gcc-sdm845.c | 56 +++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+Also need to update the Documentation file at
+Documentation/driver-model/devres.txt
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 0f694ed4238a..fc1c6658ad82 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -358,6 +358,28 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-+	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-+	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gcc_qspi_core_clk_src = {
-+	.cmd_rcgr = 0x4b008,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gcc_parent_map_0,
-+	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gcc_qspi_core_clk_src",
-+		.parent_names = gcc_parent_names_0,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_floor_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
- 	F(9600000, P_BI_TCXO, 2, 0, 0),
- 	F(19200000, P_BI_TCXO, 1, 0, 0),
-@@ -1935,6 +1957,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
-+	.halt_reg = 0x4b000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_cnoc_periph_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_qspi_core_clk = {
-+	.halt_reg = 0x4b004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_core_clk",
-+			.parent_names = (const char *[]){
-+				"gcc_qspi_core_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
- 	.halt_reg = 0x17030,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -3383,6 +3436,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
- 	[GPLL4] = &gpll4.clkr,
- 	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
- 	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
-+	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
-+	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
-+	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_sdm845_resets[] = {
--- 
-2.18.0.233.g985f88cf7e-goog
+>  2 files changed, 147 insertions(+), 26 deletions(-)
+> =
+
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 7513411140b6..4752a0004a6c 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -390,7 +390,7 @@ void clkdev_drop(struct clk_lookup *cl)
+>  }
+>  EXPORT_SYMBOL(clkdev_drop);
+>  =
+
+> -static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+> +static struct clk_lookup *do_clk_register_clkdev(struct clk_hw *hw,
+
+Don't rename this.
+
+>                                                 const char *con_id,
+>                                                 const char *dev_id, ...)
+>  {
+> @@ -404,6 +404,24 @@ static struct clk_lookup *__clk_register_clkdev(stru=
+ct clk_hw *hw,
+>         return cl;
+>  }
+>  =
+
+> +static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+> +       const char *con_id, const char *dev_id)
+> +{
+> +       struct clk_lookup *cl;
+> +
+> +       /*
+> +        * Since dev_id can be NULL, and NULL is handled specially, we mu=
+st
+> +        * pass it as either a NULL format string, or with "%s".
+> +        */
+> +       if (dev_id)
+> +               cl =3D do_clk_register_clkdev(hw, con_id, "%s",
+> +                                          dev_id);
+> +       else
+> +               cl =3D do_clk_register_clkdev(hw, con_id, NULL);
+> +
+> +       return cl;
+
+I think this is the same code as before? Try to minimize the diff so we
+can focus on what's really changing.
+
+> +}
+> +
+>  /**
+>   * clk_register_clkdev - register one clock lookup for a struct clk
+>   * @clk: struct clk to associate with all clk_lookups
+[...]
+> +
+> +/**
+> + * devm_clk_hw_register_clkdev - managed clk lookup registration for clk=
+_hw
+> + * @dev: device this lookup is bound
+> + * @hw: struct clk_hw to associate with all clk_lookups
+> + * @con_id: connection ID string on device
+> + * @dev_id: format string describing device name
+> + *
+> + * con_id or dev_id may be NULL as a wildcard, just as in the rest of
+> + * clkdev.
+> + *
+> + * To make things easier for mass registration, we detect error clk_hws
+> + * from a previous clk_hw_register_*() call, and return the error code f=
+or
+> + * those.  This is to permit this function to be called immediately
+> + * after clk_hw_register_*().
+> + */
+> +int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
+> +                               const char *con_id, const char *dev_id)
+> +{
+> +       struct clk_lookup **cl =3D NULL;
+
+Don't assign to NULL to just overwrite it later.
+
+>  =
+
+>         if (IS_ERR(hw))
+>                 return PTR_ERR(hw);
+
+Put another newline here.
+
+> +       cl =3D devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
+> +       if (cl) {
+> +               *cl =3D __clk_register_clkdev(hw, con_id, dev_id);
+
+Why can't we just call clk_hw_register_clkdev()? Sure the IS_ERR()
+chain is duplicated, but that can be left out of the devm version and
+rely on the clk_hw_register_clkdev() to take care of it otherwise.
+
+
+> +               if (*cl)
+> +                       devres_add(dev, cl);
+> +               else
+> +                       devres_free(cl);
+> +       }
+> +       return (cl && *cl) ? 0 : -ENOMEM;
+> +}
+> +EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
+>  =
+
+> -       /*
+> -        * Since dev_id can be NULL, and NULL is handled specially, we mu=
+st
+> -        * pass it as either a NULL format string, or with "%s".
+> -        */
+> -       if (dev_id)
+> -               cl =3D __clk_register_clkdev(hw, con_id, "%s", dev_id);
+> -       else
+> -               cl =3D __clk_register_clkdev(hw, con_id, NULL);
+> -
+> -       return cl ? 0 : -ENOMEM;
+> +/**
+> + * devm_clk_register_clkdev - managed clk lookup registration for a stru=
+ct clk
+> + * @dev: device this lookup is bound
+> + * @clk: struct clk to associate with all clk_lookups
+> + * @con_id: connection ID string on device
+> + * @dev_id: string describing device name
+> + *
+> + * con_id or dev_id may be NULL as a wildcard, just as in the rest of
+> + * clkdev.
+> + *
+> + * To make things easier for mass registration, we detect error clks
+> + * from a previous clk_register() call, and return the error code for
+> + * those.  This is to permit this function to be called immediately
+> + * after clk_register().
+> + */
+> +int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
+> +                            const char *con_id, const char *dev_id)
+
+I wouldn't even add this function, to encourage driver writers to
+migrate to clk_hw based registration functions and to avoid removing it
+later on.
+
+> +{
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +       return devm_clk_hw_register_clkdev(dev, __clk_get_hw(clk), con_id,
+> +                                          dev_id);
+>  }
+> -EXPORT_SYMBOL(clk_hw_register_clkdev);
+> +EXPORT_SYMBOL(devm_clk_register_clkdev);
+> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+> index 4890ff033220..27ebeae8ae26 100644
+> --- a/include/linux/clkdev.h
+> +++ b/include/linux/clkdev.h
+> @@ -52,4 +52,12 @@ int clk_add_alias(const char *, const char *, const ch=
+ar *, struct device *);
+>  int clk_register_clkdev(struct clk *, const char *, const char *);
+>  int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+>  =
+
+> +int devm_clk_register_clkdev(struct device *dev, struct clk *clk,
+> +                            const char *con_id, const char *dev_id);
+> +int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
+> +                               const char *con_id, const char *dev_id);
+> +void devm_clk_release_clkdev(struct device *dev, const char *con_id,
+> +                            const char *dev_id);
+> +
+> +
+>  #endif
