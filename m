@@ -1,90 +1,99 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
-Date: Thu, 26 Jul 2018 17:35:16 +0200
-Message-Id: <20180726153517.10020-11-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+Return-Path: <alberto@amarulasolutions.com>
+Return-Path: <alberto@amarulasolutions.com>
+Date: Mon, 9 Jul 2018 18:16:21 +0200
+From: Alberto Panizzo <alberto@amarulasolutions.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Anthony Brandon <anthony@amarulasolutions.com>,
+	linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: rockchip: rk3399: fix returning correct value
+ on clk_i2sout get_rate [with GET_RATE_NOCACHE]
+Message-ID: <20180709161620.GA12454@change>
+References: <1530883132-17678-1-git-send-email-anthony@amarulasolutions.com>
+ <1530883132-17678-2-git-send-email-anthony@amarulasolutions.com>
+ <4069085.blmd9nAIm0@phil>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <4069085.blmd9nAIm0@phil>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make the existing support for selecting between clean and SSCG clocks
-using MD12 more generic, to allow using other mode pins for arbitrary
-clock selection.
+Hi Heiko,
+On Sun, Jul 08, 2018 at 11:32:19AM +0200, Heiko Stuebner wrote:
+> Hi,
+> 
+> Am Freitag, 6. Juli 2018, 15:18:52 CEST schrieb Anthony Brandon:
+> > From: Alberto Panizzo <alberto@amarulasolutions.com>
+> > 
+> > clk_i2sout can be used as codec mclk.
+> > On simple audio card clk_i2sout is just enabled/disabled while the rate
+> > is decided on parent clock by i2s driver.
+> > Without setting CLK_GET_RATE_NOCACHE flag, the get_rate function on
+> > clk_i2sout would return incorrect values after clk_i2sout's parents
+> > update.
+> 
+> Can you elaborate a bit more on the issue you see please?
+> Because as far as I remember the clock-framework should already
+> update child-clocks when the rate of their parent changed.
+> 
+> So even the cached rate should be correct after the parent changes,
+> so I don't really understand in what case you would get a wrong rate.
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
- drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
- 2 files changed, 13 insertions(+), 10 deletions(-)
+You are right, I'm sorry this patch were coming from days of long test and
+checks to understand why clk_get_rate were returning 0 while parents clocks
+were set.
+(And working with a codec which does not offer deterministic results)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 19a77822757d29de..4346fdeef01bbeae 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 			parent = clks[cpg_clk_extalr];
- 		break;
+Especially, after having found and fixed the bits misconfigurations, a
+clk_get_rate on clk_i2sout before the first clk_i2s0 set_rate is
+returning 0.
+
+But clk_i2s0_mux results unparented before first clk_i2s0 set_rate and with
+or without NOCACHE, until a set_rate is called on clk_i2s0, a get_rate on
+clk_i2sout will return 0.
+
+This does not prevent good behavior after first _hw_params()
+so please, drop this patch.
+
+But patch 1/2 is necessary, please apply.
+
+Thanks,
+
+Alberto Panizzo
+--
+Amarula Solutions SRL                     Via le Canevare 30 31100 Treviso Italy
+Amarula Solutions BV           Cruquiuskade 47 Amsterdam 1018 AM The Netherlands
+Phone. +31(0)851119171 Fax. +31(0)204106211             www.amarulasolutions.com
  
--	case CLK_TYPE_GEN3_PE:
-+	case CLK_TYPE_GEN3_MDSEL:
- 		/*
--		 * Peripheral clock with a fixed divider, selectable between
--		 * clean and spread spectrum parents using MD12
-+		 * Clock selectable between two parents and two fixed dividers
-+		 * using a mode pin
- 		 */
--		if (cpg_mode & BIT(12)) {
--			/* Clean */
-+		if (cpg_mode & BIT(core->offset)) {
- 			div = core->div & 0xffff;
- 		} else {
--			/* SCCG */
- 			parent = clks[core->parent >> 16];
- 			if (IS_ERR(parent))
- 				return ERR_CAST(parent);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 7c49aebf9dd12490..04dc45d15874abf6 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PLL4,
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
--	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
- 
-+#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
-+		 (_parent0) << 16 | (_parent1),		\
-+		 .div = (_div0) << 16 | (_div1), .offset = _md)
-+
- #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
- 		    _div_clean) \
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
--		 (_parent_sscg) << 16 | (_parent_clean),	\
--		 .div = (_div_sscg) << 16 | (_div_clean))
-+	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
-+		       _parent_clean, _div_clean)
-+
- #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
+> 
+> 
+> > Signed-off-by: Alberto Panizzo <alberto@amarulasolutions.com>
+> > Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
+> > ---
+> >  drivers/clk/rockchip/clk-rk3399.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> > index 2a8634a..6073479 100644
+> > --- a/drivers/clk/rockchip/clk-rk3399.c
+> > +++ b/drivers/clk/rockchip/clk-rk3399.c
+> > @@ -630,7 +630,8 @@ static struct rockchip_clk_branch rk3399_clk_branches[] __initdata = {
+> >  
+> >  	MUX(0, "clk_i2sout_src", mux_i2sch_p, CLK_SET_RATE_PARENT,
+> >  			RK3399_CLKSEL_CON(31), 0, 2, MFLAGS),
+> > -	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "clk_i2sout", mux_i2sout_p, CLK_SET_RATE_PARENT,
+> > +	COMPOSITE_NODIV(SCLK_I2S_8CH_OUT, "clk_i2sout", mux_i2sout_p,
+> > +			CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> >  			RK3399_CLKSEL_CON(31), 2, 1, MFLAGS,
+> >  			RK3399_CLKGATE_CON(8), 12, GFLAGS),
+> >  
+> > 
+> 
+> 
+> 
+> 
+
 -- 
-2.17.1
+Amarula Solutions SRL                     Via le Canevare 30 31100 Treviso Italy
+Amarula Solutions BV           Cruquiuskade 47 Amsterdam 1018 AM The Netherlands
+Phone. +31(0)851119171 Fax. +31(0)204106211             www.amarulasolutions.com
