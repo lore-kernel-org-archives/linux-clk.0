@@ -1,90 +1,52 @@
-Return-Path: <miquel.raynal@bootlin.com>
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [RESEND PATCH v3 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
-Date: Fri, 13 Jul 2018 15:44:45 +0200
-Message-Id: <20180713134446.27882-1-miquel.raynal@bootlin.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:29636 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933416AbeGIPzI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jul 2018 11:55:08 -0400
+Subject: Re: [PATCH v5 2/5] clk: at91: add I2S clock mux driver
+To: Stephen Boyd <sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <alsa-devel@alsa-project.org>, <boris.brezillon@bootlin.com>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nicolas.ferre@microchip.com>, <robh+dt@kernel.org>
+CC: <Cristian.Birsan@microchip.com>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+ <20180618141239.10892-3-codrin.ciubotariu@microchip.com>
+ <153090076533.143105.11588903392800697432@swboyd.mtv.corp.google.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Message-ID: <b7a379b3-0cfe-7a8e-fa13-3d152beb5e32@microchip.com>
+Date: Mon, 9 Jul 2018 18:55:01 +0300
+MIME-Version: 1.0
+In-Reply-To: <153090076533.143105.11588903392800697432@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the introduction of suspend/resume hooks by having an easy way
-to access all the registers in one go just from a device: add the IP
-base address in the driver data.
+On 06.07.2018 21:12, Stephen Boyd wrote:
+> Quoting Codrin Ciubotariu (2018-06-18 07:12:36)
+>> This driver is a simple muxing driver that controls the
+>> I2S's clock input by using syscon/regmap to change the parent.
+>> The available inputs can be peripheral clock and generated clock.
+>>
+>> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+>> ---
+> 
+> Applied to clk-next
+> 
+> But I had to fix:
+> 
+> WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+> #56: FILE: drivers/clk/at91/clk-i2s-mux.c:1:
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> so I did. Please run checkpatch next time.
+> 
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
+Sorry about that. I did run checkpatch, but I saw some files that 
+commented the License-Identifier the same way I did. Didn't notice back 
+then that were only the headers...
+Thank you for applying my patches.
 
-Resend because I failed M. Turquette's address.
-
-Changes since v2:
-=================
-* None
-
-Changes since v1:
-=================
-* None
-
- drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 6860bd5a37c5..a9e3dcc50a7b 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -58,6 +58,7 @@
- struct clk_periph_driver_data {
- 	struct clk_hw_onecell_data *hw_data;
- 	spinlock_t lock;
-+	void __iomem *reg;
- };
- 
- struct clk_double_div {
-@@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int num_periph = 0, i, ret;
- 	struct resource *res;
--	void __iomem *reg;
- 
- 	data = of_device_get_match_data(dev);
- 	if (!data)
-@@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	while (data[num_periph].name)
- 		num_periph++;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	reg = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg))
--		return PTR_ERR(reg);
--
- 	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
- 	if (!driver_data)
- 		return -ENOMEM;
-@@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	driver_data->hw_data->num = num_periph;
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	driver_data->reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(driver_data->reg))
-+		return PTR_ERR(driver_data->reg);
-+
- 	spin_lock_init(&driver_data->lock);
- 
- 	for (i = 0; i < num_periph; i++) {
- 		struct clk_hw **hw = &driver_data->hw_data->hws[i];
--
--		if (armada_3700_add_composite_clk(&data[i], reg,
-+		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
- 						  &driver_data->lock, dev, hw))
- 			dev_err(dev, "Can't register periph clock %s\n",
- 				data[i].name);
--- 
-2.14.1
+Best regards,
+Codrin
