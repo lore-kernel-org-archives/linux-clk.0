@@ -1,173 +1,153 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V4 5/9] clk: imx: add composite clk support
-Date: Wed, 18 Jul 2018 21:36:59 +0800
-Message-Id: <1531921023-18497-6-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
+Date: Mon, 9 Jul 2018 19:38:56 +0300
+Message-ID: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: avienamo@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The imx composite clk is designed for Peripheral Clock Control (PCC)
-module observed in IMX ULP SoC series. e.g. i.MX7ULP.
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-NOTE pcc can only be operated when clk is gated.
+Move this to a separate file so it can be used to calculate the sdmmc
+clock dividers.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-ChangeLog:
-v3->v4:
- * no changes
-v2->v3:
- * no changes
-v1->v2:
- * remove an unneeded blank line change
- * use clk_hw_register
----
- drivers/clk/imx/Makefile        |  1 +
- drivers/clk/imx/clk-composite.c | 85 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  6 +++
- 3 files changed, 92 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+ drivers/clk/tegra/Makefile      |  1 +
+ drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+ drivers/clk/tegra/clk.h         |  3 +++
+ drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/clk/tegra/div71.c
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index e5b0d42..f4da12c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -4,6 +4,7 @@ obj-y += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
-+	clk-composite.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
- 	clk-gate-exclusive.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index b716923..6d4f563 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+ obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
++obj-y					+= div71.o
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index 16e0aee..ad87858 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -32,35 +32,15 @@
+ static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+ 		   unsigned long parent_rate)
+ {
+-	u64 divider_ux1 = parent_rate;
+-	u8 flags = divider->flags;
+-	int mul;
+-
+-	if (!rate)
+-		return 0;
+-
+-	mul = get_mul(divider);
+-
+-	if (!(flags & TEGRA_DIVIDER_INT))
+-		divider_ux1 *= mul;
+-
+-	if (flags & TEGRA_DIVIDER_ROUND_UP)
+-		divider_ux1 += rate - 1;
+-
+-	do_div(divider_ux1, rate);
+-
+-	if (flags & TEGRA_DIVIDER_INT)
+-		divider_ux1 *= mul;
++	int div;
+ 
+-	divider_ux1 -= mul;
++	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
++			divider->flags);
+ 
+-	if ((s64)divider_ux1 < 0)
++	if (div < 0)
+ 		return 0;
+ 
+-	if (divider_ux1 > get_max_div(divider))
+-		return get_max_div(divider);
+-
+-	return divider_ux1;
++	return div;
+ }
+ 
+ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index e3b9c22..149cc70 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags);
++
+ 
+ /* Combined read fence with delay */
+ #define fence_udelay(delay, reg)	\
+diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
 new file mode 100644
-index 0000000..297974b
+index 0000000..1eecc84
 --- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0+
++++ b/drivers/clk/tegra/div71.c
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *
++ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
++#include <asm/div64.h>
 +
-+#define PCG_PCS_SHIFT	24
-+#define PCG_PCS_MASK	0x7
-+#define PCG_CGC_SHIFT	30
-+#define PCG_FRAC_SHIFT	3
-+#define PCG_FRAC_WIDTH	1
-+#define PCG_FRAC_MASK	BIT(3)
-+#define PCG_PCD_SHIFT	0
-+#define PCG_PCD_WIDTH	3
-+#define PCG_PCD_MASK	0x7
++#include "clk.h"
 +
-+struct clk_hw *imx_clk_composite(const char *name,
-+			      const char * const *parent_names,
-+			      int num_parents, bool mux_present,
-+			      bool rate_present, bool gate_present,
-+			      void __iomem *reg)
++#define div_mask(w) ((1 << (w)) - 1)
++
++int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
++	      u8 frac_width, u8 flags)
 +{
-+	struct clk_hw *mux_hw = NULL, *fd_hw = NULL, *gate_hw = NULL;
-+	struct clk_fractional_divider *fd = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk_hw *hw;
++	u64 divider_ux1 = parent_rate;
++	int mul;
 +
-+	if (mux_present) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+		mux_hw = &mux->hw;
-+		mux->reg = reg;
-+		mux->shift = PCG_PCS_SHIFT;
-+		mux->mask = PCG_PCS_MASK;
-+	}
++	if (!rate)
++		return 0;
 +
-+	if (rate_present) {
-+		fd = kzalloc(sizeof(*fd), GFP_KERNEL);
-+		if (!fd) {
-+			kfree(mux);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		fd_hw = &fd->hw;
-+		fd->reg = reg;
-+		fd->mshift = PCG_FRAC_SHIFT;
-+		fd->mwidth = PCG_FRAC_WIDTH;
-+		fd->mmask  = PCG_FRAC_MASK;
-+		fd->nshift = PCG_PCD_SHIFT;
-+		fd->nwidth = PCG_PCD_WIDTH;
-+		fd->nmask = PCG_PCD_MASK;
-+		fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
-+	}
++	mul = 1 << frac_width;
 +
-+	if (gate_present) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate) {
-+			kfree(mux);
-+			kfree(fd);
-+			return ERR_PTR(-ENOMEM);
-+		}
-+		gate_hw = &gate->hw;
-+		gate->reg = reg;
-+		gate->bit_idx = PCG_CGC_SHIFT;
-+	}
++	if (!(flags & TEGRA_DIVIDER_INT))
++		divider_ux1 *= mul;
 +
-+	hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
-+				       mux_hw, &clk_mux_ops, fd_hw,
-+				       &clk_fractional_divider_ops, gate_hw,
-+				       &clk_gate_ops, CLK_SET_RATE_GATE |
-+				       CLK_SET_PARENT_GATE);
-+	if (IS_ERR(hw)) {
-+		kfree(mux);
-+		kfree(fd);
-+		kfree(gate);
-+	}
++	if (flags & TEGRA_DIVIDER_ROUND_UP)
++		divider_ux1 += rate - 1;
 +
-+	return hw;
++	do_div(divider_ux1, rate);
++
++	if (flags & TEGRA_DIVIDER_INT)
++		divider_ux1 *= mul;
++
++	if (divider_ux1 < mul)
++		return 0;
++
++	divider_ux1 -= mul;
++
++	if (divider_ux1 > div_mask(width))
++		return div_mask(width);
++
++	return divider_ux1;
 +}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index a5a9374..bc43f68 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -71,6 +71,12 @@ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
- 			     const char **parent_names, int num_parents);
- 
-+struct clk_hw *imx_clk_composite(const char *name,
-+				 const char * const *parent_names,
-+				 int num_parents, bool mux_present,
-+				 bool rate_present, bool gate_present,
-+				 void __iomem *reg);
-+
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
 -- 
 2.7.4
