@@ -1,107 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58045 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730768AbeGZSbz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:31:55 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 01/10] clk: sunxi-ng: a64: Add minimal rate for video PLLs
-Date: Fri, 27 Jul 2018 01:12:48 +0800
-Message-Id: <20180726171257.6688-2-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
+ SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+ <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
+Date: Mon, 9 Jul 2018 12:37:21 +0530
+MIME-Version: 1.0
+In-Reply-To: <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
 
-Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v3.1, v3:
-- none 
-Changes for v2:
-- New patch
-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++-------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index ee9c12cf3f08..d0e30192f0cf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x018,
-@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
- };
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x038,
+On 7/9/2018 11:46 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-08 20:38:03)
+>> Hello Stephen,
+>>
+>> Thanks for your review comments.
+>>
+>> On 7/9/2018 5:24 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-06-23 07:19:27)
+>>>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+>>>> new file mode 100644
+>>>> index 0000000..af437e0
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+>>>> @@ -0,0 +1,674 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>> [...]
+>>>> +static struct clk_alpha_pll disp_cc_pll0 = {
+>>>> +       .offset = 0x0,
+>>>> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+>>>> +       .clkr = {
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "disp_cc_pll0",
+>>>> +                       .parent_names = (const char *[]){ "bi_tcxo" },
+>>>> +                       .num_parents = 1,
+>>>> +                       .ops = &clk_alpha_pll_fabia_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
+>>>> +       .cmd_rcgr = 0x20d0,
+>>>> +       .mnd_width = 0,
+>>>> +       .hid_width = 5,
+>>>> +       .parent_map = disp_cc_parent_map_0,
+>>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>>> +               .name = "disp_cc_mdss_byte0_clk_src",
+>>>> +               .parent_names = disp_cc_parent_names_0,
+>>>> +               .num_parents = 4,
+>>>> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+>>>
+>>> Why is there the no cache flag? Last time I asked I don't think I got
+>>> any answer, and there isn't a comment here so please at least add a
+>>> comment to the code so we don't forget.
+>>>
+>>
+>> I think you missed my comment from the earlier email. I would add the
+>> comment and submit again.
+> 
+> Hmm.. ok.
+> 
+>>
+>>   > Why is the nocache flag needed? Applies to all clks in this file.
+>>   >
+>>
+>> This flag is required for all RCGs whose PLLs are controlled outside the
+>> clock controller. The display code would require the recalculated rate
+>> always.
+> 
+> Right. Why is the PLL controlled outside of the clock controller? The
+> rate should propagate upward to the PLL from here, so who's going
+> outside of that?
+> 
+The DSI0/1 PLL are not part of the display clock controller, but in the 
+display subsystem which are managed by the DRM drivers. When DRM drivers
+query for the rate clock driver should always return the non cached rates.
 -- 
-2.18.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
