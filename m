@@ -1,80 +1,30 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Faiz Abbas <faiz_abbas@ti.com>
-To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>
-Subject: [PATCH v4 0/6] Add MCAN Support for dra76x
-Date: Thu, 5 Jul 2018 19:53:13 +0530
-Message-ID: <20180705142319.19583-1-faiz_abbas@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: mark.rutland@arm.com, paul@pwsan.com, tony@atomide.com, faiz_abbas@ti.com,
- t-kristo@ti.com, robh+dt@kernel.org, bcousson@baylibre.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+To: Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
+ dmitry.torokhov@gmail.com, gregkh@linuxfoundation.org, hkallweit1@gmail.com,
+ keescook@chromium.org, linux-clk@vger.kernel.org, mark.rutland@arm.com,
+ matt@codeblueprint.co.uk, michal.simek@xilinx.com, mingo@kernel.org,
+ mturquette@baylibre.com, robh+dt@kernel.org, sboyd@codeaurora.org,
+ sudeep.holla@arm.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1529516435-7315-8-git-send-email-jollys@xilinx.com>
+Cc: rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Jolly Shah <jollys@xilinx.com>
+References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+ <1529516435-7315-8-git-send-email-jollys@xilinx.com>
+Message-ID: <153111415833.143105.8701882244160397855@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v9 07/10] firmware: xilinx: Add debugfs for IOCTL API
+Date: Sun, 08 Jul 2018 22:29:18 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The following patches add dts and sysconfig support
-for MCAN on TI's dra76 SOCs
+Quoting Jolly Shah (2018-06-20 10:40:32)
+> From: Rajan Vaja <rajanv@xilinx.com>
+> =
 
-Changes in v4:
- 1. Rebased to latest kernel
- 2. Using ddata->cfg.syss_mask instead of ddata->cfg.quirks
-    for checking if poll on reset status is required.
+> Add debugfs file to set/get IOCTL using debugfs interface.
 
-Changes in v3:
- 1. Added reset functionality to the ti-sysc
-    driver. This enables me to drop the hwmod
-    data patch as everything is being done in dt.
-
- 2. Dropped ti,hwmods from the dts nodes
-
- 3. Fixed the unit address of target-module
-    and mcan
-
- 4. Removed the status="disabled" in dtsi
-    followed by status="okay" in dts.
-
-Changes in v2:
- 1. Added Support for mcan in the ti-sysc driver
-    Also added the target-module node for the same
-
- 2. Added clkctrl data for mcan clocks
-
-Faiz Abbas (4):
-  clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-  bus: ti-sysc: Add support for using ti-sysc for MCAN on dra76x
-  bus: ti-sysc: Add support for software reset
-  ARM: dts: Add generic interconnect target module node for MCAN
-
-Franklin S Cooper Jr (1):
-  ARM: dts: dra76x: Add MCAN node
-
-Lokesh Vutla (1):
-  ARM: dts: dra762: Add MCAN clock support
-
- .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
- arch/arm/boot/dts/dra76-evm.dts               |  6 ++
- arch/arm/boot/dts/dra76x.dtsi                 | 64 +++++++++++++++++++
- drivers/bus/ti-sysc.c                         | 57 +++++++++++++++++
- drivers/clk/ti/clk-7xx.c                      |  1 +
- include/dt-bindings/bus/ti-sysc.h             |  2 +
- include/dt-bindings/clock/dra7.h              |  1 +
- include/linux/platform_data/ti-sysc.h         |  1 +
- 8 files changed, 133 insertions(+)
-
--- 
-2.17.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+IOCTLs and debugfs aren't the same thing. Why are the two being mixed
+together? Is some sort of userspace ABI being created here to control
+clks with usermode drivers?
