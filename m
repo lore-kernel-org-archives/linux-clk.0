@@ -1,203 +1,178 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42059 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbeG3JhS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jul 2018 05:37:18 -0400
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-To: Robin Gong <yibin.gong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
- <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <1532680211.32306.36.camel@pengutronix.de>
- <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-Date: Mon, 30 Jul 2018 10:03:29 +0200
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 9 Jul 2018 11:00:12 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Thierry
+ Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] clk: tegra: Add sdmmc mux divider clock
+Message-ID: <20180709080012.GE27696@tbergstrom-lnx.Nvidia.com>
+References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
+ <1530699455-27654-2-git-send-email-avienamo@nvidia.com>
+ <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a
-Content-Type: multipart/mixed; boundary="4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "A.s. Dong" <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Leonard Crestez <leonard.crestez@nxp.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
- <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <1532680211.32306.36.camel@pengutronix.de>
- <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+On Fri, Jul 06, 2018 at 11:18:30AM -0700, Stephen Boyd wrote:
+> Quoting Aapo Vienamo (2018-07-04 03:17:34)
+> > diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+> > new file mode 100644
+> > index 0000000..8e19cb3
+> > --- /dev/null
+> > +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+> > @@ -0,0 +1,254 @@
+> > +/*
+> > + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
+> > + *
+> > + * based on clk-mux.c
+> > +
+> > + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
+> > + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
+> > + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify it
+> > + * under the terms and conditions of the GNU General Public License,
+> > + * version 2, as published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope it will be useful, but WITHOUT
+> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> > + * more details.
+> > + *
+> > + * You should have received a copy of the GNU General Public License
+> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> 
+> Any chance we can get SPDX tags here instead of all the boiler plate?
+> 
+> > + */
+> > +
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/err.h>
+> > +#include <linux/types.h>
+> > +
+> > +#include "clk.h"
+> > +
+> > +#define DIV_MASK GENMASK(7, 0)
+> > +#define MUX_SHIFT 29
+> > +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
+> > +
+> > +#define get_max_div(d) DIV_MASK
+> > +#define get_div_field(val) ((val) & DIV_MASK)
+> > +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
+> > +
+> > +static const char * const mux_sdmmc_parents[] = { "pll_p", "pll_c4_out2",
+> > +                                                 "pll_c4_out0", "pll_c4_out1",
+> > +                                                  "clk_m" };
+> > +static u8 mux_lj_idx[] = { [0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6 };
+> > +static u8 mux_non_lj_idx[] = { [0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6 };
+> 
+> These can be const?
+> 
+> > +
+> > +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
+> > +{
+> [...]
+> > +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                 unsigned long parent_rate)
+> > +{
+> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> > +       int div;
+> > +       unsigned long flags = 0;
+> > +       u32 val;
+> > +       u8 src;
+> > +
+> > +       div = div71_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
+> > +       if (div < 0)
+> > +               return div;
+> > +
+> > +       if (sdmmc_mux->lock)
+> > +               spin_lock_irqsave(sdmmc_mux->lock, flags);
+> > +
+> > +       src = clk_sdmmc_mux_get_parent(hw);
+> > +       if (div)
+> > +               src = mux_non_lj_idx[src];
+> > +       else
+> > +               src = mux_lj_idx[src];
+> > +
+> > +       val = src << MUX_SHIFT;
+> > +       val |= div;
+> > +       writel(val, sdmmc_mux->reg);
+> > +       fence_udelay(2, sdmmc_mux->reg);
+> > +
+> > +       if (sdmmc_mux->lock)
+> > +               spin_unlock_irqrestore(sdmmc_mux->lock, flags);
+> 
+> This conditional locking will give sparse a headache. O well.
+> 
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> > +
+> > +       __clk_hw_set_clk(gate_hw, hw);
+> > +
+> > +       return gate_ops->is_enabled(gate_hw);
+> > +}
+> > +
+> > +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
+> > +{
+> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> > +
+> > +       __clk_hw_set_clk(gate_hw, hw);
+> > +
+> > +       return  gate_ops->enable(gate_hw);
+> > +}
+> > +
+> > +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
+> > +{
+> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+> > +
+> > +       gate_ops->disable(gate_hw);
+> > +}
+> > +
+> > +const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+> 
+> static?
+> 
+> > +       .get_parent = clk_sdmmc_mux_get_parent,
+> > +       .set_parent = clk_sdmmc_mux_set_parent,
+> > +       .determine_rate = clk_sdmmc_mux_determine_rate,
+> > +       .recalc_rate = clk_sdmmc_mux_recalc_rate,
+> > +       .set_rate = clk_sdmmc_mux_set_rate,
+> > +       .is_enabled = clk_sdmmc_mux_is_enabled,
+> > +       .enable = clk_sdmmc_mux_enable,
+> > +       .disable = clk_sdmmc_mux_disable,
+> > +};
+> > +
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index f14e136..4c3d0f5 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -19,6 +19,7 @@
+> >  
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/clkdev.h>
+> > +#include <linux/delay.h>
+> 
+> Why? Include this in the C file that cares please.
+> 
 
---4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The fence_udelay macro uses udelay and is used in clk-sdmmc-mux.c. However it
+seems more appropriate to include delay.h here rather than in every single
+user of the macro.
 
-
-
-On 27.07.2018 10:58, Robin Gong wrote:
->=20
->=20
->> -----Original Message-----
->> From: Lucas Stach [mailto:l.stach@pengutronix.de]
->> Sent: 2018=E5=B9=B47=E6=9C=8827=E6=97=A5 16:30
->> To: Robin Gong <yibin.gong@nxp.com>; Oleksij Rempel
->> <o.rempel@pengutronix.de>; Shawn Guo <shawnguo@kernel.org>; Mark
->> Brown <broonie@kernel.org>; Rafael J. Wysocki <rafael.j.wysocki@intel.=
-com>
->> Cc: Mark Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org;
->> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; linux-kernel@vger.kernel.org; Liam Girdwood
->> <lgirdwood@gmail.com>; Rob Herring <robh+dt@kernel.org>; dl-linux-imx
->> <linux-imx@nxp.com>; kernel@pengutronix.de; A.s. Dong
->> <aisheng.dong@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
-
->> King <linux@armlinux.org.uk>; Andrew Morton <akpm@linux-foundation.org=
->;
->> Leonard Crestez <leonard.crestez@nxp.com>; linux-clk@vger.kernel.org;
->> linux-arm-kernel@lists.infradead.org
->> Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
->> fsl,pmic-stby-poweroff property
->>
->> Hi Robin,
->>
->> Am Freitag, den 27.07.2018, 01:51 +0000 schrieb Robin Gong:
->> [...]
->>>>>> ---
->>>>>> =C2=A0Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8
->>>>>> ++++++++
->>>>>> =C2=A01 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> index a45ca67a9d5f..e1308346e00d 100644
->>>>>> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->>>>>> @@ -6,6 +6,14 @@ Required properties:
->>>>>> =C2=A0- interrupts: Should contain CCM interrupt
->>>>>> =C2=A0- #clock-cells: Should be <1>
->>>>>>
->>>>>> +Optional properties:
->>>>>> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ
->>>>>> +signal
->>>>>> +=C2=A0=C2=A0on power off.
->>>>>> +=C2=A0=C2=A0Use this property if the SoC should be powered off by=
-
->>>>>> +external power
->>>>>> +=C2=A0=C2=A0management IC (PMIC) triggered via PMIC_STBY_REQ sign=
-al.
->>>>>
->>>>> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
->>>>
->>>> No. First, it was only one customer specific issue. After some
->>>> research I found even publicly available boards (for example
->>>> RioTboard) which has same/similar design. After seeing this in imx6
->>>> documentation as valid power off way, I have no doubts - there shoul=
-d be
->> even more devices doin this in the wild.
->>>
->>> Not sure why the customer didn't follow reference design, since
->>> PMIC_ON_REQ can provide power off/on feature by pressing ONOFF key
->>> which connected ONOFF pin of i.mx6(ONOFF will toggle PMIC_ON_REQ to
->>> power off/on PMIC). The official power off/on way (PMIC_ON_REQ) can
->>> also power off all power rails of PFUZE except snvs as your patch did=
-
->>> on PMIC_STBY_REQ.=C2=A0=C2=A0PMIC_STBY_REQ is used to notify pmic swi=
-tch power
->>> mode (PFM/APS) or decrease voltage to save power in kernel suspend, n=
-ot
->> power off....I am not sure if we need this patchset to 'workaround' th=
-e board
->> issue.
->>>
->> Not all boards follow the reference design, that's a fact of life.
->>
->> Please look at the i.MX6Q reference manual. The sequence implemented i=
-n this
->> patchset can be found as a valid way to power off the system in
->> "60.4.3 Power mode transitions" "Normal ON to OFF with external PMIC",=
- so
->> there is hardly any way to argue that this is a board specific quirk. =
-This is one of
->> the Freescale/NXP recommended sequences to turn off the system.
-
-> Okay, but could you add one more comment for this solution? RTC alarm a=
-nd ONOFF
-> Button wakeup feature can't be support in this case.
-
-Enough to add it in to changelog? or should it go to the binding
-documentation?
-
-
---4qY4n4uWgIxPC5PJDnntgkyLxmMu2YwQx--
-
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltexlEACgkQdQOiSHVI
-77TWfAgAjRB1PciUy1OHomvrxni8EkaYEB80z17EC958utpp0mPJwNuFY56/8HFJ
-oCrfPZ7bn+/N0K5iCATabDyC4ylmjEGboht6je0eOXtoOqlWU/e+wMRp/yNSlRsw
-1/mQAHKWuVIlBopDYuIrNHxR9fYcmJCcOzGEb3u9vFeEJL9G8jda7IgG9ToeKTlm
-YW9F5TmlabqPZ57WLDK9AXzpW+3W1jm57VCUZesIkIyoNRYboKhPbvpS1UOr2NHi
-rZcwhrIG5CIMWnbxgWAlnNhhG2lF+w1D3wQdqURZns6RmNeDQUQ6OL0bIkLZYy+m
-U7/apbmR1x8qalt+rjgpuFFw9CcxoQ==
-=LKCD
------END PGP SIGNATURE-----
-
---0ZXQ3BVq0ww7d6z67tFll8hPf7AVFeQ0a--
+Peter.
