@@ -1,52 +1,65 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Thu, 12 Jul 2018 10:25:46 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>, aisheng.dong@nxp.com,
-	fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
-	mturquette@baylibre.com, ping.bai@nxp.com, robh+dt@kernel.org,
-	s.hauer@pengutronix.de, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, Linux-imx@nxp.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
-Message-ID: <20180712022544.GP6959@dragon>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
- <153091072630.143105.2849049240391576710@swboyd.mtv.corp.google.com>
- <20180711084302.GB6959@dragon>
- <153132682598.143105.16881098765923078751@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153132682598.143105.16881098765923078751@swboyd.mtv.corp.google.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1531237902.2708.76.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Martin Blumenstingl
+	 <martin.blumenstingl@googlemail.com>, jian.hu@amlogic.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, qianggui.song@amlogic.com,
+ sboyd@kernel.org, khilman@baylibre.com, mturquette@baylibre.com,
+ linux-kernel@vger.kernel.org, bo.yang@amlogic.com, qiufang.dai@amlogic.com,
+  linux-arm-kernel@lists.infradead.org, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
+ linux-clk@vger.kernel.org, xingyu.chen@amlogic.com, Rob Herring
+ <robh@kernel.org>
+Date: Tue, 10 Jul 2018 17:51:42 +0200
+In-Reply-To: <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+	 <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+	 <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+	 <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+	 <1531216472.2708.71.camel@baylibre.com>
+	 <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 11, 2018 at 09:33:45AM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2018-07-11 01:43:03)
-> > On Fri, Jul 06, 2018 at 01:58:46PM -0700, Stephen Boyd wrote:
-> > > Quoting Anson Huang (2018-06-21 23:32:33)
-> > > > According to Reference Manual Rev.0, 06/2017,
-> > > > there are GPIO LPCGs defined in CCM CCGRs,
-> > > > add them into clock tree.
+On Tue, 2018-07-10 at 20:59 +0800, Yixun Lan wrote:
+> > > > > +static const struct of_device_id clkc_match_table[] = {
+> > > > > +       { .compatible = "amlogic,g12a-clkc" },
 > > > > 
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > ---
+> > > > I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
+> > > > and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
+> > > > correct - I'll CC Rob Herring on the dt-bindings patch)
+> > > > 
 > > > 
-> > > Applied to clk-next
+> > > we're fine with either way, since the g12a is recently new added SoC.
+> > > 
+> > > but I guess those old compatibles which already exist won't be changed,
+> > > as it will break the DT
 > > 
-> > Stephen,
+> > Yes, I doubt we are going to change the compatibles. With or without the meson
+> > prefix, I suppose it going to stay that way.
 > > 
-> > If you can apply this patch to topic branch 'clk-imx-gpio-gates', I will
-> > be able to pick up patch #2 for this cycle.
+> > It is worth thinking about it for new drivers though.
+> > We already have the "amlogic,", so do we really to prefix even more with "meson-
+> > "
+> > 
+> > Also, if we were really strict about that scheme, should meson8b compatible be
+> > 
+> > "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
+> > 
+> > For the particular case of the clock controller, I don't care very much, as long
+> > as the compatible is coherent with documentation.
+> > 
+> > I might have a preference for the current compatible ... just for consistency
+> > with the other clock controllers.
+> > 
 > 
-> Can you merge in clk-imx6sll-gpio topic branch to your tree? I'm making
-> topics for all patch series, so that's why this got stuck into a
-> different topic branch.
+> do you imply that we should just stick to 'amlogic,g12a-clkc'?
+> 
+> it sound good to me, at least it's shorter than 'amlogic,meson-g12a-clkc'..
 
-Ah, okay.  I thought you apply patches directly to clk-next, and make
-topic branches only for those having dependencies involved.
-
-For future DT patches depending on clk ones, I will check clk tree and
-merge corresponding topic branch to resolve dependency.
-
-Thanks for clarifying.
-
-Shawn
+I did not imply anything.
+Martin raised a valid point. I'm merely giving my opinion on the matter and I'm
+interested to get others view on this.
