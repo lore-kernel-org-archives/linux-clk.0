@@ -1,60 +1,56 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 11/18] drm/sun4i: Enable DesignWare HDMI for SUN50I
-Date: Wed, 18 Jul 2018 16:24:51 +0530
-Message-Id: <20180718105458.22304-12-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 2/3] clk: meson: add sub MMC clock dt-bindings IDs
+Date: Tue, 10 Jul 2018 16:36:57 +0000
+Message-ID: <20180710163658.6175-3-yixun.lan@amlogic.com>
+In-Reply-To: <20180710163658.6175-1-yixun.lan@amlogic.com>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner SUN50I are now using DesignWare HDMI so enable
-them as default. This can build DRM_SUN8I_DW_HDMI as module
-since DRM in arm64 has module.
+Add two clock bindings IDs which provided by the MMC clock controller,
+These two clocks will be used by MMC or NAND driver.
 
-Making this as defult to SUN8I, may cause an issue while
-loading since arm32 DRM built as static.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
-Changes for v3:
-- skip SUN8I enablement, since it built statically for arm32
-Changes for v2:
-- Enable for SUN8I
+ .../dt-bindings/clock/amlogic,meson-mmc-clkc.h   | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
 
- drivers/gpu/drm/sun4i/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index cfa8b96273fb..5d0c450db148 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -52,6 +52,7 @@ config DRM_SUN6I_DSI
- 
- config DRM_SUN8I_DW_HDMI
- 	tristate "Support for Allwinner version of DesignWare HDMI"
-+	default ARM64 && ARCH_SUNXI
- 	depends on DRM_SUN4I
- 	select DRM_DW_HDMI
- 	help
+diff --git a/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+new file mode 100644
+index 000000000000..2ae988ebc3ae
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson MMC sub clock tree IDs
++ *
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ * Author: Yixun Lan <yixun.lan@amlogic.com>
++ */
++
++#ifndef __MMC_CLKC_H
++#define __MMC_CLKC_H
++
++#define CLKID_MMC_DIV				1
++#define CLKID_MMC_PHASE_TX			3
++#define CLKID_MMC_PHASE_RX			4
++
++#endif
 -- 
-2.17.1
+2.18.0
