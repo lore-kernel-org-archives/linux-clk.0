@@ -1,32 +1,62 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shengjiu.wang@nxp.com,
 	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 0/2] Add functions to get optional clocks
-Date: Mon, 30 Jul 2018 09:36:06 +0100
-Message-Id: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 1/2] clk: imx: add ocram_s clock for i.mx6sx
+Date: Tue, 10 Jul 2018 16:39:38 +0800
+Message-Id: <1531211979-2179-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quite a few drivers get an optional clock, e.g. a clock required
-to access peripheral's registers that is always enabled on some
-devices.
+i.MX6SX has a 16KB always-on ocram bank called
+ocram_s, and its clock gate in CCM CCGR1 CG14
+needs to be enabled before access, add it to
+clock tree.
 
-Phil Edworthy (2):
-  clk: Add of_clk_get_by_name_optional() function
-  clk: Add functions to get optional clocks
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sx.c             | 1 +
+ include/dt-bindings/clock/imx6sx-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
- drivers/clk/clk-devres.c | 18 ++++++++++++++++--
- drivers/clk/clkdev.c     | 49 +++++++++++++++++++++++++++++++++++++++++++-----
- include/linux/clk.h      | 30 +++++++++++++++++++++++++++++
- 3 files changed, 90 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 10c771b..691db26 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -411,6 +411,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_GPT_BUS]      = imx_clk_gate2("gpt_bus",       "perclk",            base + 0x6c, 20);
+ 	clks[IMX6SX_CLK_GPT_SERIAL]   = imx_clk_gate2("gpt_serial",    "perclk",            base + 0x6c, 22);
+ 	clks[IMX6SX_CLK_GPU]          = imx_clk_gate2("gpu",           "gpu_core_podf",     base + 0x6c, 26);
++	clks[IMX6SX_CLK_OCRAM_S]      = imx_clk_gate2("ocram_s",       "ahb",               base + 0x6c, 28);
+ 	clks[IMX6SX_CLK_CANFD]        = imx_clk_gate2("canfd",         "can_podf",          base + 0x6c, 30);
+ 
+ 	/* CCGR2 */
+diff --git a/include/dt-bindings/clock/imx6sx-clock.h b/include/dt-bindings/clock/imx6sx-clock.h
+index cd2d6c5..c1ccff8 100644
+--- a/include/dt-bindings/clock/imx6sx-clock.h
++++ b/include/dt-bindings/clock/imx6sx-clock.h
+@@ -279,6 +279,7 @@
+ #define IMX6SX_CLK_LVDS2_OUT		266
+ #define IMX6SX_CLK_LVDS2_IN		267
+ #define IMX6SX_CLK_ANACLK2		268
+-#define IMX6SX_CLK_CLK_END		269
++#define IMX6SX_CLK_OCRAM_S		269
++#define IMX6SX_CLK_CLK_END		270
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SX_H */
 -- 
 2.7.4
