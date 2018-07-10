@@ -1,40 +1,37 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1839 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727584AbeGSPG0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jul 2018 11:06:26 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <thierry.reding@gmail.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 0/2] Correct clk_out_mux parents
-Date: Thu, 19 Jul 2018 17:22:53 +0300
-Message-ID: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
+Received: from muru.com ([72.249.23.125]:50884 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751086AbeGJF4I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Jul 2018 01:56:08 -0400
+Date: Mon, 9 Jul 2018 22:56:05 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: t-kristo@ti.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        d-gerlach@ti.com, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: clk: Add functions to save/restore clock
+ context en-masse
+Message-ID: <20180710055605.GF99251@atomide.com>
+References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This series corrects the parents for the clk_out_mux clocks. Patch 1 does
-some cleanup work to keep checkpatch.pl and the compiler happy. Patch 2
-does the actual work.
+* Keerthy <j-keerthy@ti.com> [180621 01:18]:
+> Deep enough power saving mode can result into losing context of the clock
+> registers also, and they need to be restored once coming back from the power
+> saving mode. Hence add functions to save/restore clock context.
 
-v2:
+Patches 1 to 3 look good to me:
 
-Fixed const compiler warnings
+Acked-by: Tony Lindgren <tony@atomide.com>
 
+Stephen, if no more comments, can you please set up an immutable
+branch for me as otherwise the last patch might cause merge
+conflicts?
 
-Peter De Schrijver (2):
-  clk: tegra: Fix const for clk_out parents
-  clk: tegra: Correct clk_out_mux parents
+Regards,
 
- drivers/clk/tegra/clk-id.h               |  5 +++++
- drivers/clk/tegra/clk-tegra-fixed.c      | 16 ++++++++++++++
- drivers/clk/tegra/clk-tegra-pmc.c        | 36 ++++++++++++++++++++++++++++----
- drivers/clk/tegra/clk-tegra210.c         | 14 ++++++-------
- include/dt-bindings/clock/tegra210-car.h |  9 ++++++--
- 5 files changed, 67 insertions(+), 13 deletions(-)
-
--- 
-1.9.1
-
+Tony
