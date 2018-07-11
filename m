@@ -1,44 +1,35 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53804 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeGFKDH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Jul 2018 06:03:07 -0400
-Subject: Re: [PATCH v4 4/6] bus: ti-sysc: Add support for software reset
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <bcousson@baylibre.com>, <paul@pwsan.com>, <t-kristo@ti.com>,
-        <mark.rutland@arm.com>
-References: <20180705142319.19583-1-faiz_abbas@ti.com>
- <20180705142319.19583-5-faiz_abbas@ti.com>
- <20180705154758.GA112168@atomide.com>
-From: Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <cf8652a1-019c-d423-9b44-0d62006734f8@ti.com>
-Date: Fri, 6 Jul 2018 15:34:31 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180705154758.GA112168@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/2] clk: renesas: mstp: Add support for RZ/A2
+Date: Wed, 11 Jul 2018 12:03:11 -0500
+Message-Id: <20180711170313.80321-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add support for RZ/A2 series.
+The clock HW is similar to RZ/A1, but with different dividers
+and additional clocks sources.
 
-On Thursday 05 July 2018 09:17 PM, Tony Lindgren wrote:
-> * Faiz Abbas <faiz_abbas@ti.com> [180705 14:24]:
->> +static int sysc_reset(struct sysc *ddata)
->> +{
->> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
->> +	int val = sysc_read(ddata, offset);
-> 
-> Can you please just warn and return early for now if no
-> syss_mask is specified? Otherwise we'll have mysterious
-> errors if somebody leaves out "ti,hwmods" for module types
-> we do not yet support reset for.
 
-RESET write to sysconfig can still happen even if there's no syss_mask
-right? Not all modules need to poll on reset status.
+Chris Brandt (2):
+  clk: renesas: mstp: Add support for r7s9210
+  clk: renesas: mstp: Document R7S9210 support
 
-Thanks,
-Faiz
+ .../bindings/clock/renesas,cpg-mstp-clocks.txt     |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/clk-mstp.c                     |   3 +
+ drivers/clk/renesas/clk-rz.c                       | 155 ++++++++++++++++-----
+ 5 files changed, 131 insertions(+), 34 deletions(-)
+
+-- 
+2.16.1
