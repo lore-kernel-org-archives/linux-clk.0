@@ -1,182 +1,58 @@
-Return-Path: <pgwipeout@gmail.com>
-Return-Path: <pgwipeout@gmail.com>
-Subject: Re: [PATCH 1/3] clk: tegra: refactor 7.1 div calculation
-To: Aapo Vienamo <avienamo@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
-From: Peter Geis <pgwipeout@gmail.com>
-Message-ID: <46bc7178-f8a4-cc4e-ebe3-507671ffb735@gmail.com>
-Date: Tue, 3 Jul 2018 11:10:21 -0400
-MIME-Version: 1.0
-In-Reply-To: <1530617721-5767-1-git-send-email-avienamo@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 11/11] clk: renesas: r8a77980: Add RCLK for watchdog timer
+Date: Wed, 11 Jul 2018 16:21:00 +0200
+Message-Id: <20180711142100.3765-12-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Good Morning,
+On R-Car V3H, RCLK can be switched between EXTALR and the On-Chip
+Oscillator using mode pin MD19.
 
-Just a heads up.
-During compilation with your patches, I get the following warning:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+As Figure 8.1e "Block Diagram of CPG (R-Car V3H)" does not show any
+divider after the On-Chip Oscillator, I assume the OCO runs at 32768 Hz.
+---
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-In file included from ./arch/arm/include/asm/div64.h:127:0,
-                  from ./include/linux/kernel.h:174,
-                  from drivers/clk/tegra/div71.c:17:
-drivers/clk/tegra/div71.c: In function ‘div71_get’:
-./include/asm-generic/div64.h:222:28: warning: comparison of distinct 
-pointer types lacks a cast
-   (void)(((typeof((n)) *)0) == ((uint64_t *)0)); \
-                             ^
-drivers/clk/tegra/div71.c:40:2: note: in expansion of macro ‘do_div’
-   do_div(divider_ux1, rate);
-   ^~~~~~
-
-Very Respectfully,
-Peter Geis
-
-
-On 07/03/2018 07:35 AM, Aapo Vienamo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Move this to a separate file so it can be used to calculate the sdmmc
-> clock dividers.
-> 
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->   drivers/clk/tegra/Makefile      |  1 +
->   drivers/clk/tegra/clk-divider.c | 30 ++++--------------------
->   drivers/clk/tegra/clk.h         |  3 +++
->   drivers/clk/tegra/div71.c       | 51 +++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 60 insertions(+), 25 deletions(-)
->   create mode 100644 drivers/clk/tegra/div71.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index b716923..6d4f563 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->   obj-y					+= cvb.o
->   obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
->   obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> +obj-y					+= div71.o
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index 16e0aee..ad87858 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -32,35 +32,15 @@
->   static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
->   		   unsigned long parent_rate)
->   {
-> -	u64 divider_ux1 = parent_rate;
-> -	u8 flags = divider->flags;
-> -	int mul;
-> -
-> -	if (!rate)
-> -		return 0;
-> -
-> -	mul = get_mul(divider);
-> -
-> -	if (!(flags & TEGRA_DIVIDER_INT))
-> -		divider_ux1 *= mul;
-> -
-> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> -		divider_ux1 += rate - 1;
-> -
-> -	do_div(divider_ux1, rate);
-> -
-> -	if (flags & TEGRA_DIVIDER_INT)
-> -		divider_ux1 *= mul;
-> +	int div;
->   
-> -	divider_ux1 -= mul;
-> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> +			divider->flags);
->   
-> -	if ((s64)divider_ux1 < 0)
-> +	if (div < 0)
->   		return 0;
->   
-> -	if (divider_ux1 > get_max_div(divider))
-> -		return get_max_div(divider);
-> -
-> -	return divider_ux1;
-> +	return div;
->   }
->   
->   static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e1f8846..f14e136 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -811,6 +811,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
->   int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
->   u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->   int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags);
-> +
->   
->   /* Combined read fence with delay */
->   #define fence_udelay(delay, reg)	\
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..27b3846
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,51 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags)
-> +{
-> +	s64 divider_ux1 = parent_rate;
-> +	int mul;
-> +
-> +	if (!rate)
-> +		return 0;
-> +
-> +	mul = 1 << frac_width;
-> +
-> +	if (!(flags & TEGRA_DIVIDER_INT))
-> +		divider_ux1 *= mul;
-> +
-> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +		divider_ux1 += rate - 1;
-> +
-> +	do_div(divider_ux1, rate);
-> +
-> +	if (flags & TEGRA_DIVIDER_INT)
-> +		divider_ux1 *= mul;
-> +
-> +	divider_ux1 -= mul;
-> +
-> +	if (divider_ux1 > div_mask(width))
-> +		return div_mask(width);
-> +
-> +	return divider_ux1;
-> +}
-> 
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index 093677b8927800fa..122d722aca2db7d4 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -41,6 +41,7 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
++	CLK_OCO,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -98,6 +99,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
+ 
+ 	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
++	DEF_RATE("oco",		CLK_OCO,            32768),
++	DEF_GEN3_MDSEL("r",	R8A77980_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
+ };
+ 
+ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+@@ -119,6 +122,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+ 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
+ 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
+ 	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
++	DEF_MOD("rwdt",			 402,	R8A77980_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
+ 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
+ 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
+-- 
+2.17.1
