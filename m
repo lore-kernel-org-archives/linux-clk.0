@@ -1,43 +1,50 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, "Carlo
- Caione" <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>, "Qiufang
- Dai" <qiufang.dai@amlogic.com>, Bo.yang <bo.yang@amlogic.com>, Xingyu.chen
-	<xingyu.chen@amlogic.com>, "Qianggui,song" <qianggui.song@amlogic.com>,
-	Sunny.luo <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A SoC
-Date: Mon, 9 Jul 2018 19:12:45 +0800
-Message-ID: <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shengjiu.wang@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH V2 1/2] clk: imx: add ocram_s clock for i.mx6sx
+Date: Wed, 11 Jul 2018 08:58:58 +0800
+Message-Id: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new binding for Meson-G12A SoC Everything-Else part
+i.MX6SX has a 16KB always-on ocram bank called
+ocram_s, and its clock gate in CCM CCGR1 CG14
+needs to be enabled before access, add it to
+clock tree.
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
+changes since V1:
+	remove redefinition of IMX6SX_CLK_OCRAM_S to avoid build warning
+ drivers/clk/imx/clk-imx6sx.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index e950599..0833006 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 		"amlogic,gxbb-clkc" for GXBB SoC,
- 		"amlogic,gxl-clkc" for GXL and GXM SoC,
- 		"amlogic,axg-clkc" for AXG SoC.
-+		"amlogic,g12a-clkc" for G12A SoC.
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index 10c771b..691db26 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -411,6 +411,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SX_CLK_GPT_BUS]      = imx_clk_gate2("gpt_bus",       "perclk",            base + 0x6c, 20);
+ 	clks[IMX6SX_CLK_GPT_SERIAL]   = imx_clk_gate2("gpt_serial",    "perclk",            base + 0x6c, 22);
+ 	clks[IMX6SX_CLK_GPU]          = imx_clk_gate2("gpu",           "gpu_core_podf",     base + 0x6c, 26);
++	clks[IMX6SX_CLK_OCRAM_S]      = imx_clk_gate2("ocram_s",       "ahb",               base + 0x6c, 28);
+ 	clks[IMX6SX_CLK_CANFD]        = imx_clk_gate2("canfd",         "can_podf",          base + 0x6c, 30);
  
- - #clock-cells: should be 1.
- 
+ 	/* CCGR2 */
 -- 
-1.9.1
+2.7.4
