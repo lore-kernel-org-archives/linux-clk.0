@@ -1,158 +1,56 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 9/9] clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
-Date: Sat, 28 Jul 2018 00:15:27 +0530
-Message-Id: <20180727184527.13287-10-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <leonard.crestez@nxp.com>, <cyndis@kapsi.fi>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] clk: core: Potentially free connection id
+Date: Wed, 11 Jul 2018 11:21:04 +0300
+Message-ID: <20180711082104.27955-1-mperttunen@nvidia.com>
+Return-Path: mperttunen@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Reset Management Unit (RMU) support for Actions Semi S900 SoC.
+Patch "clk: core: Copy connection id" made it so that the connector
+id (con_id) is kstrdup_const'ed to cater to drivers that pass non-
+constant connection ids. The patch added the corresponding kfree_const
+to __clk_free_clk, but struct clk's can be freed also via __clk_put.
+Add the kfree_const call to __clk_put and add comments to both
+functions to remind that the logic in them should be kept in sync.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: 253160a8ad06 ("clk: core: Copy connection id")
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- drivers/clk/actions/owl-s900.c | 82 ++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
-index bb7ee872d316..4d38b1265cc3 100644
---- a/drivers/clk/actions/owl-s900.c
-+++ b/drivers/clk/actions/owl-s900.c
-@@ -19,8 +19,10 @@
- #include "owl-gate.h"
- #include "owl-mux.h"
- #include "owl-pll.h"
-+#include "owl-reset.h"
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ac96caab0523..d31055ae6ec6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3132,6 +3132,7 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
+ 	return clk;
+ }
  
- #include <dt-bindings/clock/actions,s900-cmu.h>
-+#include <dt-bindings/reset/actions,s900-reset.h>
- 
- #define CMU_COREPLL		(0x0000)
- #define CMU_DEVPLL		(0x0004)
-@@ -684,20 +686,100 @@ static struct clk_hw_onecell_data s900_hw_clks = {
- 	.num	= CLK_NR_CLKS,
- };
- 
-+static struct owl_reset_map s900_resets[] = {
-+	[RESET_DMAC]		= { CMU_DEVRST0, BIT(0) },
-+	[RESET_SRAMI]		= { CMU_DEVRST0, BIT(1) },
-+	[RESET_DDR_CTL_PHY]	= { CMU_DEVRST0, BIT(2) },
-+	[RESET_NANDC0]		= { CMU_DEVRST0, BIT(3) },
-+	[RESET_SD0]		= { CMU_DEVRST0, BIT(4) },
-+	[RESET_SD1]		= { CMU_DEVRST0, BIT(5) },
-+	[RESET_PCM1]		= { CMU_DEVRST0, BIT(6) },
-+	[RESET_DE]		= { CMU_DEVRST0, BIT(7) },
-+	[RESET_LVDS]		= { CMU_DEVRST0, BIT(8) },
-+	[RESET_SD2]		= { CMU_DEVRST0, BIT(9) },
-+	[RESET_DSI]		= { CMU_DEVRST0, BIT(10) },
-+	[RESET_CSI0]		= { CMU_DEVRST0, BIT(11) },
-+	[RESET_BISP_AXI]	= { CMU_DEVRST0, BIT(12) },
-+	[RESET_CSI1]		= { CMU_DEVRST0, BIT(13) },
-+	[RESET_GPIO]		= { CMU_DEVRST0, BIT(15) },
-+	[RESET_EDP]		= { CMU_DEVRST0, BIT(16) },
-+	[RESET_AUDIO]		= { CMU_DEVRST0, BIT(17) },
-+	[RESET_PCM0]		= { CMU_DEVRST0, BIT(18) },
-+	[RESET_HDE]		= { CMU_DEVRST0, BIT(21) },
-+	[RESET_GPU3D_PA]	= { CMU_DEVRST0, BIT(22) },
-+	[RESET_IMX]		= { CMU_DEVRST0, BIT(23) },
-+	[RESET_SE]		= { CMU_DEVRST0, BIT(24) },
-+	[RESET_NANDC1]		= { CMU_DEVRST0, BIT(25) },
-+	[RESET_SD3]		= { CMU_DEVRST0, BIT(26) },
-+	[RESET_GIC]		= { CMU_DEVRST0, BIT(27) },
-+	[RESET_GPU3D_PB]	= { CMU_DEVRST0, BIT(28) },
-+	[RESET_DDR_CTL_PHY_AXI]	= { CMU_DEVRST0, BIT(29) },
-+	[RESET_CMU_DDR]		= { CMU_DEVRST0, BIT(30) },
-+	[RESET_DMM]		= { CMU_DEVRST0, BIT(31) },
-+	[RESET_USB2HUB]		= { CMU_DEVRST1, BIT(0) },
-+	[RESET_USB2HSIC]	= { CMU_DEVRST1, BIT(1) },
-+	[RESET_HDMI]		= { CMU_DEVRST1, BIT(2) },
-+	[RESET_HDCP2TX]		= { CMU_DEVRST1, BIT(3) },
-+	[RESET_UART6]		= { CMU_DEVRST1, BIT(4) },
-+	[RESET_UART0]		= { CMU_DEVRST1, BIT(5) },
-+	[RESET_UART1]		= { CMU_DEVRST1, BIT(6) },
-+	[RESET_UART2]		= { CMU_DEVRST1, BIT(7) },
-+	[RESET_SPI0]		= { CMU_DEVRST1, BIT(8) },
-+	[RESET_SPI1]		= { CMU_DEVRST1, BIT(9) },
-+	[RESET_SPI2]		= { CMU_DEVRST1, BIT(10) },
-+	[RESET_SPI3]		= { CMU_DEVRST1, BIT(11) },
-+	[RESET_I2C0]		= { CMU_DEVRST1, BIT(12) },
-+	[RESET_I2C1]		= { CMU_DEVRST1, BIT(13) },
-+	[RESET_USB3]		= { CMU_DEVRST1, BIT(14) },
-+	[RESET_UART3]		= { CMU_DEVRST1, BIT(15) },
-+	[RESET_UART4]		= { CMU_DEVRST1, BIT(16) },
-+	[RESET_UART5]		= { CMU_DEVRST1, BIT(17) },
-+	[RESET_I2C2]		= { CMU_DEVRST1, BIT(18) },
-+	[RESET_I2C3]		= { CMU_DEVRST1, BIT(19) },
-+	[RESET_ETHERNET]	= { CMU_DEVRST1, BIT(20) },
-+	[RESET_CHIPID]		= { CMU_DEVRST1, BIT(21) },
-+	[RESET_I2C4]		= { CMU_DEVRST1, BIT(22) },
-+	[RESET_I2C5]		= { CMU_DEVRST1, BIT(23) },
-+	[RESET_CPU_SCNT]	= { CMU_DEVRST1, BIT(30) }
-+};
-+
- static struct owl_clk_desc s900_clk_desc = {
- 	.clks	    = s900_clks,
- 	.num_clks   = ARRAY_SIZE(s900_clks),
- 
- 	.hw_clks    = &s900_hw_clks,
-+
-+	.resets     = s900_resets,
-+	.num_resets = ARRAY_SIZE(s900_resets),
- };
- 
- static int s900_clk_probe(struct platform_device *pdev)
++/* keep in sync with __clk_put */
+ void __clk_free_clk(struct clk *clk)
  {
- 	struct owl_clk_desc *desc;
-+	struct owl_reset *reset;
-+	int ret;
+ 	clk_prepare_lock();
+@@ -3511,6 +3512,7 @@ int __clk_get(struct clk *clk)
+ 	return 1;
+ }
  
- 	desc = &s900_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
++/* keep in sync with __clk_free_clk */
+ void __clk_put(struct clk *clk)
+ {
+ 	struct module *owner;
+@@ -3544,6 +3546,7 @@ void __clk_put(struct clk *clk)
  
-+	/*
-+	 * FIXME: Reset controller registration should be moved to
-+	 * common code, once all SoCs of Owl family supports it.
-+	 */
-+	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	reset->rcdev.of_node = pdev->dev.of_node;
-+	reset->rcdev.ops = &owl_reset_ops;
-+	reset->rcdev.nr_resets = desc->num_resets;
-+	reset->reset_map = desc->resets;
-+	reset->regmap = desc->regmap;
-+
-+	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to register reset controller\n");
-+
- 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
+ 	module_put(owner);
+ 
++	kfree_const(clk->con_id);
+ 	kfree(clk);
  }
  
 -- 
-2.17.1
+2.16.1
