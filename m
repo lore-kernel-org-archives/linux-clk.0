@@ -1,90 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54447 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751321AbeGIG2Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jul 2018 02:28:24 -0400
-Subject: Re: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
-To: Stephen Boyd <sboyd@kernel.org>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc: devicetree@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-2-o.rempel@pengutronix.de>
- <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <263fcac9-7984-810b-1aa8-45353dac0018@pengutronix.de>
-Date: Mon, 9 Jul 2018 08:28:22 +0200
-MIME-Version: 1.0
-In-Reply-To: <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="WktTMtSmGRpI04lMMhTyKO2FNDkLLdOvf"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider configuration and clock
+Date: Wed, 11 Jul 2018 16:20:54 +0200
+Message-Id: <20180711142100.3765-6-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---WktTMtSmGRpI04lMMhTyKO2FNDkLLdOvf
-Content-Type: multipart/mixed; boundary="8UD2Khoq5QVcvL5rSjYqka6uZYiQt2M7N";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>, "A.s. Dong" <aisheng.dong@nxp.com>,
- Fabio Estevam <fabio.estevam@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
- Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc: devicetree@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>,
- kernel@pengutronix.de, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <263fcac9-7984-810b-1aa8-45353dac0018@pengutronix.de>
-Subject: Re: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-2-o.rempel@pengutronix.de>
- <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
-In-Reply-To: <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
+R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
+MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+OSC clock.  Hence augment the configuration structure with all
+documented predivider values.
 
---8UD2Khoq5QVcvL5rSjYqka6uZYiQt2M7N
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Add the OSC clock using the configured predivider.
 
-Hallo Fabio,
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a77980-cpg-mssr.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-can you please review it.
-
-On 09.07.2018 08:22, Stephen Boyd wrote:
-> Quoting Oleksij Rempel (2018-06-15 02:51:04)
->> This clock is needed for iMX mailbox driver
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> ---
->=20
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
->=20
-> but I think you'll want some imx maintainer to review it still.
->=20
->=20
-
-
---8UD2Khoq5QVcvL5rSjYqka6uZYiQt2M7N--
-
---WktTMtSmGRpI04lMMhTyKO2FNDkLLdOvf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltDAIYACgkQdQOiSHVI
-77RL7gf/VY4CFEx+SV0auhzTdIZl2ga+nuijtP7DWkiaqkd+8dkagwN4772YhTBs
-2sn/p0I4t1wFKwz0irQVAmAQK62EDjropu3QQojiV/S0nCgjPgAya5Le4x517gAh
-Yq1cHsMXGN7oWxIZAGs2sCWUrj+gptj3jcekX8NtK/D7Gq8+UU1M7dQGOqsLEUo8
-rEyBXk1qFsVBjc8RIg4eKraH8AAXBWe3tPRzZ+uNzenzn8btZ5vo4poeSsfNq1Sv
-2hD9X1siWGmqRVCDohjl28DbUJIcRS/BmWUJOPB0GLDgeZwy4N5BWOt23iEp1jaC
-LiCr7ClsB9dnTCgibfTPt+Wirp72wA==
-=TKqT
------END PGP SIGNATURE-----
-
---WktTMtSmGRpI04lMMhTyKO2FNDkLLdOvf--
+diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+index d7ebd9ec00594fc8..093677b8927800fa 100644
+--- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+@@ -96,6 +96,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
+ 	DEF_DIV6P1("canfd",	R8A77980_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("csi0",	R8A77980_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
++
++	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
+ };
+ 
+ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
+@@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
+  */
+ 
+ /*
+- *   MD		EXTAL		PLL2	PLL1	PLL3
++ *   MD		EXTAL		PLL2	PLL1	PLL3	OSC
+  * 14 13	(MHz)
+- * --------------------------------------------------
+- * 0  0		16.66 x 1	x240	x192	x192
+- * 0  1		20    x 1	x200	x160	x160
+- * 1  0		27    x 1	x148	x118	x118
+- * 1  1		33.33 / 2	x240	x192	x192
++ * --------------------------------------------------------
++ * 0  0		16.66 x 1	x240	x192	x192	/16
++ * 0  1		20    x 1	x200	x160	x160	/19
++ * 1  0		27    x 1	x148	x118	x118	/24
++ * 1  1		33.33 / 2	x240	x192	x192	/32
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+ 					 (((md) & BIT(13)) >> 13))
+ 
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[4] __initconst = {
+-	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+-	{ 1,		192,	1,	192,	1,	},
+-	{ 1,		160,	1,	160,	1,	},
+-	{ 1,		118,	1,	118,	1,	},
+-	{ 2,		192,	1,	192,	1,	},
++	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
++	{ 1,		192,	1,	192,	1,	16,	},
++	{ 1,		160,	1,	160,	1,	19,	},
++	{ 1,		118,	1,	118,	1,	24,	},
++	{ 2,		192,	1,	192,	1,	32,	},
+ };
+ 
+ static int __init r8a77980_cpg_mssr_init(struct device *dev)
+-- 
+2.17.1
