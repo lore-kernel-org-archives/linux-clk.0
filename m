@@ -1,56 +1,86 @@
-Return-Path: <mperttunen@nvidia.com>
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC: <leonard.crestez@nxp.com>, <cyndis@kapsi.fi>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] clk: core: Potentially free connection id
-Date: Wed, 11 Jul 2018 11:21:04 +0300
-Message-ID: <20180711082104.27955-1-mperttunen@nvidia.com>
-Return-Path: mperttunen@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
+Date: Wed, 11 Jul 2018 16:20:59 +0200
+Message-Id: <20180711142100.3765-11-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch "clk: core: Copy connection id" made it so that the connector
-id (con_id) is kstrdup_const'ed to cater to drivers that pass non-
-constant connection ids. The patch added the corresponding kfree_const
-to __clk_free_clk, but struct clk's can be freed also via __clk_put.
-Add the kfree_const call to __clk_put and add comments to both
-functions to remind that the logic in them should be kept in sync.
+Make the existing support for selecting between clean and SSCG clocks
+using MD12 more generic, to allow using other mode pins for arbitrary
+clock selection.
 
-Fixes: 253160a8ad06 ("clk: core: Copy connection id")
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
+ drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ac96caab0523..d31055ae6ec6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3132,6 +3132,7 @@ struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
- 	return clk;
- }
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 19a77822757d29de..4346fdeef01bbeae 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 			parent = clks[cpg_clk_extalr];
+ 		break;
  
-+/* keep in sync with __clk_put */
- void __clk_free_clk(struct clk *clk)
- {
- 	clk_prepare_lock();
-@@ -3511,6 +3512,7 @@ int __clk_get(struct clk *clk)
- 	return 1;
- }
+-	case CLK_TYPE_GEN3_PE:
++	case CLK_TYPE_GEN3_MDSEL:
+ 		/*
+-		 * Peripheral clock with a fixed divider, selectable between
+-		 * clean and spread spectrum parents using MD12
++		 * Clock selectable between two parents and two fixed dividers
++		 * using a mode pin
+ 		 */
+-		if (cpg_mode & BIT(12)) {
+-			/* Clean */
++		if (cpg_mode & BIT(core->offset)) {
+ 			div = core->div & 0xffff;
+ 		} else {
+-			/* SCCG */
+ 			parent = clks[core->parent >> 16];
+ 			if (IS_ERR(parent))
+ 				return ERR_CAST(parent);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 214df713ce719991..01619242d8ca6384 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_PLL4,
+ 	CLK_TYPE_GEN3_SD,
+ 	CLK_TYPE_GEN3_R,
+-	CLK_TYPE_GEN3_PE,
++	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
+ 	CLK_TYPE_GEN3_Z,
+ 	CLK_TYPE_GEN3_Z2,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
  
-+/* keep in sync with __clk_free_clk */
- void __clk_put(struct clk *clk)
- {
- 	struct module *owner;
-@@ -3544,6 +3546,7 @@ void __clk_put(struct clk *clk)
- 
- 	module_put(owner);
- 
-+	kfree_const(clk->con_id);
- 	kfree(clk);
- }
++#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
++		 (_parent0) << 16 | (_parent1),		\
++		 .div = (_div0) << 16 | (_div1), .offset = _md)
++
+ #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
+ 		    _div_clean) \
+-	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
+-		 (_parent_sscg) << 16 | (_parent_clean),	\
+-		 .div = (_div_sscg) << 16 | (_div_clean))
++	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
++		       _parent_clean, _div_clean)
++
+ #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
  
 -- 
-2.16.1
+2.17.1
