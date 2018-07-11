@@ -1,121 +1,60 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Mon, 30 Jul 2018 09:36:07 +0100
-Message-Id: <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
-References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Joel Stanley <joel@jms.id.au>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CACPK8XfxKhT_ywpo3vqXSEaSPGdM+uhkgpn1R+EP9Z3spxAzXg@mail.gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-aspeed@lists.ozlabs.org,
+ Andrew Jeffery <andrew@aj.id.au>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-clk@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180628231540.26633-1-joel@jms.id.au>
+ <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
+ <CACPK8XfxKhT_ywpo3vqXSEaSPGdM+uhkgpn1R+EP9Z3spxAzXg@mail.gmail.com>
+Message-ID: <153132688979.143105.557909972230566711@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
+Date: Wed, 11 Jul 2018 09:34:49 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quite a few drivers get an optional clock, e.g. a clock required
-to access peripheral's registers that is always enabled on some
-devices.
+Quoting Joel Stanley (2018-07-10 22:53:52)
+> Hi Stephen,
+> =
 
-This function behaves the same as of_clk_get_by_name() except that
-it will return NULL instead of -ENOENT. This makes error checking
-for users easier and allows clk_prepare_enable, etc to be called
-on the returned reference without additional checks.
+> On 7 July 2018 at 03:55, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Joel Stanley (2018-06-28 16:15:40)
+> >> The HPLL can be configured through a register (SCU24), however some
+> >> platforms chose to configure it through the strapping settings and do
+> >> not use the register. This was not noticed as the logic for bit 18 in
+> >> SCU24 was confused: set means programmed, but the driver read it as set
+> >> means strapped.
+> >>
+> >> This gives us the correct HPLL value on Palmetto systems, from which
+> >> most of the peripheral clocks are generated.
+> >>
+> >> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
+> >> Cc: stable@vger.kernel.org # v4.15
+> >> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
+> >> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> >> ---
+> >
+> > Do you want this merged for -rc5? It sounds like on some systems this is
+> > a problem, but I don't know if these systems are supposed to work yet or
+> > not, so priority of this fix is not easy for me to understand.
+> >
+> =
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/clk/clkdev.c | 34 ++++++++++++++++++++++++++++++----
- include/linux/clk.h  |  1 +
- 2 files changed, 31 insertions(+), 4 deletions(-)
+> Sure, some more background:
+> =
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8..c1b7262 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	struct clk *clk = ERR_PTR(-ENOENT);
- 
-@@ -73,6 +74,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
- 		if (!IS_ERR(clk)) {
- 			break;
- 		} else if (name && index >= 0) {
-+			if (optional && PTR_ERR(clk) == -ENOENT)
-+				clk = NULL;
- 			if (PTR_ERR(clk) != -EPROBE_DEFER)
- 				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
- 					np, name ? name : "", index);
-@@ -106,15 +109,38 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get_by_name(np, np->full_name, name, false);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- 
-+/**
-+ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
-+ * by a device node
-+ * @np: pointer to clock consumer node
-+ * @name: name of consumer's clock input, or NULL for the first clock reference
-+ *
-+ * This function parses the clocks and clock-names properties,
-+ * and uses them to look up the struct clk from the registered list of clock
-+ * providers.
-+ * It behaves the same as of_clk_get_by_name(), except when no clock is found.
-+ * In this case, instead of returning -ENOENT, it returns NULL.
-+ */
-+struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+					const char *name)
-+{
-+	if (!np)
-+		return ERR_PTR(-ENOENT);
-+
-+	return __of_clk_get_by_name(np, np->full_name, name, true);
-+}
-+EXPORT_SYMBOL(of_clk_get_by_name_optional);
-+
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -197,7 +223,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..8cb5455 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-+struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
- #else
- static inline struct clk *of_clk_get(struct device_node *np, int index)
--- 
-2.7.4
+> We did not notice this until we attempted to use the clock for the mtd
+> driver. However, this clock is used for the kernel clocksource, so eg.
+> sleep 1 takes two seconds to complete. This affects all of the systems
+> I have access to.
+> =
+
+> I suggest we merge for4.18, and keep the cc: stable so it can be
+> backported to the stable trees.
+> =
+
+
+Ok. Thanks! Applied to clk-fixes.
