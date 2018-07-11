@@ -1,105 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43352 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726637AbeG3MVO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jul 2018 08:21:14 -0400
-Date: Mon, 30 Jul 2018 13:46:37 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        eballetbo@gmail.com, linus.walleij@linaro.org,
-        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
-        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v11 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <04328e559dcb38b8722248af5a2de028d4237224.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 11 Jul 2018 13:43:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
+ controller
+Message-ID: <20180711194346.GA32414@rob-hp-laptop>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-2-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180710163658.6175-2-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
+> Document the MMC sub clock controller driver, the potential consumer
+> of this driver is MMC or NAND.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+So you all have decided to properly model this now?
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..3ca56fdb5ffe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,62 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDOs to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missing
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+	rtc@0 {
-+		compatible = "company,my-rtc";
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
--- 
-2.14.3
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> new file mode 100644
+> index 000000000000..ff6b4bf3ecf9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> @@ -0,0 +1,31 @@
+> +* Amlogic MMC Sub Clock Controller Driver
+> +
+> +The Amlogic MMC clock controller generates and supplies clock to support
+> +MMC and NAND controller
+> +
+> +Required Properties:
+> +
+> +- compatible: should be:
+> +		"amlogic,meson-gx-mmc-clkc"
+> +		"amlogic,meson-axg-mmc-clkc"
+> +
+> +- #clock-cells: should be 1.
+> +- clocks: phandles to clocks corresponding to the clock-names property
+> +- clock-names: list of parent clock names
+> +	- "clkin0", "clkin1"
+> +
+> +Parent node should have the following properties :
+> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
 
+You don't need "simple-mfd" and probably not syscon either. The order is 
+wrong too. Most specific first.
+
+> +- reg: base address and size of the MMC control register space.
+> +
+> +Example: Clock controller node:
+> +
+> +sd_mmc_c_clkc: clock-controller@7000 {
+> +	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
+
+Doesn't match the binding...
+
+> +	reg = <0x0 0x7000 0x0 0x4>;
+> +	#clock-cells = <1>;
+> +
+> +	clock-names = "clkin0", "clkin1";
+> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+> +			<&clkc CLKID_FCLK_DIV2>;
+> +};
+> -- 
+> 2.18.0
+> 
