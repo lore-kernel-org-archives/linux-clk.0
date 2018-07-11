@@ -1,57 +1,39 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1531316752.2708.113.camel@baylibre.com>
+Return-Path: <Jian.Hu@amlogic.com>
 Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>, Martin
-	Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, qianggui.song@amlogic.com,
- sboyd@kernel.org, khilman@baylibre.com, mturquette@baylibre.com,
- linux-kernel@vger.kernel.org, bo.yang@amlogic.com, qiufang.dai@amlogic.com,
-  linux-arm-kernel@lists.infradead.org, carlo@caione.org,
- linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
- linux-clk@vger.kernel.org, xingyu.chen@amlogic.com, Rob Herring
- <robh@kernel.org>
-Date: Wed, 11 Jul 2018 15:45:52 +0200
-In-Reply-To: <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
+To: Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>
+CC: "Qianggui, song" <qianggui.song@amlogic.com>, Kevin Hilman
+	<khilman@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Yixun
+ Lan <yixun.lan@amlogic.com>, <linux-kernel@vger.kernel.org>, Bo.yang
+	<bo.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+	<linux-arm-kernel@lists.infradead.org>, Carlo Caione <carlo@caione.org>,
+	<linux-amlogic@lists.infradead.org>, Sunny.luo <sunny.luo@amlogic.com>,
+	<linux-clk@vger.kernel.org>, Xingyu.chen <xingyu.chen@amlogic.com>
 References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	 <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-	 <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-	 <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-	 <1531216472.2708.71.camel@baylibre.com>
-	 <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+ <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+ <153114832204.143105.10370402875563713577@swboyd.mtv.corp.google.com>
+From: Jian Hu <jian.hu@amlogic.com>
+Message-ID: <67732b59-2186-0bc3-4c93-44d4acbed315@amlogic.com>
+Date: Wed, 11 Jul 2018 14:33:11 +0800
+MIME-Version: 1.0
+In-Reply-To: <153114832204.143105.10370402875563713577@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
-> > > > > +static struct clk_regmap g12a_mpll0 = {
-> > > > > +       .data = &(struct clk_regmap_gate_data){
-> > > > > +               .offset = HHI_MPLL_CNTL1,
-> > > > > +               .bit_idx = 31,
-> > > > > +       },
-> > > > > +       .hw.init = &(struct clk_init_data){
-> > > > > +               .name = "mpll0",
-> > > > > +               .ops = &clk_regmap_gate_ops,
-> > > > > +               .parent_names = (const char *[]){ "mpll0_div" },
-> > > > > +               .num_parents = 1,
-> > > > > +               .flags = CLK_SET_RATE_PARENT,
-> > > > > +       },
-> > > > > +};
-> > 
-> > The previous had a predivider (1 or 2) in front of these mpll. Even if the
-> > predivider is usually set to be a passthrough, it is better to model the tree
-> > correctly.
-> > 
-> > Is this SoC any different ?
-> > 
+
+
+On 2018/7/9 22:58, Stephen Boyd wrote:
+> Quoting Jian Hu (2018-07-09 04:12:47)
+>> Add a Clock driver for the Everyting-Else part
 > 
-> I am not sure the difference, I will confirm with IC design guys.
+> Everything instead of Everyting?
+> 
+>> of the Amlogic Meson-G12A SoC.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> 
+> .
+> 
 
-I suggest that you have a look at the (upstream) axg and gxbb clock driver for
-this
-
-Same goes for the fdiv gates.
-
-Last, please trim your replies a bit. It will make easier to see what you are
-replying to. 
+Yes, thank you for correcting.
