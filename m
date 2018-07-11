@@ -1,66 +1,55 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shengjiu.wang@nxp.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH V2 2/2] ARM: dts: imx6sx: add ocram_s support
+Date: Wed, 11 Jul 2018 08:58:59 +0800
+Message-Id: <1531270739-3075-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
+References: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Phil Edworthy <phil.edworthy@renesas.com>,
- Russell King <linux@armlinux.org.uk>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@verge.net.au>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
- <20180718130228.GG17271@n2100.armlinux.org.uk>
- <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
- <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
-Message-ID: <153255822286.48062.3193076486782567960@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH] clk: Add functions to get optional clocks
-Date: Wed, 25 Jul 2018 15:37:02 -0700
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Phil Edworthy (2018-07-18 06:56:26)
-> Hi Russell,
-> =
+i.MX6SX has a 16KB always-on ocram bank called
+ocram_s, enable it as another mmio sram.
 
-> On 18 July 2018 14:19, Geert Uytterhoeven wrote:
-> > On Wed, Jul 18, 2018 at 3:02 PM Russell King - ARM Linux  wrote:
-> > > On Wed, Jul 18, 2018 at 01:57:38PM +0100, Phil Edworthy wrote:
-> > > > Behaves the same as (devm_)clk_get except where there is no clock
-> > > > producer. In this case, instead of returning -ENOENT, the function
-> > > > returns NULL. This makes error checking simpler and allows
-> > > > clk_prepare_enable, etc to be called on the returned reference
-> > > > without additional checks.
-> > >
-> > > How does this work with non-DT systems, where looking a clock up which
-> > > isn't yet registered with clkdev returns -ENOENT ?
-> > >
-> > > (clkdev doesn't know when all clocks are registered with it.)
-> > =
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+changes since V1:
+	resort the ocram_s and ocram node by address from low to high.
+ arch/arm/boot/dts/imx6sx.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> > Good question.
-> > =
-
-> > I guess all drivers trying to handle optional clocks this way are alrea=
-dy broken
-> > on non-DT systems where clocks may be registered late...
-> =
-
-> So how do non-DT systems that look a clock up which isn't yet
-> registered with clkdev, determine that an optional clock is there
-> or not?
-> =
-
-
-Short answer is they don't. I'd still prefer we have this API though.
-
-Can you rework this patch to be a little more invasive into the
-clk_get() path, perhaps by reworking __of_clk_get_by_name() a little to
-take an 'optional' argument, so that it only returns NULL when the clk
-is looked up from DT? The fallback path in clkdev where we have a DT
-based system looking up a clk through clkdev lookups doesn't seem to be
-a real scenario that we should worry about here. I think sometimes
-people use clkdev lookups when they're migrating to DT systems and
-things aren't wired up properly in DT, but that isn't the norm.
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 596763c..f4d982c 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -166,6 +166,12 @@
+ 		interrupt-parent = <&gpc>;
+ 		ranges;
+ 
++		ocram_s: sram@8f8000 {
++			compatible = "mmio-sram";
++			reg = <0x008f8000 0x4000>;
++			clocks = <&clks IMX6SX_CLK_OCRAM_S>;
++		};
++
+ 		ocram: sram@900000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0x00900000 0x20000>;
+-- 
+2.7.4
