@@ -1,154 +1,124 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
- "A.s. Dong" <aisheng.dong@nxp.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
-Date: Thu, 26 Jul 2018 13:37:41 +0200
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v5 4/4] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+Date: Wed, 11 Jul 2018 17:39:25 +0300
+Message-ID: <1531319965-19689-5-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+Return-Path: avienamo@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
-Content-Type: multipart/mixed; boundary="G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
- "A.s. Dong" <aisheng.dong@nxp.com>
-Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
-Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
---G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+These clocks have low jitter paths to certain parents. To model these
+correctly, use the sdmmc mux divider clock type.
 
-Hi,
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-id.h           |  2 --
+ drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
+ drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
-On 26.07.2018 11:51, Robin Gong wrote:
->=20
->=20
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
->> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
->> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
->> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
-
->> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
->> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
->> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
->> Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
-
->> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
-Gong
->> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
->> Subject: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
->> fsl,pmic-stby-poweroff property
->>
->> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> index a45ca67a9d5f..e1308346e00d 100644
->> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
->> @@ -6,6 +6,14 @@ Required properties:
->>  - interrupts: Should contain CCM interrupt
->>  - #clock-cells: Should be <1>
->>
->> +Optional properties:
->> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signa=
-l
->> +  on power off.
->> +  Use this property if the SoC should be powered off by external powe=
-r
->> +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
-> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
-
-No. First, it was only one customer specific issue. After some research
-I found even publicly available boards (for example RioTboard) which has
-same/similar design. After seeing this in imx6 documentation as valid
-power off way, I have no doubts - there should be even more devices doin
-this in the wild.
-
-> Don't understand
-> why not follow normal board design guide to power off pmic by PMIC_ON_R=
-EQ.
-> How to power on board again then?
-
-Power cycle. Without this patch, power of is not real power off. So,
-power cycle, is expected behavior for user interaction. On usual PC,
-reset button will not enable PC as well.
-
-
---G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO--
-
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltZsoUACgkQdQOiSHVI
-77TWzQgAhQoMOjx7+S1Qm1rZPtMblz6hK1z0mNYWGfIGeg8cdj3+Aoo5ypnLb7+6
-MaMowFsPSn+MLu9KyaKTxhdSP+QBC9kGWqj7Dg13MILlNJJRvk5wLjYxEtbuU31H
-K0H8B2gIL9lKA7frgkndteGYeJFYM9ziaWnj1sLRzsud3TJJHx5WBYLCXI0OuLXx
-YD4H8fB2xR89Fj2Jqeaugux1Ewu99a/jUbX3PSi0trAi+AmLN83Yg1+c43r5O2Yn
-kfWatgPLmK7CMBoTZCKVZZwAG1auPkLnNXp0vSXwkoSnZaPKTzTahzCoKFb49wJ0
-PsMc7Rki7cPb+4x3ia0vwxAa/umtYw==
-=pEPP
------END PGP SIGNATURE-----
-
---CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf--
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index b616e33..de466b4 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -227,13 +227,11 @@ enum clk_id {
+ 	tegra_clk_sdmmc1_9,
+ 	tegra_clk_sdmmc2,
+ 	tegra_clk_sdmmc2_8,
+-	tegra_clk_sdmmc2_9,
+ 	tegra_clk_sdmmc3,
+ 	tegra_clk_sdmmc3_8,
+ 	tegra_clk_sdmmc3_9,
+ 	tegra_clk_sdmmc4,
+ 	tegra_clk_sdmmc4_8,
+-	tegra_clk_sdmmc4_9,
+ 	tegra_clk_se,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_soc_therm_8,
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2acba29..38c4eb2 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
+ 	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
+ };
+ 
+-static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
+-	"pll_p",
+-	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
+-	"pll_c4_out2", "pll_c4_out1",
+-	"pll_c4_out1",			/* LJ input */
+-	"clk_m", "pll_c4_out0"
+-};
+-#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
+-
+ static const char *mux_pllp_pllc2_c_c3_clkm[] = {
+ 	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
+ };
+@@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
+ 	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
+ 	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
+-	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
+ 	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
+-	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
+ 	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
+ 	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
+ 	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 5435d01..9eb1cb1 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -44,6 +44,8 @@
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_SOR1 0x410
+ #define CLK_SOURCE_LA 0x1f8
++#define CLK_SOURCE_SDMMC2 0x154
++#define CLK_SOURCE_SDMMC4 0x164
+ 
+ #define PLLC_BASE 0x80
+ #define PLLC_OUT 0x84
+@@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
+ 	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
+ 	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
+-	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
+ 	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
+ 	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
+ 	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
+-	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
+ 	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
+ 	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
+ 	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
+@@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 				0, NULL);
+ 	clks[TEGRA210_CLK_ACLK] = clk;
+ 
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
++					    CLK_SOURCE_SDMMC2, 9,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC2] = clk;
++
++	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
++					    CLK_SOURCE_SDMMC4, 15,
++					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
++	clks[TEGRA210_CLK_SDMMC4] = clk;
++
+ 	for (i = 0; i < ARRAY_SIZE(tegra210_periph); i++) {
+ 		struct tegra_periph_init_data *init = &tegra210_periph[i];
+ 		struct clk **clkp;
+-- 
+2.7.4
