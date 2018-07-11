@@ -1,54 +1,69 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44977 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388476AbeGXSxR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jul 2018 14:53:17 -0400
-Received: by mail-pl0-f66.google.com with SMTP id m16-v6so2081417pls.11
-        for <linux-clk@vger.kernel.org>; Tue, 24 Jul 2018 10:45:42 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org, andy.gross@linaro.org
-Cc: tdas@codeaurora.org, girishm@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
-        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
-Date: Tue, 24 Jul 2018 10:45:12 -0700
-Message-Id: <20180724174513.174018-2-dianders@chromium.org>
-In-Reply-To: <20180724174513.174018-1-dianders@chromium.org>
-References: <20180724174513.174018-1-dianders@chromium.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 09/11] clk: renesas: r8a77995: Correct RCLK handling
+Date: Wed, 11 Jul 2018 16:20:58 +0200
+Message-Id: <20180711142100.3765-10-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-These clocks will need to be defined in the clock driver and
-referenced in device tree files.
+According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car D3 has the
+RCLK Frequency Control Register (RCKCR), which determines the OSC and
+RINT predivider values, and selection of the RCLK clock source between
+RINT and the On-Chip Oscillator.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Hence change the OSC and RINT clock definitions to use the RCKCR
+divider, and add the missing On-Chip Oscillator and RCLK clock source
+switching logic.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+As Figure 8.1f "Block Diagram of CPG (R-Car D3)" shows 1/61 and 1/4
+dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
+---
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Changes in v3: None
-Changes in v2: None
-
- include/dt-bindings/clock/qcom,gcc-sdm845.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-index f96fc2dbf60e..b8eae5a76503 100644
---- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-@@ -194,6 +194,9 @@
- #define GPLL4							184
- #define GCC_CPUSS_DVM_BUS_CLK					185
- #define GCC_CPUSS_GNOC_CLK					186
-+#define GCC_QSPI_CORE_CLK_SRC					187
-+#define GCC_QSPI_CORE_CLK					188
-+#define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index ea4cafbe6e851aca..b242d01fd21e8c09 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -46,6 +46,8 @@ enum clk_ids {
+ 	CLK_S3,
+ 	CLK_SDSRC,
+ 	CLK_SSPSRC,
++	CLK_RINT,
++	CLK_OCO,
  
- /* GCC Resets */
- #define GCC_MMSS_BCR						0
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE
+@@ -90,8 +92,8 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 
+ 	DEF_FIXED("cl",        R8A77995_CLK_CL,    CLK_PLL1,      48, 1),
+ 	DEF_FIXED("cp",        R8A77995_CLK_CP,    CLK_EXTAL,      2, 1),
+-	DEF_FIXED("osc",       R8A77995_CLK_OSC,   CLK_EXTAL,    384, 1),
+-	DEF_FIXED("r",         R8A77995_CLK_R,     CLK_EXTAL,   1536, 1),
++	DEF_DIV6_RO("osc",     R8A77995_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
++	DEF_DIV6_RO("r_int",   CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
+ 
+ 	DEF_GEN3_PE("s1d4c",   R8A77995_CLK_S1D4C, CLK_S1, 4, CLK_PE, 2),
+ 	DEF_GEN3_PE("s3d1c",   R8A77995_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
+@@ -102,6 +104,9 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 
+ 	DEF_DIV6P1("canfd",    R8A77995_CLK_CANFD, CLK_PLL0D3,    0x244),
+ 	DEF_DIV6P1("mso",      R8A77995_CLK_MSO,   CLK_PLL1D2,    0x014),
++
++	DEF_RATE("oco",        CLK_OCO,            8 * 1000 * 1000),
++	DEF_GEN3_RCKSEL("r",   R8A77995_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
+ };
+ 
+ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
 -- 
-2.18.0.233.g985f88cf7e-goog
-
+2.17.1
