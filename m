@@ -1,79 +1,122 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v6 4/5] arm64: dts: actions: Add Clock Management Unit for S700
-Date: Sun, 15 Jul 2018 22:35:23 +0200
-Message-Id: <20180715203524.11948-5-sravanhome@gmail.com>
-In-Reply-To: <20180715203524.11948-1-sravanhome@gmail.com>
-References: <20180715203524.11948-1-sravanhome@gmail.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 07/11] clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
+Date: Wed, 11 Jul 2018 16:20:56 +0200
+Message-Id: <20180711142100.3765-8-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Clock Management Unit for Actions Semi S700 SoC.
+Add a clock type and macro for defining clocks where the parent and
+divider are selected based on the value of the RCKCR.CKSEL bit.
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 23 ++++++++++++++++++++---
+ drivers/clk/renesas/rcar-gen3-cpg.h |  8 +++++++-
+ 2 files changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index 66dd5309f0a2..4497741d48b2 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -4,6 +4,7 @@
-  */
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 7533a51c679bfd54..19a77822757d29de 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -1,7 +1,7 @@
+ /*
+  * R-Car Gen3 Clock Pulse Generator
+  *
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2018 Glider bvba
+  *
+  * Based on clk-rcar-gen3.c
+  *
+@@ -31,6 +31,8 @@
+ #define CPG_PLL2CR		0x002c
+ #define CPG_PLL4CR		0x01f4
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/actions,s700-cmu.h>
- 
- / {
- 	compatible = "actions,s700";
-@@ -44,6 +45,13 @@
- 		};
- 	};
- 
-+	cmu: clock-controller@e0168000 {
-+		compatible = "actions,s700-cmu";
-+		reg = <0x0 0xe0168000 0x0 0x1000>;
-+		clocks = <&hosc>, <&losc>;
-+		#clock-cells = <1>;
-+	};
++#define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
 +
- 	reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -87,6 +95,12 @@
- 		#clock-cells = <0>;
- 	};
+ struct cpg_simple_notifier {
+ 	struct notifier_block nb;
+ 	void __iomem *reg;
+@@ -444,7 +446,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	unsigned int div = 1;
+ 	u32 value;
  
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
+-	parent = clks[core->parent & 0xffff];	/* CLK_TYPE_PE uses high bits */
++	parent = clks[core->parent & 0xffff];	/* some types use high bits */
+ 	if (IS_ERR(parent))
+ 		return ERR_CAST(parent);
+ 
+@@ -524,7 +526,7 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 
+ 			if (clk_get_rate(clks[cpg_clk_extalr])) {
+ 				parent = clks[cpg_clk_extalr];
+-				value |= BIT(15);
++				value |= CPG_RCKCR_CKSEL;
+ 			}
+ 
+ 			writel(value, csn->reg);
+@@ -570,6 +572,21 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		div = cpg_pll_config->osc_prediv * core->div;
+ 		break;
+ 
++	case CLK_TYPE_GEN3_RCKSEL:
++		/*
++		 * Clock selectable between two parents and two fixed dividers
++		 * using RCKCR.CKSEL
++		 */
++		if (readl(base + CPG_RCKCR) & CPG_RCKCR_CKSEL) {
++			div = core->div & 0xffff;
++		} else {
++			parent = clks[core->parent >> 16];
++			if (IS_ERR(parent))
++				return ERR_CAST(parent);
++			div = core->div >> 16;
++		}
++		break;
 +
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index d7d84d9e4a1c9c8b..214df713ce719991 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -1,7 +1,7 @@
+ /*
+  * R-Car Gen3 Clock Pulse Generator
+  *
+- * Copyright (C) 2015-2016 Glider bvba
++ * Copyright (C) 2015-2018 Glider bvba
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -24,6 +24,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_Z,
+ 	CLK_TYPE_GEN3_Z2,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
++	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
+ };
+ 
+ #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
+@@ -37,6 +38,11 @@ enum rcar_gen3_clk_types {
+ #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
+ 
++#define DEF_GEN3_RCKSEL(_name, _id, _parent0, _div0, _parent1, _div1) \
++	DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,	\
++		 (_parent0) << 16 | (_parent1),	.div = (_div0) << 16 | (_div1))
++
++
+ struct rcar_gen3_cpg_pll_config {
+ 	u8 extal_div;
+ 	u8 pll1_mult;
 -- 
-2.18.0
+2.17.1
