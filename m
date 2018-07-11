@@ -1,82 +1,41 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr30053.outbound.protection.outlook.com ([40.107.3.53]:42910
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753933AbeGIISn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:18:43 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
-Date: Mon, 9 Jul 2018 08:18:40 +0000
-Message-ID: <AM0PR04MB4211C3AFCCF832121B88492B80440@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-2-o.rempel@pengutronix.de>
-In-Reply-To: <20180615095107.24610-2-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 11 Jul 2018 16:43:03 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>, aisheng.dong@nxp.com,
+	fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
+	mturquette@baylibre.com, ping.bai@nxp.com, robh+dt@kernel.org,
+	s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
+Message-ID: <20180711084302.GB6959@dragon>
+References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+ <153091072630.143105.2849049240391576710@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153091072630.143105.2849049240391576710@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> Sent: Friday, June 15, 2018 5:51 PM
-> To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>
-> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
-> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org; linux-
-> clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> Subject: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
->=20
-> This clock is needed for iMX mailbox driver
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+On Fri, Jul 06, 2018 at 01:58:46PM -0700, Stephen Boyd wrote:
+> Quoting Anson Huang (2018-06-21 23:32:33)
+> > According to Reference Manual Rev.0, 06/2017,
+> > there are GPIO LPCGs defined in CCM CCGRs,
+> > add them into clock tree.
+> > 
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> 
+> Applied to clk-next
 
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Stephen,
 
-I think this can go separately through CLK tree.
+If you can apply this patch to topic branch 'clk-imx-gpio-gates', I will
+be able to pick up patch #2 for this cycle.
 
-Regards
-Dong Aisheng
+For future cycles, I think the topic branch can be named more generic,
+so that any clk patches that DT ones have a dependency on can go there.
+And then I can apply all those DT patches by pulling in this topic
+branch.
 
-> ---
->  drivers/clk/imx/clk-imx7d.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c in=
-dex
-> 975a20d3cc94..c7159bfac77a 100644
-> --- a/drivers/clk/imx/clk-imx7d.c
-> +++ b/drivers/clk/imx/clk-imx7d.c
-> @@ -795,6 +795,7 @@ static void __init imx7d_clocks_init(struct
-> device_node *ccm_node)
->  	clks[IMX7D_DRAM_ALT_ROOT_CLK] =3D
-> imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0)=
-;
->  	clks[IMX7D_OCOTP_CLK] =3D imx_clk_gate4("ocotp_clk",
-> "ipg_root_clk", base + 0x4230, 0);
->  	clks[IMX7D_SNVS_CLK] =3D imx_clk_gate4("snvs_clk", "ipg_root_clk",
-> base + 0x4250, 0);
-> +	clks[IMX7D_MU_ROOT_CLK] =3D imx_clk_gate4("mu_root_clk",
-> "ipg_root_clk",
-> +base + 0x4270, 0);
->  	clks[IMX7D_CAAM_CLK] =3D imx_clk_gate4("caam_clk", "ipg_root_clk",
-> base + 0x4240, 0);
->  	clks[IMX7D_USB_HSIC_ROOT_CLK] =3D
-> imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0)=
-;
->  	clks[IMX7D_SDMA_CORE_CLK] =3D imx_clk_gate4("sdma_root_clk",
-> "ahb_root_clk", base + 0x4480, 0);
-> --
-> 2.17.1
-
+Shawn
