@@ -1,53 +1,53 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
- Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Subject: [PATCH 1/3] clk: meson: gxbb: remove HHI_GEN_CLK_CTNL duplicate
- definition
-Date: Wed,  4 Jul 2018 18:54:56 +0200
-Message-Id: <20180704165458.24149-2-jbrunet@baylibre.com>
-In-Reply-To: <20180704165458.24149-1-jbrunet@baylibre.com>
-References: <20180704165458.24149-1-jbrunet@baylibre.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Return-Path: <joel.stan@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Sender: joel.stan@gmail.com
+In-Reply-To: <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
+References: <20180628231540.26633-1-joel@jms.id.au> <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Wed, 11 Jul 2018 15:53:52 +1000
+Message-ID: <CACPK8XfxKhT_ywpo3vqXSEaSPGdM+uhkgpn1R+EP9Z3spxAzXg@mail.gmail.com>
+Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-aspeed@lists.ozlabs.org,
+	Andrew Jeffery <andrew@aj.id.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-clk@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-HHI_GEN_CLK_CTNL is defined twice, just remove the duplicate definition
+Hi Stephen,
 
-Fixes: 738f66d3211d ("clk: gxbb: add AmLogic GXBB clk controller driver")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.h | 1 -
- 1 file changed, 1 deletion(-)
+On 7 July 2018 at 03:55, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Joel Stanley (2018-06-28 16:15:40)
+>> The HPLL can be configured through a register (SCU24), however some
+>> platforms chose to configure it through the strapping settings and do
+>> not use the register. This was not noticed as the logic for bit 18 in
+>> SCU24 was confused: set means programmed, but the driver read it as set
+>> means strapped.
+>>
+>> This gives us the correct HPLL value on Palmetto systems, from which
+>> most of the peripheral clocks are generated.
+>>
+>> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
+>> Cc: stable@vger.kernel.org # v4.15
+>> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
+>> Signed-off-by: Joel Stanley <joel@jms.id.au>
+>> ---
+>
+> Do you want this merged for -rc5? It sounds like on some systems this is
+> a problem, but I don't know if these systems are supposed to work yet or
+> not, so priority of this fix is not easy for me to understand.
+>
 
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index ec1a812bf1fd..df6c21d368c6 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -66,7 +66,6 @@
- #define HHI_USB_CLK_CNTL		0x220 /* 0x88 offset in data sheet */
- #define HHI_32K_CLK_CNTL		0x224 /* 0x89 offset in data sheet */
- #define HHI_GEN_CLK_CNTL		0x228 /* 0x8a offset in data sheet */
--#define HHI_GEN_CLK_CNTL		0x228 /* 0x8a offset in data sheet */
- 
- #define HHI_PCM_CLK_CNTL		0x258 /* 0x96 offset in data sheet */
- #define HHI_NAND_CLK_CNTL		0x25C /* 0x97 offset in data sheet */
--- 
-2.14.4
+Sure, some more background:
 
+We did not notice this until we attempted to use the clock for the mtd
+driver. However, this clock is used for the kernel clocksource, so eg.
+sleep 1 takes two seconds to complete. This affects all of the systems
+I have access to.
 
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+I suggest we merge for4.18, and keep the cc: stable so it can be
+backported to the stable trees.
+
+Cheers,
+
+Joel
