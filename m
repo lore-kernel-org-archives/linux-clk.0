@@ -1,115 +1,59 @@
-Return-Path: <alexandre.belloni@bootlin.com>
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 09/16] clk: at91: add new DT lookup function
-Date: Wed, 18 Jul 2018 00:27:50 +0200
-Message-Id: <20180717222757.10253-10-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Return-Path: <Jian.Hu@amlogic.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A
+ SoC
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Yixun Lan <yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+	Bo.yang <bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>,
+	"Qianggui,song" <qianggui.song@amlogic.com>, Sunny.luo
+	<sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+ <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
+ <1531214976.2708.52.camel@baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+Message-ID: <f6f387ff-271b-9b4b-5b6e-072b4e56d840@amlogic.com>
+Date: Wed, 11 Jul 2018 21:04:53 +0800
+MIME-Version: 1.0
+In-Reply-To: <1531214976.2708.52.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a new DT lookup function to lookup for PMC clocks.
 
-Note that the #ifndef AT91_PMC_MOSCS section will be removed once all the
-platforms are converted.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/pmc.c           | 34 ++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/at91.h | 14 +++++++++++++
- 2 files changed, 48 insertions(+)
+On 2018/7/10 17:29, Jerome Brunet wrote:
+> On Mon, 2018-07-09 at 19:12 +0800, Jian Hu wrote:
+>> Add new binding for Meson-G12A SoC Everything-Else part
+> 
+> nitpick: I would prefer if the words 'clock' and 'controller' was somewhere in
+> the description.
+> 
+> Maybe "add new clock controller compatible for the EE domain of the g12a SoC" ?
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 0f8b3add1b04..f5697092ec52 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -19,6 +19,8 @@
- 
- #include <asm/proc-fns.h>
- 
-+#include <dt-bindings/clock/at91.h>
-+
- #include "pmc.h"
- 
- #define PMC_MAX_IDS 128
-@@ -47,6 +49,38 @@ int of_at91_get_clk_range(struct device_node *np, const char *propname,
- }
- EXPORT_SYMBOL_GPL(of_at91_get_clk_range);
- 
-+struct clk_hw *of_clk_hw_pmc_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	unsigned int type = clkspec->args[0];
-+	unsigned int idx = clkspec->args[1];
-+	struct pmc_data *pmc_data = data;
-+
-+	switch (type) {
-+	case PMC_TYPE_CORE:
-+		if (idx >= pmc_data->ncore)
-+			return ERR_PTR(-EINVAL);
-+		return pmc_data->chws[idx];
-+	case PMC_TYPE_SYSTEM:
-+		if (idx >= pmc_data->nsystem)
-+			return ERR_PTR(-EINVAL);
-+		return pmc_data->shws[idx];
-+	case PMC_TYPE_PERIPHERAL:
-+		if (idx >= pmc_data->nperiph)
-+			return ERR_PTR(-EINVAL);
-+		return pmc_data->phws[idx];
-+	case PMC_TYPE_GCK:
-+		if (idx >= pmc_data->ngck)
-+			return ERR_PTR(-EINVAL);
-+		return pmc_data->ghws[idx];
-+	default:
-+		break;
-+	}
-+
-+	pr_err("%s: invalid type (%u) or index (%u)\n", __func__, type, idx);
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
- void pmc_data_free(struct pmc_data *pmc_data)
- {
- 	kfree(pmc_data->chws);
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index ab3ee241d10c..c007adcb5512 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -9,6 +9,19 @@
- #ifndef _DT_BINDINGS_CLK_AT91_H
- #define _DT_BINDINGS_CLK_AT91_H
- 
-+#define PMC_TYPE_CORE		0
-+#define PMC_TYPE_SYSTEM		1
-+#define PMC_TYPE_PERIPHERAL	2
-+#define PMC_TYPE_GCK		3
-+
-+#define PMC_MCK			0
-+#define PMC_UTMI		1
-+#define PMC_MCK2		2
-+#define PMC_MAIN		3
-+#define PMC_I2S0_MUX		4
-+#define PMC_I2S1_MUX		5
-+
-+#ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
- #define AT91_PMC_LOCKA		1		/* PLLA Lock */
- #define AT91_PMC_LOCKB		2		/* PLLB Lock */
-@@ -19,5 +32,6 @@
- #define AT91_PMC_MOSCRCS	17		/* Main On-Chip RC */
- #define AT91_PMC_CFDEV		18		/* Clock Failure Detector Event */
- #define AT91_PMC_GCKRDY		24		/* Generated Clocks */
-+#endif
- 
- #endif
--- 
-2.18.0
+Patch 1 and 2 have squashed, the commit message focuse which one？
+> 
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+>> index e950599..0833006 100644
+>> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+>> @@ -9,6 +9,7 @@ Required Properties:
+>>   		"amlogic,gxbb-clkc" for GXBB SoC,
+>>   		"amlogic,gxl-clkc" for GXL and GXM SoC,
+>>   		"amlogic,axg-clkc" for AXG SoC.
+>> +		"amlogic,g12a-clkc" for G12A SoC.
+>>   
+>>   - #clock-cells: should be 1.
+>>   
+> 
+> .
+> 
