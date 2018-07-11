@@ -1,52 +1,65 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 4/4] ARM: davinci: dts: add a reset control to the dsp
- node
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson
-	<bjorn.andersson@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <20180621073706.22812-5-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <b3fafb57-86e0-3124-1322-9020b793ccf7@ti.com>
-Date: Mon, 2 Jul 2018 17:32:11 +0530
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v5 0/4] Multiplex sdmmc low jitter clock path
+Date: Wed, 11 Jul 2018 17:39:21 +0300
+Message-ID: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+Return-Path: avienamo@nvidia.com
 MIME-Version: 1.0
-In-Reply-To: <20180621073706.22812-5-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The davinci-rproc driver will soon use the reset framework. Add the
-> resets property to the dsp node in da850.dtsi.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
->  arch/arm/boot/dts/da850.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-> index 1bc0e4bc0697..225e0cf4b7bc 100644
-> --- a/arch/arm/boot/dts/da850.dtsi
-> +++ b/arch/arm/boot/dts/da850.dtsi
-> @@ -118,6 +118,7 @@
->  		interrupt-parent = <&intc>;
->  		interrupts = <28>;
->  		clocks = <&psc0 15>;
-> +		resets = <&psc0 15>;
+The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
+divider to achieve better jitter performance with high speed signaling
+modes. The clock path with the divider is needed by some of the slower
+signaling modes. This series automatically multiplexes the LJ and
+non-LJ clock paths based on the requested frequency.
 
-Applied to v4.19/dt
+Changelog:
+v5:
+	- Rename div71_get() to div_frac_get()
+	- Rename div71.c to div-frac.c
 
-Thanks,
-Sekhar
+v4:
+	- Add a changelog
+
+v3:
+	- Use <asm/div64.h> include instead of <linux/kernel.h> for
+	  do_div()
+	- Use SPDX tags for new files
+	- Make mux_lj_idx[] and mux_non_lj_idx[] const
+	- Make tegra_clk_sdmmc_mux_ops static
+	- Fix the includes for fence_udelay() in a separate patch
+
+v2:
+	- Fix the type compatibility error on do_div
+
+Aapo Vienamo (1):
+  clk: tegra: Fix includes required by fence_udelay()
+
+Peter De Schrijver (1):
+  clk: tegra: refactor 7.1 div calculation
+
+Peter De-Schrijver (2):
+  clk: tegra: Add sdmmc mux divider clock
+  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+
+ drivers/clk/tegra/Makefile           |   2 +
+ drivers/clk/tegra/clk-divider.c      |  30 +----
+ drivers/clk/tegra/clk-id.h           |   2 -
+ drivers/clk/tegra/clk-sdmmc-mux.c    | 249 +++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra-periph.c |  11 --
+ drivers/clk/tegra/clk-tegra210.c     |  14 +-
+ drivers/clk/tegra/clk.h              |  30 +++++
+ drivers/clk/tegra/div-frac.c         |  43 ++++++
+ 8 files changed, 341 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+ create mode 100644 drivers/clk/tegra/div-frac.c
+
+-- 
+2.7.4
