@@ -1,41 +1,57 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  <jbrunet@baylibre.com>,  Neil Armstrong <narmstrong@baylibre.com>,  <qianggui.song@amlogic.com>,  <sboyd@kernel.org>,  <mturquette@baylibre.com>,  <yixun.lan@amlogic.com>,  <linux-kernel@vger.kernel.org>,  <bo.yang@amlogic.com>,  <qiufang.dai@amlogic.com>,  <linux-arm-kernel@lists.infradead.org>,  <carlo@caione.org>,  <linux-amlogic@lists.infradead.org>,  <sunny.luo@amlogic.com>,  <linux-clk@vger.kernel.org>,  <xingyu.chen@amlogic.com>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1531316752.2708.113.camel@baylibre.com>
 Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>, Martin
+	Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>, qianggui.song@amlogic.com,
+ sboyd@kernel.org, khilman@baylibre.com, mturquette@baylibre.com,
+ linux-kernel@vger.kernel.org, bo.yang@amlogic.com, qiufang.dai@amlogic.com,
+  linux-arm-kernel@lists.infradead.org, carlo@caione.org,
+ linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
+ linux-clk@vger.kernel.org, xingyu.chen@amlogic.com, Rob Herring
+ <robh@kernel.org>
+Date: Wed, 11 Jul 2018 15:45:52 +0200
+In-Reply-To: <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
 References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	<1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-	<CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-	<be3c7332-3a7d-f8b0-efe4-e2a319273c42@amlogic.com>
-Date: Mon, 16 Jul 2018 08:41:35 -0500
-In-Reply-To: <be3c7332-3a7d-f8b0-efe4-e2a319273c42@amlogic.com> (Jian Hu's
-	message of "Wed, 11 Jul 2018 16:05:54 +0800")
-Message-ID: <7hbmb7mh68.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+	 <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+	 <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+	 <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+	 <1531216472.2708.71.camel@baylibre.com>
+	 <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Jian Hu <jian.hu@amlogic.com> writes:
+On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
+> > > > > +static struct clk_regmap g12a_mpll0 = {
+> > > > > +       .data = &(struct clk_regmap_gate_data){
+> > > > > +               .offset = HHI_MPLL_CNTL1,
+> > > > > +               .bit_idx = 31,
+> > > > > +       },
+> > > > > +       .hw.init = &(struct clk_init_data){
+> > > > > +               .name = "mpll0",
+> > > > > +               .ops = &clk_regmap_gate_ops,
+> > > > > +               .parent_names = (const char *[]){ "mpll0_div" },
+> > > > > +               .num_parents = 1,
+> > > > > +               .flags = CLK_SET_RATE_PARENT,
+> > > > > +       },
+> > > > > +};
+> > 
+> > The previous had a predivider (1 or 2) in front of these mpll. Even if the
+> > predivider is usually set to be a passthrough, it is better to model the tree
+> > correctly.
+> > 
+> > Is this SoC any different ?
+> > 
+> 
+> I am not sure the difference, I will confirm with IC design guys.
 
-> On 2018/7/10 5:53, Martin Blumenstingl wrote:
->> On Mon, Jul 9, 2018 at 1:14 PM Jian Hu <jian.hu@amlogic.com> wrote:
+I suggest that you have a look at the (upstream) axg and gxbb clock driver for
+this
 
-[...]
+Same goes for the fdiv gates.
 
->>> +static const struct of_device_id clkc_match_table[] = {
->>> +       { .compatible = "amlogic,g12a-clkc" },
->> I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
->> and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
->> correct - I'll CC Rob Herring on the dt-bindings patch)
->>
-> For clock drivers,they omit the "meson-" prefix, But for common
-> amlogic drivers use "amlogic.meson-<chip>-<ip>".
-> So which type should we choose? .compatible = "amlogic,g12a-clkc or
->
-> .compatible = "amlogic,meson-g12a-clkc
-
-Please follow the existing pattern for clock drivers, omitting the
-"meson-" prefix.
-
-Kevin
+Last, please trim your replies a bit. It will make easier to see what you are
+replying to. 
