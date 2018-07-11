@@ -1,77 +1,135 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Tue, 31 Jul 2018 12:05:36 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, robh+dt@kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180731090536.GB2956@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
- <20180613130338.GH20078@localhost.localdomain>
- <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
- <20180627084000.GE2118@localhost.localdomain>
+Return-Path: <Jian.Hu@amlogic.com>
+Subject: Re: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock
+ Bindings
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC: <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>,
+	<qianggui.song@amlogic.com>, <devicetree@vger.kernel.org>,
+	<sboyd@kernel.org>, <khilman@baylibre.com>, <mturquette@baylibre.com>,
+	<yixun.lan@amlogic.com>, <linux-kernel@vger.kernel.org>,
+	<bo.yang@amlogic.com>, <qiufang.dai@amlogic.com>,
+	<linux-arm-kernel@lists.infradead.org>, <carlo@caione.org>,
+	<linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <xingyu.chen@amlogic.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+ <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
+ <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
+From: Jian Hu <jian.hu@amlogic.com>
+Message-ID: <e4d9b2ae-45ce-59d1-3caa-b9b3f84975cf@amlogic.com>
+Date: Wed, 11 Jul 2018 16:22:34 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180627084000.GE2118@localhost.localdomain>
+In-Reply-To: <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Again,
 
-On Wed, Jun 27, 2018 at 11:40:00AM +0300, Matti Vaittinen wrote:
-> Hello Stephen,
+
+On 2018/7/10 6:13, Martin Blumenstingl wrote:
+> On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>> Add dt-bindings headers for the Meson-G12A's Everything-Else
+>> part clock controller.
+> I wonder if this should be folded into patch #1 along with an update
+> to Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt so
+> it's clear which header has to be used for G12A
 > 
-> On Mon, Jun 25, 2018 at 04:46:24PM -0700, Stephen Boyd wrote:
-> > Quoting Matti Vaittinen (2018-06-13 06:03:38)
-> > > On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
-> > > > 
-> > > > I see. This makes sense. I need to verify from HW colleagues whether
-> > > > this chip has internal oscillator or not. I originally thought we have
-> > > > on-chip oscillator - but as you say, we do have XIN pin in documentation.
-> > > > So now I am not sure if the test board I have contains oscillator driving
-> > > > the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
-> > > 
-> > > It really turned out that the PMIC just acts as a clock buffer. So I do
-> > > as you suggested and add lookup for parent clock to the driver. I
-> > > planned to do it so that if no parent is found from DT - then we assume
-> > > the 32.768KHz clock (as described in documentation). Eg, something along
-> > > the lines:
-> > > 
-> > >         init.parent_names = of_clk_get_parent_name(pdev->dev.parent->of_node, 0);
-> > >         if (init.parent_names) {
-> > >                 init.num_parents = 1;
-> > >         } else {
-> > >                 /* If parent is not given from DT we assume the typical use-case with
-> > >                  * 32.768 KHz oscillator for RTC (Maybe we could just error out here?)
-> > >                  */
-> > >                 c->rate = BD71837_CLK_RATE;
-> > >                 bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
-> > >         }
-> > 
-> > You can also add a clk directly in this driver in that case there isn't
-> > one in DT with the rate and name of your choosing. Then the logic is the
-> > same and we don't need a c->rate variable.
+As your suggestions, I will squash patch 1 and 2.
+
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 93 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+>>
+>> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+>> new file mode 100644
+>> index 0000000..1473225
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/g12a-clkc.h
+>> @@ -0,0 +1,93 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Meson-G12A clock tree IDs
+>> + *
+>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __G12A_CLKC_H
+>> +#define __G12A_CLKC_H
+>> +
+>> +#define CLKID_SYS_PLL                          0
+>> +#define CLKID_FIXED_PLL                                1
+>> +#define CLKID_FCLK_DIV2                                2
+>> +#define CLKID_FCLK_DIV3                                3
+>> +#define CLKID_FCLK_DIV4                                4
+>> +#define CLKID_FCLK_DIV5                                5
+>> +#define CLKID_FCLK_DIV7                                6
+>> +#define CLKID_GP0_PLL                          7
+>> +#define CLKID_CLK81                                    10
+>> +#define CLKID_MPLL0                                    11
+>> +#define CLKID_MPLL1                                    12
+>> +#define CLKID_MPLL2                                    13
+>> +#define CLKID_MPLL3                                    14
+>> +#define CLKID_DDR                                      15
+>> +#define CLKID_DOS                                      16
+>> +#define CLKID_AUDIO_LOCKER                     17
+>> +#define CLKID_MIPI_DSI_HOST                    18
+>> +#define CLKID_ETH_PHY                          19
+>> +#define CLKID_ISA                                      20
+>> +#define CLKID_PL301                                    21
+>> +#define CLKID_PERIPHS                          22
+>> +#define CLKID_SPICC0                           23
+>> +#define CLKID_I2C                                      24
+>> +#define CLKID_SANA                                     25
+>> +#define CLKID_SD                                       26
+>> +#define CLKID_RNG0                                     27
+>> +#define CLKID_UART0                                    28
+>> +#define CLKID_SPICC1                           29
+>> +#define CLKID_HIU_IFACE                                30
+>> +#define CLKID_MIPI_DSI_PHY                     31
+>> +#define CLKID_ASSIST_MISC                      32
+>> +#define CLKID_SD_EMMC_A                                33
+>> +#define CLKID_SD_EMMC_B                                34
+>> +#define CLKID_SD_EMMC_C                                35
+>> +#define CLKID_AUDIO_CODEC                      36
+>> +#define CLKID_AUDIO                                    37
+>> +#define CLKID_ETH                                      38
+>> +#define CLKID_DEMUX                                    39
+>> +#define CLKID_AUDIO_IFIFO                      40
+>> +#define CLKID_ADC                                      41
+>> +#define CLKID_UART1                                    42
+>> +#define CLKID_G2D                                      43
+>> +#define CLKID_RESET                                    44
+>> +#define CLKID_PCIE_COMB                                45
+>> +#define CLKID_PARSER                           46
+>> +#define CLKID_USB                                      47
+>> +#define CLKID_PCIE_PHY                         48
+>> +#define CLKID_AHB_ARB0                         49
+>> +#define CLKID_AHB_DATA_BUS                     50
+>> +#define CLKID_AHB_CTRL_BUS                     51
+>> +#define CLKID_HTX_HDCP22                       52
+>> +#define CLKID_HTX_PCLK                         53
+>> +#define CLKID_BT656                                    54
+>> +#define CLKID_USB1_DDR_BRIDGE          55
+>> +#define CLKID_MMC_PCLK                         56
+>> +#define CLKID_UART2                                    57
+>> +#define CLKID_VPU_INTR                         58
+>> +#define CLKID_GIC                                      59
+>> +#define CLKID_SD_EMMC_B_CLK0           60
+>> +#define CLKID_SD_EMMC_C_CLK0           61
+>> +#define CLKID_HIFI_PLL                         71
+>> +
+> is this empty line here on purpose? a comment would be great if
+> there's a reason behind it (there's already a gap in the numbering
+> between CLKID_GP0_PLL and CLKID_CLK81, but there's no empty line there
+> - either way is fine, please just keep it consistent)
 > 
-> So you mean that I should use clk_hw_register_fixed_rate and create new
-> clk if parent is not found? Isn't this a bit of an overkill? Downside is
-> that then we do need remove/cleanup functionality for deleting this
-> parent clock - and I didn't find devm support for fixed clock. Furthermore
-> I guess that since it is parent, it can't be removed before child is removed.
+I will drop the empty line, The gaps have define in 
+drivers/clk/meson/g12a.h file.
 > 
-> Or did you mean something else but creating a fixed rate clock as parent
-> here?
-
-I would be grateful for any tips on how to proceed. Should I
-
-1. Really create a fixed rate clock - and build cleanup sequence myself
-2. Keep this simple and fail if no parent is found using of_clk_get_parent_name
-
-Best regards
-    Matti Vaittinen
+> Regards
+> Martin
+> 
+> .
+> 
