@@ -1,93 +1,179 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:58268 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932441AbeGCHhK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jul 2018 03:37:10 -0400
-Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
- <20180703145716.31860-3-yixun.lan@amlogic.com>
- <20180703092107.51497a8f@bbrezillon>
-CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
-Date: Tue, 3 Jul 2018 15:36:46 +0800
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Wed, 11 Jul 2018 11:00:22 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+CC: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
+Message-ID: <20180711080022.GB1636@tbergstrom-lnx.Nvidia.com>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+ <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+ <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180703092107.51497a8f@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-
-Hi Broris
-
- thanks for your quick response, and see my comments below
-
-On 07/03/18 15:21, Boris Brezillon wrote:
-> On Tue, 3 Jul 2018 14:57:15 +0000
-> Yixun Lan <yixun.lan@amlogic.com> wrote:
+On Tue, Jul 10, 2018 at 05:17:05PM +0100, Jon Hunter wrote:
 > 
->> Add two clock bindings IDs which provided by the EMMC clock controller,
->> These two clocks will be used by EMMC or NAND driver.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
->>
->> diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
->> new file mode 100644
->> index 000000000000..d9972c400e58
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/emmc-clkc.h
->> @@ -0,0 +1,14 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Meson EMMC sub clock tree IDs
->> + *
->> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->> + */
->> +
->> +#ifndef __EMMC_CLKC_H
->> +#define __EMMC_CLKC_H
->> +
->> +#define CLKID_EMMC_C_MUX				0
+> On 09/07/18 17:38, Aapo Vienamo wrote:
+> > From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > 
+> > Move this to a separate file so it can be used to calculate the sdmmc
+> > clock dividers.
 > 
-> Looks like the MUX clk is the parent of the DIV one, and I guess the clk
-> driver is able to select the best parent+div pair for a requested rate.
-> Do you really need to expose the MUX to users?
+> Sorry for not commenting sooner, but what is the motivation for moving
+> this to its own file? I don't see why we need to do this in order to use
+> elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
+> and now we have a div71.c which seems quite specific.
+
+How else would you do it?
+
+Peter.
+
+> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/Makefile      |  1 +
+> >  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+> >  drivers/clk/tegra/clk.h         |  3 +++
+> >  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 52 insertions(+), 25 deletions(-)
+> >  create mode 100644 drivers/clk/tegra/div71.c
+> > 
+> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> > index b716923..6d4f563 100644
+> > --- a/drivers/clk/tegra/Makefile
+> > +++ b/drivers/clk/tegra/Makefile
+> > @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+> >  obj-y					+= cvb.o
+> >  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+> >  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> > +obj-y					+= div71.o
+> > diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> > index 16e0aee..ad87858 100644
+> > --- a/drivers/clk/tegra/clk-divider.c
+> > +++ b/drivers/clk/tegra/clk-divider.c
+> > @@ -32,35 +32,15 @@
+> >  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+> >  		   unsigned long parent_rate)
+> >  {
+> > -	u64 divider_ux1 = parent_rate;
+> > -	u8 flags = divider->flags;
+> > -	int mul;
+> > -
+> > -	if (!rate)
+> > -		return 0;
+> > -
+> > -	mul = get_mul(divider);
+> > -
+> > -	if (!(flags & TEGRA_DIVIDER_INT))
+> > -		divider_ux1 *= mul;
+> > -
+> > -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> > -		divider_ux1 += rate - 1;
+> > -
+> > -	do_div(divider_ux1, rate);
+> > -
+> > -	if (flags & TEGRA_DIVIDER_INT)
+> > -		divider_ux1 *= mul;
+> > +	int div;
+> >  
+> > -	divider_ux1 -= mul;
+> > +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
+> > +			divider->flags);
+> >  
+> > -	if ((s64)divider_ux1 < 0)
+> > +	if (div < 0)
+> >  		return 0;
+> >  
+> > -	if (divider_ux1 > get_max_div(divider))
+> > -		return get_max_div(divider);
+> > -
+> > -	return divider_ux1;
+> > +	return div;
+> >  }
+> >  
+> >  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index e3b9c22..149cc70 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+> >  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> > +	      u8 frac_width, u8 flags);
+> > +
+> >  
+> >  /* Combined read fence with delay */
+> >  #define fence_udelay(delay, reg)	\
+> > diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> > new file mode 100644
+> > index 0000000..1eecc84
+> > --- /dev/null
+> > +++ b/drivers/clk/tegra/div71.c
+> > @@ -0,0 +1,43 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> > + */
+> > +
+> > +#include <asm/div64.h>
+> > +
+> > +#include "clk.h"
+> > +
+> > +#define div_mask(w) ((1 << (w)) - 1)
+> > +
+> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> > +	      u8 frac_width, u8 flags)
+> > +{
+> > +	u64 divider_ux1 = parent_rate;
+> > +	int mul;
+> > +
+> > +	if (!rate)
+> > +		return 0;
+> > +
+> > +	mul = 1 << frac_width;
+> > +
+> > +	if (!(flags & TEGRA_DIVIDER_INT))
+> > +		divider_ux1 *= mul;
+> > +
+> > +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> > +		divider_ux1 += rate - 1;
+> > +
+> > +	do_div(divider_ux1, rate);
+> > +
+> > +	if (flags & TEGRA_DIVIDER_INT)
+> > +		divider_ux1 *= mul;
+> > +
+> > +	if (divider_ux1 < mul)
+> > +		return 0;
+> > +
+> > +	divider_ux1 -= mul;
+> > +
+> > +	if (divider_ux1 > div_mask(width))
+> > +		return div_mask(width);
+> > +
+> > +	return divider_ux1;
+> > +}
 > 
-
-Yes, It's true, the mux is parent of the div clock.
-
-while testing for the NAND driver, I find it's kind of loose about the
-parent of the clock, so selecting the div (and let CCF decide freely) is
-actually works fine
-
-but for the EMMC driver, especially when running at high clock, it's
-kind of picky about the parent of the clock, so the driver may want to
-manually choose the parent of the mux clock (example fclk_div2 here).
-That's why I'm exporting this clock ID.
-
-
->> +#define CLKID_EMMC_C_DIV				1
->> +
->> +#endif
+> I don't see anything in the above that makes this 7.1? It seems that the
+> fractional width is being passed meaning it could be m.n unless I am missing
+> something.
 > 
-> .
+> Cheers
+> Jon
 > 
-
+> -- 
+> nvpublic
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
