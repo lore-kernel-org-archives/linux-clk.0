@@ -1,91 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:26559 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932666AbeGIN3t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Jul 2018 09:29:49 -0400
-Subject: Re: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S
- controllers
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <robh+dt@kernel.org>, <broonie@kernel.org>, <sboyd@kernel.org>,
-        <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
- <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
- <20180706193923.GC16084@piout.net>
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Message-ID: <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
-Date: Mon, 9 Jul 2018 16:29:43 +0300
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 11 Jul 2018 13:45:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] clk: meson: add sub MMC clock dt-bindings IDs
+Message-ID: <20180711194546.GA7090@rob-hp-laptop>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-3-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20180706193923.GC16084@piout.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180710163658.6175-3-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06.07.2018 22:39, Alexandre Belloni wrote:
-> Hi Codrin,
-> 
-> On 18/06/2018 17:12:38+0300, Codrin Ciubotariu wrote:
->> From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
->>
->> This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
->> each I2S node.
->>
->> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
->> [codrin.ciubotariu@microchip.com: added phandle to new mux clock]
->> Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
->> ---
->>
->> The bindings for the I2S node are applied to broonie/sound.git .
->>
->> Changes in v5:
->> 	- the previous name was:
->> 	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
->>
->>   arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 34 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
->> index eeb6afa1cda7..eca73ce40bc5 100644
->> --- a/arch/arm/boot/dts/sama5d2.dtsi
->> +++ b/arch/arm/boot/dts/sama5d2.dtsi
->> @@ -58,6 +58,8 @@
->>   		serial1 = &uart3;
->>   		tcb0 = &tcb0;
->>   		tcb1 = &tcb1;
->> +		i2s0 = &i2s0;
->> +		i2s1 = &i2s1;
->>   	};
->>   
->>   	cpus {
->> @@ -1313,6 +1315,22 @@
->>   				clocks = <&clk32k>;
->>   			};
->>   
->> +			i2s0: i2s@f8050000 {
->> +				compatible = "atmel,sama5d2-i2s";
->> +				reg = <0xf8050000 0x100>;
->> +				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
->> +				dmas = <&dma0
->> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
->> +					 AT91_XDMAC_DT_PERID(31))>,
->> +				       <&dma0
->> +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
->> +					 AT91_XDMAC_DT_PERID(32))>;
->> +				dma-names = "tx", "rx";
->> +				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
->> +				clock-names = "pclk", "gclk", "aclk", "muxclk";
->> +				status = "disabled";
->> +			};
->> +
-> 
-> Can you resend the DTS patches after removing the unnecessary clocks?
+On Tue, Jul 10, 2018 at 04:36:57PM +0000, Yixun Lan wrote:
+> Add two clock bindings IDs which provided by the MMC clock controller,
+> These two clocks will be used by MMC or NAND driver.
 
-I will. Should I also make the "muxclk" clock an assigned clock to 
-assign its parent ?
+I count 3 ids.
 
-Thanks and best regards,
-Codrin
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../dt-bindings/clock/amlogic,meson-mmc-clkc.h   | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+
+This can go with the binding patch.
+
+> 
+> diff --git a/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+> new file mode 100644
+> index 000000000000..2ae988ebc3ae
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Meson MMC sub clock tree IDs
+> + *
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#ifndef __MMC_CLKC_H
+> +#define __MMC_CLKC_H
+> +
+> +#define CLKID_MMC_DIV				1
+> +#define CLKID_MMC_PHASE_TX			3
+> +#define CLKID_MMC_PHASE_RX			4
+> +
+> +#endif
+> -- 
+> 2.18.0
+> 
