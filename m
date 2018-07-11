@@ -1,53 +1,40 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/8] dt: bindings: tegra20-emc: Document interrupt property
-Date: Tue, 24 Jul 2018 19:42:14 +0300
-Message-Id: <20180724164221.3307-2-digetx@gmail.com>
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
+Date: Wed, 11 Jul 2018 12:03:13 -0500
+Message-Id: <20180711170313.80321-3-chris.brandt@renesas.com>
+In-Reply-To: <20180711170313.80321-1-chris.brandt@renesas.com>
+References: <20180711170313.80321-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-EMC has a dedicated interrupt that is used to notify about completion of
-HW operations. Document the interrupt property.
+Renesas R7S9210 SoC also has the CPG MSTP clocks.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-index 4c33b29dc660..a6fe401d0d48 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
-@@ -10,6 +10,7 @@ Properties:
-   and chosen using the ramcode board selector. If omitted, only one
-   set of tables can be present and said tables will be used
-   irrespective of ram-code configuration.
-+- interrupts : Should contain EMC General interrupt.
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+index da578ebdda28..bb470d9bc07f 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
+@@ -11,6 +11,7 @@ Required Properties:
  
- Child device nodes describe the memory settings for different configurations and clock rates.
- 
-@@ -20,6 +21,7 @@ Example:
- 		#size-cells = < 0 >;
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f4000 0x200>;
-+		interrupts = <0 78 0x04>;
- 	}
- 
- 
+   - compatible: Must be one of the following
+     - "renesas,r7s72100-mstp-clocks" for R7S72100 (RZ) MSTP gate clocks
++    - "renesas,r7s9210-mstp-clocks" for R7S9210 (RZ A2) MSTP gate clocks
+     - "renesas,r8a73a4-mstp-clocks" for R8A73A4 (R-Mobile APE6) MSTP gate clocks
+     - "renesas,r8a7740-mstp-clocks" for R8A7740 (R-Mobile A1) MSTP gate clocks
+     - "renesas,r8a7778-mstp-clocks" for R8A7778 (R-Car M1) MSTP gate clocks
 -- 
-2.18.0
+2.16.1
