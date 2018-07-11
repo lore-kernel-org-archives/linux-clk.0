@@ -1,68 +1,64 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180617145539.4758-7-digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180617145539.4758-1-digetx@gmail.com>
- <20180617145539.4758-7-digetx@gmail.com>
-Message-ID: <153109441777.143105.8459253820659446035@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date: Sun, 08 Jul 2018 17:00:17 -0700
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
+Date: Wed, 11 Jul 2018 16:20:55 +0200
+Message-Id: <20180711142100.3765-7-geert+renesas@glider.be>
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dmitry Osipenko (2018-06-17 07:55:37)
-> Kernel should never gate the EMC clock as it causes immediate lockup, so
-> removing clk-gate functionality doesn't affect anything. Turning EMC clk
-> gate into divider allows to implement glitch-less EMC scaling, avoiding
-> reparenting to a backup clock.
-> =
+Add support for defining fixed rate clocks, to be used for on-chip
+oscillators.
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-Who's supposed to apply this? Me? Thierry? The "To:" line is not
-useful when every maintainer is there.
-
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
-a20.c
-> index cc857d4d4a86..2bd35418716a 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_no=
-div_clk_list[] =3D {
->         TEGRA_INIT_DATA_NODIV("disp2",  mux_pllpdc_clkm, CLK_SOURCE_DISP2=
-, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
->  };
->  =
-
-> +static void __init tegra20_emc_clk_init(void)
-> +{
-> +       struct clk *clk;
-> +
-> +       clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> +                              ARRAY_SIZE(mux_pllmcp_clkm),
-> +                              CLK_SET_RATE_NO_REPARENT,
-> +                              clk_base + CLK_SOURCE_EMC,
-> +                              30, 2, 0, &emc_lock);
-> +
-> +       clk =3D tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOU=
-RCE_EMC,
-> +                                   &emc_lock);
-> +       clks[TEGRA20_CLK_MC] =3D clk;
-> +
-> +       /*
-> +        * Note that 'emc_mux' source and 'emc' rate shouldn't be changed=
- at
-> +        * the same time due to a HW bug, this won't happen because we're
-> +        * defining 'emc_mux' and 'emc' as a distinct clocks.
-
-s/ a//
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index f4b013e9352d9efc..e04338932786bc14 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 		}
+ 		break;
+ 
++	case CLK_TYPE_FR:
++		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
++					      core->mult);
++		break;
++
+ 	default:
+ 		if (info->cpg_clk_register)
+ 			clk = info->cpg_clk_register(dev, core, info,
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 642f720b9b055337..87bb8f368d4ecd18 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -38,6 +38,7 @@ enum clk_types {
+ 	CLK_TYPE_FF,		/* Fixed Factor Clock */
+ 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
+ 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
++	CLK_TYPE_FR,		/* Fixed Rate Clock */
+ 
+ 	/* Custom definitions start here */
+ 	CLK_TYPE_CUSTOM,
+@@ -56,6 +57,8 @@ enum clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
+ #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
++#define DEF_RATE(_name, _id, _rate)	\
++	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
+ 
+     /*
+      * Definitions of Module Clocks
+-- 
+2.17.1
