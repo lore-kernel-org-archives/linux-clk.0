@@ -1,224 +1,339 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 3/4] clk: tegra: Add sdmmc mux divider clock
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Aapo Vienamo <avienamo@nvidia.com>, Prashant Gaikwad
+	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+ <1531319965-19689-4-git-send-email-avienamo@nvidia.com>
+ <606a5a54-7674-0cca-9040-f8cb93b3cf8f@nvidia.com>
+ <20180712112042.GF1636@tbergstrom-lnx.Nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <27861604-8d9a-eddf-9d5e-1b6742e01720@nvidia.com>
+Date: Thu, 12 Jul 2018 12:32:14 +0100
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
- <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153263587085.48062.14881216441533347350@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/2] clk: qcom: Add support for RCG to register for DFS
-Date: Thu, 26 Jul 2018 13:11:10 -0700
+In-Reply-To: <20180712112042.GF1636@tbergstrom-lnx.Nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-07-15 22:37:47)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 52208d4..f8f1417 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -929,3 +938,167 @@ static void clk_rcg2_shared_disable(struct clk_hw *=
-hw)
->         .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
->  };
->  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-> +
-> +/* Common APIs to be used for DFS based RCGR */
-> +static unsigned long clk_rcg2_calculate_freq(struct clk_hw *hw,
-> +               int level, struct freq_tbl *f)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       struct clk_hw *p;
-> +       unsigned long prate =3D 0;
-> +       u32 val, mask, cfg, m_off, n_off, offset, mode;
-> +       int i, ret, num_parents;
-> +
-> +       offset =3D SE_PERF_DFSR(level);
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cf=
-g);
-> +       if (ret)
-> +               return ret;
-> +
-> +       mask =3D BIT(rcg->hid_width) - 1;
-> +       f->pre_div =3D cfg & mask ? (cfg & mask) : 1;
-> +
-> +       mode =3D cfg & CFG_MODE_MASK;
-> +       mode >>=3D CFG_MODE_SHIFT;
-> +
-> +       cfg &=3D CFG_SRC_SEL_MASK;
-> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
-> +
-> +       num_parents =3D clk_hw_get_num_parents(hw);
-> +       for (i =3D 0; i < num_parents; i++) {
-> +               if (cfg =3D=3D rcg->parent_map[i].cfg) {
-> +                       f->src =3D rcg->parent_map[i].src;
-> +                       p =3D clk_hw_get_parent_by_index(&rcg->clkr.hw, i=
-);
-> +                       prate =3D clk_hw_get_rate(p);
-> +               }
-> +       }
-> +
-> +       if (!mode)
-> +               goto done;
 
-Please remove the goto and indent all the below code when we need to do
-the mode check.
+On 12/07/18 12:20, Peter De Schrijver wrote:
+> On Thu, Jul 12, 2018 at 11:52:31AM +0100, Jon Hunter wrote:
+>>
+>> On 11/07/18 15:39, Aapo Vienamo wrote:
+>>> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+>>>
+>>> Add a clock type to model the sdmmc switch divider clocks which have paths
+>>> to source clocks bypassing the divider (Low Jitter paths). These
+>>> are handled by selecting the lj path when the divider is 1 (ie the
+>>> rate is the parent rate), otherwise the normal path with divider
+>>> will be selected. Otherwise this clock behaves as a normal peripheral
+>>> clock.
+>>>
+>>> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+>>> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+>>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>>>  drivers/clk/tegra/Makefile        |   1 +
+>>>  drivers/clk/tegra/clk-sdmmc-mux.c | 249 ++++++++++++++++++++++++++++++++++++++
+>>>  drivers/clk/tegra/clk.h           |  26 ++++
+>>>  3 files changed, 276 insertions(+)
+>>>  create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+>>>
+>>> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+>>> index c79319d..8975f88 100644
+>>> --- a/drivers/clk/tegra/Makefile
+>>> +++ b/drivers/clk/tegra/Makefile
+>>> @@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
+>>>  obj-y					+= clk-periph-gate.o
+>>>  obj-y					+= clk-pll.o
+>>>  obj-y					+= clk-pll-out.o
+>>> +obj-y					+= clk-sdmmc-mux.o
+>>>  obj-y					+= clk-super.o
+>>>  obj-y					+= clk-tegra-audio.o
+>>>  obj-y					+= clk-tegra-periph.o
+>>> diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+>>> new file mode 100644
+>>> index 0000000..9566754
+>>> --- /dev/null
+>>> +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+>>> @@ -0,0 +1,249 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
+>>> + *
+>>> + * based on clk-mux.c
+>>> + *
+>>> + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
+>>> + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
+>>> + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
+>>> + *
+>>> + */
+>>> +
+>>> +#include <linux/clk-provider.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/types.h>
+>>> +
+>>> +#include "clk.h"
+>>> +
+>>> +#define DIV_MASK GENMASK(7, 0)
+>>> +#define MUX_SHIFT 29
+>>> +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
+>>> +
+>>> +#define get_max_div(d) DIV_MASK
+>>> +#define get_div_field(val) ((val) & DIV_MASK)
+>>> +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
+>>> +
+>>> +static const char * const mux_sdmmc_parents[] = {
+>>> +	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
+>>> +};
+>>> +
+>>> +static const u8 mux_lj_idx[] = {
+>>> +	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
+>>> +};
+>>> +
+>>> +static const u8 mux_non_lj_idx[] = {
+>>> +	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
+>>> +};
+>>> +
+>>> +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	int num_parents, i;
+>>> +	u32 src, val;
+>>> +	const u8 *mux_idx;
+>>> +
+>>> +	num_parents = clk_hw_get_num_parents(hw);
+>>> +
+>>> +	val = readl_relaxed(sdmmc_mux->reg);
+>>> +	src = get_mux_field(val);
+>>> +	if (get_div_field(val))
+>>> +		mux_idx = mux_non_lj_idx;
+>>> +	else
+>>> +		mux_idx = mux_lj_idx;
+>>> +
+>>> +	for (i = 0; i < num_parents; i++) {
+>>> +		if (mux_idx[i] == src)
+>>> +			return i;
+>>> +	}
+>>> +
+>>> +	WARN(1, "Unknown parent selector %d\n", src);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	u32 val;
+>>> +
+>>> +
+>>> +	val = readl_relaxed(sdmmc_mux->reg);
+>>> +	if (get_div_field(val))
+>>> +		index = mux_non_lj_idx[index];
+>>> +	else
+>>> +		index = mux_lj_idx[index];
+>>> +
+>>> +	val &= ~MUX_MASK;
+>>> +	val |= index << MUX_SHIFT;
+>>> +
+>>> +	writel(val, sdmmc_mux->reg);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
+>>> +					       unsigned long parent_rate)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	u32 val;
+>>> +	int div, mul;
+>>> +	u64 rate = parent_rate;
+>>> +
+>>> +	val = readl_relaxed(sdmmc_mux->reg);
+>>> +	div = get_div_field(val);
+>>> +
+>>> +	mul = 2;
+>>> +	div += mul;
+>>> +
+>>> +	rate *= mul;
+>>> +	rate += div - 1;
+>>> +	do_div(rate, div);
+>>> +
+>>> +	return rate;
+>>> +}
+>>> +
+>>> +static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
+>>> +					struct clk_rate_request *req)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	int div, mul;
+>>> +	unsigned long output_rate = req->best_parent_rate;
+>>> +
+>>> +	req->rate = max(req->rate, req->min_rate);
+>>> +	req->rate = min(req->rate, req->max_rate);
+>>> +
+>>> +	if (!req->rate)
+>>> +		return output_rate;
+>>> +
+>>> +	div = div_frac_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
+>>> +	if (div < 0)
+>>> +		div = 0;
+>>> +
+>>> +	mul = 2;
+>>
+>> This multiplier never changes and so maybe more appropriate to add a 
+>> #define TEGRA_SDMMC_MULT or something for this function and the above.
+>>
+>>> +	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
+>>> +		req->rate =  DIV_ROUND_UP(output_rate * mul, div + mul);
+>>> +	else
+>>> +		req->rate =  output_rate * mul / (div + mul);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
+>>> +				  unsigned long parent_rate)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	int div;
+>>> +	unsigned long flags = 0;
+>>> +	u32 val;
+>>> +	u8 src;
+>>> +
+>>> +	div = div_frac_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
+>>> +	if (div < 0)
+>>> +		return div;
+>>> +
+>>> +	if (sdmmc_mux->lock)
+>>> +		spin_lock_irqsave(sdmmc_mux->lock, flags);
+>>> +
+>>> +	src = clk_sdmmc_mux_get_parent(hw);
+>>> +	if (div)
+>>> +		src = mux_non_lj_idx[src];
+>>> +	else
+>>> +		src = mux_lj_idx[src];
+>>> +
+>>> +	val = src << MUX_SHIFT;
+>>> +	val |= div;
+>>> +	writel(val, sdmmc_mux->reg);
+>>> +	fence_udelay(2, sdmmc_mux->reg);
+>>> +
+>>> +	if (sdmmc_mux->lock)
+>>> +		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+>>> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+>>> +
+>>> +	__clk_hw_set_clk(gate_hw, hw);
+>>> +
+>>> +	return gate_ops->is_enabled(gate_hw);
+>>> +}
+>>> +
+>>> +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+>>> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+>>> +
+>>> +	__clk_hw_set_clk(gate_hw, hw);
+>>> +
+>>> +	return  gate_ops->enable(gate_hw);
+>>
+>> Nit-pick ... extra space.
+>>
+>>> +}
+>>> +
+>>> +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
+>>> +{
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
+>>> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
+>>> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
+>>> +
+>>> +	gate_ops->disable(gate_hw);
+>>> +}
+>>> +
+>>> +static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+>>> +	.get_parent = clk_sdmmc_mux_get_parent,
+>>> +	.set_parent = clk_sdmmc_mux_set_parent,
+>>> +	.determine_rate = clk_sdmmc_mux_determine_rate,
+>>> +	.recalc_rate = clk_sdmmc_mux_recalc_rate,
+>>> +	.set_rate = clk_sdmmc_mux_set_rate,
+>>> +	.is_enabled = clk_sdmmc_mux_is_enabled,
+>>> +	.enable = clk_sdmmc_mux_enable,
+>>> +	.disable = clk_sdmmc_mux_disable,
+>>> +};
+>>> +
+>>> +struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
+>>> +	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
+>>> +	unsigned long flags, void *lock)
+>>> +{
+>>> +	struct clk *clk;
+>>> +	struct clk_init_data init;
+>>> +	const struct tegra_clk_periph_regs *bank;
+>>> +	struct tegra_sdmmc_mux *sdmmc_mux;
+>>> +
+>>> +	init.ops = &tegra_clk_sdmmc_mux_ops;
+>>> +	init.name = name;
+>>> +	init.flags = flags;
+>>
+>> Flags do not appear to be passed by the callers currently. Do we need
+>> to pass these or could we set to 0 here?
+>>
+> 
+> This is what we do for all other peripheral clocks. I don't think it makes
+> much sense to deviate from that pattern for this case.
+> 
+>>> +	init.parent_names = mux_sdmmc_parents;
+>>> +	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
+>>> +
+>>> +	bank = get_reg_bank(clk_num);
+>>> +	if (!bank)
+>>> +		return ERR_PTR(-EINVAL);
+>>> +
+>>> +	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
+>>> +	if (!sdmmc_mux)
+>>> +		return ERR_PTR(-ENOMEM);
+>>> +
+>>> +	/* Data in .init is copied by clk_register(), so stack variable OK */
+>>> +	sdmmc_mux->hw.init = &init;
+>>> +	sdmmc_mux->reg = clk_base + offset;
+>>> +	sdmmc_mux->lock = lock;
+>>
+>> Does not look like this lock is never used. The callers pass NULL.
+>> Do we have plans to use this?
+>>
+> 
+> Same here. This is inline with what we do for other peripheral clocks even
+> though the vast majority never needs this.
+> 
+>>> +	sdmmc_mux->gate.clk_base = clk_base;
+>>> +	sdmmc_mux->gate.regs = bank;
+>>> +	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
+>>> +	sdmmc_mux->gate.clk_num = clk_num;
+>>> +	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
+>>> +	sdmmc_mux->div_flags = div_flags;
+>>
+>> Callers set div_flags to TEGRA_DIVIDER_ROUND_UP. Does this need to
+>> be passed?
+>>
+> 
+> Not sure if this will always be the case.
 
-> +
-> +       /* Calculate M & N values */
-> +       m_off =3D SE_PERF_M_DFSR(level);
-> +       n_off =3D SE_PERF_N_DFSR(level);
-> +
-> +       mask =3D BIT(rcg->mnd_width) - 1;
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off, &val=
-);
-> +       if (ret) {
-> +               pr_err("Failed to read M offset register\n");
-> +               return ret;
-> +       }
-> +       val &=3D mask;
-> +       f->m =3D val;
-> +
-> +       ret =3D regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off, &val=
-);
-> +       if (ret) {
-> +               pr_err("Failed to read N offset register\n");
-> +               return ret;
-> +       }
-> +       /* val ~(N-M) */
-> +       val =3D ~val;
-> +       val &=3D mask;
-> +       val +=3D f->m;
-> +       f->n =3D val;
-> +done:
-> +       return calc_rate(prate, f->m, f->n, mode, f->pre_div);
-> +}
-> +
-> +static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
-> +{
-> +       struct freq_tbl *freq_tbl;
-> +       unsigned long calc_freq;
-> +       int i;
-> +
-> +       freq_tbl =3D kcalloc(MAX_PERF_LEVEL, sizeof(*freq_tbl),
-> +                               GFP_KERNEL);
-> +       if (!freq_tbl)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < MAX_PERF_LEVEL; i++) {
-> +               calc_freq =3D clk_rcg2_calculate_freq(&rcg->clkr.hw,
-> +                                                       i, &freq_tbl[i]);
-> +               if (calc_freq < 0) {
-> +                       kfree(freq_tbl);
-> +                       return calc_freq;
-> +               }
-> +
-> +               freq_tbl[i].freq =3D calc_freq;
-> +       }
-> +       rcg->freq_tbl =3D freq_tbl;
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
-> +                                  struct clk_rate_request *req)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       int ret;
-> +
-> +       if (!rcg->freq_tbl) {
-> +               ret =3D clk_rcg2_dfs_populate_freq_table(rcg);
-> +               if (ret) {
-> +                       pr_err("Failed to update DFS tables for %s\n",
-> +                                       clk_hw_get_name(hw));
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return clk_rcg2_shared_ops.determine_rate(hw, req);
-> +}
-> +
-> +static const struct clk_ops clk_rcg2_dfs_ops =3D {
-> +       .is_enabled =3D clk_rcg2_is_enabled,
-> +       .get_parent =3D clk_rcg2_get_parent,
-> +       .determine_rate =3D clk_rcg2_dfs_determine_rate,
+OK, the above is fine with me.
 
-It seems very risky to do this without being able to read the frequency
-out of the hardware. Taking a peek at the DFS registers I see that there
-is some sort of 'CURR_PERF_STATE' field in the DFSR register. Wouldn't
-that correspond to the index in the table that the clk is currently
-using? Why can't we mark these clks as CLK_GET_RATE_NOCACHE and then
-read this field when we're using DFS?
+Cheers
+Jon
 
-In fact, I just tested this on my device and I see that changing the DFS
-bit on the QUP register that controls the DFS used causes the DFSR
-register in GCC to update the CURR_PERF_STATE field to match what is
-chosen in the QUP. So there is definitely a way to implement
-recalc_rate() for this clk. Please do so.
-
-> +};
-> +
-> +static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regm=
-ap)
-> +{
-> +       struct clk_init_data *init;
-> +       u32 val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
-> +                         &val);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       if (!(val & SE_CMD_DFS_EN))
-> +               return 0;
-> +
-> +       init =3D kzalloc(sizeof(*init), GFP_KERNEL);
-> +       if (!init)
-> +               return -ENOMEM;
-> +
-> +       init->name =3D rcg->clkr.hw.init->name;
-> +       init->flags =3D rcg->clkr.hw.init->flags;
-> +       init->parent_names =3D rcg->clkr.hw.init->parent_names;
-> +       init->num_parents =3D rcg->clkr.hw.init->num_parents;
-> +       init->ops =3D &clk_rcg2_dfs_ops;
-> +
-> +       rcg->clkr.hw.init =3D init;
-> +       rcg->freq_tbl =3D NULL;
-> +
-> +       pr_debug("DFS registered for clk %s\n", init->name);
-
-Ok
-
-> +
-> +       return 0;
-> +}
-> +
-> +int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> +                           struct clk_rcg2 **rcgs, int num_clks)
-> +{
-> +       int i, ret =3D 0;
-> +
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               ret =3D clk_rcg2_enable_dfs(rcgs[i], regmap);
-> +               if (ret) {
-> +                       const char *name =3D rcgs[i]->clkr.hw.init->name;
-> +
-> +                       pr_err("DFS register failed for clk %s\n", name);
-> +                       break;
-
-Just return ret please.
-
-> +               }
-> +       }
-> +
-> +       return ret;
-
-And return 0 here.
-
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+-- 
+nvpublic
