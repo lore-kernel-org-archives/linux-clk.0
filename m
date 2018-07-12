@@ -1,31 +1,48 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530615672.2900.205.camel@baylibre.com>
-Subject: Re: [PATCH v2 2/2] clk: meson-axg: add clocks required by pcie
- driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Qiufang Dai <qiufang.dai@amlogic.com>,  Jian Hu
- <jian.hu@amlogic.com>, Jianxin Qin <jianxin.qin@amlogic.com>,
- linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Tue, 03 Jul 2018 13:01:12 +0200
-In-Reply-To: <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
-References: <20180702213118.19222-1-yixun.lan@amlogic.com>
-	 <20180702213118.19222-3-yixun.lan@amlogic.com>
-	 <1530609862.2900.187.camel@baylibre.com>
-	 <7c8b47a9-67bc-b685-8c90-084299631fb0@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v2 2/3] clk: meson: add sub MMC clock dt-bindings IDs
+To: Rob Herring <robh@kernel.org>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-3-yixun.lan@amlogic.com>
+ <20180711194546.GA7090@rob-hp-laptop>
+CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil
+ Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <84511d9a-5d29-ae6f-de0b-4701bafe2ab7@amlogic.com>
+Date: Thu, 12 Jul 2018 10:51:28 +0800
+MIME-Version: 1.0
+In-Reply-To: <20180711194546.GA7090@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-03 at 18:17 +0800, Yixun Lan wrote:
-> I'm seeing you already applied this patch, so would you like to
-> fix/amend the patch for me, or want me send another patch version?
-> 
-> thanks
+Hi Rob
 
-It means that I amended your patch before applying it.
+On 07/12/18 03:45, Rob Herring wrote:
+> On Tue, Jul 10, 2018 at 04:36:57PM +0000, Yixun Lan wrote:
+>> Add two clock bindings IDs which provided by the MMC clock controller,
+>> These two clocks will be used by MMC or NAND driver.
+> 
+> I count 3 ids.
+I will update this
+
+> 
+>>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  .../dt-bindings/clock/amlogic,meson-mmc-clkc.h   | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+> 
+> This can go with the binding patch.
+> 
+sure
+
+.
