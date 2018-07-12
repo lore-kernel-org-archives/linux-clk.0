@@ -1,136 +1,153 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.133]:42348 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388014AbeGWJkB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 05:40:01 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH 5/5] clk: RK808: add clkout driver for RK809 and RK817.
-Date: Mon, 23 Jul 2018 16:40:33 +0800
-Message-Id: <1532335234-23765-1-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
-References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
+Date: Thu, 12 Jul 2018 22:39:38 +0530
+Message-Id: <1531415381-16885-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
+References: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+For some of the GDSCs, there is a requirement to enable/disable the
+few clocks before turning on/off the gdsc power domain. Add support
+for the same by specifying a list of clk_hw pointers per gdsc and
+enable/disable them along with power domain on/off callbacks.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/clk/Kconfig     |  6 ++---
- drivers/clk/clk-rk808.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 64 insertions(+), 4 deletions(-)
+ drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h |  5 +++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..fc1427c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,11 +46,11 @@ config COMMON_CLK_MAX77686
- 	  clock.
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a077133..b6adca1 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -12,6 +12,8 @@
+  */
  
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+          These multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
- 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..c5d3492 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
+ #include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+ 			   GMEM_RESET_MASK, 0);
  }
++
++static int gdsc_clk_prepare_enable(struct gdsc *sc)
++{
++	int i, ret;
++
++	for (i = 0; i < sc->clk_count; i++) {
++		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
++		if (ret) {
++			for (i--; i >= 0; i--)
++				clk_disable_unprepare(sc->clk_hws[i]->clk);
++			return ret;
++		}
++	}
++	return 0;
++}
++
++static void gdsc_clk_disable_unprepare(struct gdsc *sc)
++{
++	int i;
++
++	for (i = 0; i < sc->clk_count; i++)
++		clk_disable_unprepare(sc->clk_hws[i]->clk);
++}
++
+ static int gdsc_enable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
  
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	case RK805_ID:
-+	case RK808_ID:
-+	case RK818_ID:
-+		return &rk808_clkout2_ops;
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
 +	}
 +
-+	return &rk808_clkout2_ops;
-+}
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_deassert_reset(sc);
+ 
+@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 		udelay(1);
+ 	}
+ 
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
 +
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
+ 	return 0;
+ }
  
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
+@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
  
- 	/* optional override of the clockname */
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
++	}
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+ 
+@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	if (sc->flags & CLAMP_IO)
+ 		gdsc_assert_clamp_io(sc);
+ 
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index bd1f2c7..59957d7 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -17,6 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/pm_domain.h>
+ 
++struct clk_hw;
+ struct regmap;
+ struct reset_controller_dev;
+ 
+@@ -32,6 +33,8 @@
+  * @resets: ids of resets associated with this gdsc
+  * @reset_count: number of @resets
+  * @rcdev: reset controller
++ * @clk_count: number of associated clocks
++ * @clk_hws: clk_hw pointers for associated clocks with gdsc
+  */
+ struct gdsc {
+ 	struct generic_pm_domain	pd;
+@@ -60,6 +63,8 @@ struct gdsc {
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
++	unsigned int			clk_count;
++	struct clk_hw			*clk_hws[];
+ };
+ 
+ struct gdsc_desc {
 -- 
-1.9.1
-
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
