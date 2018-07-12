@@ -1,39 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jonathanh@nvidia.com>
+Subject: Re: [PATCH v5 1/4] clk: tegra: Fix includes required by
+ fence_udelay()
+To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver
+	<pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
+ <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5332f15c-65ae-5a70-577f-6125715233e6@nvidia.com>
+Date: Thu, 12 Jul 2018 11:11:14 +0100
 MIME-Version: 1.0
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
-Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masahiro Yamada <yamada.masahiro@socionext.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- Jassi Brar <jaswinder.singh@linaro.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
-Message-ID: <153256098433.48062.7081577175619627994@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: uniphier: add NAND 200MHz clock
-Date: Wed, 25 Jul 2018 16:23:04 -0700
+In-Reply-To: <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
+Return-Path: jonathanh@nvidia.com
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Masahiro Yamada (2018-07-20 01:37:35)
-> The Denali NAND controller IP needs three clocks:
-> =
 
->  - clk: controller core clock
-> =
-
->  - clk_x: bus interface clock
-> =
-
->  - ecc_clk: clock at which ECC circuitry is run
-> =
-
-> Currently, only the first one (50MHz) is provided.  The rest of the
-> two clock ports must be connected to the 200MHz clock line.  Add this.
-> =
-
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 11/07/18 15:39, Aapo Vienamo wrote:
+> Add the missing linux/delay.h include statement for udelay() used by
+> fence_udelay() macro.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > ---
+>  drivers/clk/tegra/clk.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index e1f8846..e3b9c22 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -19,6 +19,7 @@
+>  
+>  #include <linux/clk-provider.h>
+>  #include <linux/clkdev.h>
+> +#include <linux/delay.h>
+>  
+>  /**
+>   * struct tegra_clk_sync_source - external clock source from codec
 
-Applied to clk-next
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
