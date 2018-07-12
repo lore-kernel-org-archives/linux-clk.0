@@ -1,200 +1,87 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13286 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728624AbeGQJYW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 05:24:22 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v5 07/11] soc: mediatek: add MT6765 subdomain support
-Date: Tue, 17 Jul 2018 16:52:28 +0800
-Message-ID: <1531817552-17221-8-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2 0/4] Add QCOM graphics clock controller driver for SDM845
+Date: Thu, 12 Jul 2018 22:39:37 +0530
+Message-Id: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-add extend data, parent_n for domain-subdomain corresponse.
+Changes in v2:
+Addressed review comments given by Stephen: https://lkml.org/lkml/2018/6/6/294
+* Introduce clk_rcg2_gfx3d_determine_rate ops to return the best parent
+  as 'gpucc_pll0_even' and best parent rate as twice of the requested rate
+  always. This will eliminate the need of frequency table as source and
+  div-2 are fixed for gfx3d_clk_src.
+  Also modified the clk_rcg2_set_rate ops to configure the fixed source and
+  div.
+* Add support to check if requested rate falls within allowed set_rate range.
+  This will not let the source gpucc_pll0 to go out of the supported range
+  and also client can request the rate within the range.
+* Fixed comment text in probe function and added module description for GPUCC
+  driver.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys-ext.c |  132 ++++++++++++++++++++++++++++++++-
- 1 file changed, 131 insertions(+), 1 deletion(-)
+The graphics clock driver depends upon the below change.
+	https://lkml.org/lkml/2018/6/23/108
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
-index 965e64d..e649a06 100644
---- a/drivers/soc/mediatek/mtk-scpsys-ext.c
-+++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
-@@ -13,7 +13,7 @@
- #include <linux/regmap.h>
- #include <linux/soc/mediatek/infracfg.h>
- #include <linux/soc/mediatek/scpsys-ext.h>
--
-+#include <dt-bindings/power/mt6765-power.h>
- 
- #define MAX_CLKS		10
- #define INFRA			"infracfg"
-@@ -65,6 +65,21 @@ struct bus_mask_ops {
- 			   u32 sta_ofs, u32 mask);
- };
- 
-+static struct scpsys_ext_attr *__get_attr_node(const char *scpd_n)
-+{
-+	struct scpsys_ext_attr *attr;
-+
-+	if (!scpd_n)
-+		return ERR_PTR(-EINVAL);
-+
-+	list_for_each_entry(attr, &ext_attr_map_list, attr_list) {
-+		if (attr->scpd_n && !strcmp(scpd_n, attr->scpd_n))
-+			return attr;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
- static struct scpsys_ext_attr *__get_attr_parent(const char *parent_n)
- {
- 	struct scpsys_ext_attr *attr;
-@@ -353,8 +368,123 @@ int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
- 	return 0;
- }
- 
-+/*
-+ * MT6765 extend power domain support
-+ */
-+
-+#define INFRA_TOPAXI_PROTECTEN_SET_MT6765	0x02A0
-+#define INFRA_TOPAXI_PROTECTEN_STA1_MT6765	0x0228
-+#define INFRA_TOPAXI_PROTECTEN_CLR_MT6765	0x02A4
-+
-+#define INFRA_TOPAXI_PROTECTEN_1_SET_MT6765	0x02A8
-+#define INFRA_TOPAXI_PROTECTEN_STA1_1_MT6765	0x0258
-+#define INFRA_TOPAXI_PROTECTEN_1_CLR_MT6765	0x02AC
-+
-+#define SMI_COMMON_SMI_CLAMP_MT6765		0x03C0
-+#define SMI_COMMON_SMI_CLAMP_SET_MT6765	0x03C4
-+#define SMI_COMMON_SMI_CLAMP_CLR_MT6765	0x03C8
-+
-+static struct ext_reg_ctrl infra_bus_regs_0_mt6765 = {
-+	.type = IFR_TYPE,
-+	.set_ofs = INFRA_TOPAXI_PROTECTEN_SET_MT6765,
-+	.clr_ofs = INFRA_TOPAXI_PROTECTEN_CLR_MT6765,
-+	.sta_ofs = INFRA_TOPAXI_PROTECTEN_STA1_MT6765,
-+};
-+
-+#define BUS_IFR0_MT6765(_mask) {				\
-+		.regs = &infra_bus_regs_0_mt6765,		\
-+		.mask = _mask,				\
-+		.ops = &bus_mask_set_clr_ctrl,		\
-+	}
-+
-+static struct ext_reg_ctrl infra_bus_regs_1_mt6765 = {
-+	.type = IFR_TYPE,
-+	.set_ofs = INFRA_TOPAXI_PROTECTEN_1_SET_MT6765,
-+	.clr_ofs = INFRA_TOPAXI_PROTECTEN_1_CLR_MT6765,
-+	.sta_ofs = INFRA_TOPAXI_PROTECTEN_STA1_1_MT6765,
-+};
-+
-+#define BUS_IFR1_MT6765(_mask) {				\
-+		.regs = &infra_bus_regs_1_mt6765,		\
-+		.mask = _mask,				\
-+		.ops = &bus_mask_set_clr_ctrl,		\
-+	}
-+
-+static struct ext_reg_ctrl smi_bus_regs_0_mt6765 = {
-+	.type = SMI_TYPE,
-+	.set_ofs = SMI_COMMON_SMI_CLAMP_SET_MT6765,
-+	.clr_ofs = SMI_COMMON_SMI_CLAMP_CLR_MT6765,
-+	.sta_ofs = SMI_COMMON_SMI_CLAMP_MT6765,
-+};
-+
-+#define BUS_SMI0_MT6765(_mask) {				\
-+		.regs = &smi_bus_regs_0_mt6765,		\
-+		.mask = _mask,				\
-+		.ops = &bus_mask_set_clr_ctrl,		\
-+	}
-+
-+static struct scpsys_ext_attr scp_ext_attr_mt6765[] = {
-+	[MT6765_POWER_DOMAIN_ISP] = {
-+		.scpd_n = "isp",
-+		.mask =  {
-+			BUS_IFR1_MT6765(BIT(20)),
-+			BUS_SMI0_MT6765(BIT(2)),
-+		},
-+		.parent_n = "mm",
-+		.bus_ops = &ext_bus_ctrl,
-+		.cg_ops = &ext_cg_ctrl,
-+	},
-+	[MT6765_POWER_DOMAIN_MM] = {
-+		.scpd_n = "mm",
-+		.mask = {
-+			BUS_IFR1_MT6765(BIT(16) | BIT(17)),
-+			BUS_IFR0_MT6765(BIT(10) | BIT(11)),
-+			BUS_IFR0_MT6765(BIT(1) | BIT(2)),
-+		},
-+		.bus_ops = &ext_bus_ctrl,
-+		.cg_ops = &ext_cg_ctrl,
-+	},
-+	[MT6765_POWER_DOMAIN_CONN] = {
-+		.scpd_n = "conn",
-+		.mask = {
-+			BUS_IFR0_MT6765(BIT(13)),
-+			BUS_IFR1_MT6765(BIT(18)),
-+			BUS_IFR0_MT6765(BIT(14) | BIT(16)),
-+		},
-+		.bus_ops = &ext_bus_ctrl,
-+	},
-+	[MT6765_POWER_DOMAIN_MFG] = {
-+		.scpd_n = "mfg",
-+		.mask = {
-+			BUS_IFR0_MT6765(BIT(25)),
-+			BUS_IFR0_MT6765(BIT(21) | BIT(22)),
-+		},
-+		.bus_ops = &ext_bus_ctrl,
-+	},
-+	[MT6765_POWER_DOMAIN_CAM] = {
-+		.scpd_n = "cam",
-+		.mask = {
-+			BUS_IFR1_MT6765(BIT(19) | BIT(21)),
-+			BUS_IFR0_MT6765(BIT(20)),
-+			BUS_SMI0_MT6765(BIT(3)),
-+		},
-+		.parent_n = "mm",
-+		.bus_ops = &ext_bus_ctrl,
-+		.cg_ops = &ext_cg_ctrl,
-+	},
-+};
-+
-+static const struct scpsys_ext_data scp_ext_data_mt6765 = {
-+	.attr = scp_ext_attr_mt6765,
-+	.num_attr = ARRAY_SIZE(scp_ext_attr_mt6765),
-+	.get_attr = __get_attr_node,
-+};
-+
- static const struct of_device_id of_scpsys_ext_match_tbl[] = {
- 	{
-+		.compatible = "mediatek,mt6765-scpsys",
-+		.data = &scp_ext_data_mt6765,
-+	}, {
- 		/* sentinel */
- 	}
- };
--- 
-1.7.9.5
+Changes in v1:
+This patch series adds support for graphics clock controller for SDM845.
+Below is the brief description for each change:
 
+1. For some of the GDSCs, there is requirement to enable/disable the
+   few clocks before turning on/off the gdsc power domain. This patch
+   will add support to enable/disable the clock associated with the
+   gdsc along with power domain on/off callbacks.
+
+2. To turn on the gpu_gx_gdsc, there is a hardware requirement to
+   turn on the root clock (GFX3D RCG) first which would be the turn
+   on signal for the gdsc along with the SW_COLLAPSE. As per the
+   current implementation of clk_rcg2_shared_ops, it clears the
+   root_enable bit in the enable() clock ops. But due to the above
+   said requirement for GFX3D shared RCG, root_enable bit would be
+   already set by gdsc driver and rcg2_shared_ops should not clear
+   the root unless the disable() is called.
+
+   This patch add support for the same by reusing the existing
+   clk_rcg2_shared_ops and deriving "clk_rcg2_gfx3d_ops" clk_ops
+   for GFX3D clock to take care of the root set/clear requirement.
+
+3. Add device tree bindings for graphics clock controller for SDM845.
+
+4. Add graphics clock controller (GPUCC) driver for SDM845.
+
+[v1] : https://lkml.org/lkml/2018/6/6/294
+
+Amit Nischal (4):
+  clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
+  clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+  dt-bindings: clock: Introduce QCOM Graphics clock bindings
+  clk: qcom: Add graphics clock controller driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gpucc.txt       |  18 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-rcg.h                         |   1 +
+ drivers/clk/qcom/clk-rcg2.c                        |  87 +++-
+ drivers/clk/qcom/gdsc.c                            |  44 +++
+ drivers/clk/qcom/gdsc.h                            |   5 +
+ drivers/clk/qcom/gpucc-sdm845.c                    | 438 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sdm845.h      |  38 ++
+ 9 files changed, 639 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+ create mode 100644 drivers/clk/qcom/gpucc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
