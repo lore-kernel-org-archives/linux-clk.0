@@ -1,356 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw01.mediatek.com ([210.61.82.183]:38628 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729709AbeGQJY2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 05:24:28 -0400
-From: Mars Cheng <mars.cheng@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-CC: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v5 11/11] arm64: dts: mediatek: add mt6765 support
-Date: Tue, 17 Jul 2018 16:52:32 +0800
-Message-ID: <1531817552-17221-12-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
+ controller
+To: Rob Herring <robh@kernel.org>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-2-yixun.lan@amlogic.com>
+ <20180711194346.GA32414@rob-hp-laptop>
+CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil
+ Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
+Date: Thu, 12 Jul 2018 10:47:12 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180711194346.GA32414@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This adds basic chip support for MT6765 SoC.
+Hi Rob
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm64/boot/dts/mediatek/Makefile       |    1 +
- arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++
- arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  253 +++++++++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+see my comments
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index ac17f60..7506b0d 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6765-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt6765-evb.dts b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-new file mode 100644
-index 0000000..36dddff2
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * dts file for Mediatek MT6765
-+ *
-+ * (C) Copyright 2018. Mediatek, Inc.
-+ *
-+ * Mars Cheng <mars.cheng@mediatek.com>
-+ */
-+
-+/dts-v1/;
-+#include "mt6765.dtsi"
-+
-+/ {
-+	model = "MediaTek MT6765 EVB";
-+	compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x1e800000>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:921600n8";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-new file mode 100644
-index 0000000..37f9f3a
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * dts file for Mediatek MT6765
-+ *
-+ * (C) Copyright 2018. Mediatek, Inc.
-+ *
-+ * Mars Cheng <mars.cheng@mediatek.com>
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/mt6765-clk.h>
-+
-+/ {
-+	compatible = "mediatek,mt6765";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x001>;
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x002>;
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x003>;
-+		};
-+
-+		cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x100>;
-+		};
-+
-+		cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x101>;
-+		};
-+
-+		cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x102>;
-+		};
-+
-+		cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a53";
-+			enable-method = "psci";
-+			reg = <0x103>;
-+		};
-+	};
-+
-+	clocks {
-+		clk26m: clk26m {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <26000000>;
-+		};
-+
-+		clk32k: clk32k {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <32000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-+			      <0 0x0c100000 0 0x200000>, /* GICR */
-+			      <0 0x0c400000 0 0x2000>,   /* GICC */
-+			      <0 0x0c410000 0 0x2000>,   /* GICH */
-+			      <0 0x0c420000 0 0x20000>;  /* GICV */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		topckgen: topckgen@10000000 {
-+			compatible = "mediatek,mt6765-topckgen", "syscon";
-+			reg = <0 0x10000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		infracfg: infracfg@10001000 {
-+			compatible = "mediatek,mt6765-infracfg", "syscon";
-+			reg = <0 0x10001000 0 0x1000>;
-+			interrupts = <GIC_SPI 147 IRQ_TYPE_EDGE_RISING>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pericfg: pericfg@10003000 {
-+			compatible = "mediatek,mt6765-pericfg", "syscon";
-+			reg = <0 0x10003000 0 0x1000>;
-+		};
-+
-+		scpsys: scpsys@10006000 {
-+			compatible = "mediatek,mt6765-scpsys";
-+			reg =	<0 0x10006000 0 0x1000>; /* spm */
-+			#power-domain-cells = <1>;
-+			clocks = <&topckgen CLK_TOP_MFG_SEL>,
-+				 <&topckgen CLK_TOP_MM_SEL>,
-+				 <&mmsys_config CLK_MM_SMI_COMMON>,
-+				 <&mmsys_config CLK_MM_SMI_COMM0>,
-+				 <&mmsys_config CLK_MM_SMI_COMM1>,
-+				 <&mmsys_config CLK_MM_SMI_LARB0>,
-+				 <&imgsys CLK_IMG_LARB2>,
-+				 <&mmsys_config CLK_MM_SMI_IMG>,
-+				 <&camsys CLK_CAM_LARB3>,
-+				 <&camsys CLK_CAM_DFP_VAD>,
-+				 <&camsys CLK_CAM>,
-+				 <&camsys CLK_CAM_CCU>,
-+				 <&mmsys_config CLK_MM_SMI_CAM>;
-+			clock-names = "mfg", "mm",
-+				      "mm-0", "mm-1", "mm-2", "mm-3",
-+				      "isp-0", "isp-1", "cam-0", "cam-1",
-+				      "cam-2", "cam-3", "cam-4";
-+			infracfg = <&infracfg>;
-+			smi_comm = <&smi_common>;
-+		};
-+
-+		apmixed: apmixed@1000c000 {
-+			compatible = "mediatek,mt6765-apmixedsys", "syscon";
-+			reg = <0 0x1000c000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		sysirq: interrupt-controller@10200a80 {
-+			compatible = "mediatek,mt6765-sysirq",
-+				     "mediatek,mt6577-sysirq";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			reg = <0 0x10200a80 0 0x50>;
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt6765-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_IFR_UART0>,
-+				 <&infracfg CLK_IFR_AP_DMA>;
-+			clock-names = "baud", "bus";
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt6765-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&infracfg CLK_IFR_UART1>,
-+				 <&infracfg CLK_IFR_AP_DMA>;
-+			clock-names = "baud", "bus";
-+			status = "disabled";
-+		};
-+
-+		audio: audio@11220000 {
-+			compatible = "mediatek,mt6765-audsys", "syscon";
-+			reg = <0 0x11220000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mipi_rx_ana_csi0a: mipi_rx_ana_csi0a@11c10000 {
-+			compatible = "mediatek,mt6765-mipi_rx_ana_csi0a",
-+				     "syscon";
-+			reg = <0 0x11c10000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mmsys_config: mmsys_config@14000000 {
-+			compatible = "mediatek,mt6765-mmsys", "syscon";
-+			reg = <0 0x14000000 0 0x1000>;
-+			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_LOW>;
-+			#clock-cells = <1>;
-+		};
-+
-+		smi_common: smi_common@14002000 {
-+			compatible = "mediatek,mt6765-smi-common", "syscon";
-+			reg = <0 0x14002000 0 0x1000>;
-+		};
-+
-+		imgsys: imgsys@15020000 {
-+			compatible = "mediatek,mt6765-imgsys", "syscon";
-+			reg = <0 0x15020000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		venc_gcon: venc_gcon@17000000 {
-+			compatible = "mediatek,mt6765-vcodecsys", "syscon";
-+			reg = <0 0x17000000 0 0x10000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		camsys: camsys@1a000000  {
-+			compatible = "mediatek,mt6765-camsys", "syscon";
-+			reg = <0 0x1a000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+	}; /* end of soc */
-+};
--- 
-1.7.9.5
+On 07/12/18 03:43, Rob Herring wrote:
+> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
+>> Document the MMC sub clock controller driver, the potential consumer
+>> of this driver is MMC or NAND.
+> 
+> So you all have decided to properly model this now?
+> 
+Yes, ;-)
 
+>>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> new file mode 100644
+>> index 000000000000..ff6b4bf3ecf9
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> @@ -0,0 +1,31 @@
+>> +* Amlogic MMC Sub Clock Controller Driver
+>> +
+>> +The Amlogic MMC clock controller generates and supplies clock to support
+>> +MMC and NAND controller
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: should be:
+>> +		"amlogic,meson-gx-mmc-clkc"
+>> +		"amlogic,meson-axg-mmc-clkc"
+>> +
+>> +- #clock-cells: should be 1.
+>> +- clocks: phandles to clocks corresponding to the clock-names property
+>> +- clock-names: list of parent clock names
+>> +	- "clkin0", "clkin1"
+>> +
+>> +Parent node should have the following properties :
+>> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
+> 
+> You don't need "simple-mfd" and probably not syscon either. The order is 
+> wrong too. Most specific first.
+> 
+Ok, I will drop "simple-mfd"..
+
+but the syscon is a must, since this mmc clock model access registers
+via the regmap interface
+
+I will fix the order, thanks for pointing this out
+
+>> +- reg: base address and size of the MMC control register space.
+>> +
+>> +Example: Clock controller node:
+>> +
+>> +sd_mmc_c_clkc: clock-controller@7000 {
+>> +	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
+> 
+> Doesn't match the binding...
+> 
+oops, I will update this
+
+>> +	reg = <0x0 0x7000 0x0 0x4>;
+>> +	#clock-cells = <1>;
+>> +
+>> +	clock-names = "clkin0", "clkin1";
+>> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+>> +			<&clkc CLKID_FCLK_DIV2>;
+>> +};
+>> -- 
+>> 2.18.0
+>>
+> 
+> .
+> 
