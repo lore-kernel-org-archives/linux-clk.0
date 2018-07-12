@@ -1,106 +1,81 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 5 Jul 2018 10:48:43 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com
-Cc: sboyd@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v9 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
- PMIC
-Message-ID: <87cc68c82c3c95e82797e0ce3d401a4f1d6daf25.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
+ SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sandeep Panda <spanda@codeaurora.org>,
+ Abhinav Kumar <abhinavk@codeaurora.org>, ryadav@codeaurora.org
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+ <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+ <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
+ <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
+ <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
+ <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
+Date: Thu, 12 Jul 2018 22:51:33 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Document devicetree bindings for ROHM BD71837 PMIC MFD.
+++ Display driver team,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+On 7/9/2018 8:36 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-09 02:34:07)
+>>
+>>
+>> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-07-09 00:07:21)
+>>>>
+>>>>
+>>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
+>>>>>>
+>>>>>>     > Why is the nocache flag needed? Applies to all clks in this file.
+>>>>>>     >
+>>>>>>
+>>>>>> This flag is required for all RCGs whose PLLs are controlled outside the
+>>>>>> clock controller. The display code would require the recalculated rate
+>>>>>> always.
+>>>>>
+>>>>> Right. Why is the PLL controlled outside of the clock controller? The
+>>>>> rate should propagate upward to the PLL from here, so who's going
+>>>>> outside of that?
+>>>>>
+>>>> The DSI0/1 PLL are not part of the display clock controller, but in the
+>>>> display subsystem which are managed by the DRM drivers. When DRM drivers
+>>>> query for the rate clock driver should always return the non cached rates.
+>>>
+>>> Why? Is the DSI PLL changing rate all the time, randomly, without going
+>>> through the clk APIs to do so?
+>>>
+>>
+>> Hmm, I am afraid I do not have an answer for this, but this was the
+>> requirement to always return the non cached rates from the clock driver.
+>>
+> 
+> Ok. Who knows about this requirement? Can we add someone from the
+> display driver to understand more?
+> 
+As per my discussions offline with the display teams,
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-new file mode 100644
-index 000000000000..67f2616288d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-@@ -0,0 +1,67 @@
-+* ROHM BD71837 Power Management Integrated Circuit bindings
-+
-+BD71837MWV is a programmable Power Management IC for powering single-core,
-+dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
-+low BOM cost and compact solution footprint. It integrates 8 Buck
-+egulators and 7 LDO’s to provide all the power rails required by the SoC and
-+the commonly used peripherals.
-+
-+Datasheet for PMIC is available at:
-+https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+Required properties:
-+ - compatible		: Should be "rohm,bd71837".
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - clocks		: The parent clock connected to PMIC. If this is missng
-+			  32768 KHz clock is assumed.
-+ - #clock-cells		: Should be 0
-+ - regulators:		: List of child nodes that specify the regulators
-+			  Please see ../regulator/rohm,bd71837-regulator.txt
-+
-+Optional properties:
-+- clock-output-names	: Should contain name for output clock.
-+
-+Example:
-+
-+	/* external oscillator node */
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <1>;
-+		clock-frequency  = <32768>;
-+		clock-output-names = "osc";
-+	};
-+
-+	/* PMIC node */
-+
-+	pmic: pmic@4b {
-+		compatible = "rohm,bd71837";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <29 GPIO_ACTIVE_LOW>;
-+		interrupt-names = "irq";
-+		#clock-cells = <0>;
-+		clocks = <&osc 0>;
-+		clock-output-names = "bd71837-32k-out";
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "buck1";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <1250>;
-+			};
-+			/* ... */
-+		};
-+	};
-+
-+	/* Clock consumer node */
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "my-clock";
-+		clocks = <&pmic>;
-+	};
+There is a use-case where the clock framework is unaware of the PLL VCO 
+frequency change and thus the drivers would query to get the actual HW 
+frequency rather than the cached one.
+
+Do you think keeping these flags would have any impact other than always 
+getting the non-cached rates?
+
 -- 
-2.14.3
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
