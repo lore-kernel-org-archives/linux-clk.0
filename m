@@ -1,80 +1,52 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 31 Jul 2018 15:21:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
-Message-ID: <20180731212154.GA17395@rob-hp-laptop>
-References: <20180722212010.3979-1-afaerber@suse.de>
- <20180722212010.3979-16-afaerber@suse.de>
+Return-Path: <shawnguo@kernel.org>
+Date: Thu, 12 Jul 2018 10:25:46 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>, aisheng.dong@nxp.com,
+	fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
+	mturquette@baylibre.com, ping.bai@nxp.com, robh+dt@kernel.org,
+	s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Linux-imx@nxp.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
+Message-ID: <20180712022544.GP6959@dragon>
+References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+ <153091072630.143105.2849049240391576710@swboyd.mtv.corp.google.com>
+ <20180711084302.GB6959@dragon>
+ <153132682598.143105.16881098765923078751@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180722212010.3979-16-afaerber@suse.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153132682598.143105.16881098765923078751@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 22, 2018 at 11:20:10PM +0200, Andreas Färber wrote:
-> From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+On Wed, Jul 11, 2018 at 09:33:45AM -0700, Stephen Boyd wrote:
+> Quoting Shawn Guo (2018-07-11 01:43:03)
+> > On Fri, Jul 06, 2018 at 01:58:46PM -0700, Stephen Boyd wrote:
+> > > Quoting Anson Huang (2018-06-21 23:32:33)
+> > > > According to Reference Manual Rev.0, 06/2017,
+> > > > there are GPIO LPCGs defined in CCM CCGRs,
+> > > > add them into clock tree.
+> > > > 
+> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > > ---
+> > > 
+> > > Applied to clk-next
+> > 
+> > Stephen,
+> > 
+> > If you can apply this patch to topic branch 'clk-imx-gpio-gates', I will
+> > be able to pick up patch #2 for this cycle.
 > 
-> The SDHost currently clocks the card 4x slower than it
-> should do, because there is a fixed divide by 4 in the
-> sdhost wrapper that is not present in the clock tree.
-> To model this, add a fixed divide by 4 clock node in
-> the SDHost clock path.
-> 
-> This will ensure the right clock frequency is selected when
-> the mmc driver tries to configure frequency on card insert.
-> 
-> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-> Signed-off-by: Andreas Färber <afaerber@suse.de>
-> ---
->  drivers/clk/pistachio/clk-pistachio.c     | 3 ++-
->  include/dt-bindings/clock/pistachio-clk.h | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-> index c4ceb5eaf46c..1c968d9a6e17 100644
-> --- a/drivers/clk/pistachio/clk-pistachio.c
-> +++ b/drivers/clk/pistachio/clk-pistachio.c
-> @@ -44,7 +44,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
->  	GATE(CLK_AUX_ADC_INTERNAL, "aux_adc_internal", "sys_internal_div",
->  	     0x104, 22),
->  	GATE(CLK_AUX_ADC, "aux_adc", "aux_adc_div", 0x104, 23),
-> -	GATE(CLK_SD_HOST, "sd_host", "sd_host_div", 0x104, 24),
-> +	GATE(CLK_SD_HOST, "sd_host", "sd_host_div4", 0x104, 24),
->  	GATE(CLK_BT, "bt", "bt_div", 0x104, 25),
->  	GATE(CLK_BT_DIV4, "bt_div4", "bt_div4_div", 0x104, 26),
->  	GATE(CLK_BT_DIV8, "bt_div8", "bt_div8_div", 0x104, 27),
-> @@ -54,6 +54,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
->  static struct pistachio_fixed_factor pistachio_ffs[] __initdata = {
->  	FIXED_FACTOR(CLK_WIFI_DIV4, "wifi_div4", "wifi_pll", 4),
->  	FIXED_FACTOR(CLK_WIFI_DIV8, "wifi_div8", "wifi_pll", 8),
-> +	FIXED_FACTOR(CLK_SDHOST_DIV4, "sd_host_div4", "sd_host_div", 4),
->  };
->  
->  static struct pistachio_div pistachio_divs[] __initdata = {
-> diff --git a/include/dt-bindings/clock/pistachio-clk.h b/include/dt-bindings/clock/pistachio-clk.h
-> index 039f83facb68..77b92aed241d 100644
-> --- a/include/dt-bindings/clock/pistachio-clk.h
-> +++ b/include/dt-bindings/clock/pistachio-clk.h
-> @@ -21,6 +21,7 @@
->  /* Fixed-factor clocks */
->  #define CLK_WIFI_DIV4			16
->  #define CLK_WIFI_DIV8			17
-> +#define CLK_SDHOST_DIV4			18
+> Can you merge in clk-imx6sll-gpio topic branch to your tree? I'm making
+> topics for all patch series, so that's why this got stuck into a
+> different topic branch.
 
-Does this clock really need to be exposed in DT?
+Ah, okay.  I thought you apply patches directly to clk-next, and make
+topic branches only for those having dependencies involved.
 
->  
->  /* Gate clocks */
->  #define CLK_MIPS			32
-> -- 
-> 2.16.4
-> 
+For future DT patches depending on clk ones, I will check clk tree and
+merge corresponding topic branch to resolve dependency.
+
+Thanks for clarifying.
+
+Shawn
