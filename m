@@ -1,103 +1,90 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530605373.2900.158.camel@baylibre.com>
-Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Boris Brezillon
-	 <boris.brezillon@bootlin.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
- <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
- <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Tue, 03 Jul 2018 10:09:33 +0200
-In-Reply-To: <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	 <20180703145716.31860-3-yixun.lan@amlogic.com>
-	 <20180703092107.51497a8f@bbrezillon>
-	 <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Thu, 12 Jul 2018 18:00:21 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
+ Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+ Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+In-Reply-To: <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
+ <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
+Message-ID: <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-03 at 15:36 +0800, Yixun Lan wrote:
-> Hi Broris
+On 2018-07-09 11:45, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-06-06 04:41:46)
+>> To turn on the gpu_gx_gdsc, there is a hardware requirement to
+>> turn on the root clock (GFX3D RCG) first which would be the turn
+>> on signal for the gdsc along with the SW_COLLAPSE. As per the
+>> current implementation of clk_rcg2_shared_ops, it clears the
+>> root_enable bit in the enable() and set_rate() clock ops. But due
+>> to the above said requirement for GFX3D shared RCG, root_enable bit
+>> would be already set by gdsc driver and rcg2_shared_ops should not 
+>> clear
+>> the root unless the disable is called.
+>> 
 > 
->  thanks for your quick response, and see my comments below
-> 
-> On 07/03/18 15:21, Boris Brezillon wrote:
-> > On Tue, 3 Jul 2018 14:57:15 +0000
-> > Yixun Lan <yixun.lan@amlogic.com> wrote:
-> > 
-> > > Add two clock bindings IDs which provided by the EMMC clock controller,
-> > > These two clocks will be used by EMMC or NAND driver.
-> > > 
-> > > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> > > ---
-> > >  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
-> > >  1 file changed, 14 insertions(+)
-> > >  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
-> > > 
-> > > diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
-> > > new file mode 100644
-> > > index 000000000000..d9972c400e58
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clock/emmc-clkc.h
-> > > @@ -0,0 +1,14 @@
-> > > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> > > +/*
-> > > + * Meson EMMC sub clock tree IDs
-> > > + *
-> > > + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> > > + */
-> > > +
-> > > +#ifndef __EMMC_CLKC_H
-> > > +#define __EMMC_CLKC_H
-> > > +
-> > > +#define CLKID_EMMC_C_MUX				0
-> > 
-> > Looks like the MUX clk is the parent of the DIV one, and I guess the clk
-> > driver is able to select the best parent+div pair for a requested rate.
-> > Do you really need to expose the MUX to users?
-> > 
-> 
-> Yes, It's true, the mux is parent of the div clock.
-> 
-> while testing for the NAND driver, I find it's kind of loose about the
-> parent of the clock, so selecting the div (and let CCF decide freely) is
-> actually works fine
-> 
-> but for the EMMC driver, especially when running at high clock, it's
-> kind of picky about the parent of the clock, 
+> It sounds like the GDSC enable is ANDed with the RCG's root enable
+> bit?
 
-It would be nice to get an explanation about this behavior.
-it seems that even of the rate provided by CLKID_SD_EMMC_X_CLK0 (main clock
-controller) is correct, the eMMC cannot reliably tune with it.
+Here, the root clock (GFX3D RCG) needs to be enabled first before
+writing to SW_COLLAPSE bit of the GDSC. RCG's CLK_ON signal would
+power up the GDSC.
 
-Could you elaborate on this ?
-
-> so the driver may want to
-> manually choose the parent of the mux clock (example fclk_div2 here).
-> That's why I'm exporting this clock ID.
-
-ATM the EMMC driver will not use this provider. If this is the only reason, it
-could be done later.
-
-Is the NAND driver "picky" as well ?
-
+> Does the RCG need to be clocking for the GDSC to actually turn on?
+> Or is it purely that the enable bit is logically combined that way so
+> that if the RCG is parented to a PLL that's off the GDSC will still 
+> turn
+> on?
 > 
+
+Yes, the RCG needs to be clocking for the GPU_GX GDSC to actually turn 
+on.
+
+>> Add support for the same by reusing the existing clk_rcg2_shared_ops
+>> and deriving "clk_rcg2_gfx3d_ops" clk_ops for GFX3D clock to
+>> take care of the root set/clear requirement.
 > 
-> > > +#define CLKID_EMMC_C_DIV				1
-> > > +
-> > > +#endif
-> > 
-> > .
-> > 
+> Anyway, this patch will probably significantly change given that the 
+> RCG
+> is a glorified div-2 that muxes between a safe CXO speed and a
+> configurable PLL frequency. A lot of the logic can probably just be
+> hardcoded then.
 > 
+
+Thanks for the suggestion.
+We are planning to introduce the "clk_rcg2_gfx3d_determine_rate" op 
+which will
+always return the best parent as ‘GPU_CC_PLL0_OUT_EVEN’ and best_parent
+rate equal to twice of the requested rate. With this approach frequency 
+table
+for rcg2 structure would not be required as all the supported 
+frequencies would
+be derived from the GPU_CC_PLL0_OUT_EVEN src with a divider of 2.
+
+Also, we will add support to check the requested rate if falls within 
+allowed
+set_rate range. This will make sure that the source PLL would not go out 
+of
+the supported range. set_rate_range would be set by the GPUCC driver 
+with min/max
+value by calling below API.
+
+clk_hw_set_rate_range(&gpu_cc_gx_gfx3d_clk_src.clkr.hw, 180000000, 
+710000000)
+
+>> 
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> 
+> Patch looks sane.
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-clk" in
 > the body of a message to majordomo@vger.kernel.org
