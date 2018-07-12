@@ -1,461 +1,554 @@
-Return-Path: <daniel@zonque.org>
-From: Daniel Mack <daniel@zonque.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	Daniel Mack <daniel@zonque.org>
-Subject: [PATCH v5 1/1] clk: Add driver for MAX9485
-Date: Fri,  6 Jul 2018 20:53:03 +0200
-Message-Id: <20180706185303.27936-2-daniel@zonque.org>
-In-Reply-To: <20180706185303.27936-1-daniel@zonque.org>
-References: <20180706185303.27936-1-daniel@zonque.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <1531386550.2708.171.camel@baylibre.com>
+Subject: Re: [PATCH v2 3/3] clk: meson: add sub MMC clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
+ <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+ <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
+ <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 12 Jul 2018 11:09:10 +0200
+In-Reply-To: <20180710163658.6175-4-yixun.lan@amlogic.com>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+	 <20180710163658.6175-4-yixun.lan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds a driver for MAX9485, a programmable audio clock generator.
+On Tue, 2018-07-10 at 16:36 +0000, Yixun Lan wrote:
+> The patch will add a MMC clock controller driver which used by MMC or NAND,
+> It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+> 
+> Two clocks are provided as the parent of MMC clock controller from
+> upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
+> 
+> To specify which clock the MMC or NAND driver may consume,
+> the preprocessor macros in the dt-bindings/clock/emmc-clkc.h header
+> can be used in the device tree sources.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  drivers/clk/meson/Kconfig    |   9 +
+>  drivers/clk/meson/Makefile   |   1 +
+>  drivers/clk/meson/mmc-clkc.c | 419 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 429 insertions(+)
+>  create mode 100644 drivers/clk/meson/mmc-clkc.c
+> 
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index efaa70f682b4..edc18e65c89b 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
+>  	select COMMON_CLK_REGMAP_MESON
+>  	select RESET_CONTROLLER
+>  
+> +config COMMON_CLK_MMC_MESON
+> +	tristate "Meson MMC Sub Clock Controller Driver"
+> +	depends on COMMON_CLK_AMLOGIC
+> +	select MFD_SYSCON
+> +	select REGMAP
+> +	help
+> +	  Support for the MMC sub clock controller on Amlogic Meson Platform,
+> +	  Say Y if you want this clock enabled.
+> +
+>  config COMMON_CLK_REGMAP_MESON
+>  	bool
+>  	select REGMAP
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 72ec8c40d848..4b3817f80ba1 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
+> +obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
+>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+> new file mode 100644
+> index 000000000000..43b7a376746d
+> --- /dev/null
+> +++ b/drivers/clk/meson/mmc-clkc.c
+> @@ -0,0 +1,419 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Amlogic Meson MMC Sub Clock Controller Driver
 
-The device requires a 27.000 MHz clock input. It can provide a gated
-buffered output of its input clock and two gated outputs of a PLL that can
-generate one out of 16 discrete frequencies. There is only one PLL however,
-so the two gated outputs will always have the same frequency but they can
-be switched individually.
+ * Copyright (c) 2017 Baylibre SAS.
+ * Author: Jerome Brunet <jbrunet@baylibre.com>
 
-The driver for this device exposes 4 clocks in total:
+Considering that a fair share of the code below has been copied from the clock
+portion of the eMMC driver, which I wrote last year.
 
-- MAX9485_MCLKOUT:      A gated, buffered output of the input clock
-- MAX9485_CLKOUT:       A PLL that can be configured to 16 different
-			discrete frequencies
-- MAX9485_CLKOUT[1,2]:  Two gated outputs for MAX9485_CLKOUT
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/of_device.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/clock/amlogic,meson-mmc-clkc.h>
+> +
+> +#include "clkc.h"
+> +
+> +/* clock ID used by internal driver */
+> +#define CLKID_MMC_MUX				0
+> +#define CLKID_MMC_PHASE_CORE			2
+> +
+> +#define SD_EMMC_CLOCK		0
+> +#define   CLK_DIV_MASK GENMASK(5, 0)
+> +#define   CLK_SRC_MASK GENMASK(7, 6)
+> +#define   CLK_CORE_PHASE_MASK GENMASK(9, 8)
+> +#define   CLK_TX_PHASE_MASK GENMASK(11, 10)
+> +#define   CLK_RX_PHASE_MASK GENMASK(13, 12)
+> +#define   CLK_V2_TX_DELAY_MASK GENMASK(19, 16)
+> +#define   CLK_V2_RX_DELAY_MASK GENMASK(23, 20)
+> +#define   CLK_V2_ALWAYS_ON BIT(24)
+> +
+> +#define   CLK_V3_TX_DELAY_MASK GENMASK(21, 16)
+> +#define   CLK_V3_RX_DELAY_MASK GENMASK(27, 22)
+> +#define   CLK_V3_ALWAYS_ON BIT(28)
+> +
+> +#define   CLK_DELAY_STEP_PS 200
+> +#define   CLK_PHASE_STEP 30
+> +#define   CLK_PHASE_POINT_NUM (360 / CLK_PHASE_STEP)
+> +
+> +#define MUX_CLK_NUM_PARENTS	2
+> +#define MMC_MAX_CLKS		5
 
-Some PLL output frequencies can be achieved with different register
-settings. The driver will select the one with lowest jitter in such cases.
+Some defines are aligned, some aren't. please be consistent about it.
+I personally prefer when things are aligned but it is just a preference.  
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
----
- drivers/clk/Kconfig       |   6 +
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-max9485.c | 385 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 392 insertions(+)
- create mode 100644 drivers/clk/clk-max9485.c
+> +
+> +struct clk_regmap_phase_data {
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a8c429..3e846d22d2e0 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -45,6 +45,12 @@ config COMMON_CLK_MAX77686
- 	  This driver supports Maxim 77620/77686/77802 crystal oscillator
- 	  clock.
- 
-+config COMMON_CLK_MAX9485
-+	tristate "Maxim 9485 Programmable Clock Generator"
-+	depends on I2C
-+	---help---
-+	  This driver supports Maxim 9485 Programmable Audio Clock Generator
-+
- config COMMON_CLK_RK808
- 	tristate "Clock driver for RK805/RK808/RK818"
- 	depends on MFD_RK808
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index ae40cbe770f0..24fc2b634362 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
-+obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NPCM7XX)	    	+= clk-npcm7xx.o
-diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
-new file mode 100644
-index 000000000000..ae9d3c20a513
---- /dev/null
-+++ b/drivers/clk/clk-max9485.c
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <dt-bindings/clock/maxim,max9485.h>
-+
-+#define MAX9485_NUM_CLKS 4
-+
-+/* This chip has only one register of 8 bit width. */
-+
-+#define MAX9485_FS_12KHZ	(0 << 0)
-+#define MAX9485_FS_32KHZ	(1 << 0)
-+#define MAX9485_FS_44_1KHZ	(2 << 0)
-+#define MAX9485_FS_48KHZ	(3 << 0)
-+
-+#define MAX9485_SCALE_256	(0 << 2)
-+#define MAX9485_SCALE_384	(1 << 2)
-+#define MAX9485_SCALE_768	(2 << 2)
-+
-+#define MAX9485_DOUBLE		BIT(4)
-+#define MAX9485_CLKOUT1_ENABLE	BIT(5)
-+#define MAX9485_CLKOUT2_ENABLE	BIT(6)
-+#define MAX9485_MCLK_ENABLE	BIT(7)
-+#define MAX9485_FREQ_MASK	0x1f
-+
-+struct max9485_rate {
-+	unsigned long out;
-+	u8 reg_value;
-+};
-+
-+/*
-+ * Ordered by frequency. For frequency the hardware can generate with
-+ * multiple settings, the one with lowest jitter is listed first.
-+ */
-+static const struct max9485_rate max9485_rates[] = {
-+	{  3072000, MAX9485_FS_12KHZ   | MAX9485_SCALE_256 },
-+	{  4608000, MAX9485_FS_12KHZ   | MAX9485_SCALE_384 },
-+	{  8192000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 },
-+	{  9126000, MAX9485_FS_12KHZ   | MAX9485_SCALE_768 },
-+	{ 11289600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 },
-+	{ 12288000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 },
-+	{ 12288000, MAX9485_FS_32KHZ   | MAX9485_SCALE_384 },
-+	{ 16384000, MAX9485_FS_32KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 16934400, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 },
-+	{ 18384000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 },
-+	{ 22579200, MAX9485_FS_44_1KHZ | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 24576000, MAX9485_FS_48KHZ   | MAX9485_SCALE_256 | MAX9485_DOUBLE },
-+	{ 24576000, MAX9485_FS_32KHZ   | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 24576000, MAX9485_FS_32KHZ   | MAX9485_SCALE_768 },
-+	{ 33868800, MAX9485_FS_44_1KHZ | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 33868800, MAX9485_FS_44_1KHZ | MAX9485_SCALE_768 },
-+	{ 36864000, MAX9485_FS_48KHZ   | MAX9485_SCALE_384 | MAX9485_DOUBLE },
-+	{ 36864000, MAX9485_FS_48KHZ   | MAX9485_SCALE_768 },
-+	{ 49152000, MAX9485_FS_32KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 67737600, MAX9485_FS_44_1KHZ | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ 73728000, MAX9485_FS_48KHZ   | MAX9485_SCALE_768 | MAX9485_DOUBLE },
-+	{ } /* sentinel */
-+};
-+
-+struct max9485_driver_data;
-+
-+struct max9485_clk_hw {
-+	struct clk_hw hw;
-+	struct clk_init_data init;
-+	u8 enable_bit;
-+	struct max9485_driver_data *drvdata;
-+};
-+
-+struct max9485_driver_data {
-+	struct clk *xclk;
-+	struct i2c_client *client;
-+	u8 reg_value;
-+	struct regulator *supply;
-+	struct gpio_desc *reset_gpio;
-+	struct max9485_clk_hw hw[MAX9485_NUM_CLKS];
-+};
-+
-+static inline struct max9485_clk_hw *to_max9485_clk(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct max9485_clk_hw, hw);
-+}
-+
-+static int max9485_update_bits(struct max9485_driver_data *drvdata,
-+			       u8 mask, u8 value)
-+{
-+	int ret;
-+
-+	drvdata->reg_value &= ~mask;
-+	drvdata->reg_value |= value;
-+
-+	dev_dbg(&drvdata->client->dev,
-+		"updating mask 0x%02x value 0x%02x -> 0x%02x\n",
-+		mask, value, drvdata->reg_value);
-+
-+	ret = i2c_master_send(drvdata->client,
-+			      &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+
-+	return ret < 0 ? ret : 0;
-+}
-+
-+static int max9485_clk_prepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw = to_max9485_clk(hw);
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   clk_hw->enable_bit,
-+				   clk_hw->enable_bit);
-+}
-+
-+static void max9485_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct max9485_clk_hw *clk_hw = to_max9485_clk(hw);
-+
-+	max9485_update_bits(clk_hw->drvdata, clk_hw->enable_bit, 0);
-+}
-+
-+/*
-+ * CLKOUT - configurable clock output
-+ */
-+static int max9485_clkout_set_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long parent_rate)
-+{
-+	struct max9485_clk_hw *clk_hw = to_max9485_clk(hw);
-+	const struct max9485_rate *entry;
-+
-+	for (entry = max9485_rates; entry->out != 0; entry++)
-+		if (entry->out == rate)
-+			break;
-+
-+	if (entry->out == 0)
-+		return -EINVAL;
-+
-+	return max9485_update_bits(clk_hw->drvdata,
-+				   MAX9485_FREQ_MASK,
-+				   entry->reg_value);
-+}
-+
-+static unsigned long max9485_clkout_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
-+{
-+	struct max9485_clk_hw *clk_hw = to_max9485_clk(hw);
-+	struct max9485_driver_data *drvdata = clk_hw->drvdata;
-+	const struct max9485_rate *entry;
-+
-+	for (entry = max9485_rates; entry->out != 0; entry++)
-+		if ((drvdata->reg_value & MAX9485_FREQ_MASK) == entry->reg_value)
-+			return entry->out;
-+
-+	return 0;
-+}
-+
-+static long max9485_clkout_round_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long *parent_rate)
-+{
-+	const struct max9485_rate *curr, *prev = NULL;
-+
-+	for (curr = max9485_rates; curr->out != 0; curr++) {
-+		/* Exact matches */
-+		if (curr->out == rate)
-+			return rate;
-+
-+		/*
-+		 * Find the first entry that has a frequency higher than the
-+		 * requested one.
-+		 */
-+		if (curr->out > rate) {
-+			unsigned int mid;
-+
-+			/*
-+			 * If this is the first entry, clamp the value to the
-+			 * lowest possible frequency.
-+			 */
-+			if (!prev)
-+				return curr->out;
-+
-+			/*
-+			 * Otherwise, determine whether the previous entry or
-+			 * current one is closer.
-+			 */
-+			mid = prev->out + ((curr->out - prev->out) / 2);
-+
-+			return (mid > rate) ? prev->out : curr->out;
-+		}
-+
-+		prev = curr;
-+	}
-+
-+	/* If the last entry was still too high, clamp the value */
-+	return prev->out;
-+}
-+
-+struct max9485_clk {
-+	const char *name;
-+	int parent_index;
-+	const struct clk_ops ops;
-+	u8 enable_bit;
-+};
-+
-+static const struct max9485_clk max9485_clks[MAX9485_NUM_CLKS] = {
-+	[MAX9485_MCLKOUT] = {
-+		.name = "mclkout",
-+		.parent_index = -1,
-+		.enable_bit = MAX9485_MCLK_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+		},
-+	},
-+	[MAX9485_CLKOUT] = {
-+		.name = "clkout",
-+		.parent_index = -1,
-+		.ops = {
-+			.set_rate	= max9485_clkout_set_rate,
-+			.round_rate	= max9485_clkout_round_rate,
-+			.recalc_rate	= max9485_clkout_recalc_rate,
-+		},
-+	},
-+	[MAX9485_CLKOUT1] = {
-+		.name = "clkout1",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT1_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+		},
-+	},
-+	[MAX9485_CLKOUT2] = {
-+		.name = "clkout2",
-+		.parent_index = MAX9485_CLKOUT,
-+		.enable_bit = MAX9485_CLKOUT2_ENABLE,
-+		.ops = {
-+			.prepare	= max9485_clk_prepare,
-+			.unprepare	= max9485_clk_unprepare,
-+		},
-+	},
-+};
-+
-+static struct clk_hw *max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct max9485_driver_data *drvdata = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	return &drvdata->hw[idx].hw;
-+}
-+
-+static int max9485_i2c_probe(struct i2c_client *client,
-+			     const struct i2c_device_id *id)
-+{
-+	struct max9485_driver_data *drvdata;
-+	struct device *dev = &client->dev;
-+	const char *xclk_name;
-+	int i, ret;
-+
-+	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-+	if (!drvdata)
-+		return -ENOMEM;
-+
-+	drvdata->xclk = devm_clk_get(dev, "xclk");
-+	if (IS_ERR(drvdata->xclk))
-+		return PTR_ERR(drvdata->xclk);
-+
-+	xclk_name = __clk_get_name(drvdata->xclk);
-+
-+	drvdata->supply = devm_regulator_get(dev, "vdd");
-+	if (IS_ERR(drvdata->supply))
-+		return PTR_ERR(drvdata->supply);
-+
-+	ret = regulator_enable(drvdata->supply);
-+	if (ret < 0)
-+		return ret;
-+
-+	drvdata->reset_gpio =
-+		devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(drvdata->reset_gpio))
-+		return PTR_ERR(drvdata->reset_gpio);
-+
-+	i2c_set_clientdata(client, drvdata);
-+	drvdata->client = client;
-+
-+	ret = i2c_master_recv(drvdata->client, &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+	if (ret < 0) {
-+		dev_warn(dev, "Unable to read device register: %d\n", ret);
-+		return ret;
-+	}
-+
-+	for (i = 0; i < MAX9485_NUM_CLKS; i++) {
-+		int parent_index = max9485_clks[i].parent_index;
-+		const char *name;
-+
-+		if (of_property_read_string_index(dev->of_node,
-+						  "clock-output-names",
-+						  i, &name) == 0) {
-+			drvdata->hw[i].init.name = name;
-+		} else {
-+			drvdata->hw[i].init.name = max9485_clks[i].name;
-+		}
-+
-+		drvdata->hw[i].init.ops = &max9485_clks[i].ops;
-+		drvdata->hw[i].init.num_parents = 1;
-+		drvdata->hw[i].init.flags = 0;
-+
-+		if (parent_index > 0) {
-+			drvdata->hw[i].init.parent_names =
-+				&drvdata->hw[parent_index].init.name;
-+			drvdata->hw[i].init.flags |= CLK_SET_RATE_PARENT;
-+		} else {
-+			drvdata->hw[i].init.parent_names = &xclk_name;
-+		}
-+
-+		drvdata->hw[i].enable_bit = max9485_clks[i].enable_bit;
-+		drvdata->hw[i].hw.init = &drvdata->hw[i].init;
-+		drvdata->hw[i].drvdata = drvdata;
-+
-+		ret = devm_clk_hw_register(dev, &drvdata->hw[i].hw);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, max9485_of_clk_get, drvdata);
-+}
-+
-+static int __maybe_unused max9485_suspend(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct max9485_driver_data *drvdata = i2c_get_clientdata(client);
-+
-+	gpiod_set_value_cansleep(drvdata->reset_gpio, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused max9485_resume(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+	struct max9485_driver_data *drvdata = i2c_get_clientdata(client);
-+	int ret;
-+
-+	gpiod_set_value_cansleep(drvdata->reset_gpio, 1);
-+
-+	ret = i2c_master_send(client, &drvdata->reg_value,
-+			      sizeof(drvdata->reg_value));
-+
-+	return ret < 0 ? ret : 0;
-+}
-+
-+static const struct dev_pm_ops max9485_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(max9485_suspend, max9485_resume)
-+};
-+
-+static const struct of_device_id max9485_dt_ids[] = {
-+	{ .compatible = "maxim,max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, max9485_dt_ids);
-+
-+static const struct i2c_device_id max9485_i2c_ids[] = {
-+	{ .name = "max9485", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, max9485_i2c_ids);
-+
-+static struct i2c_driver max9485_driver = {
-+	.driver = {
-+		.name		= "max9485",
-+		.pm		= &max9485_pm_ops,
-+		.of_match_table	= max9485_dt_ids,
-+	},
-+	.probe = max9485_i2c_probe,
-+	.id_table = max9485_i2c_ids,
-+};
-+module_i2c_driver(max9485_driver);
-+
-+MODULE_AUTHOR("Daniel Mack <daniel@zonque.org>");
-+MODULE_DESCRIPTION("MAX9485 Programmable Audio Clock Generator");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+Considering the recent addition of clk_phase in clk/meson, it is not the best
+name to choose.
+
+clk_phase_delay_data ?
+
+> +	unsigned long			phase_mask;
+> +	unsigned long			delay_mask;
+> +	unsigned int			delay_step_ps;
+> +};
+> +
+> +struct mmc_clkc_data {
+> +	struct clk_regmap_phase_data	tx;
+> +	struct clk_regmap_phase_data	rx;
+> +};
+
+
+
+> +
+> +struct mmc_clkc_info {
+> +	struct device			*dev;
+
+I don't think you need keep dev here, considering this is the device data.
+
+> +	struct regmap			*map;
+> +	struct mmc_clkc_data		*data;
+> +};
+
+Overall, I don't think you need this structure
+
+> +
+> +static inline struct clk_regmap_phase_data *
+> +clk_get_regmap_phase_data(struct clk_regmap *clk)
+
+Update name as well
+
+> +{
+> +	return (struct clk_regmap_phase_data *)clk->data;
+> +}
+> +
+> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
+> +	.offset = SD_EMMC_CLOCK,
+> +	.mask = 0x3,
+> +	.shift = 6,
+> +	.flags = CLK_DIVIDER_ROUND_CLOSEST,
+> +};
+> +
+> +static struct clk_regmap_div_data mmc_clkc_div_data = {
+> +	.offset = SD_EMMC_CLOCK,
+> +	.shift = 0,
+> +	.width = 6,
+> +	.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
+> +};
+
+Same comment on alignement. Some structure you've aligned, and some you haven't
+Consistency ...
+
+> +
+> +static struct clk_regmap_phase_data mmc_clkc_core_phase = {
+> +	.phase_mask	= CLK_CORE_PHASE_MASK,
+> +};
+> +
+> +static const struct mmc_clkc_data mmc_clkc_gx_data = {
+> +	{
+> +		.phase_mask	= CLK_TX_PHASE_MASK,
+> +		.delay_mask	= CLK_V2_TX_DELAY_MASK,
+> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+> +	},
+> +	{
+> +		.phase_mask	= CLK_RX_PHASE_MASK,
+> +		.delay_mask	= CLK_V2_RX_DELAY_MASK,
+> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+> +	},
+> +};
+> +
+> +static const struct mmc_clkc_data mmc_clkc_axg_data = {
+> +	{
+> +		.phase_mask	= CLK_TX_PHASE_MASK,
+> +		.delay_mask	= CLK_V3_TX_DELAY_MASK,
+> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+> +	},
+> +	{
+> +		.phase_mask	= CLK_RX_PHASE_MASK,
+> +		.delay_mask	= CLK_V3_RX_DELAY_MASK,
+> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+> +	},
+> +};
+> +
+> +static const struct of_device_id mmc_clkc_match_table[] = {
+> +	{
+> +		.compatible = "amlogic,meson-gx-mmc-clkc",
+> +		.data = &mmc_clkc_gx_data
+> +	},
+> +	{
+> +		.compatible = "amlogic,meson-axg-mmc-clkc",
+> +		.data = &mmc_clkc_axg_data
+> +	},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
+> +
+> +static struct clk_regmap *mmc_clkc_register_mux(struct mmc_clkc_info *clkc)
+> +{
+> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
+> +	struct device *dev = clkc->dev;
+> +	struct clk_init_data init;
+> +	struct clk_regmap *mux;
+> +	struct clk *clk;
+> +	char *mux_name;
+> +	int i, ret;
+> +
+> +	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+> +	if (!mux)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
+> +		char name[8];
+> +
+> +		snprintf(name, sizeof(name), "clkin%d", i);
+> +		clk = devm_clk_get(dev, name);
+> +		if (IS_ERR(clk)) {
+> +			if (clk != ERR_PTR(-EPROBE_DEFER))
+> +				dev_err(dev, "Missing clock %s\n", name);
+> +			return ERR_PTR((long)clk);
+> +		}
+> +
+> +		parent_names[i] = __clk_get_name(clk);
+> +	}
+> +
+> +	mux_name = kasprintf(GFP_KERNEL, "%s#mux", dev_name(dev));
+> +	if (!mux_name)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mux->map = clkc->map;
+> +	mux->data = &mmc_clkc_mux_data;
+> +
+> +	init.name = mux_name;
+> +	init.ops = &clk_regmap_mux_ops;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = MUX_CLK_NUM_PARENTS;
+> +
+> +	mux->hw.init = &init;
+> +	ret = devm_clk_hw_register(dev, &mux->hw);
+> +	if (ret) {
+> +		dev_err(dev, "Mux clock registration failed\n");
+> +		mux = ERR_PTR(ret);
+> +	}
+> +
+> +	kfree(mux_name);
+> +	return mux;
+> +}
+> +
+> +static struct clk_regmap *mmc_clkc_register_div(struct mmc_clkc_info *clkc)
+> +{
+> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
+> +	struct device *dev = clkc->dev;
+> +	struct clk_init_data init;
+> +	struct clk_regmap *div;
+> +	char *mux_name, *div_name;
+> +	int ret;
+> +
+> +	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+> +	if (!div)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mux_name = kasprintf(GFP_KERNEL, "%s#mux", dev_name(dev));
+> +	div_name = kasprintf(GFP_KERNEL, "%s#div", dev_name(dev));
+> +	if (!mux_name || !div_name) {
+> +		div = ERR_PTR(-ENOMEM);
+> +		goto err;
+> +	}
+> +
+> +	parent_names[0] = mux_name;
+> +	div->map = clkc->map;
+> +	div->data = &mmc_clkc_div_data;
+> +
+> +	init.name = div_name;
+> +	init.ops = &clk_regmap_divider_ops;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = 1;
+> +
+> +	div->hw.init = &init;
+> +	ret = devm_clk_hw_register(dev, &div->hw);
+> +	if (ret) {
+> +		dev_err(dev, "Divider clock registration failed\n");
+> +		div = ERR_PTR(ret);
+> +	}
+> +
+> +err:
+> +	kfree(mux_name);
+> +	kfree(div_name);
+> +	return div;
+> +}
+> +
+> +static int clk_regmap_get_phase(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct clk_regmap_phase_data *ph = clk_get_regmap_phase_data(clk);
+> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
+> +	unsigned long period_ps, p, d;
+> +	int degrees;
+> +	u32 val;
+> +
+> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
+> +	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
+> +	degrees = p * 360 / phase_num;
+> +
+> +	if (ph->delay_mask) {
+> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+> +					 clk_get_rate(hw->clk));
+> +		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
+> +		degrees += d * ph->delay_step_ps * 360 / period_ps;
+> +		degrees %= 360;
+> +	}
+> +
+> +	return degrees;
+> +}
+> +
+> +static void clk_regmap_apply_phase_delay(struct clk_regmap *clk,
+> +					 unsigned int phase,
+> +					 unsigned int delay)
+> +{
+> +	struct clk_regmap_phase_data *ph = clk->data;
+> +	u32 val;
+> +
+> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
+> +
+> +	val &= ~ph->phase_mask;
+> +	val |= phase << __ffs(ph->phase_mask);
+> +
+> +	if (ph->delay_mask) {
+> +		val &= ~ph->delay_mask;
+> +		val |= delay << __ffs(ph->delay_mask);
+> +	}
+> +
+> +	regmap_write(clk->map, SD_EMMC_CLOCK, val);
+> +}
+> +
+> +static int clk_regmap_set_phase(struct clk_hw *hw, int degrees)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct clk_regmap_phase_data *ph = clk_get_regmap_phase_data(clk);
+> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
+> +	unsigned long period_ps, d = 0, r;
+> +	u64 p;
+> +
+> +	p = degrees % 360;
+> +
+> +	if (!ph->delay_mask) {
+> +		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
+> +	} else {
+> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
+> +					 clk_get_rate(hw->clk));
+> +
+> +		/* First compute the phase index (p), the remainder (r) is the
+> +		 * part we'll try to acheive using the delays (d).
+> +		 */
+> +		r = do_div(p, 360 / phase_num);
+> +		d = DIV_ROUND_CLOSEST(r * period_ps,
+> +				      360 * ph->delay_step_ps);
+> +		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
+> +	}
+> +
+> +	clk_regmap_apply_phase_delay(clk, p, d);
+> +	return 0;
+> +}
+> +
+> +static const struct clk_ops clk_regmap_phase_ops = {
+> +	.get_phase = clk_regmap_get_phase,
+> +	.set_phase = clk_regmap_set_phase,
+> +};
+> +
+> +static struct clk_regmap *
+> +mmc_clkc_register_phase_clk(struct mmc_clkc_info *clkc,
+> +			    char *name, char *parent_name, unsigned long flags,
+> +			    struct clk_regmap_phase_data *phase_data)
+> +
+> +{
+> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
+> +	struct device *dev = clkc->dev;
+> +	struct clk_init_data init;
+> +	struct clk_regmap *x;
+
+x is not a very good name, 'clk' is just 2 more letters ...
+
+> +	char *clk_name, *core_name;
+> +	int ret;
+> +
+> +	/* create the mmc rx clock */
+> +	x = devm_kzalloc(dev, sizeof(*x), GFP_KERNEL);
+> +	if (!x)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	clk_name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), name);
+> +	core_name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), parent_name);
+> +
+> +	if (!clk_name || !core_name) {
+> +		x = ERR_PTR(-ENOMEM);
+> +		goto err;
+> +	}
+> +	parent_names[0] = core_name;
+> +
+> +	init.name = clk_name;
+> +	init.ops = &clk_regmap_phase_ops;
+> +	init.flags = flags;
+> +	init.parent_names = parent_names;
+> +	init.num_parents = 1;
+> +
+> +	x->map = clkc->map;
+> +	x->data = phase_data;
+> +	x->hw.init = &init;
+> +
+> +	ret = devm_clk_hw_register(dev, &x->hw);
+> +	if (ret) {
+> +		dev_err(dev, "Core %s clock registration failed\n", name);
+> +		x = ERR_PTR(ret);
+> +	}
+> +err:
+> +	kfree(clk_name);
+> +	kfree(core_name);
+> +	return x;
+> +}
+
+In all your mmc_clkc_register_xxx_() you should a pattern repeating itself. It
+is something I pointed out in the previous version of your patchset
+
+1. allocate a clk_regmap
+2. allocate a clock name using dev name and a suffix.
+3. register clk_hw
+4. free clock name
+5. return clk_regmap
+
+You should be able to make an helper function out of this
+Prototype will probably look like this:
+
+static struct clk_regmap *
+mmc_clkc_register_clk(struct device *dev, struct regmap *map,
+		      struct clk_init_data *init, const char* suffix)
+
+> +
+> +static int mmc_clkc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mmc_clkc_info *clkc;
+> +	struct clk_regmap *mux, *div, *core, *rx, *tx;
+> +	struct clk_hw_onecell_data *onecell_data;
+> +
+> +	clkc = devm_kzalloc(dev, sizeof(*clkc), GFP_KERNEL);
+> +	if (!clkc)
+> +		return -ENOMEM;
+> +
+> +	clkc->data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
+> +	if (!clkc->data)
+> +		return -EINVAL;
+
+Prefer ENODEV for this
+
+> +
+> +	clkc->dev = dev;
+> +	clkc->map = syscon_node_to_regmap(dev->of_node);
+> +
+> +	if (IS_ERR(clkc->map)) {
+> +		dev_err(dev, "could not find mmc clock controller\n");
+> +		return PTR_ERR(clkc->map);
+> +	}
+> +
+> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
+> +				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
+> +				    GFP_KERNEL);
+> +	if (!onecell_data)
+> +		return -ENOMEM;
+> +
+> +	mux = mmc_clkc_register_mux(clkc);
+> +	if (IS_ERR(mux))
+> +		return PTR_ERR(mux);
+> +
+> +	div = mmc_clkc_register_div(clkc);
+> +	if (IS_ERR(div))
+> +		return PTR_ERR(div);
+> +
+> +	core = mmc_clkc_register_phase_clk(clkc, "core", "div",
+> +					   CLK_SET_RATE_PARENT,
+> +					   &mmc_clkc_core_phase);
+> +	if (IS_ERR(core))
+> +		return PTR_ERR(core);
+> +
+> +	rx = mmc_clkc_register_phase_clk(clkc, "rx", "core", 0,
+> +					 &clkc->data->rx);
+> +	if (IS_ERR(rx))
+> +		return PTR_ERR(rx);
+> +
+> +	tx = mmc_clkc_register_phase_clk(clkc, "tx", "core", 0,
+> +					 &clkc->data->tx);
+> +	if (IS_ERR(tx))
+> +		return PTR_ERR(tx);
+> +
+> +	onecell_data->hws[CLKID_MMC_MUX]		= &mux->hw,
+> +	onecell_data->hws[CLKID_MMC_DIV]		= &div->hw,
+> +	onecell_data->hws[CLKID_MMC_PHASE_CORE]		= &core->hw,
+> +	onecell_data->hws[CLKID_MMC_PHASE_RX]		= &rx->hw,
+> +	onecell_data->hws[CLKID_MMC_PHASE_TX]		= &tx->hw,
+> +	onecell_data->num				= MMC_MAX_CLKS;
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +					   onecell_data);
+> +}
+> +
+> +static struct platform_driver mmc_clkc_driver = {
+> +	.probe		= mmc_clkc_probe,
+> +	.driver		= {
+> +		.name	= "meson-mmc-clkc",
+> +		.of_match_table = of_match_ptr(mmc_clkc_match_table),
+> +	},
+> +};
+> +
+> +module_platform_driver(mmc_clkc_driver);
