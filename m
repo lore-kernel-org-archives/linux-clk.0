@@ -1,71 +1,69 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-CC: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Linux ARM
-	<linux-arm-kernel@lists.infradead.org>,
-        devicetree
-	<devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski
-	<bgolaszewski@baylibre.com>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
- <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
-Date: Mon, 2 Jul 2018 17:38:24 +0530
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+References: <20180711142100.3765-1-geert+renesas@glider.be>
+ <20180711142100.3765-6-geert+renesas@glider.be> <20180712135618.fviccj5rg4jgguvp@verge.net.au>
+In-Reply-To: <20180712135618.fviccj5rg4jgguvp@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Jul 2018 16:23:53 +0200
+Message-ID: <CAMuHMdWyt7FeocWyf9RFwx2QRZdqZbpn++vjSF-6SpM4w-ZdvQ@mail.gmail.com>
+Subject: Re: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider
+ configuration and clock
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Bjorn,
+Hi Simon,
 
-On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
-> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->> Hi Bartosz,
->>
->> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> These are the remaining patches that still need to be merged in order
->>> to complete the conversion of the davinci dsp driver to using the reset
->>> framework.
->>>
->>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
->>> merged.
->>
->> Series looks good to me.
->>
->> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
->> and #2 ?
->>
->> Given the dependencies and to preserve bisect its easiest if I take the
->> series with acks from remoteproc and clock maintainers.
->>
->> Open to other suggestions as well.
->>
->> Thanks,
->> Sekhar
-> 
-> Oops you're right about the order. Do you want me to resend?
+On Thu, Jul 12, 2018 at 3:56 PM Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Jul 11, 2018 at 04:20:54PM +0200, Geert Uytterhoeven wrote:
+> > R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
+> > MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
+> > OSC clock.  Hence augment the configuration structure with all
+> > documented predivider values.
+> >
+> > Add the OSC clock using the configured predivider.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
-to you (on top of v4.18-rc1) for you to merge any further changes you
-want to queue from your tree.
+> > --- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
 
-Bartosz, given the number of moving pieces, I think its better to keep
-2/4 for v4.20 release - once all other other dependencies have been merged.
+> > @@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
+> >   */
+> >
+> >  /*
+> > - *   MD              EXTAL           PLL2    PLL1    PLL3
+> > + *   MD              EXTAL           PLL2    PLL1    PLL3    OSC
+> >   * 14 13     (MHz)
+> > - * --------------------------------------------------
+> > - * 0  0              16.66 x 1       x240    x192    x192
+> > - * 0  1              20    x 1       x200    x160    x160
+> > - * 1  0              27    x 1       x148    x118    x118
+> > - * 1  1              33.33 / 2       x240    x192    x192
+> > + * --------------------------------------------------------
+> > + * 0  0              16.66 x 1       x240    x192    x192    /16
+> > + * 0  1              20    x 1       x200    x160    x160    /19
+> > + * 1  0              27    x 1       x148    x118    x118    /24
+>
+> Not related to this patch, but in the Users' Manual 1.0
+> EXTAL is listed as 27MHz in table 8.4e but 25MHz (below) table 8.2e.
 
-Thanks,
-Sekhar
+Nice catch:
+  - Divider 24 is correct for 25 MHz, but not for 27 Mhz.
+  - Multipliers 148 and 118 are correct for 27 MHz, but not for 25 MHz.
+Needs clarification...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
