@@ -1,54 +1,75 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 31 Jul 2018 13:22:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: Erin Lo <erin.lo@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: Re: [PATCH v4 04/10] dt-bindings: ARM: Mediatek: Document bindings
- for MT8183
-Message-ID: <20180731192212.GA6510@rob-hp-laptop>
-References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
- <1533015487-60189-5-git-send-email-erin.lo@mediatek.com>
+Return-Path: <horms@verge.net.au>
+Date: Thu, 12 Jul 2018 16:35:31 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 00/11] clk: renesas: rcar-gen3: OSC and RCLK improvements
+Message-ID: <20180712143530.gi2oez5jypsqbhyx@verge.net.au>
+References: <20180711142100.3765-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1533015487-60189-5-git-send-email-erin.lo@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 31, 2018 at 01:38:01PM +0800, Erin Lo wrote:
-> From: Weiyi Lu <weiyi.lu@mediatek.com>
+On Wed, Jul 11, 2018 at 04:20:49PM +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> This patch adds the binding documentation for apmixedsys, audiosys,
-> camsys, imgsys, infracfg, mfgcfg, mmsys, topckgen, vdecsys, vencsys
-> and ipu for Mediatek MT8183.
+> This patch series contains various improvements for OSC and RCLK
+> handling on R-Car Gen3 SoCs.
 > 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |  1 +
->  .../bindings/arm/mediatek/mediatek,audsys.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,camsys.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,imgsys.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,infracfg.txt    |  1 +
->  .../bindings/arm/mediatek/mediatek,ipu.txt         | 43 ++++++++++++++++++++++
->  .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |  1 +
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  1 +
->  .../bindings/arm/mediatek/mediatek,topckgen.txt    |  1 +
->  .../bindings/arm/mediatek/mediatek,vdecsys.txt     |  1 +
->  .../bindings/arm/mediatek/mediatek,vencsys.txt     |  1 +
->  11 files changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
+> This has been tested on R-Car H3 ES1.0/ES2.0, R-Car M3-W ES1.0, R-Car
+> D3, and R-Car E3.
+> The R-Car V3H (r8a77980) patches were compile-tested only due to lack of
+> hardware.
+> 
+> Thanks for your comments!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I made a few minor comments but nothing else stood out.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+
+> 
+> Geert Uytterhoeven (11):
+>   clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
+>   clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
+>   clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
+>   clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
+>   clk: renesas: r8a77980: Add OSC predivider configuration and clock
+>   clk: renesas: cpg-mssr: Add support for fixed rate clocks
+>   clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
+>   clk: renesas: r8a77990: Correct RCLK handling
+>   clk: renesas: r8a77995: Correct RCLK handling
+>   clk: renesas: rcar-gen3: Add support for mode pin clock selection
+>   clk: renesas: r8a77980: Add RCLK for watchdog timer
+> 
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c  | 66 ++++++++++++-------------
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c  | 66 ++++++++++++-------------
+>  drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c | 28 ++++++-----
+>  drivers/clk/renesas/r8a77990-cpg-mssr.c |  9 +++-
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c |  9 +++-
+>  drivers/clk/renesas/rcar-gen3-cpg.c     | 40 +++++++++++----
+>  drivers/clk/renesas/rcar-gen3-cpg.h     | 25 ++++++++--
+>  drivers/clk/renesas/renesas-cpg-mssr.c  |  5 ++
+>  drivers/clk/renesas/renesas-cpg-mssr.h  |  3 ++
+>  10 files changed, 189 insertions(+), 128 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
+> 
