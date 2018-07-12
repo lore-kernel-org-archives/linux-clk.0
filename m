@@ -1,760 +1,345 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v4] clk: qcom: Add display clock controller driver for SDM845
-Date: Mon, 23 Jul 2018 11:22:03 +0530
-Message-Id: <1532325123-28067-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1532325123-28067-1-git-send-email-tdas@codeaurora.org>
-References: <1532325123-28067-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v6 3/4] clk: tegra: Add sdmmc mux divider clock
+Date: Thu, 12 Jul 2018 14:53:01 +0300
+Message-ID: <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+Return-Path: avienamo@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the display clock controller found on SDM845
-based devices. This would allow display drivers to probe and
-control their clocks.
+From: Peter De-Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Add a clock type to model the sdmmc switch divider clocks which have paths
+to source clocks bypassing the divider (Low Jitter paths). These
+are handled by selecting the lj path when the divider is 1 (ie the
+rate is the parent rate), otherwise the normal path with divider
+will be selected. Otherwise this clock behaves as a normal peripheral
+clock.
+
+Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/qcom/Kconfig         |  10 +
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/dispcc-sdm845.c | 686 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 697 insertions(+)
- create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
+ drivers/clk/tegra/Makefile        |   1 +
+ drivers/clk/tegra/clk-sdmmc-mux.c | 251 ++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h           |  26 ++++
+ 3 files changed, 278 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 2b69cf2..0647686 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -254,6 +254,16 @@ config SDM_VIDEOCC_845
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode and decode.
-
-+config SDM_DISPCC_845
-+	tristate "SDM845 Display Clock Controller"
-+	select SDM_GCC_845
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the display clock controller on Qualcomm Technologies, Inc
-+	  SDM845 devices.
-+	  Say Y if you want to support display devices and functionality such as
-+	  splash screen.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 599ab91..21a4503 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-+obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index c77d072..6507acc 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
+ obj-y					+= clk-periph-gate.o
+ obj-y					+= clk-pll.o
+ obj-y					+= clk-pll-out.o
++obj-y					+= clk-sdmmc-mux.o
+ obj-y					+= clk-super.o
+ obj-y					+= clk-tegra-audio.o
+ obj-y					+= clk-tegra-periph.o
+diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
 new file mode 100644
-index 0000000..266b011
+index 0000000..473d418
 --- /dev/null
-+++ b/drivers/clk/qcom/dispcc-sdm845.c
-@@ -0,0 +1,686 @@
++++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+@@ -0,0 +1,251 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
++ *
++ * based on clk-mux.c
++ *
++ * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
++ * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
++ * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
++ *
 + */
 +
 +#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
++#include <linux/err.h>
++#include <linux/types.h>
 +
-+#include <dt-bindings/clock/qcom,dispcc-sdm845.h>
++#include "clk.h"
 +
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap-divider.h"
-+#include "common.h"
-+#include "gdsc.h"
-+#include "reset.h"
++#define DIV_MASK GENMASK(7, 0)
++#define MUX_SHIFT 29
++#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
++#define SDMMC_MUL 2
 +
-+enum {
-+	P_BI_TCXO,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_DISP_CC_PLL0_OUT_MAIN,
-+	P_DSI0_PHY_PLL_OUT_BYTECLK,
-+	P_DSI0_PHY_PLL_OUT_DSICLK,
-+	P_DSI1_PHY_PLL_OUT_BYTECLK,
-+	P_DSI1_PHY_PLL_OUT_DSICLK,
-+	P_GPLL0_OUT_MAIN,
-+	P_GPLL0_OUT_MAIN_DIV,
++#define get_max_div(d) DIV_MASK
++#define get_div_field(val) ((val) & DIV_MASK)
++#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
++
++static const char * const mux_sdmmc_parents[] = {
++	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
 +};
 +
-+static const struct parent_map disp_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
-+	{ P_DSI1_PHY_PLL_OUT_BYTECLK, 2 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
++static const u8 mux_lj_idx[] = {
++	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
 +};
 +
-+static const char * const disp_cc_parent_names_0[] = {
-+	"bi_tcxo",
-+	"dsi0_phy_pll_out_byteclk",
-+	"dsi1_phy_pll_out_byteclk",
-+	"core_bi_pll_test_se",
++static const u8 mux_non_lj_idx[] = {
++	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
 +};
 +
-+static const struct parent_map disp_cc_parent_map_2[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const char * const disp_cc_parent_names_2[] = {
-+	"bi_tcxo",
-+	"core_bi_pll_test_se",
-+};
-+
-+static const struct parent_map disp_cc_parent_map_3[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
-+	{ P_GPLL0_OUT_MAIN, 4 },
-+	{ P_GPLL0_OUT_MAIN_DIV, 5 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const char * const disp_cc_parent_names_3[] = {
-+	"bi_tcxo",
-+	"disp_cc_pll0",
-+	"gcc_disp_gpll0_clk_src",
-+	"gcc_disp_gpll0_div_clk_src",
-+	"core_bi_pll_test_se",
-+};
-+
-+static const struct parent_map disp_cc_parent_map_4[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
-+	{ P_DSI1_PHY_PLL_OUT_DSICLK, 2 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const char * const disp_cc_parent_names_4[] = {
-+	"bi_tcxo",
-+	"dsi0_phy_pll_out_dsiclk",
-+	"dsi1_phy_pll_out_dsiclk",
-+	"core_bi_pll_test_se",
-+};
-+
-+static struct clk_alpha_pll disp_cc_pll0 = {
-+	.offset = 0x0,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_pll0",
-+			.parent_names = (const char *[]){ "bi_tcxo" },
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
-+	.cmd_rcgr = 0x20d0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_0,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_byte0_clk_src",
-+		.parent_names = disp_cc_parent_names_0,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_byte2_ops,
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
-+	.cmd_rcgr = 0x20ec,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_0,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_byte1_clk_src",
-+		.parent_names = disp_cc_parent_names_0,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_byte2_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
-+	.cmd_rcgr = 0x2108,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_0,
-+	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_esc0_clk_src",
-+		.parent_names = disp_cc_parent_names_0,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
-+	.cmd_rcgr = 0x2120,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_0,
-+	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_esc1_clk_src",
-+		.parent_names = disp_cc_parent_names_0,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(85714286, P_GPLL0_OUT_MAIN, 7, 0, 0),
-+	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-+	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-+	F(171428571, P_GPLL0_OUT_MAIN, 3.5, 0, 0),
-+	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
-+	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-+	F(344000000, P_DISP_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(430000000, P_DISP_CC_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
-+	.cmd_rcgr = 0x2088,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_3,
-+	.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_mdp_clk_src",
-+		.parent_names = disp_cc_parent_names_3,
-+		.num_parents = 5,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
-+	.cmd_rcgr = 0x2058,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_4,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_pclk0_clk_src",
-+		.parent_names = disp_cc_parent_names_4,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_pixel_ops,
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src = {
-+	.cmd_rcgr = 0x2070,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_4,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_pclk1_clk_src",
-+		.parent_names = disp_cc_parent_names_4,
-+		.num_parents = 4,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+		.ops = &clk_pixel_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_disp_cc_mdss_rot_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(171428571, P_GPLL0_OUT_MAIN, 3.5, 0, 0),
-+	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-+	F(344000000, P_DISP_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(430000000, P_DISP_CC_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
-+	.cmd_rcgr = 0x20a0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_3,
-+	.freq_tbl = ftbl_disp_cc_mdss_rot_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_rot_clk_src",
-+		.parent_names = disp_cc_parent_names_3,
-+		.num_parents = 5,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
-+	.cmd_rcgr = 0x20b8,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = disp_cc_parent_map_2,
-+	.freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "disp_cc_mdss_vsync_clk_src",
-+		.parent_names = disp_cc_parent_names_2,
-+		.num_parents = 2,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_ahb_clk = {
-+	.halt_reg = 0x4004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_axi_clk = {
-+	.halt_reg = 0x4008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_byte0_clk = {
-+	.halt_reg = 0x2028,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2028,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte0_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte0_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
-+	.reg = 0x20e8,
-+	.shift = 0,
-+	.width = 2,
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte0_div_clk_src",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte0_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_regmap_div_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_byte0_intf_clk = {
-+	.halt_reg = 0x202c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x202c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte0_intf_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte0_div_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_byte1_clk = {
-+	.halt_reg = 0x2030,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2030,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte1_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte1_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_regmap_div disp_cc_mdss_byte1_div_clk_src = {
-+	.reg = 0x2104,
-+	.shift = 0,
-+	.width = 2,
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte1_div_clk_src",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte1_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_regmap_div_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_byte1_intf_clk = {
-+	.halt_reg = 0x2034,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2034,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_byte1_intf_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_byte1_div_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_esc0_clk = {
-+	.halt_reg = 0x2038,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2038,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_esc0_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_esc0_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_esc1_clk = {
-+	.halt_reg = 0x203c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x203c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_esc1_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_esc1_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_mdp_clk = {
-+	.halt_reg = 0x200c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x200c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_mdp_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_mdp_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_mdp_lut_clk = {
-+	.halt_reg = 0x201c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x201c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_mdp_lut_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_mdp_clk_src",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_pclk0_clk = {
-+	.halt_reg = 0x2004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_pclk0_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_pclk0_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* Return the HW recalc rate for idle use case */
-+static struct clk_branch disp_cc_mdss_pclk1_clk = {
-+	.halt_reg = 0x2008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_pclk1_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_pclk1_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_rot_clk = {
-+	.halt_reg = 0x2014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_rot_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_rot_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_rscc_ahb_clk = {
-+	.halt_reg = 0x5004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x5004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_rscc_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_rscc_vsync_clk = {
-+	.halt_reg = 0x5008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x5008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_rscc_vsync_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_vsync_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch disp_cc_mdss_vsync_clk = {
-+	.halt_reg = 0x2024,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2024,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "disp_cc_mdss_vsync_clk",
-+			.parent_names = (const char *[]){
-+				"disp_cc_mdss_vsync_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc mdss_gdsc = {
-+	.gdscr = 0x3000,
-+	.pd = {
-+		.name = "mdss_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL | POLL_CFG_GDSCR,
-+};
-+
-+static struct clk_regmap *disp_cc_sdm845_clocks[] = {
-+	[DISP_CC_MDSS_AHB_CLK] = &disp_cc_mdss_ahb_clk.clkr,
-+	[DISP_CC_MDSS_AXI_CLK] = &disp_cc_mdss_axi_clk.clkr,
-+	[DISP_CC_MDSS_BYTE0_CLK] = &disp_cc_mdss_byte0_clk.clkr,
-+	[DISP_CC_MDSS_BYTE0_CLK_SRC] = &disp_cc_mdss_byte0_clk_src.clkr,
-+	[DISP_CC_MDSS_BYTE0_INTF_CLK] = &disp_cc_mdss_byte0_intf_clk.clkr,
-+	[DISP_CC_MDSS_BYTE0_DIV_CLK_SRC] =
-+					&disp_cc_mdss_byte0_div_clk_src.clkr,
-+	[DISP_CC_MDSS_BYTE1_CLK] = &disp_cc_mdss_byte1_clk.clkr,
-+	[DISP_CC_MDSS_BYTE1_CLK_SRC] = &disp_cc_mdss_byte1_clk_src.clkr,
-+	[DISP_CC_MDSS_BYTE1_INTF_CLK] = &disp_cc_mdss_byte1_intf_clk.clkr,
-+	[DISP_CC_MDSS_BYTE1_DIV_CLK_SRC] =
-+					&disp_cc_mdss_byte1_div_clk_src.clkr,
-+	[DISP_CC_MDSS_ESC0_CLK] = &disp_cc_mdss_esc0_clk.clkr,
-+	[DISP_CC_MDSS_ESC0_CLK_SRC] = &disp_cc_mdss_esc0_clk_src.clkr,
-+	[DISP_CC_MDSS_ESC1_CLK] = &disp_cc_mdss_esc1_clk.clkr,
-+	[DISP_CC_MDSS_ESC1_CLK_SRC] = &disp_cc_mdss_esc1_clk_src.clkr,
-+	[DISP_CC_MDSS_MDP_CLK] = &disp_cc_mdss_mdp_clk.clkr,
-+	[DISP_CC_MDSS_MDP_CLK_SRC] = &disp_cc_mdss_mdp_clk_src.clkr,
-+	[DISP_CC_MDSS_MDP_LUT_CLK] = &disp_cc_mdss_mdp_lut_clk.clkr,
-+	[DISP_CC_MDSS_PCLK0_CLK] = &disp_cc_mdss_pclk0_clk.clkr,
-+	[DISP_CC_MDSS_PCLK0_CLK_SRC] = &disp_cc_mdss_pclk0_clk_src.clkr,
-+	[DISP_CC_MDSS_PCLK1_CLK] = &disp_cc_mdss_pclk1_clk.clkr,
-+	[DISP_CC_MDSS_PCLK1_CLK_SRC] = &disp_cc_mdss_pclk1_clk_src.clkr,
-+	[DISP_CC_MDSS_ROT_CLK] = &disp_cc_mdss_rot_clk.clkr,
-+	[DISP_CC_MDSS_ROT_CLK_SRC] = &disp_cc_mdss_rot_clk_src.clkr,
-+	[DISP_CC_MDSS_RSCC_AHB_CLK] = &disp_cc_mdss_rscc_ahb_clk.clkr,
-+	[DISP_CC_MDSS_RSCC_VSYNC_CLK] = &disp_cc_mdss_rscc_vsync_clk.clkr,
-+	[DISP_CC_MDSS_VSYNC_CLK] = &disp_cc_mdss_vsync_clk.clkr,
-+	[DISP_CC_MDSS_VSYNC_CLK_SRC] = &disp_cc_mdss_vsync_clk_src.clkr,
-+	[DISP_CC_PLL0] = &disp_cc_pll0.clkr,
-+};
-+
-+static const struct qcom_reset_map disp_cc_sdm845_resets[] = {
-+	[DISP_CC_MDSS_RSCC_BCR] = { 0x5000 },
-+};
-+
-+static struct gdsc *disp_cc_sdm845_gdscs[] = {
-+	[MDSS_GDSC] = &mdss_gdsc,
-+};
-+
-+static const struct regmap_config disp_cc_sdm845_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x10000,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc disp_cc_sdm845_desc = {
-+	.config = &disp_cc_sdm845_regmap_config,
-+	.clks = disp_cc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(disp_cc_sdm845_clocks),
-+	.resets = disp_cc_sdm845_resets,
-+	.num_resets = ARRAY_SIZE(disp_cc_sdm845_resets),
-+	.gdscs = disp_cc_sdm845_gdscs,
-+	.num_gdscs = ARRAY_SIZE(disp_cc_sdm845_gdscs),
-+};
-+
-+static const struct of_device_id disp_cc_sdm845_match_table[] = {
-+	{ .compatible = "qcom,sdm845-dispcc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, disp_cc_sdm845_match_table);
-+
-+static int disp_cc_sdm845_probe(struct platform_device *pdev)
++static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
 +{
-+	struct regmap *regmap;
-+	struct alpha_pll_config disp_cc_pll0_config = {
-+		.l = 0x2c,
-+		.alpha = 0xcaaa,
-+	};
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int num_parents, i;
++	u32 src, val;
++	const u8 *mux_idx;
 +
-+	regmap = qcom_cc_map(pdev, &disp_cc_sdm845_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
++	num_parents = clk_hw_get_num_parents(hw);
 +
-+	clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
++	val = readl_relaxed(sdmmc_mux->reg);
++	src = get_mux_field(val);
++	if (get_div_field(val))
++		mux_idx = mux_non_lj_idx;
++	else
++		mux_idx = mux_lj_idx;
 +
-+	/* Enable hardware clock gating for DSI and MDP clocks */
-+	regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
++	for (i = 0; i < num_parents; i++) {
++		if (mux_idx[i] == src)
++			return i;
++	}
 +
-+	return qcom_cc_really_probe(pdev, &disp_cc_sdm845_desc, regmap);
++	WARN(1, "Unknown parent selector %d\n", src);
++
++	return 0;
 +}
 +
-+static struct platform_driver disp_cc_sdm845_driver = {
-+	.probe		= disp_cc_sdm845_probe,
-+	.driver		= {
-+		.name	= "disp_cc-sdm845",
-+		.of_match_table = disp_cc_sdm845_match_table,
-+	},
++static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	if (get_div_field(val))
++		index = mux_non_lj_idx[index];
++	else
++		index = mux_lj_idx[index];
++
++	val &= ~MUX_MASK;
++	val |= index << MUX_SHIFT;
++
++	writel(val, sdmmc_mux->reg);
++
++	return 0;
++}
++
++static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	u32 val;
++	int div;
++	u64 rate = parent_rate;
++
++	val = readl_relaxed(sdmmc_mux->reg);
++	div = get_div_field(val);
++
++	div += SDMMC_MUL;
++
++	rate *= SDMMC_MUL;
++	rate += div - 1;
++	do_div(rate, div);
++
++	return rate;
++}
++
++static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div;
++	unsigned long output_rate = req->best_parent_rate;
++
++	req->rate = max(req->rate, req->min_rate);
++	req->rate = min(req->rate, req->max_rate);
++
++	if (!req->rate)
++		return output_rate;
++
++	div = div_frac_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		div = 0;
++
++	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
++		req->rate =  DIV_ROUND_UP(output_rate * SDMMC_MUL,
++					  div + SDMMC_MUL);
++	else
++		req->rate =  output_rate * SDMMC_MUL / (div + SDMMC_MUL);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long parent_rate)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	int div;
++	unsigned long flags = 0;
++	u32 val;
++	u8 src;
++
++	div = div_frac_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
++	if (div < 0)
++		return div;
++
++	if (sdmmc_mux->lock)
++		spin_lock_irqsave(sdmmc_mux->lock, flags);
++
++	src = clk_sdmmc_mux_get_parent(hw);
++	if (div)
++		src = mux_non_lj_idx[src];
++	else
++		src = mux_lj_idx[src];
++
++	val = src << MUX_SHIFT;
++	val |= div;
++	writel(val, sdmmc_mux->reg);
++	fence_udelay(2, sdmmc_mux->reg);
++
++	if (sdmmc_mux->lock)
++		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
++
++	return 0;
++}
++
++static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return gate_ops->is_enabled(gate_hw);
++}
++
++static int clk_sdmmc_mux_enable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	__clk_hw_set_clk(gate_hw, hw);
++
++	return gate_ops->enable(gate_hw);
++}
++
++static void clk_sdmmc_mux_disable(struct clk_hw *hw)
++{
++	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
++	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
++	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
++
++	gate_ops->disable(gate_hw);
++}
++
++static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
++	.get_parent = clk_sdmmc_mux_get_parent,
++	.set_parent = clk_sdmmc_mux_set_parent,
++	.determine_rate = clk_sdmmc_mux_determine_rate,
++	.recalc_rate = clk_sdmmc_mux_recalc_rate,
++	.set_rate = clk_sdmmc_mux_set_rate,
++	.is_enabled = clk_sdmmc_mux_is_enabled,
++	.enable = clk_sdmmc_mux_enable,
++	.disable = clk_sdmmc_mux_disable,
 +};
 +
-+static int __init disp_cc_sdm845_init(void)
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++	unsigned long flags, void *lock)
 +{
-+	return platform_driver_register(&disp_cc_sdm845_driver);
-+}
-+subsys_initcall(disp_cc_sdm845_init);
++	struct clk *clk;
++	struct clk_init_data init;
++	const struct tegra_clk_periph_regs *bank;
++	struct tegra_sdmmc_mux *sdmmc_mux;
 +
-+static void __exit disp_cc_sdm845_exit(void)
-+{
-+	platform_driver_unregister(&disp_cc_sdm845_driver);
-+}
-+module_exit(disp_cc_sdm845_exit);
++	init.ops = &tegra_clk_sdmmc_mux_ops;
++	init.name = name;
++	init.flags = flags;
++	init.parent_names = mux_sdmmc_parents;
++	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
 +
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
++	bank = get_reg_bank(clk_num);
++	if (!bank)
++		return ERR_PTR(-EINVAL);
++
++	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
++	if (!sdmmc_mux)
++		return ERR_PTR(-ENOMEM);
++
++	/* Data in .init is copied by clk_register(), so stack variable OK */
++	sdmmc_mux->hw.init = &init;
++	sdmmc_mux->reg = clk_base + offset;
++	sdmmc_mux->lock = lock;
++	sdmmc_mux->gate.clk_base = clk_base;
++	sdmmc_mux->gate.regs = bank;
++	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
++	sdmmc_mux->gate.clk_num = clk_num;
++	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
++	sdmmc_mux->div_flags = div_flags;
++	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
++
++	clk = clk_register(NULL, &sdmmc_mux->hw);
++	if (IS_ERR(clk)) {
++		kfree(sdmmc_mux);
++		return clk;
++	}
++
++	sdmmc_mux->gate.hw.clk = clk;
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index c733841..d2c3a01 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -706,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+ 		const char * const *parent_names, u8 num_parents,
+ 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+ 		spinlock_t *lock);
++
++/**
++ * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
++ *
++ * @hw:		handle between common and hardware-specific interfaces
++ * @reg:	register controlling mux and divider
++ * @flags:	hardware-specific flags
++ * @lock:	optional register lock
++ * @gate:	gate clock
++ * @gate_ops:	gate clock ops
++ */
++struct tegra_sdmmc_mux {
++	struct clk_hw		hw;
++	void __iomem		*reg;
++	spinlock_t		*lock;
++	const struct clk_ops	*gate_ops;
++	struct tegra_clk_periph_gate	gate;
++	u8			div_flags;
++};
++
++#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
++
++struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
++		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
++		unsigned long flags, void *lock);
++
+ /**
+  * struct clk_init_table - clock initialization table
+  * @clk_id:	clock id as mentioned in device tree bindings
+-- 
+2.7.4
