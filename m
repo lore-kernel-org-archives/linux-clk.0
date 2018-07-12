@@ -1,77 +1,85 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v4 0/5] Add clock driver for Actions S700 SoC
-Date: Sun, 15 Jul 2018 14:31:40 +0200
-Message-Id: <20180715123145.16975-1-sravanhome@gmail.com>
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+References: <20180710163658.6175-1-yixun.lan@amlogic.com> <20180710163658.6175-2-yixun.lan@amlogic.com>
+ <20180711194346.GA32414@rob-hp-laptop> <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
+In-Reply-To: <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 12 Jul 2018 08:17:29 -0600
+Message-ID: <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock controller
+To: yixun.lan@amlogic.com
+Cc: jbrunet@baylibre.com, narmstrong@baylibre.com, khilman@baylibre.com,
+	carlo@caione.org, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+	martin.blumenstingl@googlemail.com, liang.yang@amlogic.com,
+	qiufang.dai@amlogic.com, jian.hu@amlogic.com, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Changelog v4:
-- dt-bindings use absolute numbering for clocks
-- Patch re-oredering
+On Wed, Jul 11, 2018 at 8:47 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>
+> Hi Rob
+>
+> see my comments
+>
+> On 07/12/18 03:43, Rob Herring wrote:
+> > On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
+> >> Document the MMC sub clock controller driver, the potential consumer
+> >> of this driver is MMC or NAND.
+> >
+> > So you all have decided to properly model this now?
+> >
+> Yes, ;-)
+>
+> >>
+> >> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> >> ---
+> >>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+> >>  1 file changed, 31 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> >> new file mode 100644
+> >> index 000000000000..ff6b4bf3ecf9
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> >> @@ -0,0 +1,31 @@
+> >> +* Amlogic MMC Sub Clock Controller Driver
+> >> +
+> >> +The Amlogic MMC clock controller generates and supplies clock to support
+> >> +MMC and NAND controller
+> >> +
+> >> +Required Properties:
+> >> +
+> >> +- compatible: should be:
+> >> +            "amlogic,meson-gx-mmc-clkc"
+> >> +            "amlogic,meson-axg-mmc-clkc"
+> >> +
+> >> +- #clock-cells: should be 1.
+> >> +- clocks: phandles to clocks corresponding to the clock-names property
+> >> +- clock-names: list of parent clock names
+> >> +    - "clkin0", "clkin1"
+> >> +
+> >> +Parent node should have the following properties :
+> >> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
+> >
+> > You don't need "simple-mfd" and probably not syscon either. The order is
+> > wrong too. Most specific first.
+> >
+> Ok, I will drop "simple-mfd"..
+>
+> but the syscon is a must, since this mmc clock model access registers
+> via the regmap interface
 
-Changelog v3:
-- Splitted uart clock DTS changes into separate patch
-- Splitted REGMAP Kconfig selection into separate patch
-- General naming convention as "Actions Semi" in dt-binding documentation
-- Patch re-oredering
-- Cleanup and fixed review findings
+A syscon compatible should not be the only way to get a regmap.
+Removing lines 56/57 of drivers/mfd/syscon.c should be sufficient.
 
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
+Why do you need a regmap in the first place? What else needs to access
+this register directly? Don't you need a patch removing the clock code
+from within the emmc driver? It's not even using regmap, so using
+regmap here doesn't help.
 
-This patchset adds clock support for Actions Semi OWL series S700 SoC
-with relevant clock bindings and device tree info. 
-
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
-
-Thanks and regards,
-Saravanan,
-Parthiban
-
-*** BLURB HERE ***
-
-Saravanan Sekar (5):
-  clk: actions: Add REGMAP as dependency
-  dt-bindings: clock: Add S700 support for Actions Semi Soc's
-  clk: actions: Add S700 SoC clock support
-  arm64: dts: actions: Enable clock controller for S700
-  arm64: dts: actions: Set UART clock reference from CMU
-
- ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +-
- .../boot/dts/actions/s700-cubieboard7.dts     |   8 +-
- arch/arm64/boot/dts/actions/s700.dtsi         |  14 +
- drivers/clk/actions/Kconfig                   |  14 +
- drivers/clk/actions/Makefile                  |   1 +
- drivers/clk/actions/owl-s700.c                | 610 ++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++
- 7 files changed, 769 insertions(+), 16 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-
--- 
-2.18.0
+Rob
