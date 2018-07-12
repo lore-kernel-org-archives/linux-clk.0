@@ -1,40 +1,73 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.co,
-        thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk,
-        Ben Dooks <ben.dooks@codethink.co.uk>
-Subject: [PATCH 2/8] clk: tegra: host1x has fractional divider
-Date: Fri, 20 Jul 2018 14:45:26 +0100
-Message-Id: <20180720134532.13148-3-ben.dooks@codethink.co.uk>
-In-Reply-To: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <avienamo@nvidia.com>
+From: Aapo Vienamo <avienamo@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH v6 0/4] Multiplex sdmmc low jitter clock path
+Date: Thu, 12 Jul 2018 14:52:58 +0300
+Message-ID: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+Return-Path: avienamo@nvidia.com
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The host1x clock according to both tegra2 and tegra3 manuals is
-an 8bit divider with lsb being fractional. This is running into
-an issue where the host1x is being set on a tegra20a system to
-266.4MHz but ends up at 222MHz instead.
+The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
+divider to achieve better jitter performance with high speed signaling
+modes. The clock path with the divider is needed by some of the slower
+signaling modes. This series automatically multiplexes the LJ and
+non-LJ clock paths based on the requested frequency.
 
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
+v6:
+	- Rename div-frac.c to clk-utils.c
+	- Fix checkpatch errors and warnings introduced in v5
+	- Replace int mul = 2 with a macro in clk-sdmmc-mux.c
+	- Remove unnecessary space from clk_sdmmc_mux_enable() return
+	- Free sdmmc_mux if clk_register() fails in
+	  tegra_clk_register_sdmmc_mux_div()
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 2acba2986bc6..8fa1cecf18a0 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -644,7 +644,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
- 	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
- 	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
--	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-+	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
- 	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
- 	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
- 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
+v5:
+	- Rename div71_get() to div_frac_get()
+	- Rename div71.c to div-frac.c
+
+v4:
+	- Add a changelog
+
+v3:
+	- Use <asm/div64.h> include instead of <linux/kernel.h> for
+	  do_div()
+	- Use SPDX tags for new files
+	- Make mux_lj_idx[] and mux_non_lj_idx[] const
+	- Make tegra_clk_sdmmc_mux_ops static
+	- Fix the includes for fence_udelay() in a separate patch
+
+v2:
+	- Fix the type compatibility error on do_div
+
+Aapo Vienamo (1):
+  clk: tegra: Fix includes required by fence_udelay()
+
+Peter De Schrijver (1):
+  clk: tegra: Refactor fractional divider calculation
+
+Peter De-Schrijver (2):
+  clk: tegra: Add sdmmc mux divider clock
+  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+
+ drivers/clk/tegra/Makefile           |   2 +
+ drivers/clk/tegra/clk-divider.c      |  30 +----
+ drivers/clk/tegra/clk-id.h           |   2 -
+ drivers/clk/tegra/clk-sdmmc-mux.c    | 251 +++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra-periph.c |  11 --
+ drivers/clk/tegra/clk-tegra210.c     |  14 +-
+ drivers/clk/tegra/clk-utils.c        |  43 ++++++
+ drivers/clk/tegra/clk.h              |  30 +++++
+ 8 files changed, 343 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+ create mode 100644 drivers/clk/tegra/clk-utils.c
+
 -- 
-2.18.0
+2.7.4
