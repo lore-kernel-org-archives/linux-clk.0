@@ -1,57 +1,67 @@
-Return-Path: <sean.wang@mediatek.com>
-Message-ID: <1531883057.8953.87.camel@mtkswgap22>
-Subject: Re: [resend PATCH v4 5/5] drm: mediatek: Omit warning on probe
- defers
-From: Sean Wang <sean.wang@mediatek.com>
-To: <matthias.bgg@kernel.org>
-CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
-	<ck.hu@mediatek.com>, <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <lee.jones@linaro.org>, <davem@davemloft.net>,
-	<gregkh@linuxfoundation.org>, <mchehab@kernel.org>, <rdunlap@infradead.org>,
-	<pi-cheng.chen@linaro.org>, <linux-clk@vger.kernel.org>,
-	<linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Matthias Brugger <mbrugger@suse.com>
-Date: Wed, 18 Jul 2018 11:04:17 +0800
-In-Reply-To: <20180717220328.792-6-matthias.bgg@kernel.org>
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
-	 <20180717220328.792-6-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:55543 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726789AbeGMKSO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Jul 2018 06:18:14 -0400
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-clk@vger.kernel.org
+Subject: Re: [bug report] clk: mvebu: armada-37xx-periph: prepare cpu clk to be used with DVFS
+References: <20180620201208.rzzc3lpu2lmyy4sz@kili.mountain>
+Date: Fri, 13 Jul 2018 12:04:15 +0200
+In-Reply-To: <20180620201208.rzzc3lpu2lmyy4sz@kili.mountain> (Dan Carpenter's
+        message of "Thu, 21 Jun 2018 11:06:28 +0300")
+Message-ID: <87r2k7bgf4.fsf@bootlin.com>
 MIME-Version: 1.0
-Return-Path: sean.wang@mediatek.com
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> It can happen that the clock drivers wasn't probed before the
-> ddp driver gets invoked. The driver used to omit a warning
-> that the driver failed to get the clocks. Omit this error on
-> the defered probe path.
-> 
+Hi Dan,
+ 
+ On jeu., juin 21 2018, Dan Carpenter <dan.carpenter@oracle.com> wrote:
 
-so if we list drm device as a child device of mmsys we don't need the
-patch, and that make more sense.
+> Hello Gregory CLEMENT,
+>
+> The patch 9818a7a4fd10: "clk: mvebu: armada-37xx-periph: prepare cpu
+> clk to be used with DVFS" from Nov 30, 2017, leads to the following
+> static checker warning:
+>
+> 	drivers/clk/mvebu/armada-37xx-periph.c:432 clk_pm_cpu_get_parent()
+> 	warn: signedness bug returning '(-22)'
 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> Acked-by: CK Hu <ck.hu@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index bafc5c77c4fb..6b399348a2dc 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
->  
->  	ddp->clk = devm_clk_get(dev, NULL);
->  	if (IS_ERR(ddp->clk)) {
-> -		dev_err(dev, "Failed to get clock\n");
-> +		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
-> +			dev_err(dev, "Failed to get clock\n");
->  		return PTR_ERR(ddp->clk);
->  	}
->  
+Thanks, I finally took time to take care of it and I am going to post a
+fix.
+
+Gregory
+
+>
+> drivers/clk/mvebu/armada-37xx-periph.c
+>    418  static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
+>                ^^
+>    419  {
+>    420          struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
+>    421          int num_parents = clk_hw_get_num_parents(hw);
+>    422          u32 val;
+>    423  
+>    424          if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
+>    425                  val = armada_3700_pm_dvfs_get_cpu_parent(pm_cpu->nb_pm_base);
+>    426          } else {
+>    427                  val = readl(pm_cpu->reg_mux) >> pm_cpu->shift_mux;
+>    428                  val &= pm_cpu->mask_mux;
+>    429          }
+>    430  
+>    431          if (val >= num_parents)
+>    432                  return -EINVAL;
+>                                ^^^^^^^
+>    433  
+>    434          return val;
+>    435  }
+>
+> regards,
+> dan carpenter
+
+-- 
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
