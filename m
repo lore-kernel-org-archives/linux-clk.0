@@ -1,153 +1,110 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <spanda@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180621073706.22812-2-brgl@bgdev.pl>
-References: <20180621073706.22812-1-brgl@bgdev.pl> <20180621073706.22812-2-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 23 Jul 2018 10:03:20 +0200
-Message-ID: <CAMRc=Mcqe7VgkckL3e9GmM7fNYe=a7OO1hEv-Nyh1yiMNwfzfw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>,
-	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Fri, 13 Jul 2018 13:55:49 +0530
+From: spanda@codeaurora.org
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Abhinav Kumar <abhinavk@codeaurora.org>, Michael Turquette
+ <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>,
+ ryadav@codeaurora.org, Andy Gross <andy.gross@linaro.org>, David Brown
+ <david.brown@linaro.org>, Rajendra Nayak <rnayak@codeaurora.org>, Amit
+ Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
+ SDM845
+In-Reply-To: <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+ <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+ <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
+ <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
+ <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
+ <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
+ <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
+ <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
+Message-ID: <9509c88c112d59874e28459d8f87509f@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-06-21 9:37 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Switch to using the reset framework instead of handcoded reset routines
-> we used so far.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++----
->  1 file changed, 29 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index b668e32996e2..76c06b70a1c6 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -10,6 +10,7 @@
->
->  #include <linux/bitops.h>
->  #include <linux/clk.h>
-> +#include <linux/reset.h>
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -20,8 +21,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/remoteproc.h>
->
-> -#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
-> -
->  #include "remoteproc_internal.h"
->
->  static char *da8xx_fw_name;
-> @@ -72,6 +71,7 @@ struct da8xx_rproc {
->         struct da8xx_rproc_mem *mem;
->         int num_mems;
->         struct clk *dsp_clk;
-> +       struct reset_control *dsp_reset;
->         void (*ack_fxn)(struct irq_data *data);
->         struct irq_data *irq_data;
->         void __iomem *chipsig;
-> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->         struct device *dev = rproc->dev.parent;
->         struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->         struct clk *dsp_clk = drproc->dsp_clk;
-> +       struct reset_control *dsp_reset = drproc->dsp_reset;
->         int ret;
->
->         /* hw requires the start (boot) address be on 1KB boundary */
-> @@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->                 return ret;
->         }
->
-> -       davinci_clk_reset_deassert(dsp_clk);
-> +       ret = reset_control_deassert(dsp_reset);
-> +       if (ret) {
-> +               dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-> +               clk_disable_unprepare(dsp_clk);
-> +               return ret;
-> +       }
->
->         return 0;
->  }
-> @@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  static int da8xx_rproc_stop(struct rproc *rproc)
->  {
->         struct da8xx_rproc *drproc = rproc->priv;
-> +       struct device *dev = rproc->dev.parent;
-> +       int ret;
-> +
-> +       ret = reset_control_assert(drproc->dsp_reset);
-> +       if (ret) {
-> +               dev_err(dev, "reset_control_assert() failed: %d\n", ret);
-> +               return ret;
-> +       }
->
-> -       davinci_clk_reset_assert(drproc->dsp_clk);
->         clk_disable_unprepare(drproc->dsp_clk);
->
->         return 0;
-> @@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->         struct resource *bootreg_res;
->         struct resource *chipsig_res;
->         struct clk *dsp_clk;
-> +       struct reset_control *dsp_reset;
->         void __iomem *chipsig;
->         void __iomem *bootreg;
->         int irq;
-> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->                 return PTR_ERR(dsp_clk);
->         }
->
-> +       dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-> +       if (IS_ERR(dsp_reset)) {
-> +               if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-> +                       dev_err(dev, "unable to get reset control: %ld\n",
-> +                               PTR_ERR(dsp_reset));
-> +
-> +               return PTR_ERR(dsp_reset);
-> +       }
-> +
->         if (dev->of_node) {
->                 ret = of_reserved_mem_device_init(dev);
->                 if (ret) {
-> @@ -287,6 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->         drproc = rproc->priv;
->         drproc->rproc = rproc;
->         drproc->dsp_clk = dsp_clk;
-> +       drproc->dsp_reset = dsp_reset;
->         rproc->has_iommu = false;
->
->         ret = da8xx_rproc_get_internal_memories(pdev, drproc);
-> @@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->          * *not* in reset, but da8xx_rproc_start() needs the DSP to be
->          * held in reset at the time it is called.
->          */
-> -       ret = davinci_clk_reset_assert(drproc->dsp_clk);
-> +       ret = reset_control_assert(dsp_reset);
->         if (ret)
->                 goto free_rproc;
->
-> --
-> 2.17.1
->
+On 2018-07-13 01:11, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-12 10:21:33)
+>> ++ Display driver team,
+>> 
+>> On 7/9/2018 8:36 PM, Stephen Boyd wrote:
+>> > Quoting Taniya Das (2018-07-09 02:34:07)
+>> >>
+>> >>
+>> >> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
+>> >>> Quoting Taniya Das (2018-07-09 00:07:21)
+>> >>>>
+>> >>>>
+>> >>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
+>> >>>>>>
+>> >>>>>>     > Why is the nocache flag needed? Applies to all clks in this file.
+>> >>>>>>     >
+>> >>>>>>
+>> >>>>>> This flag is required for all RCGs whose PLLs are controlled outside the
+>> >>>>>> clock controller. The display code would require the recalculated rate
+>> >>>>>> always.
+>> >>>>>
+>> >>>>> Right. Why is the PLL controlled outside of the clock controller? The
+>> >>>>> rate should propagate upward to the PLL from here, so who's going
+>> >>>>> outside of that?
+>> >>>>>
+>> >>>> The DSI0/1 PLL are not part of the display clock controller, but in the
+>> >>>> display subsystem which are managed by the DRM drivers. When DRM drivers
+>> >>>> query for the rate clock driver should always return the non cached rates.
+>> >>>
+>> >>> Why? Is the DSI PLL changing rate all the time, randomly, without going
+>> >>> through the clk APIs to do so?
+>> >>>
+>> >>
+>> >> Hmm, I am afraid I do not have an answer for this, but this was the
+>> >> requirement to always return the non cached rates from the clock driver.
+>> >>
+>> >
+>> > Ok. Who knows about this requirement? Can we add someone from the
+>> > display driver to understand more?
+>> >
+>> As per my discussions offline with the display teams,
+>> 
+>> There is a use-case where the clock framework is unaware of the PLL 
+>> VCO
+>> frequency change and thus the drivers would query to get the actual HW
+>> frequency rather than the cached one.
+>> 
+>> Do you think keeping these flags would have any impact other than 
+>> always
+>> getting the non-cached rates?
+>> 
+> 
+> The flag will make it so clk_get_rate() works in spite of something
+> changing the frequency behind the framework's back, but I want to
+> understand what and why it's changing without framework involvement. We
+> shouldn't need the flag here, because this flag is typically for clks
+> that are controlled by some other entity that the kernel doesn't have
+> control over. In this case, it seems like we have full control of the
+> clk tree for the display PLL down to this clk, so it should be 
+> perfectly
+> fine to not have this flag. The presence of the flag means that the
+> display driver is doing something wrong.
 
-Hi Bjorn, Sekhar,
-
-I'm not seeing this patch in next, did you agree on how to pick it up for 4.19?
-
-Thanks in advance,
-Bartosz
+These clocks are sourced from DSI PLL. In dsi command mode there is an 
+idle use case when there
+is no activity on display, we switch of the source DSI PLL to save power 
+by calling clk_disable_unprepare().
+In this scenario if some client queries the clk_get_rate(), then if 
+NO_CACHE flag is used the clk
+driver will return the cached rate which is some non-zero value set when 
+we last called clk_set_rate(),
+before enabling the clock, whereas actually in HW this clk is disabled. 
+So we used the NO_CACHE flag
+for the call to land in clk_recalc_rate and we return zero if the PLL is 
+disabled.
+I remember some customer had scripts that runs through all the clocks 
+during idle screen scenario
+and call clk_get_rate(), where they complained display clk_get_rate 
+returns none zero value.
