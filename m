@@ -1,86 +1,39 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl SoCs
-Date: Sat, 28 Jul 2018 00:15:18 +0530
-Message-Id: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <hofrat@osadl.at>
+Date: Fri, 13 Jul 2018 16:41:10 +0000
+From: Nicholas Mc Guire <der.herr@hofr.at>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Nicholas Mc Guire <hofrat@osadl.org>, Shawn Guo <shawnguo@kernel.org>,
+	Frank Li <Frank.Li@freescale.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx6ul: fix missing of_node_put()
+Message-ID: <20180713164110.GA27943@osadl.at>
+References: <1531480400-7664-1-git-send-email-hofrat@osadl.org>
+ <153149925072.48062.9395649003513930129@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153149925072.48062.9395649003513930129@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds Reset Controller (RMU) support for Actions Semi
-Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-the clock subsystem in hardware. Hence, in software we integrate RMU
-support into common clock driver inorder to maintain compatibility.
+On Fri, Jul 13, 2018 at 09:27:30AM -0700, Stephen Boyd wrote:
+> Quoting Nicholas Mc Guire (2018-07-13 04:13:20)
+> > of_find_compatible_node() is returning a device node with refcount
+> > incremented and must be explicitly decremented after the last use
+> > which is right after the us in of_iomap() here.
+> > 
+> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> > Fixes: commit 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+> 
+> This is not how a Fixes line works. It doesn't have 'commit'. I'll
+> remove it when applying so no need to resend.
+>
+sorry - guess I got that wrong on a whole set of patches - fill fix that
+for future patches and thanks for fixing it here 
 
-This patch series depends on the recently posted S700 clk series:
-"[PATCH v7 0/5] Add clock driver for Actions S700 SoC". For the S700 clk
-series, driver and bindings patches are applied through the clk tree.
-But the DTS patches are not yet picked up by the platform maintainer,
-Andreas.
-
-Hence, Andreas is expected to pick the DTS patches in this series once
-reviewed by the maintainers along with S700 clk DTS patches.
-
-Because of the absence of the S500 SoC clk support, the reset controller
-registration code is added to both S700 and S900 SoC clk drivers for now.
-But once S500 clk support is added, the reset controller registration part
-will be moved to Owl SoCs common clk code.
-
-Thanks,
-Mani
-
-Manivannan Sadhasivam (9):
-  clk: actions: Cache regmap info in private clock descriptor
-  dt-bindings: clock: Add reset controller bindings for Actions Semi Owl
-    SoCs
-  dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
-  dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
-  arm64: dts: actions: Add Reset Controller support for S700 SoC
-  arm64: dts: actions: Add Reset Controller support for S900 SoC
-  clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
-  clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
-  clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
-
- .../bindings/clock/actions,owl-cmu.txt        |  2 +
- arch/arm64/boot/dts/actions/s700.dtsi         |  2 +
- arch/arm64/boot/dts/actions/s900.dtsi         |  2 +
- drivers/clk/actions/Kconfig                   |  1 +
- drivers/clk/actions/Makefile                  |  1 +
- drivers/clk/actions/owl-common.c              |  3 +-
- drivers/clk/actions/owl-common.h              |  5 +-
- drivers/clk/actions/owl-reset.c               | 72 ++++++++++++++++
- drivers/clk/actions/owl-reset.h               | 32 +++++++
- drivers/clk/actions/owl-s700.c                | 55 +++++++++++-
- drivers/clk/actions/owl-s900.c                | 86 ++++++++++++++++++-
- .../dt-bindings/reset/actions,s700-reset.h    | 34 ++++++++
- .../dt-bindings/reset/actions,s900-reset.h    | 65 ++++++++++++++
- 13 files changed, 354 insertions(+), 6 deletions(-)
- create mode 100644 drivers/clk/actions/owl-reset.c
- create mode 100644 drivers/clk/actions/owl-reset.h
- create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
- create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
-
--- 
-2.17.1
+thx!
+hofrat 
