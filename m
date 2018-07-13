@@ -1,71 +1,29 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
-	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock controller
-Date: Tue, 10 Jul 2018 16:36:56 +0000
-Message-ID: <20180710163658.6175-2-yixun.lan@amlogic.com>
-In-Reply-To: <20180710163658.6175-1-yixun.lan@amlogic.com>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+To: Nicholas Mc Guire <hofrat@osadl.org>, Shawn Guo <shawnguo@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531480400-7664-1-git-send-email-hofrat@osadl.org>
+Cc: Frank Li <Frank.Li@freescale.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Nicholas Mc Guire <hofrat@osadl.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org
+References: <1531480400-7664-1-git-send-email-hofrat@osadl.org>
+Message-ID: <153149925072.48062.9395649003513930129@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: imx6ul: fix missing of_node_put()
+Date: Fri, 13 Jul 2018 09:27:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the MMC sub clock controller driver, the potential consumer
-of this driver is MMC or NAND.
+Quoting Nicholas Mc Guire (2018-07-13 04:13:20)
+> of_find_compatible_node() is returning a device node with refcount
+> incremented and must be explicitly decremented after the last use
+> which is right after the us in of_iomap() here.
+> =
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: commit 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-new file mode 100644
-index 000000000000..ff6b4bf3ecf9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-@@ -0,0 +1,31 @@
-+* Amlogic MMC Sub Clock Controller Driver
-+
-+The Amlogic MMC clock controller generates and supplies clock to support
-+MMC and NAND controller
-+
-+Required Properties:
-+
-+- compatible: should be:
-+		"amlogic,meson-gx-mmc-clkc"
-+		"amlogic,meson-axg-mmc-clkc"
-+
-+- #clock-cells: should be 1.
-+- clocks: phandles to clocks corresponding to the clock-names property
-+- clock-names: list of parent clock names
-+	- "clkin0", "clkin1"
-+
-+Parent node should have the following properties :
-+- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
-+- reg: base address and size of the MMC control register space.
-+
-+Example: Clock controller node:
-+
-+sd_mmc_c_clkc: clock-controller@7000 {
-+	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
-+	reg = <0x0 0x7000 0x0 0x4>;
-+	#clock-cells = <1>;
-+
-+	clock-names = "clkin0", "clkin1";
-+	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
-+			<&clkc CLKID_FCLK_DIV2>;
-+};
--- 
-2.18.0
+This is not how a Fixes line works. It doesn't have 'commit'. I'll
+remove it when applying so no need to resend.
