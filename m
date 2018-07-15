@@ -1,38 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:50866 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbeGJFom (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Jul 2018 01:44:42 -0400
-Date: Mon, 9 Jul 2018 22:44:38 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Faiz Abbas <faiz_abbas@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
-        mark.rutland@arm.com, sboyd@kernel.org
-Subject: Re: [PATCH v5 2/6] clk: ti: dra7: Add clkctrl clock data for the
- mcan clocks
-Message-ID: <20180710054438.GE99251@atomide.com>
-References: <20180709164841.14182-1-faiz_abbas@ti.com>
- <20180709164841.14182-3-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180709164841.14182-3-faiz_abbas@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org,
+	sboyd@kernel.org
+Cc: mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux@cubietech.com,
+	sravanhome@gmail.com,
+	support@cubietech.com,
+	catalin.marinas@arm.com,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	linux-kernel@vger.kernel.org,
+	thomas.liau@actions-semi.com,
+	darren@cubietech.com,
+	robh+dt@kernel.org,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mp-cs@actions-semi.com
+Subject: [PATCH v5 0/5] Add clock driver for Actions S700 SoC
+Date: Sun, 15 Jul 2018 22:01:46 +0200
+Message-Id: <20180715200151.10416-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-* Faiz Abbas <faiz_abbas@ti.com> [180709 16:50]:
-> Add clkctrl data for the m_can clocks and register it within the
-> clkctrl driver
+This patchset adds clock support for Actions Semi Owl series S700 SoC
+with relevant clock bindings and device tree info. 
 
-I'll apply patches 2 to 5 to omap-for-v4.19/ti-sysc. The clock
-patch is trivial enough to not have to wait for Tero to be back
-online.
+Changed the UART clock using CMU instance and changes are tested in
+cubieboard7
 
-And I'll apply the dts changes into omap-for-v4.19/dt-mcan based
-on omap-for-v4.19/ti-sysc because of the dependency to the clocks.
+Changelog v5:
+- Commit message corrections
+- Removed MMC_OWL_CLK_NANDPLL option, as no active consumer
+- Device tree clock label name correction
 
-Regards,
+Changelog v4:
+- dt-bindings use absolute numbering for clocks
+- Patch re-oredering
 
-Tony
+Changelog v3:
+- Splitted uart clock DTS changes into separate patch
+- Splitted REGMAP Kconfig selection into separate patch
+- General naming convention as "Actions Semi" in dt-binding documentation
+- Patch re-oredering
+- Cleanup and fixed review findings
+
+Changelog v2:
+Fixed 0 day compilation warning
+Modified existing dts Actions S900 clock bindings common to Actions
+Soc family
+
+
+Thanks and regards,
+Saravanan,
+Parthiban
+
+Saravanan Sekar (5):
+  clk: actions: Fix the missing REGMAP_MMIO dependency
+  dt-bindings: clock: Add S700 support for Actions Semi Soc's
+  clk: actions: Add S700 SoC clock support
+  arm64: dts: actions: Add Clock Management Unit for S700
+  arm64: dts: actions: Set UART clock reference from CMU
+
+ ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +-
+ .../boot/dts/actions/s700-cubieboard7.dts     |   8 +-
+ arch/arm64/boot/dts/actions/s700.dtsi         |  14 +
+ drivers/clk/actions/Kconfig                   |   7 +
+ drivers/clk/actions/Makefile                  |   1 +
+ drivers/clk/actions/owl-s700.c                | 606 ++++++++++++++++++
+ include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++
+ 7 files changed, 758 insertions(+), 16 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
+ create mode 100644 drivers/clk/actions/owl-s700.c
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+
+-- 
+2.18.0
