@@ -1,63 +1,52 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org,
+	sboyd@kernel.org
+Cc: mark.rutland@arm.com,
 	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
+	linux@cubietech.com,
+	sravanhome@gmail.com,
+	support@cubietech.com,
+	catalin.marinas@arm.com,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
 	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
 	thomas.liau@actions-semi.com,
+	darren@cubietech.com,
+	robh+dt@kernel.org,
 	jeff.chen@actions-semi.com,
 	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 5/9] arm64: dts: actions: Add Reset Controller support for S700 SoC
-Date: Sat, 28 Jul 2018 00:15:23 +0530
-Message-Id: <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mp-cs@actions-semi.com
+Subject: [PATCH v5 1/5] clk: actions: Fix the missing REGMAP_MMIO dependency
+Date: Sun, 15 Jul 2018 22:01:47 +0200
+Message-Id: <20180715200151.10416-2-sravanhome@gmail.com>
+In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
+References: <20180715200151.10416-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add reset controller property and bindings header for the
-Actions Semi S700 SoC DTS.
+Add REGMAP_MMIO as dependency to avoid undefined
+reference to regmap symbols.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- arch/arm64/boot/dts/actions/s700.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/actions/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index 59d29e4ca404..db4c544d5311 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -5,6 +5,7 @@
+diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+index 8854adb37847..39491154abbf 100644
+--- a/drivers/clk/actions/Kconfig
++++ b/drivers/clk/actions/Kconfig
+@@ -1,6 +1,7 @@
+ config CLK_ACTIONS
+ 	bool "Clock driver for Actions Semi SoCs"
+ 	depends on ARCH_ACTIONS || COMPILE_TEST
++	select REGMAP_MMIO
+ 	default ARCH_ACTIONS
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/actions,s700-cmu.h>
-+#include <dt-bindings/reset/actions,s900-reset.h>
- 
- / {
- 	compatible = "actions,s700";
-@@ -165,6 +166,7 @@
- 			reg = <0x0 0xe0168000 0x0 0x1000>;
- 			clocks = <&hosc>, <&losc>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		sps: power-controller@e01b0100 {
+ if CLK_ACTIONS
 -- 
-2.17.1
+2.18.0
