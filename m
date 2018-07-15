@@ -1,77 +1,39 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <afaerber@suse.de>
+Subject: Re: [PATCH v4 1/5] clk: actions: Add REGMAP as dependency
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: manivannan.sadhasivam@linaro.org, sboyd@kernel.org, mark.rutland@arm.com,
+ devicetree@vger.kernel.org, linux@cubietech.com, support@cubietech.com,
+ catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+ linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+ darren@cubietech.com, robh+dt@kernel.org, jeff.chen@actions-semi.com,
+ pn@denx.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ mp-cs@actions-semi.com
+References: <20180715123145.16975-1-sravanhome@gmail.com>
+ <20180715123145.16975-2-sravanhome@gmail.com>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
+Date: Sun, 15 Jul 2018 14:35:53 +0200
 MIME-Version: 1.0
-To: Gregory CLEMENT <gregory.clement@bootlin.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <87va9oct5k.fsf@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
- Antoine Tenart <antoine.tenart@bootlin.com>,
- Mike Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Nadav Haklai <nadavh@marvell.com>, Ken Ma <make@marvell.com>,
- Victor Gu <xigu@marvell.com>, Neta Zur Hershkovits <neta@marvell.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- Marcin Wojtas <mw@semihalf.com>, Wilson Ding <dingwei@marvell.com>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Hua Jing <jinghua@marvell.com>
-References: <20180619123446.694-1-gregory.clement@bootlin.com>
- <20180619123446.694-2-gregory.clement@bootlin.com>
- <87tvpl4pql.fsf@bootlin.com>
- <153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
- <87va9oct5k.fsf@bootlin.com>
-Message-ID: <153115467464.143105.10844577294634998251@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from
- 300Mhz to 1.2GHz
-Date: Mon, 09 Jul 2018 09:44:34 -0700
+In-Reply-To: <20180715123145.16975-2-sravanhome@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gregory CLEMENT (2018-07-09 08:42:31)
-> Hi Stephen,
->  =
+Hi,
 
->  On ven., juil. 06 2018, Stephen Boyd <sboyd@kernel.org> wrote:
-> =
+Am 15.07.2018 um 14:31 schrieb Saravanan Sekar:
+> Add REGMAP as dependency to avoid undefined reference to regmap symbol
 
-> > Quoting Gregory CLEMENT (2018-06-29 07:44:02)
-> >> Hi,
-> >>  =
+Is this a bugfix for S900? Then please add a Fixes: line. If not, why is
+it a separate patch and not in 3/5?
 
-> >>  On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> =
-wrote:
-> >> =
+Also, the subject is fine as is, but please add a full stop at the end
+of the sentence in the commit message.
 
-> >> > Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
-> >> > respectively) to L0 frequency (1.2 Ghz) requires a significant amount
-> >> > of time to let VDD stabilize to the appropriate voltage. This amount=
- of
-> >> > time is large enough that it cannot be covered by the hardware
-> >> > countdown register. Due to this, the CPU might start operating at L0
-> >> > before the voltage is stabilized, leading to CPU stalls.
-> >> >
-> >> > To work around this problem, we prevent switching directly from the
-> >> > L2/L3 frequencies to the L0 frequency, and instead switch to the L1
-> >> > frequency in-between. The sequence therefore becomes:
-> >> >
-> >> > 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
-> >> > 2. Sleep 20ms for stabling VDD voltage
-> >> > 3. Then switch from L1(600MHZ) to L0(1200Mhz).
-> >> =
-
-> >> Do you have any comment on this fix?
-> >> =
-
-> >
-> > Looks good. Is it crashing right now? I can throw it into clk-fixes if
-> > it's fixing pain.
-> =
-
-> Yes for the SoC capable to run at 1200Mhz it crashes. At the time the
-> initial support was provided, my SoC version only ran at 1000MHz, so the
-> problem was not noticed.
-> =
+Regards,
+Andreas
 
 
-Ok. Applied to clk-fixes.
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
