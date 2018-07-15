@@ -1,46 +1,217 @@
-Return-Path: <gustavo@embeddedor.com>
-Date: Wed, 18 Jul 2018 20:58:45 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Jiancheng Xue <xuejiancheng@hisilicon.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] reset: hisilicon: fix potential NULL pointer dereference
-Message-ID: <20180719015845.GA10768@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org,
+	sboyd@kernel.org
+Cc: mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux@cubietech.com,
+	sravanhome@gmail.com,
+	support@cubietech.com,
+	catalin.marinas@arm.com,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	linux-kernel@vger.kernel.org,
+	thomas.liau@actions-semi.com,
+	darren@cubietech.com,
+	robh+dt@kernel.org,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mp-cs@actions-semi.com
+Subject: [PATCH v5 2/5] dt-bindings: clock: Add S700 support for Actions Semi Soc's
+Date: Sun, 15 Jul 2018 22:01:48 +0200
+Message-Id: <20180715200151.10416-3-sravanhome@gmail.com>
+In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
+References: <20180715200151.10416-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+Add clock bindings constants for action S700
+Maintain common clock dt-bindings for Actions Semi SoC's
+S700 and S900.
 
-Fix this by adding asanity check in order to avoid a
-NULL pointer dereference.
-
-This code was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- drivers/clk/hisilicon/reset.c | 3 +++
- 1 file changed, 3 insertions(+)
+ ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +--
+ include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++++++++++++++++
+ 2 files changed, 129 insertions(+), 9 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
+ create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
 
-diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-index 2a5015c..5dfb48b 100644
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -109,6 +109,9 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
- 		return NULL;
+diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+similarity index 68%
+rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+rename to Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+index 93e4fb827cd6..d1e60d297387 100644
+--- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
++++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+@@ -1,12 +1,14 @@
+-* Actions S900 Clock Management Unit (CMU)
++* Actions Semi Owl Clock Management Unit (CMU)
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return NULL;
+-The Actions S900 clock management unit generates and supplies clock to various
+-controllers within the SoC. The clock binding described here is applicable to
+-S900 SoC.
++The Actions Semi Owl Clock Management Unit generates and supplies clock
++to various controllers within the SoC. The clock binding described here is
++applicable to S900 and S700 SoC's.
+ 
+ Required Properties:
+ 
+-- compatible: should be "actions,s900-cmu"
++- compatible: should be one of the following,
++	"actions,s900-cmu"
++	"actions,s700-cmu"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - clocks: Reference to the parent clocks ("hosc", "losc")
+@@ -15,16 +17,16 @@ Required Properties:
+ Each clock is assigned an identifier, and client nodes can use this identifier
+ to specify the clock which they consume.
+ 
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/actions,s900-cmu.h header and can be used in device
+-tree sources.
++All available clocks are defined as preprocessor macros in corresponding
++dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
++used in device tree sources.
+ 
+ External clocks:
+ 
+ The hosc clock used as input for the plls is generated outside the SoC. It is
+ expected that it is defined using standard clock bindings as "hosc".
+ 
+-Actions S900 CMU also requires one more clock:
++Actions Semi S900 CMU also requires one more clock:
+  - "losc" - internal low frequency oscillator
+ 
+ Example: Clock Management Unit node:
+diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
+new file mode 100644
+index 000000000000..3e1942996724
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s700-cmu.h
+@@ -0,0 +1,118 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Device Tree binding constants for Actions Semi S700 Clock Management Unit
++ *
++ * Copyright (c) 2014 Actions Semi Inc.
++ * Author: David Liu <liuwei@actions-semi.com>
++ *
++ * Author: Pathiban Nallathambi <pn@denx.de>
++ * Author: Saravanan Sekar <sravanhome@gmail.com>
++ */
 +
- 	rstc->membase = devm_ioremap(&pdev->dev,
- 				res->start, resource_size(res));
- 	if (!rstc->membase)
++#ifndef __DT_BINDINGS_CLOCK_S700_H
++#define __DT_BINDINGS_CLOCK_S700_H
++
++#define CLK_NONE			0
++
++/* pll clocks */
++#define CLK_CORE_PLL			1
++#define CLK_DEV_PLL			2
++#define CLK_DDR_PLL			3
++#define CLK_NAND_PLL			4
++#define CLK_DISPLAY_PLL			5
++#define CLK_TVOUT_PLL			6
++#define CLK_CVBS_PLL			7
++#define CLK_AUDIO_PLL			8
++#define CLK_ETHERNET_PLL		9
++
++/* system clock */
++#define CLK_CPU				10
++#define CLK_DEV				11
++#define CLK_AHB				12
++#define CLK_APB				13
++#define CLK_DMAC			14
++#define CLK_NOC0_CLK_MUX		15
++#define CLK_NOC1_CLK_MUX		16
++#define CLK_HP_CLK_MUX			17
++#define CLK_HP_CLK_DIV			18
++#define CLK_NOC1_CLK_DIV		19
++#define CLK_NOC0			20
++#define CLK_NOC1			21
++#define CLK_SENOR_SRC			22
++
++/* peripheral device clock */
++#define CLK_GPIO			23
++#define CLK_TIMER			24
++#define CLK_DSI				25
++#define CLK_CSI				26
++#define CLK_SI				27
++#define CLK_DE				28
++#define CLK_HDE				29
++#define CLK_VDE				30
++#define CLK_VCE				31
++#define CLK_NAND			32
++#define CLK_SD0				33
++#define CLK_SD1				34
++#define CLK_SD2				35
++
++#define CLK_UART0			36
++#define CLK_UART1			37
++#define CLK_UART2			38
++#define CLK_UART3			39
++#define CLK_UART4			40
++#define CLK_UART5			41
++#define CLK_UART6			42
++
++#define CLK_PWM0			43
++#define CLK_PWM1			44
++#define CLK_PWM2			45
++#define CLK_PWM3			46
++#define CLK_PWM4			47
++#define CLK_PWM5			48
++#define CLK_GPU3D			49
++
++#define CLK_I2C0			50
++#define CLK_I2C1			51
++#define CLK_I2C2			52
++#define CLK_I2C3			53
++
++#define CLK_SPI0			54
++#define CLK_SPI1			55
++#define CLK_SPI2			56
++#define CLK_SPI3			57
++
++#define CLK_USB3_480MPLL0		58
++#define CLK_USB3_480MPHY0		59
++#define CLK_USB3_5GPHY			60
++#define CLK_USB3_CCE			61
++#define CLK_USB3_MAC			62
++
++#define CLK_LCD				63
++#define CLK_HDMI_AUDIO			64
++#define CLK_I2SRX			65
++#define CLK_I2STX			66
++
++#define CLK_SENSOR0			67
++#define CLK_SENSOR1			68
++
++#define CLK_HDMI_DEV			69
++
++#define CLK_ETHERNET			70
++#define CLK_RMII_REF			71
++
++#define CLK_USB2H0_PLLEN		72
++#define CLK_USB2H0_PHY			73
++#define CLK_USB2H0_CCE			74
++#define CLK_USB2H1_PLLEN		75
++#define CLK_USB2H1_PHY			76
++#define CLK_USB2H1_CCE			77
++
++#define CLK_TVOUT			78
++
++#define CLK_THERMAL_SENSOR		79
++
++#define CLK_IRC_SWITCH			80
++#define CLK_PCM1			81
++#define CLK_NR_CLKS			(CLK_PCM1 + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S700_H */
 -- 
-2.7.4
+2.18.0
