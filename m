@@ -1,57 +1,79 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org,
+	sboyd@kernel.org
+Cc: mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux@cubietech.com,
+	sravanhome@gmail.com,
+	support@cubietech.com,
+	catalin.marinas@arm.com,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	linux-kernel@vger.kernel.org,
+	thomas.liau@actions-semi.com,
+	darren@cubietech.com,
+	robh+dt@kernel.org,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Marcin Wojtas <mw@semihalf.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Hua Jing <jinghua@marvell.com>,
-	Neta Zur Hershkovits <neta@marvell.com>,
-	Ken Ma <make@marvell.com>
-Subject: [PATCH] clk: mvebu: armada-37xx-periph: Fix wrong return value in get_parent
-Date: Fri, 13 Jul 2018 12:27:26 +0200
-Message-Id: <20180713102726.1950-1-gregory.clement@bootlin.com>
+	mp-cs@actions-semi.com
+Subject: [PATCH v5 4/5] arm64: dts: actions: Add Clock Management Unit for S700
+Date: Sun, 15 Jul 2018 22:01:50 +0200
+Message-Id: <20180715200151.10416-5-sravanhome@gmail.com>
+In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
+References: <20180715200151.10416-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The return value of the get_parent operation is a u8, whereas a -EINVAL
-was returned. This wrong value was return if the value was bigger that
-the number of parent but this case was already handled by the core.
+Add Clock Management Unit for Actions Semi S700 SoC.
 
-So we can just remove this chunk of code to fix the issue.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 9818a7a4fd10 ("clk: mvebu: armada-37xx-periph: prepare cpu clk to
-be used with DVFS")
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- drivers/clk/mvebu/armada-37xx-periph.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index a51edaab0c5c..287e98a7cff4 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -426,9 +426,6 @@ static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
- 		val &= pm_cpu->mask_mux;
- 	}
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 66dd5309f0a2..4497741d48b2 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -4,6 +4,7 @@
+  */
  
--	if (val >= num_parents)
--		return -EINVAL;
--
- 	return val;
- }
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/actions,s700-cmu.h>
  
+ / {
+ 	compatible = "actions,s700";
+@@ -44,6 +45,13 @@
+ 		};
+ 	};
+ 
++	cmu: clock-controller@e0168000 {
++		compatible = "actions,s700-cmu";
++		reg = <0x0 0xe0168000 0x0 0x1000>;
++		clocks = <&hosc>, <&losc>;
++		#clock-cells = <1>;
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -87,6 +95,12 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
 -- 
 2.18.0
