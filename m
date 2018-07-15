@@ -1,57 +1,51 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sun, 15 Jul 2018 19:45:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Saravanan Sekar <sravanhome@gmail.com>, sboyd@kernel.org,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	linux@cubietech.com, support@cubietech.com, catalin.marinas@arm.com,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+	darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v4 1/5] clk: actions: Add REGMAP as dependency
+Message-ID: <20180715141551.GA9980@Mani-XPS-13-9360>
+References: <20180715123145.16975-1-sravanhome@gmail.com>
+ <20180715123145.16975-2-sravanhome@gmail.com>
+ <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
 MIME-Version: 1.0
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com> <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 9 Jul 2018 23:57:49 +0200
-Message-ID: <CAFBinCBJp1xzo-CNW1HU-Odhrug31yQ7c3khB+XwvsNXp5-gTA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A SoC
-To: jian.hu@amlogic.com, robh@kernel.org
-Cc: jbrunet@baylibre.com, Neil Armstrong <narmstrong@baylibre.com>,
-	qianggui.song@amlogic.com, devicetree@vger.kernel.org, sboyd@kernel.org,
-	khilman@baylibre.com, mturquette@baylibre.com, yixun.lan@amlogic.com,
-	linux-kernel@vger.kernel.org, bo.yang@amlogic.com, qiufang.dai@amlogic.com,
-	linux-arm-kernel@lists.infradead.org, carlo@caione.org,
-	linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
-	linux-clk@vger.kernel.org, xingyu.chen@amlogic.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-adding Rob Herring so it doesn't get lost on the devicetree mailing list
+Hi,
 
-On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
->
-> Add new binding for Meson-G12A SoC Everything-Else part
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> index e950599..0833006 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->                 "amlogic,gxbb-clkc" for GXBB SoC,
->                 "amlogic,gxl-clkc" for GXL and GXM SoC,
->                 "amlogic,axg-clkc" for AXG SoC.
-> +               "amlogic,g12a-clkc" for G12A SoC.
-should this be "amlogic,meson-g12a-clkc" instead?
-that would make it consistent with virtually all other bindings which
-use the schema "amlogic,meson<chip>-<ip-block>" (where chip is 8, 8b,
-8m2, -gxbb, -gxl, ...)
+On Sun, Jul 15, 2018 at 02:35:53PM +0200, Andreas Färber wrote:
+> Hi,
+> 
+> Am 15.07.2018 um 14:31 schrieb Saravanan Sekar:
+> > Add REGMAP as dependency to avoid undefined reference to regmap symbol
+> 
+> Is this a bugfix for S900? Then please add a Fixes: line. If not, why is
+> it a separate patch and not in 3/5?
+> 
 
-see also: $ grep -R "amlogic," Documentation/devicetree/bindings/
+Yes, this is a bug fix for S900 clk and should have Fixes tag.
 
->
->  - #clock-cells: should be 1.
->
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+Thanks,
+Mani
+
+> Also, the subject is fine as is, but please add a full stop at the end
+> of the sentence in the commit message.
+> 
+> Regards,
+> Andreas
+> 
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
