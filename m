@@ -1,97 +1,42 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530605776.2900.163.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: add DT documentation for emmc clock
- controller
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
- <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
- <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Tue, 03 Jul 2018 10:16:16 +0200
-In-Reply-To: <20180703145716.31860-2-yixun.lan@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	 <20180703145716.31860-2-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
+	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
+	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH 0/2] clk: meson-g12a: Add EE clock controller driver
+Date: Mon, 16 Jul 2018 14:37:18 +0800
+Message-ID: <1531723038-134012-1-git-send-email-jian.hu@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-03 at 14:57 +0000, Yixun Lan wrote:
-> Document the EMMC sub clock controller driver, the potential consumer
-> of this driver is EMMC or NAND.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,emmc-clkc.txt      | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
-> new file mode 100644
-> index 000000000000..5534bd446363
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
-> @@ -0,0 +1,45 @@
-> +* Amlogic EMMC Sub Clock Controller Driver
-> +
-> +The Amlogic EMMC clock controller generates and supplies clock to support
-> +EMMC and NAND controller
-> +
-> +Required Properties:
-> +
-> +- compatible: should be:
-> +		"amlogic,emmc-clkc"
+Add a Clock driver for the Everyting-Else part of
+the Amlogic Meson-G12A SoC.
 
-missing clocks and clock-names here
+Jian Hu (2):
+  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+  clk: meson-g12a: Add EE Clock controller driver
 
-> +
-> +- #clock-cells: should be 1.
-> +
-> +Two clocks are provided as the parent of this EMMC clock controller driver from
-> +upper layer clock controller - eg "amlogic,axg-clkc" in AXG platfrom.
-> +The main consumer of this driver is EMMC or NAND, to specify which the clock
-> +they may consume, the preprocessor macros in the dt-bindings/clock/emmc-clkc.h
-> +header and can be used in device tree sources.
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |   1 +
+ drivers/clk/meson/Kconfig                          |  10 +
+ drivers/clk/meson/Makefile                         |   1 +
+ drivers/clk/meson/g12a.c                           | 994 +++++++++++++++++++++
+ drivers/clk/meson/g12a.h                           | 122 +++
+ include/dt-bindings/clock/g12a-clkc.h              |  92 ++
+ 6 files changed, 1220 insertions(+)
+ create mode 100644 drivers/clk/meson/g12a.c
+ create mode 100644 drivers/clk/meson/g12a.h
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
-Not sure this explanation belongs in dt-binding documentation.
-Maybe this should be in the driver itself.
-
-> +
-> +Parent node should have the following properties :
-> +- compatible: "syscon", "simple-mfd, and "amlogic,emmc-clkc"
-> +- reg: base address and size of the EMMC control register space.
-> +
-> +Example: Clock controller node:
-> +
-> +sd_emmc_c_clkc: clock-controller@7000 {
-> +	compatible = "amlogic,emmc-clkc", "syscon", "simple-mfd";
-> +	reg = <0x0 0x7000 0x0 0x4>;
-> +	#clock-cells = <1>;
-> +
-> +	clock-names = "clkin0", "clkin1";
-> +	clocks = <&clkc CLKID_SD_EMMC_C_CLK0>,
-> +			<&clkc CLKID_FCLK_DIV2>;
-> +};
-> +
-
-Not sure the following is necessary, you don't really to show how to use a clock
-controller.
-
-> +Example: NAND controller node that consumes the clock generated by the clock
-> +  controller:
-> +
-> +	nand: nfc@7800 {
-> +		compatible = "amlogic,meson-axg-nfc";
-> +		reg = <0x0 0x7800 0x0 0x100>;
-> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
-> +		clocks = <&clkc CLKID_SD_EMMC_C>,
-> +				<&sd_emmc_c_clkc CLKID_EMMC_C_DIV>;
-> +		clock-names = "core", "device";
-> +	};
+-- 
+1.9.1
