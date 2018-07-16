@@ -1,45 +1,69 @@
-Return-Path: <amit.kachhap@arm.com>
+Return-Path: <Jian.Hu@amlogic.com>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+To: Jerome Brunet <jbrunet@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC: Neil Armstrong <narmstrong@baylibre.com>, <qianggui.song@amlogic.com>,
+	<sboyd@kernel.org>, <khilman@baylibre.com>, <mturquette@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
+	<qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
+	<carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
+	<sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
+	<xingyu.chen@amlogic.com>, Rob Herring <robh@kernel.org>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+ <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+ <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+ <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+ <1531216472.2708.71.camel@baylibre.com>
+ <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
+ <1531316752.2708.113.camel@baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+Message-ID: <d00bfbac-a041-3dc9-0cda-9a6eef5f3216@amlogic.com>
+Date: Mon, 16 Jul 2018 13:58:58 +0800
 MIME-Version: 1.0
-In-Reply-To: <20180730114056.GA17362@e107155-lin>
-References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
- <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
- <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com> <20180730114056.GA17362@e107155-lin>
-From: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Date: Tue, 31 Jul 2018 10:51:07 +0530
-Message-ID: <CADGdYn4RDqoNdTnj-975S4GhSkO7Nk75z0h5oJXqo5qdK0zC+g@mail.gmail.com>
-Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531316752.2708.113.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 5:10 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> On Mon, Jul 30, 2018 at 11:03:51AM +0530, Amit Daniel Kachhap wrote:
->> Hi,
->>
->> On Fri, Jul 27, 2018 at 10:07 PM, Stephen Boyd <sboyd@kernel.org> wrote:
->> > Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
->> >> This fix rounds the clock rate properly by using quotient and not
->> >> remainder in the calculation. This issue was found while testing HDMI
->> >> in the Juno platform.
->> >>
->> >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
->> >
->> > Any Fixes: tag here?
->> Yes, This patch is tested with Linux v4.18-rc6 tag.
->>
->
-> No Stephen meant the commit that this fixes, something like below:
->
-> Fixes: 6d6a1d82eaef ("clk: add support for clocks provided by SCMI")
->
-> so that it can get backported if required.
+Hi Jerome
 
-ok my mistake. Thanks for the clarification.
+On 2018/7/11 21:45, Jerome Brunet wrote:
+> On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
+>>>>>> +static struct clk_regmap g12a_mpll0 = {
+>>>>>> +       .data = &(struct clk_regmap_gate_data){
+>>>>>> +               .offset = HHI_MPLL_CNTL1,
+>>>>>> +               .bit_idx = 31,
+>>>>>> +       },
+>>>>>> +       .hw.init = &(struct clk_init_data){
+>>>>>> +               .name = "mpll0",
+>>>>>> +               .ops = &clk_regmap_gate_ops,
+>>>>>> +               .parent_names = (const char *[]){ "mpll0_div" },
+>>>>>> +               .num_parents = 1,
+>>>>>> +               .flags = CLK_SET_RATE_PARENT,
+>>>>>> +       },
+>>>>>> +};
+>>>
+>>> The previous had a predivider (1 or 2) in front of these mpll. Even if the
+>>> predivider is usually set to be a passthrough, it is better to model the tree
+>>> correctly.
+>>>
+>>> Is this SoC any different ?
+>>>
+>>
+>> I am not sure the difference, I will confirm with IC design guys.
+> 
+> I suggest that you have a look at the (upstream) axg and gxbb clock driver for
+> this
+> 
+> Same goes for the fdiv gates.
+> 
+> Last, please trim your replies a bit. It will make easier to see what you are
+> replying to.
+> 
+> .
+> 
 
->
-> --
-> Regards,
-> Sudeep
+I have confirmed with IC design guys, axg and gxbb clock driver have a 
+prediver in frount  of these mpll, according to the Spec, we can get the 
+prediver function in HHI_MPLL_CNTL5 bit12, the G12A SoC have not the 
+prediver function.
