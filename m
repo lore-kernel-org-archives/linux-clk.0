@@ -1,62 +1,78 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v6 5/5] arm64: dts: actions: Set UART clock reference from CMU
-Date: Sun, 15 Jul 2018 22:35:24 +0200
-Message-Id: <20180715203524.11948-6-sravanhome@gmail.com>
-In-Reply-To: <20180715203524.11948-1-sravanhome@gmail.com>
-References: <20180715203524.11948-1-sravanhome@gmail.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>,  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  jian.hu@amlogic.com,  Neil Armstrong <narmstrong@baylibre.com>,  qianggui.song@amlogic.com,  sboyd@kernel.org,  mturquette@baylibre.com,  linux-kernel@vger.kernel.org,  bo.yang@amlogic.com,  qiufang.dai@amlogic.com,  linux-arm-kernel@lists.infradead.org,  carlo@caione.org,  linux-amlogic@lists.infradead.org,  sunny.luo@amlogic.com,  linux-clk@vger.kernel.org,  xingyu.chen@amlogic.com,  Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+	<1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+	<CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+	<ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+	<1531216472.2708.71.camel@baylibre.com>
+Date: Mon, 16 Jul 2018 08:38:29 -0500
+In-Reply-To: <1531216472.2708.71.camel@baylibre.com> (Jerome Brunet's message
+	of "Tue, 10 Jul 2018 11:54:32 +0200")
+Message-ID: <7hfu0jmhbe.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-index ef79d7905f44..c08808ca3346 100644
---- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-+++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-@@ -28,12 +28,6 @@
- 		device_type = "memory";
- 		reg = <0x1 0xe0000000 0x0 0x0>;
- 	};
--
--	uart3_clk: uart3-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
- 
- &timer {
-@@ -42,5 +36,5 @@
- 
- &uart3 {
- 	status = "okay";
--	clocks = <&uart3_clk>;
-+	clocks = <&cmu CLK_UART3>;
- };
--- 
-2.18.0
+> On Tue, 2018-07-10 at 09:21 +0800, Yixun Lan wrote:
+>> 
+>> On 07/10/18 05:53, Martin Blumenstingl wrote:
+>> > On Mon, Jul 9, 2018 at 1:14 PM Jian Hu <jian.hu@amlogic.com> wrote:
+
+[...]
+
+>> > > +
+>> > > +static const struct of_device_id clkc_match_table[] = {
+>> > > +       { .compatible = "amlogic,g12a-clkc" },
+>> > 
+>> > I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
+>> > and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
+>> > correct - I'll CC Rob Herring on the dt-bindings patch)
+>> > 
+>> 
+>> we're fine with either way, since the g12a is recently new added SoC.
+>> 
+>> but I guess those old compatibles which already exist won't be changed,
+>> as it will break the DT
+>
+> Yes, I doubt we are going to change the compatibles. With or without the meson
+> prefix, I suppose it going to stay that way.
+
+Correct, we will not change existing compatibles.  Adding new ones for
+clarity is fine though.
+
+> It is worth thinking about it for new drivers though.
+> We already have the "amlogic,", so do we really to prefix even more with "meson-
+> "
+>
+> Also, if we were really strict about that scheme, should meson8b compatible be
+>
+> "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
+>
+> For the particular case of the clock controller, I don't care very much, as long
+> as the compatible is coherent with documentation.
+>
+> I might have a preference for the current compatible ... just for consistency
+> with the other clock controllers.
+
+In hindsight, I think using the "meson" prefix was a mistake.  It's
+redunant, IMO, but it's how we've been doing things for all the drivers,
+except for drivers/clk, which, honestly, I hadn't even noticed until
+now.
+
+As Jerome said, I think consistency is an important goal, so leaving off
+the "meson-" for drivers/clk is fine with me.
+
+Also for consistency, for the rest of the drivers, keeping "meson-" is
+probably the right thing to do.
+
+However, patches would be welcome to add compatibles without the "meson"
+for the rest of the drivers & documentation as well, but please do not
+remove any compatibles.
+
+Kevin
