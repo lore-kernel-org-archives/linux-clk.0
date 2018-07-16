@@ -1,85 +1,250 @@
-Return-Path: <sboyd@kernel.org>
-From: sboyd@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.18-rc6
-Date: Wed, 25 Jul 2018 10:08:07 -0700
-Message-Id: <20180725170807.12780-1-sboyd@kernel.org>
-MIME-Version: 1.0
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 1/2] clk: qcom: Add support for RCG to register for DFS
+Date: Mon, 16 Jul 2018 11:07:47 +0530
+Message-Id: <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
+References: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@kernel.org>
+Dynamic Frequency switch is a feature of clock controller by which request
+from peripherals allows automatic switching frequency of input clock
+without SW intervention. There are various performance levels associated
+with a root clock. When the input performance state changes, the source
+clocks and division ratios of the new performance state are loaded on to
+RCG via HW and the RCG switches to new clock frequency when the RCG is in
+DFS HW enabled mode.
 
-The following changes since commit 9cc63791fad6d2624878c93f3415da77780e68a7:
+Register the root clock generators(RCG) to switch to use the dfs clock ops
+in the cases where DFS is enabled. The clk_round_rate() called by the clock
+consumer would invoke the dfs determine clock ops and would read the DFS
+performance level registers to identify all the frequencies supported and
+update the frequency table. The DFS clock consumers would maintain these
+frequency mapping and request the desired performance levels.
 
-  Merge branch 'clk-fix-imx6ul-defs' into clk-fixes (2018-06-29 11:40:29 -0700)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |   2 +
+ drivers/clk/qcom/clk-rcg2.c | 173 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 175 insertions(+)
 
-are available in the Git repository at:
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b209a2f..bffb625 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -161,4 +161,6 @@ struct clk_rcg2 {
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
++extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
++			     struct clk_rcg2 **rcgs, int num_clks);
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 52208d4..f8f1417 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -12,6 +12,7 @@
+ #include <linux/delay.h>
+ #include <linux/regmap.h>
+ #include <linux/math64.h>
++#include <linux/slab.h>
 
-for you to fetch changes up to 565b9937f44d5ab7956339b6c105c03471ce3243:
+ #include <asm/div64.h>
 
-  clk: aspeed: Support HPLL strapping on ast2400 (2018-07-11 09:34:25 -0700)
+@@ -40,6 +41,14 @@
+ #define N_REG			0xc
+ #define D_REG			0x10
 
-----------------------------------------------------------------
-One more round of updates for problems seen this -rc series. Drivers fixes
-are:
-
- - Amlogic Meson audio divider fix and CPU clk critical marking
-
- - Qualcomm multimedia GDSC marked as 'always on' to keep display working
-
- - Aspeed fixes for critical clks, resets causing clks to stay disabled, and
-   an incorrect HPLL frequency calculation
-
- - Marvell Armada 3700 cpu clks would undervolt when switching from low
-   frequencies to high frequencies because the voltage didn't stabilize in
-   time so now we switch to an intermediate frequency
-
-Plus we have a core framework thinko that messed up the debugfs flag
-printing logic to make it not very useful.
-
-----------------------------------------------------------------
-Benjamin Herrenschmidt (1):
-      clk: aspeed: Treat a gate in reset as disabled
-
-Geert Uytterhoeven (1):
-      clk: Really show symbolic clock flags in debugfs
-
-Gregory CLEMENT (1):
-      clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
-
-Jerome Brunet (1):
-      clk: meson: audio-divider is one based
-
-Joel Stanley (2):
-      clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
-      clk: aspeed: Support HPLL strapping on ast2400
-
-Neil Armstrong (1):
-      clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
-
-Stephen Boyd (1):
-      Merge tag 'meson-clk-fixes-4.18-1' of https://github.com/BayLibre/clk-meson into clk-fixes
-
-Vinod Koul (1):
-      clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
-
-Vivek Gautam (1):
-      clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
-
- drivers/clk/clk-aspeed.c               | 59 +++++++++++++++++++++++++---------
- drivers/clk/clk.c                      |  3 +-
- drivers/clk/meson/clk-audio-divider.c  |  2 +-
- drivers/clk/meson/gxbb.c               |  1 +
- drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++
- drivers/clk/qcom/gcc-msm8996.c         |  1 +
- drivers/clk/qcom/mmcc-msm8996.c        |  1 +
- 7 files changed, 87 insertions(+), 18 deletions(-)
-
--- 
-Sent by a computer through tubes
++/* Dynamic Frequency Scaling */
++#define MAX_PERF_LEVEL		8
++#define SE_CMD_DFSR_OFFSET	0x14
++#define SE_CMD_DFS_EN		BIT(0)
++#define SE_PERF_DFSR(level)	(0x1c + 0x4 * (level))
++#define SE_PERF_M_DFSR(level)	(0x5c + 0x4 * (level))
++#define SE_PERF_N_DFSR(level)	(0x9c + 0x4 * (level))
++
+ enum freq_policy {
+ 	FLOOR,
+ 	CEIL,
+@@ -929,3 +938,167 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++
++/* Common APIs to be used for DFS based RCGR */
++static unsigned long clk_rcg2_calculate_freq(struct clk_hw *hw,
++		int level, struct freq_tbl *f)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct clk_hw *p;
++	unsigned long prate = 0;
++	u32 val, mask, cfg, m_off, n_off, offset, mode;
++	int i, ret, num_parents;
++
++	offset = SE_PERF_DFSR(level);
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
++	if (ret)
++		return ret;
++
++	mask = BIT(rcg->hid_width) - 1;
++	f->pre_div = cfg & mask ? (cfg & mask) : 1;
++
++	mode = cfg & CFG_MODE_MASK;
++	mode >>= CFG_MODE_SHIFT;
++
++	cfg &= CFG_SRC_SEL_MASK;
++	cfg >>= CFG_SRC_SEL_SHIFT;
++
++	num_parents = clk_hw_get_num_parents(hw);
++	for (i = 0; i < num_parents; i++) {
++		if (cfg == rcg->parent_map[i].cfg) {
++			f->src = rcg->parent_map[i].src;
++			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
++			prate = clk_hw_get_rate(p);
++		}
++	}
++
++	if (!mode)
++		goto done;
++
++	/* Calculate M & N values */
++	m_off = SE_PERF_M_DFSR(level);
++	n_off = SE_PERF_N_DFSR(level);
++
++	mask = BIT(rcg->mnd_width) - 1;
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off, &val);
++	if (ret) {
++		pr_err("Failed to read M offset register\n");
++		return ret;
++	}
++	val &= mask;
++	f->m = val;
++
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off, &val);
++	if (ret) {
++		pr_err("Failed to read N offset register\n");
++		return ret;
++	}
++	/* val ~(N-M) */
++	val = ~val;
++	val &= mask;
++	val += f->m;
++	f->n = val;
++done:
++	return calc_rate(prate, f->m, f->n, mode, f->pre_div);
++}
++
++static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
++{
++	struct freq_tbl *freq_tbl;
++	unsigned long calc_freq;
++	int i;
++
++	freq_tbl = kcalloc(MAX_PERF_LEVEL, sizeof(*freq_tbl),
++				GFP_KERNEL);
++	if (!freq_tbl)
++		return -ENOMEM;
++
++	for (i = 0; i < MAX_PERF_LEVEL; i++) {
++		calc_freq = clk_rcg2_calculate_freq(&rcg->clkr.hw,
++							i, &freq_tbl[i]);
++		if (calc_freq < 0) {
++			kfree(freq_tbl);
++			return calc_freq;
++		}
++
++		freq_tbl[i].freq = calc_freq;
++	}
++	rcg->freq_tbl = freq_tbl;
++
++	return 0;
++}
++
++static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	int ret;
++
++	if (!rcg->freq_tbl) {
++		ret = clk_rcg2_dfs_populate_freq_table(rcg);
++		if (ret) {
++			pr_err("Failed to update DFS tables for %s\n",
++					clk_hw_get_name(hw));
++			return ret;
++		}
++	}
++
++	return clk_rcg2_shared_ops.determine_rate(hw, req);
++}
++
++static const struct clk_ops clk_rcg2_dfs_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.determine_rate = clk_rcg2_dfs_determine_rate,
++};
++
++static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
++{
++	struct clk_init_data *init;
++	u32 val;
++	int ret;
++
++	ret = regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
++			  &val);
++	if (ret)
++		return -EINVAL;
++
++	if (!(val & SE_CMD_DFS_EN))
++		return 0;
++
++	init = kzalloc(sizeof(*init), GFP_KERNEL);
++	if (!init)
++		return -ENOMEM;
++
++	init->name = rcg->clkr.hw.init->name;
++	init->flags = rcg->clkr.hw.init->flags;
++	init->parent_names = rcg->clkr.hw.init->parent_names;
++	init->num_parents = rcg->clkr.hw.init->num_parents;
++	init->ops = &clk_rcg2_dfs_ops;
++
++	rcg->clkr.hw.init = init;
++	rcg->freq_tbl = NULL;
++
++	pr_debug("DFS registered for clk %s\n", init->name);
++
++	return 0;
++}
++
++int qcom_cc_register_rcg_dfs(struct regmap *regmap,
++			    struct clk_rcg2 **rcgs, int num_clks)
++{
++	int i, ret = 0;
++
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_rcg2_enable_dfs(rcgs[i], regmap);
++		if (ret) {
++			const char *name = rcgs[i]->clkr.hw.init->name;
++
++			pr_err("DFS register failed for clk %s\n", name);
++			break;
++		}
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
