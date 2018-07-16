@@ -1,138 +1,33 @@
 Return-Path: <jbrunet@baylibre.com>
 Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1531214774.2708.49.camel@baylibre.com>
-Subject: Re: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock
- Bindings
+Message-ID: <1531738834.12853.64.camel@baylibre.com>
+Subject: Re: [RESEND PATCH v2 2/2] clk: meson-g12a: Add EE Clock controller
+ driver
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	jian.hu@amlogic.com
-Cc: Neil Armstrong <narmstrong@baylibre.com>, qianggui.song@amlogic.com,
- devicetree@vger.kernel.org, sboyd@kernel.org, khilman@baylibre.com,
- mturquette@baylibre.com, yixun.lan@amlogic.com,
- linux-kernel@vger.kernel.org,  bo.yang@amlogic.com,
- qiufang.dai@amlogic.com,  linux-arm-kernel@lists.infradead.org,
- carlo@caione.org,  linux-amlogic@lists.infradead.org,
- sunny.luo@amlogic.com,  linux-clk@vger.kernel.org, xingyu.chen@amlogic.com
-Date: Tue, 10 Jul 2018 11:26:14 +0200
-In-Reply-To: <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	 <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
-	 <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
+To: Jian Hu <jian.hu@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Rob Herring <robh@kernel.org>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+ <yixun.lan@amlogic.com>,  Qiufang Dai <qiufang.dai@amlogic.com>, "Bo.yang"
+ <bo.yang@amlogic.com>, "Xingyu.chen" <xingyu.chen@amlogic.com>,
+ "Qianggui,song" <qianggui.song@amlogic.com>,  "Sunny.luo"
+ <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
+ linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
+Date: Mon, 16 Jul 2018 13:00:34 +0200
+In-Reply-To: <1531728707-192230-3-git-send-email-jian.hu@amlogic.com>
+References: <1531728707-192230-1-git-send-email-jian.hu@amlogic.com>
+	 <1531728707-192230-3-git-send-email-jian.hu@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
 Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-10 at 00:13 +0200, Martin Blumenstingl wrote:
-> On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
-> > 
-> > Add dt-bindings headers for the Meson-G12A's Everything-Else
-> > part clock controller.
+On Mon, 2018-07-16 at 16:11 +0800, Jian Hu wrote:
+> Add a Clock driver for the Everything-Else part
+> of the Amlogic Meson-G12A SoC.
 > 
-> I wonder if this should be folded into patch #1 along with an update
-> to Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt so
-> it's clear which header has to be used for G12A
-> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 
-Yes, please squash patch 1 and 2.
-
-> > 
-> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> > ---
-> >  include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 93 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-> > 
-> > diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-> > new file mode 100644
-> > index 0000000..1473225
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/g12a-clkc.h
-> > @@ -0,0 +1,93 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> > +/*
-> > + * Meson-G12A clock tree IDs
-> > + *
-> > + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> > + */
-> > +
-> > +#ifndef __G12A_CLKC_H
-> > +#define __G12A_CLKC_H
-> > +
-> > +#define CLKID_SYS_PLL                          0
-> > +#define CLKID_FIXED_PLL                                1
-> > +#define CLKID_FCLK_DIV2                                2
-> > +#define CLKID_FCLK_DIV3                                3
-> > +#define CLKID_FCLK_DIV4                                4
-> > +#define CLKID_FCLK_DIV5                                5
-> > +#define CLKID_FCLK_DIV7                                6
-> > +#define CLKID_GP0_PLL                          7
-
-Please fix the alignement.
-
-> > +#define CLKID_CLK81                                    10
-> > +#define CLKID_MPLL0                                    11
-> > +#define CLKID_MPLL1                                    12
-> > +#define CLKID_MPLL2                                    13
-> > +#define CLKID_MPLL3                                    14
-> > +#define CLKID_DDR                                      15
-> > +#define CLKID_DOS                                      16
-> > +#define CLKID_AUDIO_LOCKER                     17
-> > +#define CLKID_MIPI_DSI_HOST                    18
-> > +#define CLKID_ETH_PHY                          19
-> > +#define CLKID_ISA                                      20
-> > +#define CLKID_PL301                                    21
-> > +#define CLKID_PERIPHS                          22
-> > +#define CLKID_SPICC0                           23
-> > +#define CLKID_I2C                                      24
-> > +#define CLKID_SANA                                     25
-> > +#define CLKID_SD                                       26
-> > +#define CLKID_RNG0                                     27
-> > +#define CLKID_UART0                                    28
-> > +#define CLKID_SPICC1                           29
-> > +#define CLKID_HIU_IFACE                                30
-> > +#define CLKID_MIPI_DSI_PHY                     31
-> > +#define CLKID_ASSIST_MISC                      32
-> > +#define CLKID_SD_EMMC_A                                33
-> > +#define CLKID_SD_EMMC_B                                34
-> > +#define CLKID_SD_EMMC_C                                35
-> > +#define CLKID_AUDIO_CODEC                      36
-> > +#define CLKID_AUDIO                                    37
-> > +#define CLKID_ETH                                      38
-> > +#define CLKID_DEMUX                                    39
-> > +#define CLKID_AUDIO_IFIFO                      40
-> > +#define CLKID_ADC                                      41
-> > +#define CLKID_UART1                                    42
-> > +#define CLKID_G2D                                      43
-> > +#define CLKID_RESET                                    44
-> > +#define CLKID_PCIE_COMB                                45
-> > +#define CLKID_PARSER                           46
-> > +#define CLKID_USB                                      47
-> > +#define CLKID_PCIE_PHY                         48
-> > +#define CLKID_AHB_ARB0                         49
-> > +#define CLKID_AHB_DATA_BUS                     50
-> > +#define CLKID_AHB_CTRL_BUS                     51
-> > +#define CLKID_HTX_HDCP22                       52
-> > +#define CLKID_HTX_PCLK                         53
-> > +#define CLKID_BT656                                    54
-> > +#define CLKID_USB1_DDR_BRIDGE          55
-> > +#define CLKID_MMC_PCLK                         56
-> > +#define CLKID_UART2                                    57
-> > +#define CLKID_VPU_INTR                         58
-> > +#define CLKID_GIC                                      59
-> > +#define CLKID_SD_EMMC_B_CLK0           60
-> > +#define CLKID_SD_EMMC_C_CLK0           61
-> > +#define CLKID_HIFI_PLL                         71
-> > +
-> 
-> is this empty line here on purpose? a comment would be great if
-> there's a reason behind it (there's already a gap in the numbering
-> between CLKID_GP0_PLL and CLKID_CLK81, but there's no empty line there
-> - either way is fine, please just keep it consistent)
-
-Please drop the empty line.
-Otherwise, looks good.
-
-> 
-> 
-> Regards
-> Martin
+Point raised about fdiv gates remains un-answered.
+Please address all the point raised before reposting your patches.
