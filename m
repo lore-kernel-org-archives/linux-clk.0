@@ -1,86 +1,28 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/11] clk: renesas: rcar-gen3: Add support for mode pin clock selection
-Date: Wed, 11 Jul 2018 16:20:59 +0200
-Message-Id: <20180711142100.3765-11-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+ Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525845367-22185-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1525845367-22185-1-git-send-email-tdas@codeaurora.org>
+ <1525845367-22185-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <153176222570.48062.14197627616169510732@swboyd.mtv.corp.google.com>
+Subject: Re: [v9] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Mon, 16 Jul 2018 10:30:25 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Make the existing support for selecting between clean and SSCG clocks
-using MD12 more generic, to allow using other mode pins for arbitrary
-clock selection.
+Quoting Taniya Das (2018-05-08 22:56:07)
+> Add the RPMh clock driver to control the RPMh managed clock resources on
+> some of the Qualcomm Technologies, Inc. SoCs.
+> =
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 10 ++++------
- drivers/clk/renesas/rcar-gen3-cpg.h | 13 +++++++++----
- 2 files changed, 13 insertions(+), 10 deletions(-)
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 19a77822757d29de..4346fdeef01bbeae 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -539,16 +539,14 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 			parent = clks[cpg_clk_extalr];
- 		break;
- 
--	case CLK_TYPE_GEN3_PE:
-+	case CLK_TYPE_GEN3_MDSEL:
- 		/*
--		 * Peripheral clock with a fixed divider, selectable between
--		 * clean and spread spectrum parents using MD12
-+		 * Clock selectable between two parents and two fixed dividers
-+		 * using a mode pin
- 		 */
--		if (cpg_mode & BIT(12)) {
--			/* Clean */
-+		if (cpg_mode & BIT(core->offset)) {
- 			div = core->div & 0xffff;
- 		} else {
--			/* SCCG */
- 			parent = clks[core->parent >> 16];
- 			if (IS_ERR(parent))
- 				return ERR_CAST(parent);
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 214df713ce719991..01619242d8ca6384 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -20,7 +20,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PLL4,
- 	CLK_TYPE_GEN3_SD,
- 	CLK_TYPE_GEN3_R,
--	CLK_TYPE_GEN3_PE,
-+	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
-@@ -30,11 +30,16 @@ enum rcar_gen3_clk_types {
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_SD, _parent, .offset = _offset)
- 
-+#define DEF_GEN3_MDSEL(_name, _id, _md, _parent0, _div0, _parent1, _div1) \
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_MDSEL,	\
-+		 (_parent0) << 16 | (_parent1),		\
-+		 .div = (_div0) << 16 | (_div1), .offset = _md)
-+
- #define DEF_GEN3_PE(_name, _id, _parent_sscg, _div_sscg, _parent_clean, \
- 		    _div_clean) \
--	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
--		 (_parent_sscg) << 16 | (_parent_clean),	\
--		 .div = (_div_sscg) << 16 | (_div_clean))
-+	DEF_GEN3_MDSEL(_name, _id, 12, _parent_sscg, _div_sscg,	\
-+		       _parent_clean, _div_clean)
-+
- #define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
- 
--- 
-2.17.1
+Applied to clk-next
