@@ -1,161 +1,92 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Thu, 26 Jul 2018 22:25:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	daniel.lezcano@linaro.org, linux@armlinux.org.uk,
-	Guilherme =?iso-8859-1?B?Ry4gU2lt9WVz?= <guilherme.simoes@lsitec.org.br>,
-	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
-	support@cubietech.com, catalin.marinas@arm.com,
-	mturquette@baylibre.com, will.deacon@arm.com,
-	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com,
-	robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
-	mp-cs@actions-semi.com
-Subject: Re: [PATCH] clk: actions: Add custom delay option to Actions Semi
- OWL pll clock driver
-Message-ID: <20180726165555.GB5220@Mani-XPS-13-9360>
-References: <CADHB5bAztBFgWe-1v5vFfsxJgW1S3OOpV1Jkjrgk2h+pJBFw9w@mail.gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: gpu: mali-utgard: add
+ mediatek,mt7623-mali compatible
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: sboyd@codeaurora.org, mturquette@baylibre.com, robh+dt@kernel.org,
+ mark.rutland@arm.com, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1524816502.git.sean.wang@mediatek.com>
+ <7ab060c2e9ef2b220fc62913b8936b706dfaf202.1524816502.git.sean.wang@mediatek.com>
+ <3bd6e509-f99a-1f2d-1b66-65c414bacdbd@gmail.com>
+ <1530089565.29697.35.camel@mtkswgap22>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <434aae44-d289-6683-9395-cb5711cd4b71@gmail.com>
+Date: Mon, 16 Jul 2018 15:33:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CADHB5bAztBFgWe-1v5vFfsxJgW1S3OOpV1Jkjrgk2h+pJBFw9w@mail.gmail.com>
+In-Reply-To: <1530089565.29697.35.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Edgar,
 
-On Tue, Jul 17, 2018 at 02:02:00PM -0300, Edgar Bernardi Righi wrote:
-> This patch adds custom delay support to Actions Semi OWL pll clock driver.
-> It is required for future Actions Semi Owl series S500 SoC clock support
-> 
-> Currently, the driver waits a fixed amount of time defined by the
-> macro PLL_STABILITY_WAIT_US.
-> The default delay (50us) is not enough for Actions Semi Owl S500 SoC.
-> It needs up to 150us.
-> A new field called "delay" was added to "struct owl_pll_hw". The rest
-> of the code was updated accordingly.
-> Old macros "OWL_PLL_HW", "OWL_PLL" and "OWL_PLL_NO_PARENT" were kept
-> (same usage), but updated to set "delay" value to
-> PLL_STABILITY_WAIT_US (50us).
-> New macros "OWL_PLL_HW_DELAY", "OWL_PLL_DELAY" and
-> "OWL_PLL_NO_PARENT_DELAY" were created with an extra argument to set a
-> custom "delay".
-> This does not break S700 and S900 code and was tested on S500 based
-> Lemaker Guitar Board.
-> 
-> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> 
-> diff -uprN -X vanilla/Documentation/dontdiff
-> vanilla/drivers/clk/actions/owl-pll.c
-> linux/drivers/clk/actions/owl-pll.c
-> --- vanilla/drivers/clk/actions/owl-pll.c    2018-07-17 13:07:16.667704000 -0300
-> +++ linux/drivers/clk/actions/owl-pll.c    2018-07-17 13:42:07.396785603 -0300
-> @@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_h
-> 
->      regmap_write(common->regmap, pll_hw->reg, reg);
-> 
-> -    udelay(PLL_STABILITY_WAIT_US);
-> +    udelay(pll_hw->delay);
-> 
->      return 0;
->  }
-> diff -uprN -X vanilla/Documentation/dontdiff
-> vanilla/drivers/clk/actions/owl-pll.h
-> linux/drivers/clk/actions/owl-pll.h
-> --- vanilla/drivers/clk/actions/owl-pll.h    2018-07-17 13:07:16.667704000 -0300
-> +++ linux/drivers/clk/actions/owl-pll.h    2018-07-17 13:42:11.116765089 -0300
-> @@ -27,6 +27,7 @@ struct owl_pll_hw {
->      u8            width;
->      u8            min_mul;
->      u8            max_mul;
-> +    u32            delay;
->      const struct clk_pll_table *table;
->  };
-> 
-> @@ -35,6 +36,51 @@ struct owl_pll {
->      struct owl_clk_common    common;
->  };
-> 
-> +#define PLL_STABILITY_WAIT_US    (50)
-> +
 
-You don't need this here. Please see below.
-
-> +#define OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,            \
-> +           _width, _min_mul, _max_mul, _table, _delay)            \
-> +    {                                \
-> +        .reg        = _reg,                    \
-> +        .bfreq        = _bfreq,                \
-> +        .bit_idx    = _bit_idx,                \
-> +        .shift        = _shift,                \
-> +        .width        = _width,                \
-> +        .min_mul    = _min_mul,                \
-> +        .max_mul    = _max_mul,                \
-> +        .table        = _table,                \
-> +        .delay        = _delay,                \
-> +    }
-> +
-> +#define OWL_PLL_DELAY(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-> +        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-> +    struct owl_pll _struct = {                    \
-> +        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-> +                     _width, _min_mul,            \
-> +                     _max_mul, _table, _delay),            \
-> +        .common = {                        \
-> +            .regmap = NULL,                    \
-> +            .hw.init = CLK_HW_INIT(_name,            \
-> +                           _parent,            \
-> +                           &owl_pll_ops,        \
-> +                           _flags),            \
-> +        },                            \
-> +    }
-> +
-> +#define OWL_PLL_NO_PARENT_DELAY(_struct, _name, _reg, _bfreq, _bit_idx,    \
-> +        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-> +    struct owl_pll _struct = {                    \
-> +        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-> +                     _width, _min_mul,            \
-> +                     _max_mul, _table, _delay),            \
-> +        .common = {                        \
-> +            .regmap = NULL,                    \
-> +            .hw.init = CLK_HW_INIT_NO_PARENT(_name,        \
-> +                           &owl_pll_ops,        \
-> +                           _flags),            \
-> +        },                            \
-> +    }
-> +
-
-No need to have DELAY and non DELAY defines. You can just add delay
-as a parameter to the OWL_PLL_NO_PARENT and OWL_PLL defines for the
-whole Owl family. Then use the corresponding delays in board specific
-owl-sx00.c file.
-
->  #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,            \
->             _width, _min_mul, _max_mul, _table)            \
->      {                                \
-> @@ -46,6 +92,7 @@ struct owl_pll {
->          .min_mul    = _min_mul,                \
->          .max_mul    = _max_mul,                \
->          .table        = _table,                \
-> +        .delay        = PLL_STABILITY_WAIT_US,\
-
-As said above, delay should come from board specific file. No need to
-worry about touching the S900/S700 part. As long as your change not breaking
-the functionality, it is fine.
-
-Thanks,
-Mani
-
->      }
+On 27/06/18 10:52, Sean Wang wrote:
+> On Mon, 2018-06-25 at 17:14 +0200, Matthias Brugger wrote:
+>>
+>> On 27/04/18 10:14, sean.wang@mediatek.com wrote:
+>>> From: Sean Wang <sean.wang@mediatek.com>
+>>>
+>>> The MediaTek MT7623 SoC contains a Mali-450, so add a compatible for it
+>>> and define its own vendor-specific properties.
+>>>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>>> ---
+>>
+>> Hi Rob,
+>>
+>> Any comments regarding this patch?
+>>
+>> Regards,
+>> Matthias
+>>
 > 
->  #define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-> @@ -78,7 +125,6 @@ struct owl_pll {
->      }
+> Hi, Matthias
 > 
->  #define mul_mask(m)        ((1 << ((m)->width)) - 1)
-> -#define PLL_STABILITY_WAIT_US    (50)
+> I've already got a Reviewed-by tag from Rob.
 > 
->  static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
->  {
+> Is it possible that this patch go through your tree ?
+> 
+
+Basically yes, I just want to get the mmsys problem fixed first.
+Sorry I know it is on my plate. I'll try to send a new version this week.
+
+Regards,
+Matthias
+
+> 	Sean
+> 
+>>>  Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt | 9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+>>> index 99d1c0a..656068f 100644
+>>> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+>>> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
+>>> @@ -19,6 +19,7 @@ Required properties:
+>>>        + rockchip,rk3228-mali
+>>>        + rockchip,rk3328-mali
+>>>        + stericsson,db8500-mali
+>>> +      + mediatek,mt7623-mali
+>>>  
+>>>    - reg: Physical base address and length of the GPU registers
+>>>  
+>>> @@ -89,6 +90,14 @@ to specify one more vendor-specific compatible, among:
+>>>        * interrupt-names and interrupts:
+>>>          + combined: combined interrupt of all of the above lines
+>>>  
+>>> +  - mediatek,mt7623-mali
+>>> +     Required properties:
+>>> +      * resets: phandle to the reset line for the GPU
+>>> +      * mediatek,larb: phandle pointed to the local arbiter used to control the
+>>> +	access to external memory on the SoC.
+>>> +	see Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+>>> +	for details
+>>> +
+>>>  Example:
+>>>  
+>>>  mali: gpu@1c40000 {
+>>>
+> 
+> 
