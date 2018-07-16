@@ -1,74 +1,77 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v10 01/10] dt-bindings: firmware: Add bindings for ZynqMP firmware
-Date: Tue, 17 Jul 2018 12:58:58 -0700
-Message-ID: <1531857547-16652-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 2/2] clk: qcom: gcc: Register QUPv3 RCGs for DFS on SDM845
+Date: Mon, 16 Jul 2018 11:07:48 +0530
+Message-Id: <1531719468-8458-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
+References: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+QUPv3 clocks support DFS and thus register the RCGs which require support
+for the same.
 
-Add documentation to describe Xilinx ZynqMP firmware driver
-bindings. Firmware driver provides an interface to firmware
-APIs. Interface APIs can be used by any driver to communicate
-to PMUFW (Platform Management Unit).
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ drivers/clk/qcom/gcc-sdm845.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-new file mode 100644
-index 0000000..1b431d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-@@ -0,0 +1,29 @@
-+-----------------------------------------------------------------
-+Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
-+-----------------------------------------------------------------
-+
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate to PMUFW(Platform Management Unit).
-+These requests include clock management, pin control, device control,
-+power management service, FPGA service and other platform management
-+services.
-+
-+Required properties:
-+ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
-+ - method:	The method of calling the PM-API firmware layer.
-+		Permitted values are:
-+		  - "smc" : SMC #0, following the SMCCC
-+		  - "hvc" : HVC #0, following the SMCCC
-+
-+-------
-+Example
-+-------
-+
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
-+	};
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 0f694ed..305deca 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3460,9 +3460,29 @@ enum {
+ };
+ MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
+
++static struct clk_rcg2 *gcc_dfs_clocks[] = {
++	&gcc_qupv3_wrap0_s0_clk_src,
++	&gcc_qupv3_wrap0_s1_clk_src,
++	&gcc_qupv3_wrap0_s2_clk_src,
++	&gcc_qupv3_wrap0_s3_clk_src,
++	&gcc_qupv3_wrap0_s4_clk_src,
++	&gcc_qupv3_wrap0_s5_clk_src,
++	&gcc_qupv3_wrap0_s6_clk_src,
++	&gcc_qupv3_wrap0_s7_clk_src,
++	&gcc_qupv3_wrap1_s0_clk_src,
++	&gcc_qupv3_wrap1_s1_clk_src,
++	&gcc_qupv3_wrap1_s2_clk_src,
++	&gcc_qupv3_wrap1_s3_clk_src,
++	&gcc_qupv3_wrap1_s4_clk_src,
++	&gcc_qupv3_wrap1_s5_clk_src,
++	&gcc_qupv3_wrap1_s6_clk_src,
++	&gcc_qupv3_wrap1_s7_clk_src,
 +};
--- 
-2.7.4
++
+ static int gcc_sdm845_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
++	int ret;
+
+ 	regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
+ 	if (IS_ERR(regmap))
+@@ -3472,6 +3492,11 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
++	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
++					ARRAY_SIZE(gcc_dfs_clocks));
++	if (ret)
++		return ret;
++
+ 	return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+ }
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
