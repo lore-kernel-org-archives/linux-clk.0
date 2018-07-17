@@ -1,44 +1,131 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	rohitkr@codeaurora.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/2] Add support for LPASS clock controller for SDM845
-Date: Thu,  5 Jul 2018 12:25:19 +0530
-Message-Id: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to platform device probing
+Date: Wed, 18 Jul 2018 00:03:25 +0200
+Message-Id: <20180717220328.792-3-matthias.bgg@kernel.org>
+In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
- [v2]
-  * Make gcc_lpass_sway_clk static.
-  * Remove using child nodes and use reg-names to differentiate various
-    domains of LPASS CC.
+From: Matthias Brugger <mbrugger@suse.com>
 
-Add support for the lpass clock controller found on SDM845 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
+Switch probing for the MMSYS to support invocation to a plain
+paltform device. The driver will be probed by the DRM subsystem.
 
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM LPASS clock bindings
-  clk: qcom: Add lpass clock controller driver for SDM845
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/clk/mediatek/clk-mt2701-mm.c | 42 ++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
- .../devicetree/bindings/clock/qcom,lpasscc.txt     |  31 +++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/lpasscc-sdm845.c                  | 243 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,lpass-sdm845.h      |  18 ++
- 4 files changed, 301 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
+index fe1f85072fc5..200b1842b94b 100644
+--- a/drivers/clk/mediatek/clk-mt2701-mm.c
++++ b/drivers/clk/mediatek/clk-mt2701-mm.c
+@@ -12,14 +12,20 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/module.h>
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+ 
+ #include <dt-bindings/clock/mt2701-clk.h>
+ 
++struct clk_mt2701_mm_priv {
++	struct clk_onecell_data *clk_data;
++};
++
+ static const struct mtk_gate_regs disp0_cg_regs = {
+ 	.set_ofs = 0x0104,
+ 	.clr_ofs = 0x0108,
+@@ -87,23 +93,25 @@ static const struct mtk_gate mm_clks[] = {
+ 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
+ };
+ 
+-static const struct of_device_id of_match_clk_mt2701_mm[] = {
+-	{ .compatible = "mediatek,mt2701-mmsys", },
+-	{}
+-};
+-
+ static int clk_mt2701_mm_probe(struct platform_device *pdev)
+ {
+-	struct clk_onecell_data *clk_data;
+ 	int r;
+-	struct device_node *node = pdev->dev.of_node;
++	struct device_node *node = pdev->dev.parent->of_node;
++	struct clk_mt2701_mm_priv *private;
++
++	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
++	if (!private)
++		return -ENOMEM;
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
++	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR);
++
++	platform_set_drvdata(pdev, private);
+ 
+ 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
+-						clk_data);
++					private->clk_data);
+ 
+-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	r = of_clk_add_provider(node, of_clk_src_onecell_get,
++					private->clk_data);
+ 	if (r)
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
+@@ -112,12 +120,22 @@ static int clk_mt2701_mm_probe(struct platform_device *pdev)
+ 	return r;
+ }
+ 
++static int clk_mt2701_mm_remove(struct platform_device *pdev)
++{
++	struct clk_mt2701_mm_priv *private = platform_get_drvdata(pdev);
++
++	kfree(private->clk_data);
++	kfree(private);
++
++	return 0;
++}
++
+ static struct platform_driver clk_mt2701_mm_drv = {
+ 	.probe = clk_mt2701_mm_probe,
++	.remove = clk_mt2701_mm_remove,
+ 	.driver = {
+ 		.name = "clk-mt2701-mm",
+-		.of_match_table = of_match_clk_mt2701_mm,
+ 	},
+ };
+ 
+-builtin_platform_driver(clk_mt2701_mm_drv);
++module_platform_driver(clk_mt2701_mm_drv);
+-- 
+2.17.1
