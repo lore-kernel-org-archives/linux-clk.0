@@ -1,69 +1,121 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/11] clk: renesas: r8a77990: Correct RCLK handling
-Date: Wed, 11 Jul 2018 16:20:57 +0200
-Message-Id: <20180711142100.3765-9-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54274 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729684AbeGQJYW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 05:24:22 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 0/11] Add basic SoC support for mt6765
+Date: Tue, 17 Jul 2018 16:52:21 +0800
+Message-ID: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car E3 has the
-RCLK Frequency Control Register (RCKCR), which determines the OSC and
-RINT predivider values, and selection of the RCLK clock source between
-RINT and the On-Chip Oscillator.
+This patch adds basic SoC support for Mediatek's new 8-core SoC,
+MT6765, which is mainly for smartphone application.
 
-Hence change the OSC and RINT clock definitions to use the RCKCR
-divider, and add the missing On-Chip Oscillator and RCLK clock source
-switching logic.
+Changes in V5:
+1. add clk support
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As Figure 8.1g "Block Diagram of CPG (R-Car E3)" shows 1/61 and 1/4
-dividers after the On-Chip Oscillator, I assume the OCO runs at 8 MHz.
----
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Changes in V4:
+1. add gic's settings in reg properties
+2. remove some patches about dt-bindings since GKH already took them
 
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index 9e14f1486fbb93cc..6fcc0abdb20c442d 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -44,6 +44,8 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_RINT,
-+	CLK_OCO,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -100,8 +102,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
- 	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
--	DEF_FIXED("osc",       R8A77990_CLK_OSC,   CLK_EXTAL,    384, 1),
--	DEF_FIXED("r",         R8A77990_CLK_R,     CLK_EXTAL,   1536, 1),
-+	DEF_DIV6_RO("osc",     R8A77990_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
-+	DEF_DIV6_RO("r_int",   CLK_RINT,           CLK_EXTAL, CPG_RCKCR, 32),
- 
- 	DEF_GEN3_PE("s0d6c",   R8A77990_CLK_S0D6C, CLK_S0, 6, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d1c",   R8A77990_CLK_S3D1C, CLK_S3, 1, CLK_PE, 1),
-@@ -111,6 +113,9 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	DEF_DIV6P1("canfd",    R8A77990_CLK_CANFD, CLK_PLL0D6, 0x244),
- 	DEF_DIV6P1("csi0",     R8A77990_CLK_CSI0,  CLK_PLL1D2, 0x00c),
- 	DEF_DIV6P1("mso",      R8A77990_CLK_MSO,   CLK_PLL1D2, 0x014),
-+
-+	DEF_RATE("oco",        CLK_OCO,            8 * 1000 * 1000),
-+	DEF_GEN3_RCKSEL("r",   R8A77990_CLK_R, CLK_RINT, 1, CLK_OCO, 61 * 4),
- };
- 
- static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
--- 
-2.17.1
+Changes in V3:
+1. split dt-binding document patchs
+2. fix mt6765.dtsi warnings with W=12
+3. remove uncessary PPI affinity for timer
+4. add gicc base for gic dt node
+
+Changes in V2:
+1. fix clk properties in uart dts node
+2. fix typo in submit title
+3. add simple-bus in mt6765.dtsi
+4. use correct SPDX license format
+
+Mars Cheng (7):
+  dt-bindings: clock: mediatek: document clk bindings for Mediatek
+    MT6765 SoC
+  dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
+  dt-bindings: mediatek: add MT6765 power dt-bindings
+  soc: mediatek: add MT6765 scpsys support
+  clk: mediatek: add mt6765 clock IDs
+  soc: mediatek: add MT6765 subdomain support
+  arm64: dts: mediatek: add mt6765 support
+
+Owen Chen (4):
+  soc: mediatek: add new flow for mtcmos power.
+  clk: mediatek: fix pll setting
+  clk: mediatek: add new clkmux register API
+  clk: mediatek: Add MT6765 clock support
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |   1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |  27 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |   1 +
+ .../bindings/arm/mediatek/mediatek,mipi0a.txt      |  23 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |   1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |   1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |   1 +
+ .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |  22 +
+ .../memory-controllers/mediatek,smi-common.txt     |   1 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |   6 +
+ arch/arm64/boot/dts/mediatek/Makefile              |   1 +
+ arch/arm64/boot/dts/mediatek/mt6765-evb.dts        |  33 +
+ arch/arm64/boot/dts/mediatek/mt6765.dtsi           | 253 ++++++
+ drivers/clk/mediatek/Kconfig                       |  87 ++
+ drivers/clk/mediatek/Makefile                      |   9 +-
+ drivers/clk/mediatek/clk-mt6765-audio.c            | 109 +++
+ drivers/clk/mediatek/clk-mt6765-cam.c              |  83 ++
+ drivers/clk/mediatek/clk-mt6765-img.c              |  79 ++
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c           |  77 ++
+ drivers/clk/mediatek/clk-mt6765-mm.c               | 105 +++
+drivers/clk/mediatek/clk-mt6765-vcodec.c           |  79 ++
+ drivers/clk/mediatek/clk-mt6765.c                  | 963 +++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |  41 +
+ drivers/clk/mediatek/clk-mtk.h                     |  87 +-
+ drivers/clk/mediatek/clk-mux.c                     | 236 +++++
+ drivers/clk/mediatek/clk-mux.h                     |  38 +
+ drivers/clk/mediatek/clk-pll.c                     |  45 +-
+ drivers/soc/mediatek/Makefile                      |   2 +-
+ drivers/soc/mediatek/mtk-infracfg.c                | 178 +++-
+ drivers/soc/mediatek/mtk-scpsys-ext.c              | 535 ++++++++++++
+ drivers/soc/mediatek/mtk-scpsys.c                  | 235 ++++-
+ include/dt-bindings/clock/mt6765-clk.h             | 313 +++++++
+ include/dt-bindings/power/mt6765-power.h           |  14 +
+ include/linux/soc/mediatek/infracfg.h              |   9 +-
+ include/linux/soc/mediatek/scpsys-ext.h            |  66 ++
+ 37 files changed, 3681 insertions(+), 82 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-audio.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mipi0a.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-vcodec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765.c
+ create mode 100644 drivers/clk/mediatek/clk-mux.c
+ create mode 100644 drivers/clk/mediatek/clk-mux.h
+ create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
+ create mode 100644 include/dt-bindings/clock/mt6765-clk.h
+ create mode 100644 include/dt-bindings/power/mt6765-power.h
+ create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
+
