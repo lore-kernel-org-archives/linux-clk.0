@@ -1,37 +1,116 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-To: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
-Date: Mon, 2 Jul 2018 10:32:01 -0500
-MIME-Version: 1.0
-In-Reply-To: <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys through a pdev
+Date: Wed, 18 Jul 2018 00:03:27 +0200
+Message-Id: <20180717220328.792-5-matthias.bgg@kernel.org>
+In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/02/2018 07:28 AM, Sekhar Nori wrote:
-> Hi David, Stephen,
-> 
-> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> This series moves all aemif/nand users to using the ti-aemif platform
->> driver located in drivers/memory instead of the older API located in
->> mach-davinci.
->>
->> First five patches add necessary changes to the clock driver. Next
->> seven convert the board files to using the ti-aemif driver. Last patch
->> removes now dead code.
-> 
-> How do you want to handle this series? I can apply the series and
-> provide you an immutable branch on v4.18-rc1 with the clock patches
-> applied if that can work.
+From: Matthias Brugger <mbrugger@suse.com>
 
-Sounds good to me. But I'm new to this maintainer thing, so maybe
-there is something to consider that I haven't thought of?
+The MMSYS subsystem includes clocks and drm components.
+This patch adds an initailization path through a platform device
+for the clock part, so that both drivers get probed from the same
+device tree compatible.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 18 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index dd249cf5121e..c946aea722e5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -173,6 +173,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+ 	.ext_path = mt2701_mtk_ddp_ext,
+ 	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
+ 	.shadow_register = true,
++	.clk_drv_name = "clk-mt2701-mm",
+ };
+ 
+ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+@@ -180,6 +181,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+ 	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+ 	.ext_path = mt8173_mtk_ddp_ext,
+ 	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
++	.clk_drv_name = "clk-mt8173-mm",
+ };
+ 
+ static int mtk_drm_kms_init(struct drm_device *drm)
+@@ -411,6 +413,19 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(private->config_regs))
+ 		return PTR_ERR(private->config_regs);
+ 
++	if (private->data->clk_drv_name) {
++		private->clk_dev = platform_device_register_data(dev,
++						private->data->clk_drv_name, -1,
++						NULL, 0);
++
++		if (IS_ERR(private->clk_dev)) {
++			pr_err("failed to register %s platform device\n",
++						private->data->clk_drv_name);
++
++			return PTR_ERR(private->clk_dev);
++		}
++	}
++
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(dev->of_node->parent, node) {
+ 		const struct of_device_id *of_id;
+@@ -515,6 +530,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
+ 	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
+ 		of_node_put(private->comp_node[i]);
+ 
++	if (private->clk_dev)
++		platform_device_unregister(private->clk_dev);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index 86cec19193c4..200eee5de419 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -34,11 +34,13 @@ struct mtk_mmsys_driver_data {
+ 	const enum mtk_ddp_comp_id *ext_path;
+ 	unsigned int ext_len;
+ 	bool shadow_register;
++	const char *clk_drv_name;
+ };
+ 
+ struct mtk_drm_private {
+ 	struct drm_device *drm;
+ 	struct device *dma_dev;
++	struct platform_device *clk_dev;
+ 
+ 	unsigned int num_pipes;
+ 
+-- 
+2.17.1
