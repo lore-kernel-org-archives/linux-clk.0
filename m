@@ -1,122 +1,141 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:9199 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754469AbeGCKAS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Jul 2018 06:00:18 -0400
-Subject: Re: [PATCH 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
- <20180703145716.31860-2-yixun.lan@amlogic.com>
- <1530605776.2900.163.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <0e2d2c14-656a-b43f-7699-ca68644aee57@amlogic.com>
-Date: Tue, 3 Jul 2018 17:59:55 +0800
+Received: from mga01.intel.com ([192.55.52.88]:41012 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729708AbeGQSyU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Jul 2018 14:54:20 -0400
+Date: Wed, 18 Jul 2018 02:19:29 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: [RFC PATCH] soc: mediatek: bus_ctrl_set_release() can be static
+Message-ID: <20180717181929.GA13851@lkp-hsx02>
+References: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1530605776.2900.163.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi jerome
 
-On 07/03/18 16:16, Jerome Brunet wrote:
-> On Tue, 2018-07-03 at 14:57 +0000, Yixun Lan wrote:
->> Document the EMMC sub clock controller driver, the potential consumer
->> of this driver is EMMC or NAND.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../bindings/clock/amlogic,emmc-clkc.txt      | 45 +++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->> new file mode 100644
->> index 000000000000..5534bd446363
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,emmc-clkc.txt
->> @@ -0,0 +1,45 @@
->> +* Amlogic EMMC Sub Clock Controller Driver
->> +
->> +The Amlogic EMMC clock controller generates and supplies clock to support
->> +EMMC and NAND controller
->> +
->> +Required Properties:
->> +
->> +- compatible: should be:
->> +		"amlogic,emmc-clkc"
-> 
-> missing clocks and clock-names here
-> 
-ok, will update
+Fixes: 4666e05d0237 ("soc: mediatek: add new flow for mtcmos power.")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+ mtk-scpsys-ext.c |   28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
->> +
->> +- #clock-cells: should be 1.
->> +
->> +Two clocks are provided as the parent of this EMMC clock controller driver from
->> +upper layer clock controller - eg "amlogic,axg-clkc" in AXG platfrom.
->> +The main consumer of this driver is EMMC or NAND, to specify which the clock
->> +they may consume, the preprocessor macros in the dt-bindings/clock/emmc-clkc.h
->> +header and can be used in device tree sources.
-> 
-> Not sure this explanation belongs in dt-binding documentation.
-> Maybe this should be in the driver itself.
-> 
-ok, I probably will waiting for more comments coming in ;-)
-
->> +
->> +Parent node should have the following properties :
->> +- compatible: "syscon", "simple-mfd, and "amlogic,emmc-clkc"
->> +- reg: base address and size of the EMMC control register space.
->> +
->> +Example: Clock controller node:
->> +
->> +sd_emmc_c_clkc: clock-controller@7000 {
->> +	compatible = "amlogic,emmc-clkc", "syscon", "simple-mfd";
->> +	reg = <0x0 0x7000 0x0 0x4>;
->> +	#clock-cells = <1>;
->> +
->> +	clock-names = "clkin0", "clkin1";
->> +	clocks = <&clkc CLKID_SD_EMMC_C_CLK0>,
->> +			<&clkc CLKID_FCLK_DIV2>;
->> +};
->> +
-> 
-> Not sure the following is necessary, you don't really to show how to use a clock
-> controller.
-> 
-ditto,
-
-and I'm fine with either way, this was a copy & paste from gxbb-clkc.h
-
-
->> +Example: NAND controller node that consumes the clock generated by the clock
->> +  controller:
->> +
->> +	nand: nfc@7800 {
->> +		compatible = "amlogic,meson-axg-nfc";
->> +		reg = <0x0 0x7800 0x0 0x100>;
->> +		interrupts = <GIC_SPI 34 IRQ_TYPE_EDGE_RISING>;
->> +		clocks = <&clkc CLKID_SD_EMMC_C>,
->> +				<&sd_emmc_c_clkc CLKID_EMMC_C_DIV>;
->> +		clock-names = "core", "device";
->> +	};
-> 
-> .
-> 
-
+diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
+index 965e64d..e4ceb38 100644
+--- a/drivers/soc/mediatek/mtk-scpsys-ext.c
++++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
+@@ -80,7 +80,7 @@ static struct scpsys_ext_attr *__get_attr_parent(const char *parent_n)
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
+-int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
++static int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
+ {
+ 	int i;
+ 	int ret = 0;
+@@ -111,17 +111,17 @@ int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
+ 	return ret;
+ }
+ 
+-int bus_ctrl_set(struct scpsys_ext_attr *attr)
++static int bus_ctrl_set(struct scpsys_ext_attr *attr)
+ {
+ 	return bus_ctrl_set_release(attr, CMD_ENABLE);
+ }
+ 
+-int bus_ctrl_release(struct scpsys_ext_attr *attr)
++static int bus_ctrl_release(struct scpsys_ext_attr *attr)
+ {
+ 	return bus_ctrl_set_release(attr, CMD_DISABLE);
+ }
+ 
+-int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
++static int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
+ {
+ 	int i = 0;
+ 	int ret = 0;
+@@ -158,7 +158,7 @@ int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
+ 	return ret;
+ }
+ 
+-int bus_clk_enable(struct scpsys_ext_attr *attr)
++static int bus_clk_enable(struct scpsys_ext_attr *attr)
+ {
+ 	struct scpsys_ext_attr *attr_p;
+ 	int ret = 0;
+@@ -189,17 +189,17 @@ int bus_clk_disable(struct scpsys_ext_attr *attr)
+ 	return ret;
+ }
+ 
+-const struct bus_mask_ops bus_mask_set_clr_ctrl = {
++static const struct bus_mask_ops bus_mask_set_clr_ctrl = {
+ 	.set = &mtk_generic_set_cmd,
+ 	.release = &mtk_generic_clr_cmd,
+ };
+ 
+-const struct bus_ext_ops ext_bus_ctrl = {
++static const struct bus_ext_ops ext_bus_ctrl = {
+ 	.enable = &bus_ctrl_set,
+ 	.disable = &bus_ctrl_release,
+ };
+ 
+-const struct bus_ext_ops ext_cg_ctrl = {
++static const struct bus_ext_ops ext_cg_ctrl = {
+ 	.enable = &bus_clk_enable,
+ 	.disable = &bus_clk_disable,
+ };
+@@ -207,9 +207,9 @@ const struct bus_ext_ops ext_cg_ctrl = {
+ /*
+  * scpsys bus driver init
+  */
+-struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
+-						   const char *property,
+-						   int index)
++static struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
++							  const char *property,
++							  int index)
+ {
+ 	struct device_node *syscon_np;
+ 	struct regmap *regmap;
+@@ -228,7 +228,7 @@ struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
+ 	return regmap;
+ }
+ 
+-int scpsys_ext_regmap_init(struct platform_device *pdev)
++static int scpsys_ext_regmap_init(struct platform_device *pdev)
+ {
+ 	infracfg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+ 						   INFRA);
+@@ -321,7 +321,7 @@ static int add_cg_to_list(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-int scpsys_ext_clk_init(struct platform_device *pdev)
++static int scpsys_ext_clk_init(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+ 
+@@ -333,7 +333,7 @@ int scpsys_ext_clk_init(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
++static int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
+ {
+ 	int i, count = 0;
+ 
