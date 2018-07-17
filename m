@@ -1,133 +1,130 @@
-Return-Path: <john@phrozen.org>
-From: John Crispin <john@phrozen.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Christian Lamparter <chunkeey@googlemail.com>,
-	Christian Lamparter <chunkeey@gmail.com>,
-	John Crispin <john@phrozen.org>
-Subject: [PATCH] clk: fix apss cpu overclocking
-Date: Mon, 23 Jul 2018 16:23:14 +0200
-Message-Id: <20180723142314.1183-1-john@phrozen.org>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
+Date: Tue, 17 Jul 2018 12:58:57 -0700
+Message-ID: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Christian Lamparter <chunkeey@googlemail.com>
+This patchset is adding communication layer with firmware and clock driver who uses 
+those APIs to communicate with PMU.
+Firmware driver provides an interface to firmware APIs.Interface APIs can be used by any driver to communicate to
+PMUFW(Platform Management Unit). All requests go through ATF.
+This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries supported clock information from 
+firmware and regiters pll and output clocks with CCF.
+v10:
+ - Incorporated code review comments from v9 patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10478575/
+	https://patchwork.kernel.org/patch/10478457/
+	https://patchwork.kernel.org/patch/10478461/
+	https://patchwork.kernel.org/patch/10478463/
+	
+v9:
+ - Fixed minor typo comments
 
-There's an interaction issue between the clk changes:"
-clk: qcom: ipq4019: Add the apss cpu pll divider clock node
-clk: qcom: ipq4019: remove fixed clocks and add pll clocks
-" and the cpufreq-dt.
-
-cpufreq-dt is now spamming the kernel-log with the following:
-
-[ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
-for freq 761142857 (-34)
-
-This only happens on certain devices like the Compex WPJ428
-and AVM FritzBox!4040. However, other devices like the Asus
-RT-AC58U and Meraki MR33 work just fine.
-
-The issue stem from the fact that all higher CPU-Clocks
-are achieved by switching the clock-parent to the P_DDRPLLAPSS
-(ddrpllapss). Which is set by Qualcomm's proprietary bootcode
-as part of the DDR calibration.
-
-For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
-at round 533 MHz (ddrpllsdcc = 190285714 Hz).
-
-whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
-clocked at a slightly higher 537 MHz ( ddrpllsdcc = 192000000 Hz).
-
-This patch attempts to fix the issue by modifying
-clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate()
-to use a new qcom_find_freq_close() function, which returns the closest
-matching frequency, instead of the next higher. This way, the SoC in
-the FB4040 (with its max clock speed of 710.4 MHz) will no longer
-try to overclock to 761 MHz.
-
-Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clock node")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: John Crispin <john@phrozen.org>
----
- drivers/clk/qcom/gcc-ipq4019.c | 34 +++++++++++++++++++++++++++++++---
- 1 file changed, 31 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
-index 46cb256b4aa2..4ec43f7d2e52 100644
---- a/drivers/clk/qcom/gcc-ipq4019.c
-+++ b/drivers/clk/qcom/gcc-ipq4019.c
-@@ -1253,6 +1253,29 @@ static const struct clk_fepll_vco gcc_fepll_vco = {
- 	.reg = 0x2f020,
- };
+v8:
+ - Corrected typo in clk Kconfig
  
-+
-+const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
-+					     unsigned long rate)
-+{
-+	const struct freq_tbl *last = NULL;
-+
-+	for ( ; f->freq; f++) {
-+		if (rate == f->freq)
-+			return f;
-+
-+		if (f->freq > rate) {
-+			if (!last ||
-+			   (f->freq - rate) < (rate - last->freq))
-+				return f;
-+			else
-+				return last;
-+		}
-+		last = f;
-+	}
-+
-+	return last;
-+}
-+
- /*
-  * Round rate function for APSS CPU PLL Clock divider.
-  * It looks up the frequency table and returns the next higher frequency
-@@ -1265,7 +1288,7 @@ static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_hw *p_hw;
- 	const struct freq_tbl *f;
- 
--	f = qcom_find_freq(pll->freq_tbl, rate);
-+	f = qcom_find_freq_close(pll->freq_tbl, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-@@ -1288,7 +1311,7 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
- 	u32 mask;
- 	int ret;
- 
--	f = qcom_find_freq(pll->freq_tbl, rate);
-+	f = qcom_find_freq_close(pll->freq_tbl, rate);
- 	if (!f)
- 		return -EINVAL;
- 
-@@ -1315,6 +1338,7 @@ static unsigned long
- clk_cpu_div_recalc_rate(struct clk_hw *hw,
- 			unsigned long parent_rate)
- {
-+	const struct freq_tbl *f;
- 	struct clk_fepll *pll = to_clk_fepll(hw);
- 	u32 cdiv, pre_div;
- 	u64 rate;
-@@ -1335,7 +1359,11 @@ clk_cpu_div_recalc_rate(struct clk_hw *hw,
- 	rate = clk_fepll_vco_calc_rate(pll, parent_rate) * 2;
- 	do_div(rate, pre_div);
- 
--	return rate;
-+	f = qcom_find_freq_close(pll->freq_tbl, rate);
-+	if (!f)
-+		return rate;
-+
-+	return f->freq;
- };
- 
- static const struct clk_ops clk_regmap_cpu_div_ops = {
+v7:
+ - Removed xilinx specific clock debugfs API support
+ - Added reviewed-by tags for FW and clock bindings
+ - Updated clock node name to clock-controller
+
+v6:
+ - Broke patch series to have base FW driver and Clock driver user
+ - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10230759/
+	https://patchwork.kernel.org/patch/10250047/
+
+v5:
+ - Added ATF version check support
+ - Updated some functions to be static 
+ - Minor function name corrections
+
+v4:
+ - Changed clock setrate/getrate API prototype to support 64 bit rate
+ - Defined macros for get_node_status return values
+ - Moved DT node as a child of firmware
+ - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
+ - Minor changes to incorporate other review comments from v3 patch series
+
+v3:
+ - added some fixes to firmware-ggs.c
+ - updated pinmux get/set function argument names to specify function id instead of node id
+ - added new pinctrl query macros
+ - incorporated review comments from v2 patch series
+
+v2:
+ - change SPDX-License-Identifier license text style
+ - split patch into multiple patches
+ - Updated copyrights
+ - Added ABI documentation
+ - incorporated logical review comments from previuos patch. Discussed below:
+	https://patchwork.kernel.org/patch/10150665/
+	
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (9):
+  dt-bindings: firmware: Add bindings for ZynqMP firmware
+  firmware: xilinx: Add Zynqmp firmware driver
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  firmware: xilinx: Add query data API
+  firmware: xilinx: Add clock APIs
+  firmware: xilinx: Add debugfs interface
+  firmware: xilinx: Add debugfs for IOCTL API
+  firmware: xilinx: Add debugfs for query data API
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
+ arch/arm64/Kconfig.platforms                       |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  10 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
+ drivers/clk/zynqmp/clkc.c                          | 719 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 217 +++++++
+ drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/xilinx/Kconfig                    |  23 +
+ drivers/firmware/xilinx/Makefile                   |   5 +
+ drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
+ drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
+ drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               | 116 ++++
+ 21 files changed, 2818 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 drivers/firmware/xilinx/Kconfig
+ create mode 100644 drivers/firmware/xilinx/Makefile
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+ create mode 100644 drivers/firmware/xilinx/zynqmp.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+ create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+
 -- 
-2.11.0
+2.7.4
