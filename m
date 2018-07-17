@@ -1,63 +1,192 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10991 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388105AbeGWJu7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 05:50:59 -0400
-Date: Mon, 23 Jul 2018 11:50:46 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <pgaikwad@nvidia.com>,
-        <jonathanh@nvidia.co>, <thierry.reding@gmail.com>,
-        <linux-kernel@lists.codethink.co.uk>
-Subject: Re: [PATCH 3/8] clk: tegra: fix fractional clocks for VDI, VI, EPP,
- MPE, 2D and 3D
-Message-ID: <20180723085046.GL1636@tbergstrom-lnx.Nvidia.com>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <20180720134532.13148-4-ben.dooks@codethink.co.uk>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:10036 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731186AbeGQNcz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 09:32:55 -0400
+Message-ID: <1531832413.8953.30.camel@mtkswgap22>
+Subject: Re: [PATCH v5 04/11] soc: mediatek: add MT6765 scpsys support
+From: Sean Wang <sean.wang@mediatek.com>
+To: Mars Cheng <mars.cheng@mediatek.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, Owen Chen <owen.chen@mediatek.com>
+Date: Tue, 17 Jul 2018 21:00:13 +0800
+In-Reply-To: <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+         <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180720134532.13148-4-ben.dooks@codethink.co.uk>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 20, 2018 at 02:45:27PM +0100, Ben Dooks wrote:
-> The clocks vde, vi, epp, mpe, 2d and 3d are all fractional
-> divisors, and not integer divisors as setup in the current
-> kernel. This seems to be the same for tegra2 and tegra3.
+On Tue, 2018-07-17 at 16:52 +0800, Mars Cheng wrote:
+> This adds scpsys support for MT6765
 > 
 
-Same comment as the host1x clock patch.
+it looks like 4/11 have to depend on 6/11 and 7/11 to get a full function on scpsys for MT6765.
 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+you should keep dependency in order to submit these patches
+
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 > ---
->  drivers/clk/tegra/clk-tegra-periph.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  drivers/soc/mediatek/mtk-scpsys.c        |   88 ++++++++++++++++++++++++++++++
+>  include/dt-bindings/power/mt6765-power.h |   14 +++++
+>  2 files changed, 102 insertions(+)
+>  create mode 100644 include/dt-bindings/power/mt6765-power.h
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 8fa1cecf18a0..ed70419f4ff9 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -641,13 +641,13 @@ static struct tegra_periph_init_data periph_clks[] = {
->  	I2C("i2c4", mux_pllp_clkm, CLK_SOURCE_I2C4, 103, tegra_clk_i2c4),
->  	I2C("i2c5", mux_pllp_clkm, CLK_SOURCE_I2C5, 47, tegra_clk_i2c5),
->  	I2C("i2c6", mux_pllp_clkm, CLK_SOURCE_I2C6, 166, tegra_clk_i2c6),
-> -	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
-> -	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
-> -	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
-> +	MUX("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
-> +	MUX("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
-> +	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
->  	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> -	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
-> -	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
-> -	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
-> +	MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
-> +	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
-> +	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
->  	INT8("vde", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde_8),
->  	INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi_8),
->  	INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla_pllc4, CLK_SOURCE_VI, 20, 0, tegra_clk_vi_9),
-> -- 
-> 2.18.0
-> 
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index 5b24bb4..4bb6c7a 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -23,6 +23,7 @@
+>  
+>  #include <dt-bindings/power/mt2701-power.h>
+>  #include <dt-bindings/power/mt2712-power.h>
+> +#include <dt-bindings/power/mt6765-power.h>
+>  #include <dt-bindings/power/mt6797-power.h>
+>  #include <dt-bindings/power/mt7622-power.h>
+>  #include <dt-bindings/power/mt7623a-power.h>
+> @@ -680,6 +681,79 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  };
+>  
+>  /*
+> + * MT6765 power domain support
+> + */
+> +#define SPM_PWR_STATUS_MT6765			0x0180
+> +#define SPM_PWR_STATUS_2ND_MT6765		0x0184
+> +
+> +static const struct scp_domain_data scp_domain_data_mt6765[] = {
+> +	[MT6765_POWER_DOMAIN_VCODEC] = {
+> +		.name = "vcodec",
+> +		.sta_mask = BIT(26),
+> +		.ctl_offs = 0x300,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +	[MT6765_POWER_DOMAIN_ISP] = {
+> +		.name = "isp",
+> +		.sta_mask = BIT(5),
+> +		.ctl_offs = 0x308,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +	[MT6765_POWER_DOMAIN_MM] = {
+> +		.name = "mm",
+> +		.sta_mask = BIT(3),
+> +		.ctl_offs = 0x30C,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +	[MT6765_POWER_DOMAIN_CONN] = {
+> +		.name = "conn",
+> +		.sta_mask = BIT(1),
+> +		.ctl_offs = 0x32C,
+> +		.sram_pdn_bits = 0,
+> +		.sram_pdn_ack_bits = 0,
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
+> +		.name = "mfg_async",
+> +		.sta_mask = BIT(23),
+> +		.ctl_offs = 0x334,
+> +		.sram_pdn_bits = 0,
+> +		.sram_pdn_ack_bits = 0,
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG] = {
+> +		.name = "mfg",
+> +		.sta_mask = BIT(4),
+> +		.ctl_offs = 0x338,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+> +	[MT6765_POWER_DOMAIN_CAM] = {
+> +		.name = "cam",
+> +		.sta_mask = BIT(25),
+> +		.ctl_offs = 0x344,
+> +		.sram_pdn_bits = GENMASK(8, 9),
+> +		.sram_pdn_ack_bits = GENMASK(12, 13),
+> +	},
+> +	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
+> +		.name = "mfg_core0",
+> +		.sta_mask = BIT(7),
+> +		.ctl_offs = 0x34C,
+> +		.sram_pdn_bits = GENMASK(8, 8),
+> +		.sram_pdn_ack_bits = GENMASK(12, 12),
+> +	},
+
+Above power domains really don't require any clock controlled with
+clk_id before any access on them?
+
+> +};
+> +
+> +static const struct scp_subdomain scp_subdomain_mt6765[] = {
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
+> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
+> +	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
+> +	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
+> +};
+> +
+> +/*
+>   * MT6797 power domain support
+>   */
+>  
+> @@ -962,6 +1036,17 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  	.bus_prot_reg_update = false,
+>  };
+>  
+> +static const struct scp_soc_data mt6765_data = {
+> +	.domains = scp_domain_data_mt6765,
+> +	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
+> +	.subdomains = scp_subdomain_mt6765,
+> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
+> +	.regs = {
+> +		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
+> +		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
+> +	},
+> +};
+> +
+>  static const struct scp_soc_data mt6797_data = {
+>  	.domains = scp_domain_data_mt6797,
+>  	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
+> @@ -1018,6 +1103,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.compatible = "mediatek,mt2712-scpsys",
+>  		.data = &mt2712_data,
+>  	}, {
+> +		.compatible = "mediatek,mt6765-scpsys",
+> +		.data = &mt6765_data,
+> +	}, {
+>  		.compatible = "mediatek,mt6797-scpsys",
+>  		.data = &mt6797_data,
+>  	}, {
+> diff --git a/include/dt-bindings/power/mt6765-power.h b/include/dt-bindings/power/mt6765-power.h
+> new file mode 100644
+> index 0000000..d347b4e
+> --- /dev/null
+> +++ b/include/dt-bindings/power/mt6765-power.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _DT_BINDINGS_POWER_MT6765_POWER_H
+> +#define _DT_BINDINGS_POWER_MT6765_POWER_H
+> +
+> +#define MT6765_POWER_DOMAIN_CONN		0
+> +#define MT6765_POWER_DOMAIN_MM			1
+> +#define MT6765_POWER_DOMAIN_MFG_ASYNC		2
+> +#define MT6765_POWER_DOMAIN_ISP			3
+> +#define MT6765_POWER_DOMAIN_MFG			4
+> +#define MT6765_POWER_DOMAIN_MFG_CORE0		5
+> +#define MT6765_POWER_DOMAIN_CAM			6
+> +#define MT6765_POWER_DOMAIN_VCODEC		7
+> +
+> +#endif /* _DT_BINDINGS_POWER_MT6765_POWER_H */
+
+
