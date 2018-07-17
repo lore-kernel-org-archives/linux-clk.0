@@ -1,168 +1,56 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Thu, 5 Jul 2018 14:43:48 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Aapo Vienamo <avienamo@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] clk: tegra: refactor 7.1 div calculation
-Message-ID: <20180705114348.GB27696@tbergstrom-lnx.Nvidia.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [resend PATCH v4 0/5] arm/arm64: mediatek: Fix mmsys device probing
+Date: Wed, 18 Jul 2018 00:03:23 +0200
+Message-Id: <20180717220328.792-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 04, 2018 at 01:17:33PM +0300, Aapo Vienamo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Move this to a separate file so it can be used to calculate the sdmmc
-> clock dividers.
-> 
+Changes since v3:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
 
-Series Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+  
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+ 
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/clk/tegra/Makefile      |  1 +
->  drivers/clk/tegra/clk-divider.c | 30 ++++-------------------
->  drivers/clk/tegra/clk.h         |  3 +++
->  drivers/clk/tegra/div71.c       | 54 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 63 insertions(+), 25 deletions(-)
->  create mode 100644 drivers/clk/tegra/div71.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index b716923..6d4f563 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
->  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> +obj-y					+= div71.o
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index 16e0aee..ad87858 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -32,35 +32,15 @@
->  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
->  		   unsigned long parent_rate)
->  {
-> -	u64 divider_ux1 = parent_rate;
-> -	u8 flags = divider->flags;
-> -	int mul;
-> -
-> -	if (!rate)
-> -		return 0;
-> -
-> -	mul = get_mul(divider);
-> -
-> -	if (!(flags & TEGRA_DIVIDER_INT))
-> -		divider_ux1 *= mul;
-> -
-> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> -		divider_ux1 += rate - 1;
-> -
-> -	do_div(divider_ux1, rate);
-> -
-> -	if (flags & TEGRA_DIVIDER_INT)
-> -		divider_ux1 *= mul;
-> +	int div;
->  
-> -	divider_ux1 -= mul;
-> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> +			divider->flags);
->  
-> -	if ((s64)divider_ux1 < 0)
-> +	if (div < 0)
->  		return 0;
->  
-> -	if (divider_ux1 > get_max_div(divider))
-> -		return get_max_div(divider);
-> -
-> -	return divider_ux1;
-> +	return div;
->  }
->  
->  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e1f8846..f14e136 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -811,6 +811,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
->  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
->  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags);
-> +
->  
->  /* Combined read fence with delay */
->  #define fence_udelay(delay, reg)	\
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..1a5e04c
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,54 @@
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags)
-> +{
-> +	u64 divider_ux1 = parent_rate;
-> +	int mul;
-> +
-> +	if (!rate)
-> +		return 0;
-> +
-> +	mul = 1 << frac_width;
-> +
-> +	if (!(flags & TEGRA_DIVIDER_INT))
-> +		divider_ux1 *= mul;
-> +
-> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +		divider_ux1 += rate - 1;
-> +
-> +	do_div(divider_ux1, rate);
-> +
-> +	if (flags & TEGRA_DIVIDER_INT)
-> +		divider_ux1 *= mul;
-> +
-> +	if (divider_ux1 < mul)
-> +		return 0;
-> +
-> +	divider_ux1 -= mul;
-> +
-> +	if (divider_ux1 > div_mask(width))
-> +		return div_mask(width);
-> +
-> +	return divider_ux1;
-> +}
-> -- 
-> 2.7.4
-> 
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
+
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
