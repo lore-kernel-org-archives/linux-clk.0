@@ -1,248 +1,228 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530607882.2900.182.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: add sub EMMC clock controller driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
- <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
- <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 03 Jul 2018 10:51:22 +0200
-In-Reply-To: <20180703145716.31860-4-yixun.lan@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	 <20180703145716.31860-4-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 04/16] clk: at91: audio-pll: separate registration from DT parsing
+Date: Wed, 18 Jul 2018 00:27:45 +0200
+Message-Id: <20180717222757.10253-5-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-03 at 14:57 +0000, Yixun Lan wrote:
-> This patch will add a EMMC clock controller driver support,
-> It provide a mux and divider clock.
-> 
-> This clock driver can be protentially used by either EMMC and
-> NAND driver.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  drivers/clk/meson/Kconfig     |   9 +++
->  drivers/clk/meson/Makefile    |   1 +
->  drivers/clk/meson/emmc-clkc.c | 136 ++++++++++++++++++++++++++++++++++
->  3 files changed, 146 insertions(+)
->  create mode 100644 drivers/clk/meson/emmc-clkc.c
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index efaa70f682b4..2f27ff08e4eb 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -15,6 +15,15 @@ config COMMON_CLK_MESON_AO
->  	select COMMON_CLK_REGMAP_MESON
->  	select RESET_CONTROLLER
->  
-> +config COMMON_CLK_EMMC_MESON
-> +	tristate "Meson EMMC Sub Clock Controller Driver"
-> +	depends on COMMON_CLK_AMLOGIC
-> +	select MFD_SYSCON
-> +	select REGMAP
-> +	help
-> +	  Support for the EMMC sub clock controller on AmLogic Meson Platform,
-I thought you were not writing amlogic this way anymore -^ ??  ^ 
- ... or be consistent about it.                                |
-                                                               |
-Drop the camel case please                        -------------|
-> +	  Say Y if you want this clock enabled.
-> +
->  config COMMON_CLK_REGMAP_MESON
->  	bool
->  	select REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c40d848..2f04f77ba4de 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-> +obj-$(CONFIG_COMMON_CLK_EMMC_MESON) 	+= emmc-clkc.o
->  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-> diff --git a/drivers/clk/meson/emmc-clkc.c b/drivers/clk/meson/emmc-clkc.c
-> new file mode 100644
-> index 000000000000..cf5bb9f34327
-> --- /dev/null
-> +++ b/drivers/clk/meson/emmc-clkc.c
-> @@ -0,0 +1,136 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson EMMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/init.h>
+Separate registration out of of_sama5d2_clk_audio_pll*_setup to allow other
+code to use it.
 
-replace with linux/module.h
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/clk-audio-pll.c | 147 +++++++++++++++++++++++--------
+ 1 file changed, 109 insertions(+), 38 deletions(-)
 
-> +#include <linux/of_address.h>
-
-Why do you need this ?
-
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/emmc-clkc.h>
-> +
-> +#include "clkc.h"
-> +
-> +#define SD_EMMC_CLOCK		0
-> +#define MUX_CLK_NUM_PARENTS	2
-> +#define EMMC_MAX_CLKS		2
-> +#define CLK_NAME_LEN		48
-> +
-> +static struct clk_regmap_mux_data emmc_clkc_mux_data = {
-> +	.offset = SD_EMMC_CLOCK,
-> +	.mask = 0x3,
-> +	.shift = 6,
-
-If you round the divider "closest", shouldn't you do the same for the mux ?
-
-> +};
-> +
-> +static struct clk_regmap_div_data emmc_clkc_div_data = {
-> +	.offset = SD_EMMC_CLOCK,
-> +	.shift = 0,
-> +	.width = 6,
-> +	.flags = CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
-> +};
-> +
-> +static const struct of_device_id clkc_match_table[] = {
-> +	{ .compatible = "amlogic,emmc-clkc" },
-> +	{}
-> +};
-> +
-> +static int emmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk_regmap *mux, *div;
-> +	struct regmap *map;
-> +	struct clk *clk;
-> +	int i, ret;
-> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
-> +	struct clk_init_data init;
-> +	char mux_name[CLK_NAME_LEN], div_name[CLK_NAME_LEN];
-
-I'm not big fan, especially if you append the dev_name() to the clock name.
-
-> +	struct clk_hw_onecell_data *onecell_data;
-> +
-> +	map = syscon_node_to_regmap(dev->of_node);
-> +
-> +	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-> +	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-> +
-> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-> +				    sizeof(*onecell_data->hws) * EMMC_MAX_CLKS,
-> +				    GFP_KERNEL);
-> +
-> +	if (!mux || !div || !onecell_data)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> +		char name[8];
-> +
-> +		snprintf(name, sizeof(name), "clkin%d", i);
-> +		clk = devm_clk_get(dev, name);
-> +		if (IS_ERR(clk)) {
-> +			if (clk != ERR_PTR(-EPROBE_DEFER))
-> +				dev_err(dev, "Missing clock %s\n", name);
-> +			return PTR_ERR(clk);
-> +		}
-> +
-> +		parent_names[i] = __clk_get_name(clk);
-> +	}
-> +
-> +	mux->map = map;
-> +	mux->data = &emmc_clkc_mux_data;
-> +
-> +	snprintf(mux_name, CLK_NAME_LEN, "%s#emmc_mux", dev_name(dev));
-
-I'd prefer if you used kasprintf() and free the name after the name after
-registration.
-
-> +
-> +	init.name = mux_name;
-> +	init.ops = &clk_regmap_mux_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-
-If you really intend to have manual control over the mux, as commented in patch
-2, you need CLK_SET_RATE_NOREPARENT here, otherwise whatever you set may be
-overwritten by the next clk_set_rate() call. Please choose.
-
-> +	init.parent_names = parent_names;
-> +	init.num_parents = MUX_CLK_NUM_PARENTS;
-> +
-> +	mux->hw.init = &init;
-> +	ret = devm_clk_hw_register(dev, &mux->hw);
-> +	if (ret) {
-> +		dev_err(dev, "Mux clock registration failed\n");
-> +		return ret;
-> +	}
-> +
-> +	parent_names[0] = mux_name;
-> +	div->map = map;
-> +	div->data = &emmc_clkc_div_data;
-> +
-> +	snprintf(div_name, CLK_NAME_LEN, "%s#emmc_div", dev_name(dev));
-> +
-> +	init.name = div_name;
-> +	init.ops = &clk_regmap_divider_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +	init.parent_names = parent_names;
-> +	init.num_parents = 1;
-> +
-> +	div->hw.init = &init;
-> +	ret = devm_clk_hw_register(dev, &div->hw);
-> +	if (ret) {
-> +		dev_err(dev, "Div clock registration failed\n");
-
-s/Div/Divider
-
-> +		return ret;
-> +	}
-> +
-> +	onecell_data->hws[CLKID_EMMC_C_MUX] = &mux->hw,
-> +	onecell_data->hws[CLKID_EMMC_C_DIV] = &div->hw,
-> +	onecell_data->num = EMMC_MAX_CLKS;
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					   onecell_data);
-
-This is a long function with a lot of locals. please break that up.
-(for example, one function to register each clock, helper to allocate the clk_hw
-and names ...)
-
-> +}
-> +
-> +static struct platform_driver emmc_clkc_driver = {
-> +	.probe		= emmc_clkc_probe,
-> +	.driver		= {
-> +		.name	= "emmc-clkc",
-> +		.of_match_table = clkc_match_table,
-> +	},
-> +};
-> +
-
-It should be a module, not a builtin - especially when the configuration is a
-tristate
+diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+index b3eaf654fac9..f326023a50a3 100644
+--- a/drivers/clk/at91/clk-audio-pll.c
++++ b/drivers/clk/at91/clk-audio-pll.c
+@@ -444,85 +444,156 @@ static const struct clk_ops audio_pll_pmc_ops = {
+ 	.set_rate = clk_audio_pll_pmc_set_rate,
+ };
  
-> +builtin_platform_driver(emmc_clkc_driver);
+-static int of_sama5d2_clk_audio_pll_setup(struct device_node *np,
+-					  struct clk_init_data *init,
+-					  struct clk_hw *hw,
+-					  struct regmap **clk_audio_regmap)
++struct clk_hw * __init
++at91_clk_register_audio_pll_frac(struct regmap *regmap, const char *name,
++				 const char *parent_name)
+ {
+-	struct regmap *regmap;
+-	const char *parent_names[1];
++	struct clk_audio_frac *frac_ck;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+-	regmap = syscon_node_to_regmap(of_get_parent(np));
+-	if (IS_ERR(regmap))
+-		return PTR_ERR(regmap);
++	frac_ck = kzalloc(sizeof(*frac_ck), GFP_KERNEL);
++	if (!frac_ck)
++		return ERR_PTR(-ENOMEM);
+ 
+-	init->name = np->name;
+-	of_clk_parent_fill(np, parent_names, 1);
+-	init->parent_names = parent_names;
+-	init->num_parents = 1;
++	init.name = name;
++	init.ops = &audio_pll_frac_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
+ 
+-	hw->init = init;
+-	*clk_audio_regmap = regmap;
++	frac_ck->hw.init = &init;
++	frac_ck->regmap = regmap;
+ 
+-	ret = clk_hw_register(NULL, hw);
+-	if (ret)
+-		return ret;
++	ret = clk_hw_register(NULL, &frac_ck->hw);
++	if (ret) {
++		kfree(frac_ck);
++		return ERR_PTR(ret);
++	}
+ 
+-	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
++	return &frac_ck->hw;
+ }
+ 
+ static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
+ {
+-	struct clk_audio_frac *frac_ck;
+-	struct clk_init_data init = {};
++	struct clk_hw *hw;
++	const char *name = np->name;
++	const char *parent_name;
++	struct regmap *regmap;
+ 
+-	frac_ck = kzalloc(sizeof(*frac_ck), GFP_KERNEL);
+-	if (!frac_ck)
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap))
+ 		return;
+ 
+-	init.ops = &audio_pll_frac_ops;
+-	init.flags = CLK_SET_RATE_GATE;
++	parent_name = of_clk_get_parent_name(np, 0);
+ 
+-	if (of_sama5d2_clk_audio_pll_setup(np, &init, &frac_ck->hw,
+-					   &frac_ck->regmap))
+-		kfree(frac_ck);
++	hw = at91_clk_register_audio_pll_frac(regmap, name, parent_name);
++	if (IS_ERR(hw))
++		return;
++
++	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
+ }
+ 
+-static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
++struct clk_hw * __init
++at91_clk_register_audio_pll_pad(struct regmap *regmap, const char *name,
++				const char *parent_name)
+ {
+ 	struct clk_audio_pad *apad_ck;
+-	struct clk_init_data init = {};
++	struct clk_init_data init;
++	int ret;
+ 
+ 	apad_ck = kzalloc(sizeof(*apad_ck), GFP_KERNEL);
+ 	if (!apad_ck)
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 
++	init.name = name;
+ 	init.ops = &audio_pll_pad_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
+ 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+ 		CLK_SET_RATE_PARENT;
+ 
+-	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apad_ck->hw,
+-					   &apad_ck->regmap))
++	apad_ck->hw.init = &init;
++	apad_ck->regmap = regmap;
++
++	ret = clk_hw_register(NULL, &apad_ck->hw);
++	if (ret) {
+ 		kfree(apad_ck);
++		return ERR_PTR(ret);
++	}
++
++	return &apad_ck->hw;
+ }
+ 
+-static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
++static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
++{
++	struct clk_hw *hw;
++	const char *name = np->name;
++	const char *parent_name;
++	struct regmap *regmap;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap))
++		return;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++
++	hw = at91_clk_register_audio_pll_pad(regmap, name, parent_name);
++	if (IS_ERR(hw))
++		return;
++
++	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
++}
++
++struct clk_hw * __init
++at91_clk_register_audio_pll_pmc(struct regmap *regmap, const char *name,
++				const char *parent_name)
+ {
+ 	struct clk_audio_pmc *apmc_ck;
+-	struct clk_init_data init = {};
++	struct clk_init_data init;
++	int ret;
+ 
+ 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
+ 	if (!apmc_ck)
+-		return;
++		return ERR_PTR(-ENOMEM);
+ 
++	init.name = name;
+ 	init.ops = &audio_pll_pmc_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
+ 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
+ 		CLK_SET_RATE_PARENT;
+ 
+-	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apmc_ck->hw,
+-					   &apmc_ck->regmap))
++	apmc_ck->hw.init = &init;
++	apmc_ck->regmap = regmap;
++
++	ret = clk_hw_register(NULL, &apmc_ck->hw);
++	if (ret) {
+ 		kfree(apmc_ck);
++		return ERR_PTR(ret);
++	}
++
++	return &apmc_ck->hw;
++}
++
++static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
++{
++	struct clk_hw *hw;
++	const char *name = np->name;
++	const char *parent_name;
++	struct regmap *regmap;
++
++	regmap = syscon_node_to_regmap(of_get_parent(np));
++	if (IS_ERR(regmap))
++		return;
++
++	parent_name = of_clk_get_parent_name(np, 0);
++
++	hw = at91_clk_register_audio_pll_pmc(regmap, name, parent_name);
++	if (IS_ERR(hw))
++		return;
++
++	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
+ }
+ 
+ CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_frac_setup,
+-- 
+2.18.0
