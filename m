@@ -1,213 +1,272 @@
-Return-Path: <matthias.bgg@kernel.org>
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [resend PATCH v4 1/5] drm/mediatek: Use regmap for register access
-Date: Wed, 18 Jul 2018 00:03:24 +0200
-Message-Id: <20180717220328.792-2-matthias.bgg@kernel.org>
-In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 4/4] ARM: at91: pm: configure wakeup sources for ULP1 mode
+Date: Tue, 17 Jul 2018 11:26:57 +0300
+Message-ID: <1531816017-31986-5-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+Since for ULP1 PM mode of SAMA5D2 the wakeup sources are limited and
+well known add a method to check if these wakeup sources are defined by
+user (either via DT or filesystem). In case there are no wakeup sources
+defined for ULP1 the PM suspend will fail, otherwise these will be
+configured in fast startup registers of PMC. Since wakeup sources of
+ULP1 need also to be configured in SHDWC registers the code was a bit
+changed to map the SHDWC also in case ULP1 is requested by user (this
+was done in the initialization phase). In case the ULP1 initialization
+fails the ULP0 mode is used (this mode was also used in case backup mode
+initialization failed).
 
-The mmsys memory space is shared between the drm and the
-clk driver. Use regmap to access it.
-
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +--
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 38 ++++++++++---------------
- drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +--
- drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 +++------
- drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
- 5 files changed, 24 insertions(+), 37 deletions(-)
+ arch/arm/mach-at91/pm.c | 165 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 143 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index 658b8dd45b83..4c65873b4867 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -33,7 +33,7 @@
-  * @enabled: records whether crtc_enable succeeded
-  * @planes: array of 4 drm_plane structures, one for each overlay plane
-  * @pending_planes: whether any plane has pending changes to be applied
-- * @config_regs: memory mapped mmsys configuration register space
-+ * @config_regs: regmap mapped mmsys configuration register space
-  * @mutex: handle to one of the ten disp_mutex streams
-  * @ddp_comp_nr: number of components in ddp_comp
-  * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
-@@ -48,7 +48,7 @@ struct mtk_drm_crtc {
- 	struct drm_plane		planes[OVL_LAYER_NR];
- 	bool				pending_planes;
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 099d8094018c..c8ef696b83b6 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -80,6 +80,87 @@ static struct at91_pm_bu {
+ 	phys_addr_t resume;
+ } *pm_bu;
  
--	void __iomem			*config_regs;
-+	struct regmap			*config_regs;
- 	struct mtk_disp_mutex		*mutex;
- 	unsigned int			ddp_comp_nr;
- 	struct mtk_ddp_comp		**ddp_comp;
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 8130f3dab661..bafc5c77c4fb 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -185,53 +185,45 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	return value;
++struct wakeup_source_info {
++	unsigned int pmc_fsmr_bit;
++	unsigned int shdwc_mr_bit;
++	bool set_polarity;
++};
++
++static const struct wakeup_source_info ws_info[] = {
++	{ .pmc_fsmr_bit = AT91_PMC_FSTT(10),	.set_polarity = true },
++	{ .pmc_fsmr_bit = AT91_PMC_RTCAL,	.shdwc_mr_bit = BIT(17) },
++	{ .pmc_fsmr_bit = AT91_PMC_USBAL },
++	{ .pmc_fsmr_bit = AT91_PMC_SDMMC_CD },
++};
++
++static const struct of_device_id sama5d2_ws_ids[] = {
++	{ .compatible = "atmel,sama5d2-gem",		.data = &ws_info[0] },
++	{ .compatible = "atmel,at91rm9200-rtc",		.data = &ws_info[1] },
++	{ .compatible = "atmel,sama5d3-udc",		.data = &ws_info[2] },
++	{ .compatible = "atmel,at91rm9200-ohci",	.data = &ws_info[2] },
++	{ .compatible = "usb-ohci",			.data = &ws_info[2] },
++	{ .compatible = "atmel,at91sam9g45-ehci",	.data = &ws_info[2] },
++	{ .compatible = "usb-ehci",			.data = &ws_info[2] },
++	{ .compatible = "atmel,sama5d2-sdhci",		.data = &ws_info[3] },
++	{ /* sentinel */ }
++};
++
++static int at91_pm_config_ws(unsigned int pm_mode, bool set)
++{
++	const struct wakeup_source_info *wsi;
++	const struct of_device_id *match;
++	struct platform_device *pdev;
++	struct device_node *np;
++	unsigned int mode = 0, polarity = 0, val = 0;
++
++	if (pm_mode != AT91_PM_ULP1)
++		return 0;
++
++	if (!pm_data.pmc || !pm_data.shdwc)
++		return -EPERM;
++
++	if (!set) {
++		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
++		return 0;
++	}
++
++	/* SHDWC.WUIR */
++	val = readl(pm_data.shdwc + 0x0c);
++	mode |= (val & 0x3ff);
++	polarity |= ((val >> 16) & 0x3ff);
++
++	/* SHDWC.MR */
++	val = readl(pm_data.shdwc + 0x04);
++
++	/* Loop through defined wakeup sources. */
++	for_each_matching_node_and_match(np, sama5d2_ws_ids, &match) {
++		pdev = of_find_device_by_node(np);
++		if (!pdev)
++			continue;
++
++		if (device_may_wakeup(&pdev->dev)) {
++			wsi = match->data;
++
++			/* Check if enabled on SHDWC. */
++			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
++				continue;
++
++			mode |= wsi->pmc_fsmr_bit;
++			if (wsi->set_polarity)
++				polarity |= wsi->pmc_fsmr_bit;
++		}
++	}
++
++	if (mode) {
++		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
++		writel(polarity, pm_data.pmc + AT91_PMC_FSPR);
++	} else {
++		pr_err("AT91: PM: no ULP1 wakeup sources found!");
++	}
++
++	return mode ? 0 : -EPERM;
++}
++
+ /*
+  * Called after processes are frozen, but before we shutdown devices.
+  */
+@@ -98,7 +179,7 @@ static int at91_pm_begin(suspend_state_t state)
+ 		pm_data.mode = -1;
+ 	}
+ 
+-	return 0;
++	return at91_pm_config_ws(pm_data.mode, true);
  }
  
--static void mtk_ddp_sout_sel(void __iomem *config_regs,
-+static void mtk_ddp_sout_sel(struct regmap *config_regs,
- 			     enum mtk_ddp_comp_id cur,
- 			     enum mtk_ddp_comp_id next)
+ /*
+@@ -234,6 +315,7 @@ static int at91_pm_enter(suspend_state_t state)
+  */
+ static void at91_pm_end(void)
  {
- 	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
--		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
--			       config_regs + DISP_REG_CONFIG_OUT_SEL);
-+		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
-+				BLS_TO_DSI_RDMA1_TO_DPI1);
++	at91_pm_config_ws(pm_data.mode, false);
  }
  
--void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-+void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
- 			      enum mtk_ddp_comp_id cur,
- 			      enum mtk_ddp_comp_id next)
- {
--	unsigned int addr, value, reg;
-+	unsigned int addr, value;
  
- 	value = mtk_ddp_mout_en(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) | value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, value);
- 
- 	mtk_ddp_sout_sel(config_regs, cur, next);
- 
- 	value = mtk_ddp_sel_in(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) | value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, value);
+@@ -479,31 +561,28 @@ static void __init at91_pm_sram_init(void)
+ 			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
  }
  
--void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-+void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
- 				   enum mtk_ddp_comp_id cur,
- 				   enum mtk_ddp_comp_id next)
+-static void __init at91_pm_backup_init(void)
++static bool __init at91_is_pm_mode_active(int pm_mode)
++{
++	return (pm_data.standby_mode == pm_mode ||
++		pm_data.suspend_mode == pm_mode);
++}
++
++static int __init at91_pm_backup_init(void)
  {
--	unsigned int addr, value, reg;
-+	unsigned int addr, value;
+ 	struct gen_pool *sram_pool;
+ 	struct device_node *np;
+ 	struct platform_device *pdev = NULL;
++	int ret = -ENODEV;
  
- 	value = mtk_ddp_mout_en(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) & ~value;
--		writel_relaxed(reg, config_regs + addr);
--	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, 0);
+-	if ((pm_data.standby_mode != AT91_PM_BACKUP) &&
+-	    (pm_data.suspend_mode != AT91_PM_BACKUP))
+-		return;
++	if (!at91_is_pm_mode_active(AT91_PM_BACKUP))
++		return 0;
  
- 	value = mtk_ddp_sel_in(cur, next, &addr);
--	if (value) {
--		reg = readl_relaxed(config_regs + addr) & ~value;
--		writel_relaxed(reg, config_regs + addr);
+ 	pm_bu = NULL;
+ 
+-	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
+-	if (!np) {
+-		pr_warn("%s: failed to find shdwc!\n", __func__);
+-		return;
 -	}
-+	if (value)
-+		regmap_update_bits(config_regs, addr, value, 0);
+-
+-	pm_data.shdwc = of_iomap(np, 0);
+-	of_node_put(np);
+-
+ 	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-sfrbu");
+ 	if (!np) {
+ 		pr_warn("%s: failed to find sfrbu!\n", __func__);
+-		goto sfrbu_fail;
++		return ret;
+ 	}
+ 
+ 	pm_data.sfrbu = of_iomap(np, 0);
+@@ -530,6 +609,7 @@ static void __init at91_pm_backup_init(void)
+ 	pm_bu = (void *)gen_pool_alloc(sram_pool, sizeof(struct at91_pm_bu));
+ 	if (!pm_bu) {
+ 		pr_warn("%s: unable to alloc securam!\n", __func__);
++		ret = -ENOMEM;
+ 		goto securam_fail;
+ 	}
+ 
+@@ -537,21 +617,62 @@ static void __init at91_pm_backup_init(void)
+ 	pm_bu->canary = __pa_symbol(&canary);
+ 	pm_bu->resume = __pa_symbol(cpu_resume);
+ 
+-	return;
++	return 0;
+ 
+-sfrbu_fail:
+-	iounmap(pm_data.shdwc);
+-	pm_data.shdwc = NULL;
+ securam_fail:
+ 	iounmap(pm_data.sfrbu);
+ 	pm_data.sfrbu = NULL;
++	return ret;
++}
+ 
+-	if (pm_data.standby_mode == AT91_PM_BACKUP)
++static void __init at91_pm_use_default_mode(int pm_mode)
++{
++	if (pm_mode != AT91_PM_ULP1 && pm_mode != AT91_PM_BACKUP)
++		return;
++
++	if (pm_data.standby_mode == pm_mode)
+ 		pm_data.standby_mode = AT91_PM_ULP0;
+-	if (pm_data.suspend_mode == AT91_PM_BACKUP)
++	if (pm_data.suspend_mode == pm_mode)
+ 		pm_data.suspend_mode = AT91_PM_ULP0;
  }
  
- struct mtk_disp_mutex *mtk_disp_mutex_get(struct device *dev, unsigned int id)
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-index f9a799168077..32e12f33b76a 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
-@@ -20,10 +20,10 @@ struct regmap;
- struct device;
- struct mtk_disp_mutex;
++static void __init at91_pm_modes_init(void)
++{
++	struct device_node *np;
++	int ret;
++
++	if (!at91_is_pm_mode_active(AT91_PM_BACKUP) &&
++	    !at91_is_pm_mode_active(AT91_PM_ULP1))
++		return;
++
++	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
++	if (!np) {
++		pr_warn("%s: failed to find shdwc!\n", __func__);
++		goto ulp1_default;
++	}
++
++	pm_data.shdwc = of_iomap(np, 0);
++	of_node_put(np);
++
++	ret = at91_pm_backup_init();
++	if (ret) {
++		if (!at91_is_pm_mode_active(AT91_PM_ULP1))
++			goto unmap;
++		else
++			goto backup_default;
++	}
++
++	return;
++
++unmap:
++	iounmap(pm_data.shdwc);
++	pm_data.shdwc = NULL;
++ulp1_default:
++	at91_pm_use_default_mode(AT91_PM_ULP1);
++backup_default:
++	at91_pm_use_default_mode(AT91_PM_BACKUP);
++}
++
+ struct pmc_info {
+ 	unsigned long uhp_udp_mask;
+ };
+@@ -645,7 +766,7 @@ void __init sama5d2_pm_init(void)
+ 	if (!IS_ENABLED(CONFIG_SOC_SAMA5D2))
+ 		return;
  
--void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
-+void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
- 			      enum mtk_ddp_comp_id cur,
- 			      enum mtk_ddp_comp_id next);
--void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
-+void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
- 				   enum mtk_ddp_comp_id cur,
- 				   enum mtk_ddp_comp_id next);
+-	at91_pm_backup_init();
++	at91_pm_modes_init();
+ 	sama5_pm_init();
+ }
  
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index b2ad19bd1e00..dd249cf5121e 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -21,6 +21,7 @@
- #include <drm/drm_of.h>
- #include <linux/component.h>
- #include <linux/iommu.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pm_runtime.h>
-@@ -393,7 +394,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_drm_private *private;
--	struct resource *mem;
- 	struct device_node *node;
- 	struct component_match *match = NULL;
- 	int ret;
-@@ -407,14 +407,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
- 	INIT_WORK(&private->commit.work, mtk_atomic_work);
- 	private->data = of_device_get_match_data(dev);
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	private->config_regs = devm_ioremap_resource(dev, mem);
--	if (IS_ERR(private->config_regs)) {
--		ret = PTR_ERR(private->config_regs);
--		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
--			ret);
--		return ret;
--	}
-+	private->config_regs = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(private->config_regs))
-+		return PTR_ERR(private->config_regs);
- 
- 	/* Iterate over sibling DISP function blocks */
- 	for_each_child_of_node(dev->of_node->parent, node) {
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-index 4edc0023684c..86cec19193c4 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-@@ -44,7 +44,7 @@ struct mtk_drm_private {
- 
- 	struct device_node *mutex_node;
- 	struct device *mutex_dev;
--	void __iomem *config_regs;
-+	struct regmap *config_regs;
- 	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
- 	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
- 	const struct mtk_mmsys_driver_data *data;
 -- 
-2.17.1
+2.7.4
