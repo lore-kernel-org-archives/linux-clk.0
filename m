@@ -1,280 +1,79 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 16/21] MIPS: jz4740: Add DTS nodes for the TCU drivers
-Date: Wed, 25 Jul 2018 01:19:53 +0200
-Message-Id: <20180724231958.20659-17-paul@crapouillou.net>
-In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
-References: <20180724231958.20659-1-paul@crapouillou.net>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v10 08/10] firmware: xilinx: Add debugfs for query data API
+Date: Tue, 17 Jul 2018 12:59:05 -0700
+Message-ID: <1531857547-16652-9-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Add debugfs file to query platform specific data from firmware
+using debugfs interface.
+
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- arch/mips/boot/dts/ingenic/jz4740.dtsi | 51 +++++++++++++++++++++++---
- arch/mips/boot/dts/ingenic/jz4770.dtsi | 59 ++++++++++++++++++++++++++++++
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 67 ++++++++++++++++++++++++++++++----
- 3 files changed, 164 insertions(+), 13 deletions(-)
+ drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
- v5: New patch
-
-diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-index 26c6b561d6f7..85ba63d9dc9c 100644
---- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <dt-bindings/clock/jz4740-cgu.h>
-+#include <dt-bindings/clock/ingenic,tcu.h>
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index fc11db9..4532bd0 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
+ static struct pm_api_info pm_api_list[] = {
+ 	PM_API(PM_GET_API_VERSION),
+ 	PM_API(PM_IOCTL),
++	PM_API(PM_QUERY_DATA),
+ };
  
- / {
- 	#address-cells = <1>;
-@@ -45,12 +46,52 @@
- 		#clock-cells = <1>;
- 	};
- 
--	watchdog: watchdog@10002000 {
--		compatible = "ingenic,jz4740-watchdog";
--		reg = <0x10002000 0x10>;
-+	tcu: timer@10002000 {
-+		compatible = "ingenic,jz4740-tcu";
-+		reg = <0x10002000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x10002000 0x1000>;
- 
--		clocks = <&cgu JZ4740_CLK_RTC>;
--		clock-names = "rtc";
-+		#clock-cells = <1>;
+ /**
+@@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 			sprintf(debugfs_buf, "IOCTL return value: %u\n",
+ 				pm_api_ret[1]);
+ 		break;
++	case PM_QUERY_DATA:
++	{
++		struct zynqmp_pm_query_data qdata = {0};
 +
-+		clocks = <&cgu JZ4740_CLK_RTC
-+			  &cgu JZ4740_CLK_EXT
-+			  &cgu JZ4740_CLK_PCLK
-+			  &cgu JZ4740_CLK_TCU>;
-+		clock-names = "rtc", "ext", "pclk", "tcu";
++		qdata.qid = pm_api_arg[0];
++		qdata.arg1 = pm_api_arg[1];
++		qdata.arg2 = pm_api_arg[2];
++		qdata.arg3 = pm_api_arg[3];
 +
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
++		ret = eemi_ops->query_data(qdata, pm_api_ret);
++		if (ret)
++			break;
 +
-+		interrupt-parent = <&intc>;
-+		interrupts = <23 22 21>;
-+
-+		watchdog: watchdog@0 {
-+			compatible = "ingenic,jz4740-watchdog";
-+			reg = <0x0 0x10>;
-+
-+			clocks = <&tcu TCU_CLK_WDT>;
-+			clock-names = "wdt";
-+		};
-+
-+		pwm: pwm@10 {
-+			compatible = "ingenic,jz4740-pwm";
-+			reg = <0x10 0xff0>;
-+
-+			#pwm-cells = <3>;
-+
-+			clocks = <&tcu TCU_CLK_TIMER0
-+				  &tcu TCU_CLK_TIMER1
-+				  &tcu TCU_CLK_TIMER2
-+				  &tcu TCU_CLK_TIMER3
-+				  &tcu TCU_CLK_TIMER4
-+				  &tcu TCU_CLK_TIMER5
-+				  &tcu TCU_CLK_TIMER6
-+				  &tcu TCU_CLK_TIMER7>;
-+			clock-names = "timer0", "timer1", "timer2", "timer3",
-+				      "timer4", "timer5", "timer6", "timer7";
-+		};
- 	};
- 
- 	rtc_dev: rtc@10003000 {
-diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-index 7c2804f3f5f1..1c1a91ad163b 100644
---- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #include <dt-bindings/clock/jz4770-cgu.h>
-+#include <dt-bindings/clock/ingenic,tcu.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -46,6 +47,64 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	tcu: timer@10002000 {
-+		compatible = "ingenic,jz4770-tcu";
-+		reg = <0x10002000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x10002000 0x1000>;
-+
-+		#clock-cells = <1>;
-+
-+		clocks = <&cgu JZ4770_CLK_RTC
-+			  &cgu JZ4770_CLK_EXT
-+			  &cgu JZ4770_CLK_PCLK
-+			  &cgu JZ4770_CLK_EXT>;
-+		clock-names = "rtc", "ext", "pclk", "tcu";
-+
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <27 26 25>;
-+
-+		watchdog: watchdog@0 {
-+			compatible = "ingenic,jz4740-watchdog";
-+			reg = <0x0 0x10>;
-+
-+			clocks = <&tcu TCU_CLK_WDT>;
-+			clock-names = "wdt";
-+		};
-+
-+		pwm: pwm@10 {
-+			compatible = "ingenic,jz4740-pwm";
-+			reg = <0x10 0xff0>;
-+
-+			#pwm-cells = <3>;
-+
-+			clocks = <&tcu TCU_CLK_TIMER0
-+				  &tcu TCU_CLK_TIMER1
-+				  &tcu TCU_CLK_TIMER2
-+				  &tcu TCU_CLK_TIMER3
-+				  &tcu TCU_CLK_TIMER4
-+				  &tcu TCU_CLK_TIMER5
-+				  &tcu TCU_CLK_TIMER6
-+				  &tcu TCU_CLK_TIMER7>;
-+			clock-names = "timer0", "timer1", "timer2", "timer3",
-+				      "timer4", "timer5", "timer6", "timer7";
-+		};
-+
-+		ost: timer@e0 {
-+			compatible = "ingenic,jz4770-ost";
-+			reg = <0xe0 0x20>;
-+
-+			clocks = <&tcu TCU_CLK_OST>;
-+			clock-names = "ost";
-+
-+			interrupts = <15>;
-+		};
-+	};
-+
- 	pinctrl: pin-controller@10010000 {
- 		compatible = "ingenic,jz4770-pinctrl";
- 		reg = <0x10010000 0x600>;
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index aa4e8f75ff5d..b39fd13229d9 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <dt-bindings/clock/jz4780-cgu.h>
-+#include <dt-bindings/clock/ingenic,tcu.h>
- #include <dt-bindings/dma/jz4780-dma.h>
- 
- / {
-@@ -46,6 +47,64 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	tcu: timer@10002000 {
-+		compatible = "ingenic,jz4770-tcu";
-+		reg = <0x10002000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x10002000 0x1000>;
-+
-+		#clock-cells = <1>;
-+
-+		clocks = <&cgu JZ4780_CLK_RTCLK
-+			  &cgu JZ4780_CLK_EXCLK
-+			  &cgu JZ4780_CLK_PCLK
-+			  &cgu JZ4780_CLK_EXCLK>;
-+		clock-names = "rtc", "ext", "pclk", "tcu";
-+
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <27 26 25>;
-+
-+		watchdog: watchdog@0 {
-+			compatible = "ingenic,jz4780-watchdog";
-+			reg = <0x0 0x10>;
-+
-+			clocks = <&tcu TCU_CLK_WDT>;
-+			clock-names = "wdt";
-+		};
-+
-+		pwm: pwm@10 {
-+			compatible = "ingenic,jz4740-pwm";
-+			reg = <0x10 0xff0>;
-+
-+			#pwm-cells = <3>;
-+
-+			clocks = <&tcu TCU_CLK_TIMER0
-+				  &tcu TCU_CLK_TIMER1
-+				  &tcu TCU_CLK_TIMER2
-+				  &tcu TCU_CLK_TIMER3
-+				  &tcu TCU_CLK_TIMER4
-+				  &tcu TCU_CLK_TIMER5
-+				  &tcu TCU_CLK_TIMER6
-+				  &tcu TCU_CLK_TIMER7>;
-+			clock-names = "timer0", "timer1", "timer2", "timer3",
-+				      "timer4", "timer5", "timer6", "timer7";
-+		};
-+
-+		ost: timer@e0 {
-+			compatible = "ingenic,jz4770-ost";
-+			reg = <0xe0 0x20>;
-+
-+			clocks = <&tcu TCU_CLK_OST>;
-+			clock-names = "ost";
-+
-+			interrupts = <15>;
-+		};
-+	};
-+
- 	rtc_dev: rtc@10003000 {
- 		compatible = "ingenic,jz4780-rtc";
- 		reg = <0x10003000 0x4c>;
-@@ -220,14 +279,6 @@
- 		status = "disabled";
- 	};
- 
--	watchdog: watchdog@10002000 {
--		compatible = "ingenic,jz4780-watchdog";
--		reg = <0x10002000 0x10>;
--
--		clocks = <&cgu JZ4780_CLK_RTCLK>;
--		clock-names = "rtc";
--	};
--
- 	nemc: nemc@13410000 {
- 		compatible = "ingenic,jz4780-nemc";
- 		reg = <0x13410000 0x10000>;
++		if (qdata.qid == PM_QID_CLOCK_GET_NAME)
++			sprintf(debugfs_buf, "Clock name = %s\n",
++				(char *)pm_api_ret);
++		else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
++			sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
++				pm_api_ret[1], pm_api_ret[2]);
++		else
++			sprintf(debugfs_buf,
++				"data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
++				pm_api_ret[0], pm_api_ret[1],
++				pm_api_ret[2], pm_api_ret[3]);
++		break;
++	}
+ 	default:
+ 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
+ 		ret = -EINVAL;
 -- 
-2.11.0
+2.7.4
