@@ -1,33 +1,68 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 01/13] clk: davinci: psc-da850: remove the
- 'davinci_nand.0" lookup
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <20180628095748.4462-2-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <23f1a1fb-689a-3120-6ae4-d91c76698401@lechnology.com>
-Date: Fri, 6 Jul 2018 12:40:26 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:31228 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729708AbeGQSyQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Jul 2018 14:54:16 -0400
+Date: Wed, 18 Jul 2018 02:19:29 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: Re: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
+Message-ID: <201807180244.Xwu9lTTR%fengguang.wu@intel.com>
+References: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20180628095748.4462-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28/2018 04:57 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Since commit a8e3923ab571 ("mtd: rawnand: davinci: don't acquire and
-> enable clock") we no longer acquire the aemif clock from the davinci
-> nand driver - we only do it from the ti-aemif driver. Remove the nand
-> entry from the psc lookup table.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
+Hi Owen,
 
-Applied to clk-davinci-4.19.
+Thank you for the patch! Perhaps something to improve:
 
-Thanks.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.18-rc5 next-20180717]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Mars-Cheng/Add-basic-SoC-support-for-mt6765/20180717-205540
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:83:5: sparse: symbol 'bus_ctrl_set_release' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:114:5: sparse: symbol 'bus_ctrl_set' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:119:5: sparse: symbol 'bus_ctrl_release' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:124:5: sparse: symbol 'bus_clk_enable_disable' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:161:5: sparse: symbol 'bus_clk_enable' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:192:27: sparse: symbol 'bus_mask_set_clr_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:197:26: sparse: symbol 'ext_bus_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:202:26: sparse: symbol 'ext_cg_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:210:15: sparse: symbol 'syscon_regmap_lookup_by_phandle_idx' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:231:5: sparse: symbol 'scpsys_ext_regmap_init' was not declared. Should it be static?
+   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:324:5: sparse: symbol 'scpsys_ext_clk_init' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:336:5: sparse: symbol 'scpsys_ext_attr_init' was not declared. Should it be static?
+   include/linux/slab.h:631:13: sparse: call with no type!
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
