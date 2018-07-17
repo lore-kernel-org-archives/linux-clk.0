@@ -1,49 +1,104 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from imap1.codethink.co.uk ([176.9.8.82]:46102 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730189AbeG0JnT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Jul 2018 05:43:19 -0400
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v10 04/10] firmware: xilinx: Add query data API
+Date: Tue, 17 Jul 2018 12:59:01 -0700
+Message-ID: <1531857547-16652-5-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Fri, 27 Jul 2018 09:22:31 +0100
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@lists.codethink.co.uk,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com
-Subject: Re: [Linux-kernel] tegra clock updates and fixes
-In-Reply-To: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
- <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
-Message-ID: <22193ef215e669f4273f8a66bf5482db@codethink.co.uk>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
+From: Rajan Vaja <rajanv@xilinx.com>
 
+Add ZynqMP firmware query data API to query platform
+specific information(clocks, pins) from firmware.
 
-On 2018-07-26 16:22, Stephen Boyd wrote:
-> Quoting Ben Dooks (2018-07-26 06:32:29)
->> On 2018-07-20 14:45, Ben Dooks wrote:
->> > Hi, this is a set of clock updates and fixes we did when developing
->> > the tegra20/tegra30 auto support. The audio change is due to using
->> > the tegra in clock-slave mode (this hasn't been done before)
->> >
->> > We have also implemented the clock reset status callback as it is
->> > used by some of the driver work we did.
->> 
->> Is it possible to look at applying the bits of the series that are
->> not currently under discussion? If so should I post a smaller series?
->> 
-> 
-> Just send it again please. I'd prefer to see some reviewed-by tags from
-> Nvidia folks on bits that are good to merge.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-I've seen feedback on some of the tegra3 clock bits, however no one
-has made any comments on other bits like the reset controller.
-
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 24cfd9e..8ec5682 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
+ 
++/**
++ * zynqmp_pm_query_data() - Get query data from firmware
++ * @qdata:	Variable to the zynqmp_pm_query_data structure
++ * @out:	Returned output value
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				   qdata.arg2, qdata.arg3, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.query_data = zynqmp_pm_query_data,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 2eec6e7..55ed2ba 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -35,6 +35,7 @@
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_IOCTL = 34,
++	PM_QUERY_DATA,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -48,9 +49,28 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
+ 
++enum pm_query_id {
++	PM_QID_INVALID,
++};
++
++/**
++ * struct zynqmp_pm_query_data - PM query data
++ * @qid:	query ID
++ * @arg1:	Argument 1 of query data
++ * @arg2:	Argument 2 of query data
++ * @arg3:	Argument 3 of query data
++ */
++struct zynqmp_pm_query_data {
++	u32 qid;
++	u32 arg1;
++	u32 arg2;
++	u32 arg3;
++};
++
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
-Ben
-
+2.7.4
