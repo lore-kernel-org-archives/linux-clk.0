@@ -1,259 +1,167 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	grahamr@qti.qualcomm.com,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [RFC PATCH 3/4] clk: qcom: Add prepare/unprepare clock ops for PLL/RCG
-Date: Sat, 21 Jul 2018 23:45:01 +0530
-Message-Id: <1532196902-28570-4-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
-References: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v5 08/11] clk: mediatek: fix pll setting
+Date: Tue, 17 Jul 2018 16:52:29 +0800
+Message-ID: <1531817552-17221-9-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-To put across power domain votes associated with a PLL or RCG, add the
-prepare/unprepare clock ops which would map the corresponding performance
-state corners for a clock frequency when the clk_prepare/clk_unprepare is
-being invoked.
-Also update the set_rate clock ops to send across the performance state to
-genpd framework when a new frequency is being requested.
+From: Owen Chen <owen.chen@mediatek.com>
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+1. pcwibits: The integer bits of pcw for plls is extend to 8 bits,
+   add a variable to indicate this change and
+   backward-compatible.
+2. fmin: The pll freqency lower-bound is vary from 1GMhz to
+   1.5Ghz, add a variable to indicate platform-dependent.
+
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 52 +++++++++++++++++++++++++++-------
- drivers/clk/qcom/clk-rcg2.c      | 61 +++++++++++++++++++++++++++++++++++-----
- 2 files changed, 96 insertions(+), 17 deletions(-)
+ drivers/clk/mediatek/clk-mtk.h |    2 ++
+ drivers/clk/mediatek/clk-pll.c |   45 ++++++++++++++++++++++++++++++++++------
+ 2 files changed, 41 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 3c49a60..c03b6e4 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1,14 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f83c2bb..1882221 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -215,7 +215,9 @@ struct mtk_pll_data {
+ 	const struct clk_ops *ops;
+ 	u32 rst_bar_mask;
+ 	unsigned long fmax;
++	unsigned long fmin;
+ 	int pcwbits;
++	int pcwibits;
+ 	uint32_t pcw_reg;
+ 	int pcw_shift;
+ 	const struct mtk_pll_div_table *div_table;
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index f54e401..df571e5 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -27,7 +27,7 @@
+ #define CON0_BASE_EN		BIT(0)
+ #define CON0_PWR_ON		BIT(0)
+ #define CON0_ISO_EN		BIT(1)
+-#define CON0_PCW_CHG		BIT(31)
++#define CON1_PCW_CHG		BIT(31)
  
- #include <linux/kernel.h>
-@@ -18,6 +10,7 @@
- #include <linux/delay.h>
+ #define AUDPLL_TUNER_EN		BIT(31)
  
- #include "clk-alpha-pll.h"
-+#include "clk-pd.h"
- #include "common.h"
+@@ -69,11 +69,13 @@ static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
+ {
+ 	int pcwbits = pll->data->pcwbits;
+ 	int pcwfbits;
++	int ibits;
+ 	u64 vco;
+ 	u8 c = 0;
  
- #define PLL_MODE(p)		((p)->offset + 0x0)
-@@ -522,7 +515,9 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	const struct pll_vco *vco;
- 	u32 l, alpha_width = pll_alpha_width(pll);
-+	unsigned long old_rate = clk_hw_get_rate(hw);
- 	u64 a;
-+	int ret;
+ 	/* The fractional part of the PLL divider. */
+-	pcwfbits = pcwbits > INTEGER_BITS ? pcwbits - INTEGER_BITS : 0;
++	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
++	pcwfbits = pcwbits > ibits ? pcwbits - ibits : 0;
  
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 	vco = alpha_pll_find_vco(pll, rate);
-@@ -531,6 +526,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		return -EINVAL;
- 	}
+ 	vco = (u64)fin * pcw;
  
-+	if (clk_hw_is_prepared(hw)) {
-+		/* Enforce power domain requirement for new frequency */
-+		ret = clk_power_domain_vote_rate(&pll->clkr, rate);
-+		if (ret) {
-+			pr_err("Failed to vote/set new rate %lu\n", rate);
-+			return ret;
+@@ -93,9 +95,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ {
+ 	u32 con1, val;
+ 	int pll_en;
++	u32 tuner_en = 0;
++	u32 tuner_en_mask;
++	void __iomem *tuner_en_addr = NULL;
+ 
+ 	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
+ 
++	/* disable tuner */
++	if (pll->tuner_en_addr) {
++		tuner_en_addr = pll->tuner_en_addr;
++		tuner_en_mask = BIT(pll->data->tuner_en_bit);
++	} else if (pll->tuner_addr) {
++		tuner_en_addr = pll->tuner_addr;
++		tuner_en_mask = AUDPLL_TUNER_EN;
++	}
++
++	if (tuner_en_addr) {
++		val = readl(tuner_en_addr);
++		tuner_en = val & tuner_en_mask;
++
++		if (tuner_en) {
++			val &= ~tuner_en_mask;
++			writel(val, tuner_en_addr);
 +		}
 +	}
 +
- 	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+ 	/* set postdiv */
+ 	val = readl(pll->pd_addr);
+ 	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+@@ -116,12 +140,20 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ 	con1 = readl(pll->base_addr + REG_CON1);
  
- 	if (alpha_width > ALPHA_BITWIDTH)
-@@ -550,7 +554,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
- 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
+ 	if (pll_en)
+-		con1 |= CON0_PCW_CHG;
++		con1 |= CON1_PCW_CHG;
  
--	return clk_alpha_pll_update_latch(pll, is_enabled);
-+	ret = clk_alpha_pll_update_latch(pll, is_enabled);
-+	if (ret)
-+		old_rate = rate;
+ 	writel(con1, pll->base_addr + REG_CON1);
 +
-+	if (clk_hw_is_prepared(hw))
-+		/* Release the power domain requirement for old frequency */
-+		clk_power_domain_unvote_rate(&pll->clkr, old_rate);
-+
-+	return ret;
- }
+ 	if (pll->tuner_addr)
+ 		writel(con1 + 1, pll->tuner_addr);
  
- static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1017,7 +1029,25 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return __clk_alpha_pll_update_latch(pll);
- }
- 
-+static int clk_alpha_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	return clk_power_domain_vote_rate(&pll->clkr, rate);
-+}
-+
-+static void clk_alpha_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	clk_power_domain_unvote_rate(&pll->clkr, rate);
-+}
-+
- const struct clk_ops clk_alpha_pll_fabia_ops = {
-+	.prepare = clk_alpha_pll_prepare,
-+	.unprepare = clk_alpha_pll_unprepare,
- 	.enable = alpha_pll_fabia_enable,
- 	.disable = alpha_pll_fabia_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
-@@ -1028,6 +1058,8 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fabia_ops);
- 
- const struct clk_ops clk_alpha_pll_fixed_fabia_ops = {
-+	.prepare = clk_alpha_pll_prepare,
-+	.unprepare = clk_alpha_pll_unprepare,
- 	.enable = alpha_pll_fabia_enable,
- 	.disable = alpha_pll_fabia_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4..dc17dbf 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -15,6 +15,7 @@
- 
- #include <asm/div64.h>
- 
-+#include "clk-pd.h"
- #include "clk-rcg.h"
- #include "common.h"
- 
-@@ -247,26 +248,46 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	u32 cfg, mask;
- 	struct clk_hw *hw = &rcg->clkr.hw;
- 	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	unsigned long old_rate = clk_hw_get_rate(hw);
- 
- 	if (index < 0)
- 		return index;
- 
-+	/* Enforce power domain requirement for new frequency */
-+	if (clk_hw_is_prepared(hw)) {
-+		ret = clk_power_domain_vote_rate(&rcg->clkr, f->freq);
-+		if (ret) {
-+			pr_err("Failed to vote & set new rate %lu\n", f->freq);
-+			return ret;
-+		}
++	/* restore tuner_en */
++	if (tuner_en_addr && tuner_en) {
++		val = readl(tuner_en_addr);
++		val |= tuner_en_mask;
++		writel(val, tuner_en_addr);
 +	}
 +
- 	if (rcg->mnd_width && f->n) {
- 		mask = BIT(rcg->mnd_width) - 1;
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + M_REG, mask, f->m);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			/*
-+			 * Release the power domain requirement for
-+			 * new frequency
-+			 */
-+			old_rate = f->freq;
-+			goto out;
-+		}
+ 	if (pll_en)
+ 		udelay(20);
+ }
+@@ -138,9 +170,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
+ 		u32 freq, u32 fin)
+ {
+-	unsigned long fmin = 1000 * MHZ;
++	unsigned long fmin = pll->data->fmin ? pll->data->fmin : 1000 * MHZ;
+ 	const struct mtk_pll_div_table *div_table = pll->data->div_table;
+ 	u64 _pcw;
++	int ibits;
+ 	u32 val;
  
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + N_REG, mask, ~(f->n - f->m));
--		if (ret)
--			return ret;
-+		if (ret) {
-+			old_rate = f->freq;
-+			goto out;
-+		}
- 
- 		ret = regmap_update_bits(rcg->clkr.regmap,
- 				rcg->cmd_rcgr + D_REG, mask, ~f->n);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			old_rate = f->freq;
-+			goto out;
-+		}
+ 	if (freq > pll->data->fmax)
+@@ -164,7 +197,8 @@ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
  	}
  
- 	mask = BIT(rcg->hid_width) - 1;
-@@ -276,8 +297,14 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
- 		cfg |= CFG_MODE_DUAL_EDGE;
+ 	/* _pcw = freq * postdiv / fin * 2^pcwfbits */
+-	_pcw = ((u64)freq << val) << (pll->data->pcwbits - INTEGER_BITS);
++	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
++	_pcw = ((u64)freq << val) << (pll->data->pcwbits - ibits);
+ 	do_div(_pcw, fin);
  
--	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
- 					mask, cfg);
-+out:
-+	if (clk_hw_is_prepared(hw))
-+		/* Release the power domain requirement for old/new frequency */
-+		clk_power_domain_unvote_rate(&rcg->clkr, old_rate);
-+
-+	return ret;
- }
+ 	*pcw = (u32)_pcw;
+@@ -192,7 +226,6 @@ static unsigned long mtk_pll_recalc_rate(struct clk_hw *hw,
  
- static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-@@ -338,7 +365,25 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
- 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
- }
+ 	postdiv = (readl(pll->pd_addr) >> pll->data->pd_shift) & POSTDIV_MASK;
+ 	postdiv = 1 << postdiv;
+-
+ 	pcw = readl(pll->pcw_addr) >> pll->data->pcw_shift;
+ 	pcw &= GENMASK(pll->data->pcwbits - 1, 0);
  
-+static int clk_rcg2_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	return clk_power_domain_vote_rate(&rcg->clkr, rate);
-+}
-+
-+static void clk_rcg2_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	clk_power_domain_unvote_rate(&rcg->clkr, rate);
-+}
-+
- const struct clk_ops clk_rcg2_ops = {
-+	.prepare = clk_rcg2_prepare,
-+	.unprepare = clk_rcg2_unprepare,
- 	.is_enabled = clk_rcg2_is_enabled,
- 	.get_parent = clk_rcg2_get_parent,
- 	.set_parent = clk_rcg2_set_parent,
-@@ -919,6 +964,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- }
- 
- const struct clk_ops clk_rcg2_shared_ops = {
-+	.prepare = clk_rcg2_prepare,
-+	.unprepare = clk_rcg2_unprepare,
- 	.enable = clk_rcg2_shared_enable,
- 	.disable = clk_rcg2_shared_disable,
- 	.get_parent = clk_rcg2_get_parent,
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+1.7.9.5
