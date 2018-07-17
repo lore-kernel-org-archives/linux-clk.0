@@ -1,29 +1,132 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:33451 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729406AbeGZOuK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 10:50:10 -0400
-Date: Thu, 26 Jul 2018 15:33:12 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] clk: renesas: r8a77965: Add SATA clock
-Message-ID: <20180726133312.3bwo6o72wptmxnt2@verge.net.au>
-References: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v4--to=ulrich.hecht+renesas@gmail.com 3/5] clk: mediatek: mt8173: switch mmsys to platform device probing
+Date: Tue, 17 Jul 2018 23:59:49 +0200
+Message-Id: <20180717215951.378-4-matthias.bgg@kernel.org>
+In-Reply-To: <20180717215951.378-1-matthias.bgg@kernel.org>
+References: <20180717215951.378-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 09:14:17PM +0200, Wolfram Sang wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch adds SATA clock to the R8A77965 SoC.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [wsa: rebased to upstream base]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Matthias Brugger <mbrugger@suse.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Switch probing for the MMSYS to support invocation to a
+plain paltform device. The driver will be probed by the DRM subsystem.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/clk/mediatek/clk-mt8173.c | 51 ++++++++++++++++++++++++++-----
+ 1 file changed, 44 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 96c292c3e440..10b6a0251123 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -13,8 +13,11 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -791,7 +794,7 @@ static const struct mtk_gate_regs mm1_cg_regs __initconst = {
+ 		.ops = &mtk_clk_gate_ops_setclr,		\
+ 	}
+ 
+-static const struct mtk_gate mm_clks[] __initconst = {
++static const struct mtk_gate mm_clks[] = {
+ 	/* MM0 */
+ 	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
+ 	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
+@@ -1152,22 +1155,56 @@ static void __init mtk_imgsys_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
+ 
+-static void __init mtk_mmsys_init(struct device_node *node)
+-{
++struct mtk_mmsys_priv {
+ 	struct clk_onecell_data *clk_data;
++};
++
++static int mtk_mmsys_probe(struct platform_device *pdev)
++{
+ 	int r;
++	struct device_node *node;
++	struct mtk_mmsys_priv *private;
++
++	node = pdev->dev.parent->of_node;
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
++	if (!private)
++		return -ENOMEM;
++
++	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++
++	platform_set_drvdata(pdev, private);
+ 
+ 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
+-						clk_data);
++					private->clk_data);
+ 
+-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	r = of_clk_add_provider(node, of_clk_src_onecell_get,
++					private->clk_data);
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	return r;
++}
++
++static int mtk_mmsys_remove(struct platform_device *pdev)
++{
++	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
++
++	kfree(private->clk_data);
++	kfree(private);
++
++	return 0;
+ }
+-CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
++
++static struct platform_driver clk_mt8173_mm_drv = {
++	.probe = mtk_mmsys_probe,
++	.probe = mtk_mmsys_remove,
++	.driver = {
++		.name = "clk-mt8173-mm",
++	},
++};
++module_platform_driver(clk_mt8173_mm_drv);
+ 
+ static void __init mtk_vdecsys_init(struct device_node *node)
+ {
+-- 
+2.17.1
