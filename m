@@ -1,52 +1,101 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:64772 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729708AbeGQT1b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Jul 2018 15:27:31 -0400
-Date: Wed, 18 Jul 2018 02:52:49 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [RFC PATCH] clk: mediatek: cksys_base can be static
-Message-ID: <20180717185249.GA144124@lkp-hsx02>
-References: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 05/16] clk: at91: generated: set audio_pll_allowed in at91_clk_register_generated()
+Date: Wed, 18 Jul 2018 00:27:46 +0200
+Message-Id: <20180717222757.10253-6-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Set gck->audio_pll_allowed in at91_clk_register_generated. This makes it
+easier to do it from code that is not parsing device tree.
 
-Fixes: 3cff52bad99d ("clk: mediatek: Add MT6765 clock support")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+Also, this fixes an issue where the resulting clk_hw can be dereferenced
+before being tested for error.
+
+Fixes: 1a1a36d72e3d ("clk: at91: clk-generated: make gclk determine audio_pll rate")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- clk-mt6765.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/at91/clk-generated.c | 27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
-index 7b360b9..2f90511 100644
---- a/drivers/clk/mediatek/clk-mt6765.c
-+++ b/drivers/clk/mediatek/clk-mt6765.c
-@@ -33,8 +33,8 @@
- static DEFINE_SPINLOCK(mt6765_clk_lock);
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index e709a12269c0..6dfee6e588c4 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -280,7 +280,7 @@ static void clk_generated_startup(struct clk_generated *gck)
+ static struct clk_hw * __init
+ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 			    const char *name, const char **parent_names,
+-			    u8 num_parents, u8 id,
++			    u8 num_parents, u8 id, bool pll_audio,
+ 			    const struct clk_range *range)
+ {
+ 	struct clk_generated *gck;
+@@ -304,6 +304,7 @@ at91_clk_register_generated(struct regmap *regmap, spinlock_t *lock,
+ 	gck->regmap = regmap;
+ 	gck->lock = lock;
+ 	gck->range = *range;
++	gck->audio_pll_allowed = pll_audio;
  
- /* Total 12 subsys */
--void __iomem *cksys_base;
--void __iomem *apmixed_base;
-+static void __iomem *cksys_base;
-+static void __iomem *apmixed_base;
+ 	clk_generated_startup(gck);
+ 	hw = &gck->hw;
+@@ -329,7 +330,6 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 	struct device_node *gcknp;
+ 	struct clk_range range = CLK_RANGE(0, 0);
+ 	struct regmap *regmap;
+-	struct clk_generated *gck;
  
- /* CKSYS */
- #define CLK_SCP_CFG_0		(cksys_base + 0x200)
+ 	num_parents = of_clk_get_parent_count(np);
+ 	if (num_parents == 0 || num_parents > GENERATED_SOURCE_MAX)
+@@ -346,6 +346,8 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 		return;
+ 
+ 	for_each_child_of_node(np, gcknp) {
++		bool pll_audio = false;
++
+ 		if (of_property_read_u32(gcknp, "reg", &id))
+ 			continue;
+ 
+@@ -358,23 +360,14 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 		of_at91_get_clk_range(gcknp, "atmel,clk-output-range",
+ 				      &range);
+ 
++		if (of_device_is_compatible(np, "atmel,sama5d2-clk-generated") &&
++		    (id == GCK_ID_I2S0 || id == GCK_ID_I2S1 ||
++		     id == GCK_ID_CLASSD))
++			pll_audio = true;
++
+ 		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock, name,
+ 						  parent_names, num_parents,
+-						  id, &range);
+-
+-		gck = to_clk_generated(hw);
+-
+-		if (of_device_is_compatible(np,
+-					    "atmel,sama5d2-clk-generated")) {
+-			if (gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
+-			    gck->id == GCK_ID_CLASSD)
+-				gck->audio_pll_allowed = true;
+-			else
+-				gck->audio_pll_allowed = false;
+-		} else {
+-			gck->audio_pll_allowed = false;
+-		}
+-
++						  id, pll_audio, &range);
+ 		if (IS_ERR(hw))
+ 			continue;
+ 
+-- 
+2.18.0
