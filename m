@@ -1,184 +1,307 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:49511 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753428AbeGBI4d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Jul 2018 04:56:33 -0400
-Date: Mon, 2 Jul 2018 10:56:21 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc: linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 10/24] drm/sun4i: tcon: Generalize
- engine search algorithm
-Message-ID: <20180702085621.aq6ksr3amwnj42jc@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <20180628182543.yyja6hiry7rx7fu2@flea>
- <3257762.ZQzN8rrT6c@jernej-laptop>
- <7152481.kAipQ5gD38@jernej-laptop>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="weag3fumpaj4truu"
-In-Reply-To: <7152481.kAipQ5gD38@jernej-laptop>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 10/16] clk: at91: add sama5d4 pmc driver
+Date: Wed, 18 Jul 2018 00:27:51 +0200
+Message-Id: <20180717222757.10253-11-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a driver for the PMC clocks of the sama5d4
 
---weag3fumpaj4truu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/Makefile  |   1 +
+ drivers/clk/at91/sama5d4.c | 262 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 263 insertions(+)
+ create mode 100644 drivers/clk/at91/sama5d4.c
 
-On Sun, Jul 01, 2018 at 09:09:47PM +0200, Jernej =C5=A0krabec wrote:
-> Dne petek, 29. junij 2018 ob 21:06:09 CEST je Jernej =C5=A0krabec napisal=
-(a):
-> > Dne =C4=8Detrtek, 28. junij 2018 ob 20:25:43 CEST je Maxime Ripard napi=
-sal(a):
-> > > On Thu, Jun 28, 2018 at 06:48:50AM +0200, Jernej =C5=A0krabec wrote:
-> > > > Dne =C4=8Detrtek, 28. junij 2018 ob 04:06:52 CEST je Chen-Yu Tsai n=
-apisal(a):
-> > > > > On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
-> > > > > <jernej.skrabec@siol.net>
-> > > >=20
-> > > > wrote:
-> > > > > > Current "old" method to find engine worked pretty well for DE2.
-> > > > > > However,
-> > > > > > it doesn't work when TCON TOP is between  mixer (engine) and TC=
-ON.
-> > > > > > TCON
-> > > > > > TOP has multiple input ports, but current engine search algorit=
-hm
-> > > > > > expects only one.
-> > > > > >=20
-> > > > > > This can be fixed by first looking for output port id and selec=
-ting
-> > > > > > matching input by subtracting 1 for the next round. This work e=
-ven
-> > > > > > if
-> > > > > > there is only one input and output.
-> > > > > >=20
-> > > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > > > ---
-> > > > > >=20
-> > > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 22 ++++++++++++++++++----
-> > > > > >  1 file changed, 18 insertions(+), 4 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
-> > > > > > 08747fc3ee71..264bcc43da11
-> > > > > > 100644
-> > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > @@ -791,12 +791,14 @@ static int sun4i_tcon_init_regmap(struct
-> > > > > > device
-> > > > > > *dev,
-> > > > > >=20
-> > > > > >   */
-> > > > > > =20
-> > > > > >  static struct sunxi_engine *
-> > > > > >  sun4i_tcon_find_engine_traverse(struct sun4i_drv *drv,
-> > > > > >=20
-> > > > > > -                               struct device_node *node)
-> > > > > > +                               struct device_node *node,
-> > > > > > +                               u32 port_id)
-> > > > > >=20
-> > > > > >  {
-> > > > > > =20
-> > > > > >         struct device_node *port, *ep, *remote;
-> > > > > >         struct sunxi_engine *engine =3D ERR_PTR(-EINVAL);
-> > > > > >=20
-> > > > > > +       u32 reg =3D 0;
-> > > > > >=20
-> > > > > > -       port =3D of_graph_get_port_by_id(node, 0);
-> > > > > > +       port =3D of_graph_get_port_by_id(node, port_id);
-> > > > > >=20
-> > > > > >         if (!port)
-> > > > > >        =20
-> > > > > >                 return ERR_PTR(-EINVAL);
-> > > > > >=20
-> > > > > > @@ -826,8 +828,20 @@ sun4i_tcon_find_engine_traverse(struct
-> > > > > > sun4i_drv
-> > > > > > *drv,
-> > > > > >=20
-> > > > > >                 if (remote =3D=3D engine->node)
-> > > > > >                =20
-> > > > > >                         goto out_put_remote;
-> > > > > >=20
-> > > > > > +       /*
-> > > > > > +        * According to device tree binding input ports have ev=
-en id
-> > > > > > +        * number and output ports have odd id. Since component=
- with
-> > > > > > +        * more than one input and one output (TCON TOP) exits,
-> > > > > > correct
-> > > > > > +        * remote input id has to be calculated by subtracting 1
-> > > > > > from
-> > > > > > +        * remote output id. If this for some reason can't be d=
-one,
-> > > > > > 0
-> > > > > > +        * is used as input port id.
-> > > > > > +        */
-> > > > >=20
-> > > > > You need to call
-> > > > >=20
-> > > > >     of_node_put(port);
-> > > > >=20
-> > > > > to drop the reference to the original port.
-> > > >=20
-> > > > Thanks for noticing it. I guess I should send fix patch, since patc=
-hes
-> > > > from
-> > > > drm-misc-next can't be dropped.
-> > >=20
-> > > Yeah, please send additional patches for all the issues pointed out by
-> > > Chen-Yu.
-> >=20
-> > Of course. I hope this can be resolved till the end of the next week. A=
-fter
-> > that, I will be away from PC for 2 weeks. Feel free to drop DT patches =
-if
-> > you think that it will come too close to merge window.
->=20
-> Actually, can you drop it anyway? It needs a lot of changes and keeping H=
-DMI=20
-> working would need some effort.
-
-No, we can't drop it, unfortunately.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---weag3fumpaj4truu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAls56LQACgkQ0rTAlCFN
-r3SfOA//Rb53Vq1lID0WxKB9uSBs/bU3mPxug0skNSfmQpD3OJoS3aFabr41aoPS
-wIiPeeMRnkxZydAc5EdosY9vJb8MRV5aYbVsEmiGXTPL1n8YE+Ppe/z4793BbAkg
-QSF9DzukzzdIU0geZSX7IIOrQjzkBc1aV2CzQe/JOSqfQLKUZdZOKepRJy1wUWkm
-5OPpn0DPbBk0tpZT+FnBqH7nLKFvrMa+cZ0CdeSJ+4PlRgc3W77dHleXE+xnyICZ
-rDw65tJNZzhSlK3RBb3LjhBJn1Ez1C9iRZaBpBzkcezLpaIuoESOg3z+bnGLZYGn
-I/nmlmz7cqb4MjBjcb2zZd0ihYXVa0I6Mzsc+VzQECOxMmfhIZ/Sutw+BDH23Gqo
-wW1KIpJWJyIyU4SZHn/Z96+fQNzHXe7N+Qu1gcgp3DHxukXGjhp3U1BpUAuV6dJ3
-oiUrQCqES7WNlS7S0w3UTe1bubSKTsMFbI2tCXvnYXzGMKRM7zZF1H3hEQ8FRp/z
-aVXjUeqQ2QwtEglFOQpwhAIWBWUMhacEyPw5/ITt1T6cDZ2vXqUBeAT5LUXv6zEy
-R273T3N1rdym5glKXTK398Z7hUGCmzSPtJoVmKyJqZJvH3nzAmK43cLcoJ9wjG3S
-Y5CJmViV40CxlUisvMu7jZP7cb8bbY3IpnbZt4MJcDcIK8z+6aE=
-=z0jz
------END PGP SIGNATURE-----
-
---weag3fumpaj4truu--
+diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+index facc169ebb68..7cdb762f3e2e 100644
+--- a/drivers/clk/at91/Makefile
++++ b/drivers/clk/at91/Makefile
+@@ -14,3 +14,4 @@ obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
+ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
+ obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
+ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
++obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+new file mode 100644
+index 000000000000..b98f14c1e138
+--- /dev/null
++++ b/drivers/clk/at91/sama5d4.c
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/at91.h>
++
++#include "pmc.h"
++
++static const struct clk_master_characteristics mck_characteristics = {
++	.output = { .min = 125000000, .max = 200000000 },
++	.divisors = { 1, 2, 4, 3 },
++};
++
++static u8 plla_out[] = { 0 };
++
++static u16 plla_icpll[] = { 0 };
++
++static struct clk_range plla_outputs[] = {
++	{ .min = 600000000, .max = 1200000000 },
++};
++
++static const struct clk_pll_characteristics plla_characteristics = {
++	.input = { .min = 12000000, .max = 12000000 },
++	.num_output = ARRAY_SIZE(plla_outputs),
++	.output = plla_outputs,
++	.icpll = plla_icpll,
++	.out = plla_out,
++};
++
++static const struct {
++	char *n;
++	char *p;
++	u8 id;
++} sama5d4_systemck[] = {
++	{ .n = "ddrck", .p = "masterck", .id = 2 },
++	{ .n = "lcdck", .p = "masterck", .id = 3 },
++	{ .n = "smdck", .p = "smdclk",   .id = 4 },
++	{ .n = "uhpck", .p = "usbck",    .id = 6 },
++	{ .n = "udpck", .p = "usbck",    .id = 7 },
++	{ .n = "pck0",  .p = "prog0",    .id = 8 },
++	{ .n = "pck1",  .p = "prog1",    .id = 9 },
++	{ .n = "pck2",  .p = "prog2",    .id = 10 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sama5d4_periph32ck[] = {
++	{ .n = "pioD_clk", .id = 5 },
++	{ .n = "usart0_clk", .id = 6 },
++	{ .n = "usart1_clk", .id = 7 },
++	{ .n = "icm_clk", .id = 9 },
++	{ .n = "aes_clk", .id = 12 },
++	{ .n = "tdes_clk", .id = 14 },
++	{ .n = "sha_clk", .id = 15 },
++	{ .n = "matrix1_clk", .id = 17 },
++	{ .n = "hsmc_clk", .id = 22 },
++	{ .n = "pioA_clk", .id = 23 },
++	{ .n = "pioB_clk", .id = 24 },
++	{ .n = "pioC_clk", .id = 25 },
++	{ .n = "pioE_clk", .id = 26 },
++	{ .n = "uart0_clk", .id = 27 },
++	{ .n = "uart1_clk", .id = 28 },
++	{ .n = "usart2_clk", .id = 29 },
++	{ .n = "usart3_clk", .id = 30 },
++	{ .n = "usart4_clk", .id = 31 },
++	{ .n = "twi0_clk", .id = 32 },
++	{ .n = "twi1_clk", .id = 33 },
++	{ .n = "twi2_clk", .id = 34 },
++	{ .n = "mci0_clk", .id = 35 },
++	{ .n = "mci1_clk", .id = 36 },
++	{ .n = "spi0_clk", .id = 37 },
++	{ .n = "spi1_clk", .id = 38 },
++	{ .n = "spi2_clk", .id = 39 },
++	{ .n = "tcb0_clk", .id = 40 },
++	{ .n = "tcb1_clk", .id = 41 },
++	{ .n = "tcb2_clk", .id = 42 },
++	{ .n = "pwm_clk", .id = 43 },
++	{ .n = "adc_clk", .id = 44 },
++	{ .n = "dbgu_clk", .id = 45 },
++	{ .n = "uhphs_clk", .id = 46 },
++	{ .n = "udphs_clk", .id = 47 },
++	{ .n = "ssc0_clk", .id = 48 },
++	{ .n = "ssc1_clk", .id = 49 },
++	{ .n = "trng_clk", .id = 53 },
++	{ .n = "macb0_clk", .id = 54 },
++	{ .n = "macb1_clk", .id = 55 },
++	{ .n = "fuse_clk", .id = 57 },
++	{ .n = "securam_clk", .id = 59 },
++	{ .n = "smd_clk", .id = 61 },
++	{ .n = "twi3_clk", .id = 62 },
++	{ .n = "catb_clk", .id = 63 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sama5d4_periphck[] = {
++	{ .n = "dma0_clk", .id = 8 },
++	{ .n = "cpkcc_clk", .id = 10 },
++	{ .n = "aesb_clk", .id = 13 },
++	{ .n = "mpddr_clk", .id = 16 },
++	{ .n = "matrix0_clk", .id = 18 },
++	{ .n = "vdec_clk", .id = 19 },
++	{ .n = "dma1_clk", .id = 50 },
++	{ .n = "lcdc_clk", .id = 51 },
++	{ .n = "isi_clk", .id = 52 },
++};
++
++static void __init sama5d4_pmc_setup(struct device_node *np)
++{
++	struct clk_range range = CLK_RANGE(0, 0);
++	const char *slck_name, *mainxtal_name;
++	struct pmc_data *sama5d4_pmc;
++	const char *parent_names[5];
++	struct regmap *regmap;
++	struct clk_hw *hw;
++	unsigned int i;
++	bool bypass;
++
++	i = of_property_match_string(np, "clock-names", "slow_clk");
++	if (i < 0)
++		return;
++
++	slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "main_xtal");
++	if (i < 0)
++		return;
++	mainxtal_name = of_clk_get_parent_name(np, i);
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		return;
++
++	sama5d4_pmc = pmc_data_allocate(3, 11, 64, 0);
++	if (!sama5d4_pmc)
++		return;
++
++	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
++					   100000000);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
++					bypass);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "main_rc_osc";
++	parent_names[1] = "main_osc";
++	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
++				   &sama5d3_pll_layout, &plla_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_UTMI] = hw;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
++				      &at91sam9x5_master_layout,
++				      &mck_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_MCK] = hw;
++
++	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_MCK2] = hw;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	parent_names[4] = "mck";
++	for (i = 0; i < 3; i++) {
++		char name[6];
++
++		snprintf(name, sizeof(name), "prog%d", i);
++
++		hw = at91_clk_register_programmable(regmap, name,
++						    parent_names, 5, i,
++						    &at91sam9x5_programmable_layout);
++		if (IS_ERR(hw))
++			goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sama5d4_systemck[i].n,
++					      sama5d4_systemck[i].p,
++					      sama5d4_systemck[i].id);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->shws[sama5d4_systemck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periphck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d4_periphck[i].n,
++							 "masterck",
++							 sama5d4_periphck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->phws[sama5d4_periphck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periph32ck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d4_periph32ck[i].n,
++							 "h32mxck",
++							 sama5d4_periph32ck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->phws[sama5d4_periph32ck[i].id] = hw;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d4_pmc);
++
++	return;
++
++err_free:
++	pmc_data_free(sama5d4_pmc);
++}
++CLK_OF_DECLARE(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
+-- 
+2.18.0
