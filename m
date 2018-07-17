@@ -1,140 +1,365 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Mon, 30 Jul 2018 14:31:48 +0100
-Message-Id: <1532957509-14541-2-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
-References: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45098 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQK4v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 06:56:51 -0400
+Subject: Re: [PATCH v5 05/11] clk: mediatek: add mt6765 clock IDs
+To: Mars Cheng <mars.cheng@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Cc: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+ <1531817552-17221-6-git-send-email-mars.cheng@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <a7ede0bf-e905-bf37-7e21-60226f56b9ab@gmail.com>
+Date: Tue, 17 Jul 2018 12:24:51 +0200
+MIME-Version: 1.0
+In-Reply-To: <1531817552-17221-6-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quite a few drivers get an optional clock, e.g. a clock required
-to access peripheral's registers that is always enabled on some
-devices.
 
-This function behaves the same as of_clk_get_by_name() except that
-it will return NULL instead of -EINVAL.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v3:
- - Fix check for clock not present. __of_clk_get() returns -EINVAL
-   if it's not there. Cover case of when there is no clock name.
- - of_clk_get_by_name_optional() should return NULL if !np.
- - Add dummy version of of_clk_get_by_name_optional() for the
-   !OF || !COMMON_CLK case.
----
- drivers/clk/clkdev.c | 36 ++++++++++++++++++++++++++++++++----
- include/linux/clk.h  |  6 ++++++
- 2 files changed, 38 insertions(+), 4 deletions(-)
+On 17/07/18 10:52, Mars Cheng wrote:
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8..a710333 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	struct clk *clk = ERR_PTR(-ENOENT);
- 
-@@ -70,6 +71,11 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
- 		if (name)
- 			index = of_property_match_string(np, "clock-names", name);
- 		clk = __of_clk_get(np, index, dev_id, name);
-+		if (optional && PTR_ERR(clk) == -EINVAL) {
-+			clk = NULL;
-+			pr_info("optional clock is not present %pOF:%s\n", np,
-+				name ? name : "");
-+		}
- 		if (!IS_ERR(clk)) {
- 			break;
- 		} else if (name && index >= 0) {
-@@ -106,15 +112,37 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get_by_name(np, np->full_name, name, false);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- 
-+/**
-+ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
-+ * by a device node
-+ * @np: pointer to clock consumer node
-+ * @name: name of consumer's clock input, or NULL for the first clock reference
-+ *
-+ * This function parses the clocks and clock-names properties, and uses them to
-+ * look up the struct clk from the registered list of clock providers.
-+ * It behaves the same as of_clk_get_by_name(), except when np is NULL or no
-+ * clock provider is found, when it then returns NULL.
-+ */
-+struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+					const char *name)
-+{
-+	if (!np)
-+		return NULL;
-+
-+	return __of_clk_get_by_name(np, np->full_name, name, true);
-+}
-+EXPORT_SYMBOL(of_clk_get_by_name_optional);
-+
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
- 
- static struct clk *__of_clk_get_by_name(struct device_node *np,
- 					const char *dev_id,
--					const char *name)
-+					const char *name,
-+					bool optional)
- {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -197,7 +225,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..de0e5e0 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-+struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
- #else
- static inline struct clk *of_clk_get(struct device_node *np, int index)
-@@ -788,6 +789,11 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
- {
- 	return ERR_PTR(-ENOENT);
- }
-+static inline struct clk *of_clk_get_by_name_optional(struct device_node *np,
-+						      const char *name)
-+{
-+	return NULL;
-+}
- static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
- 	return ERR_PTR(-ENOENT);
--- 
-2.7.4
+Please provide a commit message.
+
+Thanks,
+Matthias
+
+> ---
+>  include/dt-bindings/clock/mt6765-clk.h |  313 ++++++++++++++++++++++++++++++++
+>  1 file changed, 313 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mt6765-clk.h
+> 
+> diff --git a/include/dt-bindings/clock/mt6765-clk.h b/include/dt-bindings/clock/mt6765-clk.h
+> new file mode 100644
+> index 0000000..eb97e56
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mt6765-clk.h
+> @@ -0,0 +1,313 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6765_H
+> +#define _DT_BINDINGS_CLK_MT6765_H
+> +
+> +/* FIX Clks */
+> +#define CLK_TOP_CLK26M			0
+> +
+> +/* APMIXEDSYS */
+> +#define CLK_APMIXED_ARMPLL_L		0
+> +#define CLK_APMIXED_ARMPLL		1
+> +#define CLK_APMIXED_CCIPLL		2
+> +#define CLK_APMIXED_MAINPLL		3
+> +#define CLK_APMIXED_MFGPLL		4
+> +#define CLK_APMIXED_MMPLL		5
+> +#define CLK_APMIXED_UNIV2PLL		6
+> +#define CLK_APMIXED_MSDCPLL		7
+> +#define CLK_APMIXED_APLL1		8
+> +#define CLK_APMIXED_MPLL		9
+> +#define CLK_APMIXED_ULPOSC1		10
+> +#define CLK_APMIXED_ULPOSC2		11
+> +#define CLK_APMIXED_SSUSB26M		12
+> +#define CLK_APMIXED_APPLL26M		13
+> +#define CLK_APMIXED_MIPIC0_26M		14
+> +#define CLK_APMIXED_MDPLLGP26M		15
+> +#define CLK_APMIXED_MMSYS_F26M		16
+> +#define CLK_APMIXED_UFS26M		17
+> +#define CLK_APMIXED_MIPIC1_26M		18
+> +#define CLK_APMIXED_MEMPLL26M		19
+> +#define CLK_APMIXED_CLKSQ_LVPLL_26M	20
+> +#define CLK_APMIXED_MIPID0_26M		21
+> +#define CLK_APMIXED_NR_CLK		22
+> +
+> +/* TOPCKGEN */
+> +#define CLK_TOP_SYSPLL			0
+> +#define CLK_TOP_SYSPLL_D2		1
+> +#define CLK_TOP_SYSPLL1_D2		2
+> +#define CLK_TOP_SYSPLL1_D4		3
+> +#define CLK_TOP_SYSPLL1_D8		4
+> +#define CLK_TOP_SYSPLL1_D16		5
+> +#define CLK_TOP_SYSPLL_D3		6
+> +#define CLK_TOP_SYSPLL2_D2		7
+> +#define CLK_TOP_SYSPLL2_D4		8
+> +#define CLK_TOP_SYSPLL2_D8		9
+> +#define CLK_TOP_SYSPLL_D5		10
+> +#define CLK_TOP_SYSPLL3_D2		11
+> +#define CLK_TOP_SYSPLL3_D4		12
+> +#define CLK_TOP_SYSPLL_D7		13
+> +#define CLK_TOP_SYSPLL4_D2		14
+> +#define CLK_TOP_SYSPLL4_D4		15
+> +#define CLK_TOP_USB20_192M		16
+> +#define CLK_TOP_USB20_192M_D4		17
+> +#define CLK_TOP_USB20_192M_D8		18
+> +#define CLK_TOP_USB20_192M_D16		19
+> +#define CLK_TOP_USB20_192M_D32		20
+> +#define CLK_TOP_UNIVPLL			21
+> +#define CLK_TOP_UNIVPLL_D2		22
+> +#define CLK_TOP_UNIVPLL1_D2		23
+> +#define CLK_TOP_UNIVPLL1_D4		24
+> +#define CLK_TOP_UNIVPLL_D3		25
+> +#define CLK_TOP_UNIVPLL2_D2		26
+> +#define CLK_TOP_UNIVPLL2_D4		27
+> +#define CLK_TOP_UNIVPLL2_D8		28
+> +#define CLK_TOP_UNIVPLL2_D32		29
+> +#define CLK_TOP_UNIVPLL_D5		30
+> +#define CLK_TOP_UNIVPLL3_D2		31
+> +#define CLK_TOP_UNIVPLL3_D4		32
+> +#define CLK_TOP_MMPLL			33
+> +#define CLK_TOP_MMPLL_D2		34
+> +#define CLK_TOP_MPLL			35
+> +#define CLK_TOP_DA_MPLL_104M_DIV	36
+> +#define CLK_TOP_DA_MPLL_52M_DIV		37
+> +#define CLK_TOP_MFGPLL			38
+> +#define CLK_TOP_MSDCPLL			39
+> +#define CLK_TOP_MSDCPLL_D2		40
+> +#define CLK_TOP_APLL1			41
+> +#define CLK_TOP_APLL1_D2		42
+> +#define CLK_TOP_APLL1_D4		43
+> +#define CLK_TOP_APLL1_D8		44
+> +#define CLK_TOP_ULPOSC1			45
+> +#define CLK_TOP_ULPOSC1_D2		46
+> +#define CLK_TOP_ULPOSC1_D4		47
+> +#define CLK_TOP_ULPOSC1_D8		48
+> +#define CLK_TOP_ULPOSC1_D16		49
+> +#define CLK_TOP_ULPOSC1_D32		50
+> +#define CLK_TOP_DMPLL			51
+> +#define CLK_TOP_F_FRTC			52
+> +#define CLK_TOP_F_F26M			53
+> +#define CLK_TOP_AXI			54
+> +#define CLK_TOP_MM			55
+> +#define CLK_TOP_SCP			56
+> +#define CLK_TOP_MFG			57
+> +#define CLK_TOP_F_FUART			58
+> +#define CLK_TOP_SPI			59
+> +#define CLK_TOP_MSDC50_0		60
+> +#define CLK_TOP_MSDC30_1		61
+> +#define CLK_TOP_AUDIO			62
+> +#define CLK_TOP_AUD_1			63
+> +#define CLK_TOP_AUD_ENGEN1		64
+> +#define CLK_TOP_F_FDISP_PWM		65
+> +#define CLK_TOP_SSPM			66
+> +#define CLK_TOP_DXCC			67
+> +#define CLK_TOP_I2C			68
+> +#define CLK_TOP_F_FPWM			69
+> +#define CLK_TOP_F_FSENINF		70
+> +#define CLK_TOP_AES_FDE			71
+> +#define CLK_TOP_F_BIST2FPC		72
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL0	73
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL1	74
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL2	75
+> +#define CLK_TOP_DA_USB20_48M_DIV	76
+> +#define CLK_TOP_DA_UNIV_48M_DIV		77
+> +#define CLK_TOP_APLL12_DIV0		78
+> +#define CLK_TOP_APLL12_DIV1		79
+> +#define CLK_TOP_APLL12_DIV2		80
+> +#define CLK_TOP_APLL12_DIV3		81
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL0_EN	82
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL1_EN	83
+> +#define CLK_TOP_ARMPLL_DIVIDER_PLL2_EN	84
+> +#define CLK_TOP_FMEM_OCC_DRC_EN		85
+> +#define CLK_TOP_USB20_48M_EN		86
+> +#define CLK_TOP_UNIVPLL_48M_EN		87
+> +#define CLK_TOP_MPLL_104M_EN		88
+> +#define CLK_TOP_MPLL_52M_EN		89
+> +#define CLK_TOP_F_UFS_MP_SAP_CFG_EN	90
+> +#define CLK_TOP_F_BIST2FPC_EN		91
+> +#define CLK_TOP_MD_32K			92
+> +#define CLK_TOP_MD_26M			93
+> +#define CLK_TOP_MD2_32K			94
+> +#define CLK_TOP_MD2_26M			95
+> +#define CLK_TOP_AXI_SEL			96
+> +#define CLK_TOP_MEM_SEL			97
+> +#define CLK_TOP_MM_SEL			98
+> +#define CLK_TOP_SCP_SEL			99
+> +#define CLK_TOP_MFG_SEL			100
+> +#define CLK_TOP_ATB_SEL			101
+> +#define CLK_TOP_CAMTG_SEL		102
+> +#define CLK_TOP_CAMTG1_SEL		103
+> +#define CLK_TOP_CAMTG2_SEL		104
+> +#define CLK_TOP_CAMTG3_SEL		105
+> +#define CLK_TOP_UART_SEL		106
+> +#define CLK_TOP_SPI_SEL			107
+> +#define CLK_TOP_MSDC50_0_HCLK_SEL	108
+> +#define CLK_TOP_MSDC50_0_SEL		109
+> +#define CLK_TOP_MSDC30_1_SEL		110
+> +#define CLK_TOP_AUDIO_SEL		111
+> +#define CLK_TOP_AUD_INTBUS_SEL		112
+> +#define CLK_TOP_AUD_1_SEL		113
+> +#define CLK_TOP_AUD_ENGEN1_SEL		114
+> +#define CLK_TOP_DISP_PWM_SEL		115
+> +#define CLK_TOP_SSPM_SEL		116
+> +#define CLK_TOP_DXCC_SEL		117
+> +#define CLK_TOP_USB_TOP_SEL		118
+> +#define CLK_TOP_SPM_SEL			119
+> +#define CLK_TOP_I2C_SEL			120
+> +#define CLK_TOP_PWM_SEL			121
+> +#define CLK_TOP_SENINF_SEL		122
+> +#define CLK_TOP_AES_FDE_SEL		123
+> +#define CLK_TOP_PWRAP_ULPOSC_SEL	124
+> +#define CLK_TOP_CAMTM_SEL		125
+> +#define CLK_TOP_NR_CLK			126
+> +
+> +/* INFRACFG */
+> +#define CLK_IFR_ICUSB			0
+> +#define CLK_IFR_GCE			1
+> +#define CLK_IFR_THERM			2
+> +#define CLK_IFR_I2C_AP			3
+> +#define CLK_IFR_I2C_CCU			4
+> +#define CLK_IFR_I2C_SSPM		5
+> +#define CLK_IFR_I2C_RSV			6
+> +#define CLK_IFR_PWM_HCLK		7
+> +#define CLK_IFR_PWM1			8
+> +#define CLK_IFR_PWM2			9
+> +#define CLK_IFR_PWM3			10
+> +#define CLK_IFR_PWM4			11
+> +#define CLK_IFR_PWM5			12
+> +#define CLK_IFR_PWM			13
+> +#define CLK_IFR_UART0			14
+> +#define CLK_IFR_UART1			15
+> +#define CLK_IFR_GCE_26M			16
+> +#define CLK_IFR_CQ_DMA_FPC		17
+> +#define CLK_IFR_BTIF			18
+> +#define CLK_IFR_SPI0			19
+> +#define CLK_IFR_MSDC0			20
+> +#define CLK_IFR_MSDC1			21
+> +#define CLK_IFR_TRNG			22
+> +#define CLK_IFR_AUXADC			23
+> +#define CLK_IFR_CCIF1_AP		24
+> +#define CLK_IFR_CCIF1_MD		25
+> +#define CLK_IFR_AUXADC_MD		26
+> +#define CLK_IFR_AP_DMA			27
+> +#define CLK_IFR_DEVICE_APC		28
+> +#define CLK_IFR_CCIF_AP			29
+> +#define CLK_IFR_AUDIO			30
+> +#define CLK_IFR_CCIF_MD			31
+> +#define CLK_IFR_RG_PWM_FBCLK6		32
+> +#define CLK_IFR_DISP_PWM		33
+> +#define CLK_IFR_CLDMA_BCLK		34
+> +#define CLK_IFR_AUDIO_26M_BCLK		35
+> +#define CLK_IFR_SPI1			36
+> +#define CLK_IFR_I2C4			37
+> +#define CLK_IFR_SPI2			38
+> +#define CLK_IFR_SPI3			39
+> +#define CLK_IFR_I2C5			40
+> +#define CLK_IFR_I2C5_ARBITER		41
+> +#define CLK_IFR_I2C5_IMM		42
+> +#define CLK_IFR_I2C1_ARBITER		43
+> +#define CLK_IFR_I2C1_IMM		44
+> +#define CLK_IFR_I2C2_ARBITER		45
+> +#define CLK_IFR_I2C2_IMM		46
+> +#define CLK_IFR_SPI4			47
+> +#define CLK_IFR_SPI5			48
+> +#define CLK_IFR_CQ_DMA			49
+> +#define CLK_IFR_FAES_FDE		50
+> +#define CLK_IFR_MSDC0_SELF		51
+> +#define CLK_IFR_MSDC1_SELF		52
+> +#define CLK_IFR_I2C6			53
+> +#define CLK_IFR_AP_MSDC0		54
+> +#define CLK_IFR_MD_MSDC0		55
+> +#define CLK_IFR_MSDC0_SRC		56
+> +#define CLK_IFR_MSDC1_SRC		57
+> +#define CLK_IFR_AES_TOP0_BCLK		58
+> +#define CLK_IFR_MCU_PM_BCLK		59
+> +#define CLK_IFR_CCIF2_AP		60
+> +#define CLK_IFR_CCIF2_MD		61
+> +#define CLK_IFR_CCIF3_AP		62
+> +#define CLK_IFR_CCIF3_MD		63
+> +#define CLK_IFR_NR_CLK			64
+> +
+> +/* AUDIO */
+> +#define CLK_AUDIO_AFE			0
+> +#define CLK_AUDIO_22M			1
+> +#define CLK_AUDIO_APLL_TUNER		2
+> +#define CLK_AUDIO_ADC			3
+> +#define CLK_AUDIO_DAC			4
+> +#define CLK_AUDIO_DAC_PREDIS		5
+> +#define CLK_AUDIO_TML			6
+> +#define CLK_AUDIO_I2S1_BCLK		7
+> +#define CLK_AUDIO_I2S2_BCLK		8
+> +#define CLK_AUDIO_I2S3_BCLK		9
+> +#define CLK_AUDIO_I2S4_BCLK		10
+> +#define CLK_AUDIO_NR_CLK		11
+> +
+> +/* MIPI_RX_ANA_CSI0A */
+> +
+> +#define CLK_MIPI0A_CSR_CSI_EN_0A	0
+> +#define CLK_MIPI0A_NR_CLK		1
+> +
+> +/* MMSYS_CONFIG */
+> +
+> +#define CLK_MM_MDP_RDMA0		0
+> +#define CLK_MM_MDP_CCORR0		1
+> +#define CLK_MM_MDP_RSZ0			2
+> +#define CLK_MM_MDP_RSZ1			3
+> +#define CLK_MM_MDP_TDSHP0		4
+> +#define CLK_MM_MDP_WROT0		5
+> +#define CLK_MM_MDP_WDMA0		6
+> +#define CLK_MM_DISP_OVL0		7
+> +#define CLK_MM_DISP_OVL0_2L		8
+> +#define CLK_MM_DISP_RSZ0		9
+> +#define CLK_MM_DISP_RDMA0		10
+> +#define CLK_MM_DISP_WDMA0		11
+> +#define CLK_MM_DISP_COLOR0		12
+> +#define CLK_MM_DISP_CCORR0		13
+> +#define CLK_MM_DISP_AAL0		14
+> +#define CLK_MM_DISP_GAMMA0		15
+> +#define CLK_MM_DISP_DITHER0		16
+> +#define CLK_MM_DSI0			17
+> +#define CLK_MM_FAKE_ENG			18
+> +#define CLK_MM_SMI_COMMON		19
+> +#define CLK_MM_SMI_LARB0		20
+> +#define CLK_MM_SMI_COMM0		21
+> +#define CLK_MM_SMI_COMM1		22
+> +#define CLK_MM_CAM_MDP			23
+> +#define CLK_MM_SMI_IMG			24
+> +#define CLK_MM_SMI_CAM			25
+> +#define CLK_MM_IMG_DL_RELAY		26
+> +#define CLK_MM_IMG_DL_ASYNC_TOP		27
+> +#define CLK_MM_DIG_DSI			28
+> +#define CLK_MM_F26M_HRTWT		29
+> +#define CLK_MM_NR_CLK			30
+> +
+> +/* IMGSYS */
+> +
+> +#define CLK_IMG_LARB2			0
+> +#define CLK_IMG_DIP			1
+> +#define CLK_IMG_FDVT			2
+> +#define CLK_IMG_DPE			3
+> +#define CLK_IMG_RSC			4
+> +#define CLK_IMG_NR_CLK			5
+> +
+> +/* VENCSYS */
+> +
+> +#define CLK_VENC_SET0_LARB		0
+> +#define CLK_VENC_SET1_VENC		1
+> +#define CLK_VENC_SET2_JPGENC		2
+> +#define CLK_VENC_SET3_VDEC		3
+> +#define CLK_VENC_NR_CLK			4
+> +
+> +/* CAMSYS */
+> +
+> +#define CLK_CAM_LARB3			0
+> +#define CLK_CAM_DFP_VAD			1
+> +#define CLK_CAM				2
+> +#define CLK_CAMTG			3
+> +#define CLK_CAM_SENINF			4
+> +#define CLK_CAMSV0			5
+> +#define CLK_CAMSV1			6
+> +#define CLK_CAMSV2			7
+> +#define CLK_CAM_CCU			8
+> +#define CLK_CAM_NR_CLK			9
+> +
+> +#endif /* _DT_BINDINGS_CLK_MT6765_H */
+> 
