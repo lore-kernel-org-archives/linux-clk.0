@@ -1,84 +1,55 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 5 Jul 2018 06:52:26 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	matti.vaittinen@fi.rohmeurope.com,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>,
-	chenjh@rock-chips.com, Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
 	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180705055226.GJ496@dell>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
- <20180704145623.zgei3ehrwdpcu26r@penguin>
- <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: arm/arm64: mediatek: Fix mmsys device probing
+Date: Tue, 17 Jul 2018 23:59:46 +0200
+Message-Id: <20180717215951.378-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 04 Jul 2018, Enric Balletbo Serra wrote:
+Changes since v3:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
 
-> Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
-> de jul. 2018 a les 17:10:
-> >
-> > Hi Enric,
-> >
-> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
-> > > Hi Matti,
-> > >
-> > > Thanks for the patch, a few comments below, some are feedback I
-> > > received when I sent some patches to this subsystem.
-> > >
-> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> > > dia dt., 19 de juny 2018 a les 12:57:
-> > > > +};
-> > > > +
-> > > > +/* bd71837 multi function cells */
-> > > > +static struct mfd_cell bd71837_mfd_cells[] = {
-> > > > +       {
-> > > > +               .name = "bd71837-clk",
-> > > > +       }, {
-> > > > +               .name = "bd718xx-pwrkey",
-> > > > +               .resources = &irqs[0],
-> > > > +               .num_resources = ARRAY_SIZE(irqs),
-> > > > +       }, {
-> > > > +               .name = "bd71837-pmic",
-> > > > +       },
-> > > nit: no comma at the end
-> >
-> > Actually, trailing comma is preferred on structures/arrays without
-> > sentinels, because if one needs to add a new entry/new member, then in
-> > the diff there will have only one new line added, instead of one line
-> > being changed (adding now necessary comma) and one added.
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+  
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+ 
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
 
-[...]
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
 
-> Dmitry, I really appreciate this kind of comments, especially when
-> there is a justification, so I can learn more and more to do better
-> patches.
-
-+1
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on
+the bananapi-r2 and the Acer R13 Chromebook.
