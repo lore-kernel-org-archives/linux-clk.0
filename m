@@ -1,58 +1,88 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10956 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388031AbeGWJuW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 05:50:22 -0400
-Date: Mon, 23 Jul 2018 11:50:10 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-CC: <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <pgaikwad@nvidia.com>,
-        <jonathanh@nvidia.co>, <thierry.reding@gmail.com>,
-        <linux-kernel@lists.codethink.co.uk>
-Subject: Re: [PATCH 2/8] clk: tegra: host1x has fractional divider
-Message-ID: <20180723085010.GK1636@tbergstrom-lnx.Nvidia.com>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <20180720134532.13148-3-ben.dooks@codethink.co.uk>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v10 03/10] firmware: xilinx: Add zynqmp IOCTL API for device control
+Date: Tue, 17 Jul 2018 12:59:00 -0700
+Message-ID: <1531857547-16652-4-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180720134532.13148-3-ben.dooks@codethink.co.uk>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 20, 2018 at 02:45:26PM +0100, Ben Dooks wrote:
-> The host1x clock according to both tegra2 and tegra3 manuals is
-> an 8bit divider with lsb being fractional. This is running into
-> an issue where the host1x is being set on a tegra20a system to
-> 266.4MHz but ends up at 222MHz instead.
-> 
+From: Rajan Vaja <rajanv@xilinx.com>
 
-The fact the hw has a fractional divider, does not mean we're allowed to use
-it. Due to the non 50% duty cycle of fractional divided clocks, they are not
-allowed for certain peripherals. Do you have information indicating this is
-ok for the host1x clock?
+Add ZynqMP firmware IOCTL API to control and configure
+devices like PLLs, SD, Gem, etc.
 
-Peter.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  2 ++
+ 2 files changed, 22 insertions(+)
 
-
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 2acba2986bc6..8fa1cecf18a0 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -644,7 +644,7 @@ static struct tegra_periph_init_data periph_clks[] = {
->  	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
->  	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
->  	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
-> -	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
-> +	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
->  	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
->  	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
->  	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
-> -- 
-> 2.18.0
-> 
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index edbb84e..24cfd9e 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -241,8 +241,28 @@ static int get_set_conduit_method(struct device_node *np)
+ 	return 0;
+ }
+ 
++/**
++ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
++ * @node_id:	Node ID of the device
++ * @ioctl_id:	ID of the requested IOCTL
++ * @arg1:	Argument 1 to requested IOCTL call
++ * @arg2:	Argument 2 to requested IOCTL call
++ * @out:	Returned output value
++ *
++ * This function calls IOCTL to firmware for device control and configuration.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
++			   u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
++				   arg1, arg2, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
++	.ioctl = zynqmp_pm_ioctl,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index cb63bed..2eec6e7 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -34,6 +34,7 @@
+ 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_IOCTL = 34,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -49,6 +50,7 @@ enum pm_ret_status {
+ 
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
++	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+-- 
+2.7.4
