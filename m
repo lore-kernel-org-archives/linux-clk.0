@@ -1,574 +1,870 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: RE: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-Date: Sat, 14 Jul 2018 11:41:14 +0000
-Message-ID: <AM0PR04MB4211875F3E10F041E475C3C4805F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB421141DA6AD8E6EFB74A8D6E80590@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20180714070227.ifmpc5vxpehqxp6x@pengutronix.de>
- <AM0PR04MB42113A7842135CDB53698510805F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20180714094141.j7l2byvmsiygg32g@pengutronix.de>
-In-Reply-To: <20180714094141.j7l2byvmsiygg32g@pengutronix.de>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Rob Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 16/16] ARM: dts: at91: at91sam9x5: switch to new clock bindings
+Date: Wed, 18 Jul 2018 00:27:57 +0200
+Message-Id: <20180717222757.10253-17-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-> -----Original Message-----
-> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> Sent: Saturday, July 14, 2018 5:42 PM
-> To: A.s. Dong <aisheng.dong@nxp.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org; dl-linux-
-> imx <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
-> kernel@pengutronix.de; linux-clk@vger.kernel.org
-> Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-> 
-> On Sat, Jul 14, 2018 at 08:49:28AM +0000, A.s. Dong wrote:
-> > > -----Original Message-----
-> > > From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> > > Sent: Saturday, July 14, 2018 3:02 PM
-> > > To: A.s. Dong <aisheng.dong@nxp.com>
-> > > Cc: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> > > <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
-> > > Rutland <mark.rutland@arm.com>; devicetree@vger.kernel.org;
-> > > dl-linux- imx <linux-imx@nxp.com>;
-> > > linux-arm-kernel@lists.infradead.org;
-> > > kernel@pengutronix.de; linux-clk@vger.kernel.org
-> > > Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D
-> > > messaging unit
-> > >
-> > > Hi,
-> > >
-> > > Beside, what is equivalent of name and family name is in your name?
-> > > I know it is different in China, so I won't to avoid confusion with:
-> > > "Hi $name," format :)
-> > >
-> >
-> > Dong is my family name. Either Hi A.S or Hi Dong is fine to me. :)
-> >
-> > > On Thu, Jul 12, 2018 at 11:28:16AM +0000, A.s. Dong wrote:
-> > > > Hi Oleksij,
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
-> > > > > Sent: Friday, June 15, 2018 5:51 PM
-> > > > > To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
-> > > > > <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>;
-> Mark
-> > > > > Rutland <mark.rutland@arm.com>; A.s. Dong
-> <aisheng.dong@nxp.com>
-> > > > > Cc: Oleksij Rempel <o.rempel@pengutronix.de>;
-> > > kernel@pengutronix.de;
-> > > > > linux-arm-kernel@lists.infradead.org;
-> > > > > devicetree@vger.kernel.org;
-> > > > > linux- clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> > > > > Subject: [PATCH v2 4/4] mailbox: Add support for i.MX7D
-> > > > > messaging unit
-> > > > >
-> > > > > The Mailbox controller is able to send messages (up to 4 32 bit
-> > > > > words) between the endpoints.
-> > > > >
-> > > >
-> > > > This is not correct according to current implementation as we
-> > > > abstract them into 4 virtual channels while each 'channel' can
-> > > > send only one word
-> > > one time.
-> > > > We probably need explain such limitation in commit message as well.
-> > > >
-> > > > I'm not strongly against this way. But it makes the controller
-> > > > lose the HW capability to send up to 4 words. I'd just like to
-> > > > know a bit history or reason why we decided to do that. Do we
-> > > > design it for specific
-> > > users case for M4?
-> > >
-> > > no, it is R&D.
-> > >
-> >
-> > Got it
-> >
-> > > > And are we assuming there will be no real users of multi words
-> > > > send
-> > > requirement?
-> > >
-> > > no. In my experience, each imaginable Brainfuck configuration will
-> > > actually happen some day in some design for $reasons.
-> > > So, no assumptions, just currently working configuration of my R&D
-> project.
-> > >
-> >
-> > I'm fine with as it is currently. We don't have to address all
-> > possible Issues in one time.
-> >
-> > > > > This driver was tested using the mailbox-test driver sending
-> > > > > messages between the Cortex-A7 and the Cortex-M4.
-> > > > >
-> > > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > > > ---
-> > > > >  drivers/mailbox/Kconfig       |   6 +
-> > > > >  drivers/mailbox/Makefile      |   2 +
-> > > > >  drivers/mailbox/imx-mailbox.c | 288
-> > > > > ++++++++++++++++++++++++++++++++++
-> > > > >  3 files changed, 296 insertions(+)  create mode 100644
-> > > > > drivers/mailbox/imx-mailbox.c
-> > > > >
-> > > > > diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> > > > > index a2bb27446dce..e1d2738a2e4c 100644
-> > > > > --- a/drivers/mailbox/Kconfig
-> > > > > +++ b/drivers/mailbox/Kconfig
-> > > > > @@ -15,6 +15,12 @@ config ARM_MHU
-> > > > >  	  The controller has 3 mailbox channels, the last of which can
-> be
-> > > > >  	  used in Secure mode only.
-> > > > >
-> > > > > +config IMX_MBOX
-> > > > > +	tristate "iMX Mailbox"
-> > > > > +	depends on SOC_IMX7D || COMPILE_TEST
-> > > >
-> > > > Better change to ARCH_MXC as other platform does.
-> > >
-> > > ok
-> > >
-> > > > > +	help
-> > > > > +	  Mailbox implementation for iMX7D Messaging Unit (MU).
-> > > >
-> > > > Ditto
-> > >
-> > > ok
-> > >
-> > > > > +
-> > > > >  config PLATFORM_MHU
-> > > > >  	tristate "Platform MHU Mailbox"
-> > > > >  	depends on OF
-> > > > > diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
-> > > > > index
-> > > > > cc23c3a43fcd..ba2fe1b6dd62 100644
-> > > > > --- a/drivers/mailbox/Makefile
-> > > > > +++ b/drivers/mailbox/Makefile
-> > > > > @@ -7,6 +7,8 @@ obj-$(CONFIG_MAILBOX_TEST)	+= mailbox-
-> test.o
-> > > > >
-> > > > >  obj-$(CONFIG_ARM_MHU)	+= arm_mhu.o
-> > > > >
-> > > > > +obj-$(CONFIG_IMX_MBOX)	+= imx-mailbox.o
-> > > > > +
-> > > > >  obj-$(CONFIG_PLATFORM_MHU)	+= platform_mhu.o
-> > > > >
-> > > > >  obj-$(CONFIG_PL320_MBOX)	+= pl320-ipc.o
-> > > > > diff --git a/drivers/mailbox/imx-mailbox.c
-> > > > > b/drivers/mailbox/imx-mailbox.c new file mode 100644 index
-> > > > > 000000000000..e3f621cb1d30
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/mailbox/imx-mailbox.c
-> > > > > @@ -0,0 +1,288 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > +/*
-> > > > > + * Copyright (c) 2018 Pengutronix, Oleksij Rempel
-> > > > > +<o.rempel@pengutronix.de>  */
-> > > > > +
-> > > > > +#include <linux/clk.h>
-> > > > > +#include <linux/interrupt.h>
-> > > > > +#include <linux/io.h>
-> > > > > +#include <linux/kernel.h>
-> > > > > +#include <linux/mailbox_controller.h> #include <linux/module.h>
-> > > > > +#include <linux/of_device.h>
-> > > > > +
-> > > > > +/* Transmit Register */
-> > > > > +#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
-> > > > > +/* Receive Register */
-> > > > > +#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
-> > > > > +/* Status Register */
-> > > > > +#define IMX_MU_xSR		0x20
-> > > > > +#define IMX_MU_xSR_TEn(x)	BIT(20 + (x))
-> > > > > +#define IMX_MU_xSR_RFn(x)	BIT(24 + (x))
-> > > > > +#define IMX_MU_xSR_BRDIP	BIT(9)
-> > > > > +
-> > > > > +/* Control Register */
-> > > > > +#define IMX_MU_xCR		0x24
-> > > > > +/* Transmit Interrupt Enable */
-> > > > > +#define IMX_MU_xCR_TIEn(x)	BIT(20 + (x))
-> > > > > +/* Receive Interrupt Enable */
-> > > > > +#define IMX_MU_xCR_RIEn(x)	BIT(24 + (x))
-> > > > > +
-> > > > > +#define IMX_MU_MAX_CHANS	4u
-> > > > > +
-> > > > > +struct imx_mu_priv;
-> > > > > +
-> > > > > +struct imx_mu_cfg {
-> > > > > +	unsigned int		chans;
-> > > > > +	void (*init_hw)(struct imx_mu_priv *priv); };
-> > > > > +
-> > > > > +struct imx_mu_con_priv {
-> > > > > +	int			irq;
-> > > > > +	unsigned int		bidx;
-> > > > > +	unsigned int		idx;
-> > > > > +};
-> > > > > +
-> > > > > +struct imx_mu_priv {
-> > > > > +	struct device		*dev;
-> > > > > +	const struct imx_mu_cfg	*dcfg;
-> > > > > +	void __iomem		*base;
-> > > > > +
-> > > > > +	struct mbox_controller	mbox;
-> > > > > +	struct mbox_chan
-> 	mbox_chans[IMX_MU_MAX_CHANS];
-> > > > > +
-> > > > > +	struct imx_mu_con_priv  con_priv[IMX_MU_MAX_CHANS];
-> > > > > +	struct clk		*clk;
-> > > > > +};
-> > > > > +
-> > > > > +static struct imx_mu_priv *to_imx_mu_priv(struct
-> > > > > +mbox_controller
-> > > > > +*mbox) {
-> > > > > +	return container_of(mbox, struct imx_mu_priv, mbox); }
-> > > > > +
-> > > > > +static void imx_mu_write(struct imx_mu_priv *priv, u32 val, u32 offs)
-> {
-> > > > > +	iowrite32(val, priv->base + offs); }
-> > > > > +
-> > > > > +static u32 imx_mu_read(struct imx_mu_priv *priv, u32 offs) {
-> > > > > +	return ioread32(priv->base + offs); }
-> > > > > +
-> > > > > +static u32 imx_mu_rmw(struct imx_mu_priv *priv, u32 offs, u32
-> > > > > +set,
-> > > > > +u32
-> > > > > +clr) {
-> > > > > +	u32 val;
-> > > > > +
-> > > > > +	val = imx_mu_read(priv, offs);
-> > > > > +	val &= ~clr;
-> > > > > +	val |= set;
-> > > > > +	imx_mu_write(priv, val, offs);
-> > > > > +
-> > > > > +	return val;
-> > > > > +}
-> > > > > +
-> > > > > +static irqreturn_t imx_mu_isr(int irq, void *p) {
-> > > > > +	struct mbox_chan *chan = p;
-> > > > > +	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
-> > > > > +	struct imx_mu_con_priv *cp = chan->con_priv;
-> > > > > +
-> > > > > +	u32 val, dat;
-> > > > > +
-> > > > > +	val = imx_mu_read(priv, IMX_MU_xSR);
-> > > > > +	val &= IMX_MU_xSR_TEn(cp->bidx) | IMX_MU_xSR_RFn(cp-
-> >bidx);
-> > > > > +	if (!val)
-> > > > > +		return IRQ_NONE;
-> > > > > +
-> > > > > +	if (val & IMX_MU_xSR_TEn(cp->bidx)) {
-> > > > > +		imx_mu_rmw(priv, IMX_MU_xCR, 0,
-> IMX_MU_xCR_TIEn(cp-
-> > > > > >bidx));
-> > > > > +		mbox_chan_txdone(chan, 0);
-> > > > > +	}
-> > > > > +
-> > > > > +	if (val & IMX_MU_xSR_RFn(cp->bidx)) {
-> > > > > +		dat = imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
-> > > > > +		mbox_chan_received_data(chan, (void *)&dat);
-> > > > > +	}
-> > > > > +
-> > > > > +	return IRQ_HANDLED;
-> > > > > +}
-> > > > > +
-> > > > > +static bool imx_mu_last_tx_done(struct mbox_chan *chan) {
-> > > > > +	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
-> > > > > +	struct imx_mu_con_priv *cp = chan->con_priv;
-> > > > > +	u32 val;
-> > > > > +
-> > > > > +	val = imx_mu_read(priv, IMX_MU_xSR);
-> > > > > +	/* test if transmit register is empty */
-> > > > > +	return (!!(val & IMX_MU_xSR_TEn(cp->bidx))); }
-> > > > > +
-> > > > > +static int imx_mu_send_data(struct mbox_chan *chan, void *data) {
-> > > > > +	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
-> > > > > +	struct imx_mu_con_priv *cp = chan->con_priv;
-> > > > > +	u32 *arg = data;
-> > > > > +
-> > > > > +	if (!imx_mu_last_tx_done(chan))
-> > > > > +		return -EBUSY;
-> > > > > +
-> > > > > +	imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
-> > > > > +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp-
-> >bidx), 0);
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int imx_mu_startup(struct mbox_chan *chan) {
-> > > > > +	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
-> > > > > +	struct imx_mu_con_priv *cp = chan->con_priv;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret = request_irq(cp->irq, imx_mu_isr,
-> > > > > +			  IRQF_SHARED, "imx_mu_chan", chan);
-> > > >
-> > > > I guess no need to assign the irq for each cp as we have only one irq.
-> > >
-> > > all irq chip controller have one sink and number of source limited
-> > > to imagination or amount of bits in a register. May be we will need
-> > > some day to write a irqchip driver to make it work as chained irq
-> controller.
-> > >
-> >
-> > We do need write an irqchip driver later because MU still supports
-> > another four general purpose interrupts which will be used by SCU
-> firmware.
-> > But I don't think it's necessary to abstract them for TX/RX interrutps.
-> > This makes thing simple.
-> 
-> You just gave me one more reason to keep current version :)
-> 
+Switch at91sam9x5 boards to the new PMC clock bindings.
 
-Anyway, I don't think it's a must change.
-You can keep it.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ arch/arm/boot/dts/at91sam9g15.dtsi       |   4 +
+ arch/arm/boot/dts/at91sam9g25.dtsi       |   4 +
+ arch/arm/boot/dts/at91sam9g25ek.dts      |   4 +-
+ arch/arm/boot/dts/at91sam9g35.dtsi       |   4 +
+ arch/arm/boot/dts/at91sam9x25.dtsi       |   4 +
+ arch/arm/boot/dts/at91sam9x35.dtsi       |   4 +
+ arch/arm/boot/dts/at91sam9x5.dtsi        | 326 +++--------------------
+ arch/arm/boot/dts/at91sam9x5_can.dtsi    |  18 +-
+ arch/arm/boot/dts/at91sam9x5_isi.dtsi    |  11 +-
+ arch/arm/boot/dts/at91sam9x5_lcd.dtsi    |  19 +-
+ arch/arm/boot/dts/at91sam9x5_macb0.dtsi  |  11 +-
+ arch/arm/boot/dts/at91sam9x5_macb1.dtsi  |  11 +-
+ arch/arm/boot/dts/at91sam9x5_usart3.dtsi |  11 +-
+ 13 files changed, 62 insertions(+), 369 deletions(-)
 
-> > > So, I don't see any technical reason to not do it. Are you?
-> > >
-> > > > > +	if (ret) {
-> > > > > +		dev_err(chan->mbox->dev,
-> > > > > +			"Unable to acquire IRQ %d\n", cp->irq);
-> > > > > +		return ret;
-> > > > > +	}
-> > > > > +
-> > > > > +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xCR_RIEn(cp-
-> >bidx), 0);
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static void imx_mu_shutdown(struct mbox_chan *chan) {
-> > > > > +	struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
-> > > > > +	struct imx_mu_con_priv *cp = chan->con_priv;
-> > > > > +
-> > > > > +	imx_mu_rmw(priv, IMX_MU_xCR, 0,
-> > > > > +		   IMX_MU_xCR_TIEn(cp->bidx) |
-> IMX_MU_xCR_RIEn(cp-
-> > > > > >bidx));
-> > > > > +
-> > > > > +	free_irq(cp->irq, chan);
-> > > > > +}
-> > > > > +
-> > > > > +static const struct mbox_chan_ops imx_mu_ops = {
-> > > > > +	.send_data = imx_mu_send_data,
-> > > > > +	.startup = imx_mu_startup,
-> > > > > +	.shutdown = imx_mu_shutdown,
-> > > > > +};
-> > > > > +
-> > > > > +static int imx_mu_probe(struct platform_device *pdev) {
-> > > > > +	struct device *dev = &pdev->dev;
-> > > > > +	struct resource *iomem;
-> > > > > +	struct imx_mu_priv *priv;
-> > > > > +	const struct imx_mu_cfg *dcfg;
-> > > > > +	unsigned int i, chans;
-> > > > > +	int irq, ret;
-> > > > > +
-> > > > > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > > > > +	if (!priv)
-> > > > > +		return -ENOMEM;
-> > > > > +
-> > > > > +	dcfg = of_device_get_match_data(dev);
-> > > > > +	if (!dcfg)
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > > +	priv->dcfg = dcfg;
-> > > > > +	priv->dev = dev;
-> > > > > +
-> > > > > +	iomem = platform_get_resource(pdev, IORESOURCE_MEM,
-> 0);
-> > > > > +	priv->base = devm_ioremap_resource(&pdev->dev, iomem);
-> > > > > +	if (IS_ERR(priv->base))
-> > > > > +		return PTR_ERR(priv->base);
-> > > > > +
-> > > > > +	irq = platform_get_irq(pdev, 0);
-> > > > > +	if (irq <= 0)
-> > > > > +		return irq < 0 ? irq : -EINVAL;
-> > > > > +
-> > > > > +	priv->clk = devm_clk_get(dev, NULL);
-> > > > > +	if (IS_ERR(priv->clk)) {
-> > > > > +		if (PTR_ERR(priv->clk) == -ENOENT) {
-> > > > > +			priv->clk = NULL;
-> > > > > +		} else {
-> > > > > +			dev_err(dev, "Failed to get clock\n");
-> > > >
-> > > > I guess we may not need print it for DEFER_PROBE error case.
-> > >
-> > > ok.
-> > >
-> > > > > +			return PTR_ERR(priv->clk);
-> > > > > +		}
-> > > > > +	}
-> > > > > +
-> > > > > +	ret = clk_prepare_enable(priv->clk);
-> > > > > +	if (ret) {
-> > > > > +		dev_err(dev, "Failed to enable clock\n");
-> > > > > +		return ret;
-> > > > > +	}
-> > > > > +
-> > > > > +	chans = min(dcfg->chans, IMX_MU_MAX_CHANS);
-> > > > > +	/* Initialize channel identifiers */
-> > > > > +	for (i = 0; i < chans; i++) {
-> > > > > +		struct imx_mu_con_priv *cp = &priv->con_priv[i];
-> > > > > +
-> > > > > +		cp->bidx = 3 - i;
-> > > >
-> > > > We may not need it if we improve the macro to calculate bidx by idx?
-> > >
-> > > Are all implementation of NXP MU have reversed bit order?
-> >
-> > AFAIK NXP MU library is used for all known platforms with MUs.
-> > So I guess yes.
-> >
-> > > Will it fit good for one channel implementation?
-> >
-> > If you see the SCU MU patches I sent, you will see I also need convert
-> > the channel index to channel mask. But here you're using bidx where
-> > SCU MU does have. So have a common channel index to mask macro may
-> be
-> > good for both using.
-> 
-> ok
-> 
-> > >
-> > > > > +		cp->idx = i;
-> > > > > +		cp->irq = irq;
-> > > > > +		priv->mbox_chans[i].con_priv = cp;
-> > > > > +	}
-> > > > > +
-> > > > > +	priv->mbox.dev = dev;
-> > > > > +	priv->mbox.ops = &imx_mu_ops;
-> > > > > +	priv->mbox.chans = priv->mbox_chans;
-> > > > > +	priv->mbox.num_chans = chans;
-> > > > > +	priv->mbox.txdone_irq = true;
-> > > > > +
-> > > > > +	platform_set_drvdata(pdev, priv);
-> > > > > +
-> > > > > +	if (priv->dcfg->init_hw)
-> > > > > +		priv->dcfg->init_hw(priv);
-> > > > > +
-> > > > > +	return mbox_controller_register(&priv->mbox);
-> > > > > +}
-> > > > > +
-> > > > > +static int imx_mu_remove(struct platform_device *pdev) {
-> > > > > +	struct imx_mu_priv *priv = platform_get_drvdata(pdev);
-> > > > > +
-> > > > > +	mbox_controller_unregister(&priv->mbox);
-> > > > > +	clk_disable_unprepare(priv->clk);
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +
-> > > > > +static void imx_mu_init_imx7d_a(struct imx_mu_priv *priv) {
-> > > > > +	/* Set default config */
-> > > > > +	imx_mu_write(priv, 0, IMX_MU_xCR);
-> > > >
-> > > > This will reset both MU Side A and B.
-> > > > So we may need make sure Side B is initialized after A?
-> > >
-> > > I assume it is implementation specific, as soon as it will be
-> > > needed, we may introduce extra DT flag. No need to cover all
-> > > possible cases if we don't have to.
-> > >
-> >
-> > We shouldn't reset SCU side, but SCU MU is not using it. So I'm okay.
-> > We just need to know the limitation later. Probably a note added here
-> > is better.
-> 
-> ok
-> 
-> > > > > +}
-> > > > > +
-> > > > > +static const struct imx_mu_cfg imx_mu_cfg_imx7d_a = {
-> > > > > +	.chans = IMX_MU_MAX_CHANS,
-> > > > > +	.init_hw = imx_mu_init_imx7d_a, };
-> > > > > +
-> > > > > +static const struct imx_mu_cfg imx_mu_cfg_imx7d_b = {
-> > > > > +	.chans = IMX_MU_MAX_CHANS,
-> > > > > +};
-> > > > > +
-> > > > > +static const struct of_device_id imx_mu_dt_ids[] = {
-> > > > > +	{ .compatible = "fsl,imx7s-mu-a", .data =
-> &imx_mu_cfg_imx7d_a },
-> > > > > +	{ .compatible = "fsl,imx7s-mu-b", .data =
-> &imx_mu_cfg_imx7d_b
-> > > > > +},
-> > > >
-> > > > I'm not sure whether we already have the decision to use
-> > > > fsl,<soc>-mu compatible String and use property to specify the mu side.
-> > > > Can you double check if we can switch to that way?
-> > >
-> > > ok.
-> > >
-> > > > And would you update the binding doc for M4 support according to
-> > > > the qxp mu one Which Is already signed by Rob's tag?
-> > >
-> > > ok.
-> > >
-> > > So, should I update my patch set including DT binding documentation
-> > > prior to yours?
-> > >
-> >
-> > I guess you can pick that patch and send with yours. Once your part is
-> > reviewed ok (should be quick) then I can send the SCU part based on
-> > your Patch series.
-> 
-> Normally it is preferred to squash all history for newly created files.
-> I'll take your patch as base with minimal changes and send some comments
-> to Rob.
-> 
-> > Finally, I'm glad that we meet an agreement now. As we're trying to
-> > Speed up the mx8qxp support and targets to hit v4.19 kernel.
-> > So hopefully you could help send the updated patch series soon.
-> > Then I can follow up with my work. :)
-> 
-> I'll try to finish it and resend new version at Monday. Ok?
-> 
-
-Good to me.
-Thanks
-
-Regards
-Dong Aisheng
-
-> > Regards
-> > Dong Aisheng
-> >
-> > > If yes, can you please contact Rob to avoid confusions.
-> > >
-> > > --
-> > > Pengutronix e.K.                           |                             |
-> > > Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-> > > Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0
-> |
-> > > Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-> >
-> 
-> --
-> Pengutronix e.K.                           |                             |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/boot/dts/at91sam9g15.dtsi b/arch/arm/boot/dts/at91sam9g15.dtsi
+index 27de7dc0f0e0..b34a6c65bd44 100644
+--- a/arch/arm/boot/dts/at91sam9g15.dtsi
++++ b/arch/arm/boot/dts/at91sam9g15.dtsi
+@@ -24,6 +24,10 @@
+ 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
+ 				      >;
+ 			};
++
++			pmc: pmc@fffffc00 {
++				compatible = "atmel,at91sam9g15-pmc", "atmel,at91sam9x5-pmc", "syscon";
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9g25.dtsi b/arch/arm/boot/dts/at91sam9g25.dtsi
+index 0898213f3bb2..d8bb56253e64 100644
+--- a/arch/arm/boot/dts/at91sam9g25.dtsi
++++ b/arch/arm/boot/dts/at91sam9g25.dtsi
+@@ -26,6 +26,10 @@
+ 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
+ 				      >;
+ 			};
++
++			pmc: pmc@fffffc00 {
++				compatible = "atmel,at91sam9g25-pmc", "atmel,at91sam9x5-pmc", "syscon";
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9g25ek.dts b/arch/arm/boot/dts/at91sam9g25ek.dts
+index 31fecc2cdaf9..ac730812a81d 100644
+--- a/arch/arm/boot/dts/at91sam9g25ek.dts
++++ b/arch/arm/boot/dts/at91sam9g25ek.dts
+@@ -32,9 +32,9 @@
+ 					pinctrl-0 = <&pinctrl_pck0_as_isi_mck &pinctrl_sensor_power &pinctrl_sensor_reset>;
+ 					resetb-gpios = <&pioA 7 GPIO_ACTIVE_LOW>;
+ 					pwdn-gpios = <&pioA 13 GPIO_ACTIVE_HIGH>;
+-					clocks = <&pck0>;
++					clocks = <&pmc PMC_TYPE_SYSTEM 8>;
+ 					clock-names = "xvclk";
+-					assigned-clocks = <&pck0>;
++					assigned-clocks = <&pmc PMC_TYPE_SYSTEM 8>;
+ 					assigned-clock-rates = <25000000>;
+ 					status = "okay";
+ 
+diff --git a/arch/arm/boot/dts/at91sam9g35.dtsi b/arch/arm/boot/dts/at91sam9g35.dtsi
+index ff4115886f97..333e158feb61 100644
+--- a/arch/arm/boot/dts/at91sam9g35.dtsi
++++ b/arch/arm/boot/dts/at91sam9g35.dtsi
+@@ -25,6 +25,10 @@
+ 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
+ 				      >;
+ 			};
++
++			pmc: pmc@fffffc00 {
++				compatible = "atmel,at91sam9g35-pmc", "atmel,at91sam9x5-pmc", "syscon";
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9x25.dtsi b/arch/arm/boot/dts/at91sam9x25.dtsi
+index 3c5fa3388997..a99703a262c9 100644
+--- a/arch/arm/boot/dts/at91sam9x25.dtsi
++++ b/arch/arm/boot/dts/at91sam9x25.dtsi
+@@ -27,6 +27,10 @@
+ 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
+ 				      >;
+ 			};
++
++			pmc: pmc@fffffc00 {
++				compatible = "atmel,at91sam9x25-pmc", "atmel,at91sam9x5-pmc", "syscon";
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9x35.dtsi b/arch/arm/boot/dts/at91sam9x35.dtsi
+index d9054e8167b7..bca274d33f68 100644
+--- a/arch/arm/boot/dts/at91sam9x35.dtsi
++++ b/arch/arm/boot/dts/at91sam9x35.dtsi
+@@ -26,6 +26,10 @@
+ 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
+ 				      >;
+ 			};
++
++			pmc: pmc@fffffc00 {
++				compatible = "atmel,at91sam9x35-pmc", "atmel,at91sam9x5-pmc", "syscon";
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
+index a3c3c3128148..808f1ea16f9f 100644
+--- a/arch/arm/boot/dts/at91sam9x5.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5.dtsi
+@@ -111,7 +111,7 @@
+ 			ramc0: ramc@ffffe800 {
+ 				compatible = "atmel,at91sam9g45-ddramc";
+ 				reg = <0xffffe800 0x200>;
+-				clocks = <&ddrck>;
++				clocks = <&pmc PMC_TYPE_SYSTEM 2>;
+ 				clock-names = "ddrck";
+ 			};
+ 
+@@ -124,269 +124,9 @@
+ 				compatible = "atmel,at91sam9x5-pmc", "syscon";
+ 				reg = <0xfffffc00 0x200>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				interrupt-controller;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-				#interrupt-cells = <1>;
+-
+-				main_rc_osc: main_rc_osc {
+-					compatible = "atmel,at91sam9x5-clk-main-rc-osc";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_MOSCRCS>;
+-					clock-frequency = <12000000>;
+-					clock-accuracy = <50000000>;
+-				};
+-
+-				main_osc: main_osc {
+-					compatible = "atmel,at91rm9200-clk-main-osc";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_MOSCS>;
+-					clocks = <&main_xtal>;
+-				};
+-
+-				main: mainck {
+-					compatible = "atmel,at91sam9x5-clk-main";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_MOSCSELS>;
+-					clocks = <&main_rc_osc>, <&main_osc>;
+-				};
+-
+-				plla: pllack {
+-					compatible = "atmel,at91rm9200-clk-pll";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_LOCKA>;
+-					clocks = <&main>;
+-					reg = <0>;
+-					atmel,clk-input-range = <2000000 32000000>;
+-					#atmel,pll-clk-output-range-cells = <4>;
+-					atmel,pll-clk-output-ranges = <745000000 800000000 0 0
+-								       695000000 750000000 1 0
+-								       645000000 700000000 2 0
+-								       595000000 650000000 3 0
+-								       545000000 600000000 0 1
+-								       495000000 555000000 1 1
+-								       445000000 500000000 2 1
+-								       400000000 450000000 3 1>;
+-				};
+-
+-				plladiv: plladivck {
+-					compatible = "atmel,at91sam9x5-clk-plldiv";
+-					#clock-cells = <0>;
+-					clocks = <&plla>;
+-				};
+-
+-				utmi: utmick {
+-					compatible = "atmel,at91sam9x5-clk-utmi";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_LOCKU>;
+-					clocks = <&main>;
+-				};
+-
+-				mck: masterck {
+-					compatible = "atmel,at91sam9x5-clk-master";
+-					#clock-cells = <0>;
+-					interrupts-extended = <&pmc AT91_PMC_MCKRDY>;
+-					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>;
+-					atmel,clk-output-range = <0 133333333>;
+-					atmel,clk-divisors = <1 2 4 3>;
+-					atmel,master-clk-have-div3-pres;
+-				};
+-
+-				usb: usbck {
+-					compatible = "atmel,at91sam9x5-clk-usb";
+-					#clock-cells = <0>;
+-					clocks = <&plladiv>, <&utmi>;
+-				};
+-
+-				prog: progck {
+-					compatible = "atmel,at91sam9x5-clk-programmable";
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-					interrupt-parent = <&pmc>;
+-					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
+-
+-					prog0: prog0 {
+-						#clock-cells = <0>;
+-						reg = <0>;
+-						interrupts = <AT91_PMC_PCKRDY(0)>;
+-					};
+-
+-					prog1: prog1 {
+-						#clock-cells = <0>;
+-						reg = <1>;
+-						interrupts = <AT91_PMC_PCKRDY(1)>;
+-					};
+-				};
+-
+-				smd: smdclk {
+-					compatible = "atmel,at91sam9x5-clk-smd";
+-					#clock-cells = <0>;
+-					clocks = <&plladiv>, <&utmi>;
+-				};
+-
+-				systemck {
+-					compatible = "atmel,at91rm9200-clk-system";
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-
+-					ddrck: ddrck {
+-						#clock-cells = <0>;
+-						reg = <2>;
+-						clocks = <&mck>;
+-					};
+-
+-					smdck: smdck {
+-						#clock-cells = <0>;
+-						reg = <4>;
+-						clocks = <&smd>;
+-					};
+-
+-					uhpck: uhpck {
+-						#clock-cells = <0>;
+-						reg = <6>;
+-						clocks = <&usb>;
+-					};
+-
+-					udpck: udpck {
+-						#clock-cells = <0>;
+-						reg = <7>;
+-						clocks = <&usb>;
+-					};
+-
+-					pck0: pck0 {
+-						#clock-cells = <0>;
+-						reg = <8>;
+-						clocks = <&prog0>;
+-					};
+-
+-					pck1: pck1 {
+-						#clock-cells = <0>;
+-						reg = <9>;
+-						clocks = <&prog1>;
+-					};
+-				};
+-
+-				periphck {
+-					compatible = "atmel,at91sam9x5-clk-peripheral";
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-					clocks = <&mck>;
+-
+-					pioAB_clk: pioAB_clk {
+-						#clock-cells = <0>;
+-						reg = <2>;
+-					};
+-
+-					pioCD_clk: pioCD_clk {
+-						#clock-cells = <0>;
+-						reg = <3>;
+-					};
+-
+-					smd_clk: smd_clk {
+-						#clock-cells = <0>;
+-						reg = <4>;
+-					};
+-
+-					usart0_clk: usart0_clk {
+-						#clock-cells = <0>;
+-						reg = <5>;
+-					};
+-
+-					usart1_clk: usart1_clk {
+-						#clock-cells = <0>;
+-						reg = <6>;
+-					};
+-
+-					usart2_clk: usart2_clk {
+-						#clock-cells = <0>;
+-						reg = <7>;
+-					};
+-
+-					twi0_clk: twi0_clk {
+-						reg = <9>;
+-						#clock-cells = <0>;
+-					};
+-
+-					twi1_clk: twi1_clk {
+-						#clock-cells = <0>;
+-						reg = <10>;
+-					};
+-
+-					twi2_clk: twi2_clk {
+-						#clock-cells = <0>;
+-						reg = <11>;
+-					};
+-
+-					mci0_clk: mci0_clk {
+-						#clock-cells = <0>;
+-						reg = <12>;
+-					};
+-
+-					spi0_clk: spi0_clk {
+-						#clock-cells = <0>;
+-						reg = <13>;
+-					};
+-
+-					spi1_clk: spi1_clk {
+-						#clock-cells = <0>;
+-						reg = <14>;
+-					};
+-
+-					uart0_clk: uart0_clk {
+-						#clock-cells = <0>;
+-						reg = <15>;
+-					};
+-
+-					uart1_clk: uart1_clk {
+-						#clock-cells = <0>;
+-						reg = <16>;
+-					};
+-
+-					tcb0_clk: tcb0_clk {
+-						#clock-cells = <0>;
+-						reg = <17>;
+-					};
+-
+-					pwm_clk: pwm_clk {
+-						#clock-cells = <0>;
+-						reg = <18>;
+-					};
+-
+-					adc_clk: adc_clk {
+-						#clock-cells = <0>;
+-						reg = <19>;
+-					};
+-
+-					dma0_clk: dma0_clk {
+-						#clock-cells = <0>;
+-						reg = <20>;
+-					};
+-
+-					dma1_clk: dma1_clk {
+-						#clock-cells = <0>;
+-						reg = <21>;
+-					};
+-
+-					uhphs_clk: uhphs_clk {
+-						#clock-cells = <0>;
+-						reg = <22>;
+-					};
+-
+-					udphs_clk: udphs_clk {
+-						#clock-cells = <0>;
+-						reg = <23>;
+-					};
+-
+-					mci1_clk: mci1_clk {
+-						#clock-cells = <0>;
+-						reg = <26>;
+-					};
+-
+-					ssc0_clk: ssc0_clk {
+-						#clock-cells = <0>;
+-						reg = <28>;
+-					};
+-				};
++				#clock-cells = <2>;
++				clocks = <&clk32k>, <&main_xtal>;
++				clock-names = "slow_clk", "main_xtal";
+ 			};
+ 
+ 			rstc@fffffe00 {
+@@ -405,7 +145,7 @@
+ 				compatible = "atmel,at91sam9260-pit";
+ 				reg = <0xfffffe30 0xf>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				clocks = <&mck>;
++				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
+ 			};
+ 
+ 			sckc@fffffe50 {
+@@ -438,7 +178,7 @@
+ 				#size-cells = <0>;
+ 				reg = <0xf8008000 0x100>;
+ 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&tcb0_clk>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k>;
+ 				clock-names = "t0_clk", "slow_clk";
+ 			};
+ 
+@@ -448,7 +188,7 @@
+ 				#size-cells = <0>;
+ 				reg = <0xf800c000 0x100>;
+ 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&tcb0_clk>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k>;
+ 				clock-names = "t0_clk", "slow_clk";
+ 			};
+ 
+@@ -457,7 +197,7 @@
+ 				reg = <0xffffec00 0x200>;
+ 				interrupts = <20 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#dma-cells = <2>;
+-				clocks = <&dma0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 20>;
+ 				clock-names = "dma_clk";
+ 			};
+ 
+@@ -466,7 +206,7 @@
+ 				reg = <0xffffee00 0x200>;
+ 				interrupts = <21 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#dma-cells = <2>;
+-				clocks = <&dma1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 21>;
+ 				clock-names = "dma_clk";
+ 			};
+ 
+@@ -864,7 +604,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioAB_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
+ 				};
+ 
+ 				pioB: gpio@fffff600 {
+@@ -876,7 +616,7 @@
+ 					#gpio-lines = <19>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioAB_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
+ 				};
+ 
+ 				pioC: gpio@fffff800 {
+@@ -887,7 +627,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioCD_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 3>;
+ 				};
+ 
+ 				pioD: gpio@fffffa00 {
+@@ -899,7 +639,7 @@
+ 					#gpio-lines = <22>;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioCD_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 3>;
+ 				};
+ 			};
+ 
+@@ -912,7 +652,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_ssc0_tx &pinctrl_ssc0_rx>;
+-				clocks = <&ssc0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 28>;
+ 				clock-names = "pclk";
+ 				status = "disabled";
+ 			};
+@@ -924,7 +664,7 @@
+ 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(0)>;
+ 				dma-names = "rxtx";
+ 				pinctrl-names = "default";
+-				clocks = <&mci0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
+ 				clock-names = "mci_clk";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+@@ -938,7 +678,7 @@
+ 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(0)>;
+ 				dma-names = "rxtx";
+ 				pinctrl-names = "default";
+-				clocks = <&mci1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 26>;
+ 				clock-names = "mci_clk";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+@@ -954,7 +694,7 @@
+ 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(8)>,
+ 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(9) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&mck>;
++				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -968,7 +708,7 @@
+ 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(3)>,
+ 				       <&dma0 1 (AT91_DMA_CFG_PER_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&usart0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -982,7 +722,7 @@
+ 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(5)>,
+ 				       <&dma0 1 (AT91_DMA_CFG_PER_ID(6) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&usart1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -996,7 +736,7 @@
+ 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(12)>,
+ 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(13) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&usart2_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1012,7 +752,7 @@
+ 				#size-cells = <0>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_i2c0>;
+-				clocks = <&twi0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -1027,7 +767,7 @@
+ 				#size-cells = <0>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_i2c1>;
+-				clocks = <&twi1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -1042,7 +782,7 @@
+ 				#size-cells = <0>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_i2c2>;
+-				clocks = <&twi2_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -1052,7 +792,7 @@
+ 				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 5>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_uart0>;
+-				clocks = <&uart0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1063,7 +803,7 @@
+ 				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 5>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_uart1>;
+-				clocks = <&uart1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1074,7 +814,7 @@
+ 				compatible = "atmel,at91sam9x5-adc";
+ 				reg = <0xf804c000 0x100>;
+ 				interrupts = <19 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&adc_clk>,
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 19>,
+ 					 <&adc_op_clk>;
+ 				clock-names = "adc_clk", "adc_op_clk";
+ 				atmel,adc-use-external-triggers;
+@@ -1121,7 +861,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_spi0>;
+-				clocks = <&spi0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+ 				clock-names = "spi_clk";
+ 				status = "disabled";
+ 			};
+@@ -1137,7 +877,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_spi1>;
+-				clocks = <&spi1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+ 				clock-names = "spi_clk";
+ 				status = "disabled";
+ 			};
+@@ -1149,7 +889,7 @@
+ 				reg = <0x00500000 0x80000
+ 				       0xf803c000 0x400>;
+ 				interrupts = <23 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&utmi>, <&udphs_clk>;
++				clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 23>;
+ 				clock-names = "hclk", "pclk";
+ 				status = "disabled";
+ 
+@@ -1229,7 +969,7 @@
+ 				compatible = "atmel,at91sam9rl-pwm";
+ 				reg = <0xf8034000 0x300>;
+ 				interrupts = <18 IRQ_TYPE_LEVEL_HIGH 4>;
+-				clocks = <&pwm_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 18>;
+ 				#pwm-cells = <3>;
+ 				status = "disabled";
+ 			};
+@@ -1239,7 +979,7 @@
+ 			compatible = "atmel,at91rm9200-ohci", "usb-ohci";
+ 			reg = <0x00600000 0x100000>;
+ 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH 2>;
+-			clocks = <&uhphs_clk>, <&uhphs_clk>, <&uhpck>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 22>, <&pmc PMC_TYPE_PERIPHERAL 22>, <&pmc PMC_TYPE_SYSTEM 6>;
+ 			clock-names = "ohci_clk", "hclk", "uhpck";
+ 			status = "disabled";
+ 		};
+@@ -1248,7 +988,7 @@
+ 			compatible = "atmel,at91sam9g45-ehci", "usb-ehci";
+ 			reg = <0x00700000 0x100000>;
+ 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH 2>;
+-			clocks = <&utmi>, <&uhphs_clk>;
++			clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 22>;
+ 			clock-names = "usb_clk", "ehci_clk";
+ 			status = "disabled";
+ 		};
+@@ -1266,7 +1006,7 @@
+ 				  0x3 0x0 0x40000000 0x10000000
+ 				  0x4 0x0 0x50000000 0x10000000
+ 				  0x5 0x0 0x60000000 0x10000000>;
+-			clocks = <&mck>;
++			clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
+ 			status = "disabled";
+ 
+ 			nand_controller: nand-controller {
+diff --git a/arch/arm/boot/dts/at91sam9x5_can.dtsi b/arch/arm/boot/dts/at91sam9x5_can.dtsi
+index 8eb2f9c1b978..125f9e3b49ad 100644
+--- a/arch/arm/boot/dts/at91sam9x5_can.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_can.dtsi
+@@ -13,27 +13,13 @@
+ / {
+ 	ahb {
+ 		apb {
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					can0_clk: can0_clk {
+-						#clock-cells = <0>;
+-						reg = <29>;
+-					};
+-
+-					can1_clk: can1_clk {
+-						#clock-cells = <0>;
+-						reg = <30>;
+-					};
+-				};
+-			};
+-
+ 			can0: can@f8000000 {
+ 				compatible = "atmel,at91sam9x5-can";
+ 				reg = <0xf8000000 0x300>;
+ 				interrupts = <29 IRQ_TYPE_LEVEL_HIGH 3>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can0_rx_tx>;
+-				clocks = <&can0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 29>;
+ 				clock-names = "can_clk";
+ 				status = "disabled";
+ 			};
+@@ -44,7 +30,7 @@
+ 				interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_can1_rx_tx>;
+-				clocks = <&can1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 30>;
+ 				clock-names = "can_clk";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm/boot/dts/at91sam9x5_isi.dtsi b/arch/arm/boot/dts/at91sam9x5_isi.dtsi
+index 8fc45ca4dcb5..c3e45b57b6a2 100644
+--- a/arch/arm/boot/dts/at91sam9x5_isi.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_isi.dtsi
+@@ -44,22 +44,13 @@
+ 				};
+ 			};
+ 
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					isi_clk: isi_clk {
+-						#clock-cells = <0>;
+-						reg = <25>;
+-					};
+-				};
+-			};
+-
+ 			isi: isi@f8048000 {
+ 				compatible = "atmel,at91sam9g45-isi";
+ 				reg = <0xf8048000 0x4000>;
+ 				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 5>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_isi_data_0_7>;
+-				clocks = <&isi_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>;
+ 				clock-names = "isi_clk";
+ 				status = "disabled";
+ 				port {
+diff --git a/arch/arm/boot/dts/at91sam9x5_lcd.dtsi b/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
+index 1629db9dd563..12595fb11691 100644
+--- a/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
+@@ -17,7 +17,7 @@
+ 				compatible = "atmel,at91sam9x5-hlcdc";
+ 				reg = <0xf8038000 0x4000>;
+ 				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&lcdc_clk>, <&lcdck>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_SYSTEM 3>, <&clk32k>;
+ 				clock-names = "periph_clk","sys_clk", "slow_clk";
+ 				status = "disabled";
+ 
+@@ -143,23 +143,6 @@
+ 					};
+ 				};
+ 			};
+-
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					lcdc_clk: lcdc_clk {
+-						#clock-cells = <0>;
+-						reg = <25>;
+-					};
+-				};
+-
+-				systemck {
+-					lcdck: lcdck {
+-						#clock-cells = <0>;
+-						reg = <3>;
+-						clocks = <&mck>;
+-					};
+-				};
+-			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/at91sam9x5_macb0.dtsi b/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
+index 73d7e30965ba..57c2e5a4fb53 100644
+--- a/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
+@@ -43,22 +43,13 @@
+ 				};
+ 			};
+ 
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					macb0_clk: macb0_clk {
+-						#clock-cells = <0>;
+-						reg = <24>;
+-					};
+-				};
+-			};
+-
+ 			macb0: ethernet@f802c000 {
+ 				compatible = "cdns,at91sam9260-macb", "cdns,macb";
+ 				reg = <0xf802c000 0x100>;
+ 				interrupts = <24 IRQ_TYPE_LEVEL_HIGH 3>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_macb0_rmii>;
+-				clocks = <&macb0_clk>, <&macb0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 24>, <&pmc PMC_TYPE_PERIPHERAL 24>;
+ 				clock-names = "hclk", "pclk";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm/boot/dts/at91sam9x5_macb1.dtsi b/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
+index d81980c40c7d..59b8da87d3c1 100644
+--- a/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
+@@ -31,22 +31,13 @@
+ 				};
+ 			};
+ 
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					macb1_clk: macb1_clk {
+-						#clock-cells = <0>;
+-						reg = <27>;
+-					};
+-				};
+-			};
+-
+ 			macb1: ethernet@f8030000 {
+ 				compatible = "cdns,at91sam9260-macb", "cdns,macb";
+ 				reg = <0xf8030000 0x100>;
+ 				interrupts = <27 IRQ_TYPE_LEVEL_HIGH 3>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_macb1_rmii>;
+-				clocks = <&macb1_clk>, <&macb1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 27>, <&pmc PMC_TYPE_PERIPHERAL 27>;
+ 				clock-names = "hclk", "pclk";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm/boot/dts/at91sam9x5_usart3.dtsi b/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
+index a32d12b406a3..9102dfbed5d8 100644
+--- a/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
++++ b/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
+@@ -42,15 +42,6 @@
+ 				};
+ 			};
+ 
+-			pmc: pmc@fffffc00 {
+-				periphck {
+-					usart3_clk: usart3_clk {
+-						#clock-cells = <0>;
+-						reg = <8>;
+-					};
+-				};
+-			};
+-
+ 			usart3: serial@f8028000 {
+ 				compatible = "atmel,at91sam9260-usart";
+ 				reg = <0xf8028000 0x200>;
+@@ -60,7 +51,7 @@
+ 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(14)>,
+ 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(15) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&usart3_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+-- 
+2.18.0
