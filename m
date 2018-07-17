@@ -1,42 +1,53 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/8] ARM: dts: tegra20: Add clock entry to External Memory Controller
-Date: Thu, 19 Jul 2018 16:21:29 +0300
-Message-Id: <20180719132132.16153-6-digetx@gmail.com>
-In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
-References: <20180719132132.16153-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38628 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728624AbeGQJYQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Jul 2018 05:24:16 -0400
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+CC: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v5 02/11] dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
+Date: Tue, 17 Jul 2018 16:52:23 +0800
+Message-ID: <1531817552-17221-3-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock entry into the EMC DT node.
+This patch adds MT6765 smi binding document
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 1 +
+ .../memory-controllers/mediatek,smi-common.txt     |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 9eb4163a4390..979f38293fe5 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -633,6 +633,7 @@
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f400 0x200>;
- 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_EMC>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+index aa614b2..0bf64f5 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+@@ -15,6 +15,7 @@ not needed for SMI generation 2.
+ Required properties:
+ - compatible : must be one of :
+ 	"mediatek,mt2701-smi-common"
++	"mediatek,mt6765-smi-common", "syscon"
+ 	"mediatek,mt8173-smi-common"
+ - reg : the register and size of the SMI block.
+ - power-domains : a phandle to the power domain of this local arbiter.
 -- 
-2.18.0
+1.7.9.5
+
