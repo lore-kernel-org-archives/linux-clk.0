@@ -1,339 +1,1568 @@
-Return-Path: <lkp@intel.com>
-Date: Thu, 19 Jul 2018 06:54:45 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: kbuild-all@01.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: Re: [PATCH] clk: Add functions to get optional clocks
-Message-ID: <201807190653.QdWtaxVf%fengguang.wu@intel.com>
-References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="AqsLC8rIMeq19msA"
-In-Reply-To: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 2/3] clk: meson: clk-pll: remove od parameters
+Date: Tue, 17 Jul 2018 11:56:16 +0200
+Message-Id: <20180717095617.12240-3-jbrunet@baylibre.com>
+In-Reply-To: <20180717095617.12240-1-jbrunet@baylibre.com>
+References: <20180717095617.12240-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Remove od parameters from pll clocks and add post dividers clocks
+instead. Some clock, especially the one which feature several ods,
+may provide output between those ods. Also, some drivers, such
+as the hdmi driver, may require a more detailed control of the
+clock dividers, compared to what CCF would perform automatically.
 
---AqsLC8rIMeq19msA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+One added benefit of removing ods is that it also greatly reduce the
+size of the rate parameter tables.
 
-Hi Phil,
+In the future, we could possibly take the predivider 'n' out of this
+driver as well. To do so, we will need to understand the constraints
+for the PLL to lock and whether or not it depends on the input clock
+rate.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v4.18-rc5 next-20180718]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Phil-Edworthy/clk-Add-functions-to-get-optional-clocks/20180719-024451
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-reproduce: make htmldocs
-
-All warnings (new ones prefixed by >>):
-
-   WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
-   mm/mempool.c:228: warning: Function parameter or member 'pool' not described in 'mempool_init'
-   Error: Cannot open file arch/x86/kernel/cpu/mtrr/main.c
-   Error: Cannot open file arch/x86/kernel/cpu/mtrr/main.c
-   WARNING: kernel-doc 'scripts/kernel-doc -rst -enable-lineno -export arch/x86/kernel/cpu/mtrr/main.c' failed with return code 2
->> include/linux/clk.h:300: warning: Function parameter or member 'dev' not described in 'clk_get_optional'
->> include/linux/clk.h:300: warning: Function parameter or member 'id' not described in 'clk_get_optional'
->> include/linux/clk.h:366: warning: Function parameter or member 'dev' not described in 'devm_clk_get_optional'
->> include/linux/clk.h:366: warning: Function parameter or member 'id' not described in 'devm_clk_get_optional'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ibss' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.connect' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.keys' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ie' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ie_len' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.bssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.ssid' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.default_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.default_mgmt_key' not described in 'wireless_dev'
-   include/net/cfg80211.h:4279: warning: Function parameter or member 'wext.prev_bssid_valid' not described in 'wireless_dev'
-   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.units_pos' not described in 'ieee80211_hw'
-   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.accuracy' not described in 'ieee80211_hw'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.rts_cts_rate_idx' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_rts' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_cts_prot' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.short_preamble' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.skip_table' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.jiffies' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.vif' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.hw_key' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.flags' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'control.enqueue_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'ack' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'ack.cookie' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_ack_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_len' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.antenna' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.tx_time' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.is_valid_ack_signal' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'status.status_driver_data' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'driver_rates' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'pad' not described in 'ieee80211_tx_info'
-   include/net/mac80211.h:955: warning: Function parameter or member 'rate_driver_data' not described in 'ieee80211_tx_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'rx_stats_avg.chain_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.filtered' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.retry_count' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.lost_packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_tdls_pkt_time' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_retries' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.msdu_failed' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.last_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.ack_signal_filled' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'status_stats.avg_ack_signal' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.packets' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.bytes' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.last_rate' not described in 'sta_info'
-   net/mac80211/sta_info.h:588: warning: Function parameter or member 'tx_stats.msdu' not described in 'sta_info'
-   kernel/sched/fair.c:3760: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
-   include/linux/device.h:93: warning: bad line: this bus.
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.active' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.cb' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.poll' not described in 'dma_buf'
-   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.active' not described in 'dma_buf'
-   include/linux/dma-fence-array.h:54: warning: Function parameter or member 'work' not described in 'dma_fence_array'
-   include/linux/gpio/driver.h:142: warning: Function parameter or member 'request_key' not described in 'gpio_irq_chip'
-   include/linux/iio/hw-consumer.h:1: warning: no structured comments found
-   include/linux/device.h:94: warning: bad line: this bus.
-   include/linux/input/sparse-keymap.h:46: warning: Function parameter or member 'sw' not described in 'key_entry'
-   include/linux/regulator/driver.h:227: warning: Function parameter or member 'resume_early' not described in 'regulator_ops'
-   drivers/regulator/core.c:4465: warning: Excess function parameter 'state' description in 'regulator_suspend_late'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw0' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw1' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw2' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw3' not described in 'irb'
-   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.eadm' not described in 'irb'
-   drivers/usb/dwc3/gadget.c:510: warning: Excess function parameter 'dwc' description in 'dwc3_gadget_start_config'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_pin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_unpin' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_res_obj' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_get_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_import_sg_table' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vunmap' not described in 'drm_driver'
-   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_mmap' not described in 'drm_driver'
-   drivers/gpu/drm/i915/i915_vma.h:48: warning: cannot understand function prototype: 'struct i915_vma '
-   drivers/gpu/drm/i915/i915_vma.h:1: warning: no structured comments found
-   include/drm/tinydrm/tinydrm.h:34: warning: Function parameter or member 'fb_dirty' not described in 'tinydrm_device'
-   drivers/gpu/drm/tinydrm/mipi-dbi.c:272: warning: Function parameter or member 'crtc_state' not described in 'mipi_dbi_enable_flush'
-   drivers/gpu/drm/tinydrm/mipi-dbi.c:272: warning: Function parameter or member 'plane_state' not described in 'mipi_dbi_enable_flush'
-
-vim +300 include/linux/clk.h
-
- > 300	
-   301	/**
-   302	 * clk_bulk_get - lookup and obtain a number of references to clock producer.
-   303	 * @dev: device for clock "consumer"
-   304	 * @num_clks: the number of clk_bulk_data
-   305	 * @clks: the clk_bulk_data table of consumer
-   306	 *
-   307	 * This helper function allows drivers to get several clk consumers in one
-   308	 * operation. If any of the clk cannot be acquired then any clks
-   309	 * that were obtained will be freed before returning to the caller.
-   310	 *
-   311	 * Returns 0 if all clocks specified in clk_bulk_data table are obtained
-   312	 * successfully, or valid IS_ERR() condition containing errno.
-   313	 * The implementation uses @dev and @clk_bulk_data.id to determine the
-   314	 * clock consumer, and thereby the clock producer.
-   315	 * The clock returned is stored in each @clk_bulk_data.clk field.
-   316	 *
-   317	 * Drivers must assume that the clock source is not enabled.
-   318	 *
-   319	 * clk_bulk_get should not be called from within interrupt context.
-   320	 */
-   321	int __must_check clk_bulk_get(struct device *dev, int num_clks,
-   322				      struct clk_bulk_data *clks);
-   323	
-   324	/**
-   325	 * devm_clk_bulk_get - managed get multiple clk consumers
-   326	 * @dev: device for clock "consumer"
-   327	 * @num_clks: the number of clk_bulk_data
-   328	 * @clks: the clk_bulk_data table of consumer
-   329	 *
-   330	 * Return 0 on success, an errno on failure.
-   331	 *
-   332	 * This helper function allows drivers to get several clk
-   333	 * consumers in one operation with management, the clks will
-   334	 * automatically be freed when the device is unbound.
-   335	 */
-   336	int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
-   337					   struct clk_bulk_data *clks);
-   338	
-   339	/**
-   340	 * devm_clk_get - lookup and obtain a managed reference to a clock producer.
-   341	 * @dev: device for clock "consumer"
-   342	 * @id: clock consumer ID
-   343	 *
-   344	 * Returns a struct clk corresponding to the clock producer, or
-   345	 * valid IS_ERR() condition containing errno.  The implementation
-   346	 * uses @dev and @id to determine the clock consumer, and thereby
-   347	 * the clock producer.  (IOW, @id may be identical strings, but
-   348	 * clk_get may return different clock producers depending on @dev.)
-   349	 *
-   350	 * Drivers must assume that the clock source is not enabled.
-   351	 *
-   352	 * devm_clk_get should not be called from within interrupt context.
-   353	 *
-   354	 * The clock will automatically be freed when the device is unbound
-   355	 * from the bus.
-   356	 */
-   357	struct clk *devm_clk_get(struct device *dev, const char *id);
-   358	
-   359	/**
-   360	 * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-   361	 *			   clock producer.
-   362	 * Behaves the same as devm_clk_get except where there is no clock producer. In
-   363	 * this case, instead of returning -ENOENT, the function returns NULL.
-   364	 */
-   365	struct clk *devm_clk_get_optional(struct device *dev, const char *id);
- > 366	
-
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/clk/meson/axg.c     | 279 ++++++++++++++------------
+ drivers/clk/meson/axg.h     |   8 +-
+ drivers/clk/meson/clk-pll.c |  40 ++--
+ drivers/clk/meson/clkc.h    |   9 +-
+ drivers/clk/meson/gxbb.c    | 474 +++++++++++++++++++++-----------------------
+ drivers/clk/meson/gxbb.h    |  10 +-
+ drivers/clk/meson/meson8b.c | 148 +++++++-------
+ drivers/clk/meson/meson8b.h |   5 +-
+ 8 files changed, 480 insertions(+), 493 deletions(-)
 
---AqsLC8rIMeq19msA
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-wLkznaYa6LO+GjQg/VFcmf+34nGX6lkAAA==
-
---AqsLC8rIMeq19msA--
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 6d8976554656..572358062459 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -22,7 +22,7 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static struct clk_regmap axg_fixed_pll = {
++static struct clk_regmap axg_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_MPLL_CNTL,
+@@ -39,11 +39,6 @@ static struct clk_regmap axg_fixed_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_MPLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_MPLL_CNTL2,
+ 			.shift   = 0,
+@@ -61,14 +56,29 @@ static struct clk_regmap axg_fixed_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fixed_pll",
++		.name = "fixed_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
+-static struct clk_regmap axg_sys_pll = {
++static struct clk_regmap axg_fixed_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_MPLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fixed_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "fixed_pll_dco" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap axg_sys_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+@@ -85,11 +95,6 @@ static struct clk_regmap axg_sys_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_SYS_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+ 			.shift   = 31,
+@@ -102,7 +107,7 @@ static struct clk_regmap axg_sys_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "sys_pll",
++		.name = "sys_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -110,94 +115,51 @@ static struct clk_regmap axg_sys_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap axg_sys_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_SYS_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "sys_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "sys_pll_dco" },
++		.num_parents = 1,
++	},
++};
++
+ static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
+-	PLL_RATE(240000000, 40, 1, 2),
+-	PLL_RATE(246000000, 41, 1, 2),
+-	PLL_RATE(252000000, 42, 1, 2),
+-	PLL_RATE(258000000, 43, 1, 2),
+-	PLL_RATE(264000000, 44, 1, 2),
+-	PLL_RATE(270000000, 45, 1, 2),
+-	PLL_RATE(276000000, 46, 1, 2),
+-	PLL_RATE(282000000, 47, 1, 2),
+-	PLL_RATE(288000000, 48, 1, 2),
+-	PLL_RATE(294000000, 49, 1, 2),
+-	PLL_RATE(300000000, 50, 1, 2),
+-	PLL_RATE(306000000, 51, 1, 2),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(318000000, 53, 1, 2),
+-	PLL_RATE(324000000, 54, 1, 2),
+-	PLL_RATE(330000000, 55, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(342000000, 57, 1, 2),
+-	PLL_RATE(348000000, 58, 1, 2),
+-	PLL_RATE(354000000, 59, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(366000000, 61, 1, 2),
+-	PLL_RATE(372000000, 62, 1, 2),
+-	PLL_RATE(378000000, 63, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(390000000, 65, 1, 3),
+-	PLL_RATE(396000000, 66, 1, 3),
+-	PLL_RATE(402000000, 67, 1, 3),
+-	PLL_RATE(408000000, 68, 1, 3),
+-	PLL_RATE(480000000, 40, 1, 1),
+-	PLL_RATE(492000000, 41, 1, 1),
+-	PLL_RATE(504000000, 42, 1, 1),
+-	PLL_RATE(516000000, 43, 1, 1),
+-	PLL_RATE(528000000, 44, 1, 1),
+-	PLL_RATE(540000000, 45, 1, 1),
+-	PLL_RATE(552000000, 46, 1, 1),
+-	PLL_RATE(564000000, 47, 1, 1),
+-	PLL_RATE(576000000, 48, 1, 1),
+-	PLL_RATE(588000000, 49, 1, 1),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(612000000, 51, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(636000000, 53, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(660000000, 55, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(684000000, 57, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(708000000, 59, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(732000000, 61, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(756000000, 63, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(780000000, 65, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(804000000, 67, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(960000000, 40, 1, 0),
+-	PLL_RATE(984000000, 41, 1, 0),
+-	PLL_RATE(1008000000, 42, 1, 0),
+-	PLL_RATE(1032000000, 43, 1, 0),
+-	PLL_RATE(1056000000, 44, 1, 0),
+-	PLL_RATE(1080000000, 45, 1, 0),
+-	PLL_RATE(1104000000, 46, 1, 0),
+-	PLL_RATE(1128000000, 47, 1, 0),
+-	PLL_RATE(1152000000, 48, 1, 0),
+-	PLL_RATE(1176000000, 49, 1, 0),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
+-	PLL_RATE(1560000000, 65, 1, 0),
+-	PLL_RATE(1584000000, 66, 1, 0),
+-	PLL_RATE(1608000000, 67, 1, 0),
+-	PLL_RATE(1632000000, 68, 1, 0),
++	PLL_RATE(960000000, 40, 1),
++	PLL_RATE(984000000, 41, 1),
++	PLL_RATE(1008000000, 42, 1),
++	PLL_RATE(1032000000, 43, 1),
++	PLL_RATE(1056000000, 44, 1),
++	PLL_RATE(1080000000, 45, 1),
++	PLL_RATE(1104000000, 46, 1),
++	PLL_RATE(1128000000, 47, 1),
++	PLL_RATE(1152000000, 48, 1),
++	PLL_RATE(1176000000, 49, 1),
++	PLL_RATE(1200000000, 50, 1),
++	PLL_RATE(1224000000, 51, 1),
++	PLL_RATE(1248000000, 52, 1),
++	PLL_RATE(1272000000, 53, 1),
++	PLL_RATE(1296000000, 54, 1),
++	PLL_RATE(1320000000, 55, 1),
++	PLL_RATE(1344000000, 56, 1),
++	PLL_RATE(1368000000, 57, 1),
++	PLL_RATE(1392000000, 58, 1),
++	PLL_RATE(1416000000, 59, 1),
++	PLL_RATE(1440000000, 60, 1),
++	PLL_RATE(1464000000, 61, 1),
++	PLL_RATE(1488000000, 62, 1),
++	PLL_RATE(1512000000, 63, 1),
++	PLL_RATE(1536000000, 64, 1),
++	PLL_RATE(1560000000, 65, 1),
++	PLL_RATE(1584000000, 66, 1),
++	PLL_RATE(1608000000, 67, 1),
++	PLL_RATE(1632000000, 68, 1),
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -209,7 +171,7 @@ static const struct reg_sequence axg_gp0_init_regs[] = {
+ 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
+ };
+ 
+-static struct clk_regmap axg_gp0_pll = {
++static struct clk_regmap axg_gp0_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+@@ -226,11 +188,6 @@ static struct clk_regmap axg_gp0_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_GP0_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_GP0_PLL_CNTL1,
+ 			.shift   = 0,
+@@ -251,13 +208,29 @@ static struct clk_regmap axg_gp0_pll = {
+ 		.init_count = ARRAY_SIZE(axg_gp0_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "gp0_pll",
++		.name = "gp0_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
++static struct clk_regmap axg_gp0_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_GP0_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "gp0_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "gp0_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static const struct reg_sequence axg_hifi_init_regs[] = {
+ 	{ .reg = HHI_HIFI_PLL_CNTL1,	.def = 0xc084b000 },
+ 	{ .reg = HHI_HIFI_PLL_CNTL2,	.def = 0xb75020be },
+@@ -266,7 +239,7 @@ static const struct reg_sequence axg_hifi_init_regs[] = {
+ 	{ .reg = HHI_HIFI_PLL_CNTL5,	.def = 0x00058000 },
+ };
+ 
+-static struct clk_regmap axg_hifi_pll = {
++static struct clk_regmap axg_hifi_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_HIFI_PLL_CNTL,
+@@ -283,11 +256,6 @@ static struct clk_regmap axg_hifi_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_HIFI_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_HIFI_PLL_CNTL5,
+ 			.shift   = 0,
+@@ -309,13 +277,29 @@ static struct clk_regmap axg_hifi_pll = {
+ 		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "hifi_pll",
++		.name = "hifi_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
++static struct clk_regmap axg_hifi_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HIFI_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hifi_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "hifi_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_fixed_factor axg_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+@@ -645,11 +629,9 @@ static struct clk_regmap axg_mpll3 = {
+ 
+ static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
+ 	{
+-		.rate	= 100000000,
++		.rate	= 1600000000,
+ 		.m	= 200,
+ 		.n	= 3,
+-		.od	= 1,
+-		.od2	= 3,
+ 	},
+ 	{ /* sentinel */ },
+ };
+@@ -661,9 +643,10 @@ static const struct reg_sequence axg_pcie_init_regs[] = {
+ 	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0xc000004d },
+ 	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x00078000 },
+ 	{ .reg = HHI_PCIE_PLL_CNTL6,	.def = 0x002323c6 },
++	{ .reg = HHI_PCIE_PLL_CNTL,     .def = 0x400106c8 },
+ };
+ 
+-static struct clk_regmap axg_pcie_pll = {
++static struct clk_regmap axg_pcie_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_PCIE_PLL_CNTL,
+@@ -680,16 +663,6 @@ static struct clk_regmap axg_pcie_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_PCIE_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+-		.od2 = {
+-			.reg_off = HHI_PCIE_PLL_CNTL6,
+-			.shift   = 6,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_PCIE_PLL_CNTL1,
+ 			.shift   = 0,
+@@ -710,13 +683,45 @@ static struct clk_regmap axg_pcie_pll = {
+ 		.init_count = ARRAY_SIZE(axg_pcie_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "pcie_pll",
++		.name = "pcie_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+ 
++static struct clk_regmap axg_pcie_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_PCIE_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll_od",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "pcie_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_pcie_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_PCIE_PLL_CNTL6,
++		.shift = 6,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "pcie_pll_od" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_regmap axg_pcie_mux = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = HHI_PCIE_PLL_CNTL6,
+@@ -1129,6 +1134,12 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
+ 		[CLKID_GEN_CLK_SEL]		= &axg_gen_clk_sel.hw,
+ 		[CLKID_GEN_CLK_DIV]		= &axg_gen_clk_div.hw,
+ 		[CLKID_GEN_CLK]			= &axg_gen_clk.hw,
++		[CLKID_SYS_PLL_DCO]		= &axg_sys_pll_dco.hw,
++		[CLKID_FIXED_PLL_DCO]		= &axg_fixed_pll_dco.hw,
++		[CLKID_GP0_PLL_DCO]		= &axg_gp0_pll_dco.hw,
++		[CLKID_HIFI_PLL_DCO]		= &axg_hifi_pll_dco.hw,
++		[CLKID_PCIE_PLL_DCO]		= &axg_pcie_pll_dco.hw,
++		[CLKID_PCIE_PLL_OD]		= &axg_pcie_pll_od.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -1207,6 +1218,8 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_fclk_div4,
+ 	&axg_fclk_div5,
+ 	&axg_fclk_div7,
++	&axg_pcie_pll_dco,
++	&axg_pcie_pll_od,
+ 	&axg_pcie_pll,
+ 	&axg_pcie_mux,
+ 	&axg_pcie_ref,
+@@ -1216,6 +1229,12 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_gen_clk_sel,
+ 	&axg_gen_clk_div,
+ 	&axg_gen_clk,
++	&axg_fixed_pll_dco,
++	&axg_sys_pll_dco,
++	&axg_gp0_pll_dco,
++	&axg_hifi_pll_dco,
++	&axg_pcie_pll_dco,
++	&axg_pcie_pll_od,
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
+index 1d04144a1b2c..0431dabac629 100644
+--- a/drivers/clk/meson/axg.h
++++ b/drivers/clk/meson/axg.h
+@@ -133,8 +133,14 @@
+ #define CLKID_PCIE_REF				78
+ #define CLKID_GEN_CLK_SEL			82
+ #define CLKID_GEN_CLK_DIV			83
++#define CLKID_SYS_PLL_DCO			85
++#define CLKID_FIXED_PLL_DCO			86
++#define CLKID_GP0_PLL_DCO			87
++#define CLKID_HIFI_PLL_DCO			88
++#define CLKID_PCIE_PLL_DCO			89
++#define CLKID_PCIE_PLL_OD			90
+ 
+-#define NR_CLKS					85
++#define NR_CLKS					91
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/axg-clkc.h>
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 8aaefe67025f..348a866f09eb 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -11,15 +11,19 @@
+  * In the most basic form, a Meson PLL is composed as follows:
+  *
+  *                     PLL
+- *      +------------------------------+
+- *      |                              |
+- * in -----[ /N ]---[ *M ]---[ >>OD ]----->> out
+- *      |         ^        ^           |
+- *      +------------------------------+
+- *                |        |
+- *               FREF     VCO
++ *        +--------------------------------+
++ *        |                                |
++ *        |             +--+               |
++ *  in >>-----[ /N ]--->|  |      +-----+  |
++ *        |             |  |------| DCO |---->> out
++ *        |  +--------->|  |      +--v--+  |
++ *        |  |          +--+         |     |
++ *        |  |                       |     |
++ *        |  +--[ *(M + (F/Fmax) ]<--+     |
++ *        |                                |
++ *        +--------------------------------+
+  *
+- * out = in * (m + frac / frac_max) / (n << sum(ods))
++ * out = in * (m + frac / frac_max) / n
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -46,7 +50,6 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+ 					  struct meson_clk_pll_data *pll)
+ {
+ 	u64 rate = (u64)parent_rate * pllt->m;
+-	unsigned int od = pllt->od + pllt->od2 + pllt->od3;
+ 
+ 	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
+ 		u64 frac_rate = (u64)parent_rate * frac;
+@@ -55,7 +58,7 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+ 					 (1 << pll->frac.width));
+ 	}
+ 
+-	return DIV_ROUND_UP_ULL(rate, pllt->n << od);
++	return DIV_ROUND_UP_ULL(rate, pllt->n);
+ }
+ 
+ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+@@ -68,15 +71,6 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	pllt.n = meson_parm_read(clk->map, &pll->n);
+ 	pllt.m = meson_parm_read(clk->map, &pll->m);
+-	pllt.od = meson_parm_read(clk->map, &pll->od);
+-
+-	pllt.od2 = MESON_PARM_APPLICABLE(&pll->od2) ?
+-		meson_parm_read(clk->map, &pll->od2) :
+-		0;
+-
+-	pllt.od3 = MESON_PARM_APPLICABLE(&pll->od3) ?
+-		meson_parm_read(clk->map, &pll->od3) :
+-		0;
+ 
+ 	frac = MESON_PARM_APPLICABLE(&pll->frac) ?
+ 		meson_parm_read(clk->map, &pll->frac) :
+@@ -93,8 +87,6 @@ static u16 __pll_params_with_frac(unsigned long rate,
+ 	u16 frac_max = (1 << pll->frac.width);
+ 	u64 val = (u64)rate * pllt->n;
+ 
+-	val <<= pllt->od + pllt->od2 + pllt->od3;
+-
+ 	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
+ 		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
+ 	else
+@@ -242,13 +234,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	meson_parm_write(clk->map, &pll->n, pllt->n);
+ 	meson_parm_write(clk->map, &pll->m, pllt->m);
+-	meson_parm_write(clk->map, &pll->od, pllt->od);
+-
+-	if (MESON_PARM_APPLICABLE(&pll->od2))
+-		meson_parm_write(clk->map, &pll->od2, pllt->od2);
+ 
+-	if (MESON_PARM_APPLICABLE(&pll->od3))
+-		meson_parm_write(clk->map, &pll->od3, pllt->od3);
+ 
+ 	if (MESON_PARM_APPLICABLE(&pll->frac)) {
+ 		frac = __pll_params_with_frac(rate, parent_rate, pllt, pll);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index c2ee37a78ceb..a2245e857f70 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -47,17 +47,13 @@ struct pll_rate_table {
+ 	unsigned long	rate;
+ 	u16		m;
+ 	u16		n;
+-	u16		od;
+-	u16		od2;
+-	u16		od3;
+ };
+ 
+-#define PLL_RATE(_r, _m, _n, _od)					\
++#define PLL_RATE(_r, _m, _n)						\
+ 	{								\
+ 		.rate		= (_r),					\
+ 		.m		= (_m),					\
+ 		.n		= (_n),					\
+-		.od		= (_od),				\
+ 	}
+ 
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+@@ -67,9 +63,6 @@ struct meson_clk_pll_data {
+ 	struct parm m;
+ 	struct parm n;
+ 	struct parm frac;
+-	struct parm od;
+-	struct parm od2;
+-	struct parm od3;
+ 	struct parm l;
+ 	struct parm rst;
+ 	const struct reg_sequence *init_regs;
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 5ed34566917c..e2d94498f098 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -19,163 +19,70 @@
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+ static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
+-	PLL_RATE(96000000, 32, 1, 3),
+-	PLL_RATE(99000000, 33, 1, 3),
+-	PLL_RATE(102000000, 34, 1, 3),
+-	PLL_RATE(105000000, 35, 1, 3),
+-	PLL_RATE(108000000, 36, 1, 3),
+-	PLL_RATE(111000000, 37, 1, 3),
+-	PLL_RATE(114000000, 38, 1, 3),
+-	PLL_RATE(117000000, 39, 1, 3),
+-	PLL_RATE(120000000, 40, 1, 3),
+-	PLL_RATE(123000000, 41, 1, 3),
+-	PLL_RATE(126000000, 42, 1, 3),
+-	PLL_RATE(129000000, 43, 1, 3),
+-	PLL_RATE(132000000, 44, 1, 3),
+-	PLL_RATE(135000000, 45, 1, 3),
+-	PLL_RATE(138000000, 46, 1, 3),
+-	PLL_RATE(141000000, 47, 1, 3),
+-	PLL_RATE(144000000, 48, 1, 3),
+-	PLL_RATE(147000000, 49, 1, 3),
+-	PLL_RATE(150000000, 50, 1, 3),
+-	PLL_RATE(153000000, 51, 1, 3),
+-	PLL_RATE(156000000, 52, 1, 3),
+-	PLL_RATE(159000000, 53, 1, 3),
+-	PLL_RATE(162000000, 54, 1, 3),
+-	PLL_RATE(165000000, 55, 1, 3),
+-	PLL_RATE(168000000, 56, 1, 3),
+-	PLL_RATE(171000000, 57, 1, 3),
+-	PLL_RATE(174000000, 58, 1, 3),
+-	PLL_RATE(177000000, 59, 1, 3),
+-	PLL_RATE(180000000, 60, 1, 3),
+-	PLL_RATE(183000000, 61, 1, 3),
+-	PLL_RATE(186000000, 62, 1, 3),
+-	PLL_RATE(192000000, 32, 1, 2),
+-	PLL_RATE(198000000, 33, 1, 2),
+-	PLL_RATE(204000000, 34, 1, 2),
+-	PLL_RATE(210000000, 35, 1, 2),
+-	PLL_RATE(216000000, 36, 1, 2),
+-	PLL_RATE(222000000, 37, 1, 2),
+-	PLL_RATE(228000000, 38, 1, 2),
+-	PLL_RATE(234000000, 39, 1, 2),
+-	PLL_RATE(240000000, 40, 1, 2),
+-	PLL_RATE(246000000, 41, 1, 2),
+-	PLL_RATE(252000000, 42, 1, 2),
+-	PLL_RATE(258000000, 43, 1, 2),
+-	PLL_RATE(264000000, 44, 1, 2),
+-	PLL_RATE(270000000, 45, 1, 2),
+-	PLL_RATE(276000000, 46, 1, 2),
+-	PLL_RATE(282000000, 47, 1, 2),
+-	PLL_RATE(288000000, 48, 1, 2),
+-	PLL_RATE(294000000, 49, 1, 2),
+-	PLL_RATE(300000000, 50, 1, 2),
+-	PLL_RATE(306000000, 51, 1, 2),
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(318000000, 53, 1, 2),
+-	PLL_RATE(324000000, 54, 1, 2),
+-	PLL_RATE(330000000, 55, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(342000000, 57, 1, 2),
+-	PLL_RATE(348000000, 58, 1, 2),
+-	PLL_RATE(354000000, 59, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(366000000, 61, 1, 2),
+-	PLL_RATE(372000000, 62, 1, 2),
+-	PLL_RATE(384000000, 32, 1, 1),
+-	PLL_RATE(396000000, 33, 1, 1),
+-	PLL_RATE(408000000, 34, 1, 1),
+-	PLL_RATE(420000000, 35, 1, 1),
+-	PLL_RATE(432000000, 36, 1, 1),
+-	PLL_RATE(444000000, 37, 1, 1),
+-	PLL_RATE(456000000, 38, 1, 1),
+-	PLL_RATE(468000000, 39, 1, 1),
+-	PLL_RATE(480000000, 40, 1, 1),
+-	PLL_RATE(492000000, 41, 1, 1),
+-	PLL_RATE(504000000, 42, 1, 1),
+-	PLL_RATE(516000000, 43, 1, 1),
+-	PLL_RATE(528000000, 44, 1, 1),
+-	PLL_RATE(540000000, 45, 1, 1),
+-	PLL_RATE(552000000, 46, 1, 1),
+-	PLL_RATE(564000000, 47, 1, 1),
+-	PLL_RATE(576000000, 48, 1, 1),
+-	PLL_RATE(588000000, 49, 1, 1),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(612000000, 51, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(636000000, 53, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(660000000, 55, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(684000000, 57, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(708000000, 59, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(732000000, 61, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 32, 1, 0),
+-	PLL_RATE(792000000, 33, 1, 0),
+-	PLL_RATE(816000000, 34, 1, 0),
+-	PLL_RATE(840000000, 35, 1, 0),
+-	PLL_RATE(864000000, 36, 1, 0),
+-	PLL_RATE(888000000, 37, 1, 0),
+-	PLL_RATE(912000000, 38, 1, 0),
+-	PLL_RATE(936000000, 39, 1, 0),
+-	PLL_RATE(960000000, 40, 1, 0),
+-	PLL_RATE(984000000, 41, 1, 0),
+-	PLL_RATE(1008000000, 42, 1, 0),
+-	PLL_RATE(1032000000, 43, 1, 0),
+-	PLL_RATE(1056000000, 44, 1, 0),
+-	PLL_RATE(1080000000, 45, 1, 0),
+-	PLL_RATE(1104000000, 46, 1, 0),
+-	PLL_RATE(1128000000, 47, 1, 0),
+-	PLL_RATE(1152000000, 48, 1, 0),
+-	PLL_RATE(1176000000, 49, 1, 0),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
++	PLL_RATE(768000000, 32, 1),
++	PLL_RATE(792000000, 33, 1),
++	PLL_RATE(816000000, 34, 1),
++	PLL_RATE(840000000, 35, 1),
++	PLL_RATE(864000000, 36, 1),
++	PLL_RATE(888000000, 37, 1),
++	PLL_RATE(912000000, 38, 1),
++	PLL_RATE(936000000, 39, 1),
++	PLL_RATE(960000000, 40, 1),
++	PLL_RATE(984000000, 41, 1),
++	PLL_RATE(1008000000, 42, 1),
++	PLL_RATE(1032000000, 43, 1),
++	PLL_RATE(1056000000, 44, 1),
++	PLL_RATE(1080000000, 45, 1),
++	PLL_RATE(1104000000, 46, 1),
++	PLL_RATE(1128000000, 47, 1),
++	PLL_RATE(1152000000, 48, 1),
++	PLL_RATE(1176000000, 49, 1),
++	PLL_RATE(1200000000, 50, 1),
++	PLL_RATE(1224000000, 51, 1),
++	PLL_RATE(1248000000, 52, 1),
++	PLL_RATE(1272000000, 53, 1),
++	PLL_RATE(1296000000, 54, 1),
++	PLL_RATE(1320000000, 55, 1),
++	PLL_RATE(1344000000, 56, 1),
++	PLL_RATE(1368000000, 57, 1),
++	PLL_RATE(1392000000, 58, 1),
++	PLL_RATE(1416000000, 59, 1),
++	PLL_RATE(1440000000, 60, 1),
++	PLL_RATE(1464000000, 61, 1),
++	PLL_RATE(1488000000, 62, 1),
+ 	{ /* sentinel */ },
+ };
+ 
+ static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
+-	PLL_RATE(504000000, 42, 1, 1),
+-	PLL_RATE(516000000, 43, 1, 1),
+-	PLL_RATE(528000000, 44, 1, 1),
+-	PLL_RATE(540000000, 45, 1, 1),
+-	PLL_RATE(552000000, 46, 1, 1),
+-	PLL_RATE(564000000, 47, 1, 1),
+-	PLL_RATE(576000000, 48, 1, 1),
+-	PLL_RATE(588000000, 49, 1, 1),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(612000000, 51, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(636000000, 53, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(660000000, 55, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(684000000, 57, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(708000000, 59, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(732000000, 61, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(756000000, 63, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(780000000, 65, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
++	PLL_RATE(1008000000, 42, 1),
++	PLL_RATE(1032000000, 43, 1),
++	PLL_RATE(1056000000, 44, 1),
++	PLL_RATE(1080000000, 45, 1),
++	PLL_RATE(1104000000, 46, 1),
++	PLL_RATE(1128000000, 47, 1),
++	PLL_RATE(1152000000, 48, 1),
++	PLL_RATE(1176000000, 49, 1),
++	PLL_RATE(1200000000, 50, 1),
++	PLL_RATE(1224000000, 51, 1),
++	PLL_RATE(1248000000, 52, 1),
++	PLL_RATE(1272000000, 53, 1),
++	PLL_RATE(1296000000, 54, 1),
++	PLL_RATE(1320000000, 55, 1),
++	PLL_RATE(1344000000, 56, 1),
++	PLL_RATE(1368000000, 57, 1),
++	PLL_RATE(1392000000, 58, 1),
++	PLL_RATE(1416000000, 59, 1),
++	PLL_RATE(1440000000, 60, 1),
++	PLL_RATE(1464000000, 61, 1),
++	PLL_RATE(1488000000, 62, 1),
++	PLL_RATE(1512000000, 63, 1),
++	PLL_RATE(1536000000, 64, 1),
++	PLL_RATE(1560000000, 65, 1),
++	PLL_RATE(1584000000, 66, 1),
+ 	{ /* sentinel */ },
+ };
+ 
+-static struct clk_regmap gxbb_fixed_pll = {
++static struct clk_regmap gxbb_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_MPLL_CNTL,
+@@ -192,11 +99,6 @@ static struct clk_regmap gxbb_fixed_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_MPLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_MPLL_CNTL2,
+ 			.shift   = 0,
+@@ -214,7 +116,7 @@ static struct clk_regmap gxbb_fixed_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fixed_pll",
++		.name = "fixed_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -222,6 +124,21 @@ static struct clk_regmap gxbb_fixed_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap gxbb_fixed_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_MPLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fixed_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "fixed_pll_dco" },
++		.num_parents = 1,
++	},
++};
++
+ static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
+ 	.mult = 2,
+ 	.div = 1,
+@@ -233,7 +150,7 @@ static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
+ 	},
+ };
+ 
+-static struct clk_regmap gxbb_hdmi_pll = {
++static struct clk_regmap gxbb_hdmi_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_HDMI_PLL_CNTL,
+@@ -255,21 +172,6 @@ static struct clk_regmap gxbb_hdmi_pll = {
+ 			.shift   = 0,
+ 			.width   = 12,
+ 		},
+-		.od = {
+-			.reg_off = HHI_HDMI_PLL_CNTL2,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+-		.od2 = {
+-			.reg_off = HHI_HDMI_PLL_CNTL2,
+-			.shift   = 22,
+-			.width   = 2,
+-		},
+-		.od3 = {
+-			.reg_off = HHI_HDMI_PLL_CNTL2,
+-			.shift   = 18,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_HDMI_PLL_CNTL,
+ 			.shift   = 31,
+@@ -282,7 +184,7 @@ static struct clk_regmap gxbb_hdmi_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "hdmi_pll",
++		.name = "hdmi_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "hdmi_pll_pre_mult" },
+ 		.num_parents = 1,
+@@ -290,70 +192,103 @@ static struct clk_regmap gxbb_hdmi_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap gxbb_hdmi_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL2,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_od",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap gxbb_hdmi_pll_od2 = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL2,
++		.shift = 22,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_od2",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_od" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap gxbb_hdmi_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL2,
++		.shift = 18,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_od2" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap gxl_hdmi_pll_od = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL + 8,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_od",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap gxl_hdmi_pll_od2 = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL + 8,
++		.shift = 22,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "hdmi_pll_od2",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_od" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
+ static struct clk_regmap gxl_hdmi_pll = {
+-	.data = &(struct meson_clk_pll_data){
+-		.en = {
+-			.reg_off = HHI_HDMI_PLL_CNTL,
+-			.shift   = 30,
+-			.width   = 1,
+-		},
+-		.m = {
+-			.reg_off = HHI_HDMI_PLL_CNTL,
+-			.shift   = 0,
+-			.width   = 9,
+-		},
+-		.n = {
+-			.reg_off = HHI_HDMI_PLL_CNTL,
+-			.shift   = 9,
+-			.width   = 5,
+-		},
+-		.frac = {
+-			/*
+-			 * On gxl, there is a register shift due to
+-			 * HHI_HDMI_PLL_CNTL1 which does not exist on gxbb,
+-			 * so we compute the register offset based on the PLL
+-			 * base to get it right
+-			 */
+-			.reg_off = HHI_HDMI_PLL_CNTL + 4,
+-			.shift   = 0,
+-			.width   = 12,
+-		},
+-		.od = {
+-			.reg_off = HHI_HDMI_PLL_CNTL + 8,
+-			.shift   = 21,
+-			.width   = 2,
+-		},
+-		.od2 = {
+-			.reg_off = HHI_HDMI_PLL_CNTL + 8,
+-			.shift   = 23,
+-			.width   = 2,
+-		},
+-		.od3 = {
+-			.reg_off = HHI_HDMI_PLL_CNTL + 8,
+-			.shift   = 19,
+-			.width   = 2,
+-		},
+-		.l = {
+-			.reg_off = HHI_HDMI_PLL_CNTL,
+-			.shift   = 31,
+-			.width   = 1,
+-		},
+-		.rst = {
+-			.reg_off = HHI_HDMI_PLL_CNTL,
+-			.shift   = 29,
+-			.width   = 1,
+-		},
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_HDMI_PLL_CNTL + 8,
++		.shift = 18,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "hdmi_pll",
+-		.ops = &meson_clk_pll_ro_ops,
+-		.parent_names = (const char *[]){ "xtal" },
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "hdmi_pll_od2" },
+ 		.num_parents = 1,
+ 		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+-static struct clk_regmap gxbb_sys_pll = {
++static struct clk_regmap gxbb_sys_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+@@ -370,11 +305,6 @@ static struct clk_regmap gxbb_sys_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_SYS_PLL_CNTL,
+-			.shift   = 10,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+ 			.shift   = 31,
+@@ -387,7 +317,7 @@ static struct clk_regmap gxbb_sys_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "sys_pll",
++		.name = "sys_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -395,13 +325,29 @@ static struct clk_regmap gxbb_sys_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap gxbb_sys_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_SYS_PLL_CNTL,
++		.shift = 10,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "sys_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "sys_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
+ static const struct reg_sequence gxbb_gp0_init_regs[] = {
+ 	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0x69c80000 },
+ 	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a5590c4 },
+ 	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0x0000500d },
+ };
+ 
+-static struct clk_regmap gxbb_gp0_pll = {
++static struct clk_regmap gxbb_gp0_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+@@ -418,11 +364,6 @@ static struct clk_regmap gxbb_gp0_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_GP0_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+ 			.shift   = 31,
+@@ -438,7 +379,7 @@ static struct clk_regmap gxbb_gp0_pll = {
+ 		.init_count = ARRAY_SIZE(gxbb_gp0_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "gp0_pll",
++		.name = "gp0_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -454,7 +395,7 @@ static const struct reg_sequence gxl_gp0_init_regs[] = {
+ 	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
+ };
+ 
+-static struct clk_regmap gxl_gp0_pll = {
++static struct clk_regmap gxl_gp0_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_GP0_PLL_CNTL,
+@@ -471,11 +412,6 @@ static struct clk_regmap gxl_gp0_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_GP0_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_GP0_PLL_CNTL1,
+ 			.shift   = 0,
+@@ -496,7 +432,7 @@ static struct clk_regmap gxl_gp0_pll = {
+ 		.init_count = ARRAY_SIZE(gxl_gp0_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "gp0_pll",
++		.name = "gp0_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -504,6 +440,22 @@ static struct clk_regmap gxl_gp0_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap gxbb_gp0_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_GP0_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "gp0_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_names = (const char *[]){ "gp0_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE | CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_fixed_factor gxbb_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+@@ -1961,6 +1913,12 @@ static struct clk_hw_onecell_data gxbb_hw_onecell_data = {
+ 		[CLKID_GEN_CLK_SEL]	    = &gxbb_gen_clk_sel.hw,
+ 		[CLKID_GEN_CLK_DIV]	    = &gxbb_gen_clk_div.hw,
+ 		[CLKID_GEN_CLK]		    = &gxbb_gen_clk.hw,
++		[CLKID_FIXED_PLL_DCO]	    = &gxbb_fixed_pll_dco.hw,
++		[CLKID_HDMI_PLL_DCO]	    = &gxbb_hdmi_pll_dco.hw,
++		[CLKID_HDMI_PLL_OD]	    = &gxbb_hdmi_pll_od.hw,
++		[CLKID_HDMI_PLL_OD2]	    = &gxbb_hdmi_pll_od2.hw,
++		[CLKID_SYS_PLL_DCO]	    = &gxbb_sys_pll_dco.hw,
++		[CLKID_GP0_PLL_DCO]	    = &gxbb_gp0_pll_dco.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -1976,7 +1934,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_FCLK_DIV4]	    = &gxbb_fclk_div4.hw,
+ 		[CLKID_FCLK_DIV5]	    = &gxbb_fclk_div5.hw,
+ 		[CLKID_FCLK_DIV7]	    = &gxbb_fclk_div7.hw,
+-		[CLKID_GP0_PLL]		    = &gxl_gp0_pll.hw,
++		[CLKID_GP0_PLL]		    = &gxbb_gp0_pll.hw,
+ 		[CLKID_MPEG_SEL]	    = &gxbb_mpeg_clk_sel.hw,
+ 		[CLKID_MPEG_DIV]	    = &gxbb_mpeg_clk_div.hw,
+ 		[CLKID_CLK81]		    = &gxbb_clk81.hw,
+@@ -2126,19 +2084,29 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_GEN_CLK_SEL]	    = &gxbb_gen_clk_sel.hw,
+ 		[CLKID_GEN_CLK_DIV]	    = &gxbb_gen_clk_div.hw,
+ 		[CLKID_GEN_CLK]		    = &gxbb_gen_clk.hw,
++		[CLKID_FIXED_PLL_DCO]	    = &gxbb_fixed_pll_dco.hw,
++		[CLKID_HDMI_PLL_DCO]	    = &gxbb_hdmi_pll_dco.hw,
++		[CLKID_HDMI_PLL_OD]	    = &gxl_hdmi_pll_od.hw,
++		[CLKID_HDMI_PLL_OD2]	    = &gxl_hdmi_pll_od2.hw,
++		[CLKID_SYS_PLL_DCO]	    = &gxbb_sys_pll_dco.hw,
++		[CLKID_GP0_PLL_DCO]	    = &gxl_gp0_pll_dco.hw,
+ 		[NR_CLKS]		    = NULL,
+ 	},
+ 	.num = NR_CLKS,
+ };
+ 
+ static struct clk_regmap *const gxbb_clk_regmaps[] = {
+-	&gxbb_gp0_pll,
++	&gxbb_gp0_pll_dco,
+ 	&gxbb_hdmi_pll,
++	&gxbb_hdmi_pll_od,
++	&gxbb_hdmi_pll_od2,
+ };
+ 
+ static struct clk_regmap *const gxl_clk_regmaps[] = {
+-	&gxl_gp0_pll,
++	&gxl_gp0_pll_dco,
+ 	&gxl_hdmi_pll,
++	&gxl_hdmi_pll_od,
++	&gxl_hdmi_pll_od2,
+ };
+ 
+ static struct clk_regmap *const gx_clk_regmaps[] = {
+@@ -2293,6 +2261,10 @@ static struct clk_regmap *const gx_clk_regmaps[] = {
+ 	&gxbb_gen_clk_sel,
+ 	&gxbb_gen_clk_div,
+ 	&gxbb_gen_clk,
++	&gxbb_fixed_pll_dco,
++	&gxbb_hdmi_pll_dco,
++	&gxbb_sys_pll_dco,
++	&gxbb_gp0_pll,
+ };
+ 
+ struct clkc_data {
+diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
+index 20dfb1daf5b8..72bc077d9663 100644
+--- a/drivers/clk/meson/gxbb.h
++++ b/drivers/clk/meson/gxbb.h
+@@ -159,8 +159,14 @@
+ #define CLKID_VDEC_HEVC_DIV	  155
+ #define CLKID_GEN_CLK_SEL	  157
+ #define CLKID_GEN_CLK_DIV	  158
+-
+-#define NR_CLKS			  160
++#define CLKID_FIXED_PLL_DCO	  160
++#define CLKID_HDMI_PLL_DCO	  161
++#define CLKID_HDMI_PLL_OD	  162
++#define CLKID_HDMI_PLL_OD2	  163
++#define CLKID_SYS_PLL_DCO	  164
++#define CLKID_GP0_PLL_DCO	  165
++
++#define NR_CLKS			  166
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/gxbb-clkc.h>
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index fd4c414893f5..17bcf0be56ba 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -30,58 +30,21 @@ struct meson8b_clk_reset {
+ };
+ 
+ static const struct pll_rate_table sys_pll_rate_table[] = {
+-	PLL_RATE(312000000, 52, 1, 2),
+-	PLL_RATE(336000000, 56, 1, 2),
+-	PLL_RATE(360000000, 60, 1, 2),
+-	PLL_RATE(384000000, 64, 1, 2),
+-	PLL_RATE(408000000, 68, 1, 2),
+-	PLL_RATE(432000000, 72, 1, 2),
+-	PLL_RATE(456000000, 76, 1, 2),
+-	PLL_RATE(480000000, 80, 1, 2),
+-	PLL_RATE(504000000, 84, 1, 2),
+-	PLL_RATE(528000000, 88, 1, 2),
+-	PLL_RATE(552000000, 92, 1, 2),
+-	PLL_RATE(576000000, 96, 1, 2),
+-	PLL_RATE(600000000, 50, 1, 1),
+-	PLL_RATE(624000000, 52, 1, 1),
+-	PLL_RATE(648000000, 54, 1, 1),
+-	PLL_RATE(672000000, 56, 1, 1),
+-	PLL_RATE(696000000, 58, 1, 1),
+-	PLL_RATE(720000000, 60, 1, 1),
+-	PLL_RATE(744000000, 62, 1, 1),
+-	PLL_RATE(768000000, 64, 1, 1),
+-	PLL_RATE(792000000, 66, 1, 1),
+-	PLL_RATE(816000000, 68, 1, 1),
+-	PLL_RATE(840000000, 70, 1, 1),
+-	PLL_RATE(864000000, 72, 1, 1),
+-	PLL_RATE(888000000, 74, 1, 1),
+-	PLL_RATE(912000000, 76, 1, 1),
+-	PLL_RATE(936000000, 78, 1, 1),
+-	PLL_RATE(960000000, 80, 1, 1),
+-	PLL_RATE(984000000, 82, 1, 1),
+-	PLL_RATE(1008000000, 84, 1, 1),
+-	PLL_RATE(1032000000, 86, 1, 1),
+-	PLL_RATE(1056000000, 88, 1, 1),
+-	PLL_RATE(1080000000, 90, 1, 1),
+-	PLL_RATE(1104000000, 92, 1, 1),
+-	PLL_RATE(1128000000, 94, 1, 1),
+-	PLL_RATE(1152000000, 96, 1, 1),
+-	PLL_RATE(1176000000, 98, 1, 1),
+-	PLL_RATE(1200000000, 50, 1, 0),
+-	PLL_RATE(1224000000, 51, 1, 0),
+-	PLL_RATE(1248000000, 52, 1, 0),
+-	PLL_RATE(1272000000, 53, 1, 0),
+-	PLL_RATE(1296000000, 54, 1, 0),
+-	PLL_RATE(1320000000, 55, 1, 0),
+-	PLL_RATE(1344000000, 56, 1, 0),
+-	PLL_RATE(1368000000, 57, 1, 0),
+-	PLL_RATE(1392000000, 58, 1, 0),
+-	PLL_RATE(1416000000, 59, 1, 0),
+-	PLL_RATE(1440000000, 60, 1, 0),
+-	PLL_RATE(1464000000, 61, 1, 0),
+-	PLL_RATE(1488000000, 62, 1, 0),
+-	PLL_RATE(1512000000, 63, 1, 0),
+-	PLL_RATE(1536000000, 64, 1, 0),
++	PLL_RATE(1200000000, 50, 1),
++	PLL_RATE(1224000000, 51, 1),
++	PLL_RATE(1248000000, 52, 1),
++	PLL_RATE(1272000000, 53, 1),
++	PLL_RATE(1296000000, 54, 1),
++	PLL_RATE(1320000000, 55, 1),
++	PLL_RATE(1344000000, 56, 1),
++	PLL_RATE(1368000000, 57, 1),
++	PLL_RATE(1392000000, 58, 1),
++	PLL_RATE(1416000000, 59, 1),
++	PLL_RATE(1440000000, 60, 1),
++	PLL_RATE(1464000000, 61, 1),
++	PLL_RATE(1488000000, 62, 1),
++	PLL_RATE(1512000000, 63, 1),
++	PLL_RATE(1536000000, 64, 1),
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -94,7 +57,7 @@ static struct clk_fixed_rate meson8b_xtal = {
+ 	},
+ };
+ 
+-static struct clk_regmap meson8b_fixed_pll = {
++static struct clk_regmap meson8b_fixed_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_MPLL_CNTL,
+@@ -111,11 +74,6 @@ static struct clk_regmap meson8b_fixed_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_MPLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.frac = {
+ 			.reg_off = HHI_MPLL_CNTL2,
+ 			.shift   = 0,
+@@ -133,7 +91,7 @@ static struct clk_regmap meson8b_fixed_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "fixed_pll",
++		.name = "fixed_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -141,7 +99,23 @@ static struct clk_regmap meson8b_fixed_pll = {
+ 	},
+ };
+ 
+-static struct clk_regmap meson8b_vid_pll = {
++static struct clk_regmap meson8b_fixed_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_MPLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "fixed_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "fixed_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap meson8b_vid_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_VID_PLL_CNTL,
+@@ -158,11 +132,6 @@ static struct clk_regmap meson8b_vid_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_VID_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_VID_PLL_CNTL,
+ 			.shift   = 31,
+@@ -175,7 +144,7 @@ static struct clk_regmap meson8b_vid_pll = {
+ 		},
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "vid_pll",
++		.name = "vid_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -183,7 +152,23 @@ static struct clk_regmap meson8b_vid_pll = {
+ 	},
+ };
+ 
+-static struct clk_regmap meson8b_sys_pll = {
++static struct clk_regmap meson8b_vid_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_VID_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "vid_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "vid_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
++static struct clk_regmap meson8b_sys_pll_dco = {
+ 	.data = &(struct meson_clk_pll_data){
+ 		.en = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+@@ -200,11 +185,6 @@ static struct clk_regmap meson8b_sys_pll = {
+ 			.shift   = 9,
+ 			.width   = 5,
+ 		},
+-		.od = {
+-			.reg_off = HHI_SYS_PLL_CNTL,
+-			.shift   = 16,
+-			.width   = 2,
+-		},
+ 		.l = {
+ 			.reg_off = HHI_SYS_PLL_CNTL,
+ 			.shift   = 31,
+@@ -218,7 +198,7 @@ static struct clk_regmap meson8b_sys_pll = {
+ 		.table = sys_pll_rate_table,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+-		.name = "sys_pll",
++		.name = "sys_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+@@ -226,6 +206,22 @@ static struct clk_regmap meson8b_sys_pll = {
+ 	},
+ };
+ 
++static struct clk_regmap meson8b_sys_pll = {
++	.data = &(struct clk_regmap_div_data){
++		.offset = HHI_SYS_PLL_CNTL,
++		.shift = 16,
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "sys_pll",
++		.ops = &clk_regmap_divider_ro_ops,
++		.parent_names = (const char *[]){ "sys_pll_dco" },
++		.num_parents = 1,
++		.flags = CLK_GET_RATE_NOCACHE,
++	},
++};
++
+ static struct clk_fixed_factor meson8b_fclk_div2_div = {
+ 	.mult = 1,
+ 	.div = 2,
+@@ -894,6 +890,9 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+ 		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+ 		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+ 		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
++		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
++		[CLKID_PLL_VID_DCO]	    = &meson8b_vid_pll_dco.hw,
++		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
+ 		[CLK_NR_CLKS]		    = NULL,
+ 	},
+ 	.num = CLK_NR_CLKS,
+@@ -1002,6 +1001,9 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+ 	&meson8b_nand_clk_sel,
+ 	&meson8b_nand_clk_div,
+ 	&meson8b_nand_clk_gate,
++	&meson8b_fixed_pll_dco,
++	&meson8b_vid_pll_dco,
++	&meson8b_sys_pll_dco,
+ };
+ 
+ static const struct meson8b_clk_reset_line {
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index 5d09412b5084..1c6fb180e6a2 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -75,8 +75,11 @@
+ #define CLKID_FCLK_DIV7_DIV	109
+ #define CLKID_NAND_SEL		110
+ #define CLKID_NAND_DIV		111
++#define CLKID_PLL_FIXED_DCO	113
++#define CLKID_PLL_VID_DCO	114
++#define CLKID_PLL_SYS_DCO	115
+ 
+-#define CLK_NR_CLKS		113
++#define CLK_NR_CLKS		116
+ 
+ /*
+  * include the CLKID and RESETID that have
+-- 
+2.14.4
