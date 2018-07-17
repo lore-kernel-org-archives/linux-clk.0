@@ -1,286 +1,234 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Mars Cheng <mars.cheng@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring
+ <robh+dt@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Ryder Lee
+ <ryder.lee@mediatek.com>, Stephen Boyd <sboyd@kernel.org>, Sean Wang
+ <sean.wang@mediatek.com>
+Subject: [PATCH v5 01/11] dt-bindings: clock: mediatek: document clk bindings
+ for Mediatek MT6765 SoC
+Date: Tue, 17 Jul 2018 16:52:22 +0800
+Message-ID: <1531817552-17221-2-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1528285308-25477-5-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Amit Nischal <anischal@codeaurora.org>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-5-git-send-email-anischal@codeaurora.org>
-Message-ID: <153111645061.143105.8885901620675705971@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 4/4] clk: qcom: Add graphics clock controller driver for SDM845
-Date: Sun, 08 Jul 2018 23:07:30 -0700
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: devicetree@vger.kernel.org, CC Hwang <cc.hwang@mediatek.com>,
+ wsd_upstream@mediatek.com, Loda Chou <loda.chou@mediatek.com>,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-serial@vger.kernel.org, Mars Cheng <mars.cheng@mediatek.com>,
+ Owen Chen <owen.chen@mediatek.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-06-06 04:41:48)
-> diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm=
-845.c
-> new file mode 100644
-> index 0000000..81f8926
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gpucc-sdm845.c
-> @@ -0,0 +1,441 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
-> +
-> +#include "common.h"
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "gdsc.h"
-> +
-> +#define CX_GMU_CBCR_SLEEP_MASK         0xf
-> +#define CX_GMU_CBCR_SLEEP_SHIFT                4
-> +#define CX_GMU_CBCR_WAKE_MASK          0xf
-> +#define CX_GMU_CBCR_WAKE_SHIFT         8
-> +#define CLK_DIS_WAIT_SHIFT             12
-> +#define CLK_DIS_WAIT_MASK              (0xf << CLK_DIS_WAIT_SHIFT)
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+This patch adds the binding documentation for apmixedsys, audsys, camsys,
+imgsys, infracfg, mipi0a, topckgen, vcodecsys
 
-This should be removed and series can depend on Taniya's patch.
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+---
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |   27 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,mipi0a.txt      |   23 +++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |   22 ++++++++++++++++
+ 10 files changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
 
-> +
-> +enum {
-> +       P_BI_TCXO,
-> +       P_CORE_BI_PLL_TEST_SE,
-> +       P_GPLL0_OUT_MAIN,
-> +       P_GPLL0_OUT_MAIN_DIV,
-[...]
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> +       .clkr =3D {
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gpu_cc_pll0",
-> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
-> +                       .num_parents =3D 1,
-> +                       .ops =3D &clk_alpha_pll_fabia_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static const struct clk_div_table post_div_table_fabia_even[] =3D {
-> +       { 0x0, 1 },
-> +       {},
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index b404d59..44eaeac 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt2712-apmixedsys", "syscon"
++	- "mediatek,mt6765-apmixedsys", "syscon"
+ 	- "mediatek,mt6797-apmixedsys"
+ 	- "mediatek,mt7622-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index 34a69ba..9a8672a 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-audsys", "syscon"
++	- "mediatek,mt6765-audsys", "syscon"
+ 	- "mediatek,mt7622-audsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+new file mode 100644
+index 0000000..dc75783
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+@@ -0,0 +1,27 @@
++MediaTek CAMSYS controller
++============================
++
++The MediaTek CAMSYS controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt6765-camsys", "syscon"
++- #clock-cells: Must be 1
++
++The AUDSYS controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Required sub-nodes:
++-------
++For common binding part and usage, refer to
++../sonud/mt2701-afe-pcm.txt.
++
++Example:
++
++camsys: camsys@1a000000  {
++	compatible = "mediatek,mt6765-camsys", "syscon";
++	reg = <0 0x1a000000  0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index 868bd51..c7057d0 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt2712-imgsys", "syscon"
++	- "mediatek,mt6765-imgsys", "syscon"
+ 	- "mediatek,mt6797-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index 566f153..ac6aae5 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt2712-infracfg", "syscon"
++	- "mediatek,mt6765-infracfg", "syscon"
+ 	- "mediatek,mt6797-infracfg", "syscon"
+ 	- "mediatek,mt7622-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+new file mode 100644
+index 0000000..ba5ee7a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+@@ -0,0 +1,23 @@
++Mediatek mipi_rx_ana_csi0a controller
++============================
++
++The Mediatek mipi_rx_ana_csi0a controller provides various clocks
++to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt6765-mipi_rx_ana_csi0a", "syscon"
++- #clock-cells: Must be 1
++
++The vencsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++mipi_rx_ana_csi0a: mipi_rx_ana_csi0a@11c10000 {
++	compatible = "mediatek,mt6765-mipi_rx_ana_csi0a", "syscon";
++	reg = <0 0x11c10000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 4eb8bbe..184f159 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt2712-mmsys", "syscon"
++	- "mediatek,mt6765-mmsys", "syscon"
+ 	- "mediatek,mt6797-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+ - #clock-cells: Must be 1
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+index fb58ca8..8eeb84b 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,pericfg.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-pericfg", "syscon"
+ 	- "mediatek,mt2712-pericfg", "syscon"
++	- "mediatek,mt6765-pericfg", "syscon"
+ 	- "mediatek,mt7622-pericfg", "syscon"
+ 	- "mediatek,mt8135-pericfg", "syscon"
+ 	- "mediatek,mt8173-pericfg", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index 24014a7..3a5cad6 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt2712-topckgen", "syscon"
++	- "mediatek,mt6765-topckgen", "syscon"
+ 	- "mediatek,mt6797-topckgen"
+ 	- "mediatek,mt7622-topckgen"
+ 	- "mediatek,mt8135-topckgen"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+new file mode 100644
+index 0000000..462889b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+@@ -0,0 +1,22 @@
++Mediatek vcodecsys controller
++============================
++
++The Mediatek vcodecsys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt6765-vcodecsys", "syscon"
++- #clock-cells: Must be 1
++
++The vencsys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++venc_gcon: venc_gcon@17000000 {
++	compatible = "mediatek,mt6765-vcodecsys", "syscon";
++	reg = <0 0x17000000 0 0x10000>;
++	#clock-cells = <1>;
++};
+-- 
+1.7.9.5
 
-Drop the trailing comma, it's a sentinel presumably.
 
-> +};
-> +
-> +static struct clk_alpha_pll_postdiv gpu_cc_pll0_out_even =3D {
-> +       .offset =3D 0x0,
-> +       .post_div_shift =3D 8,
-> +       .post_div_table =3D post_div_table_fabia_even,
-> +       .num_post_div =3D ARRAY_SIZE(post_div_table_fabia_even),
-> +       .width =3D 4,
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "gpu_cc_pll0_out_even",
-> +               .parent_names =3D (const char *[]){ "gpu_cc_pll0" },
-> +               .num_parents =3D 1,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_alpha_pll_postdiv_fabia_ops,
-> +       },
-> +};
-> +
-> +static struct clk_alpha_pll gpu_cc_pll1 =3D {
-> +       .offset =3D 0x100,
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> +       .clkr =3D {
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gpu_cc_pll1",
-> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
-> +                       .num_parents =3D 1,
-> +                       .ops =3D &clk_alpha_pll_fabia_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] =3D {
-> +       F(19200000, P_BI_TCXO, 1, 0, 0),
-> +       F(200000000, P_GPLL0_OUT_MAIN_DIV, 1.5, 0, 0),
-> +       F(500000000, P_GPU_CC_PLL1_OUT_MAIN, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 gpu_cc_gmu_clk_src =3D {
-> +       .cmd_rcgr =3D 0x1120,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D gpu_cc_parent_map_0,
-> +       .freq_tbl =3D ftbl_gpu_cc_gmu_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "gpu_cc_gmu_clk_src",
-> +               .parent_names =3D gpu_cc_parent_names_0,
-> +               .num_parents =3D 6,
-> +               .ops =3D &clk_rcg2_shared_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_gpu_cc_gx_gfx3d_clk_src[] =3D {
-> +       F(180000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(257000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(342000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(414000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(520000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(596000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(675000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-> +       F(710000000, P_GPU_CC_PLL0_OUT_EVEN, 2, 0, 0),
-
-Do we really need to encode anything here in this table? Why can't we
-have clk_ops that hardcode this clk to be a div-2 that passes the
-frequency up to the parent source? Then this frequency table doesn't
-need to be here at all, and can live in DT as an OPP table used by the
-GPU driver.
-
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 gpu_cc_gx_gfx3d_clk_src =3D {
-> +       .cmd_rcgr =3D 0x101c,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D gpu_cc_parent_map_1,
-> +       .freq_tbl =3D ftbl_gpu_cc_gx_gfx3d_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "gpu_cc_gx_gfx3d_clk_src",
-> +               .parent_names =3D gpu_cc_parent_names_1,
-> +               .num_parents =3D 7,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_rcg2_gfx3d_ops,
-[...]
-> +static struct clk_branch gpu_cc_cx_gmu_clk =3D {
-> +       .halt_reg =3D 0x1098,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x1098,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gpu_cc_cx_gmu_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "gpu_cc_gmu_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gpu_cc_cx_snoc_dvm_clk =3D {
-> +       .halt_reg =3D 0x108c,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x108c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gpu_cc_cx_snoc_dvm_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gpu_cc_cxo_clk =3D {
-
-This isn't always on and marked critical?
-
-> +       .halt_reg =3D 0x109c,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x109c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gpu_cc_cxo_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-[...]
-> +
-> +static struct gdsc gpu_cx_gdsc =3D {
-> +       .gdscr =3D 0x106c,
-> +       .gds_hw_ctrl =3D 0x1540,
-> +       .pd =3D {
-> +               .name =3D "gpu_cx_gdsc",
-> +       },
-> +       .pwrsts =3D PWRSTS_OFF_ON,
-> +       .flags =3D VOTABLE,
-> +};
-> +
-> +static struct gdsc gpu_gx_gdsc =3D {
-> +       .gdscr =3D 0x100c,
-> +       .clamp_io_ctrl =3D 0x1508,
-> +       .pd =3D {
-> +               .name =3D "gpu_gx_gdsc",
-> +       },
-> +       .clk_hws =3D {
-> +               &gpu_cc_gx_gfx3d_clk_src.clkr.hw,
-
-Hmm alright. So basically the core GPU power domain needs the wrapper
-domain (CX) to be powered on and clocking for GX to work? Let's talk
-about it in the other patch so I can understand more.
-
-> +       },
-> +       .clk_count =3D 1,
-> +       .pwrsts =3D PWRSTS_OFF_ON,
-> +       .flags =3D CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
-> +};
-> +
-[...]
-> +
-> +static int gpu_cc_sdm845_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +       unsigned int value, mask;
-> +
-> +       regmap =3D qcom_cc_map(pdev, &gpu_cc_sdm845_desc);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       clk_fabia_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config=
-);
-> +       clk_fabia_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config=
-);
-> +
-> +       /* Configure gpu_cc_cx_gmu_clk with recommended wakeup/sleep sett=
-ings */
-> +       mask =3D CX_GMU_CBCR_WAKE_MASK << CX_GMU_CBCR_WAKE_SHIFT;
-> +       mask |=3D CX_GMU_CBCR_SLEEP_MASK << CX_GMU_CBCR_SLEEP_SHIFT;
-> +       value =3D 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEE=
-P_SHIFT;
-> +       regmap_update_bits(regmap, 0x1098, mask, value);
-> +
-> +       /* Configure clk_dis_wait for for gpu_cx_gdsc */
-
-s/for //
-
-> +       regmap_update_bits(regmap, 0x106c, CLK_DIS_WAIT_MASK,
-> +                                               (8 << CLK_DIS_WAIT_SHIFT)=
-);
-
-Remove extra parenthesis.
-
-> +
-> +       return qcom_cc_really_probe(pdev, &gpu_cc_sdm845_desc, regmap);
-> +}
-> +
-[...]
-> +
-> +MODULE_LICENSE("GPL v2");
-
-MODULE_DESCRIPTION?
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
