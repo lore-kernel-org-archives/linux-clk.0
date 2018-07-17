@@ -1,33 +1,56 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:17587 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729708AbeGQT1c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Jul 2018 15:27:32 -0400
+Date: Wed, 18 Jul 2018 02:52:47 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: Re: [PATCH v5 10/11] clk: mediatek: Add MT6765 clock support
+Message-ID: <201807180207.ER8P4qsc%fengguang.wu@intel.com>
+References: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531140923.2708.19.camel@baylibre.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
- "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
- Neil Armstrong <narmstrong@baylibre.com>
-References: <1531140923.2708.19.camel@baylibre.com>
-Message-ID: <153115528186.143105.10978033720652183122@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL]  clk: meson: updates for v4.19
-Date: Mon, 09 Jul 2018 09:54:41 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jerome Brunet (2018-07-09 05:55:23)
-> Dear clock maintainers,
-> =
+Hi Owen,
 
-> Below is a request to pull a first round of Amlogic  clock updates for
-> v4.19. It is based on our previous fixes PR (meson-clk-fixes-4.18-1) to
-> avoid conflicts while removing the audio divider driver.
-> =
+Thank you for the patch! Perhaps something to improve:
 
-> Also, we had to pull your 'clk-core-duty-cycle' branch because the audio
-> sclk divider driver implements duty cycle operation. This explains the
-> changes reported in CCF core files in the summary below. =
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.18-rc5 next-20180717]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> =
+url:    https://github.com/0day-ci/linux/commits/Mars-Cheng/Add-basic-SoC-support-for-mt6765/20180717-205540
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-Thanks. Pulled into clk-next.
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/clk/mediatek/clk-mt6765.c:36:14: sparse: symbol 'cksys_base' was not declared. Should it be static?
+>> drivers/clk/mediatek/clk-mt6765.c:37:14: sparse: symbol 'apmixed_base' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
