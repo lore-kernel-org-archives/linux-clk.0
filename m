@@ -1,41 +1,52 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>, Qiufang
- Dai <qiufang.dai@amlogic.com>, Bo.yang <bo.yang@amlogic.com>, Xingyu.chen
-	<xingyu.chen@amlogic.com>, "Qianggui,song" <qianggui.song@amlogic.com>,
-	Sunny.luo <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 0/3] clk: meson-g12a: Add EE clock controller driver
-Date: Mon, 9 Jul 2018 19:12:44 +0800
-Message-ID: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 02/16] clk: at91: generated: SSCs don't have a gclk
+Date: Wed, 18 Jul 2018 00:27:43 +0200
+Message-Id: <20180717222757.10253-3-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Clock driver for the Everyting-Else part of
-the Amlogic Meson-G12A SoC.
+As the SSCs don't have gclk, don't check for their ID to allow them to set
+the audio pll rate.
 
-Jian Hu (3):
-  dt-bindings: clk: g12a: New binding for Meson-G12A SoC
-  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-  clk: meson-g12a: Add EE Clock controller driver
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/clk-generated.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   1 +
- drivers/clk/meson/Kconfig                          |  10 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/g12a.c                           | 992 +++++++++++++++++++++
- drivers/clk/meson/g12a.h                           | 123 +++
- include/dt-bindings/clock/g12a-clkc.h              |  93 ++
- 6 files changed, 1220 insertions(+)
- create mode 100644 drivers/clk/meson/g12a.c
- create mode 100644 drivers/clk/meson/g12a.h
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-
+diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+index 33481368740e..e709a12269c0 100644
+--- a/drivers/clk/at91/clk-generated.c
++++ b/drivers/clk/at91/clk-generated.c
+@@ -26,8 +26,6 @@
+ #define GENERATED_SOURCE_MAX	6
+ #define GENERATED_MAX_DIV	255
+ 
+-#define GCK_ID_SSC0		43
+-#define GCK_ID_SSC1		44
+ #define GCK_ID_I2S0		54
+ #define GCK_ID_I2S1		55
+ #define GCK_ID_CLASSD		59
+@@ -368,8 +366,7 @@ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ 
+ 		if (of_device_is_compatible(np,
+ 					    "atmel,sama5d2-clk-generated")) {
+-			if (gck->id == GCK_ID_SSC0 || gck->id == GCK_ID_SSC1 ||
+-			    gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
++			if (gck->id == GCK_ID_I2S0 || gck->id == GCK_ID_I2S1 ||
+ 			    gck->id == GCK_ID_CLASSD)
+ 				gck->audio_pll_allowed = true;
+ 			else
 -- 
-1.9.1
+2.18.0
