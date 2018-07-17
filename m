@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1532204819.26720.68.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] clk: meson: clk-pll: add enable bit
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date: Sat, 21 Jul 2018 22:26:59 +0200
-In-Reply-To: <CAFBinCCDGKu5U1xY1WG2BHF28YEWd1HbKdDeTCc9fEV_YjSNew@mail.gmail.com>
-References: <20180717095617.12240-1-jbrunet@baylibre.com>
-         <20180717095617.12240-2-jbrunet@baylibre.com>
-         <CAFBinCCDGKu5U1xY1WG2BHF28YEWd1HbKdDeTCc9fEV_YjSNew@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [resend PATCH v4 5/5] drm: mediatek: Omit warning on probe defers
+Date: Wed, 18 Jul 2018 00:03:28 +0200
+Message-Id: <20180717220328.792-6-matthias.bgg@kernel.org>
+In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2018-07-21 at 21:48 +0200, Martin Blumenstingl wrote:
-> > @@ -250,11 +264,15 @@ static const struct reg_sequence axg_hifi_init_regs[] = {
-> >          { .reg = HHI_HIFI_PLL_CNTL3,    .def = 0x0a6a3a88 },
-> >          { .reg = HHI_HIFI_PLL_CNTL4,    .def = 0xc000004d },
-> >          { .reg = HHI_HIFI_PLL_CNTL5,    .def = 0x00058000 },
-> > -       { .reg = HHI_HIFI_PLL_CNTL,     .def = 0x40010250 },
-> 
-> is this change on purpose? this line set en, m, n, l and od before
-> maybe you can document it in the commit message
+From: Matthias Brugger <mbrugger@suse.com>
 
-Yes the change is on purpose, but as you pointed out it is worth a comment
+It can happen that the clock drivers wasn't probed before the
+ddp driver gets invoked. The driver used to omit a warning
+that the driver failed to get the clocks. Omit this error on
+the defered probe path.
 
-Actually, when taking od out of the pll driver, I remembered this 'initial
-setting' and it kinda bothered me
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Acked-by: CK Hu <ck.hu@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-If the od divider registers after the DCO, the value could have changed with it,
-which is why I wanted to remove the write on this register
-
-As you pointed out, in this register, we find m, n, od ... and enable. In a way,
-removing this register setting was the reason why I wanted to add the enable bit
-to begin with :)
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index bafc5c77c4fb..6b399348a2dc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+ 
+ 	ddp->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(ddp->clk)) {
+-		dev_err(dev, "Failed to get clock\n");
++		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get clock\n");
+ 		return PTR_ERR(ddp->clk);
+ 	}
+ 
+-- 
+2.17.1
