@@ -1,49 +1,53 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1531214976.2708.52.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A
- SoC
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>,  Qiufang Dai
- <qiufang.dai@amlogic.com>, "Bo.yang" <bo.yang@amlogic.com>, "Xingyu.chen"
- <xingyu.chen@amlogic.com>, "Qianggui,song" <qianggui.song@amlogic.com>,
- "Sunny.luo" <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Tue, 10 Jul 2018 11:29:36 +0200
-In-Reply-To: <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	 <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "dmitry.torokhov@gmail.com"
+	<dmitry.torokhov@gmail.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"keescook@chromium.org" <keescook@chromium.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, Michal Simek
+	<michals@xilinx.com>, "mingo@kernel.org" <mingo@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v9 07/10] firmware: xilinx: Add debugfs for IOCTL API
+Date: Tue, 17 Jul 2018 20:01:40 +0000
+Message-ID: 
+ <SN1PR02MB3758432C38CC9580BC96182DB85C0@SN1PR02MB3758.namprd02.prod.outlook.com>
+References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+ <1529516435-7315-8-git-send-email-jollys@xilinx.com>
+ <153111415833.143105.8701882244160397855@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <153111415833.143105.8701882244160397855@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-07-09 at 19:12 +0800, Jian Hu wrote:
-> Add new binding for Meson-G12A SoC Everything-Else part
-
-nitpick: I would prefer if the words 'clock' and 'controller' was somewhere in
-the description.
-
-Maybe "add new clock controller compatible for the EE domain of the g12a SoC" ?
-
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> index e950599..0833006 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->  		"amlogic,gxbb-clkc" for GXBB SoC,
->  		"amlogic,gxl-clkc" for GXL and GXM SoC,
->  		"amlogic,axg-clkc" for AXG SoC.
-> +		"amlogic,g12a-clkc" for G12A SoC.
->  
->  - #clock-cells: should be 1.
->  
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcmV2aWV3LA0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
+cmddDQo+IFNlbnQ6IFN1bmRheSwgSnVseSAwOCwgMjAxOCAxMDoyOSBQTQ0KPiBUbzogSm9sbHkg
+U2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+OyBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOw0KPiBk
+bWl0cnkudG9yb2tob3ZAZ21haWwuY29tOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsNCj4g
+aGthbGx3ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsgbGludXgtY2xrQHZn
+ZXIua2VybmVsLm9yZzsNCj4gbWFyay5ydXRsYW5kQGFybS5jb207IG1hdHRAY29kZWJsdWVwcmlu
+dC5jby51azsgTWljaGFsIFNpbWVrDQo+IDxtaWNoYWxzQHhpbGlueC5jb20+OyBtaW5nb0BrZXJu
+ZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4gcm9iaCtkdEBrZXJuZWwub3JnOyBz
+Ym95ZEBjb2RlYXVyb3JhLm9yZzsgc3VkZWVwLmhvbGxhQGFybS5jb20NCj4gQ2M6IFJhamFuIFZh
+amEgPFJBSkFOVkB4aWxpbnguY29tPjsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
+b3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZzsgSm9sbHkgU2hhaA0KPiA8Sk9MTFlTQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0ggdjkgMDcvMTBdIGZpcm13YXJlOiB4aWxpbng6IEFkZCBkZWJ1Z2ZzIGZvciBJT0NU
+TCBBUEkNCj4gDQo+IFF1b3RpbmcgSm9sbHkgU2hhaCAoMjAxOC0wNi0yMCAxMDo0MDozMikNCj4g
+PiBGcm9tOiBSYWphbiBWYWphIDxyYWphbnZAeGlsaW54LmNvbT4NCj4gPg0KPiA+IEFkZCBkZWJ1
+Z2ZzIGZpbGUgdG8gc2V0L2dldCBJT0NUTCB1c2luZyBkZWJ1Z2ZzIGludGVyZmFjZS4NCj4gDQo+
+IElPQ1RMcyBhbmQgZGVidWdmcyBhcmVuJ3QgdGhlIHNhbWUgdGhpbmcuIFdoeSBhcmUgdGhlIHR3
+byBiZWluZyBtaXhlZA0KPiB0b2dldGhlcj8gSXMgc29tZSBzb3J0IG9mIHVzZXJzcGFjZSBBQkkg
+YmVpbmcgY3JlYXRlZCBoZXJlIHRvIGNvbnRyb2wgY2xrcyB3aXRoDQo+IHVzZXJtb2RlIGRyaXZl
+cnM/DQoNClRoaXMgaXMgbm90IHN0YW5kYXJkIGlvY3RsLiBUaGlzIGlzIHR5cGUgb2YgWnlucU1Q
+IEFQSSBqdXN0IGxpa2Ugb3RoZXIgQVBJcy4gVGhpcyBkZWJ1Z2ZzIGlzIGNyZWF0ZWQgdG8gZGVi
+dWcgWnlucU1QIElPQ1RMIEFQSS4NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0K
