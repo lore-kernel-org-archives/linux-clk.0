@@ -1,115 +1,213 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
+Return-Path: <matthias.bgg@kernel.org>
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	pi-cheng.chen@linaro.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 4/9] dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
-Date: Sat, 28 Jul 2018 00:15:22 +0530
-Message-Id: <20180727184527.13287-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [resend PATCH v4 1/5] drm/mediatek: Use regmap for register access
+Date: Wed, 18 Jul 2018 00:03:24 +0200
+Message-Id: <20180717220328.792-2-matthias.bgg@kernel.org>
+In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding constants for Actions Semi S900 SoC Reset
-Management Unit (RMU).
+From: Matthias Brugger <mbrugger@suse.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+The mmsys memory space is shared between the drm and the
+clk driver. Use regmap to access it.
+
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- .../dt-bindings/reset/actions,s900-reset.h    | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +--
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 38 ++++++++++---------------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 +++------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+ 5 files changed, 24 insertions(+), 37 deletions(-)
 
-diff --git a/include/dt-bindings/reset/actions,s900-reset.h b/include/dt-bindings/reset/actions,s900-reset.h
-new file mode 100644
-index 000000000000..42c19d02e43b
---- /dev/null
-+++ b/include/dt-bindings/reset/actions,s900-reset.h
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+//
-+// Device Tree binding constants for Actions Semi S900 Reset Management Unit
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+
-+#ifndef __DT_BINDINGS_ACTIONS_S900_RESET_H
-+#define __DT_BINDINGS_ACTIONS_S900_RESET_H
-+
-+#define RESET_CHIPID				0
-+#define RESET_CPU_SCNT				1
-+#define RESET_SRAMI				2
-+#define RESET_DDR_CTL_PHY			3
-+#define RESET_DMAC				4
-+#define RESET_GPIO				5
-+#define RESET_BISP_AXI				6
-+#define RESET_CSI0				7
-+#define RESET_CSI1				8
-+#define RESET_DE				9
-+#define RESET_DSI				10
-+#define RESET_GPU3D_PA				11
-+#define RESET_GPU3D_PB				12
-+#define RESET_HDE				13
-+#define RESET_I2C0				14
-+#define RESET_I2C1				15
-+#define RESET_I2C2				16
-+#define RESET_I2C3				17
-+#define RESET_I2C4				18
-+#define RESET_I2C5				19
-+#define RESET_IMX				20
-+#define RESET_NANDC0				21
-+#define RESET_NANDC1				22
-+#define RESET_SD0				23
-+#define RESET_SD1				24
-+#define RESET_SD2				25
-+#define RESET_SD3				26
-+#define RESET_SPI0				27
-+#define RESET_SPI1				28
-+#define RESET_SPI2				29
-+#define RESET_SPI3				30
-+#define RESET_UART0				31
-+#define RESET_UART1				32
-+#define RESET_UART2				33
-+#define RESET_UART3				34
-+#define RESET_UART4				35
-+#define RESET_UART5				36
-+#define RESET_UART6				37
-+#define RESET_HDMI				38
-+#define RESET_LVDS				39
-+#define RESET_EDP				40
-+#define RESET_USB2HUB				41
-+#define RESET_USB2HSIC				42
-+#define RESET_USB3				43
-+#define RESET_PCM1				44
-+#define RESET_AUDIO				45
-+#define RESET_PCM0				46
-+#define RESET_SE				47
-+#define RESET_GIC				48
-+#define RESET_DDR_CTL_PHY_AXI			49
-+#define RESET_CMU_DDR				50
-+#define RESET_DMM				51
-+#define RESET_HDCP2TX				52
-+#define RESET_ETHERNET				53
-+
-+#endif /* __DT_BINDINGS_ACTIONS_S900_RESET_H */
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+index 658b8dd45b83..4c65873b4867 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+@@ -33,7 +33,7 @@
+  * @enabled: records whether crtc_enable succeeded
+  * @planes: array of 4 drm_plane structures, one for each overlay plane
+  * @pending_planes: whether any plane has pending changes to be applied
+- * @config_regs: memory mapped mmsys configuration register space
++ * @config_regs: regmap mapped mmsys configuration register space
+  * @mutex: handle to one of the ten disp_mutex streams
+  * @ddp_comp_nr: number of components in ddp_comp
+  * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
+@@ -48,7 +48,7 @@ struct mtk_drm_crtc {
+ 	struct drm_plane		planes[OVL_LAYER_NR];
+ 	bool				pending_planes;
+ 
+-	void __iomem			*config_regs;
++	struct regmap			*config_regs;
+ 	struct mtk_disp_mutex		*mutex;
+ 	unsigned int			ddp_comp_nr;
+ 	struct mtk_ddp_comp		**ddp_comp;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 8130f3dab661..bafc5c77c4fb 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -185,53 +185,45 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	return value;
+ }
+ 
+-static void mtk_ddp_sout_sel(void __iomem *config_regs,
++static void mtk_ddp_sout_sel(struct regmap *config_regs,
+ 			     enum mtk_ddp_comp_id cur,
+ 			     enum mtk_ddp_comp_id next)
+ {
+ 	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
+-		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+-			       config_regs + DISP_REG_CONFIG_OUT_SEL);
++		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
++				BLS_TO_DSI_RDMA1_TO_DPI1);
+ }
+ 
+-void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
++void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+ 			      enum mtk_ddp_comp_id cur,
+ 			      enum mtk_ddp_comp_id next)
+ {
+-	unsigned int addr, value, reg;
++	unsigned int addr, value;
+ 
+ 	value = mtk_ddp_mout_en(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) | value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, value);
+ 
+ 	mtk_ddp_sout_sel(config_regs, cur, next);
+ 
+ 	value = mtk_ddp_sel_in(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) | value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, value);
+ }
+ 
+-void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
++void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+ 				   enum mtk_ddp_comp_id cur,
+ 				   enum mtk_ddp_comp_id next)
+ {
+-	unsigned int addr, value, reg;
++	unsigned int addr, value;
+ 
+ 	value = mtk_ddp_mout_en(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) & ~value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, 0);
+ 
+ 	value = mtk_ddp_sel_in(cur, next, &addr);
+-	if (value) {
+-		reg = readl_relaxed(config_regs + addr) & ~value;
+-		writel_relaxed(reg, config_regs + addr);
+-	}
++	if (value)
++		regmap_update_bits(config_regs, addr, value, 0);
+ }
+ 
+ struct mtk_disp_mutex *mtk_disp_mutex_get(struct device *dev, unsigned int id)
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+index f9a799168077..32e12f33b76a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+@@ -20,10 +20,10 @@ struct regmap;
+ struct device;
+ struct mtk_disp_mutex;
+ 
+-void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
++void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+ 			      enum mtk_ddp_comp_id cur,
+ 			      enum mtk_ddp_comp_id next);
+-void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
++void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+ 				   enum mtk_ddp_comp_id cur,
+ 				   enum mtk_ddp_comp_id next);
+ 
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index b2ad19bd1e00..dd249cf5121e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -21,6 +21,7 @@
+ #include <drm/drm_of.h>
+ #include <linux/component.h>
+ #include <linux/iommu.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
+@@ -393,7 +394,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_drm_private *private;
+-	struct resource *mem;
+ 	struct device_node *node;
+ 	struct component_match *match = NULL;
+ 	int ret;
+@@ -407,14 +407,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	INIT_WORK(&private->commit.work, mtk_atomic_work);
+ 	private->data = of_device_get_match_data(dev);
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	private->config_regs = devm_ioremap_resource(dev, mem);
+-	if (IS_ERR(private->config_regs)) {
+-		ret = PTR_ERR(private->config_regs);
+-		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
+-			ret);
+-		return ret;
+-	}
++	private->config_regs = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(private->config_regs))
++		return PTR_ERR(private->config_regs);
+ 
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(dev->of_node->parent, node) {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index 4edc0023684c..86cec19193c4 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -44,7 +44,7 @@ struct mtk_drm_private {
+ 
+ 	struct device_node *mutex_node;
+ 	struct device *mutex_dev;
+-	void __iomem *config_regs;
++	struct regmap *config_regs;
+ 	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
+ 	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
+ 	const struct mtk_mmsys_driver_data *data;
 -- 
 2.17.1
