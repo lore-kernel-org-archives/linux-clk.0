@@ -1,154 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs21.siol.net ([185.57.226.212]:34651 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754045AbeGEUFZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Jul 2018 16:05:25 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if they don't have channel 0
-Date: Thu, 05 Jul 2018 22:03:35 +0200
-Message-ID: <1699738.FoQmAThxyL@jernej-laptop>
-In-Reply-To: <20180705070358.7ng4shuo3pxp62q6@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com> <20180705070358.7ng4shuo3pxp62q6@flea>
+Return-Path: <edgar.righi@lsitec.org.br>
 MIME-Version: 1.0
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date: Tue, 17 Jul 2018 14:02:00 -0300
+Message-ID: <CADHB5bAztBFgWe-1v5vFfsxJgW1S3OOpV1Jkjrgk2h+pJBFw9w@mail.gmail.com>
+Subject: [PATCH] clk: actions: Add custom delay option to Actions Semi OWL pll
+ clock driver
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	daniel.lezcano@linaro.org, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
+	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
+	catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne četrtek, 05. julij 2018 ob 09:03:58 CEST je Maxime Ripard napisal(a):
-> On Sun, Jul 01, 2018 at 11:11:06PM +0800, Chen-Yu Tsai wrote:
-> > On Sun, Jul 1, 2018 at 4:27 PM, Jernej Škrabec <jernej.skrabec@siol.net> 
-wrote:
-> > > Dne četrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai napisal(a):
-> > >> On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
-> > >> 
-> > >> <jernej.skrabec@siol.net> wrote:
-> > >> > Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai 
-napisal(a):
-> > >> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
-> > >> >> <jernej.skrabec@siol.net>
-> > >> > 
-> > >> > wrote:
-> > >> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI
-> > >> >> > encoder.
-> > >> >> > Because of that, all output endpoints on such TCON node will point
-> > >> >> > to a
-> > >> >> > encoder which is part of component framework.
-> > >> >> > 
-> > >> >> > Correct current graph traversing algorithm in such way that it
-> > >> >> > doesn't
-> > >> >> > skip output enpoints with id 0 on TV TCONs.
-> > >> >> 
-> > >> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that
-> > >> >> don't
-> > >> >> have channel 0, it must be skipped.
-> > >> > 
-> > >> > I'm not sure where this is stated. I read TCON binding again. Can you
-> > >> > please point me to it?
-> > >> 
-> > >> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree
-> > >> /bind ings/display/sunxi/sun4i-drm.txt#L169
-> > >> 
-> > >> Our TCON driver still expects RGB or LVDS panel / bridges on endpoint
-> > >> 0.
-> > > 
-> > > Yes, but that can only happen on TCON which has channel 0. TV TCONs
-> > > (those
-> > > with channel 1 only) can't have panels or bridges connected to them,
-> > > because they are internally always connected to either HDMI or TV
-> > > encoder or both. Actually, R40 is the only SoC, where same TV TCON can
-> > > be connected to TV encoder or HDMI. Others have specialized TV TCONs,
-> > > which are connect to only one encoder.
-> > > 
-> > > IMO TV TCONs are really just stripped down LCD TCONs to support one (or
-> > > max
-> > > two) specific encoder.
-> > 
-> > I agree. We've seen these first in the H3, and the reverse, TCONs only
-> > with
-> > LCD, on the A23/A33.
-> > 
-> > >> So I guess this was sort of implied historically. It's no longer true.
-> > >> This is something we should probably fix.
-> > > 
-> > > Fixed in what way? You mean update bindings to mention that TCON output
-> > > endpoint 0 is reserved for panels or bridges?
-> > 
-> > Either that, or have the drm driver look at other endpoints. I guess we
-> > should ask Maxime if this is already done or not, since the DSI driver
-> > isn't endpoint 0 in the A33 dtsi.
-> 
-> The DSI driver isn't really a good example for this, since the panel
-> isn't described as part of the OF graph, but DSI binding require that
-> it's a child of the DSI controller node.
+This patch adds custom delay support to Actions Semi OWL pll clock driver.
+It is required for future Actions Semi Owl series S500 SoC clock support
 
-So should be new behaviour reverted? I mean ignoring endpoint 0 on TV TCONs.
+Currently, the driver waits a fixed amount of time defined by the
+macro PLL_STABILITY_WAIT_US.
+The default delay (50us) is not enough for Actions Semi Owl S500 SoC.
+It needs up to 150us.
+A new field called "delay" was added to "struct owl_pll_hw". The rest
+of the code was updated accordingly.
+Old macros "OWL_PLL_HW", "OWL_PLL" and "OWL_PLL_NO_PARENT" were kept
+(same usage), but updated to set "delay" value to
+PLL_STABILITY_WAIT_US (50us).
+New macros "OWL_PLL_HW_DELAY", "OWL_PLL_DELAY" and
+"OWL_PLL_NO_PARENT_DELAY" were created with an extra argument to set a
+custom "delay".
+This does not break S700 and S900 code and was tested on S500 based
+Lemaker Guitar Board.
 
-For me, it doesn't make sense to check for panel or bridges on TV TCONs, 
-because they are never exposed on physical pins. They are always connected to 
-TVE or HDMI encoder internally.
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-> 
-> > >> In practice our drivers don't look at it (yet), but rely on the
-> > >> downstream
-> > >> encoder type to determine which channel to use.
-> > >> 
-> > >> But please add the "allwinner,tcon-channel" property as specified in
-> > >> the binding.
-> > > 
-> > > It's my understanding of TCON binding documentation that property
-> > > "allwinner,tcon-channel" is needed only if TCON supports both channels.
-> > > TV
-> > > TCON clearly supports only channel 1. In that case, there is no doubt to
-> > > which channel output endpoint belongs.
-> > > 
-> > > If that's not true, dt bindings documentation should be reworded to
-> > > contain
-> > > word "needed" or something similar. Currently, no DT for newer SoC
-> > > contains
-> > > that property (for example, A83T, H3, H5 or even A33).
-> 
-> Yeah, but that's mainly because we have a single output enabled for
-> each channel on those newer SoCs. When / if we enable the RGB and LVDS
-> output for example, we will have to set this.
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/drivers/clk/actions/owl-pll.c
+linux/drivers/clk/actions/owl-pll.c
+--- vanilla/drivers/clk/actions/owl-pll.c    2018-07-17 13:07:16.667704000 -0300
++++ linux/drivers/clk/actions/owl-pll.c    2018-07-17 13:42:07.396785603 -0300
+@@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_h
 
-So just to be clear, before I send follow up series, I have to add 
-"allwinner,tcon-channel" property to DT, because both TV TCONs can be 
-connected to either TVE or HDMI (trough TCON TOP)?
+     regmap_write(common->regmap, pll_hw->reg, reg);
 
-BTW, since this property is not used at all in the code, why not just simply 
-deprecate it and remove it from existing DTs? I noticed this is standard 
-practice for obsolete properties.
+-    udelay(PLL_STABILITY_WAIT_US);
++    udelay(pll_hw->delay);
 
-Best regards,
-Jernej
+     return 0;
+ }
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/drivers/clk/actions/owl-pll.h
+linux/drivers/clk/actions/owl-pll.h
+--- vanilla/drivers/clk/actions/owl-pll.h    2018-07-17 13:07:16.667704000 -0300
++++ linux/drivers/clk/actions/owl-pll.h    2018-07-17 13:42:11.116765089 -0300
+@@ -27,6 +27,7 @@ struct owl_pll_hw {
+     u8            width;
+     u8            min_mul;
+     u8            max_mul;
++    u32            delay;
+     const struct clk_pll_table *table;
+ };
 
-> 
-> > > On A33 this is even more interesting, since tcon0 has only channel
-> > > 0 and has DSI output endpoint with number 1. According to TCON
-> > > binding docs, if "allwinner,tcon-channel" is not preset, endpoint
-> > > number represent channel. So, that would mean DSI needs channel 1
-> > > on tcon which supports clearly only channel 0. So either there
-> > > TCON bindings documentation needs updates or DT for A33 has to be
-> > > updated.
-> > 
-> > Maxime? You did the A33 DSI stuff.
-> 
-> I guess it's missing on the A33 DSI endpoint.
-> 
-> Maxime
+@@ -35,6 +36,51 @@ struct owl_pll {
+     struct owl_clk_common    common;
+ };
 
++#define PLL_STABILITY_WAIT_US    (50)
++
++#define OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,            \
++           _width, _min_mul, _max_mul, _table, _delay)            \
++    {                                \
++        .reg        = _reg,                    \
++        .bfreq        = _bfreq,                \
++        .bit_idx    = _bit_idx,                \
++        .shift        = _shift,                \
++        .width        = _width,                \
++        .min_mul    = _min_mul,                \
++        .max_mul    = _max_mul,                \
++        .table        = _table,                \
++        .delay        = _delay,                \
++    }
++
++#define OWL_PLL_DELAY(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
++        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
++    struct owl_pll _struct = {                    \
++        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
++                     _width, _min_mul,            \
++                     _max_mul, _table, _delay),            \
++        .common = {                        \
++            .regmap = NULL,                    \
++            .hw.init = CLK_HW_INIT(_name,            \
++                           _parent,            \
++                           &owl_pll_ops,        \
++                           _flags),            \
++        },                            \
++    }
++
++#define OWL_PLL_NO_PARENT_DELAY(_struct, _name, _reg, _bfreq, _bit_idx,    \
++        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
++    struct owl_pll _struct = {                    \
++        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
++                     _width, _min_mul,            \
++                     _max_mul, _table, _delay),            \
++        .common = {                        \
++            .regmap = NULL,                    \
++            .hw.init = CLK_HW_INIT_NO_PARENT(_name,        \
++                           &owl_pll_ops,        \
++                           _flags),            \
++        },                            \
++    }
++
+ #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,            \
+            _width, _min_mul, _max_mul, _table)            \
+     {                                \
+@@ -46,6 +92,7 @@ struct owl_pll {
+         .min_mul    = _min_mul,                \
+         .max_mul    = _max_mul,                \
+         .table        = _table,                \
++        .delay        = PLL_STABILITY_WAIT_US,\
+     }
 
+ #define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
+@@ -78,7 +125,6 @@ struct owl_pll {
+     }
 
+ #define mul_mask(m)        ((1 << ((m)->width)) - 1)
+-#define PLL_STABILITY_WAIT_US    (50)
+
+ static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
+ {
