@@ -1,147 +1,49 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 5 Jul 2018 13:51:24 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-	lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-	arnd@arndb.de, dmitry.torokhov@gmail.com, sre@kernel.org,
-	chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v9 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180705125124.GQ496@dell>
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
- <20180705091813.GK496@dell>
- <20180705103442.GA8426@localhost.localdomain>
- <20180705111705.GN496@dell>
- <20180705122923.GD8426@localhost.localdomain>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 3/4] ARM: at91: pm: add PMC fast startup registers defines
+Date: Tue, 17 Jul 2018 11:26:56 +0300
+Message-ID: <1531816017-31986-4-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180705122923.GD8426@localhost.localdomain>
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-> > > > > +++ b/include/linux/mfd/bd71837.h
-> > > > > @@ -0,0 +1,391 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > > > 
-> > > > I thought these were meant to use C++ (//) comments?
-> > > 
-> > > The checkpatch.pl did complain if I used // comment on SPDX line for
-> > > header file. OTOH for c-file it required // comments and complained
-> > > about /* */ - version. So I did as it suggested and used 
-> > 
-> > Well that's just dandy -- who comes up with this stuff?
-> 
-> Engineers I bet =)
+Add PMC fast startup registers defines.
 
-Ones who do not suffer from OCD, clearly!
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ include/linux/clk/at91_pmc.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> > > > > +/* Copyright (C) 2018 ROHM Semiconductors */
-> > > > > +
-> > > > > +/*
-> > > > > + * ROHM BD71837MWV header file
-> > > > > + */
-> > > > 
-> > > > If you prefix the mentions of (BD,bd)71837 with (ROHM,rohm) then this
-> > > > comment becomes redundant and you can remove it.
-> > > 
-> > > I am sorry but I am not sure what you suggest here. Do you mean I should
-> > > add ROHM or rohm to all definitions here? I think that would make
-> > > definitions pretty long so I would certinly need to split more lines.
-> > > Such cange would also impact already applied patches. So maybe I
-> > > misinterpreted your comment? And in case I did not - can this prefixing of
-> > > types - be done as a separate patch set as it impacts to regulators and
-> > > clk too? (clk is not yet applied so that is easy to change though).
-> > 
-> > Any lines which are already long, you can justify as not having to do
-> > this, however I think for the filenames and function names it would
-> > be nice if they were prefixed.
-> 
-> Right. For file names this should be easily doable. And when the regmap
-> wrappers are removed there are no public functions left. And I think the
-> name of file containing the functions is sufficient for grouping
-> functions under "Rohm", right? 
-
-That's fine.
-
-> > Filenames are particularly important.  That way all of the Rohm
-> > drivers will be grouped.  Unless you can be assured that all Rohm
-> > devices will be prefixed by 'bd', then the point is slightly mooted,
-> > however since 'bd' doesn't really correlate with 'rohm' it's still
-> > difficult to assume that bd* drivers are associated with Rohm -- if
-> > you catch my drift.
-> 
-> I guess I do catch it. And no, all ROHM stuff will definitely not be
-> prefixed with bd - which is the name of the power chip
-
-> I mean power IC series.
-
-Now you're getting it! ;)
-
-> > > > > +struct bd71837_board {
-> > > > > +	struct regulator_init_data *init_data[BD71837_REGULATOR_CNT];
-> > > > > +	int	gpio_intr;
-> > > > > +};
-> > > > 
-> > > > Where is this populated?
-> > > > 
-> > > Currently nowhere as I use device-tree for getting the regulator/irq
-> > > config. This is for architectures which do not use DT - but as I don't
-> > > have one for testing I did leave the depends_on OF. If it was populated
-> > > I would expect it to be done in some setup code.
-> > 
-> > Please don't add code for 'what ifs'.
-> > 
-> > Please remove it and add it back when you need it.
-> 
-> Allright. Although this will also break the regulator part then...
-
-Well, it's broken anyway ...
-
-> > > > > +/*
-> > > > > + * bd71837 sub-driver chip access routines
-> > > > > + */
-> > > > > +
-> > > > 
-> > > > Please don't abstract APIs for no reason.
-> > > > 
-> > > > Use the regmap_* API directly instead.
-> > > > 
-> > > 
-> > > Yes. This was already pointed out by Stephen Boyd. But again, as part of
-> > > the patches (reguators) were already applied using the wrappers - I asked
-> > > if I can remove these in separate patch set after getting this initial
-> > > version out.
-> > 
-> > That is one of the issues with applying related patches without each
-> > of them being reviewed first.  Applying unsuitable code is not the
-> > correct thing to do, sorry.
-> 
-> So I assume you are not Ok with adding the wrappers and removing them
-> with later set of patches? I'll do following workaround then:
-
-No, I'm not okay with that at all. :|
-
-> 1. Change MFD Kconfig option name => current regulator code will not be
-> compiled even if the MFD would be applied.
-> 2. Change MFD according to this discussion (and break the compatibility
-> with applied regulator code)
-> 3. Fix the regulator code with further patches to Mark
-> 4. Fix the depends_on Kconfig option in regulator tree to match the new
-> one suggested here.
-> 
-> Does this sound reasonable?
-
-That's how I would do it.
-
+diff --git a/include/linux/clk/at91_pmc.h b/include/linux/clk/at91_pmc.h
+index 4ea2cbf9b50d..931ab05f771d 100644
+--- a/include/linux/clk/at91_pmc.h
++++ b/include/linux/clk/at91_pmc.h
+@@ -157,6 +157,19 @@
+ #define		AT91_PMC_GCKRDY		(1 << 24)		/* Generated Clocks */
+ #define	AT91_PMC_IMR		0x6c			/* Interrupt Mask Register */
+ 
++#define AT91_PMC_FSMR		0x70		/* Fast Startup Mode Register */
++#define AT91_PMC_FSTT(n)	BIT(n)
++#define AT91_PMC_RTCAL		BIT(17)		/* RTC Alarm Enable */
++#define AT91_PMC_USBAL		BIT(18)		/* USB Resume Enable */
++#define AT91_PMC_SDMMC_CD	BIT(19)		/* SDMMC Card Detect Enable */
++#define AT91_PMC_LPM		BIT(20)		/* Low-power Mode */
++#define AT91_PMC_RXLP_MCE	BIT(24)		/* Backup UART Receive Enable */
++#define AT91_PMC_ACC_CE		BIT(25)		/* ACC Enable */
++
++#define AT91_PMC_FSPR		0x74		/* Fast Startup Polarity Reg */
++
++#define AT91_PMC_FS_INPUT_MASK  0x7ff
++
+ #define AT91_PMC_PLLICPR	0x80			/* PLL Charge Pump Current Register */
+ 
+ #define AT91_PMC_PROT		0xe4			/* Write Protect Mode Register [some SAM9] */
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.7.4
