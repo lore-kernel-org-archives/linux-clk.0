@@ -1,72 +1,63 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Tue, 17 Jul 2018 19:47:57 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux@cubietech.com,
+	support@cubietech.com, catalin.marinas@arm.com,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+	darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v6 5/5] arm64: dts: actions: Set UART clock reference
+ from CMU
+Message-ID: <20180717141757.GE19076@mani>
+References: <20180715203524.11948-1-sravanhome@gmail.com>
+ <20180715203524.11948-6-sravanhome@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gFJiHcUke4EntF76Rudo7DrOb5_61Qf-U8-z50zDEqeQ@mail.gmail.com>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180704065522.p4qpfnpayeobaok3@vireshk-i7> <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
- <CAJZ5v0gFJiHcUke4EntF76Rudo7DrOb5_61Qf-U8-z50zDEqeQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 4 Jul 2018 14:58:46 +0200
-Message-ID: <CAPDyKFqpL22RX4-4ZnKZTe3cyzU7Y3kcXjwwKSY-RVvPUKqULg@mail.gmail.com>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
-	linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Mike Turquette <mturquette@baylibre.com>,
-	Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180715203524.11948-6-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 4 July 2018 at 14:54, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Wed, Jul 4, 2018 at 2:50 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> [...]
->>
->>>> The third problem is that semantically using OPP for requesting
->>>> specific functional frequencies (i.e. for a  serial bus) is an abuse of that
->>>> framework.  It requires the clients to find the "performance level" that
->>>> matches the specific frequency they require, then request that performance
->>>> level - when what they really want is to "set rate" on the clock to a
->>>> specific, known, frequency.
->>>
->>> This is the prototype of that routine:
->>>
->>> int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
->>>
->>> All we need is the target frequency and not an OPP.
->>>
->>> Maybe we can solve the problems you raised with the OPP core like
->>> this:
->>>
->>> - On a call to dev_pm_opp_set_rate(), we check the currently cached
->>>   frequency value. If it is unknown or 0, we call clk_enable() as
->>>   well..
->>>
->>> - When the drivers want things to shut down, they call
->>>   dev_pm_opp_set_rate(dev, 0) and on this we drop regulator vote, etc,
->>>   and call clk_disable().
->>>
->>> Will that be acceptable to everyone ?
->>
->> For a cross SoC driver, the device may not be hooked up to an OPP
->> table. Then it needs to manage the clock anyways. I guess we can do
->> that for those cases that needs it.
->>
->> Another option is to use the ->runtime_suspend|resume() callbacks at
->> the genpd level. In principle when the device enters runtime suspend,
->> genpd can decide to drop the votes for the device (if some exist). At
->> runtime resume, genpd then should re-store the votes for the device it
->> had before it became runtime suspended (or if the vote became updated
->> in-between).
->>
->> In that way, the driver only needs to call dev_pm_opp_set_rate() when
->> it calls clk_set_rate().
->
-> You'd need that for system-wide PM too I guess.
+On Sun, Jul 15, 2018 at 10:35:24PM +0200, Saravanan Sekar wrote:
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 
-Yep, but I don't think it's that critical as I think the PM domain
-will be powered off anyways for that scenario. Of course, unless it
-stays powered on because of some wakeup settings, but I doubt that.
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Kind regards
-Uffe
+Thanks,
+Mani
+
+> ---
+>  arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> index ef79d7905f44..c08808ca3346 100644
+> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> @@ -28,12 +28,6 @@
+>  		device_type = "memory";
+>  		reg = <0x1 0xe0000000 0x0 0x0>;
+>  	};
+> -
+> -	uart3_clk: uart3-clk {
+> -		compatible = "fixed-clock";
+> -		clock-frequency = <921600>;
+> -		#clock-cells = <0>;
+> -	};
+>  };
+>  
+>  &timer {
+> @@ -42,5 +36,5 @@
+>  
+>  &uart3 {
+>  	status = "okay";
+> -	clocks = <&uart3_clk>;
+> +	clocks = <&cmu CLK_UART3>;
+>  };
+> -- 
+> 2.18.0
+> 
