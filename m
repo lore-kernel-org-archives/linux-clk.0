@@ -1,133 +1,82 @@
-Return-Path: <avienamo@nvidia.com>
-Date: Thu, 12 Jul 2018 16:11:42 +0300
-From: Aapo Vienamo <avienamo@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad
-	<pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v6 4/4] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc
- clocks
-Message-ID: <20180712161142.5166b6b8@dhcp-10-21-25-168>
-In-Reply-To: <8e1852c4-1471-ae05-8e55-c30ba4e77554@nvidia.com>
-References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
-	<1531396382-5579-5-git-send-email-avienamo@nvidia.com>
-	<8e1852c4-1471-ae05-8e55-c30ba4e77554@nvidia.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Tue, 17 Jul 2018 19:44:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux@cubietech.com,
+	support@cubietech.com, catalin.marinas@arm.com,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+	darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v6 4/5] arm64: dts: actions: Add Clock Management Unit
+ for S700
+Message-ID: <20180717141429.GC19076@mani>
+References: <20180715203524.11948-1-sravanhome@gmail.com>
+ <20180715203524.11948-5-sravanhome@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Return-Path: avienamo@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180715203524.11948-5-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 12 Jul 2018 13:59:58 +0100
-Jon Hunter <jonathanh@nvidia.com> wrote:
+Hi Saravanan,
 
-> On 12/07/18 12:53, Aapo Vienamo wrote:
-> > From: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> > 
-> > These clocks have low jitter paths to certain parents. To model these
-> > correctly, use the sdmmc mux divider clock type.
-> > 
-> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-id.h           |  2 --
-> >  drivers/clk/tegra/clk-tegra-periph.c | 11 -----------
-> >  drivers/clk/tegra/clk-tegra210.c     | 14 ++++++++++++--
-> >  3 files changed, 12 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> > index b616e33..de466b4 100644
-> > --- a/drivers/clk/tegra/clk-id.h
-> > +++ b/drivers/clk/tegra/clk-id.h
-> > @@ -227,13 +227,11 @@ enum clk_id {
-> >  	tegra_clk_sdmmc1_9,
-> >  	tegra_clk_sdmmc2,
-> >  	tegra_clk_sdmmc2_8,
-> > -	tegra_clk_sdmmc2_9,
-> >  	tegra_clk_sdmmc3,
-> >  	tegra_clk_sdmmc3_8,
-> >  	tegra_clk_sdmmc3_9,
-> >  	tegra_clk_sdmmc4,
-> >  	tegra_clk_sdmmc4_8,
-> > -	tegra_clk_sdmmc4_9,
-> >  	tegra_clk_se,
-> >  	tegra_clk_soc_therm,
-> >  	tegra_clk_soc_therm_8,
-> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> > index 2acba29..38c4eb2 100644
-> > --- a/drivers/clk/tegra/clk-tegra-periph.c
-> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> > @@ -451,15 +451,6 @@ static u32 mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0_idx[] = {
-> >  	[0] = 0, [1] = 3, [2] = 4, [3] = 6, [4] = 7,
-> >  };
-> >  
-> > -static const char *mux_pllp_clkm_pllc4_out2_out1_out0_lj[] = {
-> > -	"pll_p",
-> > -	"pll_c4_out2", "pll_c4_out0",	/* LJ input */
-> > -	"pll_c4_out2", "pll_c4_out1",
-> > -	"pll_c4_out1",			/* LJ input */
-> > -	"clk_m", "pll_c4_out0"
-> > -};
-> > -#define mux_pllp_clkm_pllc4_out2_out1_out0_lj_idx NULL
-> > -
-> >  static const char *mux_pllp_pllc2_c_c3_clkm[] = {
-> >  	"pll_p", "pll_c2", "pll_c", "pll_c3", "clk_m"
-> >  };
-> > @@ -686,9 +677,7 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >  	MUX("sdmmc3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3),
-> >  	MUX("sdmmc4", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4),
-> >  	MUX8("sdmmc1", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC1, 14, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc1_9),
-> > -	MUX8("sdmmc2", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC2, 9, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc2_9),
-> >  	MUX8("sdmmc3", mux_pllp_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_SDMMC3, 69, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc3_9),
-> > -	MUX8("sdmmc4", mux_pllp_clkm_pllc4_out2_out1_out0_lj, CLK_SOURCE_SDMMC4, 15, TEGRA_PERIPH_ON_APB, tegra_clk_sdmmc4_9),
-> >  	MUX("la", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_LA, 76, TEGRA_PERIPH_ON_APB, tegra_clk_la),
-> >  	MUX("trace", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_TRACE, 77, TEGRA_PERIPH_ON_APB, tegra_clk_trace),
-> >  	MUX("owr", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_OWR, 71, TEGRA_PERIPH_ON_APB, tegra_clk_owr),
-> > diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> > index 5435d01..9eb1cb1 100644
-> > --- a/drivers/clk/tegra/clk-tegra210.c
-> > +++ b/drivers/clk/tegra/clk-tegra210.c
-> > @@ -44,6 +44,8 @@
-> >  #define CLK_SOURCE_EMC 0x19c
-> >  #define CLK_SOURCE_SOR1 0x410
-> >  #define CLK_SOURCE_LA 0x1f8
-> > +#define CLK_SOURCE_SDMMC2 0x154
-> > +#define CLK_SOURCE_SDMMC4 0x164
-> >  
-> >  #define PLLC_BASE 0x80
-> >  #define PLLC_OUT 0x84
-> > @@ -2286,11 +2288,9 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
-> >  	[tegra_clk_rtc] = { .dt_id = TEGRA210_CLK_RTC, .present = true },
-> >  	[tegra_clk_timer] = { .dt_id = TEGRA210_CLK_TIMER, .present = true },
-> >  	[tegra_clk_uarta_8] = { .dt_id = TEGRA210_CLK_UARTA, .present = true },
-> > -	[tegra_clk_sdmmc2_9] = { .dt_id = TEGRA210_CLK_SDMMC2, .present = true },
-> >  	[tegra_clk_i2s1] = { .dt_id = TEGRA210_CLK_I2S1, .present = true },
-> >  	[tegra_clk_i2c1] = { .dt_id = TEGRA210_CLK_I2C1, .present = true },
-> >  	[tegra_clk_sdmmc1_9] = { .dt_id = TEGRA210_CLK_SDMMC1, .present = true },
-> > -	[tegra_clk_sdmmc4_9] = { .dt_id = TEGRA210_CLK_SDMMC4, .present = true },
-> >  	[tegra_clk_pwm] = { .dt_id = TEGRA210_CLK_PWM, .present = true },
-> >  	[tegra_clk_i2s2] = { .dt_id = TEGRA210_CLK_I2S2, .present = true },
-> >  	[tegra_clk_usbd] = { .dt_id = TEGRA210_CLK_USBD, .present = true },
-> > @@ -3030,6 +3030,16 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
-> >  				0, NULL);
-> >  	clks[TEGRA210_CLK_ACLK] = clk;
-> >  
-> > +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc2", clk_base,
-> > +					    CLK_SOURCE_SDMMC2, 9,
-> > +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
-> > +	clks[TEGRA210_CLK_SDMMC2] = clk;
-> > +
-> > +	clk = tegra_clk_register_sdmmc_mux_div("sdmmc4", clk_base,
-> > +					    CLK_SOURCE_SDMMC4, 15,
-> > +					    TEGRA_DIVIDER_ROUND_UP, 0, NULL);
-> > +	clks[TEGRA210_CLK_SDMMC4] = clk;
-> > +  
+On Sun, Jul 15, 2018 at 10:35:23PM +0200, Saravanan Sekar wrote:
+> Add Clock Management Unit for Actions Semi S700 SoC.
 > 
-> Peter, do we need to check for an error here before populating the pointer
-> returned?
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+> index 66dd5309f0a2..4497741d48b2 100644
+> --- a/arch/arm64/boot/dts/actions/s700.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/actions,s700-cmu.h>
+>  
+>  / {
+>  	compatible = "actions,s700";
+> @@ -44,6 +45,13 @@
+>  		};
+>  	};
+>  
+> +	cmu: clock-controller@e0168000 {
+> +		compatible = "actions,s700-cmu";
+> +		reg = <0x0 0xe0168000 0x0 0x1000>;
+> +		clocks = <&hosc>, <&losc>;
+> +		#clock-cells = <1>;
+> +	};
+> +
 
-The error checking is done by the code that uses the clks array, so no.
+CMU node should come under soc, ordered based on the address.
 
- -Aapo
+Thanks,
+Mani
+
+>  	reserved-memory {
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+> @@ -87,6 +95,12 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	losc: losc {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+> -- 
+> 2.18.0
+> 
