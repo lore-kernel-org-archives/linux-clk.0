@@ -1,68 +1,52 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
-Date: Thu, 26 Jul 2018 17:35:12 +0200
-Message-Id: <20180726153517.10020-7-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga18.intel.com ([134.134.136.126]:64772 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729708AbeGQT1b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Jul 2018 15:27:31 -0400
+Date: Wed, 18 Jul 2018 02:52:49 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: [RFC PATCH] clk: mediatek: cksys_base can be static
+Message-ID: <20180717185249.GA144124@lkp-hsx02>
+References: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for defining fixed rate clocks, to be used for on-chip
-oscillators.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 3cff52bad99d ("clk: mediatek: Add MT6765 clock support")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-v2:
-  - Add Reviewed-by.
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
- 2 files changed, 8 insertions(+)
+ clk-mt6765.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9efc..e04338932786bc14 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		}
- 		break;
+diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
+index 7b360b9..2f90511 100644
+--- a/drivers/clk/mediatek/clk-mt6765.c
++++ b/drivers/clk/mediatek/clk-mt6765.c
+@@ -33,8 +33,8 @@
+ static DEFINE_SPINLOCK(mt6765_clk_lock);
  
-+	case CLK_TYPE_FR:
-+		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
-+					      core->mult);
-+		break;
-+
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 642f720b9b055337..87bb8f368d4ecd18 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -38,6 +38,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
- 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
-+	CLK_TYPE_FR,		/* Fixed Rate Clock */
+ /* Total 12 subsys */
+-void __iomem *cksys_base;
+-void __iomem *apmixed_base;
++static void __iomem *cksys_base;
++static void __iomem *apmixed_base;
  
- 	/* Custom definitions start here */
- 	CLK_TYPE_CUSTOM,
-@@ -56,6 +57,8 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
- #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
-+#define DEF_RATE(_name, _id, _rate)	\
-+	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
- 
-     /*
-      * Definitions of Module Clocks
--- 
-2.17.1
+ /* CKSYS */
+ #define CLK_SCP_CFG_0		(cksys_base + 0x200)
