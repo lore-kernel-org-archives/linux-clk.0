@@ -1,58 +1,114 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King
-	<linux@armlinux.org.uk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
-	<horms@verge.net.au>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Mon, 30 Jul 2018 16:38:48 +0000
-Message-ID: 
- <TY1PR01MB1769B0BC7769B14EFBC0F3DEF52F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
-	 <1532957509-14541-2-git-send-email-phil.edworthy@renesas.com>
- <884376f1fd82a99e5d47eeba1fd1aaa3b19bc604.camel@linux.intel.com>
-In-Reply-To: <884376f1fd82a99e5d47eeba1fd1aaa3b19bc604.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 00/16] clk: at91: Rework DT bindings
+Date: Wed, 18 Jul 2018 00:27:41 +0200
+Message-Id: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgQW5keSwNCg0KT24gMzAgSnVseSAyMDE4IDE3OjA0LCBBbmR5IFNoZXZjaGVua28gd3JvdGU6
-DQo+IE9uIE1vbiwgMjAxOC0wNy0zMCBhdCAxNDozMSArMDEwMCwgUGhpbCBFZHdvcnRoeSB3cm90
-ZToNCj4gPiBRdWl0ZSBhIGZldyBkcml2ZXJzIGdldCBhbiBvcHRpb25hbCBjbG9jaywgZS5nLiBh
-IGNsb2NrIHJlcXVpcmVkIHRvDQo+ID4gYWNjZXNzIHBlcmlwaGVyYWwncyByZWdpc3RlcnMgdGhh
-dCBpcyBhbHdheXMgZW5hYmxlZCBvbiBzb21lIGRldmljZXMuDQo+ID4NCj4gPiBUaGlzIGZ1bmN0
-aW9uIGJlaGF2ZXMgdGhlIHNhbWUgYXMgb2ZfY2xrX2dldF9ieV9uYW1lKCkgZXhjZXB0IHRoYXQg
-aXQNCj4gPiB3aWxsIHJldHVybiBOVUxMIGluc3RlYWQgb2YgLUVJTlZBTC4NCj4gDQo+IEknbSBw
-dXp6bGVkIGEgYml0Lg0KPiANCj4gX19vZl9jbGtfZ2V0KCkgbWF5IHJldHVybiBmZXcgZXJyb3Ig
-Y29kZXMsIGFuZCB0byBtZSBFTk9FTlQgc291bmRzDQo+IGNvcnJlY3Qgd2hlbiBjbG9jayBpcyBu
-b3QgZm91bmQuIE90aGVyIGVycm9yIGNvZGVzIHNob3VsZCBiZSBwYXNzZWQgdG8gdGhlDQo+IGNh
-bGxlciBldmVuIGZvciBvcHRpb25hbCBjbG9ja3MuDQo+IA0KPiBJZiBhYm92ZSBpcyBub3QgdHJ1
-ZSwgd2UgbmVlZCB0byB1bmRlcnN0YW5kIHdoYXQgY2lyY3Vtc3RhbmNlcyBmb3IgZWFjaA0KPiBw
-b3NzaWJsZSByZXR1cm5lZCBjb2RlIGFyZSwgYW5kIGZpeCAvIGFjdCBhY2NvcmRpbmdseS4NCj4N
-Cj4gUC5TLiBQb3NzaWJsZSB3YXkgbGlrZSByZWd1bGF0b3IgZnJhbWV3b3JrIGRvZXMgaXMgdG8g
-cmV0dXJuIC1FTk9ERVYuDQo+IA0KPiBTbywgYmFzaWNhbGx5IHdoYXQgSSdtIGFza2luZyBoZXJl
-IGlzIHRvIGJlIHN1cmUgdGhhdCBzaW5nbGUgZXJyb3IgY29kZSAoZm9yIG5vdw0KPiBzdXBwb3Nl
-ZCAtRUlOVkFMKSBpbiB0aGlzIGNhc2UgaXMgX3RoZV8gZXJyb3IgY29kZSBmb3IgYWJzZW50IC8g
-Y2FuJ3QgYmUNCj4gZm91bmQgY2xvY2suDQpvZl9wcm9wZXJ0eV9tYXRjaF9zdHJpbmcoKSBjYW4g
-cmV0dXJuIGRpZmZlcmVudCByZXR1cm4gdmFsdWVzIGZvciB3aGVuOg0KIHRoZSAiY2xvY2stbmFt
-ZXMiIHByb3BlcnR5IGlzIG1pc3NpbmcgKC1FSU5WQUwpLA0KIHRoZSBzcGVjaWZpZWQgY2xvY2sg
-bmFtZSBpbiB0aGUgImNsb2NrLW5hbWVzIiBwcm9wZXJ0eSBpcyBtaXNzaW5nICAoLUVOT0RBVEEp
-LA0KIG9yIGludGVybmFsIGVycm9ycywgKGUuZy4gLUVJTFNFUSkuDQpIb3dldmVyLCBpZiB5b3Ug
-dGhlbiBjYWxsIF9fb2ZfY2xrX2dldCgpIHdpdGggdGhlIGZhaWxlZCBpbmRleCwgeW91IGp1c3Qg
-Z2V0DQp0aGUgLUVJTlZBTCBlcnJvci4NCg0KTG9va2luZyBhdCBpdCBmdXJ0aGVyLCBfX29mX2Ns
-a19nZXQoKSBzaG91bGQgcmV0dXJuIC1FTk9FTlQgaWYgcGFzc2VkIGEgdmFsaWQNCmluZGV4IChl
-LmcuIDAgd2hlbiBuYW1lPU5VTEwpIGFuZCB0aGUgY2xvY2sgaXMgbm90IHRoZXJlLiBIb3dldmVy
-LCBJIHRoaW5rDQppdCB3aWxsIHRha2UgYSB3aGlsZSB0byBjaGVjayBhbGwgcG9zc2libGUgcmV0
-dXJuIHZhbHVlcyBhcyBpdCdzIG5vdCBpbW1lZGlhdGVseQ0KY2xlYXIgd2hhdCB0aGV5IGFyZSAo
-dG8gbWUpLg0KDQpJIHRoaW5rIHRoZSBiZXN0IHRoaW5nIGlzIHRvIHRlc3QgdGhlIHJldHVybiB2
-YWx1ZSBvZiBvZl9wcm9wZXJ0eV9tYXRjaF9zdHJpbmcoKQ0KZm9yIC1FTk9EQVRBLCBhbmQgZGVh
-bCB3aXRoIGl0IHRoZW4uIFRoZW4gZGVhbCB3aXRoIHRoZSBjYXNlIG9mIG5hbWU9TlVMTA0Kc2Vw
-YXJhdGVseS4NCg0KVGhhbmtzDQpQaGlsDQoNCiA+ICAtIEZpeCBjaGVjayBmb3IgY2xvY2sgbm90
-IHByZXNlbnQuIF9fb2ZfY2xrX2dldCgpIHJldHVybnMgLUVJTlZBTA0KPiA+ICAgIGlmIGl0J3Mg
-bm90IHRoZXJlLiBDb3ZlciBjYXNlIG9mIHdoZW4gdGhlcmUgaXMgbm8gY2xvY2sgbmFtZS4NCj4g
-DQo+IC0tDQo+IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwu
-Y29tPg0KPiBJbnRlbCBGaW5sYW5kIE95DQo=
+This is the promised rework of the at91 PMC clocks driver. It is mainly
+necessary to remove the DTC warnings but it also complies with the CCF
+rule that there should be one node per controller instead of one node
+per clock.
+
+This only handles the PMC, I'm planning to also rework the SCKC bindings
+later (without breaking the DT ABI).
+
+The series is based on top of clk-next plus at91-dt so I don't think it
+is convenient to have it this cycle. However, I would really like to
+ensure we agree on the new bindings this cycle before converting all the
+other platforms as this is a bit tedious.
+
+The first two patches are actually fixes and may be considered for this
+cycle.
+
+One nice note:
+at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
+
+drivers/clk/at91/built-in.o changes that way:
+
+   text	   data	    bss	    dec	    hex	
+  34792	     24	    732	  35548	   8adc	before
+  39438	     32	    741	  40211	   9d13	after
+  28300	     32	    741	  29073	   7191	without dt-compat
+
+
+Alexandre Belloni (16):
+  clk: at91: audio-pll: fix audio pmc type
+  clk: at91: generated: SSCs don't have a gclk
+  clk: at91: h32mx: separate registration from DT parsing
+  clk: at91: audio-pll: separate registration from DT parsing
+  clk: at91: generated: set audio_pll_allowed in
+    at91_clk_register_generated()
+  clk: at91: allow clock registration from C code
+  clk: at91: add pmc_data struct and helpers
+  dt-bindings: clk: at91: Document new PMC binding
+  clk: at91: add new DT lookup function
+  clk: at91: add sama5d4 pmc driver
+  clk: at91: add sama5d2 PMC driver
+  clk: at91: add at91sam9x5 PMCs driver
+  clk: at91: move DT compatibility code to its own file
+  ARM: dts: at91: sama5d4: switch to new clock bindings
+  ARM: dts: at91: sama5d2: switch to new binding
+  ARM: dts: at91: at91sam9x5: switch to new clock bindings
+
+ .../devicetree/bindings/clock/at91-clock.txt  | 523 +---------
+ arch/arm/boot/dts/at91-sama5d27_som1_ek.dts   |  12 +-
+ arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts     |   2 +-
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   |   4 +-
+ arch/arm/boot/dts/at91-sama5d4ek.dts          |   2 +-
+ arch/arm/boot/dts/at91sam9g15.dtsi            |   4 +
+ arch/arm/boot/dts/at91sam9g25.dtsi            |   4 +
+ arch/arm/boot/dts/at91sam9g25ek.dts           |   4 +-
+ arch/arm/boot/dts/at91sam9g35.dtsi            |   4 +
+ arch/arm/boot/dts/at91sam9x25.dtsi            |   4 +
+ arch/arm/boot/dts/at91sam9x35.dtsi            |   4 +
+ arch/arm/boot/dts/at91sam9x5.dtsi             | 326 +-----
+ arch/arm/boot/dts/at91sam9x5_can.dtsi         |  18 +-
+ arch/arm/boot/dts/at91sam9x5_isi.dtsi         |  11 +-
+ arch/arm/boot/dts/at91sam9x5_lcd.dtsi         |  19 +-
+ arch/arm/boot/dts/at91sam9x5_macb0.dtsi       |  11 +-
+ arch/arm/boot/dts/at91sam9x5_macb1.dtsi       |  11 +-
+ arch/arm/boot/dts/at91sam9x5_usart3.dtsi      |  11 +-
+ arch/arm/boot/dts/sama5d2.dtsi                | 642 +-----------
+ arch/arm/boot/dts/sama5d4.dtsi                | 535 +---------
+ drivers/clk/at91/Makefile                     |   5 +-
+ drivers/clk/at91/at91sam9x5.c                 | 302 ++++++
+ drivers/clk/at91/clk-audio-pll.c              | 107 +-
+ drivers/clk/at91/clk-generated.c              |  81 +-
+ drivers/clk/at91/clk-h32mx.c                  |  22 +-
+ drivers/clk/at91/clk-i2s-mux.c                |  40 +-
+ drivers/clk/at91/clk-main.c                   | 112 +-
+ drivers/clk/at91/clk-master.c                 |  99 +-
+ drivers/clk/at91/clk-peripheral.c             |  81 +-
+ drivers/clk/at91/clk-pll.c                    | 187 +---
+ drivers/clk/at91/clk-plldiv.c                 |  27 +-
+ drivers/clk/at91/clk-programmable.c           |  81 +-
+ drivers/clk/at91/clk-slow.c                   |  32 +-
+ drivers/clk/at91/clk-smd.c                    |  34 +-
+ drivers/clk/at91/clk-system.c                 |  39 +-
+ drivers/clk/at91/clk-usb.c                    |  94 +-
+ drivers/clk/at91/clk-utmi.c                   |  45 +-
+ drivers/clk/at91/dt-compat.c                  | 961 ++++++++++++++++++
+ drivers/clk/at91/pmc.c                        |  78 ++
+ drivers/clk/at91/pmc.h                        | 157 +++
+ drivers/clk/at91/sama5d2.c                    | 333 ++++++
+ drivers/clk/at91/sama5d4.c                    | 262 +++++
+ include/dt-bindings/clock/at91.h              |  14 +
+ 43 files changed, 2398 insertions(+), 2946 deletions(-)
+ create mode 100644 drivers/clk/at91/at91sam9x5.c
+ create mode 100644 drivers/clk/at91/dt-compat.c
+ create mode 100644 drivers/clk/at91/sama5d2.c
+ create mode 100644 drivers/clk/at91/sama5d4.c
+
+-- 
+2.18.0
