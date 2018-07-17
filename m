@@ -1,217 +1,153 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v4 2/5] dt-bindings: clock: Add S700 support for Actions Semi Soc's
-Date: Sun, 15 Jul 2018 14:31:42 +0200
-Message-Id: <20180715123145.16975-3-sravanhome@gmail.com>
-In-Reply-To: <20180715123145.16975-1-sravanhome@gmail.com>
-References: <20180715123145.16975-1-sravanhome@gmail.com>
+Return-Path: <Claudiu.Beznea@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 1/4] ARM: at91: pm: Use ULP0 naming instead of slow clock
+Date: Tue, 17 Jul 2018 11:26:54 +0300
+Message-ID: <1531816017-31986-2-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock bindings constants for action S700
-Maintain common clock dt-bindings for Actions Semi SoC's
-S700 and S900.
+Switch to use ULP0 naming instead of slow clock naming for power modes, to
+be as closed as possible to datasheet. This commit does the necessary
+renaming and macro addition to be as close as possible to the namings
+from [1].
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+[1] https://lore.kernel.org/lkml/1470650705-31418-3-git-send-email-wenyou.yang@atmel.com
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +--
- include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++++++++++++++++
- 2 files changed, 129 insertions(+), 9 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+ arch/arm/mach-at91/pm.c         | 18 +++++++++---------
+ arch/arm/mach-at91/pm.h         |  3 ++-
+ arch/arm/mach-at91/pm_suspend.S | 12 ++++++------
+ 3 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-similarity index 67%
-rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-rename to Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-index 93e4fb827cd6..d737ea74a450 100644
---- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-@@ -1,12 +1,14 @@
--* Actions S900 Clock Management Unit (CMU)
-+* Actions Semi Owl Clock Management Unit (CMU)
+diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+index 849014c01cf4..d43f00a715d7 100644
+--- a/arch/arm/mach-at91/pm.c
++++ b/arch/arm/mach-at91/pm.c
+@@ -40,15 +40,15 @@ extern void at91_pinctrl_gpio_resume(void);
+ #endif
  
--The Actions S900 clock management unit generates and supplies clock to various
--controllers within the SoC. The clock binding described here is applicable to
--S900 SoC.
-+The Actions Semi S900/S700 clock management unit generates and supplies clock
-+to various controllers within the SoC. The clock binding described here is
-+applicable to S900 and S700 SoC's.
+ static const match_table_t pm_modes __initconst = {
+-	{ 0, "standby" },
+-	{ AT91_PM_SLOW_CLOCK, "ulp0" },
++	{ AT91_PM_STANDBY, "standby" },
++	{ AT91_PM_ULP0, "ulp0" },
+ 	{ AT91_PM_BACKUP, "backup" },
+ 	{ -1, NULL },
+ };
  
- Required Properties:
+ static struct at91_pm_data pm_data = {
+-	.standby_mode = 0,
+-	.suspend_mode = AT91_PM_SLOW_CLOCK,
++	.standby_mode = AT91_PM_STANDBY,
++	.suspend_mode = AT91_PM_ULP0,
+ };
  
--- compatible: should be "actions,s900-cmu"
-+- compatible: should be one of the following,
-+	"actions,s900-cmu"
-+	"actions,s700-cmu"
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - clocks: Reference to the parent clocks ("hosc", "losc")
-@@ -15,16 +17,16 @@ Required Properties:
- Each clock is assigned an identifier, and client nodes can use this identifier
- to specify the clock which they consume.
+ #define at91_ramc_read(id, field) \
+@@ -145,7 +145,7 @@ static int at91_pm_verify_clocks(void)
+  */
+ int at91_suspend_entering_slow_clock(void)
+ {
+-	return (pm_data.mode >= AT91_PM_SLOW_CLOCK);
++	return (pm_data.mode >= AT91_PM_ULP0);
+ }
+ EXPORT_SYMBOL(at91_suspend_entering_slow_clock);
  
--All available clocks are defined as preprocessor macros in
--dt-bindings/clock/actions,s900-cmu.h header and can be used in device
--tree sources.
-+All available clocks are defined as preprocessor macros in corresponding
-+dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
-+used in device tree sources.
+@@ -186,7 +186,7 @@ static void at91_pm_suspend(suspend_state_t state)
+  * event sources; and reduces DRAM power.  But otherwise it's identical to
+  * PM_SUSPEND_ON: cpu idle, and nothing fancy done with main or cpu clocks.
+  *
+- * AT91_PM_SLOW_CLOCK is like STANDBY plus slow clock mode, so drivers must
++ * AT91_PM_ULP0 is like STANDBY plus slow clock mode, so drivers must
+  * suspend more deeply, the master clock switches to the clk32k and turns off
+  * the main oscillator
+  *
+@@ -204,7 +204,7 @@ static int at91_pm_enter(suspend_state_t state)
+ 		/*
+ 		 * Ensure that clocks are in a valid state.
+ 		 */
+-		if ((pm_data.mode >= AT91_PM_SLOW_CLOCK) &&
++		if (pm_data.mode >= AT91_PM_ULP0 &&
+ 		    !at91_pm_verify_clocks())
+ 			goto error;
  
- External clocks:
+@@ -546,9 +546,9 @@ static void __init at91_pm_backup_init(void)
+ 	pm_data.sfrbu = NULL;
  
- The hosc clock used as input for the plls is generated outside the SoC. It is
- expected that it is defined using standard clock bindings as "hosc".
+ 	if (pm_data.standby_mode == AT91_PM_BACKUP)
+-		pm_data.standby_mode = AT91_PM_SLOW_CLOCK;
++		pm_data.standby_mode = AT91_PM_ULP0;
+ 	if (pm_data.suspend_mode == AT91_PM_BACKUP)
+-		pm_data.suspend_mode = AT91_PM_SLOW_CLOCK;
++		pm_data.suspend_mode = AT91_PM_ULP0;
+ }
  
--Actions S900 CMU also requires one more clock:
-+Actions Semi S900 CMU also requires one more clock:
-  - "losc" - internal low frequency oscillator
+ struct pmc_info {
+diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+index f95d31496f08..c44eaf17db86 100644
+--- a/arch/arm/mach-at91/pm.h
++++ b/arch/arm/mach-at91/pm.h
+@@ -21,7 +21,8 @@
+ #define AT91_MEMCTRL_SDRAMC	1
+ #define AT91_MEMCTRL_DDRSDR	2
  
- Example: Clock Management Unit node:
-diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
-new file mode 100644
-index 000000000000..905808bf335b
---- /dev/null
-+++ b/include/dt-bindings/clock/actions,s700-cmu.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: GPL-2.0+
-+ *
-+ * Actions S700 clock driver
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Author: David Liu <liuwei@actions-semi.com>
-+ *
-+ * Author: Pathiban Nallathambi <pn@denx.de>
-+ * Author: Saravanan Sekar <sravanhome@gmail.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_S700_H
-+#define __DT_BINDINGS_CLOCK_S700_H
-+
-+#define CLK_NONE			0
-+
-+/* pll clocks */
-+#define CLK_CORE_PLL			1
-+#define CLK_DEV_PLL			2
-+#define CLK_DDR_PLL			3
-+#define CLK_NAND_PLL			4
-+#define CLK_DISPLAY_PLL			5
-+#define CLK_TVOUT_PLL			6
-+#define CLK_CVBS_PLL			7
-+#define CLK_AUDIO_PLL			8
-+#define CLK_ETHERNET_PLL		9
-+
-+/* system clock */
-+#define CLK_CPU				10
-+#define CLK_DEV				11
-+#define CLK_AHB				12
-+#define CLK_APB				13
-+#define CLK_DMAC			14
-+#define CLK_NOC0_CLK_MUX		15
-+#define CLK_NOC1_CLK_MUX		16
-+#define CLK_HP_CLK_MUX			17
-+#define CLK_HP_CLK_DIV			18
-+#define CLK_NOC1_CLK_DIV		19
-+#define CLK_NOC0			20
-+#define CLK_NOC1			21
-+#define CLK_SENOR_SRC			22
-+
-+/* peripheral device clock */
-+#define CLK_GPIO			23
-+#define CLK_TIMER			24
-+#define CLK_DSI				25
-+#define CLK_CSI				26
-+#define CLK_SI				27
-+#define CLK_DE				28
-+#define CLK_HDE				29
-+#define CLK_VDE				30
-+#define CLK_VCE				31
-+#define CLK_NAND			32
-+#define CLK_SD0				33
-+#define CLK_SD1				34
-+#define CLK_SD2				35
-+
-+#define CLK_UART0			36
-+#define CLK_UART1			37
-+#define CLK_UART2			38
-+#define CLK_UART3			39
-+#define CLK_UART4			40
-+#define CLK_UART5			41
-+#define CLK_UART6			42
-+
-+#define CLK_PWM0			43
-+#define CLK_PWM1			44
-+#define CLK_PWM2			45
-+#define CLK_PWM3			46
-+#define CLK_PWM4			47
-+#define CLK_PWM5			48
-+#define CLK_GPU3D			49
-+
-+#define CLK_I2C0			50
-+#define CLK_I2C1			51
-+#define CLK_I2C2			52
-+#define CLK_I2C3			53
-+
-+#define CLK_SPI0			54
-+#define CLK_SPI1			55
-+#define CLK_SPI2			56
-+#define CLK_SPI3			57
-+
-+#define CLK_USB3_480MPLL0		58
-+#define CLK_USB3_480MPHY0		59
-+#define CLK_USB3_5GPHY			60
-+#define CLK_USB3_CCE			61
-+#define CLK_USB3_MAC			62
-+
-+#define CLK_LCD				63
-+#define CLK_HDMI_AUDIO			64
-+#define CLK_I2SRX			65
-+#define CLK_I2STX			66
-+
-+#define CLK_SENSOR0			67
-+#define CLK_SENSOR1			68
-+
-+#define CLK_HDMI_DEV			69
-+
-+#define CLK_ETHERNET			70
-+#define CLK_RMII_REF			71
-+
-+#define CLK_USB2H0_PLLEN		72
-+#define CLK_USB2H0_PHY			73
-+#define CLK_USB2H0_CCE			74
-+#define CLK_USB2H1_PLLEN		75
-+#define CLK_USB2H1_PHY			76
-+#define CLK_USB2H1_CCE			77
-+
-+#define CLK_TVOUT			78
-+
-+#define CLK_THERMAL_SENSOR		79
-+
-+#define CLK_IRC_SWITCH			80
-+#define CLK_PCM1			81
-+#define CLK_NR_CLKS			(CLK_PCM1 + 1)
-+
-+#endif /* __DT_BINDINGS_CLOCK_S700_H */
+-#define	AT91_PM_SLOW_CLOCK	0x01
++#define	AT91_PM_STANDBY		0x00
++#define AT91_PM_ULP0		0x01
+ #define	AT91_PM_BACKUP		0x02
+ 
+ #ifndef __ASSEMBLY__
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index daca91feea6a..821322d1a64d 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -112,8 +112,8 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	bl	at91_sramc_self_refresh
+ 
+ 	ldr	r0, .pm_mode
+-	cmp	r0, #AT91_PM_SLOW_CLOCK
+-	beq	slow_clock
++	cmp	r0, #AT91_PM_ULP0
++	beq	ulp0_mode
+ 	cmp	r0, #AT91_PM_BACKUP
+ 	beq	backup_mode
+ 
+@@ -122,8 +122,8 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	at91_cpu_idle
+ 	b	exit_suspend
+ 
+-slow_clock:
+-	bl	at91_slowck_mode
++ulp0_mode:
++	bl	at91_ulp0_mode
+ 	b	exit_suspend
+ backup_mode:
+ 	bl	at91_backup_mode
+@@ -151,7 +151,7 @@ ENTRY(at91_backup_mode)
+ 	str	tmp1, [r0, #0]
+ ENDPROC(at91_backup_mode)
+ 
+-ENTRY(at91_slowck_mode)
++ENTRY(at91_ulp0_mode)
+ 	ldr	pmc, .pmc_base
+ 
+ 	/* Save Master clock setting */
+@@ -212,7 +212,7 @@ ENTRY(at91_slowck_mode)
+ 	wait_mckrdy
+ 
+ 	mov	pc, lr
+-ENDPROC(at91_slowck_mode)
++ENDPROC(at91_ulp0_mode)
+ 
+ /*
+  * void at91_sramc_self_refresh(unsigned int is_active)
 -- 
-2.18.0
+2.7.4
