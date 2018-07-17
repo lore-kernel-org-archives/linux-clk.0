@@ -1,131 +1,294 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-Date: Tue, 24 Jul 2018 14:31:57 +0300
-Message-ID: <16130866.kpFhQUNOMP@dimapc>
-In-Reply-To: <6750449.onR3KBHYkZ@dimapc>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk> <20180720134532.13148-7-ben.dooks@codethink.co.uk> <6750449.onR3KBHYkZ@dimapc>
+Return-Path: <Claudiu.Beznea@microchip.com>
+Subject: Re: [PATCH 4/4] ARM: at91: pm: configure wakeup sources for ULP1 mode
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: <sboyd@kernel.org>, <mturquette@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <linux@armlinux.org.uk>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+ <1531816017-31986-5-git-send-email-claudiu.beznea@microchip.com>
+ <20180717104508.GC3100@piout.net>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <45288ce9-a590-04c1-7601-8306bb29bba4@microchip.com>
+Date: Tue, 17 Jul 2018 13:49:31 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180717104508.GC3100@piout.net>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: Claudiu.Beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, 23 July 2018 16:05:21 MSK Dmitry Osipenko wrote:
-> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
-> > The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
-> > clocks by making a 2D and 3D mux, and split the divider into the
-> > standard 2D/3D ones and 2D/3D idle clocks.
-> > 
-> > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> > ---
-> >  drivers/clk/tegra/clk-id.h              |  4 ++++
-> >  drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
-> >  drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
-> >  include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
-> >  4 files changed, 39 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-> > index b616e33c5255..0d202a70ce66 100644
-> > --- a/drivers/clk/tegra/clk-id.h
-> > +++ b/drivers/clk/tegra/clk-id.h
-> > @@ -91,8 +91,12 @@ enum clk_id {
-> >  	tegra_clk_fuse_burn,
-> >  	tegra_clk_gpu,
-> >  	tegra_clk_gr2d,
-> > +	tegra_clk_gr2d_mux,
-> > +	tegra_clk_gr2d_idle,
-> >  	tegra_clk_gr2d_8,
-> >  	tegra_clk_gr3d,
-> > +	tegra_clk_gr3d_mux,
-> > +	tegra_clk_gr3d_idle,
-> >  	tegra_clk_gr3d_8,
-> >  	tegra_clk_hclk,
-> >  	tegra_clk_hda,
-> > diff --git a/drivers/clk/tegra/clk-tegra-periph.c
-> > b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
-> > 100644
-> > --- a/drivers/clk/tegra/clk-tegra-periph.c
-> > +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> > @@ -263,6 +263,21 @@
-> >  		.flags = _flags,					\
-> >  	}
-> > 
-> > +#define GATE_DIV(_name, _parent_name, _offset,				\
-> > +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
-> > +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
-> > +	{								\
-> > +		.name = _name,						\
-> > +		.clk_id = _clk_id,					\
-> > +		.offset = _offset,					\
-> > +		.p.parent_name =  _parent_name,				\
-> > +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
-> > +					   _div_shift, _div_width,	\
-> > +					   _div_frac_width, _div_flags, \
-> > +				_clk_num, _gate_flags, NULL, NULL),	\
-> > +		.flags = _flags						\
-> > +	}
-> > +
-> >  #define PLLP_BASE 0xa0
-> >  #define PLLP_MISC 0xac
-> >  #define PLLP_MISC1 0x680
-> > @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
-> >  	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, 
-> tegra_clk_epp),
-> > MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
-> > tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
-> > 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 
-> 21,
-> > 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 
-> 24,
-> > 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla, 
-> CLK_SOURCE_2D,
-> > 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
-> > tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
-> > TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
-> > "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
-> > TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
-> > +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
-> 
-> Now that the actual parent clock is specified by the "mux" clock, you have to 
-> adjust the tegra_clk_init_table accordingly.
-> 
-> 
-> 
-> 
-
-The 3d/2d clocks do not have a parent on T20 with these patches being applied.
-
-# cat /sys/kernel/debug/clk/clk_summary 
-                                 enable  prepare  protect                                duty
-   clock                          count    count    count        rate   accuracy phase  cycle
----------------------------------------------------------------------------------------------
- clock                                0        0        0       32768          0     0  50000
- 3d                                   1        1        0           0          0     0  50000
- 2d                                   1        1        0           0          0     0  50000
- clk_32k                              2        2        0       32768          0     0  50000
-    blink_override                    1        1        0       32768          0     0  50000
-       blink                          2        2        0       32768          0     0  50000
-    kbc                               0        0        0       32768          0     0  50000
-    rtc                               2        2        0       32768          0     0  50000
-...
 
 
-Same on T30.
+On 17.07.2018 13:45, Alexandre Belloni wrote:
+> Hi,
+> 
+> On 17/07/2018 11:26:57+0300, Claudiu Beznea wrote:
+>> Since for ULP1 PM mode of SAMA5D2 the wakeup sources are limited and
+>> well known add a method to check if these wakeup sources are defined by
+>> user (either via DT or filesystem). In case there are no wakeup sources
+>> defined for ULP1 the PM suspend will fail, otherwise these will be
+>> configured in fast startup registers of PMC. Since wakeup sources of
+>> ULP1 need also to be configured in SHDWC registers the code was a bit
+>> changed to map the SHDWC also in case ULP1 is requested by user (this
+>> was done in the initialization phase). In case the ULP1 initialization
+>> fails the ULP0 mode is used (this mode was also used in case backup mode
+>> initialization failed).
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> ---
+>>  arch/arm/mach-at91/pm.c | 165 +++++++++++++++++++++++++++++++++++++++++-------
+>>  1 file changed, 143 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+>> index 099d8094018c..c8ef696b83b6 100644
+>> --- a/arch/arm/mach-at91/pm.c
+>> +++ b/arch/arm/mach-at91/pm.c
+>> @@ -80,6 +80,87 @@ static struct at91_pm_bu {
+>>  	phys_addr_t resume;
+>>  } *pm_bu;
+>>  
+>> +struct wakeup_source_info {
+>> +	unsigned int pmc_fsmr_bit;
+>> +	unsigned int shdwc_mr_bit;
+>> +	bool set_polarity;
+>> +};
+>> +
+>> +static const struct wakeup_source_info ws_info[] = {
+>> +	{ .pmc_fsmr_bit = AT91_PMC_FSTT(10),	.set_polarity = true },
+>> +	{ .pmc_fsmr_bit = AT91_PMC_RTCAL,	.shdwc_mr_bit = BIT(17) },
+>> +	{ .pmc_fsmr_bit = AT91_PMC_USBAL },
+>> +	{ .pmc_fsmr_bit = AT91_PMC_SDMMC_CD },
+>> +};
+>> +
+>> +static const struct of_device_id sama5d2_ws_ids[] = {
+>> +	{ .compatible = "atmel,sama5d2-gem",		.data = &ws_info[0] },
+>> +	{ .compatible = "atmel,at91rm9200-rtc",		.data = &ws_info[1] },
+>> +	{ .compatible = "atmel,sama5d3-udc",		.data = &ws_info[2] },
+>> +	{ .compatible = "atmel,at91rm9200-ohci",	.data = &ws_info[2] },
+>> +	{ .compatible = "usb-ohci",			.data = &ws_info[2] },
+>> +	{ .compatible = "atmel,at91sam9g45-ehci",	.data = &ws_info[2] },
+>> +	{ .compatible = "usb-ehci",			.data = &ws_info[2] },
+>> +	{ .compatible = "atmel,sama5d2-sdhci",		.data = &ws_info[3] },
+>> +	{ /* sentinel */ }
+>> +};
+>> +
+>> +static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+>> +{
+>> +	const struct wakeup_source_info *wsi;
+>> +	const struct of_device_id *match;
+>> +	struct platform_device *pdev;
+>> +	struct device_node *np;
+>> +	unsigned int mode = 0, polarity = 0, val = 0;
+>> +
+>> +	if (pm_mode != AT91_PM_ULP1)
+>> +		return 0;
+>> +
+>> +	if (!pm_data.pmc || !pm_data.shdwc)
+>> +		return -EPERM;
+>> +
+>> +	if (!set) {
+>> +		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
+>> +		return 0;
+>> +	}
+>> +
+>> +	/* SHDWC.WUIR */
+>> +	val = readl(pm_data.shdwc + 0x0c);
+>> +	mode |= (val & 0x3ff);
+>> +	polarity |= ((val >> 16) & 0x3ff);
+>> +
+>> +	/* SHDWC.MR */
+>> +	val = readl(pm_data.shdwc + 0x04);
+>> +
+>> +	/* Loop through defined wakeup sources. */
+>> +	for_each_matching_node_and_match(np, sama5d2_ws_ids, &match) {
+>> +		pdev = of_find_device_by_node(np);
+> 
+> of_find_device_by_node takes a reference to the embedded struct
+> device...
+> 
 
-# cat /sys/kernel/debug/clk/clk_summary 
-                                 enable  prepare  protect                                duty
-   clock                          count    count    count        rate   accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
- 3d_idle                              0        0        0           0          0     0  50000
- 3d                                   1        1        0           0          0     0  50000
- 2d_idle                              0        0        0           0          0     0  50000
- 2d                                   1        1        0           0          0     0  50000
- clk_32k                              2        2        0       32768          0     0  50000
-    blink_override                    1        1        0       32768          0     0  50000
-...
+Yes, thank you!
+
+>> +		if (!pdev)
+>> +			continue;
+>> +
+>> +		if (device_may_wakeup(&pdev->dev)) {
+>> +			wsi = match->data;
+>> +
+>> +			/* Check if enabled on SHDWC. */
+>> +			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
+>> +				continue;
+>> +
+>> +			mode |= wsi->pmc_fsmr_bit;
+>> +			if (wsi->set_polarity)
+>> +				polarity |= wsi->pmc_fsmr_bit;
+>> +		}
+> 
+> So you need to drop it here.
+> 
+> Can you do that and resend, just that patch? thanks.
+> 
+>> +	}
+>> +
+>> +	if (mode) {
+>> +		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
+>> +		writel(polarity, pm_data.pmc + AT91_PMC_FSPR);
+>> +	} else {
+>> +		pr_err("AT91: PM: no ULP1 wakeup sources found!");
+>> +	}
+>> +
+>> +	return mode ? 0 : -EPERM;
+>> +}
+>> +
+>>  /*
+>>   * Called after processes are frozen, but before we shutdown devices.
+>>   */
+>> @@ -98,7 +179,7 @@ static int at91_pm_begin(suspend_state_t state)
+>>  		pm_data.mode = -1;
+>>  	}
+>>  
+>> -	return 0;
+>> +	return at91_pm_config_ws(pm_data.mode, true);
+>>  }
+>>  
+>>  /*
+>> @@ -234,6 +315,7 @@ static int at91_pm_enter(suspend_state_t state)
+>>   */
+>>  static void at91_pm_end(void)
+>>  {
+>> +	at91_pm_config_ws(pm_data.mode, false);
+>>  }
+>>  
+>>  
+>> @@ -479,31 +561,28 @@ static void __init at91_pm_sram_init(void)
+>>  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+>>  }
+>>  
+>> -static void __init at91_pm_backup_init(void)
+>> +static bool __init at91_is_pm_mode_active(int pm_mode)
+>> +{
+>> +	return (pm_data.standby_mode == pm_mode ||
+>> +		pm_data.suspend_mode == pm_mode);
+>> +}
+>> +
+>> +static int __init at91_pm_backup_init(void)
+>>  {
+>>  	struct gen_pool *sram_pool;
+>>  	struct device_node *np;
+>>  	struct platform_device *pdev = NULL;
+>> +	int ret = -ENODEV;
+>>  
+>> -	if ((pm_data.standby_mode != AT91_PM_BACKUP) &&
+>> -	    (pm_data.suspend_mode != AT91_PM_BACKUP))
+>> -		return;
+>> +	if (!at91_is_pm_mode_active(AT91_PM_BACKUP))
+>> +		return 0;
+>>  
+>>  	pm_bu = NULL;
+>>  
+>> -	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
+>> -	if (!np) {
+>> -		pr_warn("%s: failed to find shdwc!\n", __func__);
+>> -		return;
+>> -	}
+>> -
+>> -	pm_data.shdwc = of_iomap(np, 0);
+>> -	of_node_put(np);
+>> -
+>>  	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-sfrbu");
+>>  	if (!np) {
+>>  		pr_warn("%s: failed to find sfrbu!\n", __func__);
+>> -		goto sfrbu_fail;
+>> +		return ret;
+>>  	}
+>>  
+>>  	pm_data.sfrbu = of_iomap(np, 0);
+>> @@ -530,6 +609,7 @@ static void __init at91_pm_backup_init(void)
+>>  	pm_bu = (void *)gen_pool_alloc(sram_pool, sizeof(struct at91_pm_bu));
+>>  	if (!pm_bu) {
+>>  		pr_warn("%s: unable to alloc securam!\n", __func__);
+>> +		ret = -ENOMEM;
+>>  		goto securam_fail;
+>>  	}
+>>  
+>> @@ -537,21 +617,62 @@ static void __init at91_pm_backup_init(void)
+>>  	pm_bu->canary = __pa_symbol(&canary);
+>>  	pm_bu->resume = __pa_symbol(cpu_resume);
+>>  
+>> -	return;
+>> +	return 0;
+>>  
+>> -sfrbu_fail:
+>> -	iounmap(pm_data.shdwc);
+>> -	pm_data.shdwc = NULL;
+>>  securam_fail:
+>>  	iounmap(pm_data.sfrbu);
+>>  	pm_data.sfrbu = NULL;
+>> +	return ret;
+>> +}
+>>  
+>> -	if (pm_data.standby_mode == AT91_PM_BACKUP)
+>> +static void __init at91_pm_use_default_mode(int pm_mode)
+>> +{
+>> +	if (pm_mode != AT91_PM_ULP1 && pm_mode != AT91_PM_BACKUP)
+>> +		return;
+>> +
+>> +	if (pm_data.standby_mode == pm_mode)
+>>  		pm_data.standby_mode = AT91_PM_ULP0;
+>> -	if (pm_data.suspend_mode == AT91_PM_BACKUP)
+>> +	if (pm_data.suspend_mode == pm_mode)
+>>  		pm_data.suspend_mode = AT91_PM_ULP0;
+>>  }
+>>  
+>> +static void __init at91_pm_modes_init(void)
+>> +{
+>> +	struct device_node *np;
+>> +	int ret;
+>> +
+>> +	if (!at91_is_pm_mode_active(AT91_PM_BACKUP) &&
+>> +	    !at91_is_pm_mode_active(AT91_PM_ULP1))
+>> +		return;
+>> +
+>> +	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
+>> +	if (!np) {
+>> +		pr_warn("%s: failed to find shdwc!\n", __func__);
+>> +		goto ulp1_default;
+>> +	}
+>> +
+>> +	pm_data.shdwc = of_iomap(np, 0);
+>> +	of_node_put(np);
+>> +
+>> +	ret = at91_pm_backup_init();
+>> +	if (ret) {
+>> +		if (!at91_is_pm_mode_active(AT91_PM_ULP1))
+>> +			goto unmap;
+>> +		else
+>> +			goto backup_default;
+>> +	}
+>> +
+>> +	return;
+>> +
+>> +unmap:
+>> +	iounmap(pm_data.shdwc);
+>> +	pm_data.shdwc = NULL;
+>> +ulp1_default:
+>> +	at91_pm_use_default_mode(AT91_PM_ULP1);
+>> +backup_default:
+>> +	at91_pm_use_default_mode(AT91_PM_BACKUP);
+>> +}
+>> +
+>>  struct pmc_info {
+>>  	unsigned long uhp_udp_mask;
+>>  };
+>> @@ -645,7 +766,7 @@ void __init sama5d2_pm_init(void)
+>>  	if (!IS_ENABLED(CONFIG_SOC_SAMA5D2))
+>>  		return;
+>>  
+>> -	at91_pm_backup_init();
+>> +	at91_pm_modes_init();
+>>  	sama5_pm_init();
+>>  }
+>>  
+>> -- 
+>> 2.7.4
+>>
+> 
