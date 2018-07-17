@@ -1,82 +1,127 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Mon, 30 Jul 2018 21:39:04 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	linux-clk@vger.kernel.org, liuwei@actions-semi.com,
-	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-	devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-	bdong@ucrobotics.com, manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
-	pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
-Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
- SoCs
-Message-ID: <20180730160904.GA2511@Mani-XPS-13-9360>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
- <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
- <20180730151131.GA28633@mani>
- <1532965111.3471.14.camel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <1532965111.3471.14.camel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730092AbeGQWig (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:38:36 -0400
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@codeaurora.org, lee.jones@linaro.org
+Cc: davem@davemloft.net, gregkh@linuxfoundation.org,
+        mchehab@kernel.org, rdunlap@infradead.org,
+        pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
+        linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+        matthias.bgg@gmail.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <mbrugger@suse.com>
+Subject: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to platform device probing
+Date: Wed, 18 Jul 2018 00:03:26 +0200
+Message-Id: <20180717220328.792-4-matthias.bgg@kernel.org>
+In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Philipp,
+From: Matthias Brugger <mbrugger@suse.com>
 
-On Mon, Jul 30, 2018 at 05:38:31PM +0200, Philipp Zabel wrote:
-> On Mon, 2018-07-30 at 20:41 +0530, Manivannan Sadhasivam wrote:
-> > Hi Andreas,
-> > 
-> > On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
-> > > Hi Mani,
-> > > 
-> > > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
-> > > > This patchset adds Reset Controller (RMU) support for Actions Semi
-> > > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-> > > > the clock subsystem in hardware. Hence, in software we integrate RMU
-> > > > support into common clock driver inorder to maintain compatibility.
-> > > 
-> > > Can this not be placed into drivers/reset/ by using mfd-simple with a
-> > > sub-node in DT?
-> > > 
-> > 
-> > Actually I was not sure where to place this reset controller driver. When I
-> > looked into other similar ones such as sunxi, they just integrated into the
-> > clk subsystem. So I just chose that path. But yeah, this is hacky!
-> > 
-> > But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
-> > are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
-> > RMU has only 2 registers, the HW designers decided to use up the CMU memory
-> > map. So, maybe syscon would be best option I think. What is your opinion?
-> 
-> Using syscon seems cleaner than stuffing the regmap into owl_clk_desc.
-> 
+Switch probing for the MMSYS to support invocation to a
+plain paltform device. The driver will be probed by the DRM subsystem.
 
-Okay.
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/clk/mediatek/clk-mt8173.c | 51 ++++++++++++++++++++++++++-----
+ 1 file changed, 44 insertions(+), 7 deletions(-)
 
-> > Even if we go for syscon, we should place the reset driver within clk
-> > framework as I can see other SoCs like Mediatek are doing the same. But again
-> > I'm not sure!
-> 
-> Me neither. If the CMU and RMU are really separate and only share the
-> memory map, a syscon driver could live in drivers/reset without
-> problems.
-> It's only when there are interactions between clocks and resets that you
-> really want to have the reset driver integrated with clk.
-> 
+diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
+index 96c292c3e440..10b6a0251123 100644
+--- a/drivers/clk/mediatek/clk-mt8173.c
++++ b/drivers/clk/mediatek/clk-mt8173.c
+@@ -13,8 +13,11 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-gate.h"
+@@ -791,7 +794,7 @@ static const struct mtk_gate_regs mm1_cg_regs __initconst = {
+ 		.ops = &mtk_clk_gate_ops_setclr,		\
+ 	}
+ 
+-static const struct mtk_gate mm_clks[] __initconst = {
++static const struct mtk_gate mm_clks[] = {
+ 	/* MM0 */
+ 	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
+ 	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
+@@ -1152,22 +1155,56 @@ static void __init mtk_imgsys_init(struct device_node *node)
+ }
+ CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
+ 
+-static void __init mtk_mmsys_init(struct device_node *node)
+-{
++struct mtk_mmsys_priv {
+ 	struct clk_onecell_data *clk_data;
++};
++
++static int mtk_mmsys_probe(struct platform_device *pdev)
++{
+ 	int r;
++	struct device_node *node;
++	struct mtk_mmsys_priv *private;
++
++	node = pdev->dev.parent->of_node;
+ 
+-	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
++	if (!private)
++		return -ENOMEM;
++
++	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++
++	platform_set_drvdata(pdev, private);
+ 
+ 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
+-						clk_data);
++					private->clk_data);
+ 
+-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	r = of_clk_add_provider(node, of_clk_src_onecell_get,
++					private->clk_data);
+ 	if (r)
+ 		pr_err("%s(): could not register clock provider: %d\n",
+ 			__func__, r);
++
++	return r;
++}
++
++static int mtk_mmsys_remove(struct platform_device *pdev)
++{
++	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
++
++	kfree(private->clk_data);
++	kfree(private);
++
++	return 0;
+ }
+-CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
++
++static struct platform_driver clk_mt8173_mm_drv = {
++	.probe = mtk_mmsys_probe,
++	.probe = mtk_mmsys_remove,
++	.driver = {
++		.name = "clk-mt8173-mm",
++	},
++};
++module_platform_driver(clk_mt8173_mm_drv);
+ 
+ static void __init mtk_vdecsys_init(struct device_node *node)
+ {
+-- 
+2.17.1
 
-Okay. Then I will add it as a syscon driver under drivers/reset.
-
-I hope that Andreas would also be happy with this.
-
-Thanks a lot for your response!
-
-Regards,
-Mani
-
-> regards
-> Philipp
