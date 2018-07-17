@@ -1,110 +1,102 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 17/18] arm64: dts: allwinner: a64: pine64: Enable HDMI output
-Date: Wed, 18 Jul 2018 16:24:57 +0530
-Message-Id: <20180718105458.22304-18-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <RAJANV@xilinx.com>
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jolly Shah
+	<JOLLYS@xilinx.com>, Michal Simek <michals@xilinx.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
+ CLK_OF_DECLARE_DRIVER
+Date: Tue, 17 Jul 2018 16:32:36 +0000
+Message-ID: 
+ <CY1PR02MB20915AA8CDBAF17050769628B75C0@CY1PR02MB2091.namprd02.prod.outlook.com>
+References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
+ <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
+ <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
+ <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
+ <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
+ <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
+ <153112117357.143105.12822043691712705626@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <153112117357.143105.12822043691712705626@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable all necessary HDMI pipeline nodes with HDMI out
-connector on pine64 board.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
-
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 1b9b92e541d2..4d1553f7d2a9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -62,6 +62,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -82,6 +97,17 @@
- 
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -99,6 +125,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -238,6 +268,10 @@
- 	status = "disabled";
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- /* On Exp and Euler connectors */
- &uart0 {
- 	pinctrl-names = "default";
--- 
-2.17.1
+SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
+aGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiAwOSBKdWx5IDIwMTgg
+MTI6NTYgUE0NCj4gVG86IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbnguY29tPg0KPiBDYzogbGlu
+dXgtY2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSm9s
+bHkgU2hhaA0KPiA8Sk9MTFlTQHhpbGlueC5jb20+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGls
+aW54LmNvbT47DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFU
+Q0hdIGNsazogY2xrLWZpeGVkLWZhY3RvcjogVXNlIG5ldyBtYWNybw0KPiBDTEtfT0ZfREVDTEFS
+RV9EUklWRVINCj4gDQo+IEVYVEVSTkFMIEVNQUlMDQo+IA0KPiBRdW90aW5nIFJhamFuIFZhamEg
+KDIwMTgtMDYtMDMgMjA6NDE6MjcpDQo+ID4gPiA+ID4gPiA+IE9uIHRoZSBvdGhlciBoYW5kLCBl
+dmVuIGlmIHJlZ2lzdHJhdGlvbiBmYWlsZWQsIHRoYXQgbm9kZSB3aWxsIGJlDQo+ID4gPiA+ID4g
+PiA+IG1hcmtlZCBhcyBPRl9QT1BVTEFURUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3Iu
+YyB3aWxsIGFsc28NCj4gbm90DQo+ID4gPiA+ID4gPiA+IGJlIGNhbGxlZCBhbmQgdGhhdCBEVCBm
+aXhlZC1mYWN0b3IgY2xvY2sgd291bGQgbmV2ZXIgYmUgcmVnaXN0ZXJlZC4NCj4gPiA+ID4gPiA+
+ID4NCj4gPiA+ID4gPiA+ID4gU2FtZSB0aGluZyBpcyBkaXNjdXNzZWQgYXQgIGh0dHBzOi8vbGtt
+bC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IE9rLiBJ
+IGJlbGlldmUgdGhlIGFuc3dlciBpcyB0byBmaXggdGhlIERUIHRvIGRlc2NyaWJlIHRoZSBwYXJl
+bnQgY2hhaW4NCj4gPiA+ID4gPiA+IHByb3Blcmx5IHdpdGggY2xvY2stb3V0cHV0LW5hbWVzLiBP
+dGhlcndpc2UsIHdlIGhhdmUgbm8gZ29vZCB3YXkNCj4gb2YNCj4gPiA+ID4gPiA+IGZpZ3VyaW5n
+IG91dCB3aGF0IHRoZSBuYW1lIHNob3VsZCBiZS4NCj4gPiA+ID4gPiBbUmFqYW5dIGNsb2NrIERU
+IGJpbmRpbmcgZG9jIHNheXMgdGhhdCBjbG9jay1vdXRwdXQtbmFtZXMgcHJvcGVydHkNCj4gPiA+
+ID4gPiBpcyBvcHRpb25hbCBhbmQgc29tZXRpbWVzIG5vdCByZWNvbW1lbmRlZC4NCj4gPiA+ID4g
+PiBJIHRoaW5rIHRoaXMgcGF0Y2ggZml4ZXMgdGhlIGlzc3VlIHdlIGhhdmUgd2hpY2ggbWFuZGF0
+ZXMgdG8gYWRkIGNsb2NrLQ0KPiA+ID4gb3V0cHV0LQ0KPiA+ID4gPiA+IG5hbWVzDQo+ID4gPiA+
+ID4gcHJvcGVydHkgKGZvciB0aGlzIHBhcnRpY3VsYXIgY2FzZSkuIEFsc28sIElJVUMgcGxhdGZv
+cm0gZHJpdmVyIHByb2JlIGluIGNsay0NCj4gPiA+IGZpeGVkLQ0KPiA+ID4gPiA+IGZhY3Rvci5j
+DQo+ID4gPiA+ID4gd2lsbCBuZXZlciBiZSBjYWxsZWQgdW5sZXNzIHdlIHVzZSBDTEtfT0ZfREVD
+TEFSRV9EUklWRVIuDQo+ID4gPiA+ID4gSSBjb21wbGV0ZWx5IGFncmVlIHRoYXQgcHJvcGVyIHNv
+bHV0aW9uIHdvdWxkIGJlIHRvIHN0b3AgdXNpbmcgc3RyaW5ncyB0bw0KPiA+ID4gPiA+IGRlc2Ny
+aWJlIGNsb2NrIHRvcG9sb2d5Lg0KPiA+ID4gPiBbUmFqYW5dIEFueSBjb21tZW50cyBvbiB0aGlz
+Pw0KPiA+ID4gPiBVbmxlc3Mgd2UgaGF2ZSBwcm9wZXIgc29sdXRpb24gcmVhZHksIHdlIG5lZWQg
+dG8gaGF2ZSBzb21lIG1lY2hhbmlzbQ0KPiB0bw0KPiA+ID4gaGFuZGxlIHRoaXMgc2NlbmFyaW8u
+DQo+ID4gPiA+IGNsb2NrLW91dHB1dC1uYW1lcyBpcyBvcHRpb25hbCBhbmQgd2l0aG91dCB0aGlz
+LCBpdCBtYW5kYXRlcyB0byB1c2UgY2xvY2stDQo+ID4gPiBvdXRwdXQtbmFtZXMuDQo+ID4gPiA+
+DQo+ID4gPg0KPiA+ID4gSSBjb3VsZG4ndCByZWFkIHlvdXIgb3V0bG9vayBzZW50IGVtYWlsIGFu
+ZCBJIHdhcyB0b28gYnVzeSB0byBnbw0KPiA+ID4gdHJhbnNsYXRlIGl0LiBTb21lIGJ1ZyBpbiBt
+eSBNVUEgaXQgc2VlbXMuDQo+ID4gPg0KPiA+ID4gQ2FuIHlvdSBhZGQgdGhlIG91dHB1dC1uYW1l
+cyBwcm9wZXJ0eT8gSW4gdGhpcyBjYXNlIGl0J3MgcHJhY3RpY2FsbHkNCj4gPiA+IG1hbmRhdG9y
+eSwgc28gaWYgeW91IGNhbid0IGRvIGl0IEknZCBsaWtlIHRvIGhlYXIgd2h5IG5vdC4NCj4gPiBb
+UmFqYW5dIEluIG91ciBjYXNlLCB3ZSBhcmUgZmlybXdhcmUgbWFpbnRhaW5zIGNsb2NrIGRhdGFi
+YXNlIGFuZCBkcml2ZXINCj4gcXVlcnkgY2xvY2tzDQo+ID4gZnJvbSBmaXJtd2FyZSBhbmQgcmVn
+aXN0ZXJzIGNsb2NrIGJhc2VkIG9uIGluZm9ybWF0aW9uIHJlY2VpdmVkIGZyb20NCj4gZmlybXdh
+cmUuIFNvDQo+ID4gb3V0cHV0IGNsb2NrIG5hbWVzIGFyZSBub3QgZml4ZWQuDQo+ID4gaHR0cHM6
+Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDQzOTg5My8gLSBkdC1iaW5kaW5nczogY2xv
+Y2s6IEFkZA0KPiBiaW5kaW5ncyBmb3IgWnlucU1QIGNsb2NrIGRyaXZlcg0KPiA+IGh0dHBzOi8v
+cGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Mzk4OTEvIC0gZHJpdmVyczogY2xrOiBBZGQg
+WnlucU1QDQo+IGNsb2NrIGRyaXZlcg0KPiANCj4gb3V0cHV0LW5hbWVzIGFyZSBmaXhlZCBieSB0
+aGUgdGltZSBmaXJtd2FyZSBpcyBtYWRlLiBJcyB0aGUgRFQgYWxzbw0KPiBmaXhlZCBieSB0aGUg
+dGltZSBmaXJtd2FyZSBpcyBtYWRlPyBXaHkgY2FuJ3QgdGhlIERUIGJlIG1hZGUgdG8gbWF0Y2gN
+Cj4gd2hhdCB0aGUgZmlybXdhcmUgaXMgZGVzY3JpYmluZyBieSBoYXZpbmcgdGhlIGZpcm13YXJl
+IHVwZGF0ZSB0aGUgRFQgdG8NCj4gZGVzY3JpYmUgaXQncyBvdXRwdXQgbmFtZXM/DQpbUmFqYW5d
+IFRoZSBpZGVhIGlzIHRvIGhhdmUgYSBnZW5lcmljIGRyaXZlciB3aGljaCBxdWVyaWVzIGNsb2Nr
+IGZvciB0aGUgdmFyaWFudCBmcm9tDQpGaXJtd2FyZS4gU28gaWYgc29tZSBjbG9jayBjaGFuZ2Vz
+LCBkcml2ZXIgcmVtYWlucyBzYW1lLg0KPiANCj4gQW5kIHdoYXQgaXMgdGhpcyBmaXhlZCBmYWN0
+b3IgY2xrIGluIERUIGZvcj8NCj4gDQo+IEknbSBiZWdpbm5pbmcgdG8gdGhpbmsgdGhhdCBtYXli
+ZSB3ZSBzaG91bGQgbWFrZSB0aGUgZml4ZWQgZmFjdG9yIHNldHVwDQo+IGEgbGl0dGxlIHdvcnNl
+IGJ5IGhhdmluZyBpdCB1bm1hcmsgaXRzZWxmIGFzIE9GX1BPUFVMQVRFRCBpZiBpdCBmaW5kcw0K
+PiB0aGF0IHRoZSBEVCBub2RlIGhhcyBhIGNsb2NrcyBwcm9wZXJ0eSB0aGF0IGl0IGNhbid0IGZp
+bmQgYSBuYW1lIGZvci4NCj4gSG9wZWZ1bGx5IHdlIGNhbiBnZXQgYnkgd2l0aCBpdCByZWdpc3Rl
+cmluZyBsYXRlciBvbiBiZWNhdXNlIGl0IGlzbid0DQo+IGNyaXRpY2FsIGZvciB0aGUgc3lzdGVt
+IHRvIGJvb3RzdHJhcCBpbnRlcnJ1cHRzIGFuZCB0aW1lcnMuDQpbUmFqYW5dIEkgaGF2ZSBzdWJt
+aXR0ZWQgc2VwYXJhdGUgY2hhbmdlIGZvciB0aGlzIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5v
+cmcvcGF0Y2gvMTA1MjkzODcvLiANCg0KPiANCj4gSSB0YWtlIGl0IHlvdSB1bmRlcnN0YW5kIHRo
+YXQgY2hhbmdpbmcgdGhlIGNvZGUgdG8gYmUNCj4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSIHdpbGwg
+YmUgYWN0aXZlbHkgYmFkIGFuZCBjYXVzZSB0aGUgY2xrIHRvIGJlDQo+IHJlZ2lzdGVyZWQgcG90
+ZW50aWFsbHkgdHdpY2Ugc28gd2UgcmVhbGx5IG5lZWQgdG8gZml4IHRoZSByZWFsIGlzc3VlDQo+
+IHdoaWNoIGlzIHRoYXQgdGhlIHBhcmVudCBuYW1lIGNhbid0IGJlIGZpZ3VyZWQgb3V0IHVudGls
+IGxhdGVyIG9uLCBzbw0KPiB0aGUgQ0xLX09GX0RFQ0xBUkUgcGF0aCBuZWVkcyB0byBmYWlsIHdo
+ZW4gaXQgY2FuJ3QgZmluZCB0aGUgcGFyZW50IGl0DQo+IG5lZWRzIGFuZCB0aGVuIG1hbnVhbGx5
+IG1hcmsgaXRzZWxmIGFzIG5vdCBwb3B1bGF0ZWQgaW4gdGhhdCBjYXNlIHNvDQo+IHRoYXQgaXQg
+cHJvYmVzIGxhdGVyIG9uIHdpdGggdGhlIHBsYXRmb3JtIGRldmljZSBkcml2ZXIuIFVubWFya2lu
+ZyB0aGUNCj4gbm9kZSBjYW4gYWN0dWFsbHkgYmUgdXNlZCB0byBmbGFnIGEgZmFpbHVyZSBpbiB0
+aGUgaW5pdCBmdW5jdGlvbiBzbyB0aGF0DQo+IHdlIGRvbid0IGtlZXAgdHJ5aW5nIHRvIGRvIHRo
+aW5ncyB3aXRoIHRoZSBub2RlIHVudGlsIGRyaXZlciB0aW1lIHRvby4NCltSYWphbl0gSSB1bmRl
+cnN0b29kIHRoYXQgbWFraW5nIGl0IENMS19PRl9ERUNMQVJFX0RSSVZFUiB3aWxsIHRyeSB0byBy
+ZWdpc3RlciBjbG9jayB0d2ljZS4gDQoNCg==
