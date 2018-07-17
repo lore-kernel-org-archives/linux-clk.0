@@ -1,125 +1,378 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from imap1.codethink.co.uk ([176.9.8.82]:40016 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387956AbeGWMi2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 08:38:28 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 23 Jul 2018 12:37:38 +0100
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: pdeschrijver@nvidia.com, jonathanh@nvidia.co,
-        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pgaikwad@nvidia.com, linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-In-Reply-To: <22870833.4JC6Is3odW@dimapc>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <1721645.6LMGIEI4vR@dimapc>
- <ca29f065814a22f46b9b1683165548cb@codethink.co.uk>
- <22870833.4JC6Is3odW@dimapc>
-Message-ID: <9acf4b987a6b34b596c5752de252de99@codethink.co.uk>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <alexandre.belloni@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 11/16] clk: at91: add sama5d2 PMC driver
+Date: Wed, 18 Jul 2018 00:27:52 +0200
+Message-Id: <20180717222757.10253-12-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add a driver for the PMC clocks of the sama5d2
 
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/Makefile  |   1 +
+ drivers/clk/at91/sama5d2.c | 333 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 334 insertions(+)
+ create mode 100644 drivers/clk/at91/sama5d2.c
 
-On 2018-07-23 12:33, Dmitry Osipenko wrote:
-> On Monday, 23 July 2018 11:28:25 MSK Ben Dooks wrote:
->> On 2018-07-22 12:55, Dmitry Osipenko wrote:
->> > On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
->> >> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
->> >> clocks by making a 2D and 3D mux, and split the divider into the
->> >> standard 2D/3D ones and 2D/3D idle clocks.
->> >>
->> >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->> 
->> [snip]
-> 
->> @@ -658,8 +658,12 @@ static struct tegra_devclk devclks[] __initdata = 
->> {
->>  	{ .dev_id = "mpe", .dt_id = TEGRA30_CLK_MPE },
->>  	{ .dev_id = "host1x", .dt_id = TEGRA30_CLK_HOST1X },
->>  	{ .dev_id = "3d", .dt_id = TEGRA30_CLK_GR3D },
->> +	{ .dev_id = "3d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR3D_MUX },
->> +	{ .dev_id = "3d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR3D_IDLE 
->> },
->>  	{ .dev_id = "3d2", .dt_id = TEGRA30_CLK_GR3D2 },
-> 
-> The  "3d2" also has the "idle" divisor, why have you skipped it?
-
-Thanks, missed this.
-
->>  	{ .dev_id = "2d", .dt_id = TEGRA30_CLK_GR2D },
->> +	{ .dev_id = "2d", .con_id = "mux", .dt_id = TEGRA30_CLK_GR2D_MUX },
->> +	{ .dev_id = "2d", .con_id = "idle", .dt_id = TEGRA30_CLK_GR2D_IDLE 
->> },
->>  	{ .dev_id = "se", .dt_id = TEGRA30_CLK_SE },
->>  	{ .dev_id = "mselect", .dt_id = TEGRA30_CLK_MSELECT },
->>  	{ .dev_id = "tegra-nor", .dt_id = TEGRA30_CLK_NOR },
-> 
-> [snip]
-> 
->> 
->> > According to TRM, Tegra20 and Tegra114 have these "idle-mode" clock
->> > dividers
->> > as well. Why only T30 should have them?
->> 
->> I've got a separate series to sort t20 bits out, i've not used the
->> tegra114
->> 
-> 
-> This makes this series to look a bit inconsistent, please send out all 
-> the
-> patches to give a consistent view.
-> 
-> I don't see anything that could really stop you from adding the clocks 
-> for
-> T114, its 2d/3d clocks definition pretty matches to T20/30.
-
-I'd prefer not to be touch architectures I don't have access to do.
-
-> >> a/include/dt-bindings/clock/tegra30-car.h
->> >> b/include/dt-bindings/clock/tegra30-car.h index
->> >> 3c90f1535551..eda4ca60351e
->> >> 100644
->> >> --- a/include/dt-bindings/clock/tegra30-car.h
->> >> +++ b/include/dt-bindings/clock/tegra30-car.h
->> >> @@ -269,6 +269,11 @@
->> >>
->> >>  #define TEGRA30_CLK_AUDIO3_MUX 306
->> >>  #define TEGRA30_CLK_AUDIO4_MUX 307
->> >>  #define TEGRA30_CLK_SPDIF_MUX 308
->> >>
->> >> -#define TEGRA30_CLK_CLK_MAX 309
->> >> +
->> >> +#define TEGRA30_CLK_GR2D_MUX	309
->> >> +#define TEGRA30_CLK_GR3D_MUX	310
->> >> +#define TEGRA30_CLK_GR2D_IDLE	311
->> >> +#define TEGRA30_CLK_GR3D_IDLE	312
->> >> +#define TEGRA30_CLK_CLK_MAX 313
->> >>
->> >>  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
->> >
->> > IIUC, that "idle-mode" divisor is just some kind of power-safe feature,
->> > is
->> > there any real use-case for these clocks? Why not to just pre-configure
->> > the
->> > "idle-mode" bits during the clocks initialization?
->> 
->> It is is nice to have it available after to check,
-> 
-> Please initialize the "idle" clock rate via the tegra_clk_init_table in 
-> the
-> patch that adds the clock or in a followup patch within the same 
-> patchset.
-> 
->> other than that we're
->> not
->> using any drivers that currently dynamically change the values of 
->> this.
-> 
-> All changes made to upstream kernel must be justified, the only 
-> acceptable
-> justification is that a change is required for the upstream driver.
+diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+index 7cdb762f3e2e..1e7c70dda723 100644
+--- a/drivers/clk/at91/Makefile
++++ b/drivers/clk/at91/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
+ obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
+ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
+ obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
++obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+new file mode 100644
+index 000000000000..62c8c8995430
+--- /dev/null
++++ b/drivers/clk/at91/sama5d2.c
+@@ -0,0 +1,333 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/at91.h>
++
++#include "pmc.h"
++
++static const struct clk_master_characteristics mck_characteristics = {
++	.output = { .min = 124000000, .max = 166000000 },
++	.divisors = { 1, 2, 4, 3 },
++};
++
++static u8 plla_out[] = { 0 };
++
++static u16 plla_icpll[] = { 0 };
++
++static struct clk_range plla_outputs[] = {
++	{ .min = 600000000, .max = 1200000000 },
++};
++
++static const struct clk_pll_characteristics plla_characteristics = {
++	.input = { .min = 12000000, .max = 12000000 },
++	.num_output = ARRAY_SIZE(plla_outputs),
++	.output = plla_outputs,
++	.icpll = plla_icpll,
++	.out = plla_out,
++};
++
++static const struct {
++	char *n;
++	char *p;
++	u8 id;
++} sama5d2_systemck[] = {
++	{ .n = "ddrck", .p = "masterck", .id = 2 },
++	{ .n = "lcdck", .p = "masterck", .id = 3 },
++	{ .n = "uhpck", .p = "usbck",    .id = 6 },
++	{ .n = "udpck", .p = "usbck",    .id = 7 },
++	{ .n = "pck0",  .p = "prog0",    .id = 8 },
++	{ .n = "pck1",  .p = "prog1",    .id = 9 },
++	{ .n = "pck2",  .p = "prog2",    .id = 10 },
++	{ .n = "iscck", .p = "masterck", .id = 18 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++	struct clk_range r;
++} sama5d2_periph32ck[] = {
++	{ .n = "macb0_clk",   .id = 5,  .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "tdes_clk",    .id = 11, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "matrix1_clk", .id = 14, },
++	{ .n = "hsmc_clk",    .id = 17, },
++	{ .n = "pioA_clk",    .id = 18, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "flx0_clk",    .id = 19, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "flx1_clk",    .id = 20, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "flx2_clk",    .id = 21, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "flx3_clk",    .id = 22, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "flx4_clk",    .id = 23, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uart0_clk",   .id = 24, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uart1_clk",   .id = 25, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uart2_clk",   .id = 26, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uart3_clk",   .id = 27, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uart4_clk",   .id = 28, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "twi0_clk",    .id = 29, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "twi1_clk",    .id = 30, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "spi0_clk",    .id = 33, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "spi1_clk",    .id = 34, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "tcb0_clk",    .id = 35, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "tcb1_clk",    .id = 36, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "pwm_clk",     .id = 38, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "adc_clk",     .id = 40, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "uhphs_clk",   .id = 41, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "udphs_clk",   .id = 42, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "ssc0_clk",    .id = 43, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "ssc1_clk",    .id = 44, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "trng_clk",    .id = 47, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "pdmic_clk",   .id = 48, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "securam_clk", .id = 51, },
++	{ .n = "i2s0_clk",    .id = 54, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "i2s1_clk",    .id = 55, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "can0_clk",    .id = 56, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "can1_clk",    .id = 57, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "classd_clk",  .id = 59, .r = { .min = 0, .max = 83000000 }, },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sama5d2_periphck[] = {
++	{ .n = "dma0_clk",    .id = 6, },
++	{ .n = "dma1_clk",    .id = 7, },
++	{ .n = "aes_clk",     .id = 9, },
++	{ .n = "aesb_clk",    .id = 10, },
++	{ .n = "sha_clk",     .id = 12, },
++	{ .n = "mpddr_clk",   .id = 13, },
++	{ .n = "matrix0_clk", .id = 15, },
++	{ .n = "sdmmc0_hclk", .id = 31, },
++	{ .n = "sdmmc1_hclk", .id = 32, },
++	{ .n = "lcdc_clk",    .id = 45, },
++	{ .n = "isc_clk",     .id = 46, },
++	{ .n = "qspi0_clk",   .id = 52, },
++	{ .n = "qspi1_clk",   .id = 53, },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++	struct clk_range r;
++	bool pll;
++} sama5d2_gck[] = {
++	{ .n = "sdmmc0_gclk", .id = 31, },
++	{ .n = "sdmmc1_gclk", .id = 32, },
++	{ .n = "tcb0_gclk",   .id = 35, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "tcb1_gclk",   .id = 36, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "pwm_gclk",    .id = 38, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "isc_gclk",    .id = 46, },
++	{ .n = "pdmic_gclk",  .id = 48, },
++	{ .n = "i2s0_gclk",   .id = 54, .pll = true },
++	{ .n = "i2s1_gclk",   .id = 55, .pll = true },
++	{ .n = "can0_gclk",   .id = 56, .r = { .min = 0, .max = 80000000 }, },
++	{ .n = "can1_gclk",   .id = 57, .r = { .min = 0, .max = 80000000 }, },
++	{ .n = "classd_gclk", .id = 59, .r = { .min = 0, .max = 100000000 },
++	  .pll = true },
++};
++
++static void __init sama5d2_pmc_setup(struct device_node *np)
++{
++	struct clk_range range = CLK_RANGE(0, 0);
++	const char *slck_name, *mainxtal_name;
++	struct pmc_data *sama5d2_pmc;
++	const char *parent_names[6];
++	struct regmap *regmap, *regmap_sfr;
++	struct clk_hw *hw;
++	unsigned int i;
++	bool bypass;
++
++	i = of_property_match_string(np, "clock-names", "slow_clk");
++	if (i < 0)
++		return;
++
++	slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "main_xtal");
++	if (i < 0)
++		return;
++	mainxtal_name = of_clk_get_parent_name(np, i);
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		return;
++
++	sama5d2_pmc = pmc_data_allocate(6, 19, 60, 60);
++	if (!sama5d2_pmc)
++		return;
++
++	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
++					   100000000);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
++					bypass);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "main_rc_osc";
++	parent_names[1] = "main_osc";
++	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d2_pmc->chws[PMC_MAIN] = hw;
++
++	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
++				   &sama5d3_pll_layout, &plla_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
++					      "mainck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_audio_pll_pad(regmap, "audiopll_padck",
++					     "audiopll_fracck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck",
++					     "audiopll_fracck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
++	if (IS_ERR(regmap_sfr))
++		regmap_sfr = NULL;
++
++	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d2_pmc->chws[PMC_UTMI] = hw;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
++				      &at91sam9x5_master_layout,
++				      &mck_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d2_pmc->chws[PMC_MCK] = hw;
++
++	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d2_pmc->chws[PMC_MCK2] = hw;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	parent_names[4] = "mck";
++	for (i = 0; i < 3; i++) {
++		char name[6];
++
++		snprintf(name, sizeof(name), "prog%d", i);
++
++		hw = at91_clk_register_programmable(regmap, name,
++						    parent_names, 5, i,
++						    &at91sam9x5_programmable_layout);
++		if (IS_ERR(hw))
++			goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d2_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sama5d2_systemck[i].n,
++					      sama5d2_systemck[i].p,
++					      sama5d2_systemck[i].id);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->shws[sama5d2_systemck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d2_periphck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d2_periphck[i].n,
++							 "masterck",
++							 sama5d2_periphck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->phws[sama5d2_periphck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d2_periph32ck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d2_periph32ck[i].n,
++							 "h32mxck",
++							 sama5d2_periph32ck[i].id,
++							 &sama5d2_periph32ck[i].r);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->phws[sama5d2_periph32ck[i].id] = hw;
++	}
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	parent_names[4] = "mck";
++	parent_names[5] = "audiopll_pmcck";
++	for (i = 0; i < ARRAY_SIZE(sama5d2_gck); i++) {
++		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
++						 sama5d2_gck[i].n,
++						 parent_names, 6,
++						 sama5d2_gck[i].id,
++						 sama5d2_gck[i].pll,
++						 &sama5d2_gck[i].r);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->ghws[sama5d2_gck[i].id] = hw;
++	}
++
++	if (regmap_sfr) {
++		parent_names[0] = "i2s0_clk";
++		parent_names[1] = "i2s0_gclk";
++		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s0_muxclk",
++					       parent_names, 2, 0);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->chws[PMC_I2S0_MUX] = hw;
++
++		parent_names[0] = "i2s1_clk";
++		parent_names[1] = "i2s1_gclk";
++		hw = at91_clk_i2s_mux_register(regmap_sfr, "i2s1_muxclk",
++					       parent_names, 2, 1);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d2_pmc->chws[PMC_I2S1_MUX] = hw;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d2_pmc);
++
++	return;
++
++err_free:
++	pmc_data_free(sama5d2_pmc);
++}
++CLK_OF_DECLARE(sama5d2_pmc, "atmel,sama5d2-pmc", sama5d2_pmc_setup);
+-- 
+2.18.0
