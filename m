@@ -1,51 +1,110 @@
-Return-Path: <eballetbo@gmail.com>
-MIME-Version: 1.0
-References: <cover.1530776326.git.matti.vaittinen@fi.rohmeurope.com> <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <a304164cc3c1b31c7c6b62f8e233ce321a82cdd6.1530776326.git.matti.vaittinen@fi.rohmeurope.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Thu, 5 Jul 2018 10:04:48 +0200
-Message-ID: <CAFqH_531ob=uY7x-SK1tXyRZXdd1qFT+O5pUVnnnJcucC7_fig@mail.gmail.com>
-Subject: Re: [PATCH v9 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-To: matti.vaittinen@fi.rohmeurope.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sebastian Reichel <sre@kernel.org>, chenjh@rock-chips.com,
-	Andrey Smirnov <andrew.smirnov@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, sboyd@kernel.org, linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 01/18] clk: sunxi-ng: a64: Add minimal rate for video PLLs
+Date: Wed, 18 Jul 2018 16:24:41 +0530
+Message-Id: <20180718105458.22304-2-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Matti,
-Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-dia dj., 5 de jul. 2018 a les 9:46:
->
-> ROHM BD71837 PMIC MFD driver providing interrupts and support
-> for three subsystems:
-> - clk
-> - Regulators
-> - input/power-key
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/mfd/Kconfig         |  13 ++
->  drivers/mfd/Makefile        |   1 +
->  drivers/mfd/bd71837.c       | 215 ++++++++++++++++++++++++
->  include/linux/mfd/bd71837.h | 391 ++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 620 insertions(+)
->  create mode 100644 drivers/mfd/bd71837.c
->  create mode 100644 include/linux/mfd/bd71837.h
->
+According to documentation and experience with other similar SoCs, video
+PLLs don't work stable if their output frequency is set below 192 MHz.
 
-(snip)
+Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
 
-Looks good to me.
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- none 
+Changes for v2:
+- New patch
 
-Best Regards,
- Enric
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index ee9c12cf3f08..d0e30192f0cf 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   BIT(28),	/* lock */
+ 				   CLK_SET_RATE_UNGATE);
+ 
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
+-					"osc24M", 0x010,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
++					    "osc24M", 0x010,
++					    192000000,	/* Minimum rate */
++					    8, 7,		/* N */
++					    0, 4,		/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x018,
+@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
+ 	},
+ };
+ 
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
+-					"osc24M", 0x030,
+-					8, 7,		/* N */
+-					0, 4,		/* M */
+-					BIT(24),	/* frac enable */
+-					BIT(25),	/* frac select */
+-					270000000,	/* frac rate 0 */
+-					297000000,	/* frac rate 1 */
+-					BIT(31),	/* gate */
+-					BIT(28),	/* lock */
+-					CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
++					    "osc24M", 0x030,
++					    192000000,	/* Minimum rate */
++					    8, 7,		/* N */
++					    0, 4,		/* M */
++					    BIT(24),	/* frac enable */
++					    BIT(25),	/* frac select */
++					    270000000,	/* frac rate 0 */
++					    297000000,	/* frac rate 1 */
++					    BIT(31),	/* gate */
++					    BIT(28),	/* lock */
++					    CLK_SET_RATE_UNGATE);
+ 
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					"osc24M", 0x038,
+-- 
+2.17.1
