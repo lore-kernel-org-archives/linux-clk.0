@@ -1,248 +1,194 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 07/10] arm64: dts: allwinner: a64: Add display pipeline
-Date: Fri, 27 Jul 2018 01:12:54 +0800
-Message-Id: <20180726171257.6688-8-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1531905382.8953.113.camel@mtkswgap22>
+Subject: Re: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys
+ through a pdev
+From: Sean Wang <sean.wang@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: <matthias.bgg@kernel.org>, <ulrich.hecht+renesas@gmail.com>,
+	<laurent.pinchart@ideasonboard.com>, <ck.hu@mediatek.com>,
+	<p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<lee.jones@linaro.org>, <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+	<mchehab@kernel.org>, <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
+	<linux-clk@vger.kernel.org>, <linux@armlinux.org.uk>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Matthias Brugger <mbrugger@suse.com>
+Date: Wed, 18 Jul 2018 17:16:22 +0800
+In-Reply-To: <50c93f6d-c546-1479-62c1-adc0b40d5dab@gmail.com>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
+	 <20180717220328.792-5-matthias.bgg@kernel.org>
+	 <1531882655.8953.83.camel@mtkswgap22>
+	 <50c93f6d-c546-1479-62c1-adc0b40d5dab@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+On Wed, 2018-07-18 at 09:27 +0200, Matthias Brugger wrote:
+> Hi Sean,
+> 
+> On 18/07/18 04:57, Sean Wang wrote:
+> > On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
+> >> From: Matthias Brugger <mbrugger@suse.com>
+> >>
+> >> The MMSYS subsystem includes clocks and drm components.
+> >> This patch adds an initailization path through a platform device
+> >> for the clock part, so that both drivers get probed from the same
+> >> device tree compatible.
+> >>
+> > 
+> > Sorry for that I should have a response earlier for the series.
+> > 
+> > Some points I felt they're not exactly right and should be fixed up
+> > before we're moving on
+> > 
+> > Currently, drm driver have a wrong reference to the dt-binding,
+> > "mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys", they should be all
+> > for the subsystem exporting clock and reset line such common resource to
+> > its sub-devices. Every subsystem has a similar shape. I hope mmsys
+> > shouldn't be an exception.
+> 
+> I'm not sure if I understand what you mean. You proposed to use a platform
+> device [1] and now you say we should change the DTS?
+> 
 
-Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-TCON is connected to LCD and the second is to HDMI.
+Yes, my initial thought is that I would like to embed drm platform
+device into mmsys. It is the easiest way to solve problems caused by
+compatible string conflict we met here in short term.
 
-The HDMI controller/PHY pair is similar to the one on H3/H5, but have
-two video PLLs selectable.
 
-Add all required device tree nodes of the display pipeline, including
-the TCON0 LCD one and the TCON1 HDMI one.
+> What do you mean by "drm driver has a wrong reference to the dt-binding"? How
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: refactor commit message and add 1st pipeline]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v3.1:
-- Refactor commit message to make it more clear.
-- Added first pipeline (mixer0 -> tcon0)
-Changes for v3:
-- Squash all pipeline components in one patch
-- Add status for mixer1 and tcon1
-Changes for v2:
-- Change compatibles and other based on previous patch changes
+But for long-term goal, device has to define its own dt-binding before
+the driver is being implemented. Currently, drm driver uses wrong
+compatible string,  "mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys",
+that are owned by mmsys device [1], not by drm device.
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 169 ++++++++++++++++++
- 1 file changed, 169 insertions(+)
+[1]
+https://elixir.bootlin.com/linux/v4.18-rc5/source/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index d3daf90a8715..fe9cc673fe07 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -112,6 +112,12 @@
- 		};
- 	};
- 
-+	de: display-engine {
-+		compatible = "allwinner,sun50i-a64-display-engine";
-+		allwinner,pipelines = <&mixer1>;
-+		status = "disabled";
-+	};
-+
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -194,6 +200,55 @@
- 				#clock-cells = <1>;
- 				#reset-cells = <1>;
- 			};
-+
-+			mixer0: mixer@100000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-0";
-+				reg = <0x100000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER0>,
-+					 <&display_clocks CLK_MIXER0>;
-+				clock-names = "bus",
-+					      "mod";
-+				resets = <&display_clocks RST_MIXER0>;
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					mixer0_out: port@1 {
-+						reg = <1>;
-+
-+						mixer0_out_tcon0: endpoint {
-+							remote-endpoint = <&tcon0_in_mixer0>;
-+						};
-+					};
-+				};
-+			};
-+
-+			mixer1: mixer@200000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-1";
-+				reg = <0x200000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER1>,
-+					 <&display_clocks CLK_MIXER1>;
-+				clock-names = "bus",
-+					      "mod";
-+				/* The reset line is shared */
-+				resets = <&display_clocks RST_WB>;
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					mixer1_out: port@1 {
-+						reg = <1>;
-+
-+						mixer1_out_tcon1: endpoint {
-+							remote-endpoint = <&tcon1_in_mixer1>;
-+						};
-+					};
-+				};
-+			};
- 		};
- 
- 		syscon: syscon@1c00000 {
-@@ -228,6 +283,76 @@
- 			#dma-cells = <1>;
- 		};
- 
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun50i-a64-tcon-lcd",
-+				     "allwinner,sun8i-a83t-tcon-lcd";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-+			clock-names = "ahb", "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
-+			reset-names = "lcd", "lvds";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun50i-a64-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint {
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun50i-a64-mmc";
- 			reg = <0x01c0f000 0x1000>;
-@@ -686,6 +811,50 @@
- 			status = "disabled";
- 		};
- 
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun50i-a64-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun50i-a64-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_PLL_VIDEO0>, <&ccu CLK_PLL_VIDEO1>;
-+			clock-names = "bus", "mod", "pll-0", "pll-1";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
--- 
-2.18.0
+
+> would you want to name it and most important, what would be your approach to
+> have backwards compatibility to older device tree bindings?
+> 
+
+We can use embed a platform device into mmsys for solving issue caused
+by the older device tree binding.
+
+But for long-term, it's neccessary to have a drm device dt-binding
+document allowing drm driver and its components driver to follow. 
+
+
+
+> > 
+> > DRM device needs to have its own dt-binding show how connections between
+> > DRM components being made and its node should be put under mmsys node.
+> > > In this way, it becomes easy to see how the topology of the subsystem is
+> > and grows, like a tree "device tree", instead of hiding the details in
+> > the implementation.
+> > 
+> > The similar example we already did for audsys on mt2701 and mt7623 as
+> > below
+> > 
+> > 	audsys: clock-controller@11220000 {
+> > 		compatible = "mediatek,mt7623-audsys",
+> > 			     "mediatek,mt2701-audsys",
+> > 			     "syscon";
+> > 			...
+> > 
+> > 		afe: audio-controller {
+> > 			compatible = "mediatek,mt7623-audio",
+> > 				     "mediatek,mt2701-audio";
+> > 			
+> > 			...
+> > 		};
+> > 	};
+> > 
+> 
+> I think this approach is not working as, due to backwards compatibility, we have
+> to make sure that the DRM driver gets probed with the mmsys binding.
+> 
+> Regards,
+> Matthias
+> 
+> > 	
+> > 	Sean
+> > 
+> > 
+> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> >> ---
+> >>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 18 ++++++++++++++++++
+> >>  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
+> >>  2 files changed, 20 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> index dd249cf5121e..c946aea722e5 100644
+> >> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> >> @@ -173,6 +173,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+> >>  	.ext_path = mt2701_mtk_ddp_ext,
+> >>  	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
+> >>  	.shadow_register = true,
+> >> +	.clk_drv_name = "clk-mt2701-mm",
+> >>  };
+> >>  
+> >>  static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+> >> @@ -180,6 +181,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+> >>  	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+> >>  	.ext_path = mt8173_mtk_ddp_ext,
+> >>  	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
+> >> +	.clk_drv_name = "clk-mt8173-mm",
+> >>  };
+> >>  
+> >>  static int mtk_drm_kms_init(struct drm_device *drm)
+> >> @@ -411,6 +413,19 @@ static int mtk_drm_probe(struct platform_device *pdev)
+> >>  	if (IS_ERR(private->config_regs))
+> >>  		return PTR_ERR(private->config_regs);
+> >>  
+> >> +	if (private->data->clk_drv_name) {
+> >> +		private->clk_dev = platform_device_register_data(dev,
+> >> +						private->data->clk_drv_name, -1,
+> >> +						NULL, 0);
+> >> +
+> >> +		if (IS_ERR(private->clk_dev)) {
+> >> +			pr_err("failed to register %s platform device\n",
+> >> +						private->data->clk_drv_name);
+> >> +
+> >> +			return PTR_ERR(private->clk_dev);
+> >> +		}
+> >> +	}
+> >> +
+> >>  	/* Iterate over sibling DISP function blocks */
+> >>  	for_each_child_of_node(dev->of_node->parent, node) {
+> >>  		const struct of_device_id *of_id;
+> >> @@ -515,6 +530,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
+> >>  	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
+> >>  		of_node_put(private->comp_node[i]);
+> >>  
+> >> +	if (private->clk_dev)
+> >> +		platform_device_unregister(private->clk_dev);
+> >> +
+> >>  	return 0;
+> >>  }
+> >>  
+> >> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> >> index 86cec19193c4..200eee5de419 100644
+> >> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> >> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> >> @@ -34,11 +34,13 @@ struct mtk_mmsys_driver_data {
+> >>  	const enum mtk_ddp_comp_id *ext_path;
+> >>  	unsigned int ext_len;
+> >>  	bool shadow_register;
+> >> +	const char *clk_drv_name;
+> >>  };
+> >>  
+> >>  struct mtk_drm_private {
+> >>  	struct drm_device *drm;
+> >>  	struct device *dma_dev;
+> >> +	struct platform_device *clk_dev;
+> >>  
+> >>  	unsigned int num_pipes;
+> >>  
+> > 
+> > 
