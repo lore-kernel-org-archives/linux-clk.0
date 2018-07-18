@@ -1,53 +1,41 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Subject: [PATCH 0/5] support a new type of PMIC，including two chips(rk817 and rk809)
-Date: Mon, 23 Jul 2018 11:19:00 +0800
-Message-Id: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
- alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
- huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
- zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
- linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- chenjh@rock-chips.com
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Russell King
+	<linux@armlinux.org.uk>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Simon Horman <horms@verge.net.au>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux ARM
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] clk: Add functions to get optional clocks
+Date: Wed, 18 Jul 2018 13:56:26 +0000
+Message-ID: 
+ <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+ <20180718130228.GG17271@n2100.armlinux.org.uk>
+ <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-TW9zdCBvZiBmdW5jdGlvbnMgYW5kIHJlZ2lzdGVycyBvZiB0aGUgcms4MTcgYW5kIHJrODA4IGFy
-ZSB0aGUgc2FtZSwKc28gdGhleSBjYW4gc2hhcmUgYWxsbW9zdCBhbGwgY29kZXMuCgpUaGVpciBz
-cGVjaWZpY2F0aW9ucyBhcmUgYXMgZm9sbG93c++8mgogIDEpIFRoZSBSSzgwOSBhbmQgUks4MDkg
-Y29uc2lzdCBvZiA1IERDRENzLCA5IExET3MgYW5kIGhhdmUgdGhlIHNhbWUgcmVnaXN0ZXJzCiAg
-ICAgZm9yIHRoZXNlIGNvbXBvbmVudHMgZXhjZXB0IGRjZGM1LgogIDIpIFRoZSBkY2RjNSBpcyBh
-IGJvb3N0IGRjZGMgZm9yIFJLODE3IGFuZCBpcyBhIGJ1Y2sgZm9yIFJLODA5LgogIDMpIFRoZSBS
-SzgxNyBoYXMgb25lIHN3aXRjaCBidXQgVGhlIFJrODA5IGhhcyB0d28uCgpUb255IFhpZSAoNSk6
-CiAgbWZkOiByazgwODogQWRkIFJLODE3IGFuZCBSSzgwOSBzdXBwb3J0CiAgcmVndWxhdG9yOiBy
-azgwODogQWRkIHJlZ3VsYXRvciBkcml2ZXIgZm9yIFJLODA5IGFuZCBSSzgxNy4KICBtZmQ6IGR0
-LWJpbmRpbmdzOiBBZGQgUks4MDkgYW5kIFJLODE3IGRldmljZSB0cmVlIGJpbmRpbmdzIGRvY3Vt
-ZW50CiAgUlRDOiBSSzgwODogYWRkIFJUQyBkcml2ZXIgZm9yIFJLODA5IGFuZCBSSzgxNy4KICBj
-bGs6IFJLODA4OiBhZGQgY2xrb3V0IGRyaXZlciBmb3IgUks4MDkgYW5kIFJLODE3LgoKIERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZmQvcms4MDgudHh0IHwgIDU1ICsrCiBkcml2
-ZXJzL2Nsay9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNiArLQogZHJp
-dmVycy9jbGsvY2xrLXJrODA4LmMgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNjIgKystCiBk
-cml2ZXJzL21mZC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNiArLQog
-ZHJpdmVycy9tZmQvcms4MDguYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAyMTYgKysr
-KysrKy0KIGRyaXZlcnMvcmVndWxhdG9yL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgIHwg
-ICA0ICstCiBkcml2ZXJzL3JlZ3VsYXRvci9yazgwOC1yZWd1bGF0b3IuYyAgICAgICAgICAgICB8
-IDYzMyArKysrKysrKysrKysrKysrKysrKysrKy0KIGRyaXZlcnMvcnRjL0tjb25maWcgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBkcml2ZXJzL3J0Yy9ydGMtcms4MDguYyAg
-ICAgICAgICAgICAgICAgICAgICAgICB8ICA2OCArKy0KIGluY2x1ZGUvbGludXgvbWZkL3JrODA4
-LmggICAgICAgICAgICAgICAgICAgICAgIHwgMTc1ICsrKysrKysKIDEwIGZpbGVzIGNoYW5nZWQs
-IDEyMDEgaW5zZXJ0aW9ucygrKSwgMjggZGVsZXRpb25zKC0pCgotLSAKMS45LjEKCgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5l
-bCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6
-Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+SGkgUnVzc2VsbCwNCg0KT24gMTggSnVseSAyMDE4IDE0OjE5LCBHZWVydCBVeXR0ZXJob2V2ZW4g
+d3JvdGU6DQo+IE9uIFdlZCwgSnVsIDE4LCAyMDE4IGF0IDM6MDIgUE0gUnVzc2VsbCBLaW5nIC0g
+QVJNIExpbnV4ICB3cm90ZToNCj4gPiBPbiBXZWQsIEp1bCAxOCwgMjAxOCBhdCAwMTo1NzozOFBN
+ICswMTAwLCBQaGlsIEVkd29ydGh5IHdyb3RlOg0KPiA+ID4gQmVoYXZlcyB0aGUgc2FtZSBhcyAo
+ZGV2bV8pY2xrX2dldCBleGNlcHQgd2hlcmUgdGhlcmUgaXMgbm8gY2xvY2sNCj4gPiA+IHByb2R1
+Y2VyLiBJbiB0aGlzIGNhc2UsIGluc3RlYWQgb2YgcmV0dXJuaW5nIC1FTk9FTlQsIHRoZSBmdW5j
+dGlvbg0KPiA+ID4gcmV0dXJucyBOVUxMLiBUaGlzIG1ha2VzIGVycm9yIGNoZWNraW5nIHNpbXBs
+ZXIgYW5kIGFsbG93cw0KPiA+ID4gY2xrX3ByZXBhcmVfZW5hYmxlLCBldGMgdG8gYmUgY2FsbGVk
+IG9uIHRoZSByZXR1cm5lZCByZWZlcmVuY2UNCj4gPiA+IHdpdGhvdXQgYWRkaXRpb25hbCBjaGVj
+a3MuDQo+ID4NCj4gPiBIb3cgZG9lcyB0aGlzIHdvcmsgd2l0aCBub24tRFQgc3lzdGVtcywgd2hl
+cmUgbG9va2luZyBhIGNsb2NrIHVwIHdoaWNoDQo+ID4gaXNuJ3QgeWV0IHJlZ2lzdGVyZWQgd2l0
+aCBjbGtkZXYgcmV0dXJucyAtRU5PRU5UID8NCj4gPg0KPiA+IChjbGtkZXYgZG9lc24ndCBrbm93
+IHdoZW4gYWxsIGNsb2NrcyBhcmUgcmVnaXN0ZXJlZCB3aXRoIGl0LikNCj4gDQo+IEdvb2QgcXVl
+c3Rpb24uDQo+IA0KPiBJIGd1ZXNzIGFsbCBkcml2ZXJzIHRyeWluZyB0byBoYW5kbGUgb3B0aW9u
+YWwgY2xvY2tzIHRoaXMgd2F5IGFyZSBhbHJlYWR5IGJyb2tlbg0KPiBvbiBub24tRFQgc3lzdGVt
+cyB3aGVyZSBjbG9ja3MgbWF5IGJlIHJlZ2lzdGVyZWQgbGF0ZS4uLg0KDQpTbyBob3cgZG8gbm9u
+LURUIHN5c3RlbXMgdGhhdCBsb29rIGEgY2xvY2sgdXAgd2hpY2ggaXNuJ3QgeWV0DQpyZWdpc3Rl
+cmVkIHdpdGggY2xrZGV2LCBkZXRlcm1pbmUgdGhhdCBhbiBvcHRpb25hbCBjbG9jayBpcyB0aGVy
+ZQ0Kb3Igbm90Pw0KDQpUaGFua3MNClBoaWwNCg==
