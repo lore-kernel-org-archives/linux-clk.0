@@ -1,265 +1,138 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V4 6/9] dt-bindings: clock: add imx7ulp clock binding doc
-Date: Wed, 18 Jul 2018 21:37:00 +0800
-Message-Id: <1531921023-18497-7-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: sboyd@kernel.org,
+	andy.gross@linaro.org
+Cc: tdas@codeaurora.org,
+	girishm@codeaurora.org,
+	anischal@codeaurora.org,
+	bjorn.andersson@linaro.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Brown <david.brown@linaro.org>,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+Date: Wed, 18 Jul 2018 11:04:30 -0700
+Message-Id: <20180718180431.48580-3-dianders@chromium.org>
+In-Reply-To: <20180718180431.48580-1-dianders@chromium.org>
+References: <20180718180431.48580-1-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+Add both the interface and core clock.
 
-Note IMX7ULP has two clock domains: M4 and A7. This binding doc
-is only for A7 clock domain.
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>
-Cc: Bai Ping <ping.bai@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
-ChangeLog:
-v3->v4:
- * make scg, pcc separate nodes according to Rob's suggestion
-v2->v3:
- * no changes
-v1->v2: no changes
----
- .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 ++++++++++++++++
- include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++++++++++++
- 2 files changed, 196 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
-diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-new file mode 100644
-index 0000000..2239383
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-@@ -0,0 +1,87 @@
-+* Clock bindings for Freescale i.MX7ULP
-+
-+i.MX7ULP Clock functions are under joint control of the System
-+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-+modules, and Core Mode Controller (CMC)1 blocks
-+
-+The clocking scheme provides clear separation between M4 domain
-+and A7 domain. Except for a few clock sources shared between two
-+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-+and and the Fast IRC clock (FIRCLK), clock sources and clock
-+management are separated and contained within each domain.
-+
-+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-+
-+Note: this binding doc is only for A7 clock domain.
-+
-+System Clock Generation (SCG) modules:
-+---------------------------------------------------------------------
-+The System Clock Generation (SCG) is responsible for clock generation
-+and distribution across this device. Functions performed by the SCG
-+include: clock reference selection, generation of clock used to derive
-+processor, system, peripheral bus and external memory interface clocks,
-+source selection for peripheral clocks and control of power saving
-+clock gating mode.
-+
-+Required properties:
-+
-+- compatible:	Should be "fsl,imx7ulp-scg1".
-+- reg : 	Should contain registers location and length.
-+- #clock-cells:	Should be <1>.
-+- clocks:	Should contain the fixed input clocks.
-+- clock-name:   Should contain the following clock names:"rosc", "sosc",
-+		"sirc", "firc", "upll", "mpll".
-+
-+Peripheral Clock Control (PCC) modules:
-+---------------------------------------------------------------------
-+The Peripheral Clock Control (PCC) is responsible for clock selection,
-+optional division and clock gating mode for peripherals in their
-+respected power domain
-+
-+Required properties:
-+- compatible:	Should be "fsl,imx7ulp-pcc2" or "fsl,imx7ulp-pcc3".
-+- reg : 	Should contain registers location and length.
-+- #clock-cells:	Should be <1>.
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.
-+See include/dt-bindings/clock/imx7ulp-clock.h
-+for the full list of i.MX7ULP clock IDs of each module.
-+
-+Examples:
-+
-+#include <dt-bindings/clock/imx7ulp-clock.h>
-+
-+scg1: scg1@403e0000 {
-+	compatible = "fsl,imx7ulp-scg1;
-+	reg = <0x403e0000 0x10000>;
-+	clocks = <&rosc>, <&sosc>, <&sirc>,
-+		 <&firc>, <&upll>, <&mpll>;
-+	clock-names = "rosc", "sosc", "sirc",
-+		      "firc", "upll", "mpll";
-+	#clock-cells = <1>;
+ drivers/clk/qcom/gcc-sdm845.c | 73 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 0f694ed4238a..2ee96f9bc217 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
+ 	"core_bi_pll_test_se",
+ };
+ 
++static const struct parent_map gcc_parent_map_9[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_GPLL0_OUT_MAIN, 1 },
++	{ P_GPLL0_OUT_EVEN, 6 },
++	{ P_SLEEP_CLK, 7 },
 +};
 +
-+pcc2: pcc2@403f0000 {
-+	compatible = "fsl,imx7ulp-pcc2";
-+	reg = <0x403f0000 0x10000>;
-+	#clock-cells = <1>;
++static const char * const gcc_parent_names_9[] = {
++	"bi_tcxo",
++	"gpll0",
++	"gpll0_out_even",
++	"core_pi_sleep_clk",
 +};
 +
-+pcc3: pcc3@40b30000 {
-+	compatible = "fsl,imx7ulp-pcc3";
-+	reg = <0x40b30000 0x10000>;
-+	#clock-cells = <1>;
+ static struct clk_alpha_pll gpll0 = {
+ 	.offset = 0x0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+@@ -358,6 +372,31 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
++	F(75000000, P_GPLL0_OUT_EVEN, 4, 0, 0),
++	F(100000000, P_GPLL0_OUT_EVEN, 3, 0, 0),
++	F(150000000, P_GPLL0_OUT_EVEN, 2, 0, 0),
++	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
++	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
++	{ }
 +};
 +
-+usdhc1: usdhc@40380000 {
-+	compatible = "fsl,imx7ulp-usdhc";
-+	reg = <0x40380000 0x10000>;
-+	interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&scg1 IMX7ULP_CLK_NIC1_BUS_DIV>,
-+		 <&scg1 IMX7ULP_CLK_NIC1_DIV>,
-+		 <&pcc2 IMX7ULP_CLK_USDHC1>;
-+	clock-names ="ipg", "ahb", "per";
-+	bus-width = <4>;
++static struct clk_rcg2 gcc_qspi_core_clk_src = {
++	.cmd_rcgr = 0x4b008,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = gcc_parent_map_9,
++	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gcc_qspi_core_clk_src",
++		.parent_names = gcc_parent_names_9,
++		.num_parents = 4,
++		.ops = &clk_rcg2_floor_ops,
++	},
 +};
-diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
-new file mode 100644
-index 0000000..008c5ee
---- /dev/null
-+++ b/include/dt-bindings/clock/imx7ulp-clock.h
-@@ -0,0 +1,109 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *
-+ */
 +
-+#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
-+#define __DT_BINDINGS_CLOCK_IMX7ULP_H
+ static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
+ 	F(9600000, P_BI_TCXO, 2, 0, 0),
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+@@ -1935,6 +1974,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
++	.halt_reg = 0x4b000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x4b000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qspi_cnoc_periph_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
-+/* SCG1 */
++static struct clk_branch gcc_qspi_core_clk = {
++	.halt_reg = 0x4b004,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x4b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qspi_core_clk",
++			.parent_names = (const char *[]){
++				"gcc_qspi_core_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
-+#define IMX7ULP_CLK_DUMMY		0
-+#define IMX7ULP_CLK_ROSC		1
-+#define IMX7ULP_CLK_SOSC		2
-+#define IMX7ULP_CLK_FIRC		3
-+#define IMX7ULP_CLK_SPLL_PRE_SEL	4
-+#define IMX7ULP_CLK_SPLL_PRE_DIV	5
-+#define IMX7ULP_CLK_SPLL		6
-+#define IMX7ULP_CLK_SPLL_POST_DIV1	7
-+#define IMX7ULP_CLK_SPLL_POST_DIV2	8
-+#define IMX7ULP_CLK_SPLL_PFD0		9
-+#define IMX7ULP_CLK_SPLL_PFD1		10
-+#define IMX7ULP_CLK_SPLL_PFD2		11
-+#define IMX7ULP_CLK_SPLL_PFD3		12
-+#define IMX7ULP_CLK_SPLL_PFD_SEL	13
-+#define IMX7ULP_CLK_SPLL_SEL		14
-+#define IMX7ULP_CLK_APLL_PRE_SEL	15
-+#define IMX7ULP_CLK_APLL_PRE_DIV	16
-+#define IMX7ULP_CLK_APLL		17
-+#define IMX7ULP_CLK_APLL_POST_DIV1	18
-+#define IMX7ULP_CLK_APLL_POST_DIV2	19
-+#define IMX7ULP_CLK_APLL_PFD0		20
-+#define IMX7ULP_CLK_APLL_PFD1		21
-+#define IMX7ULP_CLK_APLL_PFD2		22
-+#define IMX7ULP_CLK_APLL_PFD3		23
-+#define IMX7ULP_CLK_APLL_PFD_SEL	24
-+#define IMX7ULP_CLK_APLL_SEL		25
-+#define IMX7ULP_CLK_UPLL		26
-+#define IMX7ULP_CLK_SYS_SEL		27
-+#define IMX7ULP_CLK_CORE_DIV		28
-+#define IMX7ULP_CLK_BUS_DIV		29
-+#define IMX7ULP_CLK_PLAT_DIV		30
-+#define IMX7ULP_CLK_DDR_SEL		31
-+#define IMX7ULP_CLK_DDR_DIV		32
-+#define IMX7ULP_CLK_NIC_SEL		33
-+#define IMX7ULP_CLK_NIC0_DIV		34
-+#define IMX7ULP_CLK_GPU_DIV		35
-+#define IMX7ULP_CLK_NIC1_DIV		36
-+#define IMX7ULP_CLK_NIC1_BUS_DIV	37
-+#define IMX7ULP_CLK_NIC1_EXT_DIV	38
-+#define IMX7ULP_CLK_MIPI_PLL		39
-+#define IMX7ULP_CLK_SIRC		40
-+#define IMX7ULP_CLK_SOSC_BUS_CLK	41
-+#define IMX7ULP_CLK_FIRC_BUS_CLK	42
-+#define IMX7ULP_CLK_SPLL_BUS_CLK	43
-+
-+#define IMX7ULP_CLK_SCG1_END		44
-+
-+/* PCC2 */
-+#define IMX7ULP_CLK_DMA1		0
-+#define IMX7ULP_CLK_RGPIO2P1		1
-+#define IMX7ULP_CLK_FLEXBUS		2
-+#define IMX7ULP_CLK_SEMA42_1		3
-+#define IMX7ULP_CLK_DMA_MUX1		4
-+#define IMX7ULP_CLK_SNVS		5
-+#define IMX7ULP_CLK_CAAM		6
-+#define IMX7ULP_CLK_LPTPM4		7
-+#define IMX7ULP_CLK_LPTPM5		8
-+#define IMX7ULP_CLK_LPIT1		9
-+#define IMX7ULP_CLK_LPSPI2		10
-+#define IMX7ULP_CLK_LPSPI3		11
-+#define IMX7ULP_CLK_LPI2C4		12
-+#define IMX7ULP_CLK_LPI2C5		13
-+#define IMX7ULP_CLK_LPUART4		14
-+#define IMX7ULP_CLK_LPUART5		15
-+#define IMX7ULP_CLK_FLEXIO1		16
-+#define IMX7ULP_CLK_USB0		17
-+#define IMX7ULP_CLK_USB1		18
-+#define IMX7ULP_CLK_USB_PHY		19
-+#define IMX7ULP_CLK_USB_PL301		20
-+#define IMX7ULP_CLK_USDHC0		21
-+#define IMX7ULP_CLK_USDHC1		22
-+#define IMX7ULP_CLK_WDG1		23
-+#define IMX7ULP_CLK_WDG2		24
-+
-+#define IMX7ULP_CLK_PCC2_END		25
-+
-+/* PCC3 */
-+#define IMX7ULP_CLK_LPTPM6		0
-+#define IMX7ULP_CLK_LPTPM7		1
-+#define IMX7ULP_CLK_LPI2C6		2
-+#define IMX7ULP_CLK_LPI2C7		3
-+#define IMX7ULP_CLK_LPUART6		4
-+#define IMX7ULP_CLK_LPUART7		5
-+#define IMX7ULP_CLK_VIU			6
-+#define IMX7ULP_CLK_DSI			7
-+#define IMX7ULP_CLK_LCDIF		8
-+#define IMX7ULP_CLK_MMDC		9
-+#define IMX7ULP_CLK_PCTLC		10
-+#define IMX7ULP_CLK_PCTLD		11
-+#define IMX7ULP_CLK_PCTLE		12
-+#define IMX7ULP_CLK_PCTLF		13
-+#define IMX7ULP_CLK_GPU3D		14
-+#define IMX7ULP_CLK_GPU2D		15
-+
-+#define IMX7ULP_CLK_PCC3_END		16
-+
-+#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
+ static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
+ 	.halt_reg = 0x17030,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -3383,6 +3453,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
+ 	[GPLL4] = &gpll4.clkr,
+ 	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+ 	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
++	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
++	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
++	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_sdm845_resets[] = {
 -- 
-2.7.4
+2.18.0.233.g985f88cf7e-goog
