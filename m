@@ -1,123 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sn1nam01on0073.outbound.protection.outlook.com ([104.47.32.73]:10757
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753575AbeGFKyj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Jul 2018 06:54:39 -0400
-From: Rajan Vaja <RAJANV@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jolly Shah <JOLLYS@xilinx.com>,
-        Michal Simek <michals@xilinx.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Subject: RE: [PATCH] clk: clk-fixed-factor: Use new macro
- CLK_OF_DECLARE_DRIVER
-Date: Fri, 6 Jul 2018 10:54:34 +0000
-Message-ID: <CY1PR02MB20919D7E8B2856904AD332D6B7470@CY1PR02MB2091.namprd02.prod.outlook.com>
-References: <1520518500-5500-1-git-send-email-rajanv@xilinx.com>
- <152061989141.26240.15533446439693285034@swboyd.mtv.corp.google.com>
- <SN4PR0201MB3502AC253C8B1C9E57A83B7FB7DE0@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <152113963269.111154.10395846178696174140@swboyd.mtv.corp.google.com>
- <SN4PR0201MB35029B265E608A24130BFEE2B7D70@SN4PR0201MB3502.namprd02.prod.outlook.com>
- <CY1PR02MB20914DBB65A193DED2BEED92B7870@CY1PR02MB2091.namprd02.prod.outlook.com>
- <152792163637.225090.8916381060805852261@swboyd.mtv.corp.google.com>
- <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
-In-Reply-To: <CY1PR02MB2091426610FC0037BB9EF61BB7670@CY1PR02MB2091.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 18 Jul 2018 19:30:50 +0800
+Message-ID: <CAGb2v67=h=HAiDz9+sx52vkk5YdCZMdMvM=T_vFydeszqnjLmg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSYWph
-biBWYWphDQo+IFNlbnQ6IDA0IEp1bmUgMjAxOCAwOToxMSBBTQ0KPiBUbzogJ1N0ZXBoZW4gQm95
-ZCcgPHNib3lkQGtlcm5lbC5vcmc+DQo+IENjOiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKb2xseSBTaGFoDQo+IDxKT0xMWVNAeGlsaW54
-LmNvbT47IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxpbnguY29tPjsNCj4gbXR1cnF1ZXR0ZUBi
-YXlsaWJyZS5jb20NCj4gU3ViamVjdDogUkU6IFtQQVRDSF0gY2xrOiBjbGstZml4ZWQtZmFjdG9y
-OiBVc2UgbmV3IG1hY3JvDQo+IENMS19PRl9ERUNMQVJFX0RSSVZFUg0KPiANCj4gSGkgU3RlcGhl
-biwNCj4gDQo+IFRoYW5rcyBmb3IgdGhlIHJlcGx5Lg0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1l
-c3NhZ2UtLS0tLQ0KPiA+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5v
-cmddDQo+ID4gU2VudDogMDIgSnVuZSAyMDE4IDEyOjExIFBNDQo+ID4gVG86IFJhamFuIFZhamEg
-PFJBSkFOVkB4aWxpbnguY29tPg0KPiA+IENjOiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBKb2xseSBTaGFoDQo+ID4gPEpPTExZU0B4aWxp
-bnguY29tPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+Ow0KPiA+IG10dXJxdWV0
-dGVAYmF5bGlicmUuY29tDQo+ID4gU3ViamVjdDogUkU6IFtQQVRDSF0gY2xrOiBjbGstZml4ZWQt
-ZmFjdG9yOiBVc2UgbmV3IG1hY3JvDQo+ID4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSDQo+ID4NCj4g
-PiBRdW90aW5nIFJhamFuIFZhamEgKDIwMTgtMDUtMDMgMDI6MTg6MzApDQo+ID4gPiBIaSBTdGVw
-aGVuLA0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+ID4g
-RnJvbTogUmFqYW4gVmFqYQ0KPiA+ID4gPiBTZW50OiAxNiBNYXJjaCAyMDE4IDA1OjIwIFBNDQo+
-ID4gPiA+IFRvOiAnU3RlcGhlbiBCb3lkJyA8c2JveWRAa2VybmVsLm9yZz4NCj4gPiA+ID4gQ2M6
-IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IEpvbGx5IFNoYWgNCj4gPiA+ID4gPEpPTExZU0B4aWxpbnguY29tPjsgTWljaGFsIFNpbWVrIDxt
-aWNoYWxzQHhpbGlueC5jb20+Ow0KPiA+ID4gPiBtdHVycXVldHRlQGJheWxpYnJlLmNvbQ0KPiA+
-ID4gPiBTdWJqZWN0OiBSRTogW1BBVENIXSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IFVzZSBuZXcg
-bWFjcm8NCj4gPiA+ID4gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSDQo+ID4gPiA+DQo+ID4gPiA+IEhp
-IFN0ZXBoZW4sDQo+ID4gPiA+DQo+ID4gPiA+IFRoYW5rcyBmb3IgdGhlIGNvbW1lbnQuDQo+ID4g
-PiA+DQo+ID4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+ID4gPiBGcm9t
-OiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiA+ID4gPiA+IFNlbnQ6
-IDE2IE1hcmNoIDIwMTggMTI6MTcgQU0NCj4gPiA+ID4gPiBUbzogUmFqYW4gVmFqYSA8UkFKQU5W
-QHhpbGlueC5jb20+DQo+ID4gPiA+ID4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEpvbGx5IFNoYWgNCj4gPiA+ID4gPiA8Sk9MTFlT
-QHhpbGlueC5jb20+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+ID4gPiA+
-ID4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20NCj4gPiA+ID4gPiBTdWJqZWN0OiBSRTogW1BBVENI
-XSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IFVzZSBuZXcgbWFjcm8NCj4gPiA+ID4gPiBDTEtfT0Zf
-REVDTEFSRV9EUklWRVINCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFF1b3RpbmcgUmFqYW4gVmFqYSAo
-MjAxOC0wMy0wOSAxMToyNzo0MCkNCj4gPiA+ID4gPiA+ID4gRnJvbTogU3RlcGhlbiBCb3lkIFtt
-YWlsdG86c2JveWRAa2VybmVsLm9yZ10NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSXMg
-dGhlIGludGVudCB0byByZWdpc3RlciB0aGUgY2xrIHR3aWNlPyBJIGJlbGlldmUgdGhpbmdzIGFy
-ZSB3b3JraW5nIGFzDQo+ID4gPiA+ID4gPiA+IGludGVuZGVkIHdpdGhvdXQgdGhpcyBwYXRjaCwg
-c28gbWF5YmUgeW91IGNhbiBleHBsYWluIGEgbGl0dGxlIG1vcmUNCj4gPiB3aGF0DQo+ID4gPiA+
-ID4gPiA+IHlvdSdyZSB0cnlpbmcgdG8gZml4Lg0KPiA+ID4gPiA+ID4gW1JhamFuXSBZZXMuIER1
-cmluZyBvZl9jbGtfaW5pdCgpIGlmIHNvbWUgRFQgZml4ZWQgZmFjdG9yIGNsb2NrIGhhcw0KPiA+
-ID4gPiA+ID4gcGFyZW50IHdoaWNoIGlzIG5laXRoZXIgbWVudGlvbmVkIGluIG91dHB1dC1jbG9j
-ay1uYW1lcyBvZiBjbG9jaw0KPiA+ID4gPiA+ID4gY29udHJvbGxlciBub3IgcmVnaXN0ZXJlZCBh
-cyBjbG9jayBwcm92aWRlciwgb2ZfY2xrX2luaXQoKSB3aWxsIHRyeSB0bw0KPiA+ID4gPiA+ID4g
-Zm9yY2VmdWxseSByZWdpc3RlciBpbiBzZWNvbmQgbG9vcC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+
-ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZm9yY2UgfHwgcGFyZW50X3JlYWR5KGNs
-a19wcm92aWRlci0+bnApKSB7DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAvKiBEb24ndCBwb3B1bGF0ZSBwbGF0Zm9ybSBkZXZpY2VzICov
-DQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfc2V0
-X2ZsYWcoY2xrX3Byb3ZpZGVyLT5ucCwNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBPRl9QT1BVTEFURUQpOw0KPiA+ID4gPiA+ID4N
-Cj4gPiA+ID4gPiA+IFNvIHJlZ2lzdHJhdGlvbiBvZiB0aGlzIERUIGZpeGVkLWZhY3RvciBjbG9j
-ayB3b3VsZCBmYWlsIGFzIHBhcmVudA0KPiA+ID4gPiA+ID4gd291bGQgYmUgTlVMTCBhcyBiZWxv
-dyAoY2FsbGVkIGZyb20gX29mX2ZpeGVkX2ZhY3Rvcl9jbGtfc2V0dXAoKSk6DQo+ID4gPiA+ID4g
-PiBwYXJlbnRfbmFtZSA9IG9mX2Nsa19nZXRfcGFyZW50X25hbWUobm9kZSwgMCk7DQo+ID4gPiA+
-ID4gPg0KPiA+ID4gPiA+ID4gT24gdGhlIG90aGVyIGhhbmQsIGV2ZW4gaWYgcmVnaXN0cmF0aW9u
-IGZhaWxlZCwgdGhhdCBub2RlIHdpbGwgYmUNCj4gPiA+ID4gPiA+IG1hcmtlZCBhcyBPRl9QT1BV
-TEFURUQsIHNvIHByb2JlIG9mIGNsay1maXhlZC1mYWN0b3IuYyB3aWxsIGFsc28gbm90DQo+ID4g
-PiA+ID4gPiBiZSBjYWxsZWQgYW5kIHRoYXQgRFQgZml4ZWQtZmFjdG9yIGNsb2NrIHdvdWxkIG5l
-dmVyIGJlIHJlZ2lzdGVyZWQuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gU2FtZSB0aGluZyBp
-cyBkaXNjdXNzZWQgYXQgIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE3LzYvNS82ODEgLg0KPiA+
-ID4gPiA+DQo+ID4gPiA+ID4gT2suIEkgYmVsaWV2ZSB0aGUgYW5zd2VyIGlzIHRvIGZpeCB0aGUg
-RFQgdG8gZGVzY3JpYmUgdGhlIHBhcmVudCBjaGFpbg0KPiA+ID4gPiA+IHByb3Blcmx5IHdpdGgg
-Y2xvY2stb3V0cHV0LW5hbWVzLiBPdGhlcndpc2UsIHdlIGhhdmUgbm8gZ29vZCB3YXkgb2YNCj4g
-PiA+ID4gPiBmaWd1cmluZyBvdXQgd2hhdCB0aGUgbmFtZSBzaG91bGQgYmUuDQo+ID4gPiA+IFtS
-YWphbl0gY2xvY2sgRFQgYmluZGluZyBkb2Mgc2F5cyB0aGF0IGNsb2NrLW91dHB1dC1uYW1lcyBw
-cm9wZXJ0eQ0KPiA+ID4gPiBpcyBvcHRpb25hbCBhbmQgc29tZXRpbWVzIG5vdCByZWNvbW1lbmRl
-ZC4NCj4gPiA+ID4gSSB0aGluayB0aGlzIHBhdGNoIGZpeGVzIHRoZSBpc3N1ZSB3ZSBoYXZlIHdo
-aWNoIG1hbmRhdGVzIHRvIGFkZCBjbG9jay0NCj4gPiBvdXRwdXQtDQo+ID4gPiA+IG5hbWVzDQo+
-ID4gPiA+IHByb3BlcnR5IChmb3IgdGhpcyBwYXJ0aWN1bGFyIGNhc2UpLiBBbHNvLCBJSVVDIHBs
-YXRmb3JtIGRyaXZlciBwcm9iZSBpbiBjbGstDQo+ID4gZml4ZWQtDQo+ID4gPiA+IGZhY3Rvci5j
-DQo+ID4gPiA+IHdpbGwgbmV2ZXIgYmUgY2FsbGVkIHVubGVzcyB3ZSB1c2UgQ0xLX09GX0RFQ0xB
-UkVfRFJJVkVSLg0KPiA+ID4gPiBJIGNvbXBsZXRlbHkgYWdyZWUgdGhhdCBwcm9wZXIgc29sdXRp
-b24gd291bGQgYmUgdG8gc3RvcCB1c2luZyBzdHJpbmdzIHRvDQo+ID4gPiA+IGRlc2NyaWJlIGNs
-b2NrIHRvcG9sb2d5Lg0KPiA+ID4gW1JhamFuXSBBbnkgY29tbWVudHMgb24gdGhpcz8NCj4gPiA+
-IFVubGVzcyB3ZSBoYXZlIHByb3BlciBzb2x1dGlvbiByZWFkeSwgd2UgbmVlZCB0byBoYXZlIHNv
-bWUgbWVjaGFuaXNtIHRvDQo+ID4gaGFuZGxlIHRoaXMgc2NlbmFyaW8uDQo+ID4gPiBjbG9jay1v
-dXRwdXQtbmFtZXMgaXMgb3B0aW9uYWwgYW5kIHdpdGhvdXQgdGhpcywgaXQgbWFuZGF0ZXMgdG8g
-dXNlIGNsb2NrLQ0KPiA+IG91dHB1dC1uYW1lcy4NCj4gPiA+DQo+ID4NCj4gPiBJIGNvdWxkbid0
-IHJlYWQgeW91ciBvdXRsb29rIHNlbnQgZW1haWwgYW5kIEkgd2FzIHRvbyBidXN5IHRvIGdvDQo+
-ID4gdHJhbnNsYXRlIGl0LiBTb21lIGJ1ZyBpbiBteSBNVUEgaXQgc2VlbXMuDQo+ID4NCj4gPiBD
-YW4geW91IGFkZCB0aGUgb3V0cHV0LW5hbWVzIHByb3BlcnR5PyBJbiB0aGlzIGNhc2UgaXQncyBw
-cmFjdGljYWxseQ0KPiA+IG1hbmRhdG9yeSwgc28gaWYgeW91IGNhbid0IGRvIGl0IEknZCBsaWtl
-IHRvIGhlYXIgd2h5IG5vdC4NCj4gW1JhamFuXSBJbiBvdXIgY2FzZSwgd2UgYXJlIGZpcm13YXJl
-IG1haW50YWlucyBjbG9jayBkYXRhYmFzZSBhbmQgZHJpdmVyIHF1ZXJ5DQo+IGNsb2Nrcw0KPiBm
-cm9tIGZpcm13YXJlIGFuZCByZWdpc3RlcnMgY2xvY2sgYmFzZWQgb24gaW5mb3JtYXRpb24gcmVj
-ZWl2ZWQgZnJvbQ0KPiBmaXJtd2FyZS4gU28NCj4gb3V0cHV0IGNsb2NrIG5hbWVzIGFyZSBub3Qg
-Zml4ZWQuDQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Mzk4OTMvIC0g
-ZHQtYmluZGluZ3M6IGNsb2NrOiBBZGQNCj4gYmluZGluZ3MgZm9yIFp5bnFNUCBjbG9jayBkcml2
-ZXINCj4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDQzOTg5MS8gLSBkcml2
-ZXJzOiBjbGs6IEFkZCBaeW5xTVANCj4gY2xvY2sgZHJpdmVyDQpbUmFqYW5dIEFueSBjb21tZW50
-cz8NCg0K
+On Wed, Jul 18, 2018 at 6:54 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
+>
+> A64 behaviour similar to Allwinner A83T where
+> Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
+> Mixer1 => TCON1 => HDMI
+> as per Display System Block Diagram from Allwinner_A64_User_Manual_V1.1.pdf
+>
+> This is third patch-set followed with previous RFC[1], first and second
+> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
+> rest will add eventually.
+>
+> This series fixed previous version comments
+> - Rebasing on linux-next
+> - sqash all pipeline components in one patch
+> - Enable all pipeline components in board dts
+> - about documenting fallback compatibles
+> - adding new compatible for mixer1
+>
+> Log:
+> [    1.450984] Jagan: sun8i_mixer_probe
+> [    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
+> [    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
+> [    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to regulator.10
+> [    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_phy)
+> [    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+> [    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
+> [    1.514778] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+> [    1.521398] [drm] No driver support for vblank timestamp query.
+> [    1.684611] random: fast init done
+> [    2.011575] Console: switching to colour frame buffer device 180x56
+> [    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
+> [    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
+>
+> Note:
+> Pine64 boards are unable to get edid by default like other A64 boards,
+> but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
+> create edid with display on penel
+>
+> [3] https://lkml.org/lkml/2018/5/18/461
+> [2] https://lkml.org/lkml/2018/4/30/288
+> [1] https://lkml.org/lkml/2018/4/24/547
+>
+> Icenowy Zheng (1):
+>   drm: sun4i: add support for HVCC regulator for DWC HDMI glue
+>
+> Jagan Teki (17):
+>   clk: sunxi-ng: a64: Add minimal rate for video PLLs
+>   drm/sun4i: Add support for A64 mixer1
+>   dt-bindings: display: Add compatible for A64 DE2 tcon1 blocks
+>   drm/sun4i: Add support for A64 display engine
+>   dt-bindings: display: Add compatible for A64 HDMI
+>   dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO[0-1] macros
+>   arm64: dts: allwinner: a64: Add tcon1 HDMI pipeline
+>   clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+>   arm64: defconfig: Enable CONFIG_DRM_SUN4I
+>   drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+>   drm/sun4i: Enable DesignWare HDMI for SUN50I
+
+>   arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+>   arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+>   arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
+>   arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+>   arm64: dts: allwinner: a64: pine64: Enable HDMI output
+>   arm64: dts: allwinner: a64: sopine: Enable HDMI output
+
+Please squash all the patches enabling HDMI on some board into one,
+and write an informative commit message. See commit 8b1447aed5f4
+("ARM: dts: sun6i: Enable HDMI support on some A31/A31s devices")
+for such an example.
+
+ChenYu
+
+>
+>  .../bindings/display/sunxi/sun4i-drm.txt      |   4 +
+>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  34 ++++++
+>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  34 ++++++
+>  .../dts/allwinner/sun50i-a64-olinuxino.dts    |  34 ++++++
+>  .../dts/allwinner/sun50i-a64-orangepi-win.dts |  34 ++++++
+>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  34 ++++++
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts |  34 ++++++
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 110 ++++++++++++++++++
+>  arch/arm64/configs/defconfig                  |   1 +
+>  drivers/clk/sunxi-ng/Kconfig                  |   2 +
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |  46 ++++----
+>  drivers/gpu/drm/sun4i/Kconfig                 |   3 +-
+>  drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  14 +++
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   2 +
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c           |  12 ++
+>  include/dt-bindings/clock/sun50i-a64-ccu.h    |   2 +
+>  17 files changed, 378 insertions(+), 23 deletions(-)
+>
+> --
+> 2.17.1
+>
