@@ -1,92 +1,147 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:33457 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729634AbeGMNvZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:51:25 -0400
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.co>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 1/2] clk: mvebu: armada-37xx-periph: save the IP base address in the driver data
-Date: Fri, 13 Jul 2018 15:36:38 +0200
-Message-Id: <20180713133639.27558-1-miquel.raynal@bootlin.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sean.wang@mediatek.com>
+Message-ID: <1531882655.8953.83.camel@mtkswgap22>
+Subject: Re: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys
+ through a pdev
+From: Sean Wang <sean.wang@mediatek.com>
+To: <matthias.bgg@kernel.org>
+CC: <ulrich.hecht+renesas@gmail.com>, <laurent.pinchart@ideasonboard.com>,
+	<ck.hu@mediatek.com>, <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+	<robh+dt@kernel.org>, <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <lee.jones@linaro.org>, <davem@davemloft.net>,
+	<gregkh@linuxfoundation.org>, <mchehab@kernel.org>, <rdunlap@infradead.org>,
+	<pi-cheng.chen@linaro.org>, <linux-clk@vger.kernel.org>,
+	<linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Matthias Brugger <mbrugger@suse.com>
+Date: Wed, 18 Jul 2018 10:57:35 +0800
+In-Reply-To: <20180717220328.792-5-matthias.bgg@kernel.org>
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
+	 <20180717220328.792-5-matthias.bgg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Return-Path: sean.wang@mediatek.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Prepare the introduction of suspend/resume hooks by having an easy way
-to access all the registers in one go just from a device: add the IP
-base address in the driver data.
+On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <mbrugger@suse.com>
+> 
+> The MMSYS subsystem includes clocks and drm components.
+> This patch adds an initailization path through a platform device
+> for the clock part, so that both drivers get probed from the same
+> device tree compatible.
+> 
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
+Sorry for that I should have a response earlier for the series.
 
-Changes since v2:
-=================
-* None
+Some points I felt they're not exactly right and should be fixed up
+before we're moving on
 
-Changes since v1:
-=================
-* None
+Currently, drm driver have a wrong reference to the dt-binding,
+"mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys", they should be all
+for the subsystem exporting clock and reset line such common resource to
+its sub-devices. Every subsystem has a similar shape. I hope mmsys
+shouldn't be an exception.
 
- drivers/clk/mvebu/armada-37xx-periph.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+DRM device needs to have its own dt-binding show how connections between
+DRM components being made and its node should be put under mmsys node.
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 6860bd5a37c5..a9e3dcc50a7b 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -58,6 +58,7 @@
- struct clk_periph_driver_data {
- 	struct clk_hw_onecell_data *hw_data;
- 	spinlock_t lock;
-+	void __iomem *reg;
- };
- 
- struct clk_double_div {
-@@ -649,7 +650,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int num_periph = 0, i, ret;
- 	struct resource *res;
--	void __iomem *reg;
- 
- 	data = of_device_get_match_data(dev);
- 	if (!data)
-@@ -658,11 +658,6 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 	while (data[num_periph].name)
- 		num_periph++;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	reg = devm_ioremap_resource(dev, res);
--	if (IS_ERR(reg))
--		return PTR_ERR(reg);
--
- 	driver_data = devm_kzalloc(dev, sizeof(*driver_data), GFP_KERNEL);
- 	if (!driver_data)
- 		return -ENOMEM;
-@@ -675,12 +670,16 @@ static int armada_3700_periph_clock_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	driver_data->hw_data->num = num_periph;
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	driver_data->reg = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(driver_data->reg))
-+		return PTR_ERR(driver_data->reg);
-+
- 	spin_lock_init(&driver_data->lock);
- 
- 	for (i = 0; i < num_periph; i++) {
- 		struct clk_hw **hw = &driver_data->hw_data->hws[i];
--
--		if (armada_3700_add_composite_clk(&data[i], reg,
-+		if (armada_3700_add_composite_clk(&data[i], driver_data->reg,
- 						  &driver_data->lock, dev, hw))
- 			dev_err(dev, "Can't register periph clock %s\n",
- 				data[i].name);
--- 
-2.14.1
+In this way, it becomes easy to see how the topology of the subsystem is
+and grows, like a tree "device tree", instead of hiding the details in
+the implementation.
 
+The similar example we already did for audsys on mt2701 and mt7623 as
+below
+
+	audsys: clock-controller@11220000 {
+		compatible = "mediatek,mt7623-audsys",
+			     "mediatek,mt2701-audsys",
+			     "syscon";
+			...
+
+		afe: audio-controller {
+			compatible = "mediatek,mt7623-audio",
+				     "mediatek,mt2701-audio";
+			
+			...
+		};
+	};
+
+	
+	Sean
+
+
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 18 ++++++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> index dd249cf5121e..c946aea722e5 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -173,6 +173,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+>  	.ext_path = mt2701_mtk_ddp_ext,
+>  	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
+>  	.shadow_register = true,
+> +	.clk_drv_name = "clk-mt2701-mm",
+>  };
+>  
+>  static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+> @@ -180,6 +181,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+>  	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+>  	.ext_path = mt8173_mtk_ddp_ext,
+>  	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
+> +	.clk_drv_name = "clk-mt8173-mm",
+>  };
+>  
+>  static int mtk_drm_kms_init(struct drm_device *drm)
+> @@ -411,6 +413,19 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>  	if (IS_ERR(private->config_regs))
+>  		return PTR_ERR(private->config_regs);
+>  
+> +	if (private->data->clk_drv_name) {
+> +		private->clk_dev = platform_device_register_data(dev,
+> +						private->data->clk_drv_name, -1,
+> +						NULL, 0);
+> +
+> +		if (IS_ERR(private->clk_dev)) {
+> +			pr_err("failed to register %s platform device\n",
+> +						private->data->clk_drv_name);
+> +
+> +			return PTR_ERR(private->clk_dev);
+> +		}
+> +	}
+> +
+>  	/* Iterate over sibling DISP function blocks */
+>  	for_each_child_of_node(dev->of_node->parent, node) {
+>  		const struct of_device_id *of_id;
+> @@ -515,6 +530,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
+>  	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
+>  		of_node_put(private->comp_node[i]);
+>  
+> +	if (private->clk_dev)
+> +		platform_device_unregister(private->clk_dev);
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> index 86cec19193c4..200eee5de419 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+> @@ -34,11 +34,13 @@ struct mtk_mmsys_driver_data {
+>  	const enum mtk_ddp_comp_id *ext_path;
+>  	unsigned int ext_len;
+>  	bool shadow_register;
+> +	const char *clk_drv_name;
+>  };
+>  
+>  struct mtk_drm_private {
+>  	struct drm_device *drm;
+>  	struct device *dma_dev;
+> +	struct platform_device *clk_dev;
+>  
+>  	unsigned int num_pipes;
+>  
