@@ -1,54 +1,58 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180724132219.6z4fvvarmhvs5p44@flea>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180724132219.6z4fvvarmhvs5p44@flea>
-Message-ID: <153255857623.48062.6182940259100303672@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Allwinner clock changes for 4.19
-Date: Wed, 25 Jul 2018 15:42:56 -0700
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 05/18] dt-bindings: display: Add compatible for A64 HDMI
+Date: Wed, 18 Jul 2018 16:24:45 +0530
+Message-Id: <20180718105458.22304-6-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Maxime Ripard (2018-07-24 06:22:19)
-> Hi Mike, Stephen,
-> =
+HDMI on Allwinner A64 has similar like H3/H5/A83T.
 
-> Please pull the following changes for the next merge window.
-> =
+Add compatible a64 and update A83T compatible as fallback.
 
-> Thanks!
-> Maxime
-> =
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes for v3:
+- collect Rob r-w-b tag
+Changes for v2:
+- Add fallback compatible
 
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab=
-40:
-> =
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-> =
-
-> are available in the Git repository at:
-> =
-
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-4.19
-> =
-
-> for you to fetch changes up to 0195156340d365540c7dfa239232065826904f59:
-> =
-
->   clk: sunxi-ng: add A64 compatible string (2018-06-27 20:29:08 +0200)
-> =
-
-> ----------------------------------------------------------------
-> Allwinner clock changes for 4.19
-> =
-
-> Our usual bunch of clock patches, this time to enable the A64 display
-> engine clocks controller mostly.
-
-Pulled into clk-next. Thanks!
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3594378fbe72..10b3c77833c2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -78,6 +78,7 @@ Required properties:
+ 
+   - compatible: value must be one of:
+     * "allwinner,sun8i-a83t-dw-hdmi"
++    * "allwinner,sun50i-a64-dw-hdmi", "allwinner,sun8i-a83t-dw-hdmi"
+   - reg: base address and size of memory-mapped region
+   - reg-io-width: See dw_hdmi.txt. Shall be 1.
+   - interrupts: HDMI interrupt number
+-- 
+2.17.1
