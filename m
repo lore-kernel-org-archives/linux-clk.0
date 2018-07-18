@@ -1,36 +1,102 @@
-Return-Path: <linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <1531140951.2708.20.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] clk: meson: add gen_clk
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Date: Mon, 09 Jul 2018 14:55:51 +0200
-In-Reply-To: <20180704165458.24149-1-jbrunet@baylibre.com>
-References: <20180704165458.24149-1-jbrunet@baylibre.com>
-Mime-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-amlogic/>
-List-Post: <mailto:linux-amlogic@lists.infradead.org>
-List-Help: <mailto:linux-amlogic-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-amlogic>,
- <mailto:linux-amlogic-request@lists.infradead.org?subject=subscribe>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-amlogic" <linux-amlogic-bounces@lists.infradead.org>
-Errors-To: linux-amlogic-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 15/18] arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
+Date: Wed, 18 Jul 2018 16:24:55 +0530
+Message-Id: <20180718105458.22304-16-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-07-04 at 18:54 +0200, Jerome Brunet wrote:
-> Jerome Brunet (3):
->   clk: meson: gxbb: remove HHI_GEN_CLK_CTNL duplicate definition
->   clk: meson: expose GEN_CLK clkid
->   clk: meson: add gen_clk
+Enable all necessary HDMI pipeline nodes with HDMI out
+connector on Orangepi-win board.
 
-Applied
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- Enable all pipeline components
+Changes for v2:
+- none
 
-_______________________________________________
-linux-amlogic mailing list
-linux-amlogic@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-amlogic
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index 1221764f5719..5bd80b116039 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -57,12 +57,42 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &ehci1 {
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
++&mixer1 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+@@ -195,6 +225,10 @@
+ 	vcc-hdmi-supply = <&reg_dldo1>;
+ };
+ 
++&tcon1 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+2.17.1
