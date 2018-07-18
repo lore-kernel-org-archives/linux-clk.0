@@ -1,64 +1,116 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 4.19
-Date: Wed, 11 Jul 2018 16:22:04 +0200
-Message-ID: <9241272.zrLup0OXSE@phil>
+Return-Path: <edgar.righi@lsitec.org.br>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date: Wed, 18 Jul 2018 12:43:31 -0300
+Message-ID: <CADHB5bAD6A6U1Gk0kzVse1n-g2ONQtoMoOYxpMwGZuExvqsYKA@mail.gmail.com>
+Subject: [PATCH v1 02/04] dt-bindings: clock: Add Clock Management Unit for
+ Actions Semi S500 SoC
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
+	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
+	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
+constants added.
+Tested on a Lemaker Guitar board.
 
-please find below the pull request for 4.19 Rockchip clock updates.
-As the tag describes this contains the px30 clock controller including
-its new clock type of a "half-divider", as well as a small fix for wrong
-register values that is present since the beginning of rk3399 support.
+File(s) created: "/include/dt-bindings/clock/actions,s500-cmu.h"
 
-Please pull
-Heiko
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.19-rockchip-clk1
-
-for you to fetch changes up to a64ad008980c65d38e6cf6858429c78e6b740c41:
-
-  clk: rockchip: fix clk_i2sout parent selection bits on rk3399 (2018-07-08 00:19:19 +0200)
-
-----------------------------------------------------------------
-Support for Rockchip's PX30 SoC including its new half-divider
-clock type that is doing freq_out = 2*freq_in / (2*div + 3).
-As well as a register-bit fix for the rk3399 i2sout clock.
-
-----------------------------------------------------------------
-Alberto Panizzo (1):
-      clk: rockchip: fix clk_i2sout parent selection bits on rk3399
-
-Elaine Zhang (4):
-      clk: rockchip: add dt-binding header for px30
-      dt-bindings: add bindings for px30 clock controller
-      clk: rockchip: add support for half divider
-      clk: rockchip: add clock controller for px30
-
-Heiko Stuebner (1):
-      Merge branch 'v4.19-shared/clkids' into v4.19-clk/next
-
- .../bindings/clock/rockchip,px30-cru.txt           |   65 ++
- drivers/clk/rockchip/Makefile                      |    2 +
- drivers/clk/rockchip/clk-half-divider.c            |  227 +++++
- drivers/clk/rockchip/clk-px30.c                    | 1039 ++++++++++++++++++++
- drivers/clk/rockchip/clk-rk3399.c                  |    2 +-
- drivers/clk/rockchip/clk.c                         |   10 +
- drivers/clk/rockchip/clk.h                         |  126 ++-
- include/dt-bindings/clock/px30-cru.h               |  389 ++++++++
- 8 files changed, 1858 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
- create mode 100644 drivers/clk/rockchip/clk-half-divider.c
- create mode 100644 drivers/clk/rockchip/clk-px30.c
- create mode 100644 include/dt-bindings/clock/px30-cru.h
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/include/dt-bindings/clock/actions,s500-cmu.h
+linux/include/dt-bindings/clock/actions,s500-cmu.h
+--- vanilla/include/dt-bindings/clock/actions,s500-cmu.h    1969-12-31
+21:00:00.000000000 -0300
++++ linux/include/dt-bindings/clock/actions,s500-cmu.h    2018-07-18
+12:42:13.002448774 -0300
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S500 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++// Copyright (c) 2018 LSI-TEC - Caninos Loucos
++
++#ifndef __DT_BINDINGS_CLOCK_S500_CMU_H
++#define __DT_BINDINGS_CLOCK_S500_CMU_H
++
++#define CLK_NONE            0
++
++/* fixed rate clocks */
++#define CLK_LOSC            1
++#define CLK_HOSC            2
++
++/* pll clocks */
++#define CLK_CORE_PLL        3
++#define CLK_DEV_PLL            4
++#define CLK_DDR_PLL            5
++#define CLK_NAND_PLL        6
++#define CLK_DISPLAY_PLL        7
++#define CLK_ETHERNET_PLL    8
++#define CLK_AUDIO_PLL        9
++
++/* system clock */
++#define CLK_DEV                10
++#define CLK_H                11
++#define CLK_AHBPREDIV        12
++#define CLK_AHB                13
++#define CLK_DE                14
++#define CLK_BISP            15
++#define CLK_VCE                16
++#define CLK_VDE                17
++
++/* peripheral device clock */
++#define CLK_TIMER            18
++#define CLK_I2C0            19
++#define CLK_I2C1            20
++#define CLK_I2C2            21
++#define CLK_I2C3            22
++#define CLK_PWM0            23
++#define CLK_PWM1            24
++#define CLK_PWM2            25
++#define CLK_PWM3            26
++#define CLK_PWM4            27
++#define CLK_PWM5            28
++#define CLK_SD0                29
++#define CLK_SD1                30
++#define CLK_SD2                31
++#define CLK_SENSOR0            32
++#define CLK_SENSOR1            33
++#define CLK_SPI0            34
++#define CLK_SPI1            35
++#define CLK_SPI2            36
++#define CLK_SPI3            37
++#define CLK_UART0            38
++#define CLK_UART1            39
++#define CLK_UART2            40
++#define CLK_UART3            41
++#define CLK_UART4            42
++#define CLK_UART5            43
++#define CLK_UART6            44
++#define CLK_DE1                45
++#define CLK_DE2                46
++#define CLK_I2SRX            47
++#define CLK_I2STX            48
++#define CLK_HDMI_AUDIO        49
++#define CLK_HDMI            50
++#define CLK_SPDIF            51
++#define CLK_NAND            52
++#define CLK_ECC                53
++#define CLK_RMII_REF        54
++
++#define CLK_NR_CLKS            (CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
