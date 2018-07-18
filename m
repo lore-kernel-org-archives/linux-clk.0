@@ -1,173 +1,60 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	carlo@caione.org,
-	khilman@baylibre.com,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/2] clk: meson: meson8b: register the clock controller early
-Date: Sat, 21 Jul 2018 21:13:59 +0200
-Message-Id: <20180721191400.15558-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180721191400.15558-1-martin.blumenstingl@googlemail.com>
-References: <20180721191400.15558-1-martin.blumenstingl@googlemail.com>
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 11/18] drm/sun4i: Enable DesignWare HDMI for SUN50I
+Date: Wed, 18 Jul 2018 16:24:51 +0530
+Message-Id: <20180718105458.22304-12-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Until now only the reset controller (part of the clock controller
-register space) was registered early in the boot process, while the
-clock controller itself was registered later on.
-However, some parts of the SoC are initialized early in the boot process,
-such as the SRAM and the TWD timer. The bootloader already enables these
-clocks so we didn't see any issues so far.
+Allwinner SUN50I are now using DesignWare HDMI so enable
+them as default. This can build DRM_SUN8I_DW_HDMI as module
+since DRM in arm64 has module.
 
-Register the clock controller early so other drivers (such as the SRAM
-and TWD timer) can use the clocks early in the boot process.
+Making this as defult to SUN8I, may cause an issue while
+loading since arm32 DRM built as static.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/clk/meson/meson8b.c | 94 ++++++++++++++-----------------------
- 1 file changed, 34 insertions(+), 60 deletions(-)
+Changes for v3:
+- skip SUN8I enablement, since it built statically for arm32
+Changes for v2:
+- Enable for SUN8I
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 17f56f600e09..1caaa780201b 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -11,7 +11,6 @@
- #include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/of_address.h>
--#include <linux/platform_device.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/regmap.h>
-@@ -22,8 +21,6 @@
+ drivers/gpu/drm/sun4i/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index cfa8b96273fb..5d0c450db148 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -52,6 +52,7 @@ config DRM_SUN6I_DSI
  
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static void __iomem *clk_base;
--
- struct meson8b_clk_reset {
- 	struct reset_controller_dev reset;
- 	void __iomem *base;
-@@ -1106,62 +1103,12 @@ static const struct regmap_config clkc_regmap_config = {
- 	.reg_stride     = 4,
- };
- 
--static int meson8b_clkc_probe(struct platform_device *pdev)
--{
--	int ret, i;
--	struct device *dev = &pdev->dev;
--	struct regmap *map;
--
--	if (!clk_base)
--		return -ENXIO;
--
--	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
--
--	/* Populate regmap for the regmap backed clocks */
--	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
--		meson8b_clk_regmaps[i]->map = map;
--
--	/*
--	 * register all clks
--	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
--	 */
--	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
--		/* array might be sparse */
--		if (!meson8b_hw_onecell_data.hws[i])
--			continue;
--
--		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
--		if (ret)
--			return ret;
--	}
--
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
--					   &meson8b_hw_onecell_data);
--}
--
--static const struct of_device_id meson8b_clkc_match_table[] = {
--	{ .compatible = "amlogic,meson8-clkc" },
--	{ .compatible = "amlogic,meson8b-clkc" },
--	{ .compatible = "amlogic,meson8m2-clkc" },
--	{ }
--};
--
--static struct platform_driver meson8b_driver = {
--	.probe		= meson8b_clkc_probe,
--	.driver		= {
--		.name	= "meson8b-clkc",
--		.of_match_table = meson8b_clkc_match_table,
--	},
--};
--
--builtin_platform_driver(meson8b_driver);
--
--static void __init meson8b_clkc_reset_init(struct device_node *np)
-+static void __init meson8b_clkc_init(struct device_node *np)
- {
- 	struct meson8b_clk_reset *rstc;
--	int ret;
-+	void __iomem *clk_base;
-+	struct regmap *map;
-+	int i, ret;
- 
- 	/* Generic clocks, PLLs and some of the reset-bits */
- 	clk_base = of_iomap(np, 1);
-@@ -1170,6 +1117,10 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
- 		return;
- 	}
- 
-+	map = regmap_init_mmio(NULL, clk_base, &clkc_regmap_config);
-+	if (IS_ERR(map))
-+		return;
-+
- 	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
- 	if (!rstc)
- 		return;
-@@ -1185,11 +1136,34 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
- 		       __func__, ret);
- 		return;
- 	}
-+
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
-+		meson8b_clk_regmaps[i]->map = map;
-+
-+	/*
-+	 * register all clks
-+	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
-+	 */
-+	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
-+		/* array might be sparse */
-+		if (!meson8b_hw_onecell_data.hws[i])
-+			continue;
-+
-+		ret = clk_hw_register(NULL, meson8b_hw_onecell_data.hws[i]);
-+		if (ret)
-+			return;
-+	}
-+
-+	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
-+				     &meson8b_hw_onecell_data);
-+	if (ret)
-+		pr_err("%s: failed to register clock provider\n", __func__);
- }
- 
- CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
--		      meson8b_clkc_reset_init);
-+		      meson8b_clkc_init);
- CLK_OF_DECLARE_DRIVER(meson8b_clkc, "amlogic,meson8b-clkc",
--		      meson8b_clkc_reset_init);
-+		      meson8b_clkc_init);
- CLK_OF_DECLARE_DRIVER(meson8m2_clkc, "amlogic,meson8m2-clkc",
--		      meson8b_clkc_reset_init);
-+		      meson8b_clkc_init);
+ config DRM_SUN8I_DW_HDMI
+ 	tristate "Support for Allwinner version of DesignWare HDMI"
++	default ARM64 && ARCH_SUNXI
+ 	depends on DRM_SUN4I
+ 	select DRM_DW_HDMI
+ 	help
 -- 
-2.18.0
+2.17.1
