@@ -1,38 +1,106 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	Anson.Huang@nxp.com,
+	ping.bai@nxp.com,
+	linux-imx@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH V4 2/9] clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+Date: Wed, 18 Jul 2018 21:36:56 +0800
+Message-Id: <1531921023-18497-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-To: Aapo Vienamo <avienamo@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
- Aapo Vienamo <avienamo@nvidia.com>
-References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
- <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
-Message-ID: <153255409888.48062.18427465027530245711@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v6 3/4] clk: tegra: Add sdmmc mux divider clock
-Date: Wed, 25 Jul 2018 14:28:18 -0700
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Aapo Vienamo (2018-07-12 04:53:01)
-> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> =
+Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
+denominator value in register are start from 0.
 
-> Add a clock type to model the sdmmc switch divider clocks which have paths
-> to source clocks bypassing the divider (Low Jitter paths). These
-> are handled by selecting the lj path when the divider is 1 (ie the
-> rate is the parent rate), otherwise the normal path with divider
-> will be selected. Otherwise this clock behaves as a normal peripheral
-> clock.
-> =
+This can be used to support frac dividers like below:
+Divider output clock = Divider input clock x [(frac +1) / (div +1)]
+where frac/div in register is:
+000b - Divide by 1.
+001b - Divide by 2.
+010b - Divide by 3.
 
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Applied to clk-next
+---
+ChangeLog:
+v3->v4:
+ * no changes
+v2->v3:
+ * no changes
+v1->v2:
+ * improve comments suggested by Stephen
+---
+ drivers/clk/clk-fractional-divider.c | 10 ++++++++++
+ include/linux/clk-provider.h         |  8 ++++++++
+ 2 files changed, 18 insertions(+)
+
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index fdf625f..7ccde6b 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *hw,
+ 	m = (val & fd->mmask) >> fd->mshift;
+ 	n = (val & fd->nmask) >> fd->nshift;
+ 
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		m++;
++		n++;
++	}
++
+ 	if (!n || !m)
+ 		return parent_rate;
+ 
+@@ -103,6 +108,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+ 			&m, &n);
+ 
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		m--;
++		n--;
++	}
++
+ 	if (fd->lock)
+ 		spin_lock_irqsave(fd->lock, flags);
+ 	else
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 08f135a..90d7c26 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -603,6 +603,12 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw);
+  * @lock:	register lock
+  *
+  * Clock with adjustable fractional divider affecting its output frequency.
++ *
++ * Flags:
++ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
++ *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
++ *	is set then the numerator and denominator are both the value read
++ *	plus one.
+  */
+ struct clk_fractional_divider {
+ 	struct clk_hw	hw;
+@@ -622,6 +628,8 @@ struct clk_fractional_divider {
+ 
+ #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw)
+ 
++#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
++
+ extern const struct clk_ops clk_fractional_divider_ops;
+ struct clk *clk_register_fractional_divider(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+-- 
+2.7.4
