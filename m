@@ -1,137 +1,272 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
- SDM845
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
-Date: Mon, 9 Jul 2018 09:08:03 +0530
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	Anson.Huang@nxp.com,
+	ping.bai@nxp.com,
+	linux-imx@nxp.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH V4 3/9] clk: imx: add pllv4 support
+Date: Wed, 18 Jul 2018 21:36:57 +0800
+Message-Id: <1531921023-18497-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+pllv4 is designed for System Clock Generation (SCG) module observed
+in IMX ULP SoC series. e.g. i.MX7ULP.
 
-Thanks for your review comments.
+The SCG modules generates clock used to derive processor, system,
+peripheral bus and external memory interface clocks while this patch
+intends to support the PLL part.
 
-On 7/9/2018 5:24 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-06-23 07:19:27)
->> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
->> new file mode 100644
->> index 0000000..af437e0
->> --- /dev/null
->> +++ b/drivers/clk/qcom/dispcc-sdm845.c
->> @@ -0,0 +1,674 @@
->> +// SPDX-License-Identifier: GPL-2.0
-> [...]
->> +static struct clk_alpha_pll disp_cc_pll0 = {
->> +       .offset = 0x0,
->> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
->> +       .clkr = {
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "disp_cc_pll0",
->> +                       .parent_names = (const char *[]){ "bi_tcxo" },
->> +                       .num_parents = 1,
->> +                       .ops = &clk_alpha_pll_fabia_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
->> +       .cmd_rcgr = 0x20d0,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = disp_cc_parent_map_0,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "disp_cc_mdss_byte0_clk_src",
->> +               .parent_names = disp_cc_parent_names_0,
->> +               .num_parents = 4,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-> 
-> Why is there the no cache flag? Last time I asked I don't think I got
-> any answer, and there isn't a comment here so please at least add a
-> comment to the code so we don't forget.
->
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-I think you missed my comment from the earlier email. I would add the 
-comment and submit again.
+---
+ChangeLog:
+v3->v4:
+ * no changes
+v2->v3:
+ * no changes
+v1->v2:
+ * remove clk_pllv4_is_enabled() check in set_rate, instead it will
+   be handled by core later.
+ * use readl_poll_timeout
+ * use clk_hw_register instead of clk_register
+ * other minor changes
+---
+ drivers/clk/imx/Makefile    |   1 +
+ drivers/clk/imx/clk-pllv4.c | 182 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h       |   3 +
+ 3 files changed, 186 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
 
- > Why is the nocache flag needed? Applies to all clks in this file.
- >
-
-This flag is required for all RCGs whose PLLs are controlled outside the 
-clock controller. The display code would require the recalculated rate 
-always.
-
->> +               .ops = &clk_byte2_ops,
->> +       },
->> +};
->> +
->> +static struct clk_rcg2 disp_cc_mdss_byte1_clk_src = {
->> +       .cmd_rcgr = 0x20ec,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = disp_cc_parent_map_0,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "disp_cc_mdss_byte1_clk_src",
->> +               .parent_names = disp_cc_parent_names_0,
->> +               .num_parents = 4,
->> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
->> +               .ops = &clk_byte2_ops,
->> +       },
->> +};
->> +
->> +static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
->> +       F(19200000, P_BI_TCXO, 1, 0, 0),
->> +       { }
->> +};
->> +
->> +static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
->> +       .cmd_rcgr = 0x2108,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = disp_cc_parent_map_0,
->> +       .freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "disp_cc_mdss_esc0_clk_src",
->> +               .parent_names = disp_cc_parent_names_0,
->> +               .num_parents = 4,
->> +               .ops = &clk_rcg2_ops,
->> +       },
->> +};
->> +
->> +static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
->> +       .cmd_rcgr = 0x2120,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = disp_cc_parent_map_0,
->> +       .freq_tbl = ftbl_disp_cc_mdss_esc0_clk_src,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "disp_cc_mdss_esc1_clk_src",
->> +               .parent_names = disp_cc_parent_names_0,
->> +               .num_parents = 4,
->> +               .ops = &clk_rcg2_ops,
->> +       },
->> +};
->> +
-> [...]
->> +
->> +MODULE_LICENSE("GPL v2");
-> 
-> MODULE_DESCRIPTION?
-> 
-
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 8c3baa7..bfe31bf 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -11,6 +11,7 @@ obj-y += \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
++	clk-pllv4.o \
+ 	clk-pfd.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
+new file mode 100644
+index 0000000..67c64c7
+--- /dev/null
++++ b/drivers/clk/imx/clk-pllv4.c
+@@ -0,0 +1,182 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++
++/* PLL Control Status Register (xPLLCSR) */
++#define PLL_CSR_OFFSET		0x0
++#define PLL_VLD			BIT(24)
++#define PLL_EN			BIT(0)
++
++/* PLL Configuration Register (xPLLCFG) */
++#define PLL_CFG_OFFSET		0x08
++#define BP_PLL_MULT		16
++#define BM_PLL_MULT		(0x7f << 16)
++
++/* PLL Numerator Register (xPLLNUM) */
++#define PLL_NUM_OFFSET		0x10
++
++/* PLL Denominator Register (xPLLDENOM) */
++#define PLL_DENOM_OFFSET	0x14
++
++struct clk_pllv4 {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
++
++/* Valid PLL MULT Table */
++static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
++
++#define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
++
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static inline int clk_pllv4_wait_lock(struct clk_pllv4 *pll)
++{
++	u32 csr;
++
++	return readl_poll_timeout(pll->base  + PLL_CSR_OFFSET,
++				  csr, csr & PLL_VLD, 0, LOCK_TIMEOUT_US);
++}
++
++static int clk_pllv4_is_enabled(struct clk_hw *hw)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	if (readl_relaxed(pll->base) & PLL_EN)
++		return 1;
++
++	return 0;
++}
++
++static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++	u32 div;
++
++	div = readl_relaxed(pll->base + PLL_CFG_OFFSET);
++	div &= BM_PLL_MULT;
++	div >>= BP_PLL_MULT;
++
++	return parent_rate * div;
++}
++
++static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	unsigned long round_rate, i;
++
++	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
++		round_rate = parent_rate * pllv4_mult_table[i];
++		if (rate >= round_rate)
++			return round_rate;
++	}
++
++	return round_rate;
++}
++
++static bool clk_pllv4_is_valid_mult(unsigned int mult)
++{
++	int i;
++
++	/* check if mult is in valid MULT table */
++	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
++		if (pllv4_mult_table[i] == mult)
++			return true;
++	}
++
++	return false;
++}
++
++static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++	u32 val, mult;
++
++	mult = rate / parent_rate;
++
++	if (!clk_pllv4_is_valid_mult(mult))
++		return -EINVAL;
++
++	val = readl_relaxed(pll->base + PLL_CFG_OFFSET);
++	val &= ~BM_PLL_MULT;
++	val |= mult << BP_PLL_MULT;
++	writel_relaxed(val, pll->base + PLL_CFG_OFFSET);
++
++	return 0;
++}
++
++static int clk_pllv4_enable(struct clk_hw *hw)
++{
++	u32 val;
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	val = readl_relaxed(pll->base);
++	val |= PLL_EN;
++	writel_relaxed(val, pll->base);
++
++	return clk_pllv4_wait_lock(pll);
++}
++
++static void clk_pllv4_disable(struct clk_hw *hw)
++{
++	u32 val;
++	struct clk_pllv4 *pll = to_clk_pllv4(hw);
++
++	val = readl_relaxed(pll->base);
++	val &= ~PLL_EN;
++	writel_relaxed(val, pll->base);
++}
++
++static const struct clk_ops clk_pllv4_ops = {
++	.recalc_rate	= clk_pllv4_recalc_rate,
++	.round_rate	= clk_pllv4_round_rate,
++	.set_rate	= clk_pllv4_set_rate,
++	.enable		= clk_pllv4_enable,
++	.disable	= clk_pllv4_disable,
++	.is_enabled	= clk_pllv4_is_enabled,
++};
++
++struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
++			  void __iomem *base)
++{
++	struct clk_pllv4 *pll;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++	int ret;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++
++	init.name = name;
++	init.ops = &clk_pllv4_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	pll->hw.init = &init;
++
++	hw = &pll->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pll);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec0..2fb4f1d 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -42,6 +42,9 @@ enum imx_pllv3_type {
+ struct clk *imx_clk_pllv3(enum imx_pllv3_type type, const char *name,
+ 		const char *parent_name, void __iomem *base, u32 div_mask);
+ 
++struct clk_hw *imx_clk_pllv4(const char *name, const char *parent_name,
++			     void __iomem *base);
++
+ struct clk *clk_register_gate2(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		void __iomem *reg, u8 bit_idx, u8 cgr_val,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.7.4
