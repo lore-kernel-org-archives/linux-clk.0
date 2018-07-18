@@ -1,51 +1,57 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5 1/4] clk: tegra: Fix includes required by
- fence_udelay()
-To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
- <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5332f15c-65ae-5a70-577f-6125715233e6@nvidia.com>
-Date: Thu, 12 Jul 2018 11:11:14 +0100
-MIME-Version: 1.0
-In-Reply-To: <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 08/18] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+Date: Wed, 18 Jul 2018 16:24:48 +0530
+Message-Id: <20180718105458.22304-9-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+as default.
 
-On 11/07/18 15:39, Aapo Vienamo wrote:
-> Add the missing linux/delay.h include statement for udelay() used by
-> fence_udelay() macro.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e1f8846..e3b9c22 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -19,6 +19,7 @@
->  
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
-> +#include <linux/delay.h>
->  
->  /**
->   * struct tegra_clk_sync_source - external clock source from codec
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- none
+Changes for v2:
+- Enable for MACH_SUN8I
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+ drivers/clk/sunxi-ng/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Cheers
-Jon
-
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 826674d090fd..e20182aa9748 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
+ 
+ config SUN8I_DE2_CCU
+ 	bool "Support for the Allwinner SoCs DE2 CCU"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
+ 
+ config SUN8I_R40_CCU
+ 	bool "Support for the Allwinner R40 CCU"
 -- 
-nvpublic
+2.17.1
