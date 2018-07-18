@@ -1,477 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:42444 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731412AbeG0CDh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 22:03:37 -0400
-Date: Fri, 27 Jul 2018 08:44:00 +0800
-In-Reply-To: <1571011.jY5lUBhtiX@jernej-laptop>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io> <1571011.jY5lUBhtiX@jernej-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-To: jernej.skrabec@siol.net,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com
-CC: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <615A272A-A739-4EDE-9AF4-4FC2822F3E3F@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 04/18] drm/sun4i: Add support for A64 display engine
+Date: Wed, 18 Jul 2018 16:24:44 +0530
+Message-Id: <20180718105458.22304-5-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Display Engine(DE2) in Allwinner A64 has two mixers and tcons.
 
+The routing for mixer0 is through tcon0 and connected to
+LVDS/RGB/MIPI-DSI controller.
 
-于 2018年7月27日 GMT+08:00 上午2:03:00, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Dne četrtek, 26. julij 2018 ob 19:12:57 CEST je Icenowy Zheng
->napisal(a):
->> From: Jagan Teki <jagan@amarulasolutions.com>
->> 
->> Enable all necessary device tree nodes and add connector node to
->device
->> trees for all supported A64 boards with HDMI.
->> 
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> [Icenowy: squash all board patches altogether and change supply name]
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes in v3,1:
->> - Squash all enablement patches altogether.
->> - Change supply name to match DT binding & driver change.
->> Changes for v3:
->> - Enable all pipeline components
->> Changes for v2:
->> - none
->> 
->>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34
->+++++++++++++++++++
->>  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34
->+++++++++++++++++++
->>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34
->+++++++++++++++++++
->>  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34
->+++++++++++++++++++
->>  6 files changed, 204 insertions(+)
->> 
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
->> 094cfed13df9..0d8f5571d574 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
->> @@ -60,6 +60,17 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	leds {
->>  		compatible = "gpio-leds";
->> 
->> @@ -86,6 +97,10 @@
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->>  &ehci0 {
->>  	status = "okay";
->>  };
->> @@ -103,6 +118,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &i2c1 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&i2c1_pins>;
->> @@ -120,6 +146,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -300,6 +330,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts index
->> 98dbff19f5cc..2bcf02f46366 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
->> @@ -57,6 +57,21 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci0 {
->> @@ -67,6 +82,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  /* i2c1 connected with gpio headers like pine64, bananapi */
->>  &i2c1 {
->>  	pinctrl-names = "default";
->> @@ -78,6 +104,10 @@
->>  	bias-pull-up;
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -199,6 +229,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts index
->> 3f531393eaee..5445a7a1db51 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
->> @@ -58,12 +58,42 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	wifi_pwrseq: wifi_pwrseq {
->>  		compatible = "mmc-pwrseq-simple";
->>  		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -218,6 +248,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts index
->> 1221764f5719..81a8f92c6c35 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
->> @@ -57,12 +57,42 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci1 {
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -195,6 +225,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts index
->> 1b9b92e541d2..1b972bade9f6 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
->> @@ -62,6 +62,21 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&de {
->> +	status = "okay";
->>  };
->> 
->>  &ehci0 {
->> @@ -82,6 +97,17 @@
->> 
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &i2c1 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&i2c1_pins>;
->> @@ -99,6 +125,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc0_pins>;
->> @@ -238,6 +268,10 @@
->>  	status = "disabled";
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  /* On Exp and Euler connectors */
->>  &uart0 {
->>  	pinctrl-names = "default";
->> diff --git
->a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts index
->> c21f2331add6..eff44b069b1d 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
->> @@ -61,6 +61,17 @@
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> 
->> +	connector {
->> +		compatible = "hdmi-connector";
->> +		type = "a";
->> +
->> +		port {
->> +			hdmi_con_in: endpoint {
->> +				remote-endpoint = <&hdmi_out_con>;
->> +			};
->> +		};
->> +	};
->> +
->>  	reg_vcc1v8: vcc1v8 {
->>  		compatible = "regulator-fixed";
->>  		regulator-name = "vcc1v8";
->> @@ -69,6 +80,10 @@
->>  	};
->>  };
->> 
->> +&de {
->> +	status = "okay";
->> +};
->> +
->>  &ehci0 {
->>  	status = "okay";
->>  };
->> @@ -86,6 +101,17 @@
->>  	status = "okay";
->>  };
->> 
->> +&hdmi {
->> +	hdmi-supply = <&reg_dldo1>;
->> +	status = "okay";
->> +};
->> +
->> +&hdmi_out {
->> +	hdmi_out_con: endpoint {
->> +		remote-endpoint = <&hdmi_con_in>;
->> +	};
->> +};
->> +
->>  &mdio {
->>  	ext_rgmii_phy: ethernet-phy@1 {
->>  		compatible = "ethernet-phy-ieee802.3-c22";
->> @@ -93,6 +119,10 @@
->>  	};
->>  };
->> 
->> +&mixer1 {
->> +	status = "okay";
->> +};
->> +
->>  &mmc2 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&mmc2_pins>;
->> @@ -138,6 +168,10 @@
->>  	vcc-hdmi-supply = <&reg_dldo1>;
->
->How is it possible to have vcc-hdmi-supply already defined? Did I miss
+The routing for mixer1 is through tcon1 and connected to HDMI.
 
-It's for simplefb.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3, v2:
+- none
 
->some 
->patch?
->
->Best regards,
->Jernej
->
->>  };
->> 
->> +&tcon1 {
->> +	status = "okay";
->> +};
->> +
->>  &uart0 {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&uart0_pins_a>;
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 03ffbcc98dd0..30a39946f747 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -421,6 +421,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun8i-r40-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
++	{ .compatible = "allwinner,sun50i-a64-display-engine" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
+-- 
+2.17.1
