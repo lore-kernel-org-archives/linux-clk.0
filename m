@@ -1,79 +1,84 @@
-Return-Path: <miquel.raynal@bootlin.com>
-Date: Fri, 6 Jul 2018 18:03:41 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Antoine Tenart <antoine.tenart@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Nadav Haklai <nadavh@marvell.com>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: mvebu: armada-37xx-periph: add suspend/resume
- support
-Message-ID: <20180706180341.02c5c203@xps13>
-In-Reply-To: <153089271821.143105.13475046419256564594@swboyd.mtv.corp.google.com>
-References: <20180421142344.25944-1-miquel.raynal@bootlin.com>
-	<20180421142344.25944-2-miquel.raynal@bootlin.com>
-	<87in868202.fsf@bootlin.com>
-	<20180626110918.35c13653@xps13>
-	<153089271821.143105.13475046419256564594@swboyd.mtv.corp.google.com>
+Return-Path: <matthias.bgg@gmail.com>
+Return-Path: <matthias.bgg@gmail.com>
+Subject: Re: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to
+ platform device probing (fwd)
+To: Julia Lawall <julia.lawall@lip6.fr>, matthias.bgg@kernel.org
+Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+ ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+ robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
+ sboyd@codeaurora.org, lee.jones@linaro.org, sean.wang@mediatek.com,
+ gregkh@linuxfoundation.org, rdunlap@infradead.org, linux@armlinux.org.uk,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ Matthias Brugger <mbrugger@suse.com>, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, mchehab@kernel.org,
+ pi-cheng.chen@linaro.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
+ kbuild-all@01.org
+References: <alpine.DEB.2.20.1807181654200.3113@hadrien>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <11ba8df2-21f3-71e5-8467-813eda93f8ec@gmail.com>
+Date: Wed, 18 Jul 2018 16:58:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <alpine.DEB.2.20.1807181654200.3113@hadrien>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
 
-Stephen Boyd <sboyd@kernel.org> wrote on Fri, 06 Jul 2018 08:58:38
--0700:
 
-> Quoting Miquel Raynal (2018-06-26 02:09:18)
-> > Hi Gregory,
-> >=20
-> > On Wed, 02 May 2018 18:18:37 +0200, Gregory CLEMENT
-> > <gregory.clement@bootlin.com> wrote: =20
-> > >  On sam., avril 21 2018, Miquel Raynal <miquel.raynal@bootlin.com> wr=
-ote: =20
-> > > > =20
-> > > > +#if defined(CONFIG_PM)   =20
-> > >=20
-> > > I think you could get rid of this conditional code. Have a look on wh=
-at
-> > > is done in others drivers around DEV_PM_OPS and __maybe_unused. =20
-> >=20
-> > Thanks for pointing it.
-> >=20
-> > Actually most implementations do not use __maybe_unused but do
-> > something like:
-> >=20
-> > #if defined(CONFIG_PM)
-> >=20
-> > static int xxx_pm_suspend() { ... }
-> >=20
-> > static void xxx_pm_resume() { ... }
-> >=20
-> > static struct pm_ops ops;
-> > #define XXX_DEV_PM_OPS &ops
-> > #else
-> > #define XXX_DEV_PM_OPS NULL
-> > #endif /* CONFIG_PM */=20
-> >=20
-> > And then in the platform_driver structure:
-> >=20
-> >         .pm =3D XXX_DEV_PM_OPS,
-> >=20
-> > This way, the only #if/#endif is "out" of the current code and the
-> > ".pm =3D" line is free of preprocessor macros.
-> >  =20
->=20
-> Yes, less preprocessor conditionals throughout the code is better for
-> code readability and maintainability. Please remove the conditionals and
-> use __maybe_unused instead. Sadly, we'll waste 48 bytes on the
-> save/restore registers, but that's OK.
->=20
+On 18/07/18 16:54, Julia Lawall wrote:
+> Please check on whether the kfree is still needed.
 
-Mmmh. Looking at current code I thought the above was the preferred
-way. Ok then, I'll repost with the conditionals removed and
-__maybe_unused on the suspend/resume functions as initially suggested
-by Gregory.
+No it is not needed, thanks for noting.
+Matthias
 
-Thanks,
-Miqu=C3=A8l
+> 
+> julia
+> 
+> ---------- Forwarded message ----------
+> Date: Wed, 18 Jul 2018 22:03:48 +0800
+> From: kbuild test robot <lkp@intel.com>
+> To: kbuild@01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: Re: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to
+>     platform device probing
+> 
+> In-Reply-To: <20180717220328.792-3-matthias.bgg@kernel.org>
+> References: <20180717220328.792-3-matthias.bgg@kernel.org>
+> TO: matthias.bgg@kernel.org
+> 
+> Hi Matthias,
+> 
+> I love your patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on sof-driver-fuweitax/master]
+> [also build test WARNING on v4.18-rc5 next-20180718]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/matthias-bgg-kernel-org/arm-arm64-mediatek-Fix-mmsys-device-probing/20180718-191916
+> base:   https://github.com/fuweitax/linux master
+> :::::: branch date: 3 hours ago
+> :::::: commit date: 3 hours ago
+> 
+>>> drivers/clk/mediatek/clk-mt2701-mm.c:128:1-6: WARNING: invalid free of devm_ allocated data
+> 
+> # https://github.com/0day-ci/linux/commit/555e11caac5f7729e8927939046adbfa2264f9f5
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout 555e11caac5f7729e8927939046adbfa2264f9f5
+> vim +128 drivers/clk/mediatek/clk-mt2701-mm.c
+> 
+> e98621182 Shunli Wang      2016-11-04  122
+> 555e11caa Matthias Brugger 2018-07-18  123  static int clk_mt2701_mm_remove(struct platform_device *pdev)
+> 555e11caa Matthias Brugger 2018-07-18  124  {
+> 555e11caa Matthias Brugger 2018-07-18  125  	struct clk_mt2701_mm_priv *private = platform_get_drvdata(pdev);
+> 555e11caa Matthias Brugger 2018-07-18  126
+> 555e11caa Matthias Brugger 2018-07-18  127  	kfree(private->clk_data);
+> 555e11caa Matthias Brugger 2018-07-18 @128  	kfree(private);
+> 555e11caa Matthias Brugger 2018-07-18  129
+> 555e11caa Matthias Brugger 2018-07-18  130  	return 0;
+> 555e11caa Matthias Brugger 2018-07-18  131  }
+> 555e11caa Matthias Brugger 2018-07-18  132
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
