@@ -1,52 +1,117 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Amit Nischal <anischal@codeaurora.org>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
-Message-ID: <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-Date: Sun, 08 Jul 2018 23:15:34 -0700
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 13/18] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+Date: Wed, 18 Jul 2018 16:24:53 +0530
+Message-Id: <20180718105458.22304-14-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-06-06 04:41:46)
-> To turn on the gpu_gx_gdsc, there is a hardware requirement to
-> turn on the root clock (GFX3D RCG) first which would be the turn
-> on signal for the gdsc along with the SW_COLLAPSE. As per the
-> current implementation of clk_rcg2_shared_ops, it clears the
-> root_enable bit in the enable() and set_rate() clock ops. But due
-> to the above said requirement for GFX3D shared RCG, root_enable bit
-> would be already set by gdsc driver and rcg2_shared_ops should not clear
-> the root unless the disable is called.
-> =
+Enable all necessary HDMI pipeline nodes with HDMI out
+connector on Bananpi-m64 board.
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- Enable all pipeline components
+Changes for v2:
+- none
 
-It sounds like the GDSC enable is ANDed with the RCG's root enable
-bit? Does the RCG need to be clocking for the GDSC to actually turn on?
-Or is it purely that the enable bit is logically combined that way so
-that if the RCG is parented to a PLL that's off the GDSC will still turn
-on?
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-> Add support for the same by reusing the existing clk_rcg2_shared_ops
-> and deriving "clk_rcg2_gfx3d_ops" clk_ops for GFX3D clock to
-> take care of the root set/clear requirement.
-
-Anyway, this patch will probably significantly change given that the RCG
-is a glorified div-2 that muxes between a safe CXO speed and a
-configurable PLL frequency. A lot of the logic can probably just be
-hardcoded then.
-
-> =
-
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-
-Patch looks sane.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 094cfed13df9..7adba2c8f6e5 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -86,6 +97,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -103,6 +118,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
+@@ -120,6 +146,10 @@
+ 	};
+ };
+ 
++&mixer1 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+@@ -300,6 +330,10 @@
+ 	vcc-hdmi-supply = <&reg_dldo1>;
+ };
+ 
++&tcon1 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
+-- 
+2.17.1
