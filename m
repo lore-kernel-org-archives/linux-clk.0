@@ -1,146 +1,109 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-To: Shawn Guo <shawnguo@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-pm@vger.kernel.org
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-4-o.rempel@pengutronix.de>
- <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
- <2307533.g32PyNi9fl@aspire.rjw.lan> <20180617070527.GL16091@dragon>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <20738ca3-4289-9e44-ff74-9099b5b8c2b6@pengutronix.de>
-Date: Mon, 2 Jul 2018 07:04:22 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180617070527.GL16091@dragon>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="HiPCWAM0hvhY06dQMa7Wk95ToC7Gl2hlf"
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 12/18] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
+Date: Wed, 18 Jul 2018 16:24:52 +0530
+Message-Id: <20180718105458.22304-13-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---HiPCWAM0hvhY06dQMa7Wk95ToC7Gl2hlf
-Content-Type: multipart/mixed; boundary="otFWDJEXySuV7qS8y6T1ZFssVlkaKfQop";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, linux-pm@vger.kernel.org
-Message-ID: <20738ca3-4289-9e44-ff74-9099b5b8c2b6@pengutronix.de>
-Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prepare
-References: <20180517055014.6607-1-o.rempel@pengutronix.de>
- <20180517055014.6607-4-o.rempel@pengutronix.de>
- <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
- <2307533.g32PyNi9fl@aspire.rjw.lan> <20180617070527.GL16091@dragon>
-In-Reply-To: <20180617070527.GL16091@dragon>
+From: Icenowy Zheng <icenowy@aosc.io>
 
---otFWDJEXySuV7qS8y6T1ZFssVlkaKfQop
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for the
+HDMI part, and on some boards it's connected to a dedicated regulator
+rather than the main 3.3v.
 
-Hi Rafael,
+Add support for optional HVCC regulator. For boards that doesn't use a
+dedicated regulator to power it, the default dummy regulator is used.
 
-it is two weeks since this email. Probably it was lost some where in the
-space time continuum.
-Can you please respond to it :)
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3, v2:
+- none
 
-On 17.06.2018 09:05, Shawn Guo wrote:
-> On Tue, Jun 12, 2018 at 04:33:05PM +0200, Rafael J. Wysocki wrote:
->> On Tuesday, June 12, 2018 2:42:12 PM CEST Oleksij Rempel wrote:
->>>  This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
->>> --Sj2PRcQlY7eZybdA0sq9wWzJEO8fKS924
->>> Content-Type: multipart/mixed; boundary=3D"d6BZYFRi4L3iCmOh3nm6wjii3d=
-WC9QFDg";
->>>  protected-headers=3D"v1"
->>> From: Oleksij Rempel <o.rempel@pengutronix.de>
->>> To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,=
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
+ 2 files changed, 16 insertions(+)
 
->>>  "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
->>> Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
->>>  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
->>>  linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.o=
-rg>,
->>>  Liam Girdwood <lgirdwood@gmail.com>,
->>>  Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kern=
-el.org>,
->>>  Mark Rutland <mark.rutland@arm.com>,
->>>  Michael Turquette <mturquette@baylibre.com>,
->>>  Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nx=
-p.com>,
->>>  Russell King <linux@armlinux.org.uk>
->>> Message-ID: <daba73df-037c-2583-3a08-f3f27c4129d1@pengutronix.de>
->>> Subject: Re: [PATCH v7 3/6] kernel/reboot.c: export pm_power_off_prep=
-are
->>> References: <20180517055014.6607-1-o.rempel@pengutronix.de>
->>>  <20180517055014.6607-4-o.rempel@pengutronix.de>
->>> In-Reply-To: <20180517055014.6607-4-o.rempel@pengutronix.de>
->>>
->>> --d6BZYFRi4L3iCmOh3nm6wjii3dWC9QFDg
->>> Content-Type: text/plain; charset=3Dutf-8
->>> Content-Language: en-US
->>> Content-Transfer-Encoding: quoted-printable
->>>
->>> Hi Rafael,
->>>
->>> Last version of this patch was send at 17.05.2018. No other comment w=
-as
->>> provided and this patch is a blocker for other patches in this serie.=
-
->>> Can you please give some feedback on it.
->>
->> I would have done that had I not missed the patch.
->>
->> Which probably wouldn't have happened had you CCed it to linux-pm.
->>
->> Anyway, I have no particular problems with exporting pm_power_off_prep=
-are via
->> EXPORT_SYMBOL_GPL().
->=20
-> Rafael,
->=20
-> Can we have your explicit Acked-by tag on this patch?  Thanks.
->=20
-> Shawn
->=20
-
-
---otFWDJEXySuV7qS8y6T1ZFssVlkaKfQop--
-
---HiPCWAM0hvhY06dQMa7Wk95ToC7Gl2hlf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAls5slYACgkQdQOiSHVI
-77R2sAf/X9mHyHBxUk8NRvP4/mSj0ZBzaD6H/acG8rx5PgaoeiCETAdfU1+PRb55
-KwMwyreI14fsuYpZch45Kteub768zhZfc3J8uhZTGECZ/be+AOid3XzgjvZ4Rma7
-rut3U7XgXHMHY41m9Q9y6H6OXvwlJjsyUUPYYN2e4d1fPNYcAc7PMK2570bPRAxh
-nv5n/TpiDorfh83c6mApCQtrMmHUPY5m71k/DtnnbdtulO3E6PHC/qiQzFywQPB6
-YpZHNW/G9DjgFgA4purXQz1ql4W/fPWAe7N9QeTpe7Dbm24+6cywJKpEs70impOo
-hs0gsMlodRhWgpLvKV3/jFVY651u1w==
-=7pZD
------END PGP SIGNATURE-----
-
---HiPCWAM0hvhY06dQMa7Wk95ToC7Gl2hlf--
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 31875b636434..68623a6ac44e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -113,6 +113,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	if (encoder->possible_crtcs == 0)
+ 		return -EPROBE_DEFER;
+ 
++	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
++	if (IS_ERR(hdmi->vcc_hdmi)) {
++		dev_err(dev, "Could not get HDMI power supply\n");
++		return PTR_ERR(hdmi->vcc_hdmi);
++	}
++
+ 	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
+ 	if (IS_ERR(hdmi->rst_ctrl)) {
+ 		dev_err(dev, "Could not get ctrl reset control\n");
+@@ -131,6 +137,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 		return ret;
+ 	}
+ 
++	ret = regulator_enable(hdmi->vcc_hdmi);
++	if (ret) {
++		dev_err(dev, "Cannot enable HDMI power supply\n");
++		goto err_disable_vcc;
++	}
++
+ 	ret = clk_prepare_enable(hdmi->clk_tmds);
+ 	if (ret) {
+ 		dev_err(dev, "Could not enable tmds clock\n");
+@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	clk_disable_unprepare(hdmi->clk_tmds);
+ err_assert_ctrl_reset:
+ 	reset_control_assert(hdmi->rst_ctrl);
++err_disable_vcc:
++	regulator_disable(hdmi->vcc_hdmi);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index aadbe0a10b0c..af34c498295e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -10,6 +10,7 @@
+ #include <drm/drm_encoder.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ 
+ #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
+ 	struct drm_encoder		encoder;
+ 	struct sun8i_hdmi_phy		*phy;
+ 	struct dw_hdmi_plat_data	plat_data;
++	struct regulator		*vcc_hdmi;
+ 	struct reset_control		*rst_ctrl;
+ };
+ 
+-- 
+2.17.1
