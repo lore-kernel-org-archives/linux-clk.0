@@ -1,126 +1,50 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:24639 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725912AbeGaHRz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:17:55 -0400
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
-        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCH v4 00/10] Add basic and clock support for Mediatek MT8183 SoC
-Date: Tue, 31 Jul 2018 13:37:57 +0800
-Message-ID: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH] clk: samsung: Remove unused
+ mout_user_aclk400_mcuisp_p4x12 variable
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20180718195620.5331-1-krzk@kernel.org>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Message-ID: <c5e83bb8-840a-9e91-648c-4472b956c111@math.uni-bielefeld.de>
+Date: Wed, 18 Jul 2018 22:33:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180718195620.5331-1-krzk@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-MT8183 is a SoC based on 64bit ARMv8 architecture.
-It contains 4 CA53 and 4 CA73 cores.
-MT8183 share many HW IP with MT65xx series.
-This patchset was tested on MT8183 evaluation board and use correct clock to shell.
+Speaking of the ISP clocks driver, I wonder why this one was never merged?
+https://patches.linaro.org/patch/115531/
 
-This series contains document bindings, device tree including interrupt, uart, clock.
+- Tobias
 
-Based on v4.18-rc1 and https://patchwork.kernel.org/patch/10528515/
-Composed of clock control (PATCH 5-8) and device tree (PATCH 9-10)
 
-Change in v4:
-1. Correct syntax error in dtsi
-2. Add MT8183 clock support
-
-Change in v3:
-1. Fill out GICC, GICH, GICV regions
-2. Update Copyright to 2018
-
-Change in v2:
-1. Split dt-bindings into different patches
-2. Correct bindings for supported SoCs (mtk-uart.txt)
-
-Ben Ho (1):
-  arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
-    Makefile
-
-Erin Lo (3):
-  dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
-  dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
-  dt-bindings: serial: Add compatible for Mediatek MT8183
-
-Weiyi Lu (6):
-  dt-bindings: ARM: Mediatek: Document bindings for MT8183
-  clk: mediatek: Add dt-bindings for MT8183 clocks
-  clk: mediatek: Add flags support for mtk_gate data
-  clk: mediatek: Add MT8183 clock support
-  arm64: dts: mt8183: Add clock controller device nodes
-  dts: arm64: mt8183: add uart node
-
- Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,camsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,ipu.txt         |   43 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
- .../interrupt-controller/mediatek,sysirq.txt       |    1 +
- .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
- arch/arm64/boot/dts/mediatek/Makefile              |    1 +
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |   31 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  268 +++++
- drivers/clk/mediatek/Kconfig                       |   74 ++
- drivers/clk/mediatek/Makefile                      |   12 +
- drivers/clk/mediatek/clk-gate.c                    |    5 +-
- drivers/clk/mediatek/clk-gate.h                    |    3 +-
- drivers/clk/mediatek/clk-mt8183-audio.c            |  112 ++
- drivers/clk/mediatek/clk-mt8183-cam.c              |   75 ++
- drivers/clk/mediatek/clk-mt8183-img.c              |   75 ++
- drivers/clk/mediatek/clk-mt8183-ipu0.c             |   68 ++
- drivers/clk/mediatek/clk-mt8183-ipu1.c             |   68 ++
- drivers/clk/mediatek/clk-mt8183-ipu_adl.c          |   66 ++
- drivers/clk/mediatek/clk-mt8183-ipu_conn.c         |  155 +++
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c           |   66 ++
- drivers/clk/mediatek/clk-mt8183-mm.c               |  128 ++
- drivers/clk/mediatek/clk-mt8183-vdec.c             |   84 ++
- drivers/clk/mediatek/clk-mt8183-venc.c             |   71 ++
- drivers/clk/mediatek/clk-mt8183.c                  | 1230 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mtk.c                     |    3 +-
- drivers/clk/mediatek/clk-mtk.h                     |    1 +
- include/dt-bindings/clock/mt8183-clk.h             |  413 +++++++
- 36 files changed, 3064 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
- create mode 100644 drivers/clk/mediatek/clk-mt8183-audio.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-cam.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu0.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu1.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu_adl.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu_conn.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-mfgcfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt8183.c
- create mode 100644 include/dt-bindings/clock/mt8183-clk.h
-
---
-1.9.1
-
+Krzysztof Kozlowski wrote:
+> Remove unused 'mout_user_aclk400_mcuisp_p4x12' variable to fix GCC warning:
+> 
+>     drivers/clk/samsung/clk-exynos4412-isp.c:40:27: warning:
+>         'mout_user_aclk400_mcuisp_p4x12' defined but not used [-Wunused-const-variable=]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-exynos4412-isp.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
+> index d5f1ccb36300..cfaa057035ad 100644
+> --- a/drivers/clk/samsung/clk-exynos4412-isp.c
+> +++ b/drivers/clk/samsung/clk-exynos4412-isp.c
+> @@ -37,8 +37,6 @@ static const unsigned long exynos4x12_clk_isp_save[] __initconst = {
+>  	E4X12_GATE_ISP1,
+>  };
+>  
+> -PNAME(mout_user_aclk400_mcuisp_p4x12) = { "fin_pll", "div_aclk400_mcuisp", };
+> -
+>  static struct samsung_div_clock exynos4x12_isp_div_clks[] = {
+>  	DIV(CLK_ISP_DIV_ISP0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
+>  	DIV(CLK_ISP_DIV_ISP1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
+> 
