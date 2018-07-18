@@ -1,635 +1,1159 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs47.siol.net ([185.57.226.238]:35980 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752500AbeGAT1d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jul 2018 15:27:33 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39507 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730982AbeGRP3L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jul 2018 11:29:11 -0400
+Subject: Re: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
+To: Mars Cheng <mars.cheng@mediatek.com>,
         Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 23/24] ARM: dts: sun8i: r40: Add HDMI pipeline
-Date: Sun, 01 Jul 2018 21:25:57 +0200
-Message-ID: <7021261.2sGXzK4yLY@jernej-laptop>
-In-Reply-To: <CAGb2v666uesMjm7HqOMmj2ij1+avedRPrQmxwHu-aY2JsSkUOw@mail.gmail.com>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net> <1757847.226s5Z5USo@jernej-laptop> <CAGb2v666uesMjm7HqOMmj2ij1+avedRPrQmxwHu-aY2JsSkUOw@mail.gmail.com>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+Cc: CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+ <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <261612ef-cc32-3eaf-442c-5d61dc279a08@gmail.com>
+Date: Wed, 18 Jul 2018 16:50:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne nedelja, 01. julij 2018 ob 17:35:28 CEST je Chen-Yu Tsai napisal(a):
-> On Sun, Jul 1, 2018 at 11:13 PM, Jernej Škrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Dne nedelja, 01. julij 2018 ob 15:52:55 CEST je Chen-Yu Tsai napisal(a):
-> >> On Sun, Jul 1, 2018 at 6:41 PM, Jernej Škrabec <jernej.skrabec@siol.net>
-> > 
-> > wrote:
-> >> > Dne četrtek, 28. junij 2018 ob 08:51:07 CEST je Chen-Yu Tsai 
-napisal(a):
-> >> >> On Thu, Jun 28, 2018 at 1:15 PM, Jernej Škrabec
-> >> >> <jernej.skrabec@siol.net>
-> >> > 
-> >> > wrote:
-> >> >> > Dne četrtek, 28. junij 2018 ob 04:50:09 CEST je Chen-Yu Tsai
-> > 
-> > napisal(a):
-> >> >> >> On Mon, Jun 25, 2018 at 8:03 PM, Jernej Skrabec
-> >> >> >> <jernej.skrabec@siol.net>
-> >> >> > 
-> >> >> > wrote:
-> >> >> >> > Add all entries needed for HDMI to function properly.
-> >> >> >> > 
-> >> >> >> > Since R40 has highly configurable pipeline, both mixers and both
-> >> >> >> > TCON
-> >> >> >> > TVs are added. Board specific DT should then connect them
-> >> >> >> > together
-> >> >> >> > trough TCON TOP muxers to best fit the purpose of the board.
-> >> >> >> > 
-> >> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> >> >> > ---
-> >> >> >> > 
-> >> >> >> >  arch/arm/boot/dts/sun8i-r40.dtsi | 269
-> >> >> >> >  +++++++++++++++++++++++++++++++
-> >> >> >> >  1 file changed, 269 insertions(+)
-> >> >> >> > 
-> >> >> >> > diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi
-> >> >> >> > b/arch/arm/boot/dts/sun8i-r40.dtsi index
-> >> >> >> > 173dcc1652d2..a2a75fb04caf
-> >> >> >> > 100644
-> >> >> >> > --- a/arch/arm/boot/dts/sun8i-r40.dtsi
-> >> >> >> > +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-> >> >> >> > @@ -42,8 +42,11 @@
-> >> >> >> > 
-> >> >> >> >   */
-> >> >> >> >  
-> >> >> >> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> >> >> > 
-> >> >> >> > +#include <dt-bindings/clock/sun8i-de2.h>
-> >> >> >> > 
-> >> >> >> >  #include <dt-bindings/clock/sun8i-r40-ccu.h>
-> >> >> >> > 
-> >> >> >> > +#include <dt-bindings/clock/sun8i-tcon-top.h>
-> >> >> > 
-> >> >> > Maxime, above line breaks compilation for build robot, sorry.
-> >> >> > 
-> >> >> >> >  #include <dt-bindings/reset/sun8i-r40-ccu.h>
-> >> >> >> > 
-> >> >> >> > +#include <dt-bindings/reset/sun8i-de2.h>
-> >> >> >> > 
-> >> >> >> >  / {
-> >> >> >> >  
-> >> >> >> >         #address-cells = <1>;
-> >> >> >> > 
-> >> >> >> > @@ -99,12 +102,76 @@
-> >> >> >> > 
-> >> >> >> >                 };
-> >> >> >> >         
-> >> >> >> >         };
-> >> >> >> > 
-> >> >> >> > +       de: display-engine {
-> >> >> >> > +               compatible =
-> >> >> >> > "allwinner,sun8i-r40-display-engine",
-> >> >> >> > +                            "allwinner,sun8i-h3-display-engine";
-> >> >> >> 
-> >> >> >> Given that the display pipeline looks different, they should not be
-> >> >> >> compatible.
-> >> >> > 
-> >> >> > Ok.
-> >> >> > 
-> >> >> >> > +               allwinner,pipelines = <&mixer0>, <&mixer1>;
-> >> >> >> > +               status = "disabled";
-> >> >> >> > +       };
-> >> >> >> > +
-> >> >> >> > 
-> >> >> >> >         soc {
-> >> >> >> >         
-> >> >> >> >                 compatible = "simple-bus";
-> >> >> >> >                 #address-cells = <1>;
-> >> >> >> >                 #size-cells = <1>;
-> >> >> >> >                 ranges;
-> >> >> >> > 
-> >> >> >> > +               display_clocks: clock@1000000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-de2-clk",
-> >> >> >> > +                                   
-> >> >> >> > "allwinner,sun8i-h3-de2-clk";
-> >> >> >> > +                       reg = <0x01000000 0x100000>;
-> >> >> >> > +                       clocks = <&ccu CLK_DE>,
-> >> >> >> > +                                <&ccu CLK_BUS_DE>;
-> >> >> >> > +                       clock-names = "mod",
-> >> >> >> > +                                     "bus";
-> >> >> >> > +                       resets = <&ccu RST_BUS_DE>;
-> >> >> >> > +                       #clock-cells = <1>;
-> >> >> >> > +                       #reset-cells = <1>;
-> >> >> >> > +               };
-> >> >> >> > +
-> >> >> >> > +               mixer0: mixer@1100000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-de2-mixer-0";
-> >> >> >> > +                       reg = <0x01100000 0x100000>;
-> >> >> >> > +                       clocks = <&display_clocks
-> >> >> >> > CLK_BUS_MIXER0>,
-> >> >> >> > +                                <&display_clocks CLK_MIXER0>;
-> >> >> >> > +                       clock-names = "bus",
-> >> >> >> > +                                     "mod";
-> >> >> >> > +                       resets = <&display_clocks RST_MIXER0>;
-> >> >> >> > +
-> >> >> >> > +                       ports {
-> >> >> >> > +                               #address-cells = <1>;
-> >> >> >> > +                               #size-cells = <0>;
-> >> >> >> > +
-> >> >> >> > +                               mixer0_out: port@1 {
-> >> >> >> > +                                       reg = <1>;
-> >> >> >> > +                                       mixer0_out_tcon_top:
-> >> >> >> > endpoint {
-> >> >> >> > +                                               remote-endpoint =
-> >> >> >> > <&tcon_top_mixer0_in_mixer0>; +
-> >> >> >> > };
-> >> >> >> > +                               };
-> >> >> >> > +                       };
-> >> >> >> > +               };
-> >> >> >> > +
-> >> >> >> > +               mixer1: mixer@1200000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-de2-mixer-1";
-> >> >> >> > +                       reg = <0x01200000 0x100000>;
-> >> >> >> > +                       clocks = <&display_clocks
-> >> >> >> > CLK_BUS_MIXER1>,
-> >> >> >> > +                                <&display_clocks CLK_MIXER1>;
-> >> >> >> > +                       clock-names = "bus",
-> >> >> >> > +                                     "mod";
-> >> >> >> > +                       resets = <&display_clocks RST_WB>;
-> >> >> >> > +
-> >> >> >> > +                       ports {
-> >> >> >> > +                               #address-cells = <1>;
-> >> >> >> > +                               #size-cells = <0>;
-> >> >> >> > +
-> >> >> >> > +                               mixer1_out: port@1 {
-> >> >> >> > +                                       reg = <1>;
-> >> >> >> > +                                       mixer1_out_tcon_top:
-> >> >> >> > endpoint {
-> >> >> >> > +                                               remote-endpoint =
-> >> >> >> > <&tcon_top_mixer1_in_mixer1>; +
-> >> >> >> > };
-> >> >> >> > +                               };
-> >> >> >> > +                       };
-> >> >> >> > +               };
-> >> >> >> > +
-> >> >> >> > 
-> >> >> >> >                 nmi_intc: interrupt-controller@1c00030 {
-> >> >> >> >                 
-> >> >> >> >                         compatible =
-> >> >> >> >                         "allwinner,sun7i-a20-sc-nmi";
-> >> >> >> >                         interrupt-controller;
-> >> >> >> > 
-> >> >> >> > @@ -451,6 +518,163 @@
-> >> >> >> > 
-> >> >> >> >                         #size-cells = <0>;
-> >> >> >> >                 
-> >> >> >> >                 };
-> >> >> >> > 
-> >> >> >> > +               tcon_top: tcon-top@1c70000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-tcon-top";
-> >> >> >> > +                       reg = <0x01c70000 0x1000>;
-> >> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TOP>,
-> >> >> >> > +                                <&ccu CLK_TCON_TV0>,
-> >> >> >> > +                                <&ccu CLK_TVE0>,
-> >> >> >> > +                                <&ccu CLK_TCON_TV1>,
-> >> >> >> > +                                <&ccu CLK_TVE1>,
-> >> >> >> > +                                <&ccu CLK_DSI_DPHY>;
-> >> >> >> > +                       clock-names = "bus",
-> >> >> >> > +                                     "tcon-tv0",
-> >> >> >> > +                                     "tve0",
-> >> >> >> > +                                     "tcon-tv1",
-> >> >> >> > +                                     "tve1",
-> >> >> >> > +                                     "dsi";
-> >> >> >> > +                       clock-output-names = "tcon-top-tv0",
-> >> >> >> > +                                            "tcon-top-tv1",
-> >> >> >> > +                                            "tcon-top-dsi";
-> >> >> >> > +                       resets = <&ccu RST_BUS_TCON_TOP>;
-> >> >> >> > +                       #clock-cells = <1>;
-> >> >> >> > +
-> >> >> >> > +                       ports {
-> >> >> >> > +                               #address-cells = <1>;
-> >> >> >> > +                               #size-cells = <0>;
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_mixer0_in: port@0 {
-> >> >> >> > +                                       reg = <0>;
-> >> >> >> > +
-> >> >> >> > +                                      
-> >> >> >> > tcon_top_mixer0_in_mixer0:
-> >> >> >> > endpoint { +
-> >> >> >> > remote-endpoint = <&mixer0_out_tcon_top>; +
-> >> >> >> > 
-> >> >> >> >         };
-> >> >> >> > 
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_mixer0_out: port@1 {
-> >> >> >> > +                                       #address-cells = <1>;
-> >> >> >> > +                                       #size-cells = <0>;
-> >> >> >> > +                                       reg = <1>;
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer0_out_tcon_lcd0:
-> >> >> >> > endpoint@0 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <0>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer0_out_tcon_lcd1:
-> >> >> >> > endpoint@1 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <1>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer0_out_tcon_tv0:
-> >> >> >> > endpoint@2 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <2>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer0_out_tcon_tv1:
-> >> >> >> > endpoint@3 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <3>;
-> >> >> >> > +                                       };
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_mixer1_in: port@2 {
-> >> >> >> > +                                       reg = <2>;
-> >> >> >> > +
-> >> >> >> > +                                      
-> >> >> >> > tcon_top_mixer1_in_mixer1:
-> >> >> >> > endpoint { +
-> >> >> >> > remote-endpoint = <&mixer1_out_tcon_top>; +
-> >> >> >> > 
-> >> >> >> >         };
-> >> >> >> > 
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_mixer1_out: port@3 {
-> >> >> >> > +                                       #address-cells = <1>;
-> >> >> >> > +                                       #size-cells = <0>;
-> >> >> >> > +                                       reg = <3>;
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer1_out_tcon_lcd0:
-> >> >> >> > endpoint@0 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <0>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer1_out_tcon_lcd1:
-> >> >> >> > endpoint@1 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <1>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer1_out_tcon_tv0:
-> >> >> >> > endpoint@2 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <2>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +
-> >> >> >> > tcon_top_mixer1_out_tcon_tv1:
-> >> >> >> > endpoint@3 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <3>;
-> >> >> >> > +                                       };
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_hdmi_in: port@4 {
-> >> >> >> > +                                       #address-cells = <1>;
-> >> >> >> > +                                       #size-cells = <0>;
-> >> >> >> > +                                       reg = <4>;
-> >> >> >> > +
-> >> >> >> > +                                      
-> >> >> >> > tcon_top_hdmi_in_tcon_tv0:
-> >> >> >> > endpoint@0 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <0>;
-> >> >> >> > +                                       };
-> >> >> >> > +
-> >> >> >> > +                                      
-> >> >> >> > tcon_top_hdmi_in_tcon_tv1:
-> >> >> >> > endpoint@1 { +                                               reg
-> >> >> >> > =
-> >> >> >> > <1>;
-> >> >> >> > +                                       };
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_top_hdmi_out: port@5 {
-> >> >> >> > +                                       reg = <5>;
-> >> >> >> > +
-> >> >> >> > +                                       tcon_top_hdmi_out_hdmi:
-> >> >> >> > endpoint {
-> >> >> >> > +                                               remote-endpoint =
-> >> >> >> > <&hdmi_in_tcon_top>; +                                       };
-> >> >> >> > +                               };
-> >> >> >> > +                       };
-> >> >> >> > +               };
-> >> >> >> > +
-> >> >> >> > +               tcon_tv0: lcd-controller@1c73000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-tcon-tv",
-> >> >> >> > +                                   
-> >> >> >> > "allwinner,sun8i-a83t-tcon-tv";
-> >> >> >> > +                       reg = <0x01c73000 0x1000>;
-> >> >> >> > +                       interrupts = <GIC_SPI 51
-> >> >> >> > IRQ_TYPE_LEVEL_HIGH>;
-> >> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV0>,
-> >> >> >> > <&tcon_top
-> >> >> >> > 0>;
-> >> >> >> > +                       clock-names = "ahb", "tcon-ch1";
-> >> >> >> > +                       resets = <&ccu RST_BUS_TCON_TV0>;
-> >> >> >> > +                       reset-names = "lcd";
-> >> >> >> > +
-> >> >> >> > +                       ports {
-> >> >> >> > +                               #address-cells = <1>;
-> >> >> >> > +                               #size-cells = <0>;
-> >> >> >> > +
-> >> >> >> > +                               tcon_tv0_in: port@0 {
-> >> >> >> > +                                       reg = <0>;
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_tv0_out: port@1 {
-> >> >> >> > +                                       reg = <1>;
-> >> >> >> > +                               };
-> >> >> >> > +                       };
-> >> >> >> > +               };
-> >> >> >> > +
-> >> >> >> > +               tcon_tv1: lcd-controller@1c74000 {
-> >> >> >> > +                       compatible =
-> >> >> >> > "allwinner,sun8i-r40-tcon-tv",
-> >> >> >> > +                                   
-> >> >> >> > "allwinner,sun8i-a83t-tcon-tv";
-> >> >> >> > +                       reg = <0x01c74000 0x1000>;
-> >> >> >> > +                       interrupts = <GIC_SPI 52
-> >> >> >> > IRQ_TYPE_LEVEL_HIGH>;
-> >> >> >> > +                       clocks = <&ccu CLK_BUS_TCON_TV1>,
-> >> >> >> > <&tcon_top
-> >> >> >> > 1>;
-> >> >> >> > +                       clock-names = "ahb", "tcon-ch1";
-> >> >> >> > +                       resets = <&ccu RST_BUS_TCON_TV1>;
-> >> >> >> > +                       reset-names = "lcd";
-> >> >> >> > +
-> >> >> >> > +                       ports {
-> >> >> >> > +                               #address-cells = <1>;
-> >> >> >> > +                               #size-cells = <0>;
-> >> >> >> > +
-> >> >> >> > +                               tcon_tv1_in: port@0 {
-> >> >> >> > +                                       reg = <0>;
-> >> >> >> > +                               };
-> >> >> >> > +
-> >> >> >> > +                               tcon_tv1_out: port@1 {
-> >> >> >> > +                                       reg = <1>;
-> >> >> >> 
-> >> >> >> You are missing the remote-endpoints for all the TCON-TOP <-> TCON
-> >> >> >> connections. Also, on the driver side, there's no code to handle
-> >> >> >> dynamically mapping mixers to the TCONs that are being used. In the
-> >> >> >> past
-> >> >> >> we
-> >> >> >> had simple 1:1 mappings. This is no longer the case, and it needs
-> >> >> >> to
-> >> >> >> be
-> >> >> >> dealt with.
-> >> >> > 
-> >> >> > How would TCON TOP driver know how to set muxes? There are no
-> >> >> > appropriate
-> >> >> > bingings for muxes, except for V4L2 subsystem, which doesn't really
-> >> >> > work
-> >> >> > here.
-> >> >> 
-> >> >> This will end up being a bunch of custom functions exported from the
-> >> >> TCON
-> >> >> TOP driver to the TCON driver. As for bindings, the stuff you already
-> >> >> have
-> >> >> is mostly enough. You do have to specify the endpoint ID vs component
-> >> >> mapping, so you can find the correct one.
-> >> >> 
-> >> >> For example, you would specify that the IDs for TCON LCDs be 0 and 1,
-> >> >> and
-> >> >> TCON TVs be 2 and 3. Matching the actual register values is a nice
-> >> >> convenience. These would be used by the driver as the TCON ID.
-> >> > 
-> >> > So something that's already done (minus full connections).
-> >> > 
-> >> >> Also, we might want to consider them as two pairs of two TCONs (LCD +
-> >> >> TV).
-> >> >> The CRTC in DRM land is actually the mixer + TCON on our platform.
-> >> >> This
-> >> >> means we only have two CRTCs. So we could have CRTC 0 = mixer 0 + TCON
-> >> >> LCD
-> >> >> 0 + TCON TV 0. The "TCON_TVx_OUTSEL" and "DE_PORTx PERH Select" muxes
-> >> >> would
-> >> >> be set at run time in the mode set function, selecting either LCD or
-> >> >> TV
-> >> >> based on what encoder is attached.
-> >> > 
-> >> > That proposal would still limit some combinations. For example, that
-> >> > would
-> >> > put DSI always on mixer1, since it can be connected to only LCD TCON 1.
-> >> > It can also cause undesired combination in laptop solutions. Consider
-> >> > that PCB designer connected LCD1 pins to panel for some reason. Panel
-> >> > is
-> >> > definetly main screen and should definetly be connected to mixer0, but
-> >> > in
-> >> > that case, it would be to mixer1.
-> >> 
-> >> There's no reason we can't have dynamically assigned mixer+tcon pairs,
-> >> but
-> >> that would mean implementing additional scheduling code that we don't
-> >> have
-> >> yet. The current sunxi-drm and CRTC code assume static mappings.
-> > 
-> > I just remembered that your proposed solution while should work on R40,
-> > doesn't really fit in H6 case (which is the main reason for this series).
-> > 
-> > There are only LCD TCON 0 and TV TCON 0. Their HW IDs are the same as on
-> > R40 (1 and 3). Additionaly, there is also HDMI mux as on R40, although
-> > there is only one TV TCON, which can be used only for HDMI (TV output is
-> > connected to LCD TCON through AC200 bridge, put on same die or glued in
-> > same package, not really sure and doesn't really matter).
-> 
-> OK. So even there's only one TV TCON, you still have to program all muxes
-> with the correct value, to prevent a) a bad value left by the bootloader
-> and b) bad reset default values.
-> 
-> > I would like to write something which is also going to work for H6 out of
-> > the box. For H6, following combination would work well:
-> > mixer0 = LCD TCON 1 + TV TCON 0
-> > mixer1 = LCD TCON 0 + TV TCON 1
-> > 
-> > Or alternatively, we can leave that to mux callback in TCON which would
-> > take care for best variant for given SoC.
-> 
-> I think that is the ultimate goal. However, the muxing would be a bit
-> complicated. For all the past SoCs, we were dealing with muxing the
-> downstream encoder. Now we will be muxing mixer and tcon connections
-> as well. You would also have to dynamically switch around the mixer
-> and/or tcon pointers in sun4i_crtc so existing code can still work.
-> 
-> > Once we concur on that, I'll try to implement something.
-> > 
-> >> We could do this as a second step if you're up to it.
-> > 
-> > For my ultimate goal, which is 1st class Kodi experience on mainline,
-> > current proposal works in any case (mixer1 is enough). I just don't like
-> > solutions which are not universal.
-> > 
-> >> > Additionaly, since HDMI would became floating between TV TCON 0 and 1,
-> >> > whoever would write board DT would need to know this and enable only TV
-> >> > TCON1 if LCD is desired to be connected to mixer0 (or vice versa).
-> >> 
-> >> There's no reason not to have all TCONs enabled by default. We would
-> >> consider the display-engine node controlling whether everything actually
-> >> gets used.
-> >> 
-> >> > If we really want universal solution with full connections, addtional
-> >> > property has to be defined and used for that.
-> >> > 
-> >> >> This limitation is a software one, and should not bleed over into the
-> >> >> hardware representation.
-> >> >> 
-> >> >> > Additionaly, how would HDMI know which TCON belongs to it to
-> >> >> > appropriately
-> >> >> > set possible_crtcs?
-> >> >> 
-> >> >> HDMI is connected to the two TCON TVs through the TCON TOP mux. We
-> >> >> handle
-> >> >> TCON output muxing in the TCON driver, using the set_mux callback in
-> >> >> the
-> >> >> quirks. For R40, this callback would probably call into the TCON TOP
-> >> >> driver
-> >> >> asking it to set the mux to some value.
-> >> >> 
-> >> >> > Currently, my idea is that board DT creates wanted connections.
-> >> >> > Since
-> >> >> > there is only one valid connection for each mux, driver knows eactly
-> >> >> > what
-> >> >> > to write into mux register. HDMI driver can simply check which TCON
-> >> >> > connection is valid in HDMI input mux and select it in
-> >> >> > possible_crtcs.
-> >> >> 
-> >> >> But that is not how the actual hardware looks like. The device tree
-> >> >> should
-> >> >> model the hardware, not a subset of it just because one thinks the
-> >> >> implementation is difficult or won't be used at all.
-> >> >> 
-> >> >> Furthermore, I think you have it backwards. possible_crtcs is
-> >> >> generated
-> >> >> based on (in our case) the connections between TCON and HDMI based on
-> >> >> the
-> >> >> device tree graph. So if you have both hooked up, both will show up in
-> >> >> possible_crtcs, but only one crtc will actually be selected to feed
-> >> >> the
-> >> >> HDMI encoder. If you really need to access the current crtc, the
-> >> >> drm_encoder struct contains a pointer to it.
-> >> >> 
-> >> >> In DE 1.0 driver, we leave all the muxing to the TCON driver. See
-> >> >> 
-> >> >> 
-> >> >> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/sun4i/s
-> >> >> un4
-> >> >> i_
-> >> >> tcon.c#L537
-> >> >> 
-> >> >> So in a sense, the HDMI encoder should be and is hooked up to both
-> >> >> TCONs,
-> >> >> but only one is active at any given time.
-> >> > 
-> >> > So something like that I had in v1 series. I'll implement something
-> >> > similar. That would also mean we need R40 specific TV TCON compatible.
-> >> > I'll restore that.
-> >> > 
-> >> > Just a question on future situation when TVE driver will be
-> >> > implemented.
-> >> > Suppose that R40 board has TVE0 and HDMI as outputs. This would mean
-> >> > that
-> >> > TVE0 has possible crtcs set as 0b01 and HDMI 0b11. Will be DRM
-> >> > framework
-> >> > smart enough that it will put HDMI on second crtc because TVE0 can be
-> >> > connected to only to first crtc?
-> >> 
-> >> Yes. If the possible_clones setting for the encoder is not set, the DRM
-> >> framework will not do mirroring, and will keep each active encoder on a
-> >> separate crtc.
-> >> 
-> >> >> > Please also note that mixer0 and mixer1 don't have same capabilities
-> >> >> > and
-> >> >> > you generally want mixer0 to be connected to main output. This is in
-> >> >> > contrast to DE1 SoCs, where both backends and both frontends have
-> >> >> > same
-> >> >> > capability.
-> >> >> 
-> >> >> Yes. But who's to say the two display outputs can't be reversed or
-> >> >> swapped
-> >> >> around? With fixed singular connections, you also rule out mirrored
-> >> >> output.
-> >> > 
-> >> > I don't think there is standard way to swap around mixers at runtime,
-> >> > expecially if crtcs are represented as mixer + TCON pair.
-> >> 
-> >> As I mentioned above, we will have to do this on our own.
-> >> 
-> >> > I'm not sure what do you mean with mirrored output or at least why
-> >> > singular
-> >> > connections would prevent mirroring. HW mirroring needs DRM writeback
-> >> > support which is currently in RFC phase if I'm not mistaken. Once
-> >> > implemented in DRM framework and in sun4i-drm, it would be possible
-> >> > only
-> >> > to mirror mixer0 -> mixer1, because mixer1 doesn't support writeback
-> >> > (at
-> >> > least on existing SoCs).
-> >> 
-> >> What I meant was it might be possible to drive two TCONs with one mixer,
-> >> or
-> >> two encoders with one TCON. I guess the latter is not possible since each
-> >> TCON only has one channel. Not sure about the former.
-> > 
-> > I think neither of this two variants are possible, because outputs would
-> > have to have exactly the same resolution and in second case even the same
-> > pixel clock, which is very unlikely.
-> 
-> That is what mirroring is supposed to mean, right? For instance you could
-> have VGA on one and HDMI on the other, at the same resolution and dotclock.
 
-Actually, R40 is the first SoC with DE2 where is theoretically possible to 
-connect one mixer to multiple TCONs. I didn't try it yet because BPI M2U has 
-apart from HDMI only DSI connector and TV out on test points and neither have 
-support in mainline.
+
+On 17/07/18 10:52, Mars Cheng wrote:
+> From: Owen Chen <owen.chen@mediatek.com>
+> 
+> MT6765 need multiple register and actions to setup bus
+> protect.
+> 1. turn on subsys CG before release bus protect to receive
+>    ack.
+> 2. turn off subsys CG after set bus protect and receive
+>    ack.
+> 3. bus protect need not only infracfg but other domain
+>    register to setup. Therefore we add a set/clr APIs
+>    with more customize arguments.
+> 
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> ---
+>  drivers/soc/mediatek/Makefile           |    2 +-
+>  drivers/soc/mediatek/mtk-infracfg.c     |  178 +++++++++++---
+>  drivers/soc/mediatek/mtk-scpsys-ext.c   |  405 +++++++++++++++++++++++++++++++
+>  drivers/soc/mediatek/mtk-scpsys.c       |  147 +++++++++--
+>  include/linux/soc/mediatek/infracfg.h   |    9 +-
+>  include/linux/soc/mediatek/scpsys-ext.h |   66 +++++
+>  6 files changed, 745 insertions(+), 62 deletions(-)
+>  create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
+>  create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
+> 
+> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
+> index 12998b0..9dc6670 100644
+> --- a/drivers/soc/mediatek/Makefile
+> +++ b/drivers/soc/mediatek/Makefile
+> @@ -1,3 +1,3 @@
+> -obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
+> +obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o mtk-scpsys-ext.o
+>  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
+>  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
+> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
+> index 958861c..11eadf8 100644
+> --- a/drivers/soc/mediatek/mtk-infracfg.c
+> +++ b/drivers/soc/mediatek/mtk-infracfg.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
+>   *
+> @@ -15,6 +16,7 @@
+>  #include <linux/jiffies.h>
+>  #include <linux/regmap.h>
+>  #include <linux/soc/mediatek/infracfg.h>
+> +#include <linux/soc/mediatek/scpsys-ext.h>
+>  #include <asm/processor.h>
+>  
+>  #define MTK_POLL_DELAY_US   10
+> @@ -26,62 +28,176 @@
+>  #define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
+>  
+>  /**
+> - * mtk_infracfg_set_bus_protection - enable bus protection
+> - * @regmap: The infracfg regmap
+> - * @mask: The mask containing the protection bits to be enabled.
+> - * @reg_update: The boolean flag determines to set the protection bits
+> - *              by regmap_update_bits with enable register(PROTECTEN) or
+> - *              by regmap_write with set register(PROTECTEN_SET).
+> + * mtk_generic_set_cmd - enable bus protection with set register
+> + * @regmap: The bus protect regmap
+> + * @set_ofs: The set register offset to set corresponding bit to 1.
+> + * @sta_ofs: The status register offset to show bus protect enable/disable.
+> + * @mask: The mask containing the protection bits to be disabled.
+>   *
+>   * This function enables the bus protection bits for disabled power
+>   * domains so that the system does not hang when some unit accesses the
+>   * bus while in power down.
+>   */
+> -int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
+> -		bool reg_update)
+> +int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
+> +			u32 sta_ofs, u32 mask)
+>  {
+>  	u32 val;
+>  	int ret;
+>  
+> -	if (reg_update)
+> -		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask,
+> -				mask);
+> -	else
+> -		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
+> +	regmap_write(regmap, set_ofs, mask);
+>  
+> -	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
+> -				       val, (val & mask) == mask,
+> -				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
+> +				       (val & mask) == mask,
+> +				       MTK_POLL_DELAY_US,
+> +				       MTK_POLL_TIMEOUT);
+>  
+>  	return ret;
+>  }
+>  
+>  /**
+> - * mtk_infracfg_clear_bus_protection - disable bus protection
+> - * @regmap: The infracfg regmap
+> + * mtk_generic_clr_cmd - disable bus protection  with clr register
+> + * @regmap: The bus protect regmap
+> + * @clr_ofs: The clr register offset to clear corresponding bit to 0.
+> + * @sta_ofs: The status register offset to show bus protect enable/disable.
+>   * @mask: The mask containing the protection bits to be disabled.
+> - * @reg_update: The boolean flag determines to clear the protection bits
+> - *              by regmap_update_bits with enable register(PROTECTEN) or
+> - *              by regmap_write with clear register(PROTECTEN_CLR).
+>   *
+>   * This function disables the bus protection bits previously enabled with
+> - * mtk_infracfg_set_bus_protection.
+> + * mtk_set_bus_protection.
+>   */
+>  
+> -int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
+> -		bool reg_update)
+> +int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
+> +			u32 sta_ofs, u32 mask)
+>  {
+>  	int ret;
+>  	u32 val;
+>  
+> -	if (reg_update)
+> -		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
+> -	else
+> -		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
+> +	regmap_write(regmap, clr_ofs, mask);
+>  
+> -	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
+> -				       val, !(val & mask),
+> -				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
+> +				       !(val & mask),
+> +				       MTK_POLL_DELAY_US,
+> +				       MTK_POLL_TIMEOUT);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * mtk_generic_enable_cmd - enable bus protection with upd register
+> + * @regmap: The bus protect regmap
+> + * @upd_ofs: The update register offset to directly rewrite value to
+> + *              corresponding bit.
+> + * @sta_ofs: The status register offset to show bus protect enable/disable.
+> + * @mask: The mask containing the protection bits to be disabled.
+> + *
+> + * This function enables the bus protection bits for disabled power
+> + * domains so that the system does not hang when some unit accesses the
+> + * bus while in power down.
+> + */
+> +int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
+> +			   u32 sta_ofs, u32 mask)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	regmap_update_bits(regmap, upd_ofs, mask, mask);
+>  
+> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
+> +				       (val & mask) == mask,
+> +				       MTK_POLL_DELAY_US,
+> +				       MTK_POLL_TIMEOUT);
+>  	return ret;
+>  }
+> +
+> +/**
+> + * mtk_generic_disable_cmd - disable bus protection with updd register
+> + * @regmap: The bus protect regmap
+> + * @upd_ofs: The update register offset to directly rewrite value to
+> + *              corresponding bit.
+> + * @sta_ofs: The status register offset to show bus protect enable/disable.
+> + * @mask: The mask containing the protection bits to be disabled.
+> + *
+> + * This function disables the bus protection bits previously enabled with
+> + * mtk_set_bus_protection.
+> + */
+> +
+> +int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
+> +			    u32 sta_ofs, u32 mask)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	regmap_update_bits(regmap, upd_ofs, mask, 0);
+> +
+> +	ret = regmap_read_poll_timeout(regmap, sta_ofs,
+> +				       val, !(val & mask),
+> +				       MTK_POLL_DELAY_US,
+> +				       MTK_POLL_TIMEOUT);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * mtk_set_bus_protection - enable bus protection
+> + * @infracfg: The bus protect regmap, default use infracfg
+> + * @mask: The mask containing the protection bits to be enabled.
+> + *
+> + * This function enables the bus protection bits for disabled power
+> + * domains so that the system does not hang when some unit accesses the
+> + * bus while in power down.
+> + */
+> +int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
+> +{
+> +	return mtk_generic_set_cmd(infracfg,
+> +				   INFRA_TOPAXI_PROTECTEN_SET,
+> +				   INFRA_TOPAXI_PROTECTSTA1,
+> +				   mask);
+> +}
+> +
+> +/**
+> + * mtk_clear_bus_protection - disable bus protection
+> + * @infracfg: The bus protect regmap, default use infracfg
+> + * @mask: The mask containing the protection bits to be disabled.
+> + *
+> + * This function disables the bus protection bits previously enabled with
+> + * mtk_set_bus_protection.
+> + */
+> +
+> +int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
+> +{
+> +	return mtk_generic_clr_cmd(infracfg,
+> +				   INFRA_TOPAXI_PROTECTEN_CLR,
+> +				   INFRA_TOPAXI_PROTECTSTA1,
+> +				   mask);
+> +}
+> +
+> +/**
+> + * mtk_infracfg_enable_bus_protection - enable bus protection
+> + * @infracfg: The bus protect regmap, default use infracfg
+> + * @mask: The mask containing the protection bits to be disabled.
+> + *
+> + * This function enables the bus protection bits for disabled power
+> + * domains so that the system does not hang when some unit accesses the
+> + * bus while in power down.
+> + */
+> +int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask)
+> +{
+> +	return mtk_generic_enable_cmd(infracfg,
+> +				      INFRA_TOPAXI_PROTECTEN,
+> +				      INFRA_TOPAXI_PROTECTSTA1,
+> +				      mask);
+> +}
+> +
+> +/**
+> + * mtk_infracfg_disable_bus_protection - disable bus protection
+> + * @infracfg: The bus protect regmap, default use infracfg
+> + * @mask: The mask containing the protection bits to be disabled.
+> + *
+> + * This function disables the bus protection bits previously enabled with
+> + * mtk_infracfg_set_bus_protection.
+> + */
+> +
+> +int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask)
+> +{
+> +	return mtk_generic_disable_cmd(infracfg,
+> +				       INFRA_TOPAXI_PROTECTEN,
+> +				       INFRA_TOPAXI_PROTECTSTA1,
+> +				       mask);
+> +}
+> diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
+> new file mode 100644
+> index 0000000..965e64d
+> --- /dev/null
+> +++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
+> @@ -0,0 +1,405 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +#include <linux/export.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/soc/mediatek/infracfg.h>
+> +#include <linux/soc/mediatek/scpsys-ext.h>
+> +
+> +
+> +#define MAX_CLKS		10
+> +#define INFRA			"infracfg"
+> +#define SMIC			"smi_comm"
+
+Don't use defines for this. While at it I suppose it should be "smi_common"
+
+> +
+> +static LIST_HEAD(ext_clk_map_list);
+> +static LIST_HEAD(ext_attr_map_list);
+> +
+> +static struct regmap *infracfg;
+> +static struct regmap *smi_comm;
+> +
+> +enum regmap_type {
+> +	IFR_TYPE,
+> +	SMI_TYPE,
+> +	MAX_REGMAP_TYPE,
+> +};
+> +
+> +/**
+> + * struct ext_reg_ctrl - set multiple register for bus protect
+> + * @regmap: The bus protect regmap, 1: infracfg, 2: other master regmap
+> + *                  such as SMI.
+> + * @set_ofs: The set register offset to set corresponding bit to 1.
+> + * @clr_ofs: The clr register offset to clear corresponding bit to 0.
+> + * @sta_ofs: The status register offset to show bus protect enable/disable.
+> + */
+> +struct ext_reg_ctrl {
+> +	enum regmap_type type;
+> +	u32 set_ofs;
+> +	u32 clr_ofs;
+> +	u32 sta_ofs;
+> +};
+> +
+> +/**
+> + * struct ext_clk_ctrl - enable multiple clks for bus protect
+> + * @clk: The clk need to enable before pwr on/bus protect.
+> + * @scpd_n: The name present the scpsys domain where the clks belongs to.
+> + * @clk_list: The list node linked to ext_clk_map_list.
+> + */
+> +struct ext_clk_ctrl {
+> +	struct clk *clk;
+> +	const char *scpd_n;
+> +	struct list_head clk_list;
+> +};
+> +
+> +struct bus_mask_ops {
+> +	int	(*set)(struct regmap *regmap, u32 set_ofs,
+> +		       u32 sta_ofs, u32 mask);
+> +	int	(*release)(struct regmap *regmap, u32 clr_ofs,
+> +			   u32 sta_ofs, u32 mask);
+> +};
+> +
+> +static struct scpsys_ext_attr *__get_attr_parent(const char *parent_n)
+> +{
+> +	struct scpsys_ext_attr *attr;
+> +
+> +	if (!parent_n)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	list_for_each_entry(attr, &ext_attr_map_list, attr_list) {
+> +		if (attr->scpd_n && !strcmp(parent_n, attr->scpd_n))
+> +			return attr;
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+> +int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
+> +{
+> +	int i;
+> +	int ret = 0;
+> +
+> +	for (i = 0; i < MAX_STEP_NUM && attr->mask[i].mask; i++) {
+> +		struct ext_reg_ctrl *rc = attr->mask[i].regs;
+> +		struct regmap *regmap;
+> +
+> +		if (rc->type == IFR_TYPE)
+> +			regmap = infracfg;
+> +		else if (rc->type == SMI_TYPE)
+> +			regmap = smi_comm;
+> +		else
+> +			return -EINVAL;
+> +
+> +		if (set)
+> +			ret = attr->mask[i].ops->set(regmap,
+> +						rc->set_ofs,
+> +						rc->sta_ofs,
+> +						attr->mask[i].mask);
+> +		else
+> +			ret = attr->mask[i].ops->release(regmap,
+> +						rc->clr_ofs,
+> +						rc->sta_ofs,
+> +						attr->mask[i].mask);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +int bus_ctrl_set(struct scpsys_ext_attr *attr)
+> +{
+> +	return bus_ctrl_set_release(attr, CMD_ENABLE);
+> +}
+> +
+> +int bus_ctrl_release(struct scpsys_ext_attr *attr)
+> +{
+> +	return bus_ctrl_set_release(attr, CMD_DISABLE);
+> +}
+> +
+> +int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
+> +{
+> +	int i = 0;
+> +	int ret = 0;
+> +	struct ext_clk_ctrl *cc;
+> +	struct clk *clk[MAX_CLKS];
+> +
+> +	list_for_each_entry(cc, &ext_clk_map_list, clk_list) {
+
+Why can't we handle this in the same way as we do in mtk-scpsys.c ?
+
+> +		if (!strcmp(cc->scpd_n, attr->scpd_n)) {
+> +			if (enable)
+> +				ret = clk_prepare_enable(cc->clk);
+> +			else
+> +				clk_disable_unprepare(cc->clk);
+> +
+> +			if (ret) {
+> +				pr_err("Failed to  %s %s\n",
+> +				       enable ? "enable" : "disable",
+> +				       __clk_get_name(cc->clk));
+> +				goto err;
+> +			} else {
+> +				clk[i] = cc->clk;
+> +				i++;
+> +			}
+> +		}
+> +	}
+> +
+> +	return ret;
+> +
+> +err:
+> +	for (--i; i >= 0; i--)
+> +		if (enable)
+> +			clk_disable_unprepare(clk[i]);
+> +		else
+> +			clk_prepare_enable(clk[i]);
+> +	return ret;
+> +}
+> +
+> +int bus_clk_enable(struct scpsys_ext_attr *attr)
+> +{
+> +	struct scpsys_ext_attr *attr_p;
+> +	int ret = 0;
+> +
+> +	attr_p = __get_attr_parent(attr->parent_n);
+
+Why can't we implement this using the pg_genpd_add_subdomain approach?
+
+> +	if (!IS_ERR(attr_p)) {
+> +		ret = bus_clk_enable_disable(attr_p, CMD_ENABLE);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return bus_clk_enable_disable(attr, CMD_ENABLE);
+> +}
+> +
+> +int bus_clk_disable(struct scpsys_ext_attr *attr)
+> +{
+> +	struct scpsys_ext_attr *attr_p;
+> +	int ret = 0;
+> +
+> +	ret = bus_clk_enable_disable(attr, CMD_DISABLE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	attr_p = __get_attr_parent(attr->parent_n);
+> +	if (!IS_ERR(attr_p))
+> +		ret = bus_clk_enable_disable(attr_p, CMD_DISABLE);
+
+Same here.
+
+> +
+> +	return ret;
+> +}
+> +
+> +const struct bus_mask_ops bus_mask_set_clr_ctrl = {
+> +	.set = &mtk_generic_set_cmd,
+> +	.release = &mtk_generic_clr_cmd,
+> +};
+> +
+> +const struct bus_ext_ops ext_bus_ctrl = {
+> +	.enable = &bus_ctrl_set,
+> +	.disable = &bus_ctrl_release,
+> +};
+> +
+> +const struct bus_ext_ops ext_cg_ctrl = {
+> +	.enable = &bus_clk_enable,
+> +	.disable = &bus_clk_disable,
+> +};
+> +
+> +/*
+> + * scpsys bus driver init
+> + */
+> +struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
+> +						   const char *property,
+> +						   int index)
+> +{
+> +	struct device_node *syscon_np;
+> +	struct regmap *regmap;
+> +
+> +	if (property)
+> +		syscon_np = of_parse_phandle(np, property, index);
+> +	else
+> +		syscon_np = np;
+> +
+> +	if (!syscon_np)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	regmap = syscon_node_to_regmap(syscon_np);
+> +	of_node_put(syscon_np);
+> +
+> +	return regmap;
+> +}
+
+Why do we need this? It is never called...
+
+> +
+> +int scpsys_ext_regmap_init(struct platform_device *pdev)
+> +{
+> +	infracfg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +						   INFRA);
+> +	if (IS_ERR(infracfg)) {
+> +		dev_err(&pdev->dev,
+> +			"Cannot find bus infracfg controller: %ld\n",
+> +			PTR_ERR(infracfg));
+> +		return PTR_ERR(infracfg);
+> +	}
+> +
+> +	smi_comm = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+> +						   SMIC);
+> +	if (IS_ERR(smi_comm)) {
+> +		dev_err(&pdev->dev,
+> +			"Cannot find bus smi_comm controller: %ld\n",
+> +			PTR_ERR(smi_comm));
+> +		return PTR_ERR(smi_comm);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int add_clk_to_list(struct platform_device *pdev,
+> +			   const char *name,
+> +			   const char *scpd_n)
+> +{
+> +	struct clk *clk;
+> +	struct ext_clk_ctrl *cc;
+> +
+> +	clk = devm_clk_get(&pdev->dev, name);
+> +	if (IS_ERR(clk)) {
+> +		dev_err(&pdev->dev, "Failed add clk %ld\n", PTR_ERR(clk));
+> +		return PTR_ERR(clk);
+> +	}
+> +
+> +	cc = kzalloc(sizeof(*cc), GFP_KERNEL);
+> +	cc->clk = clk;
+> +	cc->scpd_n = kstrdup(scpd_n, GFP_KERNEL);
+> +
+> +	list_add(&cc->clk_list, &ext_clk_map_list);
+> +
+> +	return 0;
+> +}
+> +
+> +static int add_cg_to_list(struct platform_device *pdev)
+> +{
+> +	int i = 0;
+> +
+> +	struct device_node *node = pdev->dev.of_node;
+> +
+> +	if (!node) {
+> +		dev_err(&pdev->dev, "Cannot find topcksys node: %ld\n",
+
+Why topcksys? Shouldn't that be the node of scpsys?
+
+> +			PTR_ERR(node));
+> +		return PTR_ERR(node);
+> +	}
+> +
+> +	do {
+> +		const char *ck_name;
+> +		char *temp_str;
+> +		char *tok[2] = {NULL};
+> +		int cg_idx = 0;
+> +		int idx = 0;
+> +		int ret = 0;
+> +
+> +		ret = of_property_read_string_index(node, "clock-names", i,
+> +						    &ck_name);
+> +		if (ret < 0)
+> +			break;
+> +
+> +		temp_str = kmalloc_array(strlen(ck_name), sizeof(char),
+> +					 GFP_KERNEL | __GFP_ZERO);
+> +		memcpy(temp_str, ck_name, strlen(ck_name));
+> +		temp_str[strlen(ck_name)] = '\0';
+
+why don't you use kstrdup or similar?
+
+> +		do {
+> +			tok[idx] = strsep(&temp_str, "-");
+> +			idx++;
+> +		} while (temp_str);
+
+You want to split the clock name like "mm-2" in
+char **tok = {"mm", "2"};
+correct? That can be done easier AFAIK:
+tok[0] = strsep(&temp_str, "-");
+tok[1] = &temp_str;
+
+> +
+> +		if (idx == 2) {
+
+You don't add clocks like "mfg" and "mm". Why?
+
+> +			if (kstrtouint(tok[1], 10, &cg_idx))
+
+And then? You don't do anything with cg_idx...
+
+> +				return -EINVAL;
+> +
+> +			if (add_clk_to_list(pdev, ck_name, tok[0]))
+
+add_clk_to_list third parameter is the name of the scp domain, but you pass the
+clock name here. I'm puzzled.
+
+> +				return -EINVAL;
+> +		}
+> +		kfree(temp_str);
+> +		i++;
+> +	} while (1);
+> +
+> +	return 0;
+> +}
+> +
+> +int scpsys_ext_clk_init(struct platform_device *pdev)
+> +{
+> +	int ret = 0;
+> +
+> +	ret = add_cg_to_list(pdev);
+> +	if (ret)
+> +		goto err;
+> +
+> +err:
+> +	return ret;
+> +}
+
+Why do we need add_cg_to_list, it can be implemented directly here. Why is here
+a goto to a return statement that will be executed anyway? Please go through the
+code and check that it is clean before submitting.
+
+> +
+> +int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
+> +{
+> +	int i, count = 0;
+> +
+> +	for (i = 0; i < data->num_attr; i++) {
+> +		struct scpsys_ext_attr *node = data->attr + i;
+> +
+> +		if (!node)
+> +			continue;
+> +
+> +		list_add(&node->attr_list, &ext_attr_map_list);
+> +		count++;
+> +	}
+> +
+> +	if (!count)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id of_scpsys_ext_match_tbl[] = {
+> +	{
+> +		/* sentinel */
+> +	}
+> +};
+> +
+> +struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *match;
+> +	struct scpsys_ext_data *data;
+> +	int ret;
+> +
+> +	match = of_match_device(of_scpsys_ext_match_tbl, &pdev->dev);
+> +
+> +	if (!match) {
+> +		dev_err(&pdev->dev, "no match\n");
+> +		return ERR_CAST(match);
+> +	}
+> +
+> +	data = (struct scpsys_ext_data *)match->data;
+> +	if (IS_ERR(data)) {
+> +		dev_err(&pdev->dev, "no match scpext data\n");
+> +		return ERR_CAST(data);
+> +	}
+> +
+> +	ret = scpsys_ext_attr_init(data);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to init bus attr: %d\n",
+> +			ret);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	ret = scpsys_ext_regmap_init(pdev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to init bus register: %d\n",
+> +			ret);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	ret = scpsys_ext_clk_init(pdev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to init bus clks: %d\n",
+> +			ret);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return data;
+> +}
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index 4bb6c7a..03df2d6 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
+>   *
+> @@ -20,6 +21,7 @@
+>  #include <linux/pm_domain.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/soc/mediatek/infracfg.h>
+> +#include <linux/soc/mediatek/scpsys-ext.h>
+>  
+>  #include <dt-bindings/power/mt2701-power.h>
+>  #include <dt-bindings/power/mt2712-power.h>
+> @@ -117,6 +119,15 @@ enum clk_id {
+>  
+>  #define MAX_CLKS	3
+>  
+> +/**
+> + * struct scp_domain_data - scp domain data for power on/off flow
+> + * @name: The domain name.
+> + * @sta_mask: The mask for power on/off status bit.
+> + * @ctl_offs: The offset for main power control register.
+> + * @sram_pdn_bits: The mask for sram power control bits.
+> + * @sram_pdn_ack_bits The mask for sram power control acked bits.
+> + * @caps: The flag for active wake-up action.
+> + */
+>  struct scp_domain_data {
+>  	const char *name;
+>  	u32 sta_mask;
+> @@ -150,7 +161,7 @@ struct scp {
+>  	void __iomem *base;
+>  	struct regmap *infracfg;
+>  	struct scp_ctrl_reg ctrl_reg;
+> -	bool bus_prot_reg_update;
+> +	struct scpsys_ext_data *ext_data;
+>  };
+>  
+>  struct scp_subdomain {
+> @@ -164,7 +175,6 @@ struct scp_soc_data {
+>  	const struct scp_subdomain *subdomains;
+>  	int num_subdomains;
+>  	const struct scp_ctrl_reg regs;
+> -	bool bus_prot_reg_update;
+>  };
+>  
+>  static int scpsys_domain_is_on(struct scp_domain *scpd)
+> @@ -236,6 +246,31 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+>  	val |= PWR_RST_B_BIT;
+>  	writel(val, ctl_addr);
+>  
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->cg_ops) {
+> +			ret = attr->cg_ops->enable(attr);
+> +			if (ret)
+> +				goto err_ext_clk;
+> +		}
+> +	}
+> +
+> +	val &= ~scpd->data->sram_pdn_bits;
+> +	writel(val, ctl_addr);
+> +
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->cg_ops) {
+> +			ret = attr->cg_ops->enable(attr);
+> +			if (ret)
+> +				goto err_ext_clk;
+> +		}
+> +	}
+> +
+>  	val &= ~scpd->data->sram_pdn_bits;
+>  	writel(val, ctl_addr);
+>  
+> @@ -247,25 +282,65 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+>  		 * applied here.
+>  		 */
+>  		usleep_range(12000, 12100);
+> -
+>  	} else {
+>  		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
+>  					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+>  		if (ret < 0)
+> -			goto err_pwr_ack;
+> +			goto err_sram;
+>  	}
+>  
+>  	if (scpd->data->bus_prot_mask) {
+>  		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
+> -				scpd->data->bus_prot_mask,
+> -				scp->bus_prot_reg_update);
+> +				scpd->data->bus_prot_mask);
+>  		if (ret)
+> -			goto err_pwr_ack;
+> +			goto err_sram;
+> +	}
+> +
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->bus_ops) {
+> +			ret = attr->bus_ops->disable(attr);
+> +			if (ret)
+> +				goto err_sram;
+> +		}
+> +	}
+> +
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->cg_ops) {
+> +			ret = attr->cg_ops->disable(attr);
+> +			if (ret)
+> +				goto err_sram;
+> +		}
+>  	}
+>  
+>  	return 0;
+>  
+> +err_sram:
+> +	val = readl(ctl_addr);
+> +	val |= scpd->data->sram_pdn_bits;
+> +	writel(val, ctl_addr);
+> +err_ext_clk:
+> +	val = readl(ctl_addr);
+> +	val |= PWR_ISO_BIT;
+> +	writel(val, ctl_addr);
+> +
+> +	val &= ~PWR_RST_B_BIT;
+> +	writel(val, ctl_addr);
+> +
+> +	val |= PWR_CLK_DIS_BIT;
+> +	writel(val, ctl_addr);
+>  err_pwr_ack:
+> +	val &= ~PWR_ON_BIT;
+> +	writel(val, ctl_addr);
+> +
+> +	val &= ~PWR_ON_2ND_BIT;
+> +	writel(val, ctl_addr);
+> +
+>  	for (i = MAX_CLKS - 1; i >= 0; i--) {
+>  		if (scpd->clk[i])
+>  			clk_disable_unprepare(scpd->clk[i]);
+> @@ -274,8 +349,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+>  	if (scpd->supply)
+>  		regulator_disable(scpd->supply);
+>  
+> -	dev_err(scp->dev, "Failed to power on domain %s\n", genpd->name);
+> -
+>  	return ret;
+>  }
+>  
+> @@ -289,14 +362,35 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+>  	int ret, tmp;
+>  	int i;
+>  
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->cg_ops) {
+> +			ret = attr->cg_ops->enable(attr);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +
+>  	if (scpd->data->bus_prot_mask) {
+>  		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
+> -				scpd->data->bus_prot_mask,
+> -				scp->bus_prot_reg_update);
+> +				scpd->data->bus_prot_mask);
+>  		if (ret)
+>  			goto out;
+>  	}
+>  
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->bus_ops) {
+> +			ret = attr->bus_ops->enable(attr);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +
+>  	val = readl(ctl_addr);
+>  	val |= scpd->data->sram_pdn_bits;
+>  	writel(val, ctl_addr);
+> @@ -307,6 +401,17 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+>  	if (ret < 0)
+>  		goto out;
+>  
+> +	if (!IS_ERR(scp->ext_data)) {
+> +		struct scpsys_ext_attr *attr;
+> +
+> +		attr = scp->ext_data->get_attr(scpd->data->name);
+> +		if (!IS_ERR(attr) && attr->cg_ops) {
+> +			ret = attr->cg_ops->disable(attr);
+> +			if (ret)
+> +				goto out;
+> +		}
+> +	}
+> +
+>  	val |= PWR_ISO_BIT;
+>  	writel(val, ctl_addr);
+>  
+> @@ -337,8 +442,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
+>  	return 0;
+>  
+>  out:
+> -	dev_err(scp->dev, "Failed to power off domain %s\n", genpd->name);
+> -
+>  	return ret;
+>  }
+>  
+> @@ -352,8 +455,7 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+>  
+>  static struct scp *init_scp(struct platform_device *pdev,
+>  			const struct scp_domain_data *scp_domain_data, int num,
+> -			const struct scp_ctrl_reg *scp_ctrl_reg,
+> -			bool bus_prot_reg_update)
+> +			const struct scp_ctrl_reg *scp_ctrl_reg)
+>  {
+>  	struct genpd_onecell_data *pd_data;
+>  	struct resource *res;
+> @@ -367,11 +469,10 @@ static struct scp *init_scp(struct platform_device *pdev,
+>  
+>  	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
+>  	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
+> -
+> -	scp->bus_prot_reg_update = bus_prot_reg_update;
+> -
+>  	scp->dev = &pdev->dev;
+>  
+> +	scp->ext_data = scpsys_ext_init(pdev);
+> +
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	scp->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(scp->base))
+> @@ -1021,7 +1122,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+>  	},
+> -	.bus_prot_reg_update = true,
+>  };
+>  
+>  static const struct scp_soc_data mt2712_data = {
+> @@ -1033,7 +1133,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+>  	},
+> -	.bus_prot_reg_update = false,
+>  };
+>  
+>  static const struct scp_soc_data mt6765_data = {
+> @@ -1056,7 +1155,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
+>  	},
+> -	.bus_prot_reg_update = true,
+
+I don't understand why you can delete this flag if you don't change anything
+else in the data structure. For me this looks like you will break other chips.
+Please explain.
+
+I have the gut feeling that this can be implemented in the existing mtk-scpsys
+driver. Can you please explain what are the points that this is not possible.
+I want to understand the design decisions you made here, because they seem
+really odd to me.
 
 Best regards,
-Jernej
+Matthias
 
+>  };
+>  
+>  static const struct scp_soc_data mt7622_data = {
+> @@ -1066,7 +1164,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+>  	},
+> -	.bus_prot_reg_update = true,
+>  };
+>  
+>  static const struct scp_soc_data mt7623a_data = {
+> @@ -1076,7 +1173,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+>  	},
+> -	.bus_prot_reg_update = true,
+>  };
+>  
+>  static const struct scp_soc_data mt8173_data = {
+> @@ -1088,7 +1184,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
+>  		.pwr_sta_offs = SPM_PWR_STATUS,
+>  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
+>  	},
+> -	.bus_prot_reg_update = true,
+>  };
+>  
+>  /*
+> @@ -1132,8 +1227,8 @@ static int scpsys_probe(struct platform_device *pdev)
+>  
+>  	soc = of_device_get_match_data(&pdev->dev);
+>  
+> -	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
+> -			soc->bus_prot_reg_update);
+> +	scp = init_scp(pdev, soc->domains, soc->num_domains,
+> +		       &soc->regs);
+>  	if (IS_ERR(scp))
+>  		return PTR_ERR(scp);
+>  
+> diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
+> index fd25f01..bfad082 100644
+> --- a/include/linux/soc/mediatek/infracfg.h
+> +++ b/include/linux/soc/mediatek/infracfg.h
+> @@ -32,8 +32,9 @@
+>  #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
+>  						 BIT(7) | BIT(8))
+>  
+> -int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
+> -		bool reg_update);
+> -int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
+> -		bool reg_update);
+> +int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
+> +int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
+> +int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask);
+> +int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask);
+> +
+>  #endif /* __SOC_MEDIATEK_INFRACFG_H */
+> diff --git a/include/linux/soc/mediatek/scpsys-ext.h b/include/linux/soc/mediatek/scpsys-ext.h
+> new file mode 100644
+> index 0000000..99b5ff1
+> --- /dev/null
+> +++ b/include/linux/soc/mediatek/scpsys-ext.h
+> @@ -0,0 +1,66 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_MEDIATEK_SCPSYS_EXT_H
+> +#define __SOC_MEDIATEK_SCPSYS_EXT_H
+> +
+> +#include <linux/platform_device.h>
+> +
+> +#define CMD_ENABLE	1
+> +#define CMD_DISABLE	0
+> +
+> +#define MAX_STEP_NUM	4
+> +
+> +/**
+> + * struct bus_mask - set mask and corresponding operation for bus protect
+> + * @regs: The register set of bus register control, including set/clr/sta.
+> + * @mask: The mask set for bus protect.
+> + * @flag: The flag to idetify which operation we take for bus protect.
+> + */
+> +struct bus_mask {
+> +	struct ext_reg_ctrl *regs;
+> +	u32 mask;
+> +	const struct bus_mask_ops *ops;
+> +};
+> +
+> +/**
+> + * struct scpsys_ext_attr - extended attribute for bus protect and further
+> + *                                           operand.
+> + *
+> + * @scpd_n: The name present the scpsys domain where the clks belongs to.
+> + * @mask: The mask set for bus protect.
+> + * @bus_ops: The operation we take for bus protect.
+> + * @cg_ops: The operation we take for cg on/off.
+> + * @attr_list: The list node linked to ext_attr_map_list.
+> + */
+> +struct scpsys_ext_attr {
+> +	const char *scpd_n;
+> +	struct bus_mask mask[MAX_STEP_NUM];
+> +	const char *parent_n;
+> +	const struct bus_ext_ops *bus_ops;
+> +	const struct bus_ext_ops *cg_ops;
+> +
+> +	struct list_head attr_list;
+> +};
+> +
+> +struct scpsys_ext_data {
+> +	struct scpsys_ext_attr *attr;
+> +	u8 num_attr;
+> +	struct scpsys_ext_attr * (*get_attr)(const char *scpd_n);
+> +};
+> +
+> +struct bus_ext_ops {
+> +	int	(*enable)(struct scpsys_ext_attr *attr);
+> +	int	(*disable)(struct scpsys_ext_attr *attr);
+> +};
+> +
+> +int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
+> +			u32 sta_ofs, u32 mask);
+> +int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
+> +			u32 sta_ofs, u32 mask);
+> +int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
+> +			   u32 sta_ofs, u32 mask);
+> +int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
+> +			    u32 sta_ofs, u32 mask);
+> +
+> +struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev);
+> +
+> +#endif /* __SOC_MEDIATEK_SCPSYS_EXT_H */
 > 
-> As far as I'm concerned, the software doesn't need to have all features
-> covered. But that doesn't mean the hardware representation can lack
-> features as well. We already did that once, and now we have some legacy
-> graph parsing code to handle that.
-> 
-> Regards
-> ChenYu
-
-
-
-
