@@ -1,33 +1,194 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Anders Roxell <anders.roxell@linaro.org>, gregory.clement@bootlin.com,
- mturquette@baylibre.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180726222721.5787-1-anders.roxell@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Anders Roxell <anders.roxell@linaro.org>
-References: <20180726222721.5787-1-anders.roxell@linaro.org>
-Message-ID: <153271055369.48062.7965396244056342743@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
-Date: Fri, 27 Jul 2018 09:55:53 -0700
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 07/18] arm64: dts: allwinner: a64: Add tcon1 HDMI pipeline
+Date: Wed, 18 Jul 2018 16:24:47 +0530
+Message-Id: <20180718105458.22304-8-jagan@amarulasolutions.com>
+In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Anders Roxell (2018-07-26 15:27:21)
-> When building armada-37xx-periph, num_parents isn't used in function
-> clk_pm_cpu_get_parent:
-> drivers/clk/mvebu/armada-37xx-periph.c: In function =E2=80=98clk_pm_cpu_g=
-et_parent=E2=80=99:
-> drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable =
-=E2=80=98num_parents=E2=80=99 [-Wunused-variable]
->   int num_parents =3D clk_hw_get_num_parents(hw);
->       ^~~~~~~~~~~
-> Remove the declaration of num_parents to dispose the warning.
-> =
+HDMI on Allwinner A64 similar behaviour like H3 with
+PHY of two clock parents (pll-0, pll-1) connected via
+second mixer and tcon.
 
-> Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return va=
-lue in get_parent")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
+Add all require entries needed for HDMI to function.
 
-Applied to clk-next
+Note, that Figure 3-3.Module Clock Diagram also showing
+HDMI connected via TCON0 with PLL_VIDEO0. this can be add
+it in future once we have mixer0 pipeline.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- Squash all pipeline components in one patch
+- Add status for mixer1 and tcon1
+Changes for v2:
+- Change compatibles and other based on previous patch changes
+
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 110 ++++++++++++++++++
+ 1 file changed, 110 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 840753432ea5..572569d8b577 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -112,6 +112,12 @@
+ 		};
+ 	};
+ 
++	de: display-engine {
++		compatible = "allwinner,sun50i-a64-display-engine";
++		allwinner,pipelines = <&mixer1>;
++		status = "disabled";
++	};
++
+ 	osc24M: osc24M_clk {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+@@ -196,6 +202,30 @@
+ 			};
+ 		};
+ 
++		mixer1: mixer@1200000 {
++			compatible = "allwinner,sun50i-a64-de2-mixer-1";
++			reg = <0x01200000 0x100000>;
++			clocks = <&display_clocks CLK_BUS_MIXER1>,
++				 <&display_clocks CLK_MIXER1>;
++			clock-names = "bus",
++				      "mod";
++			resets = <&display_clocks RST_WB>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				mixer1_out: port@1 {
++					reg = <1>;
++
++					mixer1_out_tcon1: endpoint {
++						remote-endpoint = <&tcon1_in_mixer1>;
++					};
++				};
++			};
++		};
++
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun50i-a64-system-control";
+ 			reg = <0x01c00000 0x1000>;
+@@ -228,6 +258,42 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun50i-a64-tcon-tv",
++				     "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint {
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun50i-a64-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+@@ -688,6 +754,50 @@
+ 			status = "disabled";
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun50i-a64-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint {
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun50i-a64-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_PLL_VIDEO0>, <&ccu CLK_PLL_VIDEO1>;
++			clock-names = "bus", "mod", "pll-0", "pll-1";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		rtc: rtc@1f00000 {
+ 			compatible = "allwinner,sun6i-a31-rtc";
+ 			reg = <0x01f00000 0x54>;
+-- 
+2.17.1
