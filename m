@@ -1,49 +1,40 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1839 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbeGSPG0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jul 2018 11:06:26 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <jonathanh@nvidia.com>, <thierry.reding@gmail.com>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v2 0/2] Correct clk_out_mux parents
+Date: Thu, 19 Jul 2018 17:22:53 +0300
+Message-ID: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-To: Amit Daniel Kachhap <amit.kachhap@arm.com>,
- linux-arm-kernel@lists.infradead.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.kachhap@arm.com>
-References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
-Message-ID: <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
-Date: Fri, 27 Jul 2018 09:37:47 -0700
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
-> This fix rounds the clock rate properly by using quotient and not
-> remainder in the calculation. This issue was found while testing HDMI
-> in the Juno platform.
-> =
+This series corrects the parents for the clk_out_mux clocks. Patch 1 does
+some cleanup work to keep checkpatch.pl and the compiler happy. Patch 2
+does the actual work.
 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+v2:
 
-Any Fixes: tag here?
+Fixed const compiler warnings
 
-> ---
->  drivers/clk/clk-scmi.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> =
 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index bb2a6f2..a985bf5 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -60,9 +59,9 @@ static long scmi_clk_round_rate(struct clk_hw *hw, unsi=
-gned long rate,
->  =
+Peter De Schrijver (2):
+  clk: tegra: Fix const for clk_out parents
+  clk: tegra: Correct clk_out_mux parents
 
->         ftmp =3D rate - fmin;
->         ftmp +=3D clk->info->range.step_size - 1; /* to round up */
-> -       step =3D do_div(ftmp, clk->info->range.step_size);
-> +       do_div(ftmp, clk->info->range.step_size);
->  =
+ drivers/clk/tegra/clk-id.h               |  5 +++++
+ drivers/clk/tegra/clk-tegra-fixed.c      | 16 ++++++++++++++
+ drivers/clk/tegra/clk-tegra-pmc.c        | 36 ++++++++++++++++++++++++++++----
+ drivers/clk/tegra/clk-tegra210.c         | 14 ++++++-------
+ include/dt-bindings/clock/tegra210-car.h |  9 ++++++--
+ 5 files changed, 67 insertions(+), 13 deletions(-)
 
-> -       return step * clk->info->range.step_size + fmin;
-> +       return ftmp * clk->info->range.step_size + fmin;
+-- 
+1.9.1
 
-Good catch.
