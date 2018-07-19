@@ -1,67 +1,74 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:17087 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728362AbeGTOp5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 10:45:57 -0400
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Simon Horman <horms@verge.net.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
-Date: Fri, 20 Jul 2018 13:57:22 +0000
-Message-ID: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
- <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
- <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
-In-Reply-To: <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9367 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731663AbeGSQIr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jul 2018 12:08:47 -0400
+Subject: Re: [PATCH] clk: tegra: Fixes for MBIST work around
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <thierry.reding@gmail.com>
+CC: Joseph Lo <josephl@nvidia.com>
+References: <1532010323-28534-1-git-send-email-pdeschrijver@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <68ef3adc-01da-173a-4e6d-f1edb0d2eb0b@nvidia.com>
+Date: Thu, 19 Jul 2018 16:25:03 +0100
 MIME-Version: 1.0
+In-Reply-To: <1532010323-28534-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMzo0MSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjI2IFBNIFBoaWwgRWR3b3J0aHkgd3Jv
-dGU6DQo+ID4gT24gMjAgSnVseSAyMDE4IDEzOjEyLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6
-DQo+ID4gPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjA2IFBNIFBoaWwgRWR3b3J0aHkgIHdy
-b3RlOg0KPiA+ID4gPiBPbiAyMCBKdWx5IDIwMTggMTI6MjEsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3
-cm90ZToNCj4gPiA+ID4gPiBPbiBXZWQsIEp1bCAxOCwgMjAxOCBhdCA0OjM0IFBNIFBoaWwgRWR3
-b3J0aHkgd3JvdGU6DQo+ID4gPiA+ID4gPiBUbyBhdm9pZCBhbGwgU29DIHBlcmlwaGVyYWwgZHJp
-dmVycyBkZWZlcnJpbmcgdGhlaXIgcHJvYmVzLA0KPiA+ID4gPiA+ID4gYm90aCBjbG9jayBhbmQg
-cGluY3RybCBkcml2ZXJzIHNob3VsZCBhbHJlYWR5IGJlIHByb2JlZC4gU2luY2UNCj4gPiA+ID4g
-PiA+IHRoZSBwaW5jdHJsIGRyaXZlciByZXF1aXJlcyBhIGNsb2NrIHRvIGFjY2VzcyB0aGUgcmVn
-aXN0ZXJzLA0KPiA+ID4gPiA+ID4gdGhlIGNsb2NrIGRyaXZlciBzaG91bGQgYmUgcHJvYmVkIGJl
-Zm9yZSB0aGUgcGluY3RybCBkcml2ZXIuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlcmVm
-b3JlLCBtb3ZlIHRoZSBjbG9jayBkcml2ZXIgZnJvbSBzdWJzeXNfaW5pdGNhbGwgdG8NCj4gY29y
-ZV9pbml0Y2FsbC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQaGls
-IEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+ID4gPiA+DQo+ID4gPiA+
-ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+ID4gPiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3
-IQ0KPiA+ID4gPg0KPiA+ID4gPiA+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRy
-aXZlciB1c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KPiA+ID4gPiBObywgdGhlIHBp
-bmN0cmwgZHJpdmVyIHVzZXMgc3Vic3lzX2luaXRjYWxsLCBidXQgcG9zdGNvcmVfaW5pdGNhbGwN
-Cj4gPiA+ID4gb3IgYXJjaF9pbml0Y2FsbCBtYXkgYmUgYmV0dGVyIHRvIG1ha2UgaXQgY2xlYXIg
-YWJvdXQgdGhlIGRlcGVuZGVuY2llcy4NCj4gPiA+DQo+ID4gPiBpZiB0aGUgcGluY3RybCBkcml2
-ZXIgdXNlcyBzdWJzeXNfaW5pdGNhbGwoKSwgLi4uDQo+IA0KPiA+ID4gPiA+ID4gLXN1YnN5c19p
-bml0Y2FsbChyOWEwNmcwMzJfY2xvY2tzX2luaXQpOw0KPiA+ID4gPiA+ID4gK2NvcmVfaW5pdGNh
-bGwocjlhMDZnMDMyX2Nsb2Nrc19pbml0KTsNCj4gPiA+DQo+ID4gPiAuLi4gdXNpbmcgcG9zdGNv
-cmVfaW5pdGNhbGwoKSBvciBhcmNoX2luaXRjYWxsKCkgaGVyZSwgc2hvdWxkIHdvcmsNCj4gPiA+
-IHdpdGggcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCk/DQo+ID4gTm9wZSwgeW91IGhhdmUgdG8gdXNl
-IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigpIGZvciBEVCBiYXNlZCBkcml2ZXJzLg0KPiA+IHN1
-YnN5c19pbml0Y2FsbCBpcyB0aGUgZWFybGllc3QgeW91IGNhbiB1c2UgcGxhdGZvcm1fZHJpdmVy
-X3Byb2JlKCkuDQo+IA0KPiBTbyBkcml2ZXJzL21pc2MvYXRtZWxfdGNsaWIuYyBhbmQgZHJpdmVy
-cy9waW5jdHJsL3BpbmN0cmwtY29oOTAxLmMsIHdoaWNoIHVzZQ0KPiBhcmNoX2luaXRjYWxsKCks
-IGNhbm5vdCB3b3JrPw0KSG93IHRob3NlIGRyaXZlcnMgd29yayBJIGRvIG5vdCBrbm93LiBIb3dl
-dmVyLCBJIHRyaWVkIHdpdGggdGhlIHJ6bjEgY2xvY2sNCmRyaXZlciBhbmQgaXQgZG9lcyBub3Qg
-d29yay4NCg0KPiBJZiB0aGF0IGlzIHJlYWxseSB0cnVlLCB5b3UgY2FuIHN0aWxsIHVzZSBzdWJz
-eXNfaW5pdGNhbGwoKSBpbiB0aGUgY2xvY2sgZHJpdmVyLCBhbmQNCj4gc3Vic3lzX2luaXRjYWxs
-X3N5bmMoKSBpbiB0aGUgcGluY3RybCBkcml2ZXIuDQpUcnVlLCBJJ20gbm90IHN1cmUgaG93IHBl
-b3BsZSBkZWNpZGUgd2hpY2ggaW5pdGNhbGwgdG8gdXNlIGFuZCB3aGV0aGVyIHRoZQ0KX3N5bmMg
-dmFyaWFudHMgb2YgdGhlIGluaXRjYWxscyBoYXZlIGEgc3BlY2lhbCBtZWFuaW5nIG9yIGludGVu
-dGlvbi4gQXMgZmFyIGFzDQpJIGtub3cgdGhleSB3ZXJlIGludHJvZHVjZWQgZm9yIHRocmVhZGVk
-IHByb2Jlcywgc28gYXJlIHdlIHN1cHBvc2VkIHRvDQp1c2UgdGhlbSBmb3IgZHJpdmVyIGRlcGVu
-ZGVuY2llcyBsaWtlIHRoaXM/DQoNCkRvIHlvdSBrbm93IHdoeSB0aGUgcnphMSBwaW5jdHJsIGRy
-aXZlciBpcyBydW5uaW5nIGZyb20gY29yZV9pbml0Y2FsbCgpPw0KDQpUaGFua3MNClBoaWwNCg==
+
+On 19/07/18 15:25, Peter De Schrijver wrote:
+> From: Joseph Lo <josephl@nvidia.com>
+> 
+> Fix some incorrect data in LVL2 offset and bit mask.
+
+Fixes tag?
+ 
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+> index d92f1d7..e71a9ce 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2603,7 +2603,7 @@ struct utmi_clk_param {
+>  	[TEGRA_POWERGATE_MPE] = {
+>  		.handle_lvl2_ovr = tegra210_generic_mbist_war,
+>  		.lvl2_offset = LVL2_CLK_GATE_OVRE,
+> -		.lvl2_mask = BIT(2),
+> +		.lvl2_mask = BIT(29),
+>  	},
+>  	[TEGRA_POWERGATE_SOR] = {
+>  		.handle_lvl2_ovr = tegra210_generic_mbist_war,
+> @@ -2654,14 +2654,14 @@ struct utmi_clk_param {
+>  		.num_clks = ARRAY_SIZE(nvdec_slcg_clkids),
+>  		.clk_init_data = nvdec_slcg_clkids,
+>  		.handle_lvl2_ovr = tegra210_generic_mbist_war,
+> -		.lvl2_offset = LVL2_CLK_GATE_OVRC,
+> +		.lvl2_offset = LVL2_CLK_GATE_OVRE,
+>  		.lvl2_mask = BIT(9) | BIT(31),
+>  	},
+>  	[TEGRA_POWERGATE_NVJPG] = {
+>  		.num_clks = ARRAY_SIZE(nvjpg_slcg_clkids),
+>  		.clk_init_data = nvjpg_slcg_clkids,
+>  		.handle_lvl2_ovr = tegra210_generic_mbist_war,
+> -		.lvl2_offset = LVL2_CLK_GATE_OVRC,
+> +		.lvl2_offset = LVL2_CLK_GATE_OVRE,
+>  		.lvl2_mask = BIT(9) | BIT(31),
+>  	},
+>  	[TEGRA_POWERGATE_AUD] = {
+
+Otherwise looks good to me. 
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
