@@ -1,153 +1,91 @@
-Return-Path: <Claudiu.Beznea@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-To: <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<linux@armlinux.org.uk>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 1/4] ARM: at91: pm: Use ULP0 naming instead of slow clock
-Date: Tue, 17 Jul 2018 11:26:54 +0300
-Message-ID: <1531816017-31986-2-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,  <qianggui.song@amlogic.com>,  Rob Herring <robh@kernel.org>,  Neil Armstrong <narmstrong@baylibre.com>,  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  <mturquette@baylibre.com>,  <linux-kernel@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <bo.yang@amlogic.com>,  <sboyd@kernel.org>,  <jian.hu@amlogic.com>,  <xingyu.chen@amlogic.com>,  <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <sunny.luo@amlogic.com>,  <carlo@caione.org>,  <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+	<1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+	<CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+	<ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+	<1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
+	<7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
+	<7h601be2vk.fsf@baylibre.com>
+	<e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com>
+Date: Thu, 19 Jul 2018 09:53:03 -0500
+In-Reply-To: <e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com> (Yixun Lan's
+	message of "Thu, 19 Jul 2018 22:27:55 +0800")
+Message-ID: <7hk1prmg4w.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: claudiu.beznea@microchip.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Switch to use ULP0 naming instead of slow clock naming for power modes, to
-be as closed as possible to datasheet. This commit does the necessary
-renaming and macro addition to be as close as possible to the namings
-from [1].
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-[1] https://lore.kernel.org/lkml/1470650705-31418-3-git-send-email-wenyou.yang@atmel.com
+> On 07/19/2018 10:06 PM, Kevin Hilman wrote:
+>> Yixun Lan <yixun.lan@amlogic.com> writes:
+>> 
+>> [...]
+>> 
+>>>>
+>>>> As Jerome said, I think consistency is an important goal, so leaving off
+>>>> the "meson-" for drivers/clk is fine with me.
+>>>>
+>>> ok
+>>>
+>>>> Also for consistency, for the rest of the drivers, keeping "meson-" is
+>>>> probably the right thing to do.
+>>>>
+>>> ok, for the above, you are talking about the already exist compatible
+>>> names? or the patches we will push in the future?
+>> 
+>> I'm talking about future patches.
+>> 
+> ok
+>
+>>>> However, patches would be welcome to add compatibles without the "meson"
+>>>> for the rest of the drivers & documentation as well, but please do not
+>>>> remove any compatibles.
+>>>>
+>>> I assume you are talking about the patches in the future we will push?
+>>> to drop the "meson".
+>>>
+>>> I'm confused here, as the above two paragraphs conflict with each other
+>> 
+>> Yeah, what I wrote is confusing, sorry about that.
+>> 
+>> What I mean is that new patches should stay consistent with compatibles
+>> in their existing drivers/subsystems.  That means keeping the "meson-"
+>> prefix for everything except drivers/clk.
+>> 
+> sounds good to me.
+>
+>> In addition to that, patches would be welcome for *adding* compatibles
+>> without "meson" to all the current drivers.
+>> 
+> not sure if I parse above correctly, so let me rephrase..
+>
+> for "all the current drivers", do you mean all the drivers which already
+> accepted at mainline kernel, which are mmc, uart, spi, i2c ..
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- arch/arm/mach-at91/pm.c         | 18 +++++++++---------
- arch/arm/mach-at91/pm.h         |  3 ++-
- arch/arm/mach-at91/pm_suspend.S | 12 ++++++------
- 3 files changed, 17 insertions(+), 16 deletions(-)
+Yes.
 
-diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
-index 849014c01cf4..d43f00a715d7 100644
---- a/arch/arm/mach-at91/pm.c
-+++ b/arch/arm/mach-at91/pm.c
-@@ -40,15 +40,15 @@ extern void at91_pinctrl_gpio_resume(void);
- #endif
- 
- static const match_table_t pm_modes __initconst = {
--	{ 0, "standby" },
--	{ AT91_PM_SLOW_CLOCK, "ulp0" },
-+	{ AT91_PM_STANDBY, "standby" },
-+	{ AT91_PM_ULP0, "ulp0" },
- 	{ AT91_PM_BACKUP, "backup" },
- 	{ -1, NULL },
- };
- 
- static struct at91_pm_data pm_data = {
--	.standby_mode = 0,
--	.suspend_mode = AT91_PM_SLOW_CLOCK,
-+	.standby_mode = AT91_PM_STANDBY,
-+	.suspend_mode = AT91_PM_ULP0,
- };
- 
- #define at91_ramc_read(id, field) \
-@@ -145,7 +145,7 @@ static int at91_pm_verify_clocks(void)
-  */
- int at91_suspend_entering_slow_clock(void)
- {
--	return (pm_data.mode >= AT91_PM_SLOW_CLOCK);
-+	return (pm_data.mode >= AT91_PM_ULP0);
- }
- EXPORT_SYMBOL(at91_suspend_entering_slow_clock);
- 
-@@ -186,7 +186,7 @@ static void at91_pm_suspend(suspend_state_t state)
-  * event sources; and reduces DRAM power.  But otherwise it's identical to
-  * PM_SUSPEND_ON: cpu idle, and nothing fancy done with main or cpu clocks.
-  *
-- * AT91_PM_SLOW_CLOCK is like STANDBY plus slow clock mode, so drivers must
-+ * AT91_PM_ULP0 is like STANDBY plus slow clock mode, so drivers must
-  * suspend more deeply, the master clock switches to the clk32k and turns off
-  * the main oscillator
-  *
-@@ -204,7 +204,7 @@ static int at91_pm_enter(suspend_state_t state)
- 		/*
- 		 * Ensure that clocks are in a valid state.
- 		 */
--		if ((pm_data.mode >= AT91_PM_SLOW_CLOCK) &&
-+		if (pm_data.mode >= AT91_PM_ULP0 &&
- 		    !at91_pm_verify_clocks())
- 			goto error;
- 
-@@ -546,9 +546,9 @@ static void __init at91_pm_backup_init(void)
- 	pm_data.sfrbu = NULL;
- 
- 	if (pm_data.standby_mode == AT91_PM_BACKUP)
--		pm_data.standby_mode = AT91_PM_SLOW_CLOCK;
-+		pm_data.standby_mode = AT91_PM_ULP0;
- 	if (pm_data.suspend_mode == AT91_PM_BACKUP)
--		pm_data.suspend_mode = AT91_PM_SLOW_CLOCK;
-+		pm_data.suspend_mode = AT91_PM_ULP0;
- }
- 
- struct pmc_info {
-diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
-index f95d31496f08..c44eaf17db86 100644
---- a/arch/arm/mach-at91/pm.h
-+++ b/arch/arm/mach-at91/pm.h
-@@ -21,7 +21,8 @@
- #define AT91_MEMCTRL_SDRAMC	1
- #define AT91_MEMCTRL_DDRSDR	2
- 
--#define	AT91_PM_SLOW_CLOCK	0x01
-+#define	AT91_PM_STANDBY		0x00
-+#define AT91_PM_ULP0		0x01
- #define	AT91_PM_BACKUP		0x02
- 
- #ifndef __ASSEMBLY__
-diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index daca91feea6a..821322d1a64d 100644
---- a/arch/arm/mach-at91/pm_suspend.S
-+++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -112,8 +112,8 @@ ENTRY(at91_pm_suspend_in_sram)
- 	bl	at91_sramc_self_refresh
- 
- 	ldr	r0, .pm_mode
--	cmp	r0, #AT91_PM_SLOW_CLOCK
--	beq	slow_clock
-+	cmp	r0, #AT91_PM_ULP0
-+	beq	ulp0_mode
- 	cmp	r0, #AT91_PM_BACKUP
- 	beq	backup_mode
- 
-@@ -122,8 +122,8 @@ ENTRY(at91_pm_suspend_in_sram)
- 	at91_cpu_idle
- 	b	exit_suspend
- 
--slow_clock:
--	bl	at91_slowck_mode
-+ulp0_mode:
-+	bl	at91_ulp0_mode
- 	b	exit_suspend
- backup_mode:
- 	bl	at91_backup_mode
-@@ -151,7 +151,7 @@ ENTRY(at91_backup_mode)
- 	str	tmp1, [r0, #0]
- ENDPROC(at91_backup_mode)
- 
--ENTRY(at91_slowck_mode)
-+ENTRY(at91_ulp0_mode)
- 	ldr	pmc, .pmc_base
- 
- 	/* Save Master clock setting */
-@@ -212,7 +212,7 @@ ENTRY(at91_slowck_mode)
- 	wait_mckrdy
- 
- 	mov	pc, lr
--ENDPROC(at91_slowck_mode)
-+ENDPROC(at91_ulp0_mode)
- 
- /*
-  * void at91_sramc_self_refresh(unsigned int is_active)
--- 
-2.7.4
+> all of them follow "amlogic,meson-${SOC}-${FUNCTION}", so do you propose
+> to add compatbiles like "amlogic,${SOC}-${FUNCTION}" ?
+
+Yes, but that's an optional future cleanup.
+
+> take i2c for example, there is "amlogic,meson-axg-i2c" already, do you
+> want to add another "amlogic,axg-i2c" ? I feel this will adding more
+> confusion..
+
+Possibly, but it will provide a path to remove the "meson-" prefix in
+the future if we would like.
+
+> How about only following the "amlogic,${SOC}-${FUNCTION}" syntax in the
+> new added drivers in the future, for example NAND, PCIE driver which we
+> want to push (those drivers doesn't exist in current mainline kernel).
+
+For new drivers, it's fine to not use the "meson-" prefix at all.
+
+Kevin
