@@ -1,133 +1,89 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 1/9] clk: actions: Cache regmap info in private clock descriptor
-Date: Sat, 28 Jul 2018 00:15:19 +0530
-Message-Id: <20180727184527.13287-2-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/8] Tegra20 External Memory Controller driver
+Date: Thu, 19 Jul 2018 16:21:24 +0300
+Message-Id: <20180719132132.16153-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the reset controller, regmap info needs to
-be cached in the private clock descriptor, owl_clk_desc. Hence,
-save that and also make the clock descriptor struct non const.
+Hello,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/owl-common.c | 3 ++-
- drivers/clk/actions/owl-common.h | 3 ++-
- drivers/clk/actions/owl-s700.c   | 4 ++--
- drivers/clk/actions/owl-s900.c   | 4 ++--
- 4 files changed, 8 insertions(+), 6 deletions(-)
+Couple years ago the Tegra20 EMC driver was removed from the kernel
+due to incompatible changes in the Tegra's clock driver. This patchset
+introduces a modernized EMC driver. Currently the sole purpose of the
+driver is to initialize DRAM frequency to maximum rate during of the
+kernels boot-up. Later we may consider implementing dynamic memory
+frequency scaling, utilizing functionality provided by this driver.
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 61c1071b5180..32dd29e0a37e 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -39,7 +39,7 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
- }
- 
- int owl_clk_regmap_init(struct platform_device *pdev,
--			 const struct owl_clk_desc *desc)
-+			struct owl_clk_desc *desc)
- {
- 	void __iomem *base;
- 	struct regmap *regmap;
-@@ -57,6 +57,7 @@ int owl_clk_regmap_init(struct platform_device *pdev,
- 	}
- 
- 	owl_clk_set_regmap(desc, regmap);
-+	desc->regmap = regmap;
- 
- 	return 0;
- }
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-index 4fd726ec54a6..56f01f7774aa 100644
---- a/drivers/clk/actions/owl-common.h
-+++ b/drivers/clk/actions/owl-common.h
-@@ -26,6 +26,7 @@ struct owl_clk_desc {
- 	struct owl_clk_common		**clks;
- 	unsigned long			num_clks;
- 	struct clk_hw_onecell_data	*hw_clks;
-+	struct regmap			*regmap;
- };
- 
- static inline struct owl_clk_common *
-@@ -35,7 +36,7 @@ static inline struct owl_clk_common *
- }
- 
- int owl_clk_regmap_init(struct platform_device *pdev,
--			 const struct owl_clk_desc *desc);
-+			struct owl_clk_desc *desc);
- int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
- 
- #endif /* _OWL_COMMON_H_ */
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-index 5e9531392ee5..e7cacd677275 100644
---- a/drivers/clk/actions/owl-s700.c
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -569,7 +569,7 @@ static struct clk_hw_onecell_data s700_hw_clks = {
- 		.num    = CLK_NR_CLKS,
- };
- 
--static const struct owl_clk_desc s700_clk_desc = {
-+static struct owl_clk_desc s700_clk_desc = {
- 	.clks       = s700_clks,
- 	.num_clks   = ARRAY_SIZE(s700_clks),
- 
-@@ -578,7 +578,7 @@ static const struct owl_clk_desc s700_clk_desc = {
- 
- static int s700_clk_probe(struct platform_device *pdev)
- {
--	const struct owl_clk_desc *desc;
-+	struct owl_clk_desc *desc;
- 
- 	desc = &s700_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
-diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
-index 7f60ed6afe63..bb7ee872d316 100644
---- a/drivers/clk/actions/owl-s900.c
-+++ b/drivers/clk/actions/owl-s900.c
-@@ -684,7 +684,7 @@ static struct clk_hw_onecell_data s900_hw_clks = {
- 	.num	= CLK_NR_CLKS,
- };
- 
--static const struct owl_clk_desc s900_clk_desc = {
-+static struct owl_clk_desc s900_clk_desc = {
- 	.clks	    = s900_clks,
- 	.num_clks   = ARRAY_SIZE(s900_clks),
- 
-@@ -693,7 +693,7 @@ static const struct owl_clk_desc s900_clk_desc = {
- 
- static int s900_clk_probe(struct platform_device *pdev)
- {
--	const struct owl_clk_desc *desc;
-+	struct owl_clk_desc *desc;
- 
- 	desc = &s900_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
+Changelog:
+
+v4:
+	- Fixed "bad of_node_put()" error which was revealed by enabling
+	  some extra kernel debug config options.
+
+	- The "emc-table" DT nodes are now parsed starting from the "emc"
+	  node instead of the DT root.
+
+	- Adjusted code comment in the "Turn EMC clock gate into divider"
+	  patch as was suggested by Stephen Boyd to the v3.
+
+v3:
+	- Handle "nvidia,use-ram-code" DT property, its handling was missed
+	  in the previous versions.
+
+	- Honor "emc-tables" DT node naming which is explicitly specified
+	  in the DT binding, also was missed in the previous versions.
+
+	- Two new DT binding patches: one adds the EMC clock property,
+	  other relocates the binding doc file to the appropriate directory.
+	  One new patch that adds EMC clock property to the DTS file.
+
+	- Addressed v2 review comments from Thierry Reding. Driver does not
+	  preserve backwards compatibility with older device tree binding.
+
+	- The PLL_M and PLL_P clocks are kept internal to the driver because
+	  after some more considering I couldn't find a really good reason why
+	  these clocks should be in the device tree.
+
+	- Some minor cleanups and fixes in the drivers code.
+
+v2:
+	- Minor code cleanups like consistent use of writel_relaxed instead
+	  of non-relaxed version, reworded error messages, etc.
+
+	- Factored out use_pllm_ud bit checking into a standalone patch for
+	  consistency.
+
+Dmitry Osipenko (8):
+  dt: bindings: tegra20-emc: Document interrupt property
+  dt: bindings: tegra20-emc: Document clock property
+  dt: bindings: Move tegra20-emc binding to memory-controllers directory
+  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+  ARM: dts: tegra20: Add clock entry to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../nvidia,tegra20-emc.txt                    |   4 +
+ arch/arm/boot/dts/tegra20.dtsi                |   2 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 575 ++++++++++++++++++
+ 6 files changed, 628 insertions(+), 10 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
 -- 
-2.17.1
+2.18.0
