@@ -1,110 +1,342 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 1/3] clk: meson: clk-pll: add enable bit
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+References: <20180717095617.12240-1-jbrunet@baylibre.com>
+ <20180717095617.12240-2-jbrunet@baylibre.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Message-ID: <82297468-1729-099d-72cc-88072759c797@baylibre.com>
+Date: Thu, 19 Jul 2018 10:33:44 +0200
 MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Neil Armstrong <narmstrong@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, yixun.lan@amlogic.com,
- linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@bootlin.com>,
- Liang Yang <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>, Carlo Caione <carlo@caione.org>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
- <20180712211244.11428-3-yixun.lan@amlogic.com>
- <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
- <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
-Message-ID: <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
-Date: Fri, 27 Jul 2018 09:41:40 -0700
+In-Reply-To: <20180717095617.12240-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Yixun Lan (2018-07-27 07:52:23)
-> HI Stephen:
-> =
+On 17/07/2018 11:56, Jerome Brunet wrote:
+> Add the enable the bit of the pll clocks.
+> These pll clocks may be disabled but we can't model this as an external
+> gate since the pll needs to lock when enabled.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/axg.c     | 28 ++++++++++++++++++++++++---
+>  drivers/clk/meson/clk-pll.c | 47 ++++++++++++++++++++++++++++++++++++++++-----
+>  drivers/clk/meson/clkc.h    |  1 +
+>  drivers/clk/meson/gxbb.c    | 32 ++++++++++++++++++++++++++++--
+>  drivers/clk/meson/meson8b.c | 15 +++++++++++++++
+>  5 files changed, 113 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index 00ce62ad6416..6d8976554656 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -24,6 +24,11 @@ static DEFINE_SPINLOCK(meson_clk_lock);
+>  
+>  static struct clk_regmap axg_fixed_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_MPLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_MPLL_CNTL,
+>  			.shift   = 0,
+> @@ -65,6 +70,11 @@ static struct clk_regmap axg_fixed_pll = {
+>  
+>  static struct clk_regmap axg_sys_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_SYS_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_SYS_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -197,11 +207,15 @@ static const struct reg_sequence axg_gp0_init_regs[] = {
+>  	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+>  	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+>  	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
+> -	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+>  };
+>  
+>  static struct clk_regmap axg_gp0_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_GP0_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_GP0_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -250,11 +264,15 @@ static const struct reg_sequence axg_hifi_init_regs[] = {
+>  	{ .reg = HHI_HIFI_PLL_CNTL3,	.def = 0x0a6a3a88 },
+>  	{ .reg = HHI_HIFI_PLL_CNTL4,	.def = 0xc000004d },
+>  	{ .reg = HHI_HIFI_PLL_CNTL5,	.def = 0x00058000 },
+> -	{ .reg = HHI_HIFI_PLL_CNTL,	.def = 0x40010250 },
+>  };
+>  
+>  static struct clk_regmap axg_hifi_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_HIFI_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_HIFI_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -637,7 +655,6 @@ static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
+>  };
+>  
+>  static const struct reg_sequence axg_pcie_init_regs[] = {
+> -	{ .reg = HHI_PCIE_PLL_CNTL,	.def = 0x400106c8 },
+>  	{ .reg = HHI_PCIE_PLL_CNTL1,	.def = 0x0084a2aa },
+>  	{ .reg = HHI_PCIE_PLL_CNTL2,	.def = 0xb75020be },
+>  	{ .reg = HHI_PCIE_PLL_CNTL3,	.def = 0x0a47488e },
+> @@ -648,6 +665,11 @@ static const struct reg_sequence axg_pcie_init_regs[] = {
+>  
+>  static struct clk_regmap axg_pcie_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_PCIE_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_PCIE_PLL_CNTL,
+>  			.shift   = 0,
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 3e04617ac47f..8aaefe67025f 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -185,12 +185,45 @@ static void meson_clk_pll_init(struct clk_hw *hw)
+>  	}
+>  }
+>  
+> +static int meson_clk_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> +
+> +	/* Make sure the pll is in reset */
+> +	meson_parm_write(clk->map, &pll->rst, 1);
+> +
+> +	/* Enable the pll */
+> +	meson_parm_write(clk->map, &pll->en, 1);
+> +
+> +	/* Take the pll out reset */
+> +	meson_parm_write(clk->map, &pll->rst, 0);
+> +
+> +	if (meson_clk_pll_wait_lock(hw))
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+> +static void meson_clk_pll_disable(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> +
+> +	/* Put the pll is in reset */
+> +	meson_parm_write(clk->map, &pll->rst, 1);
+> +
+> +	/* Disable the pll */
+> +	meson_parm_write(clk->map, &pll->en, 0);
+> +}
+> +
+>  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  				  unsigned long parent_rate)
+>  {
+>  	struct clk_regmap *clk = to_clk_regmap(hw);
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  	const struct pll_rate_table *pllt;
+> +	unsigned int enabled;
+>  	unsigned long old_rate;
+>  	u16 frac = 0;
+>  
+> @@ -203,8 +236,9 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (!pllt)
+>  		return -EINVAL;
+>  
+> -	/* Put the pll in reset to write the params */
+> -	meson_parm_write(clk->map, &pll->rst, 1);
+> +	enabled = meson_parm_read(clk->map, &pll->en);
+> +	if (enabled)
+> +		meson_clk_pll_disable(hw);
+>  
+>  	meson_parm_write(clk->map, &pll->n, pllt->n);
+>  	meson_parm_write(clk->map, &pll->m, pllt->m);
+> @@ -221,10 +255,11 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		meson_parm_write(clk->map, &pll->frac, frac);
+>  	}
+>  
+> -	/* make sure the reset is cleared at this point */
+> -	meson_parm_write(clk->map, &pll->rst, 0);
+> +	/* If the pll is stopped, bail out now */
+> +	if (!enabled)
+> +		return 0;
+>  
+> -	if (meson_clk_pll_wait_lock(hw)) {
+> +	if (meson_clk_pll_enable(hw)) {
+>  		pr_warn("%s: pll did not lock, trying to restore old rate %lu\n",
+>  			__func__, old_rate);
+>  		/*
+> @@ -244,6 +279,8 @@ const struct clk_ops meson_clk_pll_ops = {
+>  	.recalc_rate	= meson_clk_pll_recalc_rate,
+>  	.round_rate	= meson_clk_pll_round_rate,
+>  	.set_rate	= meson_clk_pll_set_rate,
+> +	.enable		= meson_clk_pll_enable,
+> +	.disable	= meson_clk_pll_disable
+>  };
+>  
+>  const struct clk_ops meson_clk_pll_ro_ops = {
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 24cec16b6038..c2ee37a78ceb 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -63,6 +63,7 @@ struct pll_rate_table {
+>  #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+>  
+>  struct meson_clk_pll_data {
+> +	struct parm en;
+>  	struct parm m;
+>  	struct parm n;
+>  	struct parm frac;
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 86d3ae58e84c..5ed34566917c 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -177,6 +177,11 @@ static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
+>  
+>  static struct clk_regmap gxbb_fixed_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_MPLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_MPLL_CNTL,
+>  			.shift   = 0,
+> @@ -230,6 +235,11 @@ static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
+>  
+>  static struct clk_regmap gxbb_hdmi_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_HDMI_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_HDMI_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -282,6 +292,11 @@ static struct clk_regmap gxbb_hdmi_pll = {
+>  
+>  static struct clk_regmap gxl_hdmi_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_HDMI_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_HDMI_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -340,6 +355,11 @@ static struct clk_regmap gxl_hdmi_pll = {
+>  
+>  static struct clk_regmap gxbb_sys_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_SYS_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_SYS_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -379,11 +399,15 @@ static const struct reg_sequence gxbb_gp0_init_regs[] = {
+>  	{ .reg = HHI_GP0_PLL_CNTL2,	.def = 0x69c80000 },
+>  	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a5590c4 },
+>  	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0x0000500d },
+> -	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x4a000228 },
+>  };
+>  
+>  static struct clk_regmap gxbb_gp0_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_GP0_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_GP0_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -428,11 +452,15 @@ static const struct reg_sequence gxl_gp0_init_regs[] = {
+>  	{ .reg = HHI_GP0_PLL_CNTL3,	.def = 0x0a59a288 },
+>  	{ .reg = HHI_GP0_PLL_CNTL4,	.def = 0xc000004d },
+>  	{ .reg = HHI_GP0_PLL_CNTL5,	.def = 0x00078000 },
+> -	{ .reg = HHI_GP0_PLL_CNTL,	.def = 0x40010250 },
+>  };
+>  
+>  static struct clk_regmap gxl_gp0_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_GP0_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_GP0_PLL_CNTL,
+>  			.shift   = 0,
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 7447d96a265f..fd4c414893f5 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -96,6 +96,11 @@ static struct clk_fixed_rate meson8b_xtal = {
+>  
+>  static struct clk_regmap meson8b_fixed_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_MPLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_MPLL_CNTL,
+>  			.shift   = 0,
+> @@ -138,6 +143,11 @@ static struct clk_regmap meson8b_fixed_pll = {
+>  
+>  static struct clk_regmap meson8b_vid_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_VID_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_VID_PLL_CNTL,
+>  			.shift   = 0,
+> @@ -175,6 +185,11 @@ static struct clk_regmap meson8b_vid_pll = {
+>  
+>  static struct clk_regmap meson8b_sys_pll = {
+>  	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = HHI_SYS_PLL_CNTL,
+> +			.shift   = 30,
+> +			.width   = 1,
+> +		},
+>  		.m = {
+>  			.reg_off = HHI_SYS_PLL_CNTL,
+>  			.shift   = 0,
+> 
 
-> On 07/26/2018 11:20 PM, Stephen Boyd wrote:
-> > Quoting Yixun Lan (2018-07-12 14:12:44)
-> >> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc=
-.c
-> >> new file mode 100644
-> >> index 000000000000..36c4c7cd69a6
-> >> --- /dev/null
-> >> +++ b/drivers/clk/meson/mmc-clkc.c
-> >> @@ -0,0 +1,367 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Amlogic Meson MMC Sub Clock Controller Driver
-> >> + *
-> >> + * Copyright (c) 2017 Baylibre SAS.
-> >> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> >> + *
-> >> + * Copyright (c) 2018 Amlogic, inc.
-> >> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> >> + */
-> >> +
-> >> +#include <linux/clk.h>
-> > =
+This makes the pll reset path much clearer !
 
-> > Is this include used?
-> > =
-
-> this is needed by clk_get_rate()
-> see drivers/clk/meson/mmc-clkc.c:204
-
-Hmm ok. That's unfortunate.
-
-> =
-
-> > =
-
-> >> +       init.num_parents =3D 1;
-> >> +
-> >> +       clk =3D mmc_clkc_register_clk(dev, map, &init, suffix, data);
-> >> +       if (IS_ERR(clk))
-> >> +               dev_err(dev, "Core %s clock registration failed\n", su=
-ffix);
-> >> +
-> >> +       kfree(parent);
-> >> +       return clk;
-> >> +}
-> >> +
-> >> +static int mmc_clkc_probe(struct platform_device *pdev)
-> >> +{
-> >> +       struct clk_hw_onecell_data *onecell_data;
-> >> +       struct device *dev =3D &pdev->dev;
-> >> +       struct mmc_clkc_data *data;
-> >> +       struct regmap *map;
-> >> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
-> >> +
-> >> +       data =3D (struct mmc_clkc_data *)of_device_get_match_data(dev);
-> > =
-
-> > This cast is unnecessary. Pleas remove.
-> > =
-
-> Ok, I will try to fix in next version
-> =
-
-> =
-
-> this was trying to silence the =E2=80=99const=E2=80=98 cast warning [1]
-> I could make a 'const struct mmc_clkc_data *data' declare, but need to
-> fix further cast warning issue..
-> =
-
-> =
-
-> [1] drivers/clk/meson/mmc-clkc.c: In function =E2=80=98mmc_clkc_probe=E2=
-=80=99:
-> drivers/clk/meson/mmc-clkc.c:302:7: warning: assignment discards =E2=80=
-=98const=E2=80=99
-> qualifier from pointer target type [-Wdiscarded-qualifiers]
->   data =3D of_device_get_match_data(dev);
->        ^
-
-Yes. Casting away const is a bad idea.
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
