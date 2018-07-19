@@ -1,78 +1,35 @@
-Return-Path: <viresh.kumar@linaro.org>
-Return-Path: <viresh.kumar@linaro.org>
-Date: Wed, 4 Jul 2018 12:25:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: grahamr@codeaurora.org
-Cc: linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, sboyd@kernel.org,
-	mturquette@baylibre.com, dianders@chromium.org,
-	ulf.hansson@linaro.org, Taniya Das <tdas@codeaurora.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>, vincent.guittot@linaro.org,
-	amit.kucheria@linaro.org
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-Message-ID: <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1531990745.26720.34.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll
+ tables
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Thu, 19 Jul 2018 10:59:05 +0200
+In-Reply-To: <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
+References: <20180717095617.12240-1-jbrunet@baylibre.com>
+         <20180717095617.12240-4-jbrunet@baylibre.com>
+         <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 18-06-18, 13:44, grahamr@codeaurora.org wrote:
-> The second concern above is the more challenging.  A proposal to use OPP to
-> manage core DVFS has been made, but suffers from three major problems:
+On Thu, 2018-07-19 at 10:44 +0200, Neil Armstrong wrote:
+> We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
 
-A bit of history first on how things evolved. The OPP core was
-initially designed to be a data provider, which can be used by other
-framework/drivers like cpufreq, etc.
+I was thinking about this too.
+I did not went for it because it would mean yet another rework of the pll
+driver, which I did not had time to do now.
 
-Sometime back we realized that we can get rid of some code that is
-duplicated across drivers but is essentially doing the same thing,
-programming clock and regulators. We looked at the best place to put
-that functionality and OPP core was the place we chose.
+I suspect that the min and max value of 'm' the pll can lock on might depend on
+the input rate of the DCO, so past the 'n' prediv.
 
-> first, it requires clients to use OPP for setting their rate, but the clock
-> framework for other control (i.e. enable or disable). Not only is this
-> confusing and (I would claim) ugly, it would also be very easy for clients
-> to accidentally call clk_set_rate directly instead of going via OPP,
-> resulting in invalid DVFS operating points.
+So, to replace the tuple (m, n) table with ranges, I think it would be best to
+take the predivider 'n' out first and try to clarify the contraints on the input
+rate of the DCO with amlogic ... we can also try and see ;)
 
-I agree to this problem. It would be more correct and convenient to
-have things controlled by a single entity.
-
-> The second problem is that OPP
-> does not allow for removing a voltage vote entirely when the clock is
-> disabled - which is a fundamental requirement for the design to be power
-> optimal.
-
-This should be done by the entity which takes care of
-enabling/disabling the resources and its the drivers for now. So yeah
-it is the same problem as the first one I would say.
-
-> The third problem is that semantically using OPP for requesting
-> specific functional frequencies (i.e. for a  serial bus) is an abuse of that
-> framework.  It requires the clients to find the "performance level" that
-> matches the specific frequency they require, then request that performance
-> level - when what they really want is to "set rate" on the clock to a
-> specific, known, frequency.
-
-This is the prototype of that routine:
-
-int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
-
-All we need is the target frequency and not an OPP.
-
-Maybe we can solve the problems you raised with the OPP core like
-this:
-
-- On a call to dev_pm_opp_set_rate(), we check the currently cached
-  frequency value. If it is unknown or 0, we call clk_enable() as
-  well..
-
-- When the drivers want things to shut down, they call
-  dev_pm_opp_set_rate(dev, 0) and on this we drop regulator vote, etc,
-  and call clk_disable().
-
-Will that be acceptable to everyone ?
-
--- 
-viresh
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
