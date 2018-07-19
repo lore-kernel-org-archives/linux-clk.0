@@ -1,36 +1,79 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754214AbeGIGWB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:22:01 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180615095107.24610-2-o.rempel@pengutronix.de>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-2-o.rempel@pengutronix.de>
-Message-ID: <153111732039.143105.423209769011221751@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 1/4] clk: imx7d: add IMX7D_MU_ROOT_CLK
-Date: Sun, 08 Jul 2018 23:22:00 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sravanhome@gmail.com>
+Return-Path: <sravanhome@gmail.com>
+From: Saravanan Sekar <sravanhome@gmail.com>
+To: afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org,
+	sboyd@kernel.org
+Cc: mark.rutland@arm.com,
+	devicetree@vger.kernel.org,
+	linux@cubietech.com,
+	sravanhome@gmail.com,
+	support@cubietech.com,
+	catalin.marinas@arm.com,
+	mturquette@baylibre.com,
+	will.deacon@arm.com,
+	linux-kernel@vger.kernel.org,
+	thomas.liau@actions-semi.com,
+	darren@cubietech.com,
+	robh+dt@kernel.org,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mp-cs@actions-semi.com
+Subject: [PATCH v7 4/5] arm64: dts: actions: Add Clock Management Unit for S700
+Date: Thu, 19 Jul 2018 11:06:48 +0200
+Message-Id: <20180719090649.12460-5-sravanhome@gmail.com>
+In-Reply-To: <20180719090649.12460-1-sravanhome@gmail.com>
+References: <20180719090649.12460-1-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Oleksij Rempel (2018-06-15 02:51:04)
-> This clock is needed for iMX mailbox driver
-> =
+Add Clock Management Unit for Actions Semi S700 SoC.
 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-but I think you'll want some imx maintainer to review it still.
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 66dd5309f0a2..59d29e4ca404 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/actions,s700-cmu.h>
+ 
+ / {
+ 	compatible = "actions,s700";
+@@ -87,6 +88,12 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+@@ -153,6 +160,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		cmu: clock-controller@e0168000 {
++			compatible = "actions,s700-cmu";
++			reg = <0x0 0xe0168000 0x0 0x1000>;
++			clocks = <&hosc>, <&losc>;
++			#clock-cells = <1>;
++		};
++
+ 		sps: power-controller@e01b0100 {
+ 			compatible = "actions,s700-sps";
+ 			reg = <0x0 0xe01b0100 0x0 0x100>;
+-- 
+2.14.4
