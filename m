@@ -1,141 +1,162 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:38251 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730204AbeG0PWi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jul 2018 11:22:38 -0400
-Date: Fri, 27 Jul 2018 16:00:32 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI
- output on A64 boards w/ HDMI
-Message-ID: <20180727140032.go6f3dwzxrzfstzj@flea>
-References: <20180726171257.6688-1-icenowy@aosc.io>
- <20180726171257.6688-11-icenowy@aosc.io>
- <20180727125615.ju23ecgm6y4rz7p5@flea>
- <8DF4600E-DFE4-47CD-B541-FFDD903A65FB@aosc.io>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+To: Douglas Anderson <dianders@chromium.org>, sboyd@kernel.org,
+ andy.gross@linaro.org
+Cc: girishm@codeaurora.org, anischal@codeaurora.org,
+ bjorn.andersson@linaro.org, Michael Turquette <mturquette@baylibre.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ David Brown <david.brown@linaro.org>, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20180718180431.48580-1-dianders@chromium.org>
+ <20180718180431.48580-3-dianders@chromium.org>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <6248e3cc-f458-7dec-143c-7d2aeccde590@codeaurora.org>
+Date: Thu, 19 Jul 2018 16:34:49 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v7khuw5dmvnh5md2"
-In-Reply-To: <8DF4600E-DFE4-47CD-B541-FFDD903A65FB@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180718180431.48580-3-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Doug,
 
---v7khuw5dmvnh5md2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please find my comments inline.
 
-On Fri, Jul 27, 2018 at 09:26:11PM +0800, Icenowy Zheng wrote:
->=20
->=20
-> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8827=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
-8:56:15, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
-> >On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
-> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> index 1b9b92e541d2..1b972bade9f6 100644
-> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> >> @@ -62,6 +62,21 @@
-> >>  	chosen {
-> >>  		stdout-path =3D "serial0:115200n8";
-> >>  	};
-> >> +
-> >> +	connector {
-> >> +		compatible =3D "hdmi-connector";
-> >> +		type =3D "a";
-> >> +
-> >> +		port {
-> >> +			hdmi_con_in: endpoint {
-> >> +				remote-endpoint =3D <&hdmi_out_con>;
-> >> +			};
-> >> +		};
-> >> +	};
-> >> +};
-> >> +
-> >> +&de {
-> >> +	status =3D "okay";
-> >>  };
-> >> =20
-> >>  &ehci0 {
-> >> @@ -82,6 +97,17 @@
-> >> =20
-> >>  };
-> >> =20
-> >> +&hdmi {
-> >> +	hdmi-supply =3D <&reg_dldo1>;
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&hdmi_out {
-> >> +	hdmi_out_con: endpoint {
-> >> +		remote-endpoint =3D <&hdmi_con_in>;
-> >> +	};
-> >> +};
-> >> +
-> >>  &i2c1 {
-> >>  	pinctrl-names =3D "default";
-> >>  	pinctrl-0 =3D <&i2c1_pins>;
-> >> @@ -99,6 +125,10 @@
-> >>  	};
-> >>  };
-> >> =20
-> >> +&mixer1 {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >>  &mmc0 {
-> >>  	pinctrl-names =3D "default";
-> >>  	pinctrl-0 =3D <&mmc0_pins>;
-> >> @@ -238,6 +268,10 @@
-> >>  	status =3D "disabled";
-> >>  };
-> >> =20
-> >> +&tcon1 {
-> >> +	status =3D "okay";
-> >> +};
-> >
-> >Is it working or not on the pine64?
->=20
-> Not tested yet, as my main A64 device is Pine A64-LTS now.
+On 7/18/2018 11:34 PM, Douglas Anderson wrote:
+> Add both the interface and core clock.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+>   drivers/clk/qcom/gcc-sdm845.c | 73 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 73 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index 0f694ed4238a..2ee96f9bc217 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
+>   	"core_bi_pll_test_se",
+>   };
+>   
+> +static const struct parent_map gcc_parent_map_9[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_GPLL0_OUT_MAIN, 1 },
+> +	{ P_GPLL0_OUT_EVEN, 6 },
+> +	{ P_SLEEP_CLK, 7 },
 
-It was last reported as broken, so it's better to leave it out of that
-patch until someone figures it out.
+SRC 7 has 'core_bi_pll_test_se' and not 'sleep_clk'.
 
-Thanks!
-Maxime
+Please use the 'gcc_parent_map_0'
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +};
+> +
+> +static const char * const gcc_parent_names_9[] = {
+> +	"bi_tcxo",
+> +	"gpll0",
+> +	"gpll0_out_even",
+> +	"core_pi_sleep_clk",
+> +};
+> +
+>   static struct clk_alpha_pll gpll0 = {
+>   	.offset = 0x0,
+>   	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> @@ -358,6 +372,31 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
+>   	},
+>   };
+>   
+> +static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+> +	F(75000000, P_GPLL0_OUT_EVEN, 4, 0, 0),
+> +	F(100000000, P_GPLL0_OUT_EVEN, 3, 0, 0),
 
---v7khuw5dmvnh5md2
-Content-Type: application/pgp-signature; name="signature.asc"
+Is SW planning to use this frequency?
 
------BEGIN PGP SIGNATURE-----
+> +	F(150000000, P_GPLL0_OUT_EVEN, 2, 0, 0),
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbJW0ACgkQ0rTAlCFN
-r3QllA//exZmfAVzyiiH1jm4uSPE1bgA7XZC7jlWLVRwhkm4ZHCIjnCrSof1b4Up
-1ndnaL8fujY+Tv5ZzclTb51hJ0r4pI30MehokD8gakgn59pc3BI0P+wpJKxDafsp
-Ba7494kwY55iyJU/xlPHpwcll0od4J+5qMT3qie6GGqH0yIkkvz2iiWZtTod89Dd
-l5vdmtYX+arqo+XA1E8uDzG/0Rlu24UkKCE/rKqDXXIsEPfTvz9AHaAUmYDw1glI
-5pyWbHweasNtsiBQJMRAIvkVMY6HwDVkVRmigz6Rt6oxzKPzOZ2tfamXGmDSjEfp
-knckzERBdco0RsB/29Kze1w3C1VcO1wN7JJcRWPMEqD5ZtSNJRe32JV40JiwKcgH
-A9Vw8NdmqQp8UdUs6mj2JmPzPYbDp6g/kJtC+TUxJnuOYb2r9gJX++mIKueUa6hC
-Reqx5DQdY3KRhQTeQkjnbuF3+9ipyeT2Tzn48LnIG6gjns6EVTefAT1JKuRii+Pz
-LsZVA129CJsTrAexRN1GL9zzuJuwmnmqu/+d0PdfW+CSXS0WKrb+ziyZcSwM4wPR
-U+8k4R0H3/4F7aR9Z50B5dhn/Evh+B9nEGdQUMuFf0coawkB9KoqRnLBBvH4yiiz
-HsKCPQYT6aZBSegoSAkPO/U6S+wYIqXw8KavPOLF11H2gtvQHCE=
-=oa88
------END PGP SIGNATURE-----
+F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
 
---v7khuw5dmvnh5md2--
+> +	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
+
+F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
+
+> +	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
+Please remove this, the Max supported frequency is 300MHz.
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
+> +	.cmd_rcgr = 0x4b008,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_parent_map_9,
+> +	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "gcc_qspi_core_clk_src",
+> +		.parent_names = gcc_parent_names_9,
+> +		.num_parents = 4,
+> +		.ops = &clk_rcg2_floor_ops,
+
+Could we use the rcg2_ops instead?
+
+> +	},
+> +};
+> +
+>   static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
+>   	F(9600000, P_BI_TCXO, 2, 0, 0),
+>   	F(19200000, P_BI_TCXO, 1, 0, 0),
+> @@ -1935,6 +1974,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
+> +	.halt_reg = 0x4b000,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x4b000,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_qspi_cnoc_periph_ahb_clk",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch gcc_qspi_core_clk = {
+> +	.halt_reg = 0x4b004,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x4b004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_qspi_core_clk",
+> +			.parent_names = (const char *[]){
+> +				"gcc_qspi_core_clk_src",
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
+>   	.halt_reg = 0x17030,
+>   	.halt_check = BRANCH_HALT_VOTED,
+> @@ -3383,6 +3453,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
+>   	[GPLL4] = &gpll4.clkr,
+>   	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+>   	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+> +	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+> +	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+> +	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+>   };
+>   
+>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
