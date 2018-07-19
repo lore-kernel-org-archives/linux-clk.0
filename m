@@ -1,106 +1,95 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	grahamr@qti.qualcomm.com,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [RFC PATCH 2/4] clk: qcom: Initialize the power domain class for each clock
-Date: Sat, 21 Jul 2018 23:45:00 +0530
-Message-Id: <1532196902-28570-3-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
-References: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 6/8] clk: tegra20: Turn EMC clock gate into divider
+Date: Thu, 19 Jul 2018 16:21:30 +0300
+Message-Id: <20180719132132.16153-7-digetx@gmail.com>
+In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
+References: <20180719132132.16153-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The power domain class is being initialized for clocks which has
-an associated power domains before registering the clocks with
-the clock framework.
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/qcom/clk-regmap.h |  5 +++++
- drivers/clk/qcom/common.c     | 17 +++++++----------
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
-index 90d95cd..6265d91 100644
---- a/drivers/clk/qcom/clk-regmap.h
-+++ b/drivers/clk/qcom/clk-regmap.h
-@@ -17,22 +17,27 @@
- #include <linux/clk-provider.h>
- 
- struct regmap;
-+struct clk_powerdomain_class;
- 
- /**
-  * struct clk_regmap - regmap supporting clock
-  * @hw:		handle between common and hardware-specific interfaces
-  * @regmap:	regmap to use for regmap helpers and/or by providers
-+ * @pd:		power domain scaling requirement class
-  * @enable_reg: register when using regmap enable/disable ops
-  * @enable_mask: mask when using regmap enable/disable ops
-  * @enable_is_inverted: flag to indicate set enable_mask bits to disable
-  *                      when using clock_enable_regmap and friends APIs.
-+ * @rate_max:	maximum clock rate in Hz supported at each power domain.
-  */
- struct clk_regmap {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-+	struct clk_powerdomain_class *pd;
- 	unsigned int enable_reg;
- 	unsigned int enable_mask;
- 	bool enable_is_inverted;
-+	unsigned long *rate_max;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..ebea97016d58 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
  };
- #define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
  
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 39ce64c..b0684bf 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -1,14 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-+ * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights reserved.
-  */
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
  
- #include <linux/export.h>
-@@ -20,6 +12,7 @@
- #include <linux/of.h>
- 
- #include "common.h"
-+#include "clk-pd.h"
- #include "clk-rcg.h"
- #include "clk-regmap.h"
- #include "reset.h"
-@@ -263,6 +256,10 @@ int qcom_cc_really_probe(struct platform_device *pdev,
- 		if (!rclks[i])
- 			continue;
- 
-+		ret = clk_power_domain_class_init(dev, rclks[i]->pd);
-+		if (ret)
-+			return ret;
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
 +
- 		ret = devm_clk_register_regmap(dev, rclks[i]);
- 		if (ret)
- 			return ret;
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as distinct clocks.
++	 */
++	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
++				   clk_base + CLK_SOURCE_EMC, 0, 7,
++				   0, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+2.18.0
