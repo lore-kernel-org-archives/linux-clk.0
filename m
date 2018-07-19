@@ -1,70 +1,37 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	lee.jones@linaro.org,
-	arnd@arndb.de
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 07/10] arm64: dts: actions: Add RMU node for Actions Semi S700 SoC
-Date: Wed,  1 Aug 2018 09:09:12 +0530
-Message-Id: <20180801033915.15880-8-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
-References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/8] dt: bindings: Move tegra20-emc binding to memory-controllers directory
+Date: Thu, 19 Jul 2018 16:21:27 +0300
+Message-Id: <20180719132132.16153-4-digetx@gmail.com>
+In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
+References: <20180719132132.16153-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Reset Controller Unit (RMU) node under the system-controller node
-for Actions Semi S700 SoC. Also add the bindings constant header to
-be used by clients.
+Move tegra20-emc binding to the memory-controllers directory for
+consistency with the other Tegra memory bindings.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/actions/s700.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
 
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index a57f54587164..8498579504c7 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/actions,s700-cmu.h>
-+#include <dt-bindings/reset/actions,s700-rmu.h>
- 
- / {
- 	compatible = "actions,s700";
-@@ -169,6 +170,11 @@
- 				clocks = <&hosc>, <&losc>;
- 				#clock-cells = <1>;
- 			};
-+
-+			rmu: reset-controller {
-+				compatible = "actions,s700-rmu";
-+				#reset-cells = <1>;
-+			};
- 		};
- 
- 		sps: power-controller@e01b0100 {
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+rename to Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.txt
 -- 
-2.17.1
+2.18.0
