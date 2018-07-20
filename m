@@ -1,48 +1,88 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v2 2/3] clk: meson: add sub MMC clock dt-bindings IDs
-To: Rob Herring <robh@kernel.org>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-3-yixun.lan@amlogic.com>
- <20180711194546.GA7090@rob-hp-laptop>
-CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil
- Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
-	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <84511d9a-5d29-ae6f-de0b-4701bafe2ab7@amlogic.com>
-Date: Thu, 12 Jul 2018 10:51:28 +0800
-MIME-Version: 1.0
-In-Reply-To: <20180711194546.GA7090@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] clk: uniphier: add more USB3 PHY clocks
+Date: Fri, 20 Jul 2018 17:37:36 +0900
+Message-Id: <1532075856-1723-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1532075856-1723-1-git-send-email-yamada.masahiro@socionext.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob
+Add USB3 PHY clocks where missing.  Use fixed-factor clocks for those
+without gating.
 
-On 07/12/18 03:45, Rob Herring wrote:
-> On Tue, Jul 10, 2018 at 04:36:57PM +0000, Yixun Lan wrote:
->> Add two clock bindings IDs which provided by the MMC clock controller,
->> These two clocks will be used by MMC or NAND driver.
-> 
-> I count 3 ids.
-I will update this
+For clarification, prefix clock names with 'ss' or 'hs'.
 
-> 
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../dt-bindings/clock/amlogic,meson-mmc-clkc.h   | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-> 
-> This can go with the binding patch.
-> 
-sure
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-.
+ drivers/clk/uniphier/clk-uniphier-sys.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+index a582446..1c5a998 100644
+--- a/drivers/clk/uniphier/clk-uniphier-sys.c
++++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+@@ -122,6 +122,9 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
+ 	UNIPHIER_PRO4_SYS_CLK_GIO(12),			/* Ether, SATA, USB3 */
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
++	UNIPHIER_CLK_FACTOR("usb30-hsphy0", 16, "upll", 1, 12),
++	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 17, "ref", 1, 1),
++	UNIPHIER_CLK_FACTOR("usb31-ssphy0", 20, "ref", 1, 1),
+ 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 18),
+ 	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x2104, 19),
+ 	UNIPHIER_PRO4_SYS_CLK_AIO(40),
+@@ -173,8 +176,11 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(14, 0),
+ 	UNIPHIER_PRO4_SYS_CLK_USB3(15, 1),
+ 	/* The document mentions 0x2104 bit 18, but not functional */
+-	UNIPHIER_CLK_GATE("usb30-phy", 16, NULL, 0x2104, 19),
+-	UNIPHIER_CLK_GATE("usb31-phy", 20, NULL, 0x2104, 20),
++	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x2104, 19),
++	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 17, "ref", 1, 1),
++	UNIPHIER_CLK_FACTOR("usb30-ssphy1", 18, "ref", 1, 1),
++	UNIPHIER_CLK_GATE("usb31-hsphy0", 20, NULL, 0x2104, 20),
++	UNIPHIER_CLK_FACTOR("usb31-ssphy0", 21, "ref", 1, 1),
+ 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x2104, 22),
+ 	UNIPHIER_PRO5_SYS_CLK_AIO(40),
+ 	{ /* sentinel */ }
+@@ -235,8 +241,10 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
+ 	 * We do not use bit 15 here.
+ 	 */
+ 	UNIPHIER_CLK_GATE("usb30", 14, NULL, 0x210c, 14),
+-	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 12),
+-	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 13),
++	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x210c, 12),
++	UNIPHIER_CLK_GATE("usb30-hsphy1", 17, NULL, 0x210c, 13),
++	UNIPHIER_CLK_FACTOR("usb30-ssphy0", 18, "ref", 1, 1),
++	UNIPHIER_CLK_FACTOR("usb30-ssphy1", 19, "ref", 1, 1),
+ 	UNIPHIER_CLK_GATE("pcie", 24, NULL, 0x210c, 4),
+ 	UNIPHIER_LD11_SYS_CLK_AIO(40),
+ 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
+@@ -272,11 +280,11 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
+ 	UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x210c, 4),	/* =GIO0 */
+ 	UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x210c, 5),	/* =GIO1 */
+ 	UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x210c, 6),	/* =GIO1-1 */
+-	UNIPHIER_CLK_GATE("usb30-phy0", 16, NULL, 0x210c, 16),
+-	UNIPHIER_CLK_GATE("usb30-phy1", 17, NULL, 0x210c, 18),
+-	UNIPHIER_CLK_GATE("usb30-phy2", 18, NULL, 0x210c, 20),
+-	UNIPHIER_CLK_GATE("usb31-phy0", 20, NULL, 0x210c, 17),
+-	UNIPHIER_CLK_GATE("usb31-phy1", 21, NULL, 0x210c, 19),
++	UNIPHIER_CLK_GATE("usb30-hsphy0", 16, NULL, 0x210c, 16),
++	UNIPHIER_CLK_GATE("usb30-ssphy0", 17, NULL, 0x210c, 18),
++	UNIPHIER_CLK_GATE("usb30-ssphy1", 18, NULL, 0x210c, 20),
++	UNIPHIER_CLK_GATE("usb31-hsphy0", 20, NULL, 0x210c, 17),
++	UNIPHIER_CLK_GATE("usb31-ssphy0", 21, NULL, 0x210c, 19),
+ 	UNIPHIER_CLK_GATE("pcie", 24, NULL, 0x210c, 3),
+ 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x210c, 7),
+ 	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x210c, 8),
+-- 
+2.7.4
