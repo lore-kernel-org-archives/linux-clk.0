@@ -1,111 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	Jia-Ju Bai <baijiaju1990@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4.9 015/101] clk: renesas: cpg-mssr: Stop using printk format %pCr
-Date: Sun,  1 Jul 2018 18:21:01 +0200
-Message-Id: <20180701160757.744559346@linuxfoundation.org>
-In-Reply-To: <20180701160757.138608453@linuxfoundation.org>
-References: <20180701160757.138608453@linuxfoundation.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Sat, 21 Jul 2018 00:48:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Saravanan Sekar <sravanhome@gmail.com>
+Cc: afaerber@suse.de, sboyd@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux@cubietech.com,
+	support@cubietech.com, catalin.marinas@arm.com,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+	darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v7 4/5] arm64: dts: actions: Add Clock Management Unit
+ for S700
+Message-ID: <20180720191842.GA2508@Mani-XPS-13-9360>
+References: <20180719090649.12460-1-sravanhome@gmail.com>
+ <20180719090649.12460-5-sravanhome@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180719090649.12460-5-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jul 19, 2018 at 11:06:48AM +0200, Saravanan Sekar wrote:
+> Add Clock Management Unit for Actions Semi S700 SoC.
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 
-------------------
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks,
+Mani
 
-commit ef4b0be62641d296cf4c0ad8f75ab83ab066ed51 upstream.
-
-Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
-called in atomic context.
-
-Replace it by open-coding the operation.  This is safe here, as the code
-runs in task context.
-
-Link: http://lkml.kernel.org/r/1527845302-12159-2-git-send-email-geert+renesas@glider.be
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-To: Michael Turquette <mturquette@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-To: Eric Anholt <eric@anholt.net>
-To: Stefan Wahren <stefan.wahren@i2se.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable@vger.kernel.org # 4.5+
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/clk/renesas/renesas-cpg-mssr.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -243,8 +243,9 @@ struct clk *cpg_mssr_clk_src_twocell_get
- 		dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
- 		       PTR_ERR(clk));
- 	else
--		dev_dbg(dev, "clock (%u, %u) is %pC at %pCr Hz\n",
--			clkspec->args[0], clkspec->args[1], clk, clk);
-+		dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
-+			clkspec->args[0], clkspec->args[1], clk,
-+			clk_get_rate(clk));
- 	return clk;
- }
- 
-@@ -304,7 +305,7 @@ static void __init cpg_mssr_register_cor
- 	if (IS_ERR_OR_NULL(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Core clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Core clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
-@@ -372,7 +373,7 @@ static void __init cpg_mssr_register_mod
- 	if (IS_ERR(clk))
- 		goto fail;
- 
--	dev_dbg(dev, "Module clock %pC at %pCr Hz\n", clk, clk);
-+	dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk, clk_get_rate(clk));
- 	priv->clks[id] = clk;
- 	return;
- 
+> ---
+>  arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+> index 66dd5309f0a2..59d29e4ca404 100644
+> --- a/arch/arm64/boot/dts/actions/s700.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/actions,s700-cmu.h>
+>  
+>  / {
+>  	compatible = "actions,s700";
+> @@ -87,6 +88,12 @@
+>  		#clock-cells = <0>;
+>  	};
+>  
+> +	losc: losc {
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <32768>;
+> +		#clock-cells = <0>;
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		#address-cells = <2>;
+> @@ -153,6 +160,13 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		cmu: clock-controller@e0168000 {
+> +			compatible = "actions,s700-cmu";
+> +			reg = <0x0 0xe0168000 0x0 0x1000>;
+> +			clocks = <&hosc>, <&losc>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+>  		sps: power-controller@e01b0100 {
+>  			compatible = "actions,s700-sps";
+>  			reg = <0x0 0xe01b0100 0x0 0x100>;
+> -- 
+> 2.14.4
+> 
