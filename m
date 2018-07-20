@@ -1,42 +1,40 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
-	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
-	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH 0/2] clk: meson-g12a: Add EE clock controller driver
-Date: Mon, 16 Jul 2018 14:37:18 +0800
-Message-ID: <1531723038-134012-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.co,
+        thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH 2/8] clk: tegra: host1x has fractional divider
+Date: Fri, 20 Jul 2018 14:45:26 +0100
+Message-Id: <20180720134532.13148-3-ben.dooks@codethink.co.uk>
+In-Reply-To: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Clock driver for the Everyting-Else part of
-the Amlogic Meson-G12A SoC.
+The host1x clock according to both tegra2 and tegra3 manuals is
+an 8bit divider with lsb being fractional. This is running into
+an issue where the host1x is being set on a tegra20a system to
+266.4MHz but ends up at 222MHz instead.
 
-Jian Hu (2):
-  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-  clk: meson-g12a: Add EE Clock controller driver
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   1 +
- drivers/clk/meson/Kconfig                          |  10 +
- drivers/clk/meson/Makefile                         |   1 +
- drivers/clk/meson/g12a.c                           | 994 +++++++++++++++++++++
- drivers/clk/meson/g12a.h                           | 122 +++
- include/dt-bindings/clock/g12a-clkc.h              |  92 ++
- 6 files changed, 1220 insertions(+)
- create mode 100644 drivers/clk/meson/g12a.c
- create mode 100644 drivers/clk/meson/g12a.h
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 2acba2986bc6..8fa1cecf18a0 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -644,7 +644,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	INT("vde", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde),
+ 	INT("vi", mux_pllm_pllc_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi),
+ 	INT("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp),
+-	INT("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
++	MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0, tegra_clk_host1x),
+ 	INT("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60, 0, tegra_clk_mpe),
+ 	INT("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D, 21, 0, tegra_clk_gr2d),
+ 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
 -- 
-1.9.1
+2.18.0
