@@ -1,51 +1,42 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sun, 15 Jul 2018 19:45:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: Saravanan Sekar <sravanhome@gmail.com>, sboyd@kernel.org,
-	mark.rutland@arm.com, devicetree@vger.kernel.org,
-	linux@cubietech.com, support@cubietech.com, catalin.marinas@arm.com,
-	mturquette@baylibre.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
-	darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
-Subject: Re: [PATCH v4 1/5] clk: actions: Add REGMAP as dependency
-Message-ID: <20180715141551.GA9980@Mani-XPS-13-9360>
-References: <20180715123145.16975-1-sravanhome@gmail.com>
- <20180715123145.16975-2-sravanhome@gmail.com>
- <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38479 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388008AbeGTSfa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 14:35:30 -0400
+Date: Fri, 20 Jul 2018 11:46:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
+Subject: Re: [PATCH v5 04/11] soc: mediatek: add MT6765 scpsys support
+Message-ID: <20180720174609.GA679@rob-hp-laptop>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+ <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Tue, Jul 17, 2018 at 04:52:25PM +0800, Mars Cheng wrote:
+> This adds scpsys support for MT6765
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-scpsys.c        |   88 ++++++++++++++++++++++++++++++
+>  include/dt-bindings/power/mt6765-power.h |   14 +++++
 
-On Sun, Jul 15, 2018 at 02:35:53PM +0200, Andreas Färber wrote:
-> Hi,
-> 
-> Am 15.07.2018 um 14:31 schrieb Saravanan Sekar:
-> > Add REGMAP as dependency to avoid undefined reference to regmap symbol
-> 
-> Is this a bugfix for S900? Then please add a Fixes: line. If not, why is
-> it a separate patch and not in 3/5?
-> 
+This file goes in the binding patch.
 
-Yes, this is a bug fix for S900 clk and should have Fixes tag.
-
-Thanks,
-Mani
-
-> Also, the subject is fine as is, but please add a full stop at the end
-> of the sentence in the commit message.
-> 
-> Regards,
-> Andreas
-> 
-> 
-> -- 
-> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
+>  2 files changed, 102 insertions(+)
+>  create mode 100644 include/dt-bindings/power/mt6765-power.h
