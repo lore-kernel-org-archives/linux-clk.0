@@ -1,71 +1,67 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Mike Turquette <mturquette@baylibre.com>,  Stephen Boyd
- <sboyd@codeaurora.org>,  linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Andrew Lunn <andrew@lunn.ch>,  Jason
- Cooper <jason@lakedaemon.net>,  Hua Jing <jinghua@marvell.com>,  Antoine
- Tenart <antoine.tenart@bootlin.com>,  stable@vger.kernel.org,  Maxime
- Chevallier <maxime.chevallier@bootlin.com>,  Nadav Haklai
- <nadavh@marvell.com>,  Ken Ma <make@marvell.com>,  Victor Gu
- <xigu@marvell.com>,  Neta Zur Hershkovits <neta@marvell.com>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  =?utf-8?Q?Miqu=C3=A8l?= Raynal
- <miquel.raynal@bootlin.com>,  Marcin Wojtas <mw@semihalf.com>,  Wilson
- Ding <dingwei@marvell.com>,  linux-arm-kernel@lists.infradead.org,
-  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
-References: <20180619123446.694-1-gregory.clement@bootlin.com>
-	<20180619123446.694-2-gregory.clement@bootlin.com>
-	<87tvpl4pql.fsf@bootlin.com>
-	<153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
-Date: Mon, 09 Jul 2018 17:42:31 +0200
-In-Reply-To: <153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
-	(Stephen Boyd's message of "Fri, 06 Jul 2018 16:44:44 -0700")
-Message-ID: <87va9oct5k.fsf@bootlin.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:17087 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728362AbeGTOp5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 10:45:57 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+Date: Fri, 20 Jul 2018 13:57:22 +0000
+Message-ID: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+ <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+ <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+In-Reply-To: <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
- 
- On ven., juil. 06 2018, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Gregory CLEMENT (2018-06-29 07:44:02)
->> Hi,
->>  
->>  On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
->> 
->> > Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
->> > respectively) to L0 frequency (1.2 Ghz) requires a significant amount
->> > of time to let VDD stabilize to the appropriate voltage. This amount of
->> > time is large enough that it cannot be covered by the hardware
->> > countdown register. Due to this, the CPU might start operating at L0
->> > before the voltage is stabilized, leading to CPU stalls.
->> >
->> > To work around this problem, we prevent switching directly from the
->> > L2/L3 frequencies to the L0 frequency, and instead switch to the L1
->> > frequency in-between. The sequence therefore becomes:
->> >
->> > 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
->> > 2. Sleep 20ms for stabling VDD voltage
->> > 3. Then switch from L1(600MHZ) to L0(1200Mhz).
->> 
->> Do you have any comment on this fix?
->> 
->
-> Looks good. Is it crashing right now? I can throw it into clk-fixes if
-> it's fixing pain.
-
-Yes for the SoC capable to run at 1200Mhz it crashes. At the time the
-initial support was provided, my SoC version only ran at 1000MHz, so the
-problem was not noticed.
-
-Thanks,
-
-Gregory
-
-
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMzo0MSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjI2IFBNIFBoaWwgRWR3b3J0aHkgd3Jv
+dGU6DQo+ID4gT24gMjAgSnVseSAyMDE4IDEzOjEyLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6
+DQo+ID4gPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjA2IFBNIFBoaWwgRWR3b3J0aHkgIHdy
+b3RlOg0KPiA+ID4gPiBPbiAyMCBKdWx5IDIwMTggMTI6MjEsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3
+cm90ZToNCj4gPiA+ID4gPiBPbiBXZWQsIEp1bCAxOCwgMjAxOCBhdCA0OjM0IFBNIFBoaWwgRWR3
+b3J0aHkgd3JvdGU6DQo+ID4gPiA+ID4gPiBUbyBhdm9pZCBhbGwgU29DIHBlcmlwaGVyYWwgZHJp
+dmVycyBkZWZlcnJpbmcgdGhlaXIgcHJvYmVzLA0KPiA+ID4gPiA+ID4gYm90aCBjbG9jayBhbmQg
+cGluY3RybCBkcml2ZXJzIHNob3VsZCBhbHJlYWR5IGJlIHByb2JlZC4gU2luY2UNCj4gPiA+ID4g
+PiA+IHRoZSBwaW5jdHJsIGRyaXZlciByZXF1aXJlcyBhIGNsb2NrIHRvIGFjY2VzcyB0aGUgcmVn
+aXN0ZXJzLA0KPiA+ID4gPiA+ID4gdGhlIGNsb2NrIGRyaXZlciBzaG91bGQgYmUgcHJvYmVkIGJl
+Zm9yZSB0aGUgcGluY3RybCBkcml2ZXIuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhlcmVm
+b3JlLCBtb3ZlIHRoZSBjbG9jayBkcml2ZXIgZnJvbSBzdWJzeXNfaW5pdGNhbGwgdG8NCj4gY29y
+ZV9pbml0Y2FsbC4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQaGls
+IEVkd29ydGh5IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiA+ID4gPiA+DQo+ID4gPiA+
+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+ID4gPiBUaGFua3MgZm9yIHlvdXIgcmV2aWV3
+IQ0KPiA+ID4gPg0KPiA+ID4gPiA+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRy
+aXZlciB1c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KPiA+ID4gPiBObywgdGhlIHBp
+bmN0cmwgZHJpdmVyIHVzZXMgc3Vic3lzX2luaXRjYWxsLCBidXQgcG9zdGNvcmVfaW5pdGNhbGwN
+Cj4gPiA+ID4gb3IgYXJjaF9pbml0Y2FsbCBtYXkgYmUgYmV0dGVyIHRvIG1ha2UgaXQgY2xlYXIg
+YWJvdXQgdGhlIGRlcGVuZGVuY2llcy4NCj4gPiA+DQo+ID4gPiBpZiB0aGUgcGluY3RybCBkcml2
+ZXIgdXNlcyBzdWJzeXNfaW5pdGNhbGwoKSwgLi4uDQo+IA0KPiA+ID4gPiA+ID4gLXN1YnN5c19p
+bml0Y2FsbChyOWEwNmcwMzJfY2xvY2tzX2luaXQpOw0KPiA+ID4gPiA+ID4gK2NvcmVfaW5pdGNh
+bGwocjlhMDZnMDMyX2Nsb2Nrc19pbml0KTsNCj4gPiA+DQo+ID4gPiAuLi4gdXNpbmcgcG9zdGNv
+cmVfaW5pdGNhbGwoKSBvciBhcmNoX2luaXRjYWxsKCkgaGVyZSwgc2hvdWxkIHdvcmsNCj4gPiA+
+IHdpdGggcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCk/DQo+ID4gTm9wZSwgeW91IGhhdmUgdG8gdXNl
+IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigpIGZvciBEVCBiYXNlZCBkcml2ZXJzLg0KPiA+IHN1
+YnN5c19pbml0Y2FsbCBpcyB0aGUgZWFybGllc3QgeW91IGNhbiB1c2UgcGxhdGZvcm1fZHJpdmVy
+X3Byb2JlKCkuDQo+IA0KPiBTbyBkcml2ZXJzL21pc2MvYXRtZWxfdGNsaWIuYyBhbmQgZHJpdmVy
+cy9waW5jdHJsL3BpbmN0cmwtY29oOTAxLmMsIHdoaWNoIHVzZQ0KPiBhcmNoX2luaXRjYWxsKCks
+IGNhbm5vdCB3b3JrPw0KSG93IHRob3NlIGRyaXZlcnMgd29yayBJIGRvIG5vdCBrbm93LiBIb3dl
+dmVyLCBJIHRyaWVkIHdpdGggdGhlIHJ6bjEgY2xvY2sNCmRyaXZlciBhbmQgaXQgZG9lcyBub3Qg
+d29yay4NCg0KPiBJZiB0aGF0IGlzIHJlYWxseSB0cnVlLCB5b3UgY2FuIHN0aWxsIHVzZSBzdWJz
+eXNfaW5pdGNhbGwoKSBpbiB0aGUgY2xvY2sgZHJpdmVyLCBhbmQNCj4gc3Vic3lzX2luaXRjYWxs
+X3N5bmMoKSBpbiB0aGUgcGluY3RybCBkcml2ZXIuDQpUcnVlLCBJJ20gbm90IHN1cmUgaG93IHBl
+b3BsZSBkZWNpZGUgd2hpY2ggaW5pdGNhbGwgdG8gdXNlIGFuZCB3aGV0aGVyIHRoZQ0KX3N5bmMg
+dmFyaWFudHMgb2YgdGhlIGluaXRjYWxscyBoYXZlIGEgc3BlY2lhbCBtZWFuaW5nIG9yIGludGVu
+dGlvbi4gQXMgZmFyIGFzDQpJIGtub3cgdGhleSB3ZXJlIGludHJvZHVjZWQgZm9yIHRocmVhZGVk
+IHByb2Jlcywgc28gYXJlIHdlIHN1cHBvc2VkIHRvDQp1c2UgdGhlbSBmb3IgZHJpdmVyIGRlcGVu
+ZGVuY2llcyBsaWtlIHRoaXM/DQoNCkRvIHlvdSBrbm93IHdoeSB0aGUgcnphMSBwaW5jdHJsIGRy
+aXZlciBpcyBydW5uaW5nIGZyb20gY29yZV9pbml0Y2FsbCgpPw0KDQpUaGFua3MNClBoaWwNCg==
