@@ -1,136 +1,88 @@
-Return-Path: <edgar.righi@lsitec.org.br>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relmlor4.renesas.com ([210.160.252.174]:31336 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731745AbeGTNOE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 09:14:04 -0400
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+Date: Fri, 20 Jul 2018 12:26:00 +0000
+Message-ID: <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
+ <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+In-Reply-To: <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date: Tue, 17 Jul 2018 14:02:00 -0300
-Message-ID: <CADHB5bAztBFgWe-1v5vFfsxJgW1S3OOpV1Jkjrgk2h+pJBFw9w@mail.gmail.com>
-Subject: [PATCH] clk: actions: Add custom delay option to Actions Semi OWL pll
- clock driver
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	daniel.lezcano@linaro.org, linux@armlinux.org.uk,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
-	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
-	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
-	catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
-	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com
-Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch adds custom delay support to Actions Semi OWL pll clock driver.
-It is required for future Actions Semi Owl series S500 SoC clock support
-
-Currently, the driver waits a fixed amount of time defined by the
-macro PLL_STABILITY_WAIT_US.
-The default delay (50us) is not enough for Actions Semi Owl S500 SoC.
-It needs up to 150us.
-A new field called "delay" was added to "struct owl_pll_hw". The rest
-of the code was updated accordingly.
-Old macros "OWL_PLL_HW", "OWL_PLL" and "OWL_PLL_NO_PARENT" were kept
-(same usage), but updated to set "delay" value to
-PLL_STABILITY_WAIT_US (50us).
-New macros "OWL_PLL_HW_DELAY", "OWL_PLL_DELAY" and
-"OWL_PLL_NO_PARENT_DELAY" were created with an extra argument to set a
-custom "delay".
-This does not break S700 and S900 code and was tested on S500 based
-Lemaker Guitar Board.
-
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-
-diff -uprN -X vanilla/Documentation/dontdiff
-vanilla/drivers/clk/actions/owl-pll.c
-linux/drivers/clk/actions/owl-pll.c
---- vanilla/drivers/clk/actions/owl-pll.c    2018-07-17 13:07:16.667704000 -0300
-+++ linux/drivers/clk/actions/owl-pll.c    2018-07-17 13:42:07.396785603 -0300
-@@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_h
-
-     regmap_write(common->regmap, pll_hw->reg, reg);
-
--    udelay(PLL_STABILITY_WAIT_US);
-+    udelay(pll_hw->delay);
-
-     return 0;
- }
-diff -uprN -X vanilla/Documentation/dontdiff
-vanilla/drivers/clk/actions/owl-pll.h
-linux/drivers/clk/actions/owl-pll.h
---- vanilla/drivers/clk/actions/owl-pll.h    2018-07-17 13:07:16.667704000 -0300
-+++ linux/drivers/clk/actions/owl-pll.h    2018-07-17 13:42:11.116765089 -0300
-@@ -27,6 +27,7 @@ struct owl_pll_hw {
-     u8            width;
-     u8            min_mul;
-     u8            max_mul;
-+    u32            delay;
-     const struct clk_pll_table *table;
- };
-
-@@ -35,6 +36,51 @@ struct owl_pll {
-     struct owl_clk_common    common;
- };
-
-+#define PLL_STABILITY_WAIT_US    (50)
-+
-+#define OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,            \
-+           _width, _min_mul, _max_mul, _table, _delay)            \
-+    {                                \
-+        .reg        = _reg,                    \
-+        .bfreq        = _bfreq,                \
-+        .bit_idx    = _bit_idx,                \
-+        .shift        = _shift,                \
-+        .width        = _width,                \
-+        .min_mul    = _min_mul,                \
-+        .max_mul    = _max_mul,                \
-+        .table        = _table,                \
-+        .delay        = _delay,                \
-+    }
-+
-+#define OWL_PLL_DELAY(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-+        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-+    struct owl_pll _struct = {                    \
-+        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-+                     _width, _min_mul,            \
-+                     _max_mul, _table, _delay),            \
-+        .common = {                        \
-+            .regmap = NULL,                    \
-+            .hw.init = CLK_HW_INIT(_name,            \
-+                           _parent,            \
-+                           &owl_pll_ops,        \
-+                           _flags),            \
-+        },                            \
-+    }
-+
-+#define OWL_PLL_NO_PARENT_DELAY(_struct, _name, _reg, _bfreq, _bit_idx,    \
-+        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-+    struct owl_pll _struct = {                    \
-+        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-+                     _width, _min_mul,            \
-+                     _max_mul, _table, _delay),            \
-+        .common = {                        \
-+            .regmap = NULL,                    \
-+            .hw.init = CLK_HW_INIT_NO_PARENT(_name,        \
-+                           &owl_pll_ops,        \
-+                           _flags),            \
-+        },                            \
-+    }
-+
- #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,            \
-            _width, _min_mul, _max_mul, _table)            \
-     {                                \
-@@ -46,6 +92,7 @@ struct owl_pll {
-         .min_mul    = _min_mul,                \
-         .max_mul    = _max_mul,                \
-         .table        = _table,                \
-+        .delay        = PLL_STABILITY_WAIT_US,\
-     }
-
- #define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-@@ -78,7 +125,6 @@ struct owl_pll {
-     }
-
- #define mul_mask(m)        ((1 << ((m)->width)) - 1)
--#define PLL_STABILITY_WAIT_US    (50)
-
- static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
- {
+SGkgR2VlcnQsDQoNCk9uIDIwIEp1bHkgMjAxOCAxMzoxMiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBGcmksIEp1bCAyMCwgMjAxOCBhdCAyOjA2IFBNIFBoaWwgRWR3b3J0aHkgIHdy
+b3RlOg0KPiA+IE9uIDIwIEp1bHkgMjAxOCAxMjoyMSwgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3Rl
+Og0KPiA+ID4gT24gV2VkLCBKdWwgMTgsIDIwMTggYXQgNDozNCBQTSBQaGlsIEVkd29ydGh5IHdy
+b3RlOg0KPiA+ID4gPiBUbyBhdm9pZCBhbGwgU29DIHBlcmlwaGVyYWwgZHJpdmVycyBkZWZlcnJp
+bmcgdGhlaXIgcHJvYmVzLCBib3RoDQo+ID4gPiA+IGNsb2NrIGFuZCBwaW5jdHJsIGRyaXZlcnMg
+c2hvdWxkIGFscmVhZHkgYmUgcHJvYmVkLiBTaW5jZSB0aGUNCj4gPiA+ID4gcGluY3RybCBkcml2
+ZXIgcmVxdWlyZXMgYSBjbG9jayB0byBhY2Nlc3MgdGhlIHJlZ2lzdGVycywgdGhlIGNsb2NrDQo+
+ID4gPiA+IGRyaXZlciBzaG91bGQgYmUgcHJvYmVkIGJlZm9yZSB0aGUgcGluY3RybCBkcml2ZXIu
+DQo+ID4gPiA+DQo+ID4gPiA+IFRoZXJlZm9yZSwgbW92ZSB0aGUgY2xvY2sgZHJpdmVyIGZyb20g
+c3Vic3lzX2luaXRjYWxsIHRvIGNvcmVfaW5pdGNhbGwuDQo+ID4gPiA+DQo+ID4gPiA+IFNpZ25l
+ZC1vZmYtYnk6IFBoaWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+ID4g
+Pg0KPiA+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+IFRoYW5rcyBmb3IgeW91ciByZXZp
+ZXchDQo+ID4NCj4gPiA+IFRoZSAobm90IHlldCB1cHN0cmVhbWVkKSBwaW5jdHJsIGRyaXZlciB1
+c2VzIHBvc3Rjb3JlX2luaXRjYWxsKCksIHJpZ2h0Pw0KPiA+IE5vLCB0aGUgcGluY3RybCBkcml2
+ZXIgdXNlcyBzdWJzeXNfaW5pdGNhbGwsIGJ1dCBwb3N0Y29yZV9pbml0Y2FsbCBvcg0KPiA+IGFy
+Y2hfaW5pdGNhbGwgbWF5IGJlIGJldHRlciB0byBtYWtlIGl0IGNsZWFyIGFib3V0IHRoZSBkZXBl
+bmRlbmNpZXMuDQo+IA0KPiBpZiB0aGUgcGluY3RybCBkcml2ZXIgdXNlcyBzdWJzeXNfaW5pdGNh
+bGwoKSwgLi4uDQo+IA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA2ZzAz
+Mi1jbG9ja3MuYw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I5YTA2ZzAzMi1j
+bG9ja3MuYw0KPiA+ID4gPiBAQCAtODc3LDE3ICs4NzcsMTggQEAgc3RhdGljIGNvbnN0IHN0cnVj
+dCBvZl9kZXZpY2VfaWQNCj4gPiA+IHI5YTA2ZzAzMl9tYXRjaFtdID0gew0KPiA+ID4gPiAgICAg
+ICAgIHsgfQ0KPiA+ID4gPiAgfTsNCj4gPiA+ID4NCj4gPiA+ID4gLXN0YXRpYyBzdHJ1Y3QgcGxh
+dGZvcm1fZHJpdmVyIHI5YTA2ZzAzMl9jbG9ja19kcml2ZXIgPSB7DQo+ID4gPiA+ICtzdGF0aWMg
+c3RydWN0IHBsYXRmb3JtX2RyaXZlciByOWEwNmcwMzJfY2xvY2tfZHJpdmVyIF9fcmVmZGF0YSA9
+DQo+ID4gPiA+ICt7DQo+ID4gPiA+ICAgICAgICAgLmRyaXZlciAgICAgICAgID0gew0KPiA+ID4g
+PiAgICAgICAgICAgICAgICAgLm5hbWUgICA9ICJyZW5lc2FzLHI5YTA2ZzAzMi1zeXNjdHJsIiwN
+Cj4gPiA+ID4gICAgICAgICAgICAgICAgIC5vZl9tYXRjaF90YWJsZSA9IHI5YTA2ZzAzMl9tYXRj
+aCwNCj4gPiA+ID4gICAgICAgICB9LA0KPiA+ID4gPiArICAgICAgIC5wcm9iZSA9IHI5YTA2ZzAz
+Ml9jbG9ja3NfcHJvYmUsDQo+ID4gPiA+ICB9Ow0KPiA+ID4gPg0KPiA+ID4gPiAgc3RhdGljIGlu
+dCBfX2luaXQgcjlhMDZnMDMyX2Nsb2Nrc19pbml0KHZvaWQpICB7DQo+ID4gPiA+IC0gICAgICAg
+cmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9wcm9iZSgmcjlhMDZnMDMyX2Nsb2NrX2RyaXZlciwNCj4g
+PiA+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgcjlhMDZnMDMyX2Nsb2Nrc19wcm9iZSk7DQo+
+ID4gPiA+ICsgICAgICAgcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZyOWEwNmcwMzJfY2xvY2tf
+ZHJpdmVyKTsNCj4gPiA+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiBUaGF0IHNob3VsZCBiZToN
+Cj4gPiArICAgICAgIHJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJnI5YTA2ZzAzMl9j
+bG9ja19kcml2ZXIpOw0KPiA+DQo+ID4gPiA+ICB9DQo+ID4gPg0KPiA+ID4gV2h5IGFyZSBhbGwg
+b2YgdGhlIGFib3ZlIGNoYW5nZXMgbmVlZGVkPw0KPiA+ID4gU2hvdWxkbid0IHRoZSBwbGF0Zm9y
+bV9kcml2ZXJfcHJvYmUoKSBrZWVwIG9uIHdvcmtpbmc/DQo+ID4gPiBJZiBpdCBkb2VzIG5vdCwg
+aXQgbWVhbnMgdGhlIGNsb2NrIGRyaXZlciBoYXMgc29tZSBvdGhlciBkZXBlbmRlbmN5LA0KPiA+
+ID4gYW5kIGNhbm5vdCBiZSBib3VuZCBpbW1lZGlhdGVseS4gIFRoaXMgaXMgcG90ZW50aWFsbHkg
+YSBkYW5nZXJvdXMNCj4gPiA+IHNpdHVhdGlvbiwgYXMNCj4gPiA+IHI5YTA2ZzAzMl9jbG9ja3Nf
+cHJvYmUoKSBpcyBfX2luaXQsIGJ1dCBjYW4gc3RpbGwgYmUgY2FsbGVkIGF0IGFueSB0aW1lIGxh
+dGVyLg0KPiA+ID4gSGVuY2UgdXNpbmcgcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCkgaXMgdGhlIHNh
+ZmUgdGhpbmcgdG8gZG8sDQo+ID4gPiBwb3NzaWJseSB3aXRoIGEgZGlmZmVyZW50IHJlc2h1ZmZs
+aW5nIG9mIHRoZSBjbG9jayBhbmQgcGluY3RybCBpbml0Y2FsbA0KPiBwcmlvcml0aWVzLg0KPiA+
+IE5vLCB5b3UgY2Fubm90IGNhbGwgcGxhdGZvcm1fZHJpdmVyX3Byb2JlKCkgZnJvbSBjb3JlX2lu
+aXRjYWxsLg0KPiA+IEFsbCBkcml2ZXJzIHRoYXQgYXJlIGluIGNvcmVfaW5pdGNhbGwgY2FsbCBw
+bGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoKS4NCj4gDQo+IEhlbmNlIHRoZXkgY2Fubm90IGhhdmUg
+dGhlaXIgcHJvYmUgZnVuY3Rpb24gX19pbml0Lg0KPiANCj4gPg0KPiA+IFRoYW5rcw0KPiA+IFBo
+aWwNCj4gPg0KPiA+ID4gPiAtc3Vic3lzX2luaXRjYWxsKHI5YTA2ZzAzMl9jbG9ja3NfaW5pdCk7
+DQo+ID4gPiA+ICtjb3JlX2luaXRjYWxsKHI5YTA2ZzAzMl9jbG9ja3NfaW5pdCk7DQo+IA0KPiAu
+Li4gdXNpbmcgcG9zdGNvcmVfaW5pdGNhbGwoKSBvciBhcmNoX2luaXRjYWxsKCkgaGVyZSwgc2hv
+dWxkIHdvcmsgd2l0aA0KPiBwbGF0Zm9ybV9kcml2ZXJfcHJvYmUoKT8NCk5vcGUsIHlvdSBoYXZl
+IHRvIHVzZSBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoKSBmb3IgRFQgYmFzZWQgZHJpdmVycy4N
+CnN1YnN5c19pbml0Y2FsbCBpcyB0aGUgZWFybGllc3QgeW91IGNhbiB1c2UgcGxhdGZvcm1fZHJp
+dmVyX3Byb2JlKCkuDQoNClRoYW5rcw0KUGhpbA0KDQo+IEdye29ldGplLGVldGluZ31zLA0KPiAN
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRl
+cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
+dXgtDQo+IG02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
+aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4gSSdtIHRh
+bGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5n
+IGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBMaW51cyBU
+b3J2YWxkcw0K
