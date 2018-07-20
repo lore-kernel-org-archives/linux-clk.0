@@ -1,32 +1,40 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Saravanan Sekar <sravanhome@gmail.com>, afaerber@suse.de,
- manivannan.sadhasivam@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180719090649.12460-2-sravanhome@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux@cubietech.com,
- sravanhome@gmail.com, support@cubietech.com, catalin.marinas@arm.com,
- mturquette@baylibre.com, will.deacon@arm.com, linux-kernel@vger.kernel.org,
- thomas.liau@actions-semi.com, darren@cubietech.com, robh+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, pn@denx.de, linux-clk@vger.kernel.org,
- jeff.chen@actions-semi.com, mp-cs@actions-semi.com
-References: <20180719090649.12460-1-sravanhome@gmail.com>
- <20180719090649.12460-2-sravanhome@gmail.com>
-Message-ID: <153256212945.48062.14143557798405781571@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v7 1/5] clk: actions: Add missing REGMAP_MMIO dependency
-Date: Wed, 25 Jul 2018 16:42:09 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: jbrunet@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: meson: Add video clocks path
+Date: Fri, 20 Jul 2018 11:39:39 +0200
+Message-Id: <1532079581-978-1-git-send-email-narmstrong@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Saravanan Sekar (2018-07-19 02:06:45)
-> Add REGMAP_MMIO as dependency to avoid undefined
-> reference to regmap symbols.
-> =
+This patchset adds initial support the Video Clocks used in the Display
+Pipelin from the DRM driver.
+The DRM driver is in his way to finaly switch to the Common Clock Framework
+to setup the clock path, this adds the clock entries that will be used
+by the DRM driver in a near future.
 
-> Fixes: d85d20053e19 ("clk: actions: Add S900 SoC clock support")
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> Reviewed-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+The vid_pll programmable divider is introduced in its R/O form right now,
+but will be extended to be R/W in a next iteration.
 
-Applied to clk-next
+Until the DRM driver actually uses these clocks, the Gates are marked as
+IGNORE_IF_UNSUSED and the MUX/Dividers as NOCACHE since the registers
+will be modified directly.
+
+Neil Armstrong (2):
+  clk: meson: Add vid_pll divider driver
+  clk: meson-gxbb: Add video clocks
+
+ drivers/clk/meson/Makefile            |   2 +-
+ drivers/clk/meson/clkc.h              |   6 +
+ drivers/clk/meson/gxbb.c              | 667 ++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/gxbb.h              |  24 +-
+ drivers/clk/meson/vid-pll-div.c       |  90 +++++
+ include/dt-bindings/clock/gxbb-clkc.h |  17 +
+ 6 files changed, 803 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/clk/meson/vid-pll-div.c
+
+-- 
+2.7.4
