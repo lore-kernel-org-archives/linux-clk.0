@@ -1,57 +1,103 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,  <qianggui.song@amlogic.com>,  Rob Herring <robh@kernel.org>,  Neil Armstrong <narmstrong@baylibre.com>,  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  <mturquette@baylibre.com>,  <linux-kernel@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <bo.yang@amlogic.com>,  <sboyd@kernel.org>,  <jian.hu@amlogic.com>,  <xingyu.chen@amlogic.com>,  <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <sunny.luo@amlogic.com>,  <carlo@caione.org>,  <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	<1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-	<CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-	<ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-	<1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
-	<7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
-Date: Thu, 19 Jul 2018 09:06:39 -0500
-In-Reply-To: <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com> (Yixun Lan's
-	message of "Tue, 17 Jul 2018 09:24:02 +0800")
-Message-ID: <7h601be2vk.fsf@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44112 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeGTNAj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 09:00:39 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com> <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Jul 2018 14:12:29 +0200
+Message-ID: <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+Hi Phil,
 
-[...]
-
->> 
->> As Jerome said, I think consistency is an important goal, so leaving off
->> the "meson-" for drivers/clk is fine with me.
->> 
-> ok
+On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> On 20 July 2018 12:21, Geert Uytterhoeven wrote:
+> > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
+> > > To avoid all SoC peripheral drivers deferring their probes, both clock
+> > > and pinctrl drivers should already be probed. Since the pinctrl driver
+> > > requires a clock to access the registers, the clock driver should be
+> > > probed before the pinctrl driver.
+> > >
+> > > Therefore, move the clock driver from subsys_initcall to core_initcall.
+> > >
+> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> >
+> > Thanks for your patch!
+> Thanks for your review!
 >
->> Also for consistency, for the rest of the drivers, keeping "meson-" is
->> probably the right thing to do.
->> 
-> ok, for the above, you are talking about the already exist compatible
-> names? or the patches we will push in the future?
+> > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
+> No, the pinctrl driver uses subsys_initcall, but postcore_initcall or
+> arch_initcall may be better to make it clear about the dependencies.
 
-I'm talking about future patches.
+if the pinctrl driver uses subsys_initcall(), ...
 
->> However, patches would be welcome to add compatibles without the "meson"
->> for the rest of the drivers & documentation as well, but please do not
->> remove any compatibles.
->> 
-> I assume you are talking about the patches in the future we will push?
-> to drop the "meson".
+> > > --- a/drivers/clk/renesas/r9a06g032-clocks.c
+> > > +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+> > > @@ -877,17 +877,18 @@ static const struct of_device_id
+> > r9a06g032_match[] = {
+> > >         { }
+> > >  };
+> > >
+> > > -static struct platform_driver r9a06g032_clock_driver = {
+> > > +static struct platform_driver r9a06g032_clock_driver __refdata = {
+> > >         .driver         = {
+> > >                 .name   = "renesas,r9a06g032-sysctrl",
+> > >                 .of_match_table = r9a06g032_match,
+> > >         },
+> > > +       .probe = r9a06g032_clocks_probe,
+> > >  };
+> > >
+> > >  static int __init r9a06g032_clocks_init(void)  {
+> > > -       return platform_driver_probe(&r9a06g032_clock_driver,
+> > > -                       r9a06g032_clocks_probe);
+> > > +       platform_driver_register(&r9a06g032_clock_driver);
+> > > +       return 0;
+> That should be:
+> +       return platform_driver_register(&r9a06g032_clock_driver);
 >
-> I'm confused here, as the above two paragraphs conflict with each other
+> > >  }
+> >
+> > Why are all of the above changes needed?
+> > Shouldn't the platform_driver_probe() keep on working?
+> > If it does not, it means the clock driver has some other dependency, and
+> > cannot be bound immediately.  This is potentially a dangerous situation, as
+> > r9a06g032_clocks_probe() is __init, but can still be called at any time later.
+> > Hence using platform_driver_probe() is the safe thing to do, possibly with a
+> > different reshuffling of the clock and pinctrl initcall priorities.
+> No, you cannot call platform_driver_probe() from core_initcall.
+> All drivers that are in core_initcall call platform_driver_register().
 
-Yeah, what I wrote is confusing, sorry about that.
+Hence they cannot have their probe function __init.
 
-What I mean is that new patches should stay consistent with compatibles
-in their existing drivers/subsystems.  That means keeping the "meson-"
-prefix for everything except drivers/clk.
+>
+> Thanks
+> Phil
+>
+> > > -subsys_initcall(r9a06g032_clocks_init);
+> > > +core_initcall(r9a06g032_clocks_init);
 
-In addition to that, patches would be welcome for *adding* compatibles
-without "meson" to all the current drivers.
+... using postcore_initcall() or arch_initcall() here, should work with
+platform_driver_probe()?
 
-Kevin
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
