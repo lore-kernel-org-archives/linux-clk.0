@@ -1,57 +1,40 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55012 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388131AbeGTSdd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 14:33:33 -0400
+Date: Fri, 20 Jul 2018 11:44:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mars Cheng <mars.cheng@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
+Subject: Re: [PATCH v5 02/11] dt-bindings: mediatek: Add smi dts binding for
+ Mediatek MT6765 SoC
+Message-ID: <20180720174413.GA31579@rob-hp-laptop>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+ <1531817552-17221-3-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
- <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com> <c82487a125591c14e66ba56dc3202aa0093f0aba.camel@linux.intel.com>
-In-Reply-To: <c82487a125591c14e66ba56dc3202aa0093f0aba.camel@linux.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Jul 2018 13:29:49 +0200
-Message-ID: <CAMuHMdWXfS9gFxOq5nvJWx2KMOae5_c8Lb0omeE3P9yjyYZ7gA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1531817552-17221-3-git-send-email-mars.cheng@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andy,
+On Tue, Jul 17, 2018 at 04:52:23PM +0800, Mars Cheng wrote:
+> This patch adds MT6765 smi binding document
+> 
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> ---
+>  .../memory-controllers/mediatek,smi-common.txt     |    1 +
+>  1 file changed, 1 insertion(+)
 
-On Mon, Jul 30, 2018 at 12:57 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Mon, 2018-07-30 at 10:55 +0200, Geert Uytterhoeven wrote:
-> > On Mon, Jul 30, 2018 at 10:36 AM Phil Edworthy
-> > <phil.edworthy@renesas.com> wrote:
->
-> > > +struct clk *of_clk_get_by_name_optional(struct device_node *np,
-> > > +                                       const char *name)
-> > > +{
-> > > +       if (!np)
-> > > +               return ERR_PTR(-ENOENT);
-> >
-> > Shouldn't this return NULL?
-> > Or let __of_clk_get_by_name() handle that (cfr. above)?
-> >
-> > Hmm, of_clk_get_by_name() has a similar check, while the current
-> > __of_clk_get_by_name() already handle np == NULL, too.
->
-> This check is needed to prevent NULL pointer dereference below.
-
-Thank, I had missed that unexpected detail.
-
-> > > +
-> > > +       return __of_clk_get_by_name(np, np->full_name, name, true);
-> > > +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Rob Herring <robh@kernel.org>
