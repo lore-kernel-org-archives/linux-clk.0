@@ -1,37 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52288 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933833AbeGFUrU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Jul 2018 16:47:20 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 20 Jul 2018 08:20:49 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH 2/2] clk: renesas: mstp: Document R7S9210 support
+Message-ID: <20180720142049.GA2249@rob-hp-laptop>
+References: <20180711170313.80321-1-chris.brandt@renesas.com>
+ <20180711170313.80321-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
-To: Faiz Abbas <faiz_abbas@ti.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180705142319.19583-3-faiz_abbas@ti.com>
-Cc: mark.rutland@arm.com, paul@pwsan.com, tony@atomide.com,
-        faiz_abbas@ti.com, t-kristo@ti.com, robh+dt@kernel.org,
-        bcousson@baylibre.com
-References: <20180705142319.19583-1-faiz_abbas@ti.com>
- <20180705142319.19583-3-faiz_abbas@ti.com>
-Message-ID: <153091003956.143105.6661322668517577461@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 2/6] clk: ti: dra7: Add clkctrl clock data for the mcan clocks
-Date: Fri, 06 Jul 2018 13:47:19 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180711170313.80321-3-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Faiz Abbas (2018-07-05 07:23:15)
-> Add clkctrl data for the m_can clocks and register it within the
-> clkctrl driver
-> =
-
-> Acked-by: Rob Herring <robh@kernel.org>
-> CC: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+On Wed, Jul 11, 2018 at 12:03:13PM -0500, Chris Brandt wrote:
+> Renesas R7S9210 SoC also has the CPG MSTP clocks.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 > ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-but Tero should ack it too.
-
+Acked-by: Rob Herring <robh@kernel.org>
