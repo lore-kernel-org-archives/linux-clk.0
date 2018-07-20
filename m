@@ -1,84 +1,40 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 3/9] dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
-Date: Sat, 28 Jul 2018 00:15:21 +0530
-Message-Id: <20180727184527.13287-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, jonathanh@nvidia.co,
+        thierry.reding@gmail.com, linux-kernel@lists.codethink.co.uk,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH 8/8] clk: tegra: show clock name in error from _calc_rate
+Date: Fri, 20 Jul 2018 14:45:32 +0100
+Message-Id: <20180720134532.13148-9-ben.dooks@codethink.co.uk>
+In-Reply-To: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding constants for Actions Semi S700 SoC Reset
-Management Unit (RMU).
+If the _calc_rate() function fails in the tegra clock code, print
+the name of the clock that failed to allow debugging.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 ---
- .../dt-bindings/reset/actions,s700-reset.h    | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
+ drivers/clk/tegra/clk-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/reset/actions,s700-reset.h b/include/dt-bindings/reset/actions,s700-reset.h
-new file mode 100644
-index 000000000000..5e3b16b8ef53
---- /dev/null
-+++ b/include/dt-bindings/reset/actions,s700-reset.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+//
-+// Device Tree binding constants for Actions Semi S700 Reset Management Unit
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+
-+#ifndef __DT_BINDINGS_ACTIONS_S700_RESET_H
-+#define __DT_BINDINGS_ACTIONS_S700_RESET_H
-+
-+#define RESET_AUDIO				0
-+#define RESET_CSI				1
-+#define RESET_DE				2
-+#define RESET_DSI				3
-+#define RESET_GPIO				4
-+#define RESET_I2C0				5
-+#define RESET_I2C1				6
-+#define RESET_I2C2				7
-+#define RESET_I2C3				8
-+#define RESET_KEY				9
-+#define RESET_LCD0				10
-+#define RESET_SI				11
-+#define RESET_SPI0				12
-+#define RESET_SPI1				13
-+#define RESET_SPI2				14
-+#define RESET_SPI3				15
-+#define RESET_UART0				16
-+#define RESET_UART1				17
-+#define RESET_UART2				18
-+#define RESET_UART3				19
-+#define RESET_UART4				20
-+#define RESET_UART5				21
-+#define RESET_UART6				22
-+
-+#endif /* __DT_BINDINGS_ACTIONS_S700_RESET_H */
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 830d1c87fa7c..d1339a6139a1 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -576,8 +576,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		cfreq = parent_rate / (parent_rate / 1000000);
+ 		break;
+ 	default:
+-		pr_err("%s Unexpected reference rate %lu\n",
+-		       __func__, parent_rate);
++		pr_err("%s Unexpected reference rate %lu for %s\n",
++		       __func__, parent_rate, __clk_get_name(hw->clk));
+ 		BUG();
+ 	}
+ 
 -- 
-2.17.1
+2.18.0
