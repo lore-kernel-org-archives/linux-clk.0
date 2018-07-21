@@ -1,29 +1,40 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 11 Jul 2018 21:14:32 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: s.hauer@pengutronix.de, kernel@pengutronix.de, fabio.estevam@nxp.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shengjiu.wang@nxp.com,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Linux-imx@nxp.com
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx: add ocram_s support
-Message-ID: <20180711131431.GJ6959@dragon>
-References: <1531270739-3075-1-git-send-email-Anson.Huang@nxp.com>
- <1531270739-3075-2-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531270739-3075-2-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: linux-clk@vger.kernel.org,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/2] dt-bindings: clock: meson8b: export the CPU_DIV16 clock
+Date: Sat, 21 Jul 2018 19:25:36 +0200
+Message-Id: <20180721172537.15639-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
+References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 11, 2018 at 08:58:59AM +0800, Anson Huang wrote:
-> i.MX6SX has a 16KB always-on ocram bank called
-> ocram_s, enable it as another mmio sram.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+The CPU_DIV16 clock is used for the TWD timer on Meson8, Meson8b and
+Meson8m2.
 
-Since the clock ID has already been defined before, this dts patch can
-be applied independently to clock driver one.
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ include/dt-bindings/clock/meson8b-clkc.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Applied, thanks.
+diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
+index a60f47b49231..041560d9a67b 100644
+--- a/include/dt-bindings/clock/meson8b-clkc.h
++++ b/include/dt-bindings/clock/meson8b-clkc.h
+@@ -103,5 +103,6 @@
+ #define CLKID_MPLL1		94
+ #define CLKID_MPLL2		95
+ #define CLKID_NAND_CLK		112
++#define CLKID_CPU_DIV16		113
+ 
+ #endif /* __MESON8B_CLKC_H */
+-- 
+2.18.0
