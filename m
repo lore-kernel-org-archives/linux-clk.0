@@ -1,36 +1,46 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH v5 1/5] clk: actions: Fix the missing REGMAP_MMIO
- dependency
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: manivannan.sadhasivam@linaro.org, sboyd@kernel.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, linux@cubietech.com, support@cubietech.com,
- catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
- linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
- darren@cubietech.com, robh+dt@kernel.org, jeff.chen@actions-semi.com,
- pn@denx.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mp-cs@actions-semi.com
-References: <20180715200151.10416-1-sravanhome@gmail.com>
- <20180715200151.10416-2-sravanhome@gmail.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <4255c9c7-fffb-5b35-dbb7-ec91c6424c34@suse.de>
-Date: Sun, 15 Jul 2018 22:19:12 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180715200151.10416-2-sravanhome@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] meson8b: register the clock controller early
+Date: Sat, 21 Jul 2018 21:13:58 +0200
+Message-Id: <20180721191400.15558-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Am 15.07.2018 um 22:01 schrieb Saravanan Sekar:
-> Add REGMAP_MMIO as dependency to avoid undefined
-> reference to regmap symbols.
-> 
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+Some parts of the SoC are initialized early in the boot process, such
+as the SRAM and the TWD timer. This means that the corresponding
+drivers need to access the clock controller early as well.
 
-Still no Fixes: header. Please read SubmittingPatches.
+Before this series the clock controller was registered as platform
+driver, which is too late for the TWD timer (just as an example).
+The reset controller (built into the clock controller driver) was
+already registered early, basically for the same reason (the reset
+lines are used to start the secondary CPUs, which is done very early
+in the boot process).
 
-Regards,
-Andreas
+Register the clock controller early enough so we're able to use the
+TWD timer (as we need to pass a clock which is provided by this
+clock controller) in a second step.
+
+The second patch simplifies the reset controller (built into the clock
+controller driver) because the regmap is already available early and
+thus can be used by the reset controller driver as well.
+
+
+Martin Blumenstingl (2):
+  clk: meson: meson8b: register the clock controller early
+  clk: meson: meson8b: use the regmap in the internal reset controller
+
+ drivers/clk/meson/meson8b.c | 107 ++++++++++++++----------------------
+ 1 file changed, 40 insertions(+), 67 deletions(-)
 
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.18.0
