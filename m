@@ -1,146 +1,152 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
- bindings
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Saravanan Sekar <sravanhome@gmail.com>
-Cc: sboyd@kernel.org, pn@denx.de, linux-arm-kernel@lists.infradead.org,
- mturquette@baylibre.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
- catalin.marinas@arm.com, will.deacon@arm.com, devicetree@vger.kernel.org,
- Jeff Chen <jeff.chen@actions-semi.com>,
- "Thomas C. Liau" <thomas.liau@actions-semi.com>
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-4-sravanhome@gmail.com>
- <20180630093202.GB7320@Mani-XPS-13-9360>
- <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
- <20180701173706.GA15895@Mani-XPS-13-9360>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <88ce01d4-2694-eca0-770e-d4bd2869a258@suse.de>
-Date: Sun, 1 Jul 2018 19:58:15 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38218 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbeGUW3C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jul 2018 18:29:02 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180701173706.GA15895@Mani-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8
+References: <20180717095617.12240-1-jbrunet@baylibre.com> <20180717095617.12240-4-jbrunet@baylibre.com>
+ <d4e5e35a-39e0-fe27-8d27-387c5312ca32@baylibre.com> <CAFBinCBc_cFD2ACiSHVuRrXaqSyDnkJb2rem1_k2jwved=QXVw@mail.gmail.com>
+ <1532206010.26720.84.camel@baylibre.com>
+In-Reply-To: <1532206010.26720.84.camel@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 21 Jul 2018 23:34:39 +0200
+Message-ID: <CAFBinCD3i5pRzSp4Sx5349p_2XQfdCNguxU-gU1tD_asFu6YjA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: meson: clk-pll: drop hard-coded rates from pll tables
+To: jbrunet@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hi Jerome,
 
-Am 01.07.2018 um 19:37 schrieb Manivannan Sadhasivam:
-> On Sun, Jul 01, 2018 at 07:26:20PM +0200, Saravanan Sekar wrote:
->> Hi Mani
->>
->>
->> On 06/30/18 11:32, Manivannan Sadhasivam wrote:
->>> Hi Saravanan,
->>>
->>> I agree with modifying the existing binding to accomodate other
->>> SoC's of the same family. But the binding should be
->>> "actions,owl-cmu.txt" since it reflects the family name.
->>
->> Agree, will modify the name
->>
->>> Andreas, what do you think?
+On Sat, Jul 21, 2018 at 10:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> On Sat, 2018-07-21 at 22:16 +0200, Martin Blumenstingl wrote:
+> > > We could even add ranges instead of table when we know the PLL supports a well-known continuous dividers range.
+> >
+> > I had a look at the sys_pll settings on Meson8b, here's what
+> > Meson8/Meson8b/Meson8m2 support for sys_pll:
+> > - 50..74
+> > - 76
+> > - 78
+> > - 80
+> > - 82
+> > - 84
+> > - 86
+> > - 88
+> > - 90
+> > - 92
+> > - 94
+> > - 96
+> > - 98
+>
+> Are those values with the same predivider (n) value ?
+yes, all are using n = 1
 
-I concur that sx00 is insufficient. Older models were called ATMxxxx.
-Unfortunately with owl- it then no longer matches the compatible, but I
-wouldn't mind.
+> I suspect the ability of the DCO to lock might depends on its input rate and an
+> m range
+>
+> So if n change, it might possible that the m range will be different.
+>
+> ... at least, that's my guess :)
+for the Meson8b's SYS_PLL Amlogic's GPL kernel is using bits 15:14 in
+HHI_SYS_PLL_CNTL for frequencies above 1.64GHz (below that these
+reserved bits are always 0).
+if the values are useful for you (format is: frequency, m, n, od and
+bits 15:14. what's missing here is the "cpu_scale_div" divider which
+is for example why you'll see the "56, 1, 2, 0" tuple multiple times):
+SYS_PLL(24000, 56, 1, 2, 0)
+SYS_PLL(48000, 64, 1, 2, 0)
+SYS_PLL(72000, 72, 1, 2, 0)
+SYS_PLL(96000, 64, 1, 2, 0)
+SYS_PLL(120000, 80, 1, 2, 0)
+SYS_PLL(144000, 96, 1, 2, 0)
+SYS_PLL(168000, 56, 1, 1, 0)
+SYS_PLL(192000, 64, 1, 1, 0)
+SYS_PLL(216000, 72, 1, 1, 0)
+SYS_PLL(240000, 80, 1, 1, 0)
+SYS_PLL(264000, 88, 1, 1, 0)
+SYS_PLL(288000, 96, 1, 1, 0)
+SYS_PLL(312000, 52, 1, 2, 0)
+SYS_PLL(336000, 56, 1, 2, 0)
+SYS_PLL(360000, 60, 1, 2, 0)
+SYS_PLL(384000, 64, 1, 2, 0)
+SYS_PLL(408000, 68, 1, 2, 0)
+SYS_PLL(432000, 72, 1, 2, 0)
+SYS_PLL(456000, 76, 1, 2, 0)
+SYS_PLL(480000, 80, 1, 2, 0)
+SYS_PLL(504000, 84, 1, 2, 0)
+SYS_PLL(528000, 88, 1, 2, 0)
+SYS_PLL(552000, 92, 1, 2, 0)
+SYS_PLL(576000, 96, 1, 2, 0)
+SYS_PLL(600000, 50, 1, 1, 0)
+SYS_PLL(624000, 52, 1, 1, 0)
+SYS_PLL(648000, 54, 1, 1, 0)
+SYS_PLL(672000, 56, 1, 1, 0)
+SYS_PLL(696000, 58, 1, 1, 0)
+SYS_PLL(720000, 60, 1, 1, 0)
+SYS_PLL(744000, 62, 1, 1, 0)
+SYS_PLL(768000, 64, 1, 1, 0)
+SYS_PLL(792000, 66, 1, 1, 0)
+SYS_PLL(816000, 68, 1, 1, 0)
+SYS_PLL(840000, 70, 1, 1, 0)
+SYS_PLL(864000, 72, 1, 1, 0)
+SYS_PLL(888000, 74, 1, 1, 0)
+SYS_PLL(912000, 76, 1, 1, 0)
+SYS_PLL(936000, 78, 1, 1, 0)
+SYS_PLL(960000, 80, 1, 1, 0)
+SYS_PLL(984000, 82, 1, 1, 0)
+SYS_PLL(1008000, 84, 1, 1, 0)
+SYS_PLL(1032000, 86, 1, 1, 0)
+SYS_PLL(1056000, 88, 1, 1, 0)
+SYS_PLL(1080000, 90, 1, 1, 0)
+SYS_PLL(1104000, 92, 1, 1, 0)
+SYS_PLL(1128000, 94, 1, 1, 0)
+SYS_PLL(1152000, 96, 1, 1, 0)
+SYS_PLL(1176000, 98, 1, 1, 0)
+SYS_PLL(1200000, 50, 1, 0, 0)
+SYS_PLL(1224000, 51, 1, 0, 0)
+SYS_PLL(1248000, 52, 1, 0, 0)
+SYS_PLL(1272000, 53, 1, 0, 0)
+SYS_PLL(1296000, 54, 1, 0, 0)
+SYS_PLL(1320000, 55, 1, 0, 0)
+SYS_PLL(1344000, 56, 1, 0, 0)
+SYS_PLL(1368000, 57, 1, 0, 0)
+SYS_PLL(1392000, 58, 1, 0, 0)
+SYS_PLL(1416000, 59, 1, 0, 0)
+SYS_PLL(1440000, 60, 1, 0, 0)
+SYS_PLL(1464000, 61, 1, 0, 0)
+SYS_PLL(1488000, 62, 1, 0, 0)
+SYS_PLL(1512000, 63, 1, 0, 0)
+SYS_PLL(1536000, 64, 1, 0, 0)
+SYS_PLL(1560000, 65, 1, 0, 0)
+SYS_PLL(1584000, 66, 1, 0, 0)
+SYS_PLL(1608000, 67, 1, 0, 0)
+SYS_PLL(1632000, 68, 1, 0, 0)
+SYS_PLL(1656000, 68, 1, 0, 1)
+SYS_PLL(1680000, 68, 1, 0, 2)
+SYS_PLL(1704000, 68, 1, 0, 3)
+SYS_PLL(1728000, 69, 1, 0, 0)
+SYS_PLL(1752000, 69, 1, 0, 1)
+SYS_PLL(1776000, 69, 1, 0, 2)
+SYS_PLL(1800000, 69, 1, 0, 3)
+SYS_PLL(1824000, 70, 1, 0, 0)
+SYS_PLL(1848000, 70, 1, 0, 1)
+SYS_PLL(1872000, 70, 1, 0, 2)
+SYS_PLL(1896000, 70, 1, 0, 3)
+SYS_PLL(1920000, 71, 1, 0, 0)
+SYS_PLL(1944000, 71, 1, 0, 1)
+SYS_PLL(1968000, 71, 1, 0, 2)
+SYS_PLL(1992000, 71, 1, 0, 3)
+SYS_PLL(2016000, 72, 1, 0, 0)
+SYS_PLL(2040000, 72, 1, 0, 1)
+SYS_PLL(2064000, 72, 1, 0, 2)
+SYS_PLL(2088000, 72, 1, 0, 3)
+SYS_PLL(2112000, 73, 1, 0, 0)
 
->>> On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
->>>> Modify clock bindings common Actions Semi Soc family S700/S900.
->>>>
->>>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->>>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->>>> ---
->>>>   ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
->>>>   1 file changed, 10 insertions(+), 8 deletions(-)
->>>>   rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->>>> similarity index 71%
->>>> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
->>>> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->>>> index 93e4fb827cd6..8dc7edb4d198 100644
->>>> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
->>>> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->>>> @@ -1,12 +1,14 @@
->>>> -* Actions S900 Clock Management Unit (CMU)
->>>> +* Actions S900/S700 Clock Management Unit (CMU)
->>> Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
->>
->> sure
->>
-> 
-> During the review of I2C controller driver, Andreas pointed out that
-> we should use Owl instead of OWL in all places and also Actions should
-> be replaced by Actions Semiconductor.
 
-Actually I was just asking to include the company name and not just say
-Owl. Whether it's Actions, Actions Semi or Actions Semiconductor is not
-that important to me - that would be for the Actions Semi colleagues to
-comment - which I see are not in CC... Please fix that! You don't need
-mp-cs I think, but the others please.
-
-> So, please change it in relevant
-> places. For this binding, title should be:
-> 
-> Actions Semiconductor Owl SoC's Clock Management Unit (CMU).
-
-"SoC's" looks weird there, do we have such precedence to add it?
-"Actions Owl Clock Management Unit (CMU)" might do?
-
-Saravanan, please compare other patch titles and adapt your subjects
-accordingly: "modify bindings" is not very meaningful, since a patch
-always modifies something and the prefix already indicates dt-bindings
-as target. "Soc" is misspelled. The time-saving information to put there
-would be addition of S700.
-
->>>> -The Actions S900 clock management unit generates and supplies clock to various
->>>> -controllers within the SoC. The clock binding described here is applicable to
->>>> -S900 SoC.
->>>> +The Actions S900/S700 clock management unit generates and supplies clock to
->>>> +various controllers within the SoC. The clock binding described here is
->>>> +applicable to S900/S700 SoC.
-
-"S900 and S700 SoCs"? (keep the slash above)
-
->>>>   Required Properties:
->>>> -- compatible: should be "actions,s900-cmu"
->>>> +- compatible: should be one of this
->>> Change to: compatible: should be one of the following:
->>
->> sure
->>
->>> Thanks,
->>> Mani
->>>
->>>> +	"actions,s900-cmu"
->>>> +	"actions,s700-cmu"
-
-Mani, should we order alphabetically? I.e., will S500 go before S900, or
-will people just always append at the end now? Not saying we have to,
-but keeping it consistent across Actions bindings would be desirable.
-
->>>>   - reg: physical base address of the controller and length of memory mapped
->>>>     region.
->>>>   - clocks: Reference to the parent clocks ("hosc", "losc")
->>>> @@ -15,9 +17,9 @@ Required Properties:
->>>>   Each clock is assigned an identifier, and client nodes can use this identifier
->>>>   to specify the clock which they consume.
->>>> -All available clocks are defined as preprocessor macros in
->>>> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
->>>> -tree sources.
->>>> +All available clocks are defined as preprocessor macros in corresponding
->>>> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
-
-actions,s700-cmu.h for humans please or at least ...,s700-cmu.h.
-
->>>> +device tree sources.
->>>>   External clocks:
-
-Thanks,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Regards
+Martin
