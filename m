@@ -1,117 +1,106 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:10031 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729913AbeGQByg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jul 2018 21:54:36 -0400
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-To: Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
- <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
- <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
- <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
-CC: <yixun.lan@amlogic.com>, <qianggui.song@amlogic.com>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
-        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
-        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
-Date: Tue, 17 Jul 2018 09:24:02 +0800
-MIME-Version: 1.0
-In-Reply-To: <7hfu0jmhbe.fsf@baylibre.com>
-Content-Type: text/plain; charset="windows-1252"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	grahamr@qti.qualcomm.com,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [RFC PATCH 2/4] clk: qcom: Initialize the power domain class for each clock
+Date: Sat, 21 Jul 2018 23:45:00 +0530
+Message-Id: <1532196902-28570-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
+References: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Kevin
+The power domain class is being initialized for clocks which has
+an associated power domains before registering the clocks with
+the clock framework.
 
-just want to clarify..
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-regmap.h |  5 +++++
+ drivers/clk/qcom/common.c     | 17 +++++++----------
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
-On 07/16/18 21:38, Kevin Hilman wrote:
-> Jerome Brunet <jbrunet@baylibre.com> writes:
-> 
->> On Tue, 2018-07-10 at 09:21 +0800, Yixun Lan wrote:
->>>
->>> On 07/10/18 05:53, Martin Blumenstingl wrote:
->>>> On Mon, Jul 9, 2018 at 1:14 PM Jian Hu <jian.hu@amlogic.com> wrote:
-> 
-> [...]
-> 
->>>>> +
->>>>> +static const struct of_device_id clkc_match_table[] = {
->>>>> +       { .compatible = "amlogic,g12a-clkc" },
->>>>
->>>> I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
->>>> and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
->>>> correct - I'll CC Rob Herring on the dt-bindings patch)
->>>>
->>>
->>> we're fine with either way, since the g12a is recently new added SoC.
->>>
->>> but I guess those old compatibles which already exist won't be changed,
->>> as it will break the DT
->>
->> Yes, I doubt we are going to change the compatibles. With or without the meson
->> prefix, I suppose it going to stay that way.
-> 
-> Correct, we will not change existing compatibles.  Adding new ones for
-> clarity is fine though.
-> 
-fine
-
->> It is worth thinking about it for new drivers though.
->> We already have the "amlogic,", so do we really to prefix even more with "meson-
->> "
->>
->> Also, if we were really strict about that scheme, should meson8b compatible be
->>
->> "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
->>
->> For the particular case of the clock controller, I don't care very much, as long
->> as the compatible is coherent with documentation.
->>
->> I might have a preference for the current compatible ... just for consistency
->> with the other clock controllers.
-> 
-> In hindsight, I think using the "meson" prefix was a mistake.  It's
-> redunant, IMO, but it's how we've been doing things for all the drivers,
-> except for drivers/clk, which, honestly, I hadn't even noticed until
-> now.
-> 
-> As Jerome said, I think consistency is an important goal, so leaving off
-> the "meson-" for drivers/clk is fine with me.
-> 
-ok
-
-> Also for consistency, for the rest of the drivers, keeping "meson-" is
-> probably the right thing to do.
-> 
-ok, for the above, you are talking about the already exist compatible
-names? or the patches we will push in the future?
-
-> However, patches would be welcome to add compatibles without the "meson"
-> for the rest of the drivers & documentation as well, but please do not
-> remove any compatibles.
-> 
-I assume you are talking about the patches in the future we will push?
-to drop the "meson".
-
-I'm confused here, as the above two paragraphs conflict with each other
-
-> Kevin
-> 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-> 
-> .
-> 
-
+diff --git a/drivers/clk/qcom/clk-regmap.h b/drivers/clk/qcom/clk-regmap.h
+index 90d95cd..6265d91 100644
+--- a/drivers/clk/qcom/clk-regmap.h
++++ b/drivers/clk/qcom/clk-regmap.h
+@@ -17,22 +17,27 @@
+ #include <linux/clk-provider.h>
+ 
+ struct regmap;
++struct clk_powerdomain_class;
+ 
+ /**
+  * struct clk_regmap - regmap supporting clock
+  * @hw:		handle between common and hardware-specific interfaces
+  * @regmap:	regmap to use for regmap helpers and/or by providers
++ * @pd:		power domain scaling requirement class
+  * @enable_reg: register when using regmap enable/disable ops
+  * @enable_mask: mask when using regmap enable/disable ops
+  * @enable_is_inverted: flag to indicate set enable_mask bits to disable
+  *                      when using clock_enable_regmap and friends APIs.
++ * @rate_max:	maximum clock rate in Hz supported at each power domain.
+  */
+ struct clk_regmap {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
++	struct clk_powerdomain_class *pd;
+ 	unsigned int enable_reg;
+ 	unsigned int enable_mask;
+ 	bool enable_is_inverted;
++	unsigned long *rate_max;
+ };
+ #define to_clk_regmap(_hw) container_of(_hw, struct clk_regmap, hw)
+ 
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index 39ce64c..b0684bf 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -1,14 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
++ * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights reserved.
+  */
+ 
+ #include <linux/export.h>
+@@ -20,6 +12,7 @@
+ #include <linux/of.h>
+ 
+ #include "common.h"
++#include "clk-pd.h"
+ #include "clk-rcg.h"
+ #include "clk-regmap.h"
+ #include "reset.h"
+@@ -263,6 +256,10 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+ 		if (!rclks[i])
+ 			continue;
+ 
++		ret = clk_power_domain_class_init(dev, rclks[i]->pd);
++		if (ret)
++			return ret;
++
+ 		ret = devm_clk_register_regmap(dev, rclks[i]);
+ 		if (ret)
+ 			return ret;
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
