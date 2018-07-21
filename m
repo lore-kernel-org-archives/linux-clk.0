@@ -1,84 +1,53 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31809 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728595AbeGYKSM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jul 2018 06:18:12 -0400
-Message-ID: <1532509635.22373.6.camel@mhfsdcap03>
-Subject: Re: [PATCH v5 07/11] soc: mediatek: add MT6765 subdomain support
-From: Yong Wu <yong.wu@mediatek.com>
-To: Mars Cheng <Mars.Cheng@mediatek.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        "; Rob Herring" <robh+dt@kernel.org>,
-        "; Marc Zyngier" <marc.zyngier@arm.com>,
-        "; Ryder Lee =?UTF-8?Q?=28=E6=9D=8E=E5=BA=9AV=29?="
-        <Ryder.Lee@mediatek.com>, "; Stephen Boyd" <sboyd@kernel.org>,
-        "; Sean Wang =?UTF-8?Q?=28=E7=8E=8B=E5=BF=97=E4=BA=98=29?="
-        <sean.wang@mediatek.com>,
-        ";devicetree@vger.kernel.org; CC Hwang =?UTF-8?Q?=28S=E8=87=B4=29?="
-        <cc.hwang@mediatek.com>,
-        "; wsd_upstream" <wsd_upstream@mediatek.com>,
-        "; Loda Chou =?UTF-8?Q?=28=E5=91=A8=E5=AE=8F=E9=9C=96=29?="
-        <Loda.Chou@mediatek.com>,
-        "; linux-kernel@vger.kernel.org; linux-mediatek@lists.infradead.org;
-        linux-serial@vger.kernel.org; Mars Cheng
-        =?UTF-8?Q?=28=E6=A3=AE=E5=8F=8B=29?=" <Mars.Cheng@mediatek.com>,
-        "; Owen Chen =?UTF-8?Q?=28=E5=B3=BB=E6=96=8C=29?="
-        <owen.chen@mediatek.com>, <"; linux-clk"@vger.kernel.org>
-Date: Wed, 25 Jul 2018 17:07:15 +0800
-In-Reply-To: <ce7724590f4e4551be88b76a7355738c@MTKMBS31N1.mediatek.inc>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-         <1531817552-17221-8-git-send-email-mars.cheng@mediatek.com>
-         <ce7724590f4e4551be88b76a7355738c@MTKMBS31N1.mediatek.inc>
-Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	grahamr@qti.qualcomm.com,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [RFC PATCH 0/4] clk: qcom: Add support to vote to genpd
+Date: Sat, 21 Jul 2018 23:44:58 +0530
+Message-Id: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mars,
+A clock controller could be connected to single or multiple power domains. Add
+support for powerdomain_class which would help associate these power domains to
+the RCGs and PLLs in the clock controller. Map the domain and the corresponding
+frequencies to the clock(RCG/PLL). The clock frequency request from a consumer
+would be mapped to the corresponding performance corner, aggregated at the
+clock driver and would be vote/unvoted to the genpd framework for the desired
+performance state.
 
-> -----Original Message-----
-> From: Linux-mediatek [mailto:linux-mediatek-bounces@lists.infradead.org] On Behalf Of Mars Cheng
-> Sent: Tuesday, July 17, 2018 4:52 PM
-> To: Matthias Brugger <matthias.bgg@gmail.com>; Rob Herring <robh+dt@kernel.org>; Marc Zyngier <marc.zyngier@arm.com>; Ryder Lee (李庚V) <Ryder.Lee@mediatek.com>; Stephen Boyd <sboyd@kernel.org>; Sean Wang (王志亘) <sean.wang@mediatek.com>
-> Cc: devicetree@vger.kernel.org; CC Hwang (S致) <cc.hwang@mediatek.com>; wsd_upstream <wsd_upstream@mediatek.com>; Loda Chou (周宏霖) <Loda.Chou@mediatek.com>; linux-kernel@vger.kernel.org; linux-mediatek@lists.infradead.org; linux-serial@vger.kernel.org; Mars Cheng (森友) <Mars.Cheng@mediatek.com>; Owen Chen (峻斌) <owen.chen@mediatek.com>; linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: [PATCH v5 07/11] soc: mediatek: add MT6765 subdomain support
-> 
-> add extend data, parent_n for domain-subdomain corresponse.
-> 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys-ext.c |  132 ++++++++++++++++++++++++++++++++-
->  1 file changed, 131 insertions(+), 1 deletion(-)
-> 
-[...]
-> +
-> +#define SMI_COMMON_SMI_CLAMP_MT6765		0x03C0
-> +#define SMI_COMMON_SMI_CLAMP_SET_MT6765	0x03C4
-> +#define SMI_COMMON_SMI_CLAMP_CLR_MT6765	0x03C8
+This series add an example of power domain class for sdm845 RCG/PLLs and the
+corresponding frequency mappings. This depends on power domain drivers of
+SDM845 https://lkml.org/lkml/2018/6/27/7.
 
-  From my understanding, this smi register could clamp the dummy
-commands after the larb power down for the sake of safe,
-is it right?
+Taniya Das (4):
+  clk: qcom: Add support to request power domain state
+  clk: qcom: Initialize the power domain class for each clock
+  clk: qcom: Add prepare/unprepare clock ops for PLL/RCG
+  clk: qcom: sdm845: Add Power Domain to RCGs and PLL
 
-   If it's yes, I guess we could put this in the larb device's
-runtime_resume/runtime_suspend callback.
-   we can enable the clamp in the larb's runtime_suspend and clear it in
-the larb's runtime_resume.
+ arch/arm64/boot/dts/qcom/sdm845.dtsi |   2 +
+ drivers/clk/qcom/Makefile            |   1 +
+ drivers/clk/qcom/clk-alpha-pll.c     |  52 ++++++++--
+ drivers/clk/qcom/clk-pd.c            | 193 +++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-pd.h            |  55 ++++++++++
+ drivers/clk/qcom/clk-rcg2.c          |  61 +++++++++--
+ drivers/clk/qcom/clk-regmap.h        |   5 +
+ drivers/clk/qcom/common.c            |  17 ++-
+ drivers/clk/qcom/gcc-sdm845.c        |  83 ++++++++++++---
+ 9 files changed, 427 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/qcom/clk-pd.c
+ create mode 100644 drivers/clk/qcom/clk-pd.h
 
-   then we don't need add "syscon" for smi-common node.
-
-   please tell me if I miss something.
-
-   Thanks.
-
-> +
-[...]
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
