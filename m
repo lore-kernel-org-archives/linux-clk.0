@@ -1,136 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:33740 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeGaJis (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 05:38:48 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v2 5/5] clk: RK808: add RK809 and RK817 support.
-Date: Tue, 31 Jul 2018 16:00:29 +0800
-Message-Id: <1533024029-30273-1-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
-References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-amlogic@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/3] Meson8/Meson8b: introduce a HHI syscon node
+Date: Sat, 21 Jul 2018 21:28:43 +0200
+Message-Id: <20180721192846.18811-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+The Meson8/Meson8b/Meson8m2 SoCs are suffering from a similar problem
+as the GXBB/GXL/GXM SoCs (see the GX series from Jerome: [0]):
+There is a register area called "HHI" which is used for multiple IP
+blocks of the SoC:
+- the system clock controller
+- a few reset lines (there is a separate reset controller, these reset
+  lines are not part of the other reset controller). this reset
+  controller is currently implemented in the clock controller driver
+- a HDMI controller
+- temperature sensor calibration data (by "data" I really mean data,
+  the ADC driver has four bits for the TSC data in it's own register
+  space, however on Meson8b and Meson8m2 there is a fifth TSC bit which
+  is stored in the HHI register area)
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
----
- drivers/clk/Kconfig     |  6 ++---
- drivers/clk/clk-rk808.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 64 insertions(+), 4 deletions(-)
+The first three could be implemented with a single node (either in one
+big driver, or using a MFD driver which would register function-
+specific drivers).
+However, the TSC data is a big problem, because the ADC has it's own
+set of registers but needs to write one bit in the HHI register area.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..fc1427c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,11 +46,11 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+          These multi-function devices have two fixed-rate oscillators,
- 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
- 	  by control register.
- 
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..c5d3492 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	case RK805_ID:
-+	case RK808_ID:
-+	case RK818_ID:
-+		return &rk808_clkout2_ops;
-+	}
-+
-+	return &rk808_clkout2_ops;
-+}
-+
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
- 
- 	/* optional override of the clockname */
+NOTE: this series has multiple dependencies:
+- the clock controller changes depend "meson8b: add the CPU_DIV16 clock
+  for the ARM TWD" as well as "meson8b: register the clock controller
+  early" [2]
+- the dts changes depend on "fix clock controller register size on
+  Meson8/Meson8b" [3]
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2018-March/006733.html
+[1] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
+[2] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007900.html
+[3] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007897.html
+
+
+Martin Blumenstingl (3):
+  dt-bindings: clock: meson8b: use the registers from the HHI syscon
+  clk: meson: meson8b: use the HHI syscon if available
+  ARM: dts: meson: switch the clock controller to the HHI register area
+
+ .../bindings/clock/amlogic,meson8b-clkc.txt   | 13 ++++------
+ arch/arm/boot/dts/meson.dtsi                  |  5 ++++
+ arch/arm/boot/dts/meson8.dtsi                 | 15 ++++++------
+ arch/arm/boot/dts/meson8b.dtsi                | 15 ++++++------
+ drivers/clk/meson/meson8b.c                   | 24 ++++++++++++-------
+ 5 files changed, 41 insertions(+), 31 deletions(-)
+
 -- 
-1.9.1
-
-
+2.18.0
