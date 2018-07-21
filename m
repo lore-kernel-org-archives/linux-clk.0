@@ -1,83 +1,173 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 25 Jul 2018 14:07:55 -0600
-From: Rob Herring <robh@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: narmstrong@baylibre.com, jbrunet@baylibre.com, mark.rutland@arm.com,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, carlo@caione.org,
-	khilman@baylibre.com, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: meson8b: use the registers from
- the HHI syscon
-Message-ID: <20180725200755.GA24555@rob-hp-laptop>
-References: <20180721192846.18811-1-martin.blumenstingl@googlemail.com>
- <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/2] clk: meson: meson8b: register the clock controller early
+Date: Sat, 21 Jul 2018 21:13:59 +0200
+Message-Id: <20180721191400.15558-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180721191400.15558-1-martin.blumenstingl@googlemail.com>
+References: <20180721191400.15558-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Jul 21, 2018 at 09:28:44PM +0200, Martin Blumenstingl wrote:
-> The clock controller on Meson8/Meson8m2 and Meson8b is part of a
-> register region called "HHI". This register area contains more
-> functionality than just a clock controller:
-> - the clock controller
-> - some reset controller bits
-> - temperature sensor calibration data (on Meson8b and Meson8m2 only)
-> - HDMI controller
-> 
-> The HHI register area may be accessed concurrently. Allow this by using
-> a "system controller" as parent node.
+Until now only the reset controller (part of the clock controller
+register space) was registered early in the boot process, while the
+clock controller itself was registered later on.
+However, some parts of the SoC are initialized early in the boot process,
+such as the SRAM and the TWD timer. The bootloader already enables these
+clocks so we didn't see any issues so far.
 
-Why? A single node can be a provider of multiple things. Maybe the HDMI 
-should be a child since it will involve graph nodes, but the rest can be 
-one node. There should be numerous examples of blocks that are clock and 
-reset controllers.
+Register the clock controller early so other drivers (such as the SRAM
+and TWD timer) can use the clocks early in the boot process.
 
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  .../bindings/clock/amlogic,meson8b-clkc.txt         | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> index b455c5aa9139..38fb979210d3 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> @@ -9,15 +9,13 @@ Required Properties:
->  	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
->  	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
->  	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
-> -- reg: it must be composed by two tuples:
-> -	0) physical base address of the xtal register and length of memory
-> -	   mapped region.
-> -	1) physical base address of the clock controller and length of memory
-> -	   mapped region.
-> -
->  - #clock-cells: should be 1.
->  - #reset-cells: should be 1.
->  
-> +Parent node should have the following properties :
-> +- compatible: "syscon", "simple-mfd"
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 94 ++++++++++++++-----------------------
+ 1 file changed, 34 insertions(+), 60 deletions(-)
 
-These 2 compatibles alone are not valid.
-
-> +- reg: base address and size of the HHI system control register space.
-> +
->  Each clock is assigned an identifier and client nodes can use this identifier
->  to specify the clock which they consume. All available clocks are defined as
->  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
-> @@ -30,9 +28,8 @@ device tree sources).
->  
->  Example: Clock controller node:
->  
-> -	clkc: clock-controller@c1104000 {
-> +	clkc: clock-controller {
->  		compatible = "amlogic,meson8b-clkc";
-> -		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
->  		#clock-cells = <1>;
->  		#reset-cells = <1>;
->  	};
-> -- 
-> 2.18.0
-> 
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 17f56f600e09..1caaa780201b 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/init.h>
+ #include <linux/of_address.h>
+-#include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/regmap.h>
+@@ -22,8 +21,6 @@
+ 
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static void __iomem *clk_base;
+-
+ struct meson8b_clk_reset {
+ 	struct reset_controller_dev reset;
+ 	void __iomem *base;
+@@ -1106,62 +1103,12 @@ static const struct regmap_config clkc_regmap_config = {
+ 	.reg_stride     = 4,
+ };
+ 
+-static int meson8b_clkc_probe(struct platform_device *pdev)
+-{
+-	int ret, i;
+-	struct device *dev = &pdev->dev;
+-	struct regmap *map;
+-
+-	if (!clk_base)
+-		return -ENXIO;
+-
+-	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
+-
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
+-		meson8b_clk_regmaps[i]->map = map;
+-
+-	/*
+-	 * register all clks
+-	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
+-	 */
+-	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
+-		/* array might be sparse */
+-		if (!meson8b_hw_onecell_data.hws[i])
+-			continue;
+-
+-		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-					   &meson8b_hw_onecell_data);
+-}
+-
+-static const struct of_device_id meson8b_clkc_match_table[] = {
+-	{ .compatible = "amlogic,meson8-clkc" },
+-	{ .compatible = "amlogic,meson8b-clkc" },
+-	{ .compatible = "amlogic,meson8m2-clkc" },
+-	{ }
+-};
+-
+-static struct platform_driver meson8b_driver = {
+-	.probe		= meson8b_clkc_probe,
+-	.driver		= {
+-		.name	= "meson8b-clkc",
+-		.of_match_table = meson8b_clkc_match_table,
+-	},
+-};
+-
+-builtin_platform_driver(meson8b_driver);
+-
+-static void __init meson8b_clkc_reset_init(struct device_node *np)
++static void __init meson8b_clkc_init(struct device_node *np)
+ {
+ 	struct meson8b_clk_reset *rstc;
+-	int ret;
++	void __iomem *clk_base;
++	struct regmap *map;
++	int i, ret;
+ 
+ 	/* Generic clocks, PLLs and some of the reset-bits */
+ 	clk_base = of_iomap(np, 1);
+@@ -1170,6 +1117,10 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	map = regmap_init_mmio(NULL, clk_base, &clkc_regmap_config);
++	if (IS_ERR(map))
++		return;
++
+ 	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
+ 	if (!rstc)
+ 		return;
+@@ -1185,11 +1136,34 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
+ 		       __func__, ret);
+ 		return;
+ 	}
++
++	/* Populate regmap for the regmap backed clocks */
++	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
++		meson8b_clk_regmaps[i]->map = map;
++
++	/*
++	 * register all clks
++	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
++	 */
++	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
++		/* array might be sparse */
++		if (!meson8b_hw_onecell_data.hws[i])
++			continue;
++
++		ret = clk_hw_register(NULL, meson8b_hw_onecell_data.hws[i]);
++		if (ret)
++			return;
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
++				     &meson8b_hw_onecell_data);
++	if (ret)
++		pr_err("%s: failed to register clock provider\n", __func__);
+ }
+ 
+ CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
+-		      meson8b_clkc_reset_init);
++		      meson8b_clkc_init);
+ CLK_OF_DECLARE_DRIVER(meson8b_clkc, "amlogic,meson8b-clkc",
+-		      meson8b_clkc_reset_init);
++		      meson8b_clkc_init);
+ CLK_OF_DECLARE_DRIVER(meson8m2_clkc, "amlogic,meson8m2-clkc",
+-		      meson8b_clkc_reset_init);
++		      meson8b_clkc_init);
+-- 
+2.18.0
