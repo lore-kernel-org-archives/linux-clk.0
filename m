@@ -1,91 +1,68 @@
-Return-Path: <khilman@baylibre.com>
-Return-Path: <khilman@baylibre.com>
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,  <qianggui.song@amlogic.com>,  Rob Herring <robh@kernel.org>,  Neil Armstrong <narmstrong@baylibre.com>,  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,  <mturquette@baylibre.com>,  <linux-kernel@vger.kernel.org>,  <linux-clk@vger.kernel.org>,  <bo.yang@amlogic.com>,  <sboyd@kernel.org>,  <jian.hu@amlogic.com>,  <xingyu.chen@amlogic.com>,  <qiufang.dai@amlogic.com>,  <linux-amlogic@lists.infradead.org>,  <sunny.luo@amlogic.com>,  <carlo@caione.org>,  <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-	<1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-	<CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-	<ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-	<1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
-	<7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
-	<7h601be2vk.fsf@baylibre.com>
-	<e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com>
-Date: Thu, 19 Jul 2018 09:53:03 -0500
-In-Reply-To: <e1f0b672-65de-6afa-cec4-e2d910c58b7c@amlogic.com> (Yixun Lan's
-	message of "Thu, 19 Jul 2018 22:27:55 +0800")
-Message-ID: <7hk1prmg4w.fsf@baylibre.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37228 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbeGUWcR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Jul 2018 18:32:17 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180717095617.12240-1-jbrunet@baylibre.com> <20180717095617.12240-3-jbrunet@baylibre.com>
+ <CAFBinCAcqwhJUoLF3XkhOR2gnNk3cjEgh=ChTDybeRPLHgzeSg@mail.gmail.com> <1532205745.26720.81.camel@baylibre.com>
+In-Reply-To: <1532205745.26720.81.camel@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 21 Jul 2018 23:37:54 +0200
+Message-ID: <CAFBinCAOssTAfearSER=95siRem-ZP8yU48xgoG4epRN76fgAA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: meson: clk-pll: remove od parameters
+To: jbrunet@baylibre.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+Hi Jerome,
 
-> On 07/19/2018 10:06 PM, Kevin Hilman wrote:
->> Yixun Lan <yixun.lan@amlogic.com> writes:
->> 
->> [...]
->> 
->>>>
->>>> As Jerome said, I think consistency is an important goal, so leaving off
->>>> the "meson-" for drivers/clk is fine with me.
->>>>
->>> ok
->>>
->>>> Also for consistency, for the rest of the drivers, keeping "meson-" is
->>>> probably the right thing to do.
->>>>
->>> ok, for the above, you are talking about the already exist compatible
->>> names? or the patches we will push in the future?
->> 
->> I'm talking about future patches.
->> 
-> ok
+On Sat, Jul 21, 2018 at 10:42 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
->>>> However, patches would be welcome to add compatibles without the "meson"
->>>> for the rest of the drivers & documentation as well, but please do not
->>>> remove any compatibles.
->>>>
->>> I assume you are talking about the patches in the future we will push?
->>> to drop the "meson".
->>>
->>> I'm confused here, as the above two paragraphs conflict with each other
->> 
->> Yeah, what I wrote is confusing, sorry about that.
->> 
->> What I mean is that new patches should stay consistent with compatibles
->> in their existing drivers/subsystems.  That means keeping the "meson-"
->> prefix for everything except drivers/clk.
->> 
-> sounds good to me.
+> On Sat, 2018-07-21 at 22:01 +0200, Martin Blumenstingl wrote:
+> > > +static struct clk_regmap gxbb_hdmi_pll_od = {
+> > > +       .data = &(struct clk_regmap_div_data){
+> > > +               .offset = HHI_HDMI_PLL_CNTL2,
+> > > +               .shift = 16,
+> > > +               .width = 2,
+> > > +               .flags = CLK_DIVIDER_POWER_OF_TWO,
+> > > +       },
+> > > +       .hw.init = &(struct clk_init_data){
+> > > +               .name = "hdmi_pll_od",
+> > > +               .ops = &clk_regmap_divider_ro_ops,
+> > > +               .parent_names = (const char *[]){ "hdmi_pll_dco" },
+> > > +               .num_parents = 1,
+> > > +               .flags = CLK_GET_RATE_NOCACHE,
+> >
+> > why do we need CLK_GET_RATE_NOCACHE here?
+> > also, shouldn't all _od clocks use CLK_SET_RATE_PARENT?
+> > (this applies to all new _od clocks, not just this one)
 >
->> In addition to that, patches would be welcome for *adding* compatibles
->> without "meson" to all the current drivers.
->> 
-> not sure if I parse above correctly, so let me rephrase..
+> The goal was to retain the original behavior of the clock.
+> The pll has CLK_GET_RATE_NOCACHE, which is why I put it again in the od
+> dividers. Same goes for ro_ops
+I missed that - thanks for the explanation!
+
+> For the particular case of the HDMI PLL, the display driver still set the pll
+> parameters m, n and ods directly which justify CLK_GET_RATE_NOCACHE for now.
+> Of course, the goal is to remove this flag someday. I think there has been some
+> good progress in the DRM driver to reach this goal.
 >
-> for "all the current drivers", do you mean all the drivers which already
-> accepted at mainline kernel, which are mmc, uart, spi, i2c ..
+> If we think the use CLK_GET_RATE_NOCACHE is not justified for some other plls, I
+> would prefer if it was addressed in another patchset.
+now that the reason is clear to me: I fully agree!
 
-Yes.
+> Regarding SET_RATE_PARENT, with the pll set with ro_ops, it does not change
+> anything but, I agree, it would be better to set flag for the future.
+I see
+adding SET_RATE_PARENT will probably save a bit of headache later on
+when enabling the write operation of the PLL and then wondering why
+the frequency is not changed
 
-> all of them follow "amlogic,meson-${SOC}-${FUNCTION}", so do you propose
-> to add compatbiles like "amlogic,${SOC}-${FUNCTION}" ?
 
-Yes, but that's an optional future cleanup.
-
-> take i2c for example, there is "amlogic,meson-axg-i2c" already, do you
-> want to add another "amlogic,axg-i2c" ? I feel this will adding more
-> confusion..
-
-Possibly, but it will provide a path to remove the "meson-" prefix in
-the future if we would like.
-
-> How about only following the "amlogic,${SOC}-${FUNCTION}" syntax in the
-> new added drivers in the future, for example NAND, PCIE driver which we
-> want to push (those drivers doesn't exist in current mainline kernel).
-
-For new drivers, it's fine to not use the "meson-" prefix at all.
-
-Kevin
+Regards
+Martin
