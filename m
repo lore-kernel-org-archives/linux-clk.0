@@ -1,51 +1,259 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-To: David Lechner <david@lechnology.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
- <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
-Date: Wed, 4 Jul 2018 12:05:29 +0530
-MIME-Version: 1.0
-In-Reply-To: <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	grahamr@qti.qualcomm.com,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [RFC PATCH 3/4] clk: qcom: Add prepare/unprepare clock ops for PLL/RCG
+Date: Sat, 21 Jul 2018 23:45:01 +0530
+Message-Id: <1532196902-28570-4-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
+References: <1532196902-28570-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi David,
+To put across power domain votes associated with a PLL or RCG, add the
+prepare/unprepare clock ops which would map the corresponding performance
+state corners for a clock frequency when the clk_prepare/clk_unprepare is
+being invoked.
+Also update the set_rate clock ops to send across the performance state to
+genpd framework when a new frequency is being requested.
 
-On Monday 02 July 2018 09:02 PM, David Lechner wrote:
-> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
->> Hi David, Stephen,
->>
->> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> This series moves all aemif/nand users to using the ti-aemif platform
->>> driver located in drivers/memory instead of the older API located in
->>> mach-davinci.
->>>
->>> First five patches add necessary changes to the clock driver. Next
->>> seven convert the board files to using the ti-aemif driver. Last patch
->>> removes now dead code.
->>
->> How do you want to handle this series? I can apply the series and
->> provide you an immutable branch on v4.18-rc1 with the clock patches
->> applied if that can work.
-> 
-> Sounds good to me. But I'm new to this maintainer thing, so maybe
-> there is something to consider that I haven't thought of?
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 52 +++++++++++++++++++++++++++-------
+ drivers/clk/qcom/clk-rcg2.c      | 61 +++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 96 insertions(+), 17 deletions(-)
 
-I don't think there is more to it. Ultimately there should not be two
-commits for the same patch. Either you can apply and share the commit to
-use or I can do that as well. I am equally fine either way.
-
-Regards,
-Sekhar
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 3c49a60..c03b6e4 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -1,14 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/kernel.h>
+@@ -18,6 +10,7 @@
+ #include <linux/delay.h>
+ 
+ #include "clk-alpha-pll.h"
++#include "clk-pd.h"
+ #include "common.h"
+ 
+ #define PLL_MODE(p)		((p)->offset + 0x0)
+@@ -522,7 +515,9 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	const struct pll_vco *vco;
+ 	u32 l, alpha_width = pll_alpha_width(pll);
++	unsigned long old_rate = clk_hw_get_rate(hw);
+ 	u64 a;
++	int ret;
+ 
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+ 	vco = alpha_pll_find_vco(pll, rate);
+@@ -531,6 +526,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_hw_is_prepared(hw)) {
++		/* Enforce power domain requirement for new frequency */
++		ret = clk_power_domain_vote_rate(&pll->clkr, rate);
++		if (ret) {
++			pr_err("Failed to vote/set new rate %lu\n", rate);
++			return ret;
++		}
++	}
++
+ 	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+ 
+ 	if (alpha_width > ALPHA_BITWIDTH)
+@@ -550,7 +554,15 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
+ 			   PLL_ALPHA_EN, PLL_ALPHA_EN);
+ 
+-	return clk_alpha_pll_update_latch(pll, is_enabled);
++	ret = clk_alpha_pll_update_latch(pll, is_enabled);
++	if (ret)
++		old_rate = rate;
++
++	if (clk_hw_is_prepared(hw))
++		/* Release the power domain requirement for old frequency */
++		clk_power_domain_unvote_rate(&pll->clkr, old_rate);
++
++	return ret;
+ }
+ 
+ static int clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -1017,7 +1029,25 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return __clk_alpha_pll_update_latch(pll);
+ }
+ 
++static int clk_alpha_pll_prepare(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	unsigned long rate = clk_hw_get_rate(hw);
++
++	return clk_power_domain_vote_rate(&pll->clkr, rate);
++}
++
++static void clk_alpha_pll_unprepare(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	unsigned long rate = clk_hw_get_rate(hw);
++
++	clk_power_domain_unvote_rate(&pll->clkr, rate);
++}
++
+ const struct clk_ops clk_alpha_pll_fabia_ops = {
++	.prepare = clk_alpha_pll_prepare,
++	.unprepare = clk_alpha_pll_unprepare,
+ 	.enable = alpha_pll_fabia_enable,
+ 	.disable = alpha_pll_fabia_disable,
+ 	.is_enabled = clk_alpha_pll_is_enabled,
+@@ -1028,6 +1058,8 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_fabia_ops);
+ 
+ const struct clk_ops clk_alpha_pll_fixed_fabia_ops = {
++	.prepare = clk_alpha_pll_prepare,
++	.unprepare = clk_alpha_pll_unprepare,
+ 	.enable = alpha_pll_fabia_enable,
+ 	.disable = alpha_pll_fabia_disable,
+ 	.is_enabled = clk_alpha_pll_is_enabled,
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 52208d4..dc17dbf 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -15,6 +15,7 @@
+ 
+ #include <asm/div64.h>
+ 
++#include "clk-pd.h"
+ #include "clk-rcg.h"
+ #include "common.h"
+ 
+@@ -247,26 +248,46 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	u32 cfg, mask;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+ 	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	unsigned long old_rate = clk_hw_get_rate(hw);
+ 
+ 	if (index < 0)
+ 		return index;
+ 
++	/* Enforce power domain requirement for new frequency */
++	if (clk_hw_is_prepared(hw)) {
++		ret = clk_power_domain_vote_rate(&rcg->clkr, f->freq);
++		if (ret) {
++			pr_err("Failed to vote & set new rate %lu\n", f->freq);
++			return ret;
++		}
++	}
++
+ 	if (rcg->mnd_width && f->n) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+ 				rcg->cmd_rcgr + M_REG, mask, f->m);
+-		if (ret)
+-			return ret;
++		if (ret) {
++			/*
++			 * Release the power domain requirement for
++			 * new frequency
++			 */
++			old_rate = f->freq;
++			goto out;
++		}
+ 
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+ 				rcg->cmd_rcgr + N_REG, mask, ~(f->n - f->m));
+-		if (ret)
+-			return ret;
++		if (ret) {
++			old_rate = f->freq;
++			goto out;
++		}
+ 
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+ 				rcg->cmd_rcgr + D_REG, mask, ~f->n);
+-		if (ret)
+-			return ret;
++		if (ret) {
++			old_rate = f->freq;
++			goto out;
++		}
+ 	}
+ 
+ 	mask = BIT(rcg->hid_width) - 1;
+@@ -276,8 +297,14 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+ 
+-	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
++	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+ 					mask, cfg);
++out:
++	if (clk_hw_is_prepared(hw))
++		/* Release the power domain requirement for old/new frequency */
++		clk_power_domain_unvote_rate(&rcg->clkr, old_rate);
++
++	return ret;
+ }
+ 
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+@@ -338,7 +365,25 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+ 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
+ 
++static int clk_rcg2_prepare(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	unsigned long rate = clk_hw_get_rate(hw);
++
++	return clk_power_domain_vote_rate(&rcg->clkr, rate);
++}
++
++static void clk_rcg2_unprepare(struct clk_hw *hw)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	unsigned long rate = clk_hw_get_rate(hw);
++
++	clk_power_domain_unvote_rate(&rcg->clkr, rate);
++}
++
+ const struct clk_ops clk_rcg2_ops = {
++	.prepare = clk_rcg2_prepare,
++	.unprepare = clk_rcg2_unprepare,
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+ 	.set_parent = clk_rcg2_set_parent,
+@@ -919,6 +964,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ }
+ 
+ const struct clk_ops clk_rcg2_shared_ops = {
++	.prepare = clk_rcg2_prepare,
++	.unprepare = clk_rcg2_unprepare,
+ 	.enable = clk_rcg2_shared_enable,
+ 	.disable = clk_rcg2_shared_disable,
+ 	.get_parent = clk_rcg2_get_parent,
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
