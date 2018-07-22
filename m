@@ -1,295 +1,103 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v10 05/10] firmware: xilinx: Add clock APIs
-Date: Tue, 17 Jul 2018 12:59:02 -0700
-Message-ID: <1531857547-16652-6-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+Return-Path: <afaerber@suse.de>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To: linux-mips@linux-mips.org
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	James Hogan <jhogan@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 00/15] MIPS: pistachio: Creator Ci40 aka Marduk SPI-UART
+Date: Sun, 22 Jul 2018 23:19:55 +0200
+Message-Id: <20180722212010.3979-1-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+Hello,
 
-Add clock APIs to control clocks through firmware
-interface.
+This patchset enables SPI and UARTs for the Ci40's mikroBUS and Raspberry Pi B+
+connectors, as well as the remaining seven LEDs and as dependency the 802.15.4.
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 186 ++++++++++++++++++++++++++++++++++-
- include/linux/firmware/xlnx-zynqmp.h |  30 ++++++
- 2 files changed, 214 insertions(+), 2 deletions(-)
+I also dug out some related driver fixes from their pistachio-4.9-lede branch:
+https://github.com/CreatorDev/linux/commits/pistachio-4.9-lede
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 8ec5682..41ed800 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -269,14 +269,196 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-  */
- static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
- {
--	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
--				   qdata.arg2, qdata.arg3, out);
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				  qdata.arg2, qdata.arg3, out);
-+
-+	/*
-+	 * For clock name query, all bytes in SMC response are clock name
-+	 * characters and return code is always success. For invalid clocks,
-+	 * clock name bytes would be zeros.
-+	 */
-+	return qdata.qid == PM_QID_CLOCK_GET_NAME ? 0 : ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_enable() - Enable the clock for given id
-+ * @clock_id:	ID of the clock to be enabled
-+ *
-+ * This function is used by master to enable the clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_enable(u32 clock_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_ENABLE, clock_id, 0, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_disable() - Disable the clock for given id
-+ * @clock_id:	ID of the clock to be disable
-+ *
-+ * This function is used by master to disable the clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_disable(u32 clock_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_DISABLE, clock_id, 0, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getstate() - Get the clock state for given id
-+ * @clock_id:	ID of the clock to be queried
-+ * @state:	1/0 (Enabled/Disabled)
-+ *
-+ * This function is used by master to get the state of clock
-+ * including peripherals and PLL clocks.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getstate(u32 clock_id, u32 *state)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETSTATE, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*state = ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setdivider() - Set the clock divider for given id
-+ * @clock_id:	ID of the clock
-+ * @divider:	divider value
-+ *
-+ * This function is used by master to set divider for any clock
-+ * to achieve desired rate.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setdivider(u32 clock_id, u32 divider)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETDIVIDER, clock_id, divider,
-+				   0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getdivider() - Get the clock divider for given id
-+ * @clock_id:	ID of the clock
-+ * @divider:	divider value
-+ *
-+ * This function is used by master to get divider values
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getdivider(u32 clock_id, u32 *divider)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETDIVIDER, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*divider = ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setrate() - Set the clock rate for given id
-+ * @clock_id:	ID of the clock
-+ * @rate:	rate value in hz
-+ *
-+ * This function is used by master to set rate for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setrate(u32 clock_id, u64 rate)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETRATE, clock_id,
-+				   lower_32_bits(rate),
-+				   upper_32_bits(rate),
-+				   0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getrate() - Get the clock rate for given id
-+ * @clock_id:	ID of the clock
-+ * @rate:	rate value in hz
-+ *
-+ * This function is used by master to get rate
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getrate(u32 clock_id, u64 *rate)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETRATE, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*rate = ((u64)ret_payload[2] << 32) | ret_payload[1];
-+
-+	return ret;
-+}
-+
-+/**
-+ * zynqmp_pm_clock_setparent() - Set the clock parent for given id
-+ * @clock_id:	ID of the clock
-+ * @parent_id:	parent id
-+ *
-+ * This function is used by master to set parent for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_setparent(u32 clock_id, u32 parent_id)
-+{
-+	return zynqmp_pm_invoke_fn(PM_CLOCK_SETPARENT, clock_id,
-+				   parent_id, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_clock_getparent() - Get the clock parent for given id
-+ * @clock_id:	ID of the clock
-+ * @parent_id:	parent id
-+ *
-+ * This function is used by master to get parent index
-+ * for any clock.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_CLOCK_GETPARENT, clock_id, 0,
-+				  0, 0, ret_payload);
-+	*parent_id = ret_payload[1];
-+
-+	return ret;
- }
- 
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
- 	.query_data = zynqmp_pm_query_data,
-+	.clock_enable = zynqmp_pm_clock_enable,
-+	.clock_disable = zynqmp_pm_clock_disable,
-+	.clock_getstate = zynqmp_pm_clock_getstate,
-+	.clock_setdivider = zynqmp_pm_clock_setdivider,
-+	.clock_getdivider = zynqmp_pm_clock_getdivider,
-+	.clock_setrate = zynqmp_pm_clock_setrate,
-+	.clock_getrate = zynqmp_pm_clock_getrate,
-+	.clock_setparent = zynqmp_pm_clock_setparent,
-+	.clock_getparent = zynqmp_pm_clock_getparent,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 55ed2ba..58a7478 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -36,6 +36,15 @@ enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
- 	PM_QUERY_DATA,
-+	PM_CLOCK_ENABLE,
-+	PM_CLOCK_DISABLE,
-+	PM_CLOCK_GETSTATE,
-+	PM_CLOCK_SETDIVIDER,
-+	PM_CLOCK_GETDIVIDER,
-+	PM_CLOCK_SETRATE,
-+	PM_CLOCK_GETRATE,
-+	PM_CLOCK_SETPARENT,
-+	PM_CLOCK_GETPARENT,
- };
- 
- /* PMU-FW return status codes */
-@@ -49,8 +58,20 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_ioctl_id {
-+	IOCTL_SET_PLL_FRAC_MODE = 8,
-+	IOCTL_GET_PLL_FRAC_MODE,
-+	IOCTL_SET_PLL_FRAC_DATA,
-+	IOCTL_GET_PLL_FRAC_DATA,
-+};
-+
- enum pm_query_id {
- 	PM_QID_INVALID,
-+	PM_QID_CLOCK_GET_NAME,
-+	PM_QID_CLOCK_GET_TOPOLOGY,
-+	PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS,
-+	PM_QID_CLOCK_GET_PARENTS,
-+	PM_QID_CLOCK_GET_ATTRIBUTES,
- };
- 
- /**
-@@ -71,6 +92,15 @@ struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
-+	int (*clock_enable)(u32 clock_id);
-+	int (*clock_disable)(u32 clock_id);
-+	int (*clock_getstate)(u32 clock_id, u32 *state);
-+	int (*clock_setdivider)(u32 clock_id, u32 divider);
-+	int (*clock_getdivider)(u32 clock_id, u32 *divider);
-+	int (*clock_setrate)(u32 clock_id, u64 rate);
-+	int (*clock_getrate)(u32 clock_id, u64 *rate);
-+	int (*clock_setparent)(u32 clock_id, u32 parent_id);
-+	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+Tested with a LoRa click expansion board. [*]
+Note that a number of drivers are missing in the pistachio defconfig. This
+should probably be remedied as follow-up.
+
+While all creatordev.io websites appear to be gone, I still had a local copy
+of the Ci40 schematics document.
+
+This patchset: https://github.com/afaerber/linux/commits/ci40-spi-uart.v1
+
+Some more potential patches for missing features appear to be here:
+https://github.com/CreatorDev/linux/commits/pistachio-4.9-wip
+
+Have a lot of fun!
+
+Cheers,
+Andreas
+
+P.S. As follow-up to this series I've reported on linux-serial that sc16is7xx
+and serdev drivers don't appear to play nicely together:
+https://marc.info/?l=linux-serial&m=153228314300681&w=2
+
+[*] Cf. netdev https://patchwork.ozlabs.org/cover/937545/
+
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
+
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+
+Andreas Färber (7):
+  MIPS: dts: img: pistachio_marduk: Reorder nodes
+  MIPS: dts: img: pistachio_marduk: Cleanups
+  MIPS: dts: img: pistachio: Rename spim0-clk pin node label
+  MIPS: dts: img: pistachio_marduk: Enable SPIM0
+  MIPS: dts: img: pistachio_marduk: Add 6Lowpan node
+  MIPS: dts: img: pistachio_marduk: Add SPI UART node
+  MIPS: dts: img: pistachio_marduk: Add user LEDs
+
+Damien Horsley (1):
+  dmaengine: img-mdc: Handle early status read
+
+Govindraj Raja (1):
+  clk: pistachio: Fix wrong SDHost card speed
+
+Ian Pozella (1):
+  MIPS: dts: img: pistachio_marduk: Switch mmc to 1 bit mode
+
+Ionela Voinescu (5):
+  spi: img-spfi: Implement dual and quad mode
+  spi: img-spfi: Set device select bits for SPFI port state
+  spi: img-spfi: Use device 0 configuration for all devices
+  spi: img-spfi: RX maximum burst size for DMA is 8
+  spi: img-spfi: Finish every transfer cleanly
+
+ arch/mips/boot/dts/img/pistachio.dtsi       |   2 +-
+ arch/mips/boot/dts/img/pistachio_marduk.dts | 174 ++++++++++++++++++++++------
+ drivers/clk/pistachio/clk-pistachio.c       |   3 +-
+ drivers/dma/img-mdc-dma.c                   |  40 ++++---
+ drivers/spi/spi-img-spfi.c                  | 165 +++++++++++++++++++++-----
+ include/dt-bindings/clock/pistachio-clk.h   |   1 +
+ 6 files changed, 299 insertions(+), 86 deletions(-)
+
 -- 
-2.7.4
+2.16.4
