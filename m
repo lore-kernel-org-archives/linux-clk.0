@@ -1,43 +1,67 @@
 Return-Path: <digetx@gmail.com>
 Return-Path: <digetx@gmail.com>
 From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
-Date: Thu, 19 Jul 2018 16:21:28 +0300
-Message-Id: <20180719132132.16153-5-digetx@gmail.com>
-In-Reply-To: <20180719132132.16153-1-digetx@gmail.com>
-References: <20180719132132.16153-1-digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 6/8] clk: tegra20: Turn EMC clock gate into divider
+Date: Sun, 22 Jul 2018 14:39:37 +0300
+Message-ID: <1555597.AMQUAZZLsZ@dimapc>
+In-Reply-To: <20180719132132.16153-7-digetx@gmail.com>
+References: <20180719132132.16153-1-digetx@gmail.com> <20180719132132.16153-7-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add interrupt entry into the EMC DT node.
+On Thursday, 19 July 2018 16:21:30 MSK Dmitry Osipenko wrote:
+> Kernel should never gate the EMC clock as it causes immediate lockup, so
+> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+> gate into divider allows to implement glitch-less EMC scaling, avoiding
+> reparenting to a backup clock.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c
+> b/drivers/clk/tegra/clk-tegra20.c index cc857d4d4a86..ebea97016d58 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max]
+> __initdata = { [tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present =
+> true }, [tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+> [tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+> -	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true }, };
+> 
+>  static unsigned long tegra20_clk_measure_input_freq(void)
+> @@ -799,6 +798,31 @@ static struct tegra_periph_init_data
+> tegra_periph_nodiv_clk_list[] = {
+> TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2,
+> 26,  0, TEGRA20_CLK_DISP2), };
+> 
+> +static void __init tegra20_emc_clk_init(void)
+> +{
+> +	struct clk *clk;
+> +
+> +	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+> +			       ARRAY_SIZE(mux_pllmcp_clkm),
+> +			       CLK_SET_RATE_NO_REPARENT,
+> +			       clk_base + CLK_SOURCE_EMC,
+> +			       30, 2, 0, &emc_lock);
+> +
+> +	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+> +				    &emc_lock);
+> +	clks[TEGRA20_CLK_MC] = clk;
+> +
+> +	/*
+> +	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+> +	 * the same time due to a HW bug, this won't happen because we're
+> +	 * defining 'emc_mux' and 'emc' as distinct clocks.
+> +	 */
+> +	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
+> +				   clk_base + CLK_SOURCE_EMC, 0, 7,
+> +				   0, &emc_lock);
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 15b73bd377f0..9eb4163a4390 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -632,6 +632,7 @@
- 	memory-controller@7000f400 {
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f400 0x200>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
--- 
-2.18.0
+Actually this is wrong. The divisor is 8 bits-wide and "lsb denote 0.5x", so 
+this is a 7.1 divider. I'll prepare v5.
