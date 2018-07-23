@@ -1,582 +1,255 @@
-Return-Path: <alexandre.belloni@bootlin.com>
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 08/16] dt-bindings: clk: at91: Document new PMC binding
-Date: Wed, 18 Jul 2018 00:27:49 +0200
-Message-Id: <20180717222757.10253-9-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Subject: [PATCH 4/5] RTC: RK808: add RTC driver for RK809 and RK817.
+Date: Mon, 23 Jul 2018 11:19:04 +0800
+Message-Id: <1532315945-1094-5-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
+ alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
+ huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+ zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
+ linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ chenjh@rock-chips.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the new PMC binding with only one PMC node for all the PMC clocks
-instead of one node per clock as this proved to be problematic.
+RK809 and RK817 are power management IC chips for multimedia products.
+Most of their functions and registers are same, including the rtc.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 ---
- .../devicetree/bindings/clock/at91-clock.txt  | 523 +-----------------
- 1 file changed, 21 insertions(+), 502 deletions(-)
+ drivers/rtc/Kconfig     |  4 +--
+ drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 56 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index 64fcbea10e12..e9f70fcdfe80 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -4,6 +4,8 @@ This binding uses the common clock binding[1].
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index a2ba5db..1aaf935 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
+ 	  will be called rtc-max77686.
  
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+ config RTC_DRV_RK808
+-	tristate "Rockchip RK805/RK808/RK818 RTC"
++	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+ 	depends on MFD_RK808
+ 	help
+ 	  If you say yes here you will get support for the
+-	  RTC of RK805, RK808 and RK818 PMIC.
++	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
  
-+Slow Clock controller:
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rk808-rtc.
+diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+index 739c0d4..5bacdaf 100644
+--- a/drivers/rtc/rtc-rk808.c
++++ b/drivers/rtc/rtc-rk808.c
+@@ -50,9 +50,18 @@
+ #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
+ #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+ 
++struct rk_rtc_compat_reg {
++	unsigned int ctrl_reg;
++	unsigned int status_reg;
++	unsigned int alarm_seconds_reg;
++	unsigned int int_reg;
++	unsigned int seconds_reg;
++};
 +
- Required properties:
- - compatible : shall be one of the following:
- 	"atmel,at91sam9x5-sckc" or
-@@ -16,84 +18,6 @@ Required properties:
+ struct rk808_rtc {
+ 	struct rk808 *rk808;
+ 	struct rtc_device *rtc;
++	struct rk_rtc_compat_reg *creg;
+ 	int irq;
+ };
  
- 	"atmel,at91sam9x5-clk-slow-rc-osc":
- 		at91 internal slow RC oscillator
--
--	"atmel,<chip>-pmc":
--		at91 PMC (Power Management Controller)
--		All at91 specific clocks (clocks defined below) must be child
--		node of the PMC node.
--		<chip> can be: at91rm9200, at91sam9260, at91sam9261,
--		at91sam9263, at91sam9g45, at91sam9n12, at91sam9rl, at91sam9x5,
--		sama5d2, sama5d3 or sama5d4.
--
--	"atmel,at91sam9x5-clk-slow" (under sckc node)
--	or
--	"atmel,at91sam9260-clk-slow" (under pmc node):
--		at91 slow clk
--
--	"atmel,at91rm9200-clk-main-osc"
--	"atmel,at91sam9x5-clk-main-rc-osc"
--		at91 main clk sources
--
--	"atmel,at91sam9x5-clk-main"
--	"atmel,at91rm9200-clk-main":
--		at91 main clock
--
--	"atmel,at91rm9200-clk-master" or
--	"atmel,at91sam9x5-clk-master":
--		at91 master clock
--
--	"atmel,at91sam9x5-clk-peripheral" or
--	"atmel,at91rm9200-clk-peripheral":
--		at91 peripheral clocks
--
--	"atmel,at91rm9200-clk-pll" or
--	"atmel,at91sam9g45-clk-pll" or
--	"atmel,at91sam9g20-clk-pllb" or
--	"atmel,sama5d3-clk-pll":
--		at91 pll clocks
--
--	"atmel,at91sam9x5-clk-plldiv":
--		at91 plla divisor
--
--	"atmel,at91rm9200-clk-programmable" or
--	"atmel,at91sam9g45-clk-programmable" or
--	"atmel,at91sam9x5-clk-programmable":
--		at91 programmable clocks
--
--	"atmel,at91sam9x5-clk-smd":
--		at91 SMD (Soft Modem) clock
--
--	"atmel,at91rm9200-clk-system":
--		at91 system clocks
--
--	"atmel,at91rm9200-clk-usb" or
--	"atmel,at91sam9x5-clk-usb" or
--	"atmel,at91sam9n12-clk-usb":
--		at91 usb clock
--
--	"atmel,at91sam9x5-clk-utmi":
--		at91 utmi clock
--
--	"atmel,sama5d4-clk-h32mx":
--		at91 h32mx clock
--
--	"atmel,sama5d2-clk-generated":
--		at91 generated clock
--
--	"atmel,sama5d2-clk-audio-pll-frac":
--		at91 audio fractional pll
--
--	"atmel,sama5d2-clk-audio-pll-pad":
--		at91 audio pll CLK_AUDIO output pin
--
--	"atmel,sama5d2-clk-audio-pll-pmc"
--		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
--		and can be used by peripheral clock or generic clock
--
--	"atmel,sama5d2-clk-i2s-mux" (under pmc node):
--		at91 I2S clock source selection
--
--Required properties for SCKC node:
- - reg : defines the IO memory reserved for the SCKC.
- - #size-cells : shall be 0 (reg is used to encode clk id).
- - #address-cells : shall be 1 (reg is used to encode clk id).
-@@ -109,435 +33,30 @@ For example:
- 		/* put at91 slow clocks here */
- 	};
+@@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	int ret;
  
-+Power Management Controller (PMC):
+ 	/* Force an update of the shadowed registers right now */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+ 	if (ret) {
+@@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+ 	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+ 	 */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+ 				 0);
+ 	if (ret) {
+@@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
  
--Required properties for internal slow RC oscillator:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clock-frequency : define the internal RC oscillator frequency.
--
--Optional properties:
--- clock-accuracy : define the internal RC oscillator accuracy.
--
--For example:
--	slow_rc_osc: slow_rc_osc {
--		compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--		clock-frequency = <32768>;
--		clock-accuracy = <50000000>;
--	};
--
--Required properties for slow oscillator:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main osc source clk sources (see atmel datasheet).
-+Required properties:
-+- compatible : shall be "atmel,<chip>-pmc", "syscon":
-+	<chip> can be: at91rm9200, at91sam9260, at91sam9261,
-+	at91sam9263, at91sam9g45, at91sam9n12, at91sam9rl, at91sam9g15,
-+	at91sam9g25, at91sam9g35, at91sam9x25, at91sam9x35, at91sam9x5,
-+	sama5d2, sama5d3 or sama5d4.
-+- #clock-cells : from common clock binding; shall be set to 2. The first entry
-+  is the type of the clock (core, system, peripheral or generated) and the
-+  second entry its index as provided by the datasheet
-+- clocks : Must contain an entry for each entry in clock-names.
-+- clock-names: Must include the following entries: "slow_clk", "main_xtal"
+-	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
+ 			       rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+@@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	rtc_data[6] = bin2bcd(tm->tm_wday);
  
- Optional properties:
- - atmel,osc-bypass : boolean property. Set this when a clock signal is directly
-   provided on XIN.
+ 	/* Stop RTC while updating the RTC registers */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+ 	if (ret) {
+@@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 		return ret;
+ 	}
  
- For example:
--	slow_osc: slow_osc {
--		compatible = "atmel,at91rm9200-clk-slow-osc";
--		#clock-cells = <0>;
--		clocks = <&slow_xtal>;
--	};
--
--Required properties for slow clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the slow clk sources (see atmel datasheet).
--
--For example:
--	clk32k: slck {
--		compatible = "atmel,at91sam9x5-clk-slow";
--		#clock-cells = <0>;
--		clocks = <&slow_rc_osc &slow_osc>;
--	};
--
--Required properties for PMC node:
--- reg : defines the IO memory reserved for the PMC.
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- interrupts : shall be set to PMC interrupt line.
--- interrupt-controller : tell that the PMC is an interrupt controller.
--- #interrupt-cells : must be set to 1. The first cell encodes the interrupt id,
--	and reflect the bit position in the PMC_ER/DR/SR registers.
--	You can use the dt macros defined in dt-bindings/clock/at91.h.
--	0 (AT91_PMC_MOSCS) -> main oscillator ready
--	1 (AT91_PMC_LOCKA) -> PLL A ready
--	2 (AT91_PMC_LOCKB) -> PLL B ready
--	3 (AT91_PMC_MCKRDY) -> master clock ready
--	6 (AT91_PMC_LOCKU) -> UTMI PLL clock ready
--	8 .. 15 (AT91_PMC_PCKRDY(id)) -> programmable clock ready
--	16 (AT91_PMC_MOSCSELS) -> main oscillator selected
--	17 (AT91_PMC_MOSCRCS) -> RC main oscillator stabilized
--	18 (AT91_PMC_CFDEV) -> clock failure detected
--
--For example:
--	pmc: pmc@fffffc00 {
--		compatible = "atmel,sama5d3-pmc";
--		interrupts = <1 4 7>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		/* put at91 clocks here */
--	};
--
--Required properties for main clock internal RC oscillator:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- clock-frequency : define the internal RC oscillator frequency.
--
--Optional properties:
--- clock-accuracy : define the internal RC oscillator accuracy.
--
--For example:
--	main_rc_osc: main_rc_osc {
--		compatible = "atmel,at91sam9x5-clk-main-rc-osc";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		clock-frequency = <12000000>;
--		clock-accuracy = <50000000>;
--	};
--
--Required properties for main clock oscillator:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main osc source clk sources (see atmel datasheet).
--
--Optional properties:
--- atmel,osc-bypass : boolean property. Specified if a clock signal is provided
--  on XIN.
--
--  clock signal is directly provided on XIN pin.
--
--For example:
--	main_osc: main_osc {
--		compatible = "atmel,at91rm9200-clk-main-osc";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		#clock-cells = <0>;
--		clocks = <&main_xtal>;
--	};
--
--Required properties for main clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main clk sources (see atmel datasheet).
--
--For example:
--	main: mainck {
--		compatible = "atmel,at91sam9x5-clk-main";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		#clock-cells = <0>;
--		clocks = <&main_rc_osc &main_osc>;
--	};
--
--Required properties for master clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<3>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the master clock sources (see atmel datasheet) phandles.
--	e.g. "<&ck32k>, <&main>, <&plla>, <&pllb>".
--- atmel,clk-output-range : minimum and maximum clock frequency (two u32
--			   fields).
--	   e.g. output = <0 133000000>; <=> 0 to 133MHz.
--- atmel,clk-divisors : master clock divisors table (four u32 fields).
--		0 <=> reserved value.
--		e.g. divisors = <1 2 4 6>;
--- atmel,master-clk-have-div3-pres : some SoC use the reserved value 7 in the
--				    PRES field as CLOCK_DIV3 (e.g sam9x5).
--
--For example:
--	mck: mck {
--		compatible = "atmel,at91rm9200-clk-master";
--		interrupt-parent = <&pmc>;
--		interrupts = <3>;
--		#clock-cells = <0>;
--		atmel,clk-output-range = <0 133000000>;
--		atmel,clk-divisors = <1 2 4 0>;
--	};
--
--Required properties for peripheral clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the master clock phandle.
--	e.g. clocks = <&mck>;
--- name: device tree node describing a specific peripheral clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: peripheral id. See Atmel's datasheets to get a full
--	  list of peripheral ids.
--	* atmel,clk-output-range : minimum and maximum clock frequency
--	  (two u32 fields). Only valid on at91sam9x5-clk-peripheral
--	  compatible IPs.
--
--For example:
--	periph: periphck {
--		compatible = "atmel,at91sam9x5-clk-peripheral";
--		#size-cells = <0>;
--		#address-cells = <1>;
--		clocks = <&mck>;
--
--		ssc0_clk {
--			#clock-cells = <0>;
--			reg = <2>;
--			atmel,clk-output-range = <0 133000000>;
--		};
--
--		usart0_clk {
--			#clock-cells = <0>;
--			reg = <3>;
--			atmel,clk-output-range = <0 66000000>;
--		};
--	};
--
--
--Required properties for pll clocks:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<1>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the main clock phandle.
--- reg : pll id.
--	0 -> PLL A
--	1 -> PLL B
--- atmel,clk-input-range : minimum and maximum source clock frequency (two u32
--			  fields).
--	  e.g. input = <1 32000000>; <=> 1 to 32MHz.
--- #atmel,pll-clk-output-range-cells : number of cells reserved for pll output
--				      range description. Sould be set to 2, 3
--				      or 4.
--	* 1st and 2nd cells represent the frequency range (min-max).
--	* 3rd cell is optional and represents the OUT field value for the given
--	  range.
--	* 4th cell is optional and represents the ICPLL field (PLLICPR
--	  register)
--- atmel,pll-clk-output-ranges : pll output frequency ranges + optional parameter
--				depending on #atmel,pll-output-range-cells
--				property value.
--
--For example:
--	plla: pllack {
--		compatible = "atmel,at91sam9g45-clk-pll";
--		interrupt-parent = <&pmc>;
--		interrupts = <1>;
--		#clock-cells = <0>;
--		clocks = <&main>;
--		reg = <0>;
--		atmel,clk-input-range = <2000000 32000000>;
--		#atmel,pll-clk-output-range-cells = <4>;
--		atmel,pll-clk-output-ranges = <74500000 800000000 0 0
--					       69500000 750000000 1 0
--					       64500000 700000000 2 0
--					       59500000 650000000 3 0
--					       54500000 600000000 0 1
--					       49500000 550000000 1 1
--					       44500000 500000000 2 1
--					       40000000 450000000 3 1>;
--	};
--
--Required properties for plldiv clocks (plldiv = pll / 2):
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the plla clock phandle.
--
--The pll divisor is equal to 2 and cannot be changed.
--
--For example:
--	plladiv: plladivck {
--		compatible = "atmel,at91sam9x5-clk-plldiv";
--		#clock-cells = <0>;
--		clocks = <&plla>;
--	};
--
--Required properties for programmable clocks:
--- interrupt-parent : must reference the PMC node.
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the programmable clock source phandles.
--	e.g. clocks = <&clk32k>, <&main>, <&plla>, <&pllb>;
--- name: device tree node describing a specific prog clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg : programmable clock id (register offset from  PCKx
--			 register).
--	* interrupts : shall be set to "<(8 + id)>".
--
--For example:
--	prog: progck {
--		compatible = "atmel,at91sam9g45-clk-programmable";
--		#size-cells = <0>;
--		#address-cells = <1>;
--		interrupt-parent = <&pmc>;
--		clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
--
--		prog0 {
--			#clock-cells = <0>;
--			reg = <0>;
--			interrupts = <8>;
--		};
--
--		prog1 {
--			#clock-cells = <0>;
--			reg = <1>;
--			interrupts = <9>;
--		};
--	};
--
--
--Required properties for smd clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the smd clock source phandles.
--	e.g. clocks = <&plladiv>, <&utmi>;
--
--For example:
--	smd: smdck {
--		compatible = "atmel,at91sam9x5-clk-smd";
--		#clock-cells = <0>;
--		clocks = <&plladiv>, <&utmi>;
--	};
--
--Required properties for system clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- name: device tree node describing a specific system clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: system clock id (bit position in SCER/SCDR/SCSR registers).
--	      See Atmel's datasheet to get a full list of system clock ids.
--
--For example:
--	system: systemck {
--		compatible = "atmel,at91rm9200-clk-system";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		ddrck {
--			#clock-cells = <0>;
--			reg = <2>;
--			clocks = <&mck>;
--		};
--
--		uhpck {
--			#clock-cells = <0>;
--			reg = <6>;
--			clocks = <&usb>;
--		};
--
--		udpck {
--			#clock-cells = <0>;
--			reg = <7>;
--			clocks = <&usb>;
--		};
--	};
--
--
--Required properties for usb clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the smd clock source phandles.
--	e.g. clocks = <&pllb>;
--- atmel,clk-divisors (only available for "atmel,at91rm9200-clk-usb"):
--	usb clock divisor table.
--	e.g. divisors = <1 2 4 0>;
--
--For example:
--	usb: usbck {
--		compatible = "atmel,at91sam9x5-clk-usb";
--		#clock-cells = <0>;
--		clocks = <&plladiv>, <&utmi>;
--	};
--
--	usb: usbck {
--		compatible = "atmel,at91rm9200-clk-usb";
--		#clock-cells = <0>;
--		clocks = <&pllb>;
--		atmel,clk-divisors = <1 2 4 0>;
--	};
--
--
--Required properties for utmi clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<AT91_PMC_LOCKU IRQ_TYPE_LEVEL_HIGH>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the main clock source phandle.
--
--For example:
--	utmi: utmick {
--		compatible = "atmel,at91sam9x5-clk-utmi";
--		interrupt-parent = <&pmc>;
--		interrupts = <AT91_PMC_LOCKU IRQ_TYPE_LEVEL_HIGH>;
--		#clock-cells = <0>;
--		clocks = <&main>;
--	};
--
--Required properties for 32 bits bus Matrix clock (h32mx clock):
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the master clock source phandle.
--
--For example:
--	h32ck: h32mxck {
--		#clock-cells = <0>;
--		compatible = "atmel,sama5d4-clk-h32mx";
--		clocks = <&mck>;
--	};
--
--Required properties for generated clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the generated clock source phandles.
--	e.g. clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
--- name: device tree node describing a specific generated clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: peripheral id. See Atmel's datasheets to get a full
--	  list of peripheral ids.
--	* atmel,clk-output-range : minimum and maximum clock frequency
--	  (two u32 fields).
--
--For example:
--	gck {
--		compatible = "atmel,sama5d2-clk-generated";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
--
--		tcb0_gclk: tcb0_gclk {
--			#clock-cells = <0>;
--			reg = <35>;
--			atmel,clk-output-range = <0 83000000>;
--		};
--
--		pwm_gclk: pwm_gclk {
--			#clock-cells = <0>;
--			reg = <38>;
--			atmel,clk-output-range = <0 83000000>;
--		};
--	};
--
--Required properties for I2S mux clocks:
--- #size-cells : shall be 0 (reg is used to encode I2S bus id).
--- #address-cells : shall be 1 (reg is used to encode I2S bus id).
--- name: device tree node describing a specific mux clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
--	  peripheral and generated clock; the first phandle shall belong to the
--	  peripheral clock and the second one shall belong to the generated
--	  clock; "clock-indices" property can be user to specify
--	  the correct order.
--	* reg: I2S bus id of the corresponding mux clock.
--	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
--
--For example:
--	i2s_clkmux {
--		compatible = "atmel,sama5d2-clk-i2s-mux";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		i2s0muxck: i2s0_muxclk {
--			clocks = <&i2s0_clk>, <&i2s0_gclk>;
--			#clock-cells = <0>;
--			reg = <0>;
--		};
--
--		i2s1muxck: i2s1_muxclk {
--			clocks = <&i2s1_clk>, <&i2s1_gclk>;
--			#clock-cells = <0>;
--			reg = <1>;
--		};
-+	pmc: pmc@f0018000 {
-+		compatible = "atmel,sama5d4-pmc", "syscon";
-+		reg = <0xf0018000 0x120>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-+		#clock-cells = <2>;
-+		clocks = <&clk32k>, <&main_xtal>;
-+		clock-names = "slow_clk", "main_xtal";
- 	};
+-	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
++	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
+ 				rtc_data, NUM_TIME_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+ 		return ret;
+ 	}
+ 	/* Start RTC again */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+@@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	uint32_t int_reg;
+ 	int ret;
+ 
+-	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_read(rk808->regmap,
++			       rk808_rtc->creg->alarm_seconds_reg,
+ 			       alrm_data, NUM_ALARM_REGS);
++	if (ret) {
++		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
++		return ret;
++	}
+ 
+ 	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+ 	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
+@@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+ 	rockchip_to_gregorian(&alrm->time);
+ 
+-	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
++	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+ 		return ret;
+@@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+ 	struct rk808 *rk808 = rk808_rtc->rk808;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+ 
+ 	return ret;
+@@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+ 	struct rk808 *rk808 = rk808_rtc->rk808;
+ 	int ret;
+ 
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+ 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+ 
+@@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+ 	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+ 
+-	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
++	ret = regmap_bulk_write(rk808->regmap,
++				rk808_rtc->creg->alarm_seconds_reg,
+ 				alrm_data, NUM_ALARM_REGS);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to bulk write: %d\n", ret);
+@@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+ 	struct i2c_client *client = rk808->i2c;
+ 	int ret;
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&client->dev,
+@@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+ 	rk808_rtc_suspend, rk808_rtc_resume);
+ 
++static struct rk_rtc_compat_reg rk808_creg = {
++	.ctrl_reg = RK808_RTC_CTRL_REG,
++	.status_reg = RK808_RTC_STATUS_REG,
++	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
++	.int_reg = RK808_RTC_INT_REG,
++	.seconds_reg = RK808_SECONDS_REG,
++};
++
++static struct rk_rtc_compat_reg rk817_creg = {
++	.ctrl_reg = RK817_RTC_CTRL_REG,
++	.status_reg = RK817_RTC_STATUS_REG,
++	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
++	.int_reg = RK817_RTC_INT_REG,
++	.seconds_reg = RK817_SECONDS_REG,
++};
++
+ static int rk808_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+@@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 	if (rk808_rtc == NULL)
+ 		return -ENOMEM;
+ 
++	switch (rk808->variant) {
++	case RK809_ID:
++	case RK817_ID:
++		rk808_rtc->creg = &rk817_creg;
++		break;
++	default:
++		rk808_rtc->creg = &rk808_creg;
++		break;
++	}
+ 	platform_set_drvdata(pdev, rk808_rtc);
+ 	rk808_rtc->rk808 = rk808;
+ 
+ 	/* start rtc running by default, and use shadowed timer. */
+-	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
++	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+ 				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+ 				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+@@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
++	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+ 			   RTC_STATUS_MASK);
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
 -- 
-2.18.0
+1.9.1
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
