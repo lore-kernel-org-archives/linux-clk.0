@@ -1,43 +1,137 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
-Date: Tue, 24 Jul 2018 19:42:17 +0300
-Message-Id: <20180724164221.3307-5-digetx@gmail.com>
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Subject: [PATCH 3/5] mfd: dt-bindings: Add RK809 and RK817 device tree
+ bindings document
+Date: Mon, 23 Jul 2018 11:19:03 +0800
+Message-Id: <1532315945-1094-4-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
+ alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
+ huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+ zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
+ linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ chenjh@rock-chips.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add interrupt entry into the EMC DT node.
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 ---
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/mfd/rk808.txt | 55 +++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 15b73bd377f0..9eb4163a4390 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -632,6 +632,7 @@
- 	memory-controller@7000f400 {
- 		compatible = "nvidia,tegra20-emc";
- 		reg = <0x7000f400 0x200>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 	};
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..31c9f3d 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
+ 
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,28 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
++Optional RK809 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK809 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK808 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2.
++
++Following regulators of the RK817 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- BOOST
++	- OTG_SWITCH
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +147,13 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
+ 
++There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
-2.18.0
+1.9.1
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
