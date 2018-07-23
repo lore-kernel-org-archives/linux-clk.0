@@ -1,117 +1,181 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from imap1.codethink.co.uk ([176.9.8.82]:40013 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388172AbeGXNiv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jul 2018 09:38:51 -0400
-Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com,
-        linux-kernel@lists.codethink.co.uk
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <20180720134532.13148-7-ben.dooks@codethink.co.uk>
- <6750449.onR3KBHYkZ@dimapc> <16130866.kpFhQUNOMP@dimapc>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Message-ID: <a4bd4ea0-ad7b-e942-c535-1ac5f9162beb@codethink.co.uk>
-Date: Tue, 24 Jul 2018 13:32:28 +0100
-MIME-Version: 1.0
-In-Reply-To: <16130866.kpFhQUNOMP@dimapc>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Camera clock bindings
+Date: Mon, 23 Jul 2018 16:56:32 +0530
+Message-Id: <1532345193-18108-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1532345193-18108-1-git-send-email-anischal@codeaurora.org>
+References: <1532345193-18108-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24/07/18 12:31, Dmitry Osipenko wrote:
-> On Monday, 23 July 2018 16:05:21 MSK Dmitry Osipenko wrote:
->> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
->>> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
->>> clocks by making a 2D and 3D mux, and split the divider into the
->>> standard 2D/3D ones and 2D/3D idle clocks.
->>>
->>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>> ---
->>>   drivers/clk/tegra/clk-id.h              |  4 ++++
->>>   drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
->>>   drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
->>>   include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
->>>   4 files changed, 39 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
->>> index b616e33c5255..0d202a70ce66 100644
->>> --- a/drivers/clk/tegra/clk-id.h
->>> +++ b/drivers/clk/tegra/clk-id.h
->>> @@ -91,8 +91,12 @@ enum clk_id {
->>>   	tegra_clk_fuse_burn,
->>>   	tegra_clk_gpu,
->>>   	tegra_clk_gr2d,
->>> +	tegra_clk_gr2d_mux,
->>> +	tegra_clk_gr2d_idle,
->>>   	tegra_clk_gr2d_8,
->>>   	tegra_clk_gr3d,
->>> +	tegra_clk_gr3d_mux,
->>> +	tegra_clk_gr3d_idle,
->>>   	tegra_clk_gr3d_8,
->>>   	tegra_clk_hclk,
->>>   	tegra_clk_hda,
->>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c
->>> b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
->>> 100644
->>> --- a/drivers/clk/tegra/clk-tegra-periph.c
->>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
->>> @@ -263,6 +263,21 @@
->>>   		.flags = _flags,					\
->>>   	}
->>>
->>> +#define GATE_DIV(_name, _parent_name, _offset,				\
->>> +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
->>> +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
->>> +	{								\
->>> +		.name = _name,						\
->>> +		.clk_id = _clk_id,					\
->>> +		.offset = _offset,					\
->>> +		.p.parent_name =  _parent_name,				\
->>> +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
->>> +					   _div_shift, _div_width,	\
->>> +					   _div_frac_width, _div_flags, \
->>> +				_clk_num, _gate_flags, NULL, NULL),	\
->>> +		.flags = _flags						\
->>> +	}
->>> +
->>>   #define PLLP_BASE 0xa0
->>>   #define PLLP_MISC 0xac
->>>   #define PLLP_MISC1 0x680
->>> @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
->>>   	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0,
->> tegra_clk_epp),
->>> MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
->>> tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
->>> 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D,
->> 21,
->>> 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D,
->> 24,
->>> 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla,
->> CLK_SOURCE_2D,
->>> 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
->>> tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
->>> TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
->>> "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
->>> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
->>> +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
->>
->> Now that the actual parent clock is specified by the "mux" clock, you have to
->> adjust the tegra_clk_init_table accordingly.
->>
->>
->>
->>
-> 
-> The 3d/2d clocks do not have a parent on T20 with these patches being applied.
+Add device tree bindings for camera clock controller for
+Qualcomm Technology Inc's SDM845 SoCs.
 
-Thanks, I need to extract the setup from some of the other changes that
-we did for the tegra30a/20a devices.
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,camcc.txt       |  18 ++++
+ include/dt-bindings/clock/qcom,camcc-sdm845.h      | 116 +++++++++++++++++++++
+ 2 files changed, 134 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,camcc-sdm845.h
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc.txt b/Documentation/devicetree/bindings/clock/qcom,camcc.txt
+new file mode 100644
+index 0000000..c5eb669
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,camcc.txt
+@@ -0,0 +1,18 @@
++Qualcomm Camera Clock & Reset Controller Binding
++------------------------------------------------
++
++Required properties :
++- compatible : shall contain "qcom,sdm845-camcc".
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	camcc: clock-controller@ad00000 {
++		compatible = "qcom,sdm845-camcc";
++		reg = <0xad00000 0x10000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,camcc-sdm845.h b/include/dt-bindings/clock/qcom,camcc-sdm845.h
+new file mode 100644
+index 0000000..4f7a2d2
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,camcc-sdm845.h
+@@ -0,0 +1,116 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_CAM_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_CAM_CC_SDM845_H
++
++/* CAM_CC clock registers */
++#define CAM_CC_BPS_AHB_CLK				0
++#define CAM_CC_BPS_AREG_CLK				1
++#define CAM_CC_BPS_AXI_CLK				2
++#define CAM_CC_BPS_CLK					3
++#define CAM_CC_BPS_CLK_SRC				4
++#define CAM_CC_CAMNOC_ATB_CLK				5
++#define CAM_CC_CAMNOC_AXI_CLK				6
++#define CAM_CC_CCI_CLK					7
++#define CAM_CC_CCI_CLK_SRC				8
++#define CAM_CC_CPAS_AHB_CLK				9
++#define CAM_CC_CPHY_RX_CLK_SRC				10
++#define CAM_CC_CSI0PHYTIMER_CLK				11
++#define CAM_CC_CSI0PHYTIMER_CLK_SRC			12
++#define CAM_CC_CSI1PHYTIMER_CLK				13
++#define CAM_CC_CSI1PHYTIMER_CLK_SRC			14
++#define CAM_CC_CSI2PHYTIMER_CLK				15
++#define CAM_CC_CSI2PHYTIMER_CLK_SRC			16
++#define CAM_CC_CSI3PHYTIMER_CLK				17
++#define CAM_CC_CSI3PHYTIMER_CLK_SRC			18
++#define CAM_CC_CSIPHY0_CLK				19
++#define CAM_CC_CSIPHY1_CLK				20
++#define CAM_CC_CSIPHY2_CLK				21
++#define CAM_CC_CSIPHY3_CLK				22
++#define CAM_CC_FAST_AHB_CLK_SRC				23
++#define CAM_CC_FD_CORE_CLK				24
++#define CAM_CC_FD_CORE_CLK_SRC				25
++#define CAM_CC_FD_CORE_UAR_CLK				26
++#define CAM_CC_ICP_APB_CLK				27
++#define CAM_CC_ICP_ATB_CLK				28
++#define CAM_CC_ICP_CLK					29
++#define CAM_CC_ICP_CLK_SRC				30
++#define CAM_CC_ICP_CTI_CLK				31
++#define CAM_CC_ICP_TS_CLK				32
++#define CAM_CC_IFE_0_AXI_CLK				33
++#define CAM_CC_IFE_0_CLK				34
++#define CAM_CC_IFE_0_CLK_SRC				35
++#define CAM_CC_IFE_0_CPHY_RX_CLK			36
++#define CAM_CC_IFE_0_CSID_CLK				37
++#define CAM_CC_IFE_0_CSID_CLK_SRC			38
++#define CAM_CC_IFE_0_DSP_CLK				39
++#define CAM_CC_IFE_1_AXI_CLK				40
++#define CAM_CC_IFE_1_CLK				41
++#define CAM_CC_IFE_1_CLK_SRC				42
++#define CAM_CC_IFE_1_CPHY_RX_CLK			43
++#define CAM_CC_IFE_1_CSID_CLK				44
++#define CAM_CC_IFE_1_CSID_CLK_SRC			45
++#define CAM_CC_IFE_1_DSP_CLK				46
++#define CAM_CC_IFE_LITE_CLK				47
++#define CAM_CC_IFE_LITE_CLK_SRC				48
++#define CAM_CC_IFE_LITE_CPHY_RX_CLK			49
++#define CAM_CC_IFE_LITE_CSID_CLK			50
++#define CAM_CC_IFE_LITE_CSID_CLK_SRC			51
++#define CAM_CC_IPE_0_AHB_CLK				52
++#define CAM_CC_IPE_0_AREG_CLK				53
++#define CAM_CC_IPE_0_AXI_CLK				54
++#define CAM_CC_IPE_0_CLK				55
++#define CAM_CC_IPE_0_CLK_SRC				56
++#define CAM_CC_IPE_1_AHB_CLK				57
++#define CAM_CC_IPE_1_AREG_CLK				58
++#define CAM_CC_IPE_1_AXI_CLK				59
++#define CAM_CC_IPE_1_CLK				60
++#define CAM_CC_IPE_1_CLK_SRC				61
++#define CAM_CC_JPEG_CLK					62
++#define CAM_CC_JPEG_CLK_SRC				63
++#define CAM_CC_LRME_CLK					64
++#define CAM_CC_LRME_CLK_SRC				65
++#define CAM_CC_MCLK0_CLK				66
++#define CAM_CC_MCLK0_CLK_SRC				67
++#define CAM_CC_MCLK1_CLK				68
++#define CAM_CC_MCLK1_CLK_SRC				69
++#define CAM_CC_MCLK2_CLK				70
++#define CAM_CC_MCLK2_CLK_SRC				71
++#define CAM_CC_MCLK3_CLK				72
++#define CAM_CC_MCLK3_CLK_SRC				73
++#define CAM_CC_PLL0					74
++#define CAM_CC_PLL0_OUT_EVEN				75
++#define CAM_CC_PLL1					76
++#define CAM_CC_PLL1_OUT_EVEN				77
++#define CAM_CC_PLL2					78
++#define CAM_CC_PLL2_OUT_EVEN				79
++#define CAM_CC_PLL3					80
++#define CAM_CC_PLL3_OUT_EVEN				81
++#define CAM_CC_SLOW_AHB_CLK_SRC				82
++#define CAM_CC_SOC_AHB_CLK				83
++#define CAM_CC_SYS_TMR_CLK				84
++
++/* CAM_CC Resets */
++#define TITAN_CAM_CC_CCI_BCR				0
++#define TITAN_CAM_CC_CPAS_BCR				1
++#define TITAN_CAM_CC_CSI0PHY_BCR			2
++#define TITAN_CAM_CC_CSI1PHY_BCR			3
++#define TITAN_CAM_CC_CSI2PHY_BCR			4
++#define TITAN_CAM_CC_MCLK0_BCR				5
++#define TITAN_CAM_CC_MCLK1_BCR				6
++#define TITAN_CAM_CC_MCLK2_BCR				7
++#define TITAN_CAM_CC_MCLK3_BCR				8
++#define TITAN_CAM_CC_TITAN_TOP_BCR			9
++
++/* CAM_CC GDSCRs */
++#define BPS_GDSC					0
++#define IPE_0_GDSC					1
++#define IPE_1_GDSC					2
++#define IFE_0_GDSC					3
++#define IFE_1_GDSC					4
++#define TITAN_TOP_GDSC					5
++
++#endif
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
