@@ -1,55 +1,74 @@
-Return-Path: <pgwipeout@gmail.com>
-Return-Path: <pgwipeout@gmail.com>
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-To: Stephen Boyd <sboyd@kernel.org>, Marcel Ziswiler <marcel@ziswiler.com>,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <20180720075422.26563-1-marcel@ziswiler.com>
- <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
-From: Peter Geis <pgwipeout@gmail.com>
-Message-ID: <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
-Date: Wed, 25 Jul 2018 19:42:34 -0400
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from imap1.codethink.co.uk ([176.9.8.82]:33097 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387869AbeGWJ2a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 05:28:30 -0400
 MIME-Version: 1.0
-In-Reply-To: <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Mon, 23 Jul 2018 09:28:25 +0100
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: pdeschrijver@nvidia.com, jonathanh@nvidia.co,
+        thierry.reding@gmail.com, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pgaikwad@nvidia.com, linux-kernel@lists.codethink.co.uk
+Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
+In-Reply-To: <1721645.6LMGIEI4vR@dimapc>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+ <20180720134532.13148-7-ben.dooks@codethink.co.uk>
+ <1721645.6LMGIEI4vR@dimapc>
+Message-ID: <ca29f065814a22f46b9b1683165548cb@codethink.co.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 7/25/2018 7:24 PM, Stephen Boyd wrote:
-> Quoting Marcel Ziswiler (2018-07-20 00:54:22)
->> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
->> Actually report the error code from devm_regulator_get() which may as
->> well just be a probe deferral.
->>
->> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->>
->> ---
->>
->>   drivers/clk/tegra/clk-dfll.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index 48ee43734e05..b2123084e175 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *pdev,
->>   
->>          td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
->>          if (IS_ERR(td->vdd_reg)) {
->> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
->> -               return PTR_ERR(td->vdd_reg);
->> +               ret = PTR_ERR(td->vdd_reg);
->> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
-> 
-> Do you want to know that a probe defer is happening? Usually patches are
-> sent to make that error path silent.
-> 
 
-Just asking as the newbie here, but shouldn't probe deferral be 
-regulated to dev_debug?
-Then pass any other error code as dev_err.
+
+On 2018-07-22 12:55, Dmitry Osipenko wrote:
+> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
+>> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
+>> clocks by making a 2D and 3D mux, and split the divider into the
+>> standard 2D/3D ones and 2D/3D idle clocks.
+>> 
+>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+
+[snip]
+
+> 
+> According to TRM, Tegra20 and Tegra114 have these "idle-mode" clock 
+> dividers
+> as well. Why only T30 should have them?
+
+I've got a separate series to sort t20 bits out, i've not used the 
+tegra114
+
+>> a/include/dt-bindings/clock/tegra30-car.h
+>> b/include/dt-bindings/clock/tegra30-car.h index 
+>> 3c90f1535551..eda4ca60351e
+>> 100644
+>> --- a/include/dt-bindings/clock/tegra30-car.h
+>> +++ b/include/dt-bindings/clock/tegra30-car.h
+>> @@ -269,6 +269,11 @@
+>>  #define TEGRA30_CLK_AUDIO3_MUX 306
+>>  #define TEGRA30_CLK_AUDIO4_MUX 307
+>>  #define TEGRA30_CLK_SPDIF_MUX 308
+>> -#define TEGRA30_CLK_CLK_MAX 309
+>> +
+>> +#define TEGRA30_CLK_GR2D_MUX	309
+>> +#define TEGRA30_CLK_GR3D_MUX	310
+>> +#define TEGRA30_CLK_GR2D_IDLE	311
+>> +#define TEGRA30_CLK_GR3D_IDLE	312
+>> +#define TEGRA30_CLK_CLK_MAX 313
+>> 
+>>  #endif	/* _DT_BINDINGS_CLOCK_TEGRA30_CAR_H */
+> 
+> IIUC, that "idle-mode" divisor is just some kind of power-safe feature, 
+> is
+> there any real use-case for these clocks? Why not to just pre-configure 
+> the
+> "idle-mode" bits during the clocks initialization?
+
+It is is nice to have it available after to check, other than that we're 
+not
+using any drivers that currently dynamically change the values of this.
+
