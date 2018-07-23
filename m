@@ -1,547 +1,604 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	robin.murphy@arm.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/8] devfreq: rk3399_dmc / clk: rockchip: Sync with vblank in the kernel for DDRfreq.
-Date: Mon, 30 Jul 2018 10:11:20 +0200
-Message-Id: <20180730081124.30698-5-enric.balletbo@collabora.com>
-In-Reply-To: <20180730081124.30698-1-enric.balletbo@collabora.com>
-References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Subject: [PATCH 1/5] mfd: rk808: Add RK817 and RK809 support
+Date: Mon, 23 Jul 2018 11:19:01 +0800
+Message-Id: <1532315945-1094-2-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
+ alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
+ huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+ zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
+ linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ chenjh@rock-chips.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Derek Basehore <dbasehore@chromium.org>
+    The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+    and handheld devices. It contains the following components:
 
-This changes the kernel to sync with vblank for the display in the
-kernel. This was done in Trusted Firmware-A (TF-A) before, but that locks
-up one CPU for up to one display frame (1/60 second). That's bad for
-performance and power, so this moves waiting to the kernel where the
-waiting thread can properly wait on a completion.
+        - Regulators
+        - RTC
+        - Clocking
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+    Both RK809 and RK817 chips are using a similar register map,
+    so we can reuse the RTC and Clocking and regulators functionality.
+
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 ---
+ drivers/mfd/Kconfig       |   6 +-
+ drivers/mfd/rk808.c       | 216 +++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 389 insertions(+), 5 deletions(-)
 
-Changes in v1: None
-
- drivers/clk/rockchip/clk-ddr.c    | 142 +++++++++++++++++++++++++-----
- drivers/clk/rockchip/clk.c        |   2 +-
- drivers/clk/rockchip/clk.h        |   3 +-
- drivers/devfreq/rk3399_dmc.c      | 125 ++++++++++++++++++++------
- drivers/devfreq/rk3399_dmc_priv.h |  15 ++++
- include/soc/rockchip/rk3399_dmc.h |  42 +++++++++
- 6 files changed, 277 insertions(+), 52 deletions(-)
- create mode 100644 drivers/devfreq/rk3399_dmc_priv.h
- create mode 100644 include/soc/rockchip/rk3399_dmc.h
-
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index e8075359366b..707be1bd8910 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -17,7 +17,9 @@
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/ktime.h>
- #include <linux/slab.h>
-+#include <soc/rockchip/rk3399_dmc.h>
- #include <soc/rockchip/rockchip_sip.h>
- #include "clk.h"
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5..84f2f22 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -967,14 +967,14 @@ config MFD_RC5T583
+ 	  different functionality of the device.
  
-@@ -30,39 +32,104 @@ struct rockchip_ddrclk {
- 	int		div_shift;
- 	int		div_width;
- 	int		ddr_flag;
--	spinlock_t	*lock;
-+	unsigned long	cached_rate;
-+	struct work_struct set_rate_work;
-+	struct mutex	lock;
-+	struct raw_notifier_head sync_chain;
+ config MFD_RK808
+-	tristate "Rockchip RK805/RK808/RK818 Power Management Chip"
++	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 Power Management Chip"
+ 	depends on I2C && OF
+ 	select MFD_CORE
+ 	select REGMAP_I2C
+ 	select REGMAP_IRQ
+ 	help
+-	  If you say yes here you get support for the RK805, RK808 and RK818
+-	  Power Management chips.
++	  If you say yes here you get support for the RK805, RK809 and RK817,
++	  RK808 and RK818 Power Management chips.
+ 	  This driver provides common support for accessing the device
+ 	  through I2C interface. The device supports multiple sub-devices
+ 	  including interrupts, RTC, LDO & DCDC regulators, and onkey.
+diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+index 216fbf6..bfb5668 100644
+--- a/drivers/mfd/rk808.c
++++ b/drivers/mfd/rk808.c
+@@ -62,6 +62,29 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	return false;
+ }
+ 
++static bool rk817_is_volatile_reg(struct device *dev, unsigned int reg)
++{
++	/*
++	 * Notes:
++	 * - Technically the ROUND_30s bit makes RTC_CTRL_REG volatile, but
++	 *   we don't use that feature.  It's better to cache.
++	 * - It's unlikely we care that RK808_DEVCTRL_REG is volatile since
++	 *   bits are cleared in case when we shutoff anyway, but better safe.
++	 */
++
++	switch (reg) {
++	case RK817_SECONDS_REG ... RK817_WEEKS_REG:
++	case RK817_RTC_STATUS_REG:
++	case RK817_INT_STS_REG0:
++	case RK817_INT_STS_REG1:
++	case RK817_INT_STS_REG2:
++	case RK817_SYS_STS:
++		return true;
++	}
++
++	return true;
++}
++
+ static const struct regmap_config rk818_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -86,6 +109,14 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	.volatile_reg = rk808_is_volatile_reg,
  };
  
- #define to_rockchip_ddrclk_hw(hw) container_of(hw, struct rockchip_ddrclk, hw)
-+#define DMC_DEFAULT_TIMEOUT_NS		NSEC_PER_SEC
-+#define DDRCLK_SET_RATE_MAX_RETRIES	3
++static const struct regmap_config rk817_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = RK817_GPIO_INT_CFG,
++	.cache_type = REGCACHE_NONE,
++	.volatile_reg = rk817_is_volatile_reg,
++};
++
+ static struct resource rtc_resources[] = {
+ 	{
+ 		.start  = RK808_IRQ_RTC_ALARM,
+@@ -94,6 +125,13 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	}
+ };
  
--static int rockchip_ddrclk_sip_set_rate(struct clk_hw *hw, unsigned long drate,
--					unsigned long prate)
-+static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- {
--	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
--	unsigned long flags;
-+	struct rockchip_ddrclk *ddrclk = container_of(work,
-+			struct rockchip_ddrclk, set_rate_work);
-+	ktime_t timeout = ktime_add_ns(ktime_get(), DMC_DEFAULT_TIMEOUT_NS);
- 	struct arm_smccc_res res;
-+	int ret, i;
++static struct resource rk817_rtc_resources[] = {
++	{
++		.start  = RK817_IRQ_RTC_ALARM,
++		.end    = RK817_IRQ_RTC_ALARM,
++		.flags  = IORESOURCE_IRQ,
++	}
++};
+ static struct resource rk805_key_resources[] = {
+ 	{
+ 		.start  = RK805_IRQ_PWRON_FALL,
+@@ -107,6 +145,19 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	}
+ };
+ 
++static struct resource rk817_pwrkey_resources[] = {
++	{
++		.start  = RK817_IRQ_PWRON_RISE,
++		.end    = RK817_IRQ_PWRON_RISE,
++		.flags  = IORESOURCE_IRQ,
++	},
++	{
++		.start  = RK817_IRQ_PWRON_FALL,
++		.end    = RK817_IRQ_PWRON_FALL,
++		.flags  = IORESOURCE_IRQ,
++	},
++};
 +
-+	mutex_lock(&ddrclk->lock);
-+	for (i = 0; i < DDRCLK_SET_RATE_MAX_RETRIES; i++) {
-+		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0, &timeout);
-+		if (ret == NOTIFY_BAD)
-+			goto out;
+ static const struct mfd_cell rk805s[] = {
+ 	{ .name = "rk808-clkout", },
+ 	{ .name = "rk808-regulator", },
+@@ -132,6 +183,21 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	},
+ };
+ 
++static const struct mfd_cell rk817s[] = {
++	{ .name = "rk808-clkout",},
++	{ .name = "rk808-regulator",},
++	{
++		.name = "rk8xx-pwrkey",
++		.num_resources = ARRAY_SIZE(rk817_pwrkey_resources),
++		.resources = &rk817_pwrkey_resources[0],
++	},
++	{
++		.name = "rk808-rtc",
++		.num_resources = ARRAY_SIZE(rk817_rtc_resources),
++		.resources = &rk817_rtc_resources[0],
++	},
++};
 +
-+		/*
-+		 * Check the timeout with irqs disabled. This is so we don't get
-+		 * preempted after checking the timeout. That could cause things
-+		 * like garbage values for the display if we change the DDR rate
-+		 * at the wrong time.
-+		 */
-+		local_irq_disable();
-+		if (ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
-+				timeout)) {
-+			local_irq_enable();
-+			continue;
+ static const struct mfd_cell rk818s[] = {
+ 	{ .name = "rk808-clkout", },
+ 	{ .name = "rk808-regulator", },
+@@ -167,6 +233,13 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 						    VB_LO_SEL_3500MV },
+ };
+ 
++static const struct rk808_reg_data rk817_pre_init_reg[] = {
++	{RK817_RTC_CTRL_REG, RTC_STOP, RTC_STOP},
++	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_H},
++	{RK817_SYS_CFG(1), RK817_HOTDIE_TEMP_MSK | RK817_TSD_TEMP_MSK,
++					   RK817_HOTDIE_105 | RK817_TSD_140},
++};
++
+ static const struct rk808_reg_data rk818_pre_init_reg[] = {
+ 	/* improve efficiency */
+ 	{ RK818_BUCK2_CONFIG_REG, BUCK2_RATE_MASK,  BUCK_ILMIN_250MA },
+@@ -332,6 +405,39 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	},
+ };
+ 
++#define REGMAP_IRQ_M(_id) \
++	[_id] = {				\
++		.mask = BIT(((_id) % 8)),	\
++		.reg_offset = ((_id) / 8),	\
++	}
++
++static const struct regmap_irq rk817_irqs[RK817_IRQ_END] = {
++	REGMAP_IRQ_M(0),
++	REGMAP_IRQ_M(1),
++	REGMAP_IRQ_M(2),
++	REGMAP_IRQ_M(3),
++	REGMAP_IRQ_M(4),
++	REGMAP_IRQ_M(5),
++	REGMAP_IRQ_M(6),
++	REGMAP_IRQ_M(7),
++	REGMAP_IRQ_M(8),
++	REGMAP_IRQ_M(9),
++	REGMAP_IRQ_M(10),
++	REGMAP_IRQ_M(11),
++	REGMAP_IRQ_M(12),
++	REGMAP_IRQ_M(13),
++	REGMAP_IRQ_M(14),
++	REGMAP_IRQ_M(15),
++	REGMAP_IRQ_M(16),
++	REGMAP_IRQ_M(17),
++	REGMAP_IRQ_M(18),
++	REGMAP_IRQ_M(19),
++	REGMAP_IRQ_M(20),
++	REGMAP_IRQ_M(21),
++	REGMAP_IRQ_M(22),
++	REGMAP_IRQ_M(23)
++};
++
+ static struct regmap_irq_chip rk805_irq_chip = {
+ 	.name = "rk805",
+ 	.irqs = rk805_irqs,
+@@ -355,6 +461,18 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+ 	.init_ack_masked = true,
+ };
+ 
++static struct regmap_irq_chip rk817_irq_chip = {
++	.name = "rk817",
++	.irqs = rk817_irqs,
++	.num_irqs = ARRAY_SIZE(rk817_irqs),
++	.num_regs = 3,
++	.irq_reg_stride = 2,
++	.status_base = RK817_INT_STS_REG0,
++	.mask_base = RK817_INT_STS_MSK_REG0,
++	.ack_base = RK817_INT_STS_REG0,
++	.init_ack_masked = true,
++};
++
+ static const struct regmap_irq_chip rk818_irq_chip = {
+ 	.name = "rk818",
+ 	.irqs = rk818_irqs,
+@@ -423,9 +541,39 @@ static void rk818_device_shutdown(void)
+ 		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+ }
+ 
++static void rk8xx_device_shutdown_prepare(void)
++{
++	int ret;
++	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
++
++	if (!rk808) {
++		dev_warn(&rk808_i2c_client->dev,
++			 "have no rk808, so do nothing here\n");
++		return;
++	}
++
++	switch (rk808->variant) {
++	case RK809_ID:
++	case RK817_ID:
++		ret = regmap_update_bits(rk808->regmap,
++					 RK817_SYS_CFG(3),
++					 RK817_SLPPIN_FUNC_MSK,
++					 SLPPIN_DN_FUN);
++		if (ret) {
++			dev_warn(&rk808_i2c_client->dev,
++				 "switch pin func to power down error!\n");
 +		}
-+
-+		arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, ddrclk->cached_rate, 0,
-+			      ROCKCHIP_SIP_CONFIG_DRAM_SET_RATE,
-+			      0, 0, 0, 0, &res);
-+		local_irq_enable();
++		break;
++	default:
 +		break;
 +	}
-+out:
-+	mutex_unlock(&ddrclk->lock);
-+}
- 
--	spin_lock_irqsave(ddrclk->lock, flags);
--	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, drate, 0,
--		      ROCKCHIP_SIP_CONFIG_DRAM_SET_RATE,
--		      0, 0, 0, 0, &res);
--	spin_unlock_irqrestore(ddrclk->lock, flags);
-+int rockchip_ddrclk_register_sync_nb(struct clk *clk, struct notifier_block *nb)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk;
-+	int ret;
- 
--	return res.a0;
-+	if (!hw || !nb)
-+		return -EINVAL;
-+
-+	ddrclk = to_rockchip_ddrclk_hw(hw);
-+	if (!ddrclk)
-+		return -EINVAL;
-+
-+	mutex_lock(&ddrclk->lock);
-+	ret = raw_notifier_chain_register(&ddrclk->sync_chain, nb);
-+	mutex_unlock(&ddrclk->lock);
-+
-+	return ret;
- }
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_register_sync_nb);
- 
--static unsigned long
--rockchip_ddrclk_sip_recalc_rate(struct clk_hw *hw,
--				unsigned long parent_rate)
-+int rockchip_ddrclk_unregister_sync_nb(struct clk *clk,
-+				       struct notifier_block *nb)
- {
--	struct arm_smccc_res res;
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk;
-+	int ret;
- 
--	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
--		      ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE,
--		      0, 0, 0, 0, &res);
-+	if (!hw || !nb)
-+		return -EINVAL;
- 
--	return res.a0;
-+	ddrclk = to_rockchip_ddrclk_hw(hw);
-+	if (!ddrclk)
-+		return -EINVAL;
-+
-+	mutex_lock(&ddrclk->lock);
-+	ret = raw_notifier_chain_unregister(&ddrclk->sync_chain, nb);
-+	mutex_unlock(&ddrclk->lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_unregister_sync_nb);
-+
-+void rockchip_ddrclk_wait_set_rate(struct clk *clk)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	flush_work(&ddrclk->set_rate_work);
- }
-+EXPORT_SYMBOL_GPL(rockchip_ddrclk_wait_set_rate);
- 
- static long rockchip_ddrclk_sip_round_rate(struct clk_hw *hw,
- 					   unsigned long rate,
-@@ -77,6 +144,30 @@ static long rockchip_ddrclk_sip_round_rate(struct clk_hw *hw,
- 	return res.a0;
- }
- 
-+static int rockchip_ddrclk_sip_set_rate(struct clk_hw *hw, unsigned long drate,
-+					unsigned long prate)
-+{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+	long rate;
-+
-+	rate = rockchip_ddrclk_sip_round_rate(hw, drate, &prate);
-+	if (rate < 0)
-+		return rate;
-+
-+	ddrclk->cached_rate = rate;
-+	queue_work(system_highpri_wq, &ddrclk->set_rate_work);
-+	return 0;
 +}
 +
-+static unsigned long
-+rockchip_ddrclk_sip_recalc_rate(struct clk_hw *hw,
-+				unsigned long parent_rate)
-+{
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	return ddrclk->cached_rate;
-+}
-+
- static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
- {
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-@@ -105,12 +196,12 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 					 u8 num_parents, int mux_offset,
- 					 int mux_shift, int mux_width,
- 					 int div_shift, int div_width,
--					 int ddr_flag, void __iomem *reg_base,
--					 spinlock_t *lock)
-+					 int ddr_flag, void __iomem *reg_base)
- {
- 	struct rockchip_ddrclk *ddrclk;
- 	struct clk_init_data init;
- 	struct clk *clk;
-+	struct arm_smccc_res res;
- 
- 	ddrclk = kzalloc(sizeof(*ddrclk), GFP_KERNEL);
- 	if (!ddrclk)
-@@ -134,7 +225,6 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	}
- 
- 	ddrclk->reg_base = reg_base;
--	ddrclk->lock = lock;
- 	ddrclk->hw.init = &init;
- 	ddrclk->mux_offset = mux_offset;
- 	ddrclk->mux_shift = mux_shift;
-@@ -142,6 +232,14 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->div_shift = div_shift;
- 	ddrclk->div_width = div_width;
- 	ddrclk->ddr_flag = ddr_flag;
-+	mutex_init(&ddrclk->lock);
-+	INIT_WORK(&ddrclk->set_rate_work, rockchip_ddrclk_set_rate_func);
-+	RAW_INIT_NOTIFIER_HEAD(&ddrclk->sync_chain);
-+
-+	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
-+		      ROCKCHIP_SIP_CONFIG_DRAM_GET_RATE,
-+		      0, 0, 0, 0, &res);
-+	ddrclk->cached_rate = res.a0;
- 
- 	clk = clk_register(NULL, &ddrclk->hw);
- 	if (IS_ERR(clk))
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 326b3fa44f5d..1b7775aff191 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -541,7 +541,7 @@ void __init rockchip_clk_register_branches(
- 				list->muxdiv_offset, list->mux_shift,
- 				list->mux_width, list->div_shift,
- 				list->div_width, list->div_flags,
--				ctx->reg_base, &ctx->lock);
-+				ctx->reg_base);
- 			break;
- 		}
- 
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index ef601dded32c..5e4ce49ef337 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -326,8 +326,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 					 u8 num_parents, int mux_offset,
- 					 int mux_shift, int mux_width,
- 					 int div_shift, int div_width,
--					 int ddr_flags, void __iomem *reg_base,
--					 spinlock_t *lock);
-+					 int ddr_flags, void __iomem *reg_base);
- 
- #define ROCKCHIP_INVERTER_HIWORD_MASK	BIT(0)
- 
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index c619dc4ac620..b4ac9ee605be 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -28,9 +28,12 @@
- #include <linux/rwsem.h>
- #include <linux/suspend.h>
- 
-+#include <soc/rockchip/rk3399_dmc.h>
- #include <soc/rockchip/rk3399_grf.h>
- #include <soc/rockchip/rockchip_sip.h>
- 
-+#include "rk3399_dmc_priv.h"
-+
- struct dram_timing {
- 	unsigned int ddr3_speed_bin;
- 	unsigned int pd_idle;
-@@ -70,6 +73,7 @@ struct rk3399_dmcfreq {
- 	struct clk *dmc_clk;
- 	struct devfreq_event_dev *edev;
- 	struct mutex lock;
-+	struct mutex en_lock;
- 	struct dram_timing timing;
- 	struct regulator *vdd_center;
- 	struct regmap *regmap_pmu;
-@@ -77,6 +81,8 @@ struct rk3399_dmcfreq {
- 	unsigned long volt, target_volt;
- 	unsigned int odt_dis_freq;
- 	int odt_pd_arg0, odt_pd_arg1;
-+	int num_sync_nb;
-+	int disable_count;
+ static const struct of_device_id rk808_of_match[] = {
+ 	{ .compatible = "rockchip,rk805" },
+ 	{ .compatible = "rockchip,rk808" },
++	{ .compatible = "rockchip,rk809" },
++	{ .compatible = "rockchip,rk817" },
+ 	{ .compatible = "rockchip,rk818" },
+ 	{ },
  };
+@@ -442,6 +590,7 @@ static int rk808_probe(struct i2c_client *client,
+ 	int nr_pre_init_regs;
+ 	int nr_cells;
+ 	int pm_off = 0, msb, lsb;
++	unsigned char pmic_id_msb = RK808_ID_MSB, pmic_id_lsb = RK808_ID_LSB;
+ 	int ret;
+ 	int i;
  
- static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
-@@ -139,6 +145,13 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
- 		goto out;
- 	}
- 
-+	/*
-+	 * Setting the dpll is asynchronous since clk_set_rate grabs a global
-+	 * common clk lock and set_rate for the dpll takes up to one display
-+	 * frame to complete. We still need to wait for the set_rate to complete
-+	 * here, though, before we change voltage.
-+	 */
-+	rockchip_ddrclk_wait_set_rate(dmcfreq->dmc_clk);
- 	/*
- 	 * Check the dpll rate,
- 	 * There only two result we will get,
-@@ -205,40 +218,15 @@ static struct devfreq_dev_profile rk3399_devfreq_dmc_profile = {
- static __maybe_unused int rk3399_dmcfreq_suspend(struct device *dev)
- {
- 	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(dev);
--	int ret = 0;
--
--	ret = devfreq_event_disable_edev(dmcfreq->edev);
--	if (ret < 0) {
--		dev_err(dev, "failed to disable the devfreq-event devices\n");
--		return ret;
--	}
- 
--	ret = devfreq_suspend_device(dmcfreq->devfreq);
--	if (ret < 0) {
--		dev_err(dev, "failed to suspend the devfreq devices\n");
--		return ret;
--	}
--
--	return 0;
-+	return rockchip_dmcfreq_block(dmcfreq->devfreq);
- }
- 
- static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
- {
- 	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(dev);
--	int ret = 0;
- 
--	ret = devfreq_event_enable_edev(dmcfreq->edev);
--	if (ret < 0) {
--		dev_err(dev, "failed to enable the devfreq-event devices\n");
--		return ret;
--	}
--
--	ret = devfreq_resume_device(dmcfreq->devfreq);
--	if (ret < 0) {
--		dev_err(dev, "failed to resume the devfreq devices\n");
--		return ret;
--	}
--	return ret;
-+	return rockchip_dmcfreq_unblock(dmcfreq->devfreq);
- }
- 
- static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
-@@ -311,6 +299,88 @@ static int of_get_ddr_timings(struct dram_timing *timing,
- 	return ret;
- }
- 
-+int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+					struct notifier_block *nb)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	/*
-+	 * We have a short amount of time (~1ms or less typically) to run
-+	 * dmcfreq after we sync with the notifier, so syncing with more than
-+	 * one notifier is not generally possible. Thus, if more than one sync
-+	 * notifier is registered, disable dmcfreq.
-+	 */
-+	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		devfreq_suspend_device(devfreq);
-+
-+	ret = rockchip_ddrclk_register_sync_nb(dmcfreq->dmc_clk, nb);
-+	if (ret == 0)
-+		dmcfreq->num_sync_nb++;
-+	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		devfreq_resume_device(devfreq);
-+
-+	mutex_unlock(&dmcfreq->en_lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_register_clk_sync_nb);
-+
-+int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					  struct notifier_block *nb)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	ret = rockchip_ddrclk_unregister_sync_nb(dmcfreq->dmc_clk, nb);
-+	if (ret == 0) {
-+		dmcfreq->num_sync_nb--;
-+		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+			devfreq_resume_device(devfreq);
-+	}
-+
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_unregister_clk_sync_nb);
-+
-+int rockchip_dmcfreq_block(struct devfreq *devfreq)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret = 0;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0)
-+		ret = devfreq_suspend_device(devfreq);
-+
-+	if (!ret)
-+		dmcfreq->disable_count++;
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_block);
-+
-+int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
-+{
-+	struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(devfreq->dev.parent);
-+	int ret = 0;
-+
-+	mutex_lock(&dmcfreq->en_lock);
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1)
-+		ret = devfreq_resume_device(devfreq);
-+
-+	if (!ret)
-+		dmcfreq->disable_count--;
-+	WARN_ON(dmcfreq->disable_count < 0);
-+	mutex_unlock(&dmcfreq->en_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(rockchip_dmcfreq_unblock);
-+
- static int rk3399_dmcfreq_probe(struct platform_device *pdev)
- {
- 	struct arm_smccc_res res;
-@@ -328,6 +398,7 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+@@ -449,15 +598,20 @@ static int rk808_probe(struct i2c_client *client,
+ 	if (!rk808)
  		return -ENOMEM;
  
- 	mutex_init(&data->lock);
-+	mutex_init(&data->en_lock);
++	if (of_device_is_compatible(np, "rockchip,rk817") ||
++	    of_device_is_compatible(np, "rockchip,rk809")) {
++		pmic_id_msb = RK817_ID_MSB;
++		pmic_id_lsb = RK817_ID_LSB;
++	}
+ 	/* Read chip variant */
+-	msb = i2c_smbus_read_byte_data(client, RK808_ID_MSB);
++	msb = i2c_smbus_read_byte_data(client, pmic_id_msb);
+ 	if (msb < 0) {
+ 		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
+ 			RK808_ID_MSB);
+ 		return msb;
+ 	}
  
- 	data->vdd_center = devm_regulator_get(dev, "center");
- 	if (IS_ERR(data->vdd_center)) {
-diff --git a/drivers/devfreq/rk3399_dmc_priv.h b/drivers/devfreq/rk3399_dmc_priv.h
-new file mode 100644
-index 000000000000..8ac0340a4990
---- /dev/null
-+++ b/drivers/devfreq/rk3399_dmc_priv.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+-	lsb = i2c_smbus_read_byte_data(client, RK808_ID_LSB);
++	lsb = i2c_smbus_read_byte_data(client, pmic_id_lsb);
+ 	if (lsb < 0) {
+ 		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
+ 			RK808_ID_LSB);
+@@ -495,6 +649,16 @@ static int rk808_probe(struct i2c_client *client,
+ 		nr_cells = ARRAY_SIZE(rk818s);
+ 		pm_pwroff_fn = rk818_device_shutdown;
+ 		break;
++	case RK809_ID:
++	case RK817_ID:
++		rk808->regmap_cfg = &rk817_regmap_config;
++		rk808->regmap_irq_chip = &rk817_irq_chip;
++		pre_init_reg = rk817_pre_init_reg;
++		nr_pre_init_regs = ARRAY_SIZE(rk817_pre_init_reg);
++		cells = rk817s;
++		nr_cells = ARRAY_SIZE(rk817s);
++		pm_power_off_prepare = rk8xx_device_shutdown_prepare;
++		break;
+ 	default:
+ 		dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
+ 			rk808->variant);
+@@ -568,9 +732,56 @@ static int rk808_remove(struct i2c_client *client)
+ 	return 0;
+ }
+ 
++static int rk8xx_suspend(struct device *dev)
++{
++	int ret = 0;
++	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
++
++	switch (rk808->variant) {
++	case RK809_ID:
++	case RK817_ID:
++		ret = regmap_update_bits(rk808->regmap,
++					 RK817_SYS_CFG(3),
++					 RK817_SLPPIN_FUNC_MSK,
++					 SLPPIN_SLP_FUN);
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
++static int rk8xx_resume(struct device *dev)
++{
++	int ret = 0;
++	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
++
++	switch (rk808->variant) {
++	case RK809_ID:
++	case RK817_ID:
++		ret = regmap_update_bits(rk808->regmap,
++					 RK817_SYS_CFG(3),
++					 RK817_SLPPIN_FUNC_MSK,
++					 SLPPIN_NULL_FUN);
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
++static const struct dev_pm_ops rk8xx_pm_ops = {
++	.suspend = rk8xx_suspend,
++	.resume =  rk8xx_resume,
++};
++
+ static const struct i2c_device_id rk808_ids[] = {
+ 	{ "rk805" },
+ 	{ "rk808" },
++	{ "rk809" },
++	{ "rk817" },
+ 	{ "rk818" },
+ 	{ },
+ };
+@@ -580,6 +791,7 @@ static int rk808_remove(struct i2c_client *client)
+ 	.driver = {
+ 		.name = "rk808",
+ 		.of_match_table = rk808_of_match,
++		.pm = &rk8xx_pm_ops,
+ 	},
+ 	.probe    = rk808_probe,
+ 	.remove   = rk808_remove,
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index d315659..b973b0a 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -382,6 +382,7 @@ enum rk805_reg {
+ #define SWITCH1_EN	BIT(5)
+ #define DEV_OFF_RST	BIT(3)
+ #define DEV_OFF		BIT(0)
++#define RTC_STOP	BIT(0)
+ 
+ #define VB_LO_ACT		BIT(4)
+ #define VB_LO_SEL_3500MV	(7 << 0)
+@@ -396,6 +397,175 @@ enum rk805_reg {
+ #define SLEEP_FUN			(0x1 << 2)
+ #define RK8XX_ID_MSK			0xfff0
+ #define FPWM_MODE			BIT(7)
++enum rk817_reg_id {
++	RK817_ID_DCDC1 = 0,
++	RK817_ID_DCDC2,
++	RK817_ID_DCDC3,
++	RK817_ID_DCDC4,
++	RK817_ID_LDO1,
++	RK817_ID_LDO2,
++	RK817_ID_LDO3,
++	RK817_ID_LDO4,
++	RK817_ID_LDO5,
++	RK817_ID_LDO6,
++	RK817_ID_LDO7,
++	RK817_ID_LDO8,
++	RK817_ID_LDO9,
++	RK817_ID_BOOST,
++	RK817_ID_BOOST_OTG_SW,
++	RK817_NUM_REGULATORS
++};
++
++enum rk809_reg_id {
++	RK809_ID_DCDC5 = RK817_ID_BOOST,
++	RK809_ID_SW1,
++	RK809_ID_SW2,
++	RK809_NUM_REGULATORS
++};
++
++#define RK817_SECONDS_REG		0x00
++#define RK817_MINUTES_REG		0x01
++#define RK817_HOURS_REG			0x02
++#define RK817_DAYS_REG			0x03
++#define RK817_MONTHS_REG		0x04
++#define RK817_YEARS_REG			0x05
++#define RK817_WEEKS_REG			0x06
++#define RK817_ALARM_SECONDS_REG		0x07
++#define RK817_ALARM_MINUTES_REG		0x08
++#define RK817_ALARM_HOURS_REG		0x09
++#define RK817_ALARM_DAYS_REG		0x0a
++#define RK817_ALARM_MONTHS_REG		0x0b
++#define RK817_ALARM_YEARS_REG		0x0c
++#define RK817_RTC_CTRL_REG		0xd
++#define RK817_RTC_STATUS_REG		0xe
++#define RK817_RTC_INT_REG		0xf
++#define RK817_RTC_COMP_LSB_REG		0x10
++#define RK817_RTC_COMP_MSB_REG		0x11
++
++#define RK817_POWER_EN_REG(i)		(0xb1 + (i))
++#define RK817_POWER_SLP_EN_REG(i)	(0xb5 + (i))
++
++#define RK817_POWER_CONFIG		(0xb9)
++
++#define RK817_BUCK_CONFIG_REG(i)	(0xba + (i) * 3)
++
++#define RK817_BUCK1_ON_VSEL_REG		0xBB
++#define RK817_BUCK1_SLP_VSEL_REG	0xBC
++
++#define RK817_BUCK2_CONFIG_REG		0xBD
++#define RK817_BUCK2_ON_VSEL_REG		0xBE
++#define RK817_BUCK2_SLP_VSEL_REG	0xBF
++
++#define RK817_BUCK3_CONFIG_REG		0xC0
++#define RK817_BUCK3_ON_VSEL_REG		0xC1
++#define RK817_BUCK3_SLP_VSEL_REG	0xC2
++
++#define RK817_BUCK4_CONFIG_REG		0xC3
++#define RK817_BUCK4_ON_VSEL_REG		0xC4
++#define RK817_BUCK4_SLP_VSEL_REG	0xC5
++
++#define RK817_LDO_ON_VSEL_REG(idx)	(0xcc + (idx) * 2)
++#define RK817_BOOST_OTG_CFG		(0xde)
++
++#define RK817_ID_MSB			0xed
++#define RK817_ID_LSB			0xee
++
++#define RK817_SYS_STS			0xf0
++#define RK817_SYS_CFG(i)		(0xf1 + (i))
++
++#define RK817_ON_SOURCE_REG		0xf5
++#define RK817_OFF_SOURCE_REG		0xf6
++
++/* INTERRUPT REGISTER */
++#define RK817_INT_STS_REG0		0xf8
++#define RK817_INT_STS_MSK_REG0		0xf9
++#define RK817_INT_STS_REG1		0xfa
++#define RK817_INT_STS_MSK_REG1		0xfb
++#define RK817_INT_STS_REG2		0xfc
++#define RK817_INT_STS_MSK_REG2		0xfd
++#define RK817_GPIO_INT_CFG		0xfe
++
++/* IRQ Definitions */
++#define RK817_IRQ_PWRON_FALL		0
++#define RK817_IRQ_PWRON_RISE		1
++#define RK817_IRQ_PWRON			2
++#define RK817_IRQ_PWMON_LP		3
++#define RK817_IRQ_HOTDIE		4
++#define RK817_IRQ_RTC_ALARM		5
++#define RK817_IRQ_RTC_PERIOD		6
++#define RK817_IRQ_VB_LO			7
++#define RK817_IRQ_PLUG_IN		(8 + 0)
++#define RK817_IRQ_PLUG_OUT		(8 + 1)
++#define RK817_IRQ_CHRG_TERM		(8 + 2)
++#define RK817_IRQ_CHRG_TIME		(8 + 3)
++#define RK817_IRQ_CHRG_TS		(8 + 4)
++#define RK817_IRQ_USB_OV		(8 + 5)
++#define RK817_IRQ_CHRG_IN_CLMP		(8 + 6)
++#define RK817_IRQ_BAT_DIS_ILIM		(8 + 7)
++#define RK817_IRQ_GATE_GPIO		(16 + 0)
++#define RK817_IRQ_TS_GPIO		(16 + 1)
++#define RK817_IRQ_CODEC_PD		(16 + 2)
++#define RK817_IRQ_CODEC_PO		(16 + 3)
++#define RK817_IRQ_CLASSD_MUTE_DONE	(16 + 4)
++#define RK817_IRQ_CLASSD_OCP		(16 + 5)
++#define RK817_IRQ_BAT_OVP		(16 + 6)
++#define RK817_IRQ_CHRG_BAT_HI		(16 + 7)
++#define RK817_IRQ_END			(RK817_IRQ_CHRG_BAT_HI + 1)
++
 +/*
-+ * Copyright (C) 2017-2018 Google, Inc.
-+ * Author: Derek Basehore <dbasehore@chromium.org>
++ * rtc_ctrl 0xd
++ * same as 808, except bit4
 + */
++#define RK817_RTC_CTRL_RSV4		BIT(4)
 +
-+#ifndef __RK3399_DMC_PRIV_H
-+#define __RK3399_DMC_PRIV_H
++/* power config 0xb9 */
++#define RK817_BUCK3_FB_RES_MSK		BIT(6)
++#define RK817_BUCK3_FB_RES_INTER	BIT(6)
++#define RK817_BUCK3_FB_RES_EXT		0
 +
-+void rockchip_ddrclk_wait_set_rate(struct clk *clk);
-+int rockchip_ddrclk_register_sync_nb(struct clk *clk,
-+				     struct notifier_block *nb);
-+int rockchip_ddrclk_unregister_sync_nb(struct clk *clk,
-+				       struct notifier_block *nb);
-+#endif
-diff --git a/include/soc/rockchip/rk3399_dmc.h b/include/soc/rockchip/rk3399_dmc.h
-new file mode 100644
-index 000000000000..8b28563710d1
---- /dev/null
-+++ b/include/soc/rockchip/rk3399_dmc.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2016-2018, Fuzhou Rockchip Electronics Co., Ltd
-+ * Author: Lin Huang <hl@rock-chips.com>
-+ */
++/* buck config 0xba */
++#define RK817_RAMP_RATE_OFFSET		6
++#define RK817_RAMP_RATE_MASK		(0x3 << RK817_RAMP_RATE_OFFSET)
++#define RK817_RAMP_RATE_3MV_PER_US	(0x0 << RK817_RAMP_RATE_OFFSET)
++#define RK817_RAMP_RATE_6_3MV_PER_US	(0x1 << RK817_RAMP_RATE_OFFSET)
++#define RK817_RAMP_RATE_12_5MV_PER_US	(0x2 << RK817_RAMP_RATE_OFFSET)
++#define RK817_RAMP_RATE_25MV_PER_US	(0x3 << RK817_RAMP_RATE_OFFSET)
 +
-+#ifndef __SOC_RK3399_DMC_H
-+#define __SOC_RK3399_DMC_H
++/* sys_cfg1 0xf2 */
++#define RK817_HOTDIE_TEMP_MSK		(0x3 << 4)
++#define RK817_HOTDIE_85			(0x0 << 4)
++#define RK817_HOTDIE_95			(0x1 << 4)
++#define RK817_HOTDIE_105		(0x2 << 4)
++#define RK817_HOTDIE_115		(0x3 << 4)
 +
-+#include <linux/devfreq.h>
-+#include <linux/notifier.h>
++#define RK817_TSD_TEMP_MSK		BIT(6)
++#define RK817_TSD_140			0
++#define RK817_TSD_160			BIT(6)
 +
-+#define DMC_MIN_SET_RATE_NS	(250 * NSEC_PER_USEC)
-+#define DMC_MIN_VBLANK_NS	(DMC_MIN_SET_RATE_NS + 50 * NSEC_PER_USEC)
++#define RK817_CLK32KOUT2_EN		BIT(7)
 +
-+#if IS_ENABLED(CONFIG_ARM_RK3399_DMC_DEVFREQ)
-+int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+					  struct notifier_block *nb);
++/* sys_cfg3 0xf4 */
++#define RK817_SLPPIN_FUNC_MSK		(0x3 << 3)
++#define SLPPIN_NULL_FUN			(0x0 << 3)
++#define SLPPIN_SLP_FUN			(0x1 << 3)
++#define SLPPIN_DN_FUN			(0x2 << 3)
++#define SLPPIN_RST_FUN			(0x3 << 3)
 +
-+int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					    struct notifier_block *nb);
++#define RK817_RST_FUNC_MSK		(0x3 << 6)
++#define RK817_RST_FUNC_SFT		(6)
++#define RK817_RST_FUNC_CNT		(3)
++#define RK817_RST_FUNC_DEV		(0) /* reset the dev */
++#define RK817_RST_FUNC_REG		(0x1 << 6) /* reset the reg only */
 +
-+int rockchip_dmcfreq_block(struct devfreq *devfreq);
++#define RK817_SLPPOL_MSK		BIT(5)
++#define RK817_SLPPOL_H			BIT(5)
++#define RK817_SLPPOL_L			(0)
 +
-+int rockchip_dmcfreq_unblock(struct devfreq *devfreq);
-+#else
-+static inline int
-+rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
-+				      struct notifier_block *nb)
-+{ return 0; }
-+
-+static inline int
-+rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
-+					struct notifier_block *nb)
-+{ return 0; }
-+
-+static inline int rockchip_dmcfreq_block(struct devfreq *devfreq) { return 0; }
-+
-+static inline int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
-+{ return 0; }
-+#endif
-+#endif
++/* gpio&int 0xfe */
++#define RK817_INT_POL_MSK		BIT(1)
++#define RK817_INT_POL_H			BIT(1)
++#define RK817_INT_POL_L			0
++#define RK809_BUCK5_CONFIG(i)		(RK817_BOOST_OTG_CFG + (i) * 1)
+ 
+ enum {
+ 	BUCK_ILMIN_50MA,
+@@ -443,6 +613,8 @@ enum {
+ enum {
+ 	RK805_ID = 0x8050,
+ 	RK808_ID = 0x0000,
++	RK809_ID = 0x8090,
++	RK817_ID = 0x8170,
+ 	RK818_ID = 0x8181,
+ };
+ 
 -- 
-2.18.0
+1.9.1
+
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
