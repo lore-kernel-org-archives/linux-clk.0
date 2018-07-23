@@ -1,52 +1,66 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: sboyd@kernel.org,
+	andy.gross@linaro.org
+Cc: tdas@codeaurora.org,
+	grahamr@codeaurora.org,
+	girishm@codeaurora.org,
+	anischal@codeaurora.org,
+	bjorn.andersson@linaro.org,
+	Douglas Anderson <dianders@chromium.org>,
 	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v5 1/5] clk: actions: Fix the missing REGMAP_MMIO dependency
-Date: Sun, 15 Jul 2018 22:01:47 +0200
-Message-Id: <20180715200151.10416-2-sravanhome@gmail.com>
-In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
-References: <20180715200151.10416-1-sravanhome@gmail.com>
+	David Brown <david.brown@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: qcom: Quad SPI (qspi) clock support for sdm845
+Date: Mon, 23 Jul 2018 14:54:02 -0700
+Message-Id: <20180723215404.74296-1-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add REGMAP_MMIO as dependency to avoid undefined
-reference to regmap symbols.
 
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- drivers/clk/actions/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This two-series patch adds the needed clock bits to use the Quad SPI
+(qspi) part on sdm845.  It's expected that the bindings part of this
+patch could land in the clock tree with an immutable git hash and then
+be pulled into the Qualcomm tree so it could be used by dts files.
 
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-index 8854adb37847..39491154abbf 100644
---- a/drivers/clk/actions/Kconfig
-+++ b/drivers/clk/actions/Kconfig
-@@ -1,6 +1,7 @@
- config CLK_ACTIONS
- 	bool "Clock driver for Actions Semi SoCs"
- 	depends on ARCH_ACTIONS || COMPILE_TEST
-+	select REGMAP_MMIO
- 	default ARCH_ACTIONS
- 
- if CLK_ACTIONS
+>From the reply to my v1, the clock plan for this clock is:
+- MinSVS@19.2
+- LowSVS@75
+- SVS@150
+- Nominal@300
+...and intermediate frequencies can be used at frequences less than
+300.  I didn't see a need for 75 MHz and it was unclear from previous
+replies if this should come from MAIN or EVEN so I left it out.  I
+have added 100 MHz here since it is useful (/ 4 = 25 MHz is a useful
+clock for SPI flash)
+
+OTHER NOTES:
+- From probing lines, it appears that the Quad SPI block has a divide
+  by 4 somewhere inside it (probably so it can oversample the lines,
+  or possibly so it can generate phase-offset clocks).  Thus we need
+  the core to go 4 times faster than we'd expect to run the SPI bus.
+- SPI devices usually specify the MAX frequency they should be clocked
+  at, so it's important that we use the clk_rcg2_floor_ops here rather
+  than the clk_rcg2_ops
+
+Changes in v2:
+- Only 19.2, 100, 150, and 300 MHz now.
+- All clocks come from MAIN rather than EVEN.
+- Use parent map 0 instead of new parent map 9.
+
+Douglas Anderson (2):
+  clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
+  clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+
+ drivers/clk/qcom/gcc-sdm845.c               | 63 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h |  3 +
+ 2 files changed, 66 insertions(+)
+
 -- 
-2.18.0
+2.18.0.233.g985f88cf7e-goog
