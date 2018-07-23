@@ -1,261 +1,148 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 25 Jul 2018 09:21:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 04/21] dt-bindings: Add doc for the Ingenic TCU drivers
-Message-ID: <20180725152105.GA6347@rob-hp-laptop>
-References: <20180724231958.20659-1-paul@crapouillou.net>
- <20180724231958.20659-5-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ve1eur01on0068.outbound.protection.outlook.com ([104.47.1.68]:37163
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387869AbeGWJ3S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Jul 2018 05:29:18 -0400
+Subject: Re: [PATCH 3/5] mfd: dt-bindings: Add RK809 and RK817 device tree
+ bindings document
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+References: <1532315945-1094-1-git-send-email-tony.xie@rock-chips.com>
+ <1532315945-1094-4-git-send-email-tony.xie@rock-chips.com>
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <4fa3dc0e-13bf-c226-92ba-981296509b3b@ysoft.com>
+Date: Mon, 23 Jul 2018 10:29:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180724231958.20659-5-paul@crapouillou.net>
+In-Reply-To: <1532315945-1094-4-git-send-email-tony.xie@rock-chips.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 01:19:41AM +0200, Paul Cercueil wrote:
-> Add documentation about how to properly use the Ingenic TCU
-> (Timer/Counter Unit) drivers from devicetree.
+On 23.7.2018 05:19, Tony Xie wrote:
+> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 > ---
->  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  24 +---
->  .../devicetree/bindings/timer/ingenic,tcu.txt      | 147 +++++++++++++++++++++
->  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 +--
->  3 files changed, 151 insertions(+), 37 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>   Documentation/devicetree/bindings/mfd/rk808.txt | 55 +++++++++++++++++++++++++
+>   1 file changed, 55 insertions(+)
 > 
->  v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
->      added content.
+
+Hi Tony,
+Seems something went wrong with your series. The introductory email can be
+found only in linux-arm-kernel list but nowhere else and I can not find
+the fifth patch at all.
+
+Formal notes to this patch.
+- Documentation/binding patches should go first in your series.
+- Subject line should be: "dt-bindings: mfd: ..."
+- Try to avoid the words [documentation, device tree, bindings] in subject.
+
+See this patch [1] from Rob and add him to the recipients for v2.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=44acf10587907ff77c28fd97906220b2d8eb4f05
+
+Best regards,
+Michal
+
+> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+> index 91b6522..31c9f3d 100644
+> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
+> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+> @@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+>   The rk8xx family current members:
+>   rk805
+>   rk808
+> +rk809
+> +rk817
+>   rk818
+>   
+>   Required properties:
+>   - compatible: "rockchip,rk805"
+>   - compatible: "rockchip,rk808"
+> +- compatible: "rockchip,rk809"
+> +- compatible: "rockchip,rk817"
+>   - compatible: "rockchip,rk818"
+>   - reg: I2C slave address
+>   - interrupt-parent: The parent interrupt controller.
+> @@ -46,6 +50,28 @@ Optional RK808 properties:
+>     the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+>     very quickly with no slow ramp time.
+>   
+> +Optional RK809 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +- vcc8-supply:  The input supply for SWITCH_REG1
+> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
+> +
+> +Optional RK817 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +- vcc8-supply:  The input supply for BOOST
+> +- vcc9-supply:  The input supply for OTG_SWITCH
+> +
+>   Optional RK818 properties:
+>   - vcc1-supply:  The input supply for DCDC_REG1
+>   - vcc2-supply:  The input supply for DCDC_REG2
+> @@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+>   	- SWITCH_REGn
+>   		- valid values for n are 1 to 2
+>   
+> +Following regulators of the RK809 PMIC block are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK808 datasheet.
+> +
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 5.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9.
+> +	- SWITCH_REGn
+> +		- valid values for n are 1 to 2.
+> +
+> +Following regulators of the RK817 PMIC block are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK818 datasheet.
+> +
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 4.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9.
+> +	- BOOST
+> +	- OTG_SWITCH
+> +
+>   Following regulators of the RK818 PMIC block are supported. Note that
+>   the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+>   number as described in RK818 datasheet.
+> @@ -99,6 +147,13 @@ number as described in RK818 datasheet.
+>   	- HDMI_SWITCH
+>   	- OTG_SWITCH
+>   
+> +There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
+> +	The gpio_gt and gpio_ts pins support the gpio function.
+> +	The gpio_slp pin is for controlling the pmic states, as below:
+> +		- reset
+> +		- power down
+> +		- sleep
+> +
+>   Standard regulator bindings are used inside regulator subnodes. Check
+>     Documentation/devicetree/bindings/regulator/regulator.txt
+>   for more details
 > 
->  v5: - Edited PWM/watchdog DT bindings documentation to point to the new
->        document.
->      - Moved main document to
->        Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->      - Updated documentation to reflect the new devicetree bindings.
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> index 7d9d3f90641b..a722cdde3aa7 100644
-> --- a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
-> @@ -1,25 +1,5 @@
->  Ingenic JZ47xx PWM Controller
->  =============================
->  
-> -Required properties:
-> -- compatible: One of:
-> -  * "ingenic,jz4740-pwm"
-> -  * "ingenic,jz4770-pwm"
-> -  * "ingenic,jz4780-pwm"
-> -- #pwm-cells: Should be 3. See pwm.txt in this directory for a description
-> -  of the cells format.
-> -- clocks : phandle to the external clock.
-> -- clock-names : Should be "ext".
-> -
-> -
-> -Example:
-> -
-> -	pwm: pwm@10002000 {
-> -		compatible = "ingenic,jz4740-pwm";
-> -		reg = <0x10002000 0x1000>;
-> -
-> -		#pwm-cells = <3>;
-> -
-> -		clocks = <&ext>;
-> -		clock-names = "ext";
-> -	};
-> +This documentation has moved; for a description of the devicetree bindings of
-> +this driver, please refer to ../timer/ingenic,tcu.txt.
 
-This should be evident from the git log. Just remove it.
-
-> diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> new file mode 100644
-> index 000000000000..65d125b460aa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> @@ -0,0 +1,147 @@
-> +Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
-> +==========================================================
-> +
-> +For a description of the TCU hardware and drivers, have a look at
-> +Documentation/mips/ingenic-tcu.txt.
-> +
-> +Required properties:
-> +
-> +- compatible: Must be one of:
-> +  * ingenic,jz4740-tcu
-> +  * ingenic,jz4725b-tcu
-> +  * ingenic,jz4770-tcu
-> +- reg: Should be the offset/length value corresponding to the TCU registers
-
-> +- #address-cells: Should be <1>;
-> +- #size-cells: Should be <1>;
-> +- ranges: Should be one range for the full TCU registers area
-
-These can all be implied.
-
-> +- clocks: List of phandle & clock specifiers for clocks external to the TCU.
-> +  The "pclk", "rtc", "ext" and "tcu" clocks should be provided.
-> +- clock-names: List of name strings for the external clocks.
-> +- #clock-cells: Should be <1>;
-> +  Clock consumers specify this argument to identify a clock. The valid values
-> +  may be found in <dt-bindings/clock/ingenic,tcu.h>.
-> +- interrupt-controller : Identifies the node as an interrupt controller
-> +- #interrupt-cells : Specifies the number of cells needed to encode an
-> +  interrupt source. The value should be 1.
-> +- interrupt-parent : phandle of the interrupt controller.
-> +- interrupts : Specifies the interrupt the controller is connected to.
-
-How many and what are they. The example shows there are 3.
-> +
-> +Optional properties:
-> +
-> +- ingenic,timer-channel: Specifies the TCU channel that should be used as
-> +  system timer. If not provided, the TCU channel 0 is used for the system timer.
-> +
-> +- ingenic,clocksource-channel: Specifies the TCU channel that should be used
-> +  as clocksource and sched_clock. It must be a different channel than the one
-> +  used as system timer. If not provided, neither a clocksource nor a
-> +  sched_clock is instantiated.
-
-clocksource and sched_clock are Linux specific and don't belong in DT. 
-You should define properties of the hardware or use existing properties 
-like interrupts or clocks to figure out which channel to use. For 
-example, if some channels don't have an interrupt, then use them for 
-clocksource and not a clockevent. Or you could have timers that run in 
-low-power modes or not. If all the channels are identical, then it 
-shouldn't matter which ones the OS picks.
-
-> +
-> +
-> +Children nodes
-> +==========================================================
-> +
-> +
-> +PWM node:
-> +---------
-> +
-> +Required properties:
-> +
-> +- compatible: Must be one of:
-> +  * ingenic,jz4740-pwm
-> +  * ingenic,jz4725b-pwm
-> +- #pwm-cells: Should be 3. See ../pwm/pwm.txt for a description of the cell
-> +  format.
-> +- clocks: List of phandle & clock specifiers for the TCU clocks.
-> +- clock-names: List of name strings for the TCU clocks.
-> +
-> +
-> +Watchdog node:
-> +--------------
-> +
-> +Required properties:
-> +
-> +- compatible: Must be one of:
-> +  * ingenic,jz4740-watchdog
-> +  * ingenic,jz4780-watchdog
-> +- clocks: phandle to the RTC clock
-> +- clock-names: should be "rtc"
-> +
-> +
-> +OST node:
-> +---------
-> +
-> +Required properties:
-> +
-> +- compatible: Must be one of:
-> +  * ingenic,jz4725b-ost
-> +  * ingenic,jz4770-ost
-> +- clocks: phandle to the OST clock
-> +- clock-names: should be "ost"
-> +- interrupts : Specifies the interrupt the OST is connected to.
-> +
-> +
-> +Example
-> +==========================================================
-> +
-> +#include <dt-bindings/clock/jz4770-cgu.h>
-> +#include <dt-bindings/clock/ingenic,tcu.h>
-> +
-> +/ {
-> +	tcu: timer@10002000 {
-> +		compatible = "ingenic,jz4770-tcu";
-> +		reg = <0x10002000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x10002000 0x1000>;
-> +
-> +		#clock-cells = <1>;
-> +
-> +		clocks = <&cgu JZ4770_CLK_RTC
-> +			  &cgu JZ4770_CLK_EXT
-> +			  &cgu JZ4770_CLK_PCLK
-> +			  &cgu JZ4770_CLK_EXT>;
-> +		clock-names = "rtc", "ext", "pclk", "tcu";
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +
-> +		interrupt-parent = <&intc>;
-> +		interrupts = <27 26 25>;
-> +
-> +		watchdog: watchdog@0 {
-> +			compatible = "ingenic,jz4740-watchdog";
-> +			reg = <0x0 0x10>;
-> +
-> +			clocks = <&tcu TCU_CLK_WDT>;
-> +			clock-names = "wdt";
-> +		};
-> +
-> +		pwm: pwm@10 {
-> +			compatible = "ingenic,jz4740-pwm";
-> +			reg = <0x10 0xff0>;
-> +
-> +			#pwm-cells = <3>;
-> +
-> +			clocks = <&tcu TCU_CLK_TIMER0
-> +				  &tcu TCU_CLK_TIMER1
-> +				  &tcu TCU_CLK_TIMER2
-> +				  &tcu TCU_CLK_TIMER3
-> +				  &tcu TCU_CLK_TIMER4
-> +				  &tcu TCU_CLK_TIMER5
-> +				  &tcu TCU_CLK_TIMER6
-> +				  &tcu TCU_CLK_TIMER7>;
-> +			clock-names = "timer0", "timer1", "timer2", "timer3",
-> +				      "timer4", "timer5", "timer6", "timer7";
-> +		};
-> +
-> +		ost: timer@e0 {
-> +			compatible = "ingenic,jz4770-ost";
-> +			reg = <0xe0 0x20>;
-
-This is creating an overlapping region with PWM which should be avoided. 
-Are timers and PWM the same h/w? Then there should be one node (or maybe 
-you can do 1 node per channel if each channel is independent (has its 
-own register range, clocks, interrupts, etc.
-
-Or the PWM node needs to exclude this region (by having 2 reg regions).
-
-> +
-> +			clocks = <&tcu TCU_CLK_OST>;
-> +			clock-names = "ost";
-> +
-> +			interrupts = <15>;
-> +		};
-> +	};
-> +};
