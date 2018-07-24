@@ -1,135 +1,115 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-clk@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] clk: Add functions to get optional clocks
-Date: Wed, 18 Jul 2018 13:57:38 +0100
-Message-Id: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 01/21] mfd: Add ingenic-tcu.h header
+Date: Wed, 25 Jul 2018 01:19:38 +0200
+Message-Id: <20180724231958.20659-2-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Behaves the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+This header contains macros for the registers that are present in the
+regmap shared by all the drivers related to the TCU (Timer Counter Unit)
+of the Ingenic JZ47xx SoCs.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/clk/clk-devres.c | 11 +++++++++++
- drivers/clk/clkdev.c     | 11 +++++++++++
- include/linux/clk.h      | 27 +++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+)
+ include/linux/mfd/ingenic-tcu.h | 56 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 include/linux/mfd/ingenic-tcu.h
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..63295d9 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -34,6 +34,17 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *c = devm_clk_get(dev, id);
-+
-+	if (PTR_ERR(c) == -ENOENT)
-+		return NULL;
-+
-+	return c;
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 7513411..7f2cd1e 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -209,6 +209,17 @@ struct clk *clk_get(struct device *dev, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *c = clk_get(dev, id);
-+
-+	if (PTR_ERR(c) == -ENOENT)
-+		return NULL;
-+
-+	return c;
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..907202b 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -258,6 +258,14 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
+ v2: Use SPDX identifier for the license
+
+ v3: - Use macros instead of enum
+     - Add 'TCU_' at the beginning of each macro
+	 - Remove useless include <linux/regmap.h>
+
+ v4: No change
+
+ v5: No change
+
+diff --git a/include/linux/mfd/ingenic-tcu.h b/include/linux/mfd/ingenic-tcu.h
+new file mode 100644
+index 000000000000..3d85f075d2db
+--- /dev/null
++++ b/include/linux/mfd/ingenic-tcu.h
+@@ -0,0 +1,56 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Header file for the Ingenic JZ47xx TCU driver
 + */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
++#ifndef __LINUX_CLK_INGENIC_TCU_H_
++#define __LINUX_CLK_INGENIC_TCU_H_
 +
-+/**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-  * @num_clks: the number of clk_bulk_data
-@@ -316,6 +324,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
- /**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++#include <linux/bitops.h>
 +
-+/**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-  * @dev: device for clock "consumer"
-@@ -603,6 +619,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
++#define TCU_REG_WDT_TDR		0x00
++#define TCU_REG_WDT_TCER	0x04
++#define TCU_REG_WDT_TCNT	0x08
++#define TCU_REG_WDT_TCSR	0x0c
++#define TCU_REG_TER		0x10
++#define TCU_REG_TESR		0x14
++#define TCU_REG_TECR		0x18
++#define TCU_REG_TSR		0x1c
++#define TCU_REG_TFR		0x20
++#define TCU_REG_TFSR		0x24
++#define TCU_REG_TFCR		0x28
++#define TCU_REG_TSSR		0x2c
++#define TCU_REG_TMR		0x30
++#define TCU_REG_TMSR		0x34
++#define TCU_REG_TMCR		0x38
++#define TCU_REG_TSCR		0x3c
++#define TCU_REG_TDFR0		0x40
++#define TCU_REG_TDHR0		0x44
++#define TCU_REG_TCNT0		0x48
++#define TCU_REG_TCSR0		0x4c
++#define TCU_REG_OST_DR		0xe0
++#define TCU_REG_OST_CNTL	0xe4
++#define TCU_REG_OST_CNTH	0xe8
++#define TCU_REG_OST_TCSR	0xec
++#define TCU_REG_TSTR		0xf0
++#define TCU_REG_TSTSR		0xf4
++#define TCU_REG_TSTCR		0xf8
++#define TCU_REG_OST_CNTHBUF	0xfc
 +
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -614,6 +635,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
++#define TCU_TCSR_RESERVED_BITS		0x3f
++#define TCU_TCSR_PARENT_CLOCK_MASK	0x07
++#define TCU_TCSR_PRESCALE_LSB		3
++#define TCU_TCSR_PRESCALE_MASK		0x38
 +
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
++#define TCU_TCSR_PWM_SD		BIT(9)	/* 0: Shutdown abruptly 1: gracefully */
++#define TCU_TCSR_PWM_INITL_HIGH	BIT(8)	/* Sets the initial output level */
++#define TCU_TCSR_PWM_EN		BIT(7)	/* PWM pin output enable */
++
++#define TCU_WDT_TCER_TCEN	BIT(0)	/* Watchdog timer enable */
++
++#define TCU_CHANNEL_STRIDE	0x10
++#define TCU_REG_TDFRc(c)	(TCU_REG_TDFR0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TDHRc(c)	(TCU_REG_TDHR0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) * TCU_CHANNEL_STRIDE))
++#define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) * TCU_CHANNEL_STRIDE))
++
++#endif /* __LINUX_CLK_INGENIC_TCU_H_ */
 -- 
-2.7.4
+2.11.0
