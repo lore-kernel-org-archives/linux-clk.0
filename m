@@ -1,44 +1,44 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 24 Jul 2018 17:29:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>,
+	Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock
+ controller
+Message-ID: <20180724232917.GA27041@rob-hp-laptop>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+ <20180712211244.11428-2-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-To: Shawn Guo <shawnguo@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180711084302.GB6959@dragon>
-Cc: Anson Huang <Anson.Huang@nxp.com>, aisheng.dong@nxp.com,
- fabio.estevam@nxp.com, kernel@pengutronix.de, mark.rutland@arm.com,
- mturquette@baylibre.com, ping.bai@nxp.com, robh+dt@kernel.org,
- s.hauer@pengutronix.de, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, Linux-imx@nxp.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
- <153091072630.143105.2849049240391576710@swboyd.mtv.corp.google.com>
- <20180711084302.GB6959@dragon>
-Message-ID: <153132682598.143105.16881098765923078751@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: imx6sll: add GPIO LPCGs
-Date: Wed, 11 Jul 2018 09:33:45 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180712211244.11428-2-yixun.lan@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Shawn Guo (2018-07-11 01:43:03)
-> On Fri, Jul 06, 2018 at 01:58:46PM -0700, Stephen Boyd wrote:
-> > Quoting Anson Huang (2018-06-21 23:32:33)
-> > > According to Reference Manual Rev.0, 06/2017,
-> > > there are GPIO LPCGs defined in CCM CCGRs,
-> > > add them into clock tree.
-> > > =
+On Thu, Jul 12, 2018 at 09:12:43PM +0000, Yixun Lan wrote:
+> Document the MMC sub clock controller driver, the potential consumer
+> of this driver is MMC or NAND. Also add three clock bindings IDs which
+> provided by this driver.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+>  .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
+>  2 files changed, 47 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
 
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > ---
-> > =
-
-> > Applied to clk-next
-> =
-
-> Stephen,
-> =
-
-> If you can apply this patch to topic branch 'clk-imx-gpio-gates', I will
-> be able to pick up patch #2 for this cycle.
-
-Can you merge in clk-imx6sll-gpio topic branch to your tree? I'm making
-topics for all patch series, so that's why this got stuck into a
-different topic branch.
+Reviewed-by: Rob Herring <robh@kernel.org>
