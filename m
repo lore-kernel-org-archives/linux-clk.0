@@ -1,32 +1,125 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>, Jian Hu <jian.hu@amlogic.com>,
- Neil Armstrong <narmstrong@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-Cc: "Qianggui, song" <qianggui.song@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Yixun Lan <yixun.lan@amlogic.com>, linux-kernel@vger.kernel.org,
- "Bo.yang" <bo.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
- Jian Hu <jian.hu@amlogic.com>, linux-arm-kernel@lists.infradead.org,
- Carlo Caione <carlo@caione.org>, linux-amlogic@lists.infradead.org,
- "Sunny.luo" <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
- "Xingyu.chen" <xingyu.chen@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-Message-ID: <153114832204.143105.10370402875563713577@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-Date: Mon, 09 Jul 2018 07:58:42 -0700
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
+To: sboyd@kernel.org,
+	andy.gross@linaro.org
+Cc: tdas@codeaurora.org,
+	girishm@codeaurora.org,
+	linux-arm-msm@vger.kernel.org,
+	anischal@codeaurora.org,
+	bjorn.andersson@linaro.org,
+	grahamr@codeaurora.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	David Brown <david.brown@linaro.org>
+Subject: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+Date: Tue, 24 Jul 2018 10:45:13 -0700
+Message-Id: <20180724174513.174018-3-dianders@chromium.org>
+In-Reply-To: <20180724174513.174018-1-dianders@chromium.org>
+References: <20180724174513.174018-1-dianders@chromium.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Jian Hu (2018-07-09 04:12:47)
-> Add a Clock driver for the Everyting-Else part
+Add both the interface and core clock.
 
-Everything instead of Everyting?
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+(am from https://lore.kernel.org/patchwork/patch/966680/mbox)
 
-> of the Amlogic Meson-G12A SoC.
-> =
+---
 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Changes in v3:
+- Removed gcc_parent_names_9 which I had left in (doh!).
+
+Changes in v2:
+- Only 19.2, 100, 150, and 300 MHz now.
+- All clocks come from MAIN rather than EVEN.
+- Use parent map 0 instead of new parent map 9.
+
+ drivers/clk/qcom/gcc-sdm845.c | 56 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 0f694ed4238a..fc1c6658ad82 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -358,6 +358,28 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
++	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
++	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 gcc_qspi_core_clk_src = {
++	.cmd_rcgr = 0x4b008,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = gcc_parent_map_0,
++	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gcc_qspi_core_clk_src",
++		.parent_names = gcc_parent_names_0,
++		.num_parents = 4,
++		.ops = &clk_rcg2_floor_ops,
++	},
++};
++
+ static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
+ 	F(9600000, P_BI_TCXO, 2, 0, 0),
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+@@ -1935,6 +1957,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
++	.halt_reg = 0x4b000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x4b000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qspi_cnoc_periph_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_qspi_core_clk = {
++	.halt_reg = 0x4b004,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x4b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_qspi_core_clk",
++			.parent_names = (const char *[]){
++				"gcc_qspi_core_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
+ 	.halt_reg = 0x17030,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -3383,6 +3436,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
+ 	[GPLL4] = &gpll4.clkr,
+ 	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+ 	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
++	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
++	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
++	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_sdm845_resets[] = {
+-- 
+2.18.0.233.g985f88cf7e-goog
