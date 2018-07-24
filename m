@@ -1,31 +1,67 @@
-Return-Path: <leonard.crestez@nxp.com>
-From: Leonard Crestez <leonard.crestez@nxp.com>
-To: "mperttunen@nvidia.com" <mperttunen@nvidia.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"cyndis@kapsi.fi" <cyndis@kapsi.fi>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: core: Potentially free connection id
-Date: Wed, 11 Jul 2018 10:17:10 +0000
-Message-ID: <4b809427e9b922ba41efafb20a97e0698e9cd3d0.camel@nxp.com>
-References: <20180711082104.27955-1-mperttunen@nvidia.com>
-In-Reply-To: <20180711082104.27955-1-mperttunen@nvidia.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 07/21] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
+Date: Wed, 25 Jul 2018 01:19:44 +0200
+Message-Id: <20180724231958.20659-8-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-T24gV2VkLCAyMDE4LTA3LTExIGF0IDExOjIxICswMzAwLCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6
-DQo+IFBhdGNoICJjbGs6IGNvcmU6IENvcHkgY29ubmVjdGlvbiBpZCIgbWFkZSBpdCBzbyB0aGF0
-IHRoZSBjb25uZWN0b3INCj4gaWQgKGNvbl9pZCkgaXMga3N0cmR1cF9jb25zdCdlZCB0byBjYXRl
-ciB0byBkcml2ZXJzIHRoYXQgcGFzcyBub24tDQo+IGNvbnN0YW50IGNvbm5lY3Rpb24gaWRzLiBU
-aGUgcGF0Y2ggYWRkZWQgdGhlIGNvcnJlc3BvbmRpbmcNCj4ga2ZyZWVfY29uc3QNCj4gdG8gX19j
-bGtfZnJlZV9jbGssIGJ1dCBzdHJ1Y3QgY2xrJ3MgY2FuIGJlIGZyZWVkIGFsc28gdmlhIF9fY2xr
-X3B1dC4NCj4gQWRkIHRoZSBrZnJlZV9jb25zdCBjYWxsIHRvIF9fY2xrX3B1dCBhbmQgYWRkIGNv
-bW1lbnRzIHRvIGJvdGgNCj4gZnVuY3Rpb25zIHRvIHJlbWluZCB0aGF0IHRoZSBsb2dpYyBpbiB0
-aGVtIHNob3VsZCBiZSBrZXB0IGluIHN5bmMuDQo+IA0KPiBGaXhlczogMjUzMTYwYThhZDA2ICgi
-Y2xrOiBjb3JlOiBDb3B5IGNvbm5lY3Rpb24gaWQiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQ
-ZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNvbT4NCg0KWWVzLCBzb3JyeSBJIG1pc3NlZCB0
-aGlzLg0KDQpSZXZpZXdlZC1ieTogTGVvbmFyZCBDcmVzdGV6IDxsZW9uYXJkLmNyZXN0ZXpAbnhw
-LmNvbT4NCg0KTWF5YmUgYSBzdGF0aWMgX19jbGtfZnJlZV9tZW0gZnVuY3Rpb24gY291bGQgYmUg
-Y3JlYXRlZCBpbnN0ZWFkIG9mDQpjb21tZW50cyBhc2tpbmcgdG8ga2VlcCB0aGluZ3MgaW4gc3lu
-Yz8gQnV0IHRoZXJlIGFyZSBvbmx5IDIgbGluZXMgc28NCml0J3MgZmluZS4=
+Add myself as maintainer for the ingenic-timer and ingenic-ost drivers.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+ v2: No change
+
+ v3: No change
+
+ v4: No change
+
+ v5: Update with new files
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0fe4228f78cb..bd62185623e5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7073,6 +7073,15 @@ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+ F:	drivers/mtd/nand/raw/jz4780_*
+ 
++INGENIC TCU driver
++M:	Paul Cercueil <paul@crapouillou.net>
++S:	Maintained
++F:	drivers/clocksource/ingenic-ost.c
++F:	drivers/clocksource/ingenic-timer.c
++F:	drivers/clocksource/ingenic-timer.h
++F:	include/linux/mfd/ingenic-tcu.h
++F:	include/dt-bindings/clock/ingenic,tcu.h
++
+ INOTIFY
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
+-- 
+2.11.0
