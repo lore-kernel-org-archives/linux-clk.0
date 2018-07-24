@@ -1,61 +1,95 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6408 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbeGSPIy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Jul 2018 11:08:54 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <jonathanh@nvidia.com>, <thierry.reding@gmail.com>
-CC: Joseph Lo <josephl@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH] clk: tegra: Fixes for MBIST work around
-Date: Thu, 19 Jul 2018 17:25:23 +0300
-Message-ID: <1532010323-28534-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 6/8] clk: tegra20: Turn EMC clock gate into divider
+Date: Tue, 24 Jul 2018 19:42:19 +0300
+Message-Id: <20180724164221.3307-7-digetx@gmail.com>
+In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
+References: <20180724164221.3307-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Joseph Lo <josephl@nvidia.com>
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
-Fix some incorrect data in LVL2 offset and bit mask.
-
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index d92f1d7..e71a9ce 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2603,7 +2603,7 @@ struct utmi_clk_param {
- 	[TEGRA_POWERGATE_MPE] = {
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
- 		.lvl2_offset = LVL2_CLK_GATE_OVRE,
--		.lvl2_mask = BIT(2),
-+		.lvl2_mask = BIT(29),
- 	},
- 	[TEGRA_POWERGATE_SOR] = {
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-@@ -2654,14 +2654,14 @@ struct utmi_clk_param {
- 		.num_clks = ARRAY_SIZE(nvdec_slcg_clkids),
- 		.clk_init_data = nvdec_slcg_clkids,
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
--		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-+		.lvl2_offset = LVL2_CLK_GATE_OVRE,
- 		.lvl2_mask = BIT(9) | BIT(31),
- 	},
- 	[TEGRA_POWERGATE_NVJPG] = {
- 		.num_clks = ARRAY_SIZE(nvjpg_slcg_clkids),
- 		.clk_init_data = nvjpg_slcg_clkids,
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
--		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-+		.lvl2_offset = LVL2_CLK_GATE_OVRE,
- 		.lvl2_mask = BIT(9) | BIT(31),
- 	},
- 	[TEGRA_POWERGATE_AUD] = {
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86..68551effb5ca 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
+ 
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as distinct clocks.
++	 */
++	clk = tegra_clk_register_divider("emc", "emc_mux",
++				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
++				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
 -- 
-1.9.1
-
+2.18.0
