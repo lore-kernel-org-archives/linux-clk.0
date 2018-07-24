@@ -1,105 +1,164 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To: Rob Herring <robh@kernel.org>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-2-yixun.lan@amlogic.com>
- <20180711194346.GA32414@rob-hp-laptop>
-CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>, Neil
- Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
-	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
-Date: Thu, 12 Jul 2018 10:47:12 +0800
-MIME-Version: 1.0
-In-Reply-To: <20180711194346.GA32414@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 03/21] doc: Add doc for the Ingenic TCU hardware
+Date: Wed, 25 Jul 2018 01:19:40 +0200
+Message-Id: <20180724231958.20659-4-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob
+Add a documentation file about the Timer/Counter Unit (TCU) present in
+the Ingenic JZ47xx SoCs.
 
-see my comments
+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
+hardware block. It features up to to eight channels, that can be used as
+counters, timers, or PWM.
 
-On 07/12/18 03:43, Rob Herring wrote:
-> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
->> Document the MMC sub clock controller driver, the potential consumer
->> of this driver is MMC or NAND.
-> 
-> So you all have decided to properly model this now?
-> 
-Yes, ;-)
+- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
+  have eight channels.
 
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
->>  1 file changed, 31 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->> new file mode 100644
->> index 000000000000..ff6b4bf3ecf9
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->> @@ -0,0 +1,31 @@
->> +* Amlogic MMC Sub Clock Controller Driver
->> +
->> +The Amlogic MMC clock controller generates and supplies clock to support
->> +MMC and NAND controller
->> +
->> +Required Properties:
->> +
->> +- compatible: should be:
->> +		"amlogic,meson-gx-mmc-clkc"
->> +		"amlogic,meson-axg-mmc-clkc"
->> +
->> +- #clock-cells: should be 1.
->> +- clocks: phandles to clocks corresponding to the clock-names property
->> +- clock-names: list of parent clock names
->> +	- "clkin0", "clkin1"
->> +
->> +Parent node should have the following properties :
->> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
-> 
-> You don't need "simple-mfd" and probably not syscon either. The order is 
-> wrong too. Most specific first.
-> 
-Ok, I will drop "simple-mfd"..
+- JZ4725B introduced a separate channel, called Operating System Timer
+  (OST). It is a 64-bit programmable timer.
 
-but the syscon is a must, since this mmc clock model access registers
-via the regmap interface
+- Each one of the TCU channels has its own clock, which can be reparented
+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
+  their TCSR register.
+  * The watchdog and OST hardware blocks also feature a TCSR register with
+    the same format in their register space.
+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
+    and OST clocks.
 
-I will fix the order, thanks for pointing this out
+- Each TCU channel works in one of two modes:
+  * mode TCU1: channels cannot work in sleep mode, but are easier to
+    operate.
+  * mode TCU2: channels can work in sleep mode, but the operation is a bit
+    more complicated than with TCU1 channels.
 
->> +- reg: base address and size of the MMC control register space.
->> +
->> +Example: Clock controller node:
->> +
->> +sd_mmc_c_clkc: clock-controller@7000 {
->> +	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
-> 
-> Doesn't match the binding...
-> 
-oops, I will update this
+- The mode of each TCU channel depends on the SoC used:
+  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
+    TCU1 mode.
+  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
+  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
+    others operate as TCU1.
 
->> +	reg = <0x0 0x7000 0x0 0x4>;
->> +	#clock-cells = <1>;
->> +
->> +	clock-names = "clkin0", "clkin1";
->> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
->> +			<&clkc CLKID_FCLK_DIV2>;
->> +};
->> -- 
->> 2.18.0
->>
-> 
-> .
-> 
+- Each channel can generate an interrupt. Some channels share an interrupt
+  line, some don't, and this changes between SoC versions:
+  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
+    own interrupt line; channels 2-7 share the last interrupt line.
+  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
+    interrupt line; the OST uses the last interrupt line.
+  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
+    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
+    the OST uses the last interrupt line.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ Documentation/mips/00-INDEX        |  3 ++
+ Documentation/mips/ingenic-tcu.txt | 59 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 Documentation/mips/ingenic-tcu.txt
+
+ v4: New patch in this series
+
+ v5: Added information about number of channels, and improved
+     documentation about channel modes
+
+diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
+index 8ae9cffc2262..8ab8c3f83771 100644
+--- a/Documentation/mips/00-INDEX
++++ b/Documentation/mips/00-INDEX
+@@ -2,3 +2,6 @@
+ 	- this file.
+ AU1xxx_IDE.README
+ 	- README for MIPS AU1XXX IDE driver.
++ingenic-tcu.txt
++	- Information file about the Timer/Counter Unit present
++	  in Ingenic JZ47xx SoCs.
+diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+new file mode 100644
+index 000000000000..dd044c40dbfe
+--- /dev/null
++++ b/Documentation/mips/ingenic-tcu.txt
+@@ -0,0 +1,59 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit hardware
++-----------------------------------------------
++
++The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
++hardware block. It features up to to eight channels, that can be used as
++counters, timers, or PWM.
++
++- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
++  have eight channels.
++
++- JZ4725B introduced a separate channel, called Operating System Timer
++  (OST). It is a 64-bit programmable timer.
++
++- Each one of the TCU channels has its own clock, which can be reparented
++  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
++  their TCSR register.
++  * The watchdog and OST hardware blocks also feature a TCSR register with
++    the same format in their register space.
++  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
++    and OST clocks.
++
++- Each TCU channel works in one of two modes:
++  * mode TCU1: channels cannot work in sleep mode, but are easier to
++    operate.
++  * mode TCU2: channels can work in sleep mode, but the operation is a bit
++    more complicated than with TCU1 channels.
++
++- The mode of each TCU channel depends on the SoC used:
++  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
++    TCU1 mode.
++  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
++  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
++    others operate as TCU1.
++
++- Each channel can generate an interrupt. Some channels share an interrupt
++  line, some don't, and this changes between SoC versions:
++  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
++    own interrupt line; channels 2-7 share the last interrupt line.
++  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
++    interrupt line; the OST uses the last interrupt line.
++  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
++    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
++    the OST uses the last interrupt line.
++
++Implementation
++--------------
++
++The functionalities of the TCU hardware are spread across multiple drivers:
++- clocks/irq/timer: drivers/clocksource/ingenic-timer.c
++- PWM:              drivers/pwm/pwm-jz4740.c
++- watchdog:         drivers/watchdog/jz4740_wdt.c
++- OST:              drivers/clocksource/ingenic-ost.c
++
++Because various functionalities of the TCU that belong to different drivers
++and frameworks can be controlled from the same registers, all of these
++drivers access their registers through the same regmap.
++
++For more information regarding the devicetree bindings of the TCU drivers,
++have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+-- 
+2.11.0
