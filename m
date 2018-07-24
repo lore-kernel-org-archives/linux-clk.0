@@ -1,22 +1,54 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1530019690-32685-2-git-send-email-dinguyen@kernel.org>
-Cc: dinguyen@kernel.org, mturquette@baylibre.com
-References: <1530019690-32685-1-git-send-email-dinguyen@kernel.org>
- <1530019690-32685-2-git-send-email-dinguyen@kernel.org>
-Message-ID: <153090061828.143105.17525305631192612749@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: socfpga: stratix10: fix the sdmmc_free_clk mux
-Date: Fri, 06 Jul 2018 11:10:18 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44977 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388476AbeGXSxR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jul 2018 14:53:17 -0400
+Received: by mail-pl0-f66.google.com with SMTP id m16-v6so2081417pls.11
+        for <linux-clk@vger.kernel.org>; Tue, 24 Jul 2018 10:45:42 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: sboyd@kernel.org, andy.gross@linaro.org
+Cc: tdas@codeaurora.org, girishm@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
+        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
+Date: Tue, 24 Jul 2018 10:45:12 -0700
+Message-Id: <20180724174513.174018-2-dianders@chromium.org>
+In-Reply-To: <20180724174513.174018-1-dianders@chromium.org>
+References: <20180724174513.174018-1-dianders@chromium.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Dinh Nguyen (2018-06-26 06:28:10)
-> The first parent of the sdmmc_free_clk should be the main_sdmmc_clk.
-> =
+These clocks will need to be defined in the clock driver and
+referenced in device tree files.
 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Applied to clk-next
+Changes in v3: None
+Changes in v2: None
+
+ include/dt-bindings/clock/qcom,gcc-sdm845.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+index f96fc2dbf60e..b8eae5a76503 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -194,6 +194,9 @@
+ #define GPLL4							184
+ #define GCC_CPUSS_DVM_BUS_CLK					185
+ #define GCC_CPUSS_GNOC_CLK					186
++#define GCC_QSPI_CORE_CLK_SRC					187
++#define GCC_QSPI_CORE_CLK					188
++#define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
+ 
+ /* GCC Resets */
+ #define GCC_MMSS_BCR						0
+-- 
+2.18.0.233.g985f88cf7e-goog
+
