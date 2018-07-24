@@ -1,77 +1,61 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-To: linux-mips@linux-mips.org
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	James Hogan <jhogan@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Govindraj Raja <Govindraj.Raja@imgtec.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
-Date: Sun, 22 Jul 2018 23:20:10 +0200
-Message-Id: <20180722212010.3979-16-afaerber@suse.de>
-In-Reply-To: <20180722212010.3979-1-afaerber@suse.de>
-References: <20180722212010.3979-1-afaerber@suse.de>
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Sender: dianders@google.com
+In-Reply-To: <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
+References: <20180723215404.74296-1-dianders@chromium.org> <20180723215404.74296-3-dianders@chromium.org>
+ <f4f92dcd-7a63-f9de-a7a0-c403672d5c6c@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 23 Jul 2018 20:30:21 -0700
+Message-ID: <CAD=FV=WkC5BsreD8t8_+-5J3ztFp5nAFAA+HSwHVvYW3ED3yiA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>, grahamr@codeaurora.org,
+	Girish Mahadevan <girishm@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	David Brown <david.brown@linaro.org>,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+Hi,
 
-The SDHost currently clocks the card 4x slower than it
-should do, because there is a fixed divide by 4 in the
-sdhost wrapper that is not present in the clock tree.
-To model this, add a fixed divide by 4 clock node in
-the SDHost clock path.
+On Mon, Jul 23, 2018 at 7:22 PM, Taniya Das <tdas@codeaurora.org> wrote:
+>
+>
+> On 7/24/2018 3:24 AM, Douglas Anderson wrote:
+>>
+>> Add both the interface and core clock.
+>>
+>> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+>> ---
+>>
+>> Changes in v2:
+>> - Only 19.2, 100, 150, and 300 MHz now.
+>> - All clocks come from MAIN rather than EVEN.
+>> - Use parent map 0 instead of new parent map 9.
+>>
+>>   drivers/clk/qcom/gcc-sdm845.c | 63 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 63 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+>> index 0f694ed4238a..5bca634e277a 100644
+>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -162,6 +162,13 @@ static const char * const gcc_parent_names_10[] = {
+>>         "core_bi_pll_test_se",
+>>   };
+>>   +static const char * const gcc_parent_names_9[] = {
+>> +       "bi_tcxo",
+>> +       "gpll0",
+>> +       "gpll0_out_even",
+>> +       "core_pi_sleep_clk",
+>> +};
+>> +
+>
+>
+> Please remove this.
 
-This will ensure the right clock frequency is selected when
-the mmc driver tries to configure frequency on card insert.
+Oops, that's embarrassing.  Please stay tuned for v3.
 
-Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
-Signed-off-by: Andreas Färber <afaerber@suse.de>
----
- drivers/clk/pistachio/clk-pistachio.c     | 3 ++-
- include/dt-bindings/clock/pistachio-clk.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
-index c4ceb5eaf46c..1c968d9a6e17 100644
---- a/drivers/clk/pistachio/clk-pistachio.c
-+++ b/drivers/clk/pistachio/clk-pistachio.c
-@@ -44,7 +44,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
- 	GATE(CLK_AUX_ADC_INTERNAL, "aux_adc_internal", "sys_internal_div",
- 	     0x104, 22),
- 	GATE(CLK_AUX_ADC, "aux_adc", "aux_adc_div", 0x104, 23),
--	GATE(CLK_SD_HOST, "sd_host", "sd_host_div", 0x104, 24),
-+	GATE(CLK_SD_HOST, "sd_host", "sd_host_div4", 0x104, 24),
- 	GATE(CLK_BT, "bt", "bt_div", 0x104, 25),
- 	GATE(CLK_BT_DIV4, "bt_div4", "bt_div4_div", 0x104, 26),
- 	GATE(CLK_BT_DIV8, "bt_div8", "bt_div8_div", 0x104, 27),
-@@ -54,6 +54,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
- static struct pistachio_fixed_factor pistachio_ffs[] __initdata = {
- 	FIXED_FACTOR(CLK_WIFI_DIV4, "wifi_div4", "wifi_pll", 4),
- 	FIXED_FACTOR(CLK_WIFI_DIV8, "wifi_div8", "wifi_pll", 8),
-+	FIXED_FACTOR(CLK_SDHOST_DIV4, "sd_host_div4", "sd_host_div", 4),
- };
- 
- static struct pistachio_div pistachio_divs[] __initdata = {
-diff --git a/include/dt-bindings/clock/pistachio-clk.h b/include/dt-bindings/clock/pistachio-clk.h
-index 039f83facb68..77b92aed241d 100644
---- a/include/dt-bindings/clock/pistachio-clk.h
-+++ b/include/dt-bindings/clock/pistachio-clk.h
-@@ -21,6 +21,7 @@
- /* Fixed-factor clocks */
- #define CLK_WIFI_DIV4			16
- #define CLK_WIFI_DIV8			17
-+#define CLK_SDHOST_DIV4			18
- 
- /* Gate clocks */
- #define CLK_MIPS			32
--- 
-2.16.4
+-Doug
