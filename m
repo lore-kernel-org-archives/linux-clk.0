@@ -1,85 +1,34 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:29920 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728567AbeGYK12 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jul 2018 06:27:28 -0400
-Message-ID: <1532510191.22373.11.camel@mhfsdcap03>
-Subject: Re: FW: [PATCH v5 07/11] soc: mediatek: add MT6765 subdomain support
-From: Yong Wu <yong.wu@mediatek.com>
-To: <Mars.Cheng@mediatek.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        "; Rob Herring" <robh+dt@kernel.org>,
-        "; Marc Zyngier" <marc.zyngier@arm.com>,
-        "; Ryder Lee =?UTF-8?Q?=28=E6=9D=8E=E5=BA=9AV=29?="
-        <Ryder.Lee@mediatek.com>, "; Stephen Boyd" <sboyd@kernel.org>,
-        "; Sean Wang =?UTF-8?Q?=28=E7=8E=8B=E5=BF=97=E4=BA=98=29?="
-        <sean.wang@mediatek.com>,
-        ";CC Hwang =?UTF-8?Q?=28S=E8=87=B4=29?=" <cc.hwang@mediatek.com>,
-        "; wsd_upstream" <wsd_upstream@mediatek.com>,
-        "; Loda Chou =?UTF-8?Q?=28=E5=91=A8=E5=AE=8F=E9=9C=96=29?="
-        <Loda.Chou@mediatek.com>,
-        "; linux-kernel@vger.kernel.org; linux-mediatek@lists.infradead.org;
-        linux-serial@vger.kernel.org;Mars Cheng
-        =?UTF-8?Q?=28=E6=A3=AE=E5=8F=8B=29?=" <Mars.Cheng@mediatek.com>,
-        "; Owen Chen =?UTF-8?Q?=28=E5=B3=BB=E6=96=8C=29?="
-        <owen.chen@mediatek.com>, <"; linux-clk"@vger.kernel.org>
-Date: Wed, 25 Jul 2018 17:16:31 +0800
-In-Reply-To: <ce7724590f4e4551be88b76a7355738c@MTKMBS31N1.mediatek.inc>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-         <1531817552-17221-8-git-send-email-mars.cheng@mediatek.com>
-         <ce7724590f4e4551be88b76a7355738c@MTKMBS31N1.mediatek.inc>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <dianders@google.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+Sender: dianders@google.com
+In-Reply-To: <20180724174513.174018-3-dianders@chromium.org>
+References: <20180724174513.174018-1-dianders@chromium.org> <20180724174513.174018-3-dianders@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 24 Jul 2018 11:24:19 -0700
+Message-ID: <CAD=FV=W-YDFM2k6080naxPY8bfE8SJE68g60qXBM9+msgSQRzA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+To: Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>
+Cc: Taniya Das <tdas@codeaurora.org>, Girish Mahadevan <girishm@codeaurora.org>,
+	linux-arm-msm <linux-arm-msm@vger.kernel.org>, Amit Nischal <anischal@codeaurora.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, grahamr@codeaurora.org,
+	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Douglas Anderson <dianders@chromium.org>, Michael Turquette <mturquette@baylibre.com>,
+	LKML <linux-kernel@vger.kernel.org>, David Brown <david.brown@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mars,
+Hi,
 
-> -----Original Message-----
-> From: Linux-mediatek [mailto:linux-mediatek-bounces@lists.infradead.org] On Behalf Of Mars Cheng
-> Sent: Tuesday, July 17, 2018 4:52 PM
-> To: Matthias Brugger <matthias.bgg@gmail.com>; Rob Herring <robh+dt@kernel.org>; Marc Zyngier <marc.zyngier@arm.com>; Ryder Lee (李庚V) <Ryder.Lee@mediatek.com>; Stephen Boyd <sboyd@kernel.org>; Sean Wang (王志亘) <sean.wang@mediatek.com>
-> Cc: devicetree@vger.kernel.org; CC Hwang (S致) <cc.hwang@mediatek.com>; wsd_upstream <wsd_upstream@mediatek.com>; Loda Chou (周宏霖) <Loda.Chou@mediatek.com>; linux-kernel@vger.kernel.org; linux-mediatek@lists.infradead.org; linux-serial@vger.kernel.org; Mars Cheng (森友) <Mars.Cheng@mediatek.com>; Owen Chen (峻斌) <owen.chen@mediatek.com>; linux-clk@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: [PATCH v5 07/11] soc: mediatek: add MT6765 subdomain support
-> 
-> add extend data, parent_n for domain-subdomain corresponse.
-> 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys-ext.c |  132 ++++++++++++++++++++++++++++++++-
->  1 file changed, 131 insertions(+), 1 deletion(-)
-> 
-[...]
-> +
-> +#define SMI_COMMON_SMI_CLAMP_MT6765		0x03C0
-> +#define SMI_COMMON_SMI_CLAMP_SET_MT6765	0x03C4
-> +#define SMI_COMMON_SMI_CLAMP_CLR_MT6765	0x03C8
+On Tue, Jul 24, 2018 at 10:45 AM, Douglas Anderson
+<dianders@chromium.org> wrote:
+> Add both the interface and core clock.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> (am from https://lore.kernel.org/patchwork/patch/966680/mbox)
 
-   From my understanding, this smi register could clamp the dummy
-commands after the larb power down for the sake of safe,
-is it right?
+It's just the day for me being a screwup I guess.  :(  That line
+(obviously) doesn't belong.  I'm assuming it's easy enough for Stephen
+to remove it when he applies so I won't plan to repost.  Sorry for
+being so dumb.
 
-   If it's yes, I guess we could put it in the larb device's
-runtime_resume/runtime_suspend callback.
-   we can enable the clamp in the larb's runtime_suspend and clear it in
-the larb's runtime_resume.
-
-   then we don't need add "syscon" for smi-common node.
-
-   please tell me if I miss something.
-
-   Thanks.
-
-> +
-[...]
-> --
-> 1.7.9.5
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+-Doug
