@@ -1,89 +1,117 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Thu, 05 Jul 2018 23:38:35 -0700
-In-Reply-To: <20180705075650.GA7683@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com> <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com> <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com> <20180704145623.zgei3ehrwdpcu26r@penguin> <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com> <20180705075650.GA7683@localhost.localdomain>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from imap1.codethink.co.uk ([176.9.8.82]:40013 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388172AbeGXNiv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Jul 2018 09:38:51 -0400
+Subject: Re: [PATCH 6/8] clk: tegra30: add 2d and 3d idle clocks
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, jonathanh@nvidia.co, thierry.reding@gmail.com,
+        linux-kernel@lists.codethink.co.uk
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+ <20180720134532.13148-7-ben.dooks@codethink.co.uk>
+ <6750449.onR3KBHYkZ@dimapc> <16130866.kpFhQUNOMP@dimapc>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Message-ID: <a4bd4ea0-ad7b-e942-c535-1ac5f9162beb@codethink.co.uk>
+Date: Tue, 24 Jul 2018 13:32:28 +0100
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,Enric Balletbo Serra <eballetbo@gmail.com>
-CC: Michael Turquette <mturquette@baylibre.com>,sboyd@kernel.org,Rob Herring <robh+dt@kernel.org>,Mark Rutland <mark.rutland@arm.com>,Lee Jones <lee.jones@linaro.org>,Liam Girdwood <lgirdwood@gmail.com>,Mark Brown <broonie@kernel.org>,Matti Vaittinen <mazziesaccount@gmail.com>,Arnd Bergmann <arnd@arndb.de>,Sebastian Reichel <sre@kernel.org>,chenjh@rock-chips.com,Andrey Smirnov <andrew.smirnov@gmail.com>,Linus Walleij <linus.walleij@linaro.org>,Kate Stewart <kstewart@linuxfoundation.org>,=?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>,Greg Kroah-Hartman <gregkh@linuxfoundation.org>,linux-clk@vger.kernel.org,"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,linux-kernel <linux-kernel@vger.kernel.org>,linux-input@vger.kernel.org,mikko.mutanen@fi.rohmeurope.com,heikki.haikola@fi.rohmeurope.com
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Message-ID: <31712EE3-4FA5-4A52-8F84-0EDC1AEEF868@gmail.com>
+In-Reply-To: <16130866.kpFhQUNOMP@dimapc>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On July 5, 2018 12:56:50 AM PDT, Matti Vaittinen <matti=2Evaittinen@fi=2Ero=
-hmeurope=2Ecom> wrote:
->On Wed, Jul 04, 2018 at 06:57:39PM +0200, Enric Balletbo Serra wrote:
->> Missatge de Dmitry Torokhov <dmitry=2Etorokhov@gmail=2Ecom> del dia dc=
-=2E,
->4
->> de jul=2E 2018 a les 17:10:
->> >
->> > Hi Enric,
->> >
->> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra
->wrote:
->> > > Hi Matti,
->> > >
->> > > Thanks for the patch, a few comments below, some are feedback I
->> > > received when I sent some patches to this subsystem=2E
->> > >
->> > > Missatge de Matti Vaittinen <matti=2Evaittinen@fi=2Erohmeurope=2Eco=
-m>
->del
->> > > dia dt=2E, 19 de juny 2018 a les 12:57:
->> > > > +};
->> > > > +
->> > > > +/* bd71837 multi function cells */
->> > > > +static struct mfd_cell bd71837_mfd_cells[] =3D {
->> > > > +       {
->> > > > +               =2Ename =3D "bd71837-clk",
->> > > > +       }, {
->> > > > +               =2Ename =3D "bd718xx-pwrkey",
->> > > > +               =2Eresources =3D &irqs[0],
->> > > > +               =2Enum_resources =3D ARRAY_SIZE(irqs),
->> > > > +       }, {
->> > > > +               =2Ename =3D "bd71837-pmic",
->> > > > +       },
->> > > nit: no comma at the end
->> >
->> > Actually, trailing comma is preferred on structures/arrays without
->> > sentinels, because if one needs to add a new entry/new member, then
->in
->> > the diff there will have only one new line added, instead of one
->line
->> > being changed (adding now necessary comma) and one added=2E
->> >
->>=20
->> Many thanks for sharing your knowledge! That looks to me a good
->> reason=2E
->
->So in this specific ecample leaving the comma does not help=2E The
->opening
->brace for new array element would be added to same line where the comma
->is, right?
+On 24/07/18 12:31, Dmitry Osipenko wrote:
+> On Monday, 23 July 2018 16:05:21 MSK Dmitry Osipenko wrote:
+>> On Friday, 20 July 2018 16:45:30 MSK Ben Dooks wrote:
+>>> The 2D and 3D clocks have an IDLE field in bits 15:8 so add these
+>>> clocks by making a 2D and 3D mux, and split the divider into the
+>>> standard 2D/3D ones and 2D/3D idle clocks.
+>>>
+>>> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+>>> ---
+>>>   drivers/clk/tegra/clk-id.h              |  4 ++++
+>>>   drivers/clk/tegra/clk-tegra-periph.c    | 23 +++++++++++++++++++++--
+>>>   drivers/clk/tegra/clk-tegra30.c         |  8 ++++++++
+>>>   include/dt-bindings/clock/tegra30-car.h |  7 ++++++-
+>>>   4 files changed, 39 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+>>> index b616e33c5255..0d202a70ce66 100644
+>>> --- a/drivers/clk/tegra/clk-id.h
+>>> +++ b/drivers/clk/tegra/clk-id.h
+>>> @@ -91,8 +91,12 @@ enum clk_id {
+>>>   	tegra_clk_fuse_burn,
+>>>   	tegra_clk_gpu,
+>>>   	tegra_clk_gr2d,
+>>> +	tegra_clk_gr2d_mux,
+>>> +	tegra_clk_gr2d_idle,
+>>>   	tegra_clk_gr2d_8,
+>>>   	tegra_clk_gr3d,
+>>> +	tegra_clk_gr3d_mux,
+>>> +	tegra_clk_gr3d_idle,
+>>>   	tegra_clk_gr3d_8,
+>>>   	tegra_clk_hclk,
+>>>   	tegra_clk_hda,
+>>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c
+>>> b/drivers/clk/tegra/clk-tegra-periph.c index 47e5b1ac1a69..83967dac93f2
+>>> 100644
+>>> --- a/drivers/clk/tegra/clk-tegra-periph.c
+>>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
+>>> @@ -263,6 +263,21 @@
+>>>   		.flags = _flags,					\
+>>>   	}
+>>>
+>>> +#define GATE_DIV(_name, _parent_name, _offset,				\
+>>> +		 _div_shift, _div_width, _div_frac_width, _div_flags,	\
+>>> +			     _clk_num, _gate_flags,  _clk_id, _flags)	\
+>>> +	{								\
+>>> +		.name = _name,						\
+>>> +		.clk_id = _clk_id,					\
+>>> +		.offset = _offset,					\
+>>> +		.p.parent_name =  _parent_name,				\
+>>> +		.periph = TEGRA_CLK_PERIPH(0, 0, 0,			\
+>>> +					   _div_shift, _div_width,	\
+>>> +					   _div_frac_width, _div_flags, \
+>>> +				_clk_num, _gate_flags, NULL, NULL),	\
+>>> +		.flags = _flags						\
+>>> +	}
+>>> +
+>>>   #define PLLP_BASE 0xa0
+>>>   #define PLLP_MISC 0xac
+>>>   #define PLLP_MISC1 0x680
+>>> @@ -646,8 +661,12 @@ static struct tegra_periph_init_data periph_clks[] = {
+>>>   	MUX("epp", mux_pllm_pllc_pllp_plla, CLK_SOURCE_EPP, 19, 0,
+>> tegra_clk_epp),
+>>> MUX("host1x", mux_pllm_pllc_pllp_plla, CLK_SOURCE_HOST1X, 28, 0,
+>>> tegra_clk_host1x), MUX("mpe", mux_pllm_pllc_pllp_plla, CLK_SOURCE_MPE, 60,
+>>> 0, tegra_clk_mpe), -	MUX("2d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_2D,
+>> 21,
+>>> 0, tegra_clk_gr2d), -	MUX("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D,
+>> 24,
+>>> 0, tegra_clk_gr3d), +	MUX("2d_mux", mux_pllm_pllc_pllp_plla,
+>> CLK_SOURCE_2D,
+>>> 0, TEGRA_PERIPH_NO_DIV | TEGRA_PERIPH_NO_RESET | TEGRA_PERIPH_NO_GATE,
+>>> tegra_clk_gr2d_mux), +	GATE_DIV("2d", "2d_mux", CLK_SOURCE_2D, 0, 8, 1,
+>>> TEGRA_DIVIDER_ROUND_UP,21, 0, tegra_clk_gr2d, 0), +	GATE_DIV("2d_idle",
+>>> "2d_mux", CLK_SOURCE_2D, 8, 8, 1, TEGRA_DIVIDER_ROUND_UP, 0,
+>>> TEGRA_PERIPH_NO_GATE | TEGRA_PERIPH_NO_RESET, tegra_clk_gr2d_idle, 0),
+>>> +	MUX("3d_mux", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 0,
+>>
+>> Now that the actual parent clock is specified by the "mux" clock, you have to
+>> adjust the tegra_clk_init_table accordingly.
+>>
+>>
+>>
+>>
+> 
+> The 3d/2d clocks do not have a parent on T20 with these patches being applied.
 
-Ah, yes,  you are right=2E We usually have either:
+Thanks, I need to extract the setup from some of the other changes that
+we did for the tegra30a/20a devices.
 
-        { /* element 1 */ },
-        { / *element 2 */ },
-        =2E=2E=2E
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
-or:
-
-        {
-                /* element 1 */
-        },
-        {
-                /* element 2 */
-        },
-
-but I do not think that it is codified in the CodingStyle=2E
-
-
-Thanks=2E
-
---=20
-Dmitry
+https://www.codethink.co.uk/privacy.html
