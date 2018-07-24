@@ -1,186 +1,43 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v4 2/2] clk: Add functions to get optional clocks
-Date: Tue, 31 Jul 2018 13:11:00 +0100
-Message-Id: <1533039060-18779-3-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
-References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 4/8] ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+Date: Tue, 24 Jul 2018 19:42:17 +0300
+Message-Id: <20180724164221.3307-5-digetx@gmail.com>
+In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
+References: <20180724164221.3307-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Behaves the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+Add interrupt entry into the EMC DT node.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-v4:
- - No changes.
-v3:
- - No changes.
----
- drivers/clk/clk-devres.c | 18 ++++++++++++++++--
- drivers/clk/clkdev.c     | 17 +++++++++++++++--
- include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra20.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..a2bb01a 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
- 	clk_put(*(struct clk **)res);
- }
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
-+static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
- {
- 	struct clk **ptr, *clk;
- 
-@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk = clk_get(dev, id);
-+	if (!optional)
-+		clk = clk_get(dev, id);
-+	else
-+		clk = clk_get_optional(dev, id);
- 	if (!IS_ERR(clk)) {
- 		*ptr = clk;
- 		devres_add(dev, ptr);
-@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 
- 	return clk;
- }
-+
-+struct clk *devm_clk_get(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, false);
-+}
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, true);
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index f8f6ba9..0ad6c31 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -226,21 +226,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
--struct clk *clk_get(struct device *dev, const char *con_id)
-+static struct clk *internal_clk_get(struct device *dev, const char *con_id,
-+				    bool optional)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
-+					   optional);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
- 
- 	return clk_get_sys(dev_id, con_id);
- }
-+
-+struct clk *clk_get(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, false);
-+}
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, true);
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index de0e5e0..58ec7bc 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-  * @num_clks: the number of clk_bulk_data
-@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
- /**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-  * @dev: device for clock "consumer"
-@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 15b73bd377f0..9eb4163a4390 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -632,6 +632,7 @@
+ 	memory-controller@7000f400 {
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f400 0x200>;
++		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
 -- 
-2.7.4
+2.18.0
