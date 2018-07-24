@@ -1,137 +1,76 @@
-Return-Path: <hofrat@osadl.at>
-Date: Thu, 26 Jul 2018 05:50:33 +0000
-From: Nicholas Mc Guire <der.herr@hofr.at>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Nicholas Mc Guire <hofrat@osadl.org>,
-	Kees Cook <keescook@chromium.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drivers: clk: st: address sparse warnings
-Message-ID: <20180726055033.GB22040@osadl.at>
-References: <1531649904-6072-1-git-send-email-hofrat@osadl.org>
- <1531649904-6072-2-git-send-email-hofrat@osadl.org>
- <153255125317.48062.14342630708691039501@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <153255125317.48062.14342630708691039501@swboyd.mtv.corp.google.com>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 02/21] dt-bindings: ingenic: Add DT bindings for TCU clocks
+Date: Wed, 25 Jul 2018 01:19:39 +0200
+Message-Id: <20180724231958.20659-3-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 25, 2018 at 01:40:53PM -0700, Stephen Boyd wrote:
-> Quoting Nicholas Mc Guire (2018-07-15 03:18:24)
-> >  Refactoring of code to make it more readable and at the same time make
-> > sparse happy again.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > ---
-> > 
-> > sparse complained about:
-> > drivers/clk/st/clkgen-pll.c:225:12: warning: context imbalance in 'clkgen_pll_enable' - different lock contexts for basic block
-> > drivers/clk/st/clkgen-pll.c:267:9: warning: context imbalance in 'clkgen_pll_disable' - different lock contexts for basic block
-> > drivers/clk/st/clkgen-pll.c:413:9: warning: context imbalance in 'set_rate_stm_pll3200c32' - different lock contexts for basic block
-> > drivers/clk/st/clkgen-pll.c:570:9: warning: context imbalance in 'set_rate_stm_pll4600c28' - different lock contexts for basic block
-> > 
-> > Which are technically false positives as the pll->lock which is being
-> > checked is determined at configuration time, thus the locks are balanced.
-> > Never the less the refactored code seems more readable and was 
-> > commented to make it clear.
-> 
-> This stuff above should go into the commit text.
+This header provides clock numbers for the ingenic,tcu
+DT binding.
 
-ok - then I´ll resend that with that moved into the commit message.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
-> 
-> > 
-> > Patch was compile tested with: multi_v7_defconfig (implies
-> > CONFIG_ARCH_STI=y)
-> > 
-> > Patch is against 4.18-rc4 (localversion-next is next-20180713)
-> > 
-> >  drivers/clk/st/clkgen-pll.c | 51 +++++++++++++++++++++++++--------------------
-> >  1 file changed, 28 insertions(+), 23 deletions(-)
-> 
-> I believe this driver is in stasis mode. Not sure anyone is testing this
-> right now. Please Cc people who have worked on this driver, like Gabriel
-> Fernandez.
->  
-> > 
-> > diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-> > index 7a7106dc..cbb5184 100644
-> > --- a/drivers/clk/st/clkgen-pll.c
-> > +++ b/drivers/clk/st/clkgen-pll.c
-> > @@ -228,13 +228,13 @@ static int clkgen_pll_enable(struct clk_hw *hw)
-> >         unsigned long flags = 0;
-> >         int ret = 0;
-> >  
-> > -       if (pll->lock)
-> > +       if (pll->lock) {
-> > +               /* stih418 and stih407 */
-> >                 spin_lock_irqsave(pll->lock, flags);
-> > -
-> > -       ret = __clkgen_pll_enable(hw);
-> > -
-> > -       if (pll->lock)
-> > +               ret = __clkgen_pll_enable(hw);
-> >                 spin_unlock_irqrestore(pll->lock, flags);
-> > +       } else
-> > +               ret = __clkgen_pll_enable(hw);
-> >  
-> >         return ret;
-> >  }
-> > @@ -259,13 +259,13 @@ static void clkgen_pll_disable(struct clk_hw *hw)
-> >         struct clkgen_pll *pll = to_clkgen_pll(hw);
-> >         unsigned long flags = 0;
-> >  
-> > -       if (pll->lock)
-> > +       if (pll->lock) {
-> > +               /* stih418 and stih407 */
-> >                 spin_lock_irqsave(pll->lock, flags);
-> > -
-> > -       __clkgen_pll_disable(hw);
-> > -
-> > -       if (pll->lock)
-> > +               __clkgen_pll_disable(hw);
-> >                 spin_unlock_irqrestore(pll->lock, flags);
-> > +       } else
-> > +               __clkgen_pll_disable(hw);
-> >  }
-> >  
-> >  static int clk_pll3200c32_get_params(unsigned long input, unsigned long output,
-> > @@ -400,15 +400,18 @@ static int set_rate_stm_pll3200c32(struct clk_hw *hw, unsigned long rate,
-> >  
-> >         __clkgen_pll_disable(hw);
-> >  
-> > -       if (pll->lock)
-> > +       if (pll->lock) {
-> > +               /* stih407 and stih418 */
-> >                 spin_lock_irqsave(pll->lock, flags);
-> > -
-> > -       CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-> > -       CLKGEN_WRITE(pll, idf, pll->idf);
-> > -       CLKGEN_WRITE(pll, cp, pll->cp);
-> > -
-> > -       if (pll->lock)
-> > +               CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-> > +               CLKGEN_WRITE(pll, idf, pll->idf);
-> > +               CLKGEN_WRITE(pll, cp, pll->cp);
-> >                 spin_unlock_irqrestore(pll->lock, flags);
-> > +       } else {
-> > +               CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-> > +               CLKGEN_WRITE(pll, idf, pll->idf);
-> > +               CLKGEN_WRITE(pll, cp, pll->cp);
-> > +       }
-> 
-> Please don't duplicate this code. The sparse warnings can be fixed by
-> adding a fake lock acquire to the else of the if condition. We do this
-> in drivers/clk/clk.c so you should be able to copy it from there.
+ v2: Use SPDX identifier for the license
 
-the duplication is not a mater of the sparse warning only - the inetnt was
-to improve readability - atleast for the one-line cases it seems more 
-readable to have it this way than to have the two lock checks - notably
-as you can then comment what the difference here really is.
+ v3: No change
 
-I agree that for this case with the three lines in the body it is not
-that reasonable - this was simply a matter of consistency as the other lock
-checks were moved into a if-else construct for readability and commenting.
+ v4: No change
 
-thx!
-hofrat
+ v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
+
+diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+new file mode 100644
+index 000000000000..d569650a7945
+--- /dev/null
++++ b/include/dt-bindings/clock/ingenic,tcu.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,tcu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++
++#define TCU_CLK_TIMER0	0
++#define TCU_CLK_TIMER1	1
++#define TCU_CLK_TIMER2	2
++#define TCU_CLK_TIMER3	3
++#define TCU_CLK_TIMER4	4
++#define TCU_CLK_TIMER5	5
++#define TCU_CLK_TIMER6	6
++#define TCU_CLK_TIMER7	7
++#define TCU_CLK_WDT	8
++#define TCU_CLK_OST	9
++
++#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+-- 
+2.11.0
