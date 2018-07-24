@@ -1,127 +1,59 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To: Rob Herring <robh@kernel.org>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-2-yixun.lan@amlogic.com>
- <20180711194346.GA32414@rob-hp-laptop>
- <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
- <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
-CC: <yixun.lan@amlogic.com>, <jbrunet@baylibre.com>,
-	<narmstrong@baylibre.com>, <khilman@baylibre.com>, <carlo@caione.org>, Mike
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	<miquel.raynal@bootlin.com>, <boris.brezillon@bootlin.com>,
-	<martin.blumenstingl@googlemail.com>, <liang.yang@amlogic.com>,
-	<qiufang.dai@amlogic.com>, <jian.hu@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <5442a2e8-eb49-2aa8-e53e-8db88cd0bd58@amlogic.com>
-Date: Fri, 13 Jul 2018 07:29:26 +0800
-MIME-Version: 1.0
-In-Reply-To: <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 18/21] MIPS: qi_lb60: Use 750 kHz system timer & enable clocksource
+Date: Wed, 25 Jul 2018 01:19:55 +0200
+Message-Id: <20180724231958.20659-19-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-HI Rob
+The default clock (12 MHz) is too fast for the system timer, which fails
+to report time accurately.
 
-see my comments
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/dts/ingenic/qi_lb60.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-On 07/12/2018 10:17 PM, Rob Herring wrote:
-> On Wed, Jul 11, 2018 at 8:47 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
->>
->> Hi Rob
->>
->> see my comments
->>
->> On 07/12/18 03:43, Rob Herring wrote:
->>> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
->>>> Document the MMC sub clock controller driver, the potential consumer
->>>> of this driver is MMC or NAND.
->>>
->>> So you all have decided to properly model this now?
->>>
->> Yes, ;-)
->>
->>>>
->>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>>> ---
->>>>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
->>>>  1 file changed, 31 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>> new file mode 100644
->>>> index 000000000000..ff6b4bf3ecf9
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>> @@ -0,0 +1,31 @@
->>>> +* Amlogic MMC Sub Clock Controller Driver
->>>> +
->>>> +The Amlogic MMC clock controller generates and supplies clock to support
->>>> +MMC and NAND controller
->>>> +
->>>> +Required Properties:
->>>> +
->>>> +- compatible: should be:
->>>> +            "amlogic,meson-gx-mmc-clkc"
->>>> +            "amlogic,meson-axg-mmc-clkc"
->>>> +
->>>> +- #clock-cells: should be 1.
->>>> +- clocks: phandles to clocks corresponding to the clock-names property
->>>> +- clock-names: list of parent clock names
->>>> +    - "clkin0", "clkin1"
->>>> +
->>>> +Parent node should have the following properties :
->>>> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
->>>
->>> You don't need "simple-mfd" and probably not syscon either. The order is
->>> wrong too. Most specific first.
->>>
->> Ok, I will drop "simple-mfd"..
->>
->> but the syscon is a must, since this mmc clock model access registers
->> via the regmap interface
-> 
-> A syscon compatible should not be the only way to get a regmap.
-do you have any suggestion about other function that I can use? is
-devm_regmap_init_mmio() feasible
+ v5: New patch
 
-> Removing lines 56/57 of drivers/mfd/syscon.c should be sufficient.
-> 
-I'm not sure what's the valid point of removing compatible 'syscon' in
-driver/mfd/syscon.c, sounds this will break a lot DT/or need to fix?
-will you propose a patch for this? then I can certainly adjust here
-
-> Why do you need a regmap in the first place? What else needs to access
-> this register directly?
-Yes, the SD_EMMC_CLOCK register contain several bits which not fit well
-into common clock model, and they need to be access in the NAND or eMMC
-driver itself, Martin had explained this in early thread[1]
-
-In this register
-Bit[31] select NAND or eMMC function
-Bit[25] enable SDIO IRQ
-Bit[24] Clock always on
-Bit[15:14] SRAM Power down
-
-[1]
-https://lkml.kernel.org/r/CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com
-
-> Don't you need a patch removing the clock code
-> from within the emmc driver? It's not even using regmap, so using
-> regmap here doesn't help.
->
-No, and current eMMC driver still use iomap to access the register
-
-I think we probably would like to take two steps approach.
-first, from the hardware perspective, the NAND and eMMC(port C) driver
-can't exist at same time, since they share the pins, clock, internal
-ram, So we have to only enable one of NAND or eMMC in DT, not enable
-both of them.
-Second, we might like to convert eMMC driver to also use mmc-clkc model.
-
-
-Yixun
+diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+index 85529a142409..5d2aca867427 100644
+--- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
++++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+@@ -45,3 +45,12 @@
+ 		bias-disable;
+ 	};
+ };
++
++&tcu {
++	/* Use TCU1 channel as clocksource */
++	ingenic,clocksource-channel = <1>;
++
++	/* 750 kHz for the system timer and clocksource */
++	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
++	assigned-clock-rates = <750000>, <750000>;
++};
+-- 
+2.11.0
