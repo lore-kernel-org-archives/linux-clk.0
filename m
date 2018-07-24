@@ -1,80 +1,278 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/11] clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-Date: Wed, 11 Jul 2018 16:20:50 +0200
-Message-Id: <20180711142100.3765-2-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 08/21] watchdog: jz4740: Use regmap and WDT clock provided by TCU driver
+Date: Wed, 25 Jul 2018 01:19:45 +0200
+Message-Id: <20180724231958.20659-9-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a clock type and macro for defining clocks using the OSC EXTAL
-predivider combined with a fixed divider.
+Instead of requesting the "ext" clock and handling the watchdog clock
+divider and gating in the watchdog driver, we now request and use the
+"wdt" clock that is supplied by the ingenic-timer "TCU" driver.
 
-On most R-Car Gen3 SoCs, the predivider value depends on mode pins, and
-thus must be specified in the configuration structure.
+The major benefit is that the watchdog's clock rate and parent can now
+be specified from within devicetree, instead of hardcoded in the driver.
 
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Also, this driver won't poke anymore into the TCU registers to
+enable/disable the clock, as this is now handled by the TCU driver.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On the bad side, we break the ABI with devicetree - as we now request a
+different clock. In this very specific case it is still okay, as every
+Ingenic JZ47xx-based board out there compile the devicetree within the
+kernel; so it's still time to push breaking changes, in order to get a
+clean devicetree that won't break once it musn't.
+
+Since we broke the ABI by changing the clock, the driver was also
+updated to use the regmap provided by the TCU driver.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 7 +++++++
- drivers/clk/renesas/rcar-gen3-cpg.h | 4 ++++
- 2 files changed, 11 insertions(+)
+ drivers/watchdog/Kconfig      |   2 +
+ drivers/watchdog/jz4740_wdt.c | 128 +++++++++++++++++++++---------------------
+ 2 files changed, 66 insertions(+), 64 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 628b63b85d3f09c5..7533a51c679bfd54 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -563,6 +563,13 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base, CPG_FRQCRC_Z2FC_MASK);
+ v5: New patch
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 9af07fd92763..834222abbbdb 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1476,7 +1476,9 @@ config INDYDOG
+ config JZ4740_WDT
+ 	tristate "Ingenic jz4740 SoC hardware watchdog"
+ 	depends on MACH_JZ4740 || MACH_JZ4780
++	depends on COMMON_CLK
+ 	select WATCHDOG_CORE
++	select INGENIC_TIMER
+ 	help
+ 	  Hardware driver for the built-in watchdog timer on Ingenic jz4740 SoCs.
  
-+	case CLK_TYPE_GEN3_OSC:
-+		/*
-+		 * Clock combining OSC EXTAL predivider and a fixed divider
-+		 */
-+		div = cpg_pll_config->osc_prediv * core->div;
-+		break;
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index ec4d99a830ba..aaa6fc87136c 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -13,6 +13,7 @@
+  *
+  */
+ 
++#include <linux/mfd/ingenic-tcu.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/types.h>
+@@ -25,26 +26,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+-
+-#include <asm/mach-jz4740/timer.h>
+-
+-#define JZ_REG_WDT_TIMER_DATA     0x0
+-#define JZ_REG_WDT_COUNTER_ENABLE 0x4
+-#define JZ_REG_WDT_TIMER_COUNTER  0x8
+-#define JZ_REG_WDT_TIMER_CONTROL  0xC
+-
+-#define JZ_WDT_CLOCK_PCLK 0x1
+-#define JZ_WDT_CLOCK_RTC  0x2
+-#define JZ_WDT_CLOCK_EXT  0x4
+-
+-#define JZ_WDT_CLOCK_DIV_SHIFT   3
+-
+-#define JZ_WDT_CLOCK_DIV_1    (0 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_4    (1 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_16   (2 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_64   (3 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_256  (4 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_1024 (5 << JZ_WDT_CLOCK_DIV_SHIFT)
++#include <linux/regmap.h>
+ 
+ #define DEFAULT_HEARTBEAT 5
+ #define MAX_HEARTBEAT     2048
+@@ -64,15 +46,15 @@ MODULE_PARM_DESC(heartbeat,
+ 
+ struct jz4740_wdt_drvdata {
+ 	struct watchdog_device wdt;
+-	void __iomem *base;
+-	struct clk *rtc_clk;
++	struct regmap *map;
++	struct clk *clk;
+ };
+ 
+ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+ 	return 0;
+ }
+ 
+@@ -80,52 +62,65 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+ 				    unsigned int new_timeout)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+-	unsigned int rtc_clk_rate;
+-	unsigned int timeout_value;
+-	unsigned short clock_div = JZ_WDT_CLOCK_DIV_1;
+-
+-	rtc_clk_rate = clk_get_rate(drvdata->rtc_clk);
+-
+-	timeout_value = rtc_clk_rate * new_timeout;
+-	while (timeout_value > 0xffff) {
+-		if (clock_div == JZ_WDT_CLOCK_DIV_1024) {
+-			/* Requested timeout too high;
+-			* use highest possible value. */
+-			timeout_value = 0xffff;
+-			break;
+-		}
+-		timeout_value >>= 2;
+-		clock_div += (1 << JZ_WDT_CLOCK_DIV_SHIFT);
++	struct clk *clk = drvdata->clk;
++	unsigned long clk_rate, timeout_value;
++	bool change_rate = false;
++	u32 tcer;
++	int ret = 0;
 +
- 	default:
- 		return ERR_PTR(-EINVAL);
++	clk_rate = clk_get_rate(clk);
++	timeout_value = clk_rate * new_timeout;
++
++	if (timeout_value > 0xffff) {
++		clk_rate = clk_round_rate(clk, 0xffff / new_timeout);
++		timeout_value = clk_rate * new_timeout;
++		if (timeout_value > 0xffff)
++			return -EINVAL;
++		change_rate = true;
  	}
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index ea4f8fc3c4c972e7..d7d84d9e4a1c9c8b 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -23,6 +23,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_PE,
- 	CLK_TYPE_GEN3_Z,
- 	CLK_TYPE_GEN3_Z2,
-+	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- };
  
- #define DEF_GEN3_SD(_name, _id, _parent, _offset)	\
-@@ -33,6 +34,8 @@ enum rcar_gen3_clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN3_PE,			\
- 		 (_parent_sscg) << 16 | (_parent_clean),	\
- 		 .div = (_div_sscg) << 16 | (_div_clean))
-+#define DEF_GEN3_OSC(_name, _id, _parent, _div)		\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN3_OSC, _parent, .div = _div)
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+-	writew(clock_div, drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
++	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
  
- struct rcar_gen3_cpg_pll_config {
- 	u8 extal_div;
-@@ -40,6 +43,7 @@ struct rcar_gen3_cpg_pll_config {
- 	u8 pll1_div;
- 	u8 pll3_mult;
- 	u8 pll3_div;
-+	u8 osc_prediv;
- };
+-	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+-	writew(clock_div | JZ_WDT_CLOCK_RTC,
+-		drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
++	if (change_rate) {
++		clk_disable_unprepare(clk);
++		ret = clk_set_rate(clk, clk_rate);
++		clk_prepare_enable(clk);
++		if (ret)
++			goto done;
++	}
  
- #define CPG_RCKCR	0x240
+-	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	regmap_write(drvdata->map, TCU_REG_WDT_TDR, (u16)timeout_value);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+ 
+ 	wdt_dev->timeout = new_timeout;
+-	return 0;
++
++done:
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
++	return ret;
+ }
+ 
+ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+ {
+-	jz4740_timer_enable_watchdog();
+-	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
++	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
++	int ret;
+ 
+-	return 0;
++	clk_prepare_enable(drvdata->clk);
++	ret = jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
++	if (ret)
++		clk_disable_unprepare(drvdata->clk);
++	else
++		regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
++
++	return ret;
+ }
+ 
+ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+-	jz4740_timer_disable_watchdog();
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
++	clk_disable_unprepare(drvdata->clk);
+ 
+ 	return 0;
+ }
+@@ -163,13 +158,17 @@ MODULE_DEVICE_TABLE(of, jz4740_wdt_of_matches);
+ 
+ static int jz4740_wdt_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct jz4740_wdt_drvdata *drvdata;
+ 	struct watchdog_device *jz4740_wdt;
+-	struct resource	*res;
+ 	int ret;
+ 
+-	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct jz4740_wdt_drvdata),
+-			       GFP_KERNEL);
++	if (!dev->of_node) {
++		dev_err(dev, "jz4740-wdt must be probed via devicetree\n");
++		return -ENODEV;
++	}
++
++	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+ 	if (!drvdata)
+ 		return -ENOMEM;
+ 
+@@ -182,19 +181,20 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+ 	jz4740_wdt->timeout = heartbeat;
+ 	jz4740_wdt->min_timeout = 1;
+ 	jz4740_wdt->max_timeout = MAX_HEARTBEAT;
+-	jz4740_wdt->parent = &pdev->dev;
++	jz4740_wdt->parent = dev;
+ 	watchdog_set_nowayout(jz4740_wdt, nowayout);
+ 	watchdog_set_drvdata(jz4740_wdt, drvdata);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(drvdata->base))
+-		return PTR_ERR(drvdata->base);
++	drvdata->map = dev_get_regmap(dev->parent, NULL);
++	if (IS_ERR(drvdata->map)) {
++		dev_warn(dev, "regmap not found\n");
++		return PTR_ERR(drvdata->map);
++	}
+ 
+-	drvdata->rtc_clk = devm_clk_get(&pdev->dev, "rtc");
+-	if (IS_ERR(drvdata->rtc_clk)) {
+-		dev_err(&pdev->dev, "cannot find RTC clock\n");
+-		return PTR_ERR(drvdata->rtc_clk);
++	drvdata->clk = devm_clk_get(&pdev->dev, "wdt");
++	if (IS_ERR(drvdata->clk)) {
++		dev_err(&pdev->dev, "cannot find WDT clock\n");
++		return PTR_ERR(drvdata->clk);
+ 	}
+ 
+ 	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
 -- 
-2.17.1
+2.11.0
