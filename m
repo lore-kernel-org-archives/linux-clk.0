@@ -1,161 +1,151 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28301 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729723AbeGaHSG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:06 -0400
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
-        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 08/10] arm64: dts: mt8183: Add clock controller device nodes
-Date: Tue, 31 Jul 2018 13:38:05 +0800
-Message-ID: <1533015487-60189-9-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
-References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Michal Simek <michals@xilinx.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "mingo@kernel.org" <mingo@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "sudeep.holla@arm.com"
+	<sudeep.holla@arm.com>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"keescook@chromium.org" <keescook@chromium.org>, "dmitry.torokhov@gmail.com"
+	<dmitry.torokhov@gmail.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+	Michal Simek <michals@xilinx.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: Rajan Vaja <RAJANV@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for
+ ZynqMP core
+Date: Tue, 24 Jul 2018 18:14:54 +0000
+Message-ID: 
+ <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+ <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
+In-Reply-To: <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Weiyi Lu <weiyi.lu@mediatek.com>
-
-Add clock controller nodes for MT8183, include topckgen, infracfg,
-apmixedsys and subsystem.
-
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 92 ++++++++++++++++++++++++++++++++
- 1 file changed, 92 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 1553265..6b87a24 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -5,6 +5,7 @@
-  *	   Erin Lo <erin.lo@mediatek.com>
-  */
- 
-+#include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-@@ -112,6 +113,13 @@
- 		method          = "smc";
- 	};
- 
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupt-parent = <&gic>;
-@@ -143,4 +151,88 @@
- 		interrupt-parent = <&gic>;
- 		reg = <0 0x0c530a80 0 0x50>;
- 	};
-+
-+	topckgen: syscon@10000000 {
-+		compatible = "mediatek,mt8183-topckgen", "syscon";
-+		reg = <0 0x10000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	infracfg: syscon@10001000 {
-+		compatible = "mediatek,mt8183-infracfg", "syscon";
-+		reg = <0 0x10001000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	apmixedsys: syscon@1000c000 {
-+		compatible = "mediatek,mt8183-apmixedsys", "syscon";
-+		reg = <0 0x1000c000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	audiosys: syscon@11220000 {
-+		compatible = "mediatek,mt8183-audiosys", "syscon";
-+		reg = <0 0x11220000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	mfgcfg: syscon@13000000 {
-+		compatible = "mediatek,mt8183-mfgcfg", "syscon";
-+		reg = <0 0x13000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	mmsys: syscon@14000000 {
-+		compatible = "mediatek,mt8183-mmsys", "syscon";
-+		reg = <0 0x14000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	imgsys: syscon@15020000 {
-+		compatible = "mediatek,mt8183-imgsys", "syscon";
-+		reg = <0 0x15020000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vdecsys: syscon@16000000 {
-+		compatible = "mediatek,mt8183-vdecsys", "syscon";
-+		reg = <0 0x16000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	vencsys: syscon@17000000 {
-+		compatible = "mediatek,mt8183-vencsys", "syscon";
-+		reg = <0 0x17000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ipu_conn: syscon@19000000 {
-+		compatible = "mediatek,mt8183-ipu_conn", "syscon";
-+		reg = <0 0x19000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ipu_adl: syscon@19010000 {
-+		compatible = "mediatek,mt8183-ipu_adl", "syscon";
-+		reg = <0 0x19010000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ipu_core0: syscon@19180000 {
-+		compatible = "mediatek,mt8183-ipu_core0", "syscon";
-+		reg = <0 0x19180000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	ipu_core1: syscon@19280000 {
-+		compatible = "mediatek,mt8183-ipu_core1", "syscon";
-+		reg = <0 0x19280000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
-+
-+	camsys: syscon@1a000000 {
-+		compatible = "mediatek,mt8183-camsys", "syscon";
-+		reg = <0 0x1a000000 0 0x1000>;
-+		#clock-cells = <1>;
-+	};
- };
--- 
-1.9.1
-
+SGkgTWljaGFsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1pY2hh
+bCBTaW1layBbbWFpbHRvOm1pY2hhbC5zaW1la0B4aWxpbnguY29tXQ0KPiBTZW50OiBUaHVyc2Rh
+eSwgSnVseSAxOSwgMjAxOCAzOjMzIEFNDQo+IFRvOiBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54
+LmNvbT47IGFyZC5iaWVzaGV1dmVsQGxpbmFyby5vcmc7DQo+IG1pbmdvQGtlcm5lbC5vcmc7IGdy
+ZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBtYXR0QGNvZGVibHVlcHJpbnQuY28udWs7DQo+IHN1
+ZGVlcC5ob2xsYUBhcm0uY29tOyBoa2FsbHdlaXQxQGdtYWlsLmNvbTsga2Vlc2Nvb2tAY2hyb21p
+dW0ub3JnOw0KPiBkbWl0cnkudG9yb2tob3ZAZ21haWwuY29tOyBtdHVycXVldHRlQGJheWxpYnJl
+LmNvbTsNCj4gc2JveWRAY29kZWF1cm9yYS5vcmc7IE1pY2hhbCBTaW1layA8bWljaGFsc0B4aWxp
+bnguY29tPjsNCj4gcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbGlu
+dXgtY2xrQHZnZXIua2VybmVsLm9yZw0KPiBDYzogUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5j
+b20+OyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IGxpbnV4LWtlcm5l
+bEB2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBKb2xseSBTaGFo
+DQo+IDxKT0xMWVNAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MTAgMDAvMTBd
+IGRyaXZlcnM6IEludHJvZHVjZSBmaXJtd2FyZSBkbmQgY2xvY2sgcml2ZXIgZm9yDQo+IFp5bnFN
+UCBjb3JlDQo+IA0KPiBPbiAxNy43LjIwMTggMjE6NTgsIEpvbGx5IFNoYWggd3JvdGU6DQo+ID4g
+VGhpcyBwYXRjaHNldCBpcyBhZGRpbmcgY29tbXVuaWNhdGlvbiBsYXllciB3aXRoIGZpcm13YXJl
+IGFuZCBjbG9jaw0KPiA+IGRyaXZlciB3aG8gdXNlcyB0aG9zZSBBUElzIHRvIGNvbW11bmljYXRl
+IHdpdGggUE1VLg0KPiA+IEZpcm13YXJlIGRyaXZlciBwcm92aWRlcyBhbiBpbnRlcmZhY2UgdG8g
+ZmlybXdhcmUgQVBJcy5JbnRlcmZhY2UgQVBJcw0KPiA+IGNhbiBiZSB1c2VkIGJ5IGFueSBkcml2
+ZXIgdG8gY29tbXVuaWNhdGUgdG8gUE1VRlcoUGxhdGZvcm0gTWFuYWdlbWVudA0KPiBVbml0KS4g
+QWxsIHJlcXVlc3RzIGdvIHRocm91Z2ggQVRGLg0KPiA+IFRoaXMgcGF0Y2hzZXQgYWRkcyBDQ0Yg
+Y29tcGxpYW50IGNsb2NrIGRyaXZlciBmb3IgWnlucU1QLkNsb2NrIGRyaXZlcg0KPiA+IHF1ZXJp
+ZXMgc3VwcG9ydGVkIGNsb2NrIGluZm9ybWF0aW9uIGZyb20gZmlybXdhcmUgYW5kIHJlZ2l0ZXJz
+IHBsbCBhbmQgb3V0cHV0DQo+IGNsb2NrcyB3aXRoIENDRi4NCj4gPiB2MTA6DQo+ID4gIC0gSW5j
+b3Jwb3JhdGVkIGNvZGUgcmV2aWV3IGNvbW1lbnRzIGZyb20gdjkgcGF0Y2ggc2VyaWVzLiBEaXNj
+dXNzZWQgYmVsb3c6DQo+ID4gCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0
+Nzg1NzUvDQo+ID4gCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Nzg0NTcv
+DQo+ID4gCWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Nzg0NjEvDQo+ID4g
+CWh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA0Nzg0NjMvDQo+ID4NCj4gPiB2
+OToNCj4gPiAgLSBGaXhlZCBtaW5vciB0eXBvIGNvbW1lbnRzDQo+ID4NCj4gPiB2ODoNCj4gPiAg
+LSBDb3JyZWN0ZWQgdHlwbyBpbiBjbGsgS2NvbmZpZw0KPiA+DQo+ID4gdjc6DQo+ID4gIC0gUmVt
+b3ZlZCB4aWxpbnggc3BlY2lmaWMgY2xvY2sgZGVidWdmcyBBUEkgc3VwcG9ydA0KPiA+ICAtIEFk
+ZGVkIHJldmlld2VkLWJ5IHRhZ3MgZm9yIEZXIGFuZCBjbG9jayBiaW5kaW5ncw0KPiA+ICAtIFVw
+ZGF0ZWQgY2xvY2sgbm9kZSBuYW1lIHRvIGNsb2NrLWNvbnRyb2xsZXINCj4gPg0KPiA+IHY2Og0K
+PiA+ICAtIEJyb2tlIHBhdGNoIHNlcmllcyB0byBoYXZlIGJhc2UgRlcgZHJpdmVyIGFuZCBDbG9j
+ayBkcml2ZXIgdXNlcg0KPiA+ICAtIEluY29ycG9yYXRlZCBjb2RlIHJldmlldyBjb21tZW50cyBm
+cm9tIGxhc3QgRlcgYW5kIENsb2NrIGRyaXZlciBwYXRjaA0KPiBzZXJpZXMuIERpc2N1c3NlZCBi
+ZWxvdzoNCj4gPiAJaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDIzMDc1OS8N
+Cj4gPiAJaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDI1MDA0Ny8NCj4gPg0K
+PiA+IHY1Og0KPiA+ICAtIEFkZGVkIEFURiB2ZXJzaW9uIGNoZWNrIHN1cHBvcnQNCj4gPiAgLSBV
+cGRhdGVkIHNvbWUgZnVuY3Rpb25zIHRvIGJlIHN0YXRpYw0KPiA+ICAtIE1pbm9yIGZ1bmN0aW9u
+IG5hbWUgY29ycmVjdGlvbnMNCj4gPg0KPiA+IHY0Og0KPiA+ICAtIENoYW5nZWQgY2xvY2sgc2V0
+cmF0ZS9nZXRyYXRlIEFQSSBwcm90b3R5cGUgdG8gc3VwcG9ydCA2NCBiaXQgcmF0ZQ0KPiA+ICAt
+IERlZmluZWQgbWFjcm9zIGZvciBnZXRfbm9kZV9zdGF0dXMgcmV0dXJuIHZhbHVlcw0KPiA+ICAt
+IE1vdmVkIERUIG5vZGUgYXMgYSBjaGlsZCBvZiBmaXJtd2FyZQ0KPiA+ICAtIENoYW5nZWQgZGVi
+dWdmcyBBUElzIHRvIHJldHVybiBkYXRhIHRvIGRlYnVnZnMgYnVmZmVyIGluc3RlYWQgb2YNCj4g
+PiBkdW1waW5nIHRvIGtlcm5lbCBsb2cNCj4gPiAgLSBNaW5vciBjaGFuZ2VzIHRvIGluY29ycG9y
+YXRlIG90aGVyIHJldmlldyBjb21tZW50cyBmcm9tIHYzIHBhdGNoDQo+ID4gc2VyaWVzDQo+ID4N
+Cj4gPiB2MzoNCj4gPiAgLSBhZGRlZCBzb21lIGZpeGVzIHRvIGZpcm13YXJlLWdncy5jDQo+ID4g
+IC0gdXBkYXRlZCBwaW5tdXggZ2V0L3NldCBmdW5jdGlvbiBhcmd1bWVudCBuYW1lcyB0byBzcGVj
+aWZ5IGZ1bmN0aW9uDQo+ID4gaWQgaW5zdGVhZCBvZiBub2RlIGlkDQo+ID4gIC0gYWRkZWQgbmV3
+IHBpbmN0cmwgcXVlcnkgbWFjcm9zDQo+ID4gIC0gaW5jb3Jwb3JhdGVkIHJldmlldyBjb21tZW50
+cyBmcm9tIHYyIHBhdGNoIHNlcmllcw0KPiA+DQo+ID4gdjI6DQo+ID4gIC0gY2hhbmdlIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyIGxpY2Vuc2UgdGV4dCBzdHlsZQ0KPiA+ICAtIHNwbGl0IHBhdGNo
+IGludG8gbXVsdGlwbGUgcGF0Y2hlcw0KPiA+ICAtIFVwZGF0ZWQgY29weXJpZ2h0cw0KPiA+ICAt
+IEFkZGVkIEFCSSBkb2N1bWVudGF0aW9uDQo+ID4gIC0gaW5jb3Jwb3JhdGVkIGxvZ2ljYWwgcmV2
+aWV3IGNvbW1lbnRzIGZyb20gcHJldml1b3MgcGF0Y2guIERpc2N1c3NlZA0KPiBiZWxvdzoNCj4g
+PiAJaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDE1MDY2NS8NCj4gPg0KPiA+
+IEpvbGx5IFNoYWggKDEpOg0KPiA+ICAgZHJpdmVyczogY2xrOiBBZGQgWnlucU1QIGNsb2NrIGRy
+aXZlcg0KPiA+DQo+ID4gUmFqYW4gVmFqYSAoOSk6DQo+ID4gICBkdC1iaW5kaW5nczogZmlybXdh
+cmU6IEFkZCBiaW5kaW5ncyBmb3IgWnlucU1QIGZpcm13YXJlDQo+ID4gICBmaXJtd2FyZTogeGls
+aW54OiBBZGQgWnlucW1wIGZpcm13YXJlIGRyaXZlcg0KPiA+ICAgZmlybXdhcmU6IHhpbGlueDog
+QWRkIHp5bnFtcCBJT0NUTCBBUEkgZm9yIGRldmljZSBjb250cm9sDQo+ID4gICBmaXJtd2FyZTog
+eGlsaW54OiBBZGQgcXVlcnkgZGF0YSBBUEkNCj4gPiAgIGZpcm13YXJlOiB4aWxpbng6IEFkZCBj
+bG9jayBBUElzDQo+ID4gICBmaXJtd2FyZTogeGlsaW54OiBBZGQgZGVidWdmcyBpbnRlcmZhY2UN
+Cj4gPiAgIGZpcm13YXJlOiB4aWxpbng6IEFkZCBkZWJ1Z2ZzIGZvciBJT0NUTCBBUEkNCj4gPiAg
+IGZpcm13YXJlOiB4aWxpbng6IEFkZCBkZWJ1Z2ZzIGZvciBxdWVyeSBkYXRhIEFQSQ0KPiA+ICAg
+ZHQtYmluZGluZ3M6IGNsb2NrOiBBZGQgYmluZGluZ3MgZm9yIFp5bnFNUCBjbG9jayBkcml2ZXIN
+Cj4gPg0KPiA+ICAuLi4vZmlybXdhcmUveGlsaW54L3hsbngsenlucW1wLWZpcm13YXJlLnR4dCAg
+ICAgICB8ICA4MiArKysNCj4gPiAgYXJjaC9hcm02NC9LY29uZmlnLnBsYXRmb3JtcyAgICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDEgKw0KPiA+ICBkcml2ZXJzL2Nsay9LY29uZmlnICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvY2xrL01ha2VmaWxl
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZHJpdmVycy9jbGsv
+enlucW1wL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTAgKw0KPiA+ICBkcml2
+ZXJzL2Nsay96eW5xbXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArDQo+
+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstZ2F0ZS16eW5xbXAuYyAgICAgICAgICAgICAgIHwg
+MTQ0ICsrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstbXV4LXp5bnFtcC5jICAgICAg
+ICAgICAgICAgIHwgMTQxICsrKysNCj4gPiAgZHJpdmVycy9jbGsvenlucW1wL2Nsay16eW5xbXAu
+aCAgICAgICAgICAgICAgICAgICAgfCAgNjggKysNCj4gPiAgZHJpdmVycy9jbGsvenlucW1wL2Ns
+a2MuYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCA3MTkgKysrKysrKysrKysrKysrKysrKysr
+DQo+ID4gIGRyaXZlcnMvY2xrL3p5bnFtcC9kaXZpZGVyLmMgICAgICAgICAgICAgICAgICAgICAg
+IHwgMjE3ICsrKysrKysNCj4gPiAgZHJpdmVycy9jbGsvenlucW1wL3BsbC5jICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgfCAzMzUgKysrKysrKysrKw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL0tj
+b25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRyaXZlcnMvZmly
+bXdhcmUvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCj4gPiAgZHJp
+dmVycy9maXJtd2FyZS94aWxpbngvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgfCAgMjMgKw0K
+PiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICB8
+ICAgNSArDQo+ID4gIGRyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFtcC1kZWJ1Zy5jICAgICAg
+ICAgICAgIHwgMjQ5ICsrKysrKysNCj4gPiAgZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlucW1w
+LWRlYnVnLmggICAgICAgICAgICAgfCAgMjIgKw0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlu
+eC96eW5xbXAuYyAgICAgICAgICAgICAgICAgICB8IDU2MiArKysrKysrKysrKysrKysrDQo+ID4g
+IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2sveGxueCx6eW5xbXAtY2xrLmggICAgICAgIHwgMTE2
+ICsrKysNCj4gPiAgaW5jbHVkZS9saW51eC9maXJtd2FyZS94bG54LXp5bnFtcC5oICAgICAgICAg
+ICAgICAgfCAxMTYgKysrKw0KPiA+ICAyMSBmaWxlcyBjaGFuZ2VkLCAyODE4IGluc2VydGlvbnMo
+KykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2Zpcm13YXJlL3hpbGlueC94bG54LHp5bnFtcC1maXJtd2FyZQ0KPiA+IC50eHQg
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay96eW5xbXAvS2NvbmZpZyAgY3JlYXRlIG1v
+ZGUNCj4gPiAxMDA2NDQgZHJpdmVycy9jbGsvenlucW1wL01ha2VmaWxlICBjcmVhdGUgbW9kZSAx
+MDA2NDQNCj4gPiBkcml2ZXJzL2Nsay96eW5xbXAvY2xrLWdhdGUtenlucW1wLmMNCj4gPiAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3p5bnFtcC9jbGstbXV4LXp5bnFtcC5jDQo+ID4g
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay96eW5xbXAvY2xrLXp5bnFtcC5oICBjcmVh
+dGUgbW9kZQ0KPiA+IDEwMDY0NCBkcml2ZXJzL2Nsay96eW5xbXAvY2xrYy5jICBjcmVhdGUgbW9k
+ZSAxMDA2NDQNCj4gPiBkcml2ZXJzL2Nsay96eW5xbXAvZGl2aWRlci5jICBjcmVhdGUgbW9kZSAx
+MDA2NDQNCj4gPiBkcml2ZXJzL2Nsay96eW5xbXAvcGxsLmMgIGNyZWF0ZSBtb2RlIDEwMDY0NA0K
+PiA+IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L0tjb25maWcgIGNyZWF0ZSBtb2RlIDEwMDY0NA0K
+PiA+IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L01ha2VmaWxlICBjcmVhdGUgbW9kZSAxMDA2NDQN
+Cj4gPiBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAtZGVidWcuYw0KPiA+ICBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlucW1wLWRlYnVnLmgNCj4gPiAg
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFtcC5jICBjcmVh
+dGUgbW9kZQ0KPiA+IDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3hsbngsenlucW1w
+LWNsay5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2xpbnV4L2Zpcm13YXJlL3hs
+bngtenlucW1wLmgNCj4gPg0KPiANCj4gSXQgbG9va3MgcHJldHR5IGNhbG0gb3ZlciB0aGUgbGFz
+dCBzZXZlcmFsIHNlcmllcyB0aGF0J3Mgd2h5IHdoZW4gSSBnZXQgYW4gYW5zd2VyDQo+IGZyb20g
+U3RlcGhlbiBvciBNaWtlIEkgd2lsbCB0YWtlIHRoaXMgc2VyaWVzIHZpYSBteSB0cmVlIGFuZCBh
+cm0tc29jIHRyZWUuDQo+IA0KPiBJIGhhdmUgYXBwbGllZCAwMS0wOCBoZXJlDQo+ICBodHRwczov
+L2dpdGh1Yi5jb20vWGlsaW54L2xpbnV4LXhsbngvY29tbWl0cy96eW5xbXAvc29jDQo+IA0KPiBU
+aGFua3MsDQo+IE1pY2hhbA0KDQoNClRoYW5rcyBmb3IgbWVyZ2luZyB0aGUgcGF0Y2hlcy4gDQpC
+eSBtaXN0YWtlIEkgYWRkZWQg4oCcUmV2aWV3ZWQtYnk6IFN0ZXBoZW4gQm95ZCBzYm95ZEBrZXJu
+ZWwub3Jn4oCdIGZvciBmaXJtd2FyZSBiaW5kaW5ncyAoUGF0Y2gwMSkuICBTdGVwaGVuIGhhZCBy
+ZXZpZXdlZCBjbG9jayBiaW5kaW5ncyBvbmx5LiAgUGxlYXNlIHN1Z2dlc3QgaWYgSSBzaG91bGQg
+c2VuZCBhIG5ldyB2ZXJzaW9uIHdpdGggdGhhdCBmaXguDQoNClRoYW5rcywNCkpvbGx5IFNoYWgN
+Cg==
