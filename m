@@ -1,69 +1,261 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <20180711142100.3765-1-geert+renesas@glider.be>
- <20180711142100.3765-6-geert+renesas@glider.be> <20180712135618.fviccj5rg4jgguvp@verge.net.au>
-In-Reply-To: <20180712135618.fviccj5rg4jgguvp@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Jul 2018 16:23:53 +0200
-Message-ID: <CAMuHMdWyt7FeocWyf9RFwx2QRZdqZbpn++vjSF-6SpM4w-ZdvQ@mail.gmail.com>
-Subject: Re: [PATCH 05/11] clk: renesas: r8a77980: Add OSC predivider
- configuration and clock
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 04/21] dt-bindings: Add doc for the Ingenic TCU drivers
+Date: Wed, 25 Jul 2018 01:19:41 +0200
+Message-Id: <20180724231958.20659-5-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Simon,
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) drivers from devicetree.
 
-On Thu, Jul 12, 2018 at 3:56 PM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jul 11, 2018 at 04:20:54PM +0200, Geert Uytterhoeven wrote:
-> > R-Car Gen3 Hardware Manual Rev.0.54 documents the relation between the
-> > MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-> > OSC clock.  Hence augment the configuration structure with all
-> > documented predivider values.
-> >
-> > Add the OSC clock using the configured predivider.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  24 +---
+ .../devicetree/bindings/timer/ingenic,tcu.txt      | 147 +++++++++++++++++++++
+ .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 +--
+ 3 files changed, 151 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
 
-> > --- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
+ v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+     added content.
 
-> > @@ -171,23 +173,23 @@ static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
-> >   */
-> >
-> >  /*
-> > - *   MD              EXTAL           PLL2    PLL1    PLL3
-> > + *   MD              EXTAL           PLL2    PLL1    PLL3    OSC
-> >   * 14 13     (MHz)
-> > - * --------------------------------------------------
-> > - * 0  0              16.66 x 1       x240    x192    x192
-> > - * 0  1              20    x 1       x200    x160    x160
-> > - * 1  0              27    x 1       x148    x118    x118
-> > - * 1  1              33.33 / 2       x240    x192    x192
-> > + * --------------------------------------------------------
-> > + * 0  0              16.66 x 1       x240    x192    x192    /16
-> > + * 0  1              20    x 1       x200    x160    x160    /19
-> > + * 1  0              27    x 1       x148    x118    x118    /24
->
-> Not related to this patch, but in the Users' Manual 1.0
-> EXTAL is listed as 27MHz in table 8.4e but 25MHz (below) table 8.2e.
+ v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+       document.
+     - Moved main document to
+       Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+     - Updated documentation to reflect the new devicetree bindings.
 
-Nice catch:
-  - Divider 24 is correct for 25 MHz, but not for 27 Mhz.
-  - Multipliers 148 and 118 are correct for 27 MHz, but not for 25 MHz.
-Needs clarification...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+index 7d9d3f90641b..a722cdde3aa7 100644
+--- a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+@@ -1,25 +1,5 @@
+ Ingenic JZ47xx PWM Controller
+ =============================
+ 
+-Required properties:
+-- compatible: One of:
+-  * "ingenic,jz4740-pwm"
+-  * "ingenic,jz4770-pwm"
+-  * "ingenic,jz4780-pwm"
+-- #pwm-cells: Should be 3. See pwm.txt in this directory for a description
+-  of the cells format.
+-- clocks : phandle to the external clock.
+-- clock-names : Should be "ext".
+-
+-
+-Example:
+-
+-	pwm: pwm@10002000 {
+-		compatible = "ingenic,jz4740-pwm";
+-		reg = <0x10002000 0x1000>;
+-
+-		#pwm-cells = <3>;
+-
+-		clocks = <&ext>;
+-		clock-names = "ext";
+-	};
++This documentation has moved; for a description of the devicetree bindings of
++this driver, please refer to ../timer/ingenic,tcu.txt.
+diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..65d125b460aa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+@@ -0,0 +1,147 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
++==========================================================
++
++For a description of the TCU hardware and drivers, have a look at
++Documentation/mips/ingenic-tcu.txt.
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-tcu
++  * ingenic,jz4725b-tcu
++  * ingenic,jz4770-tcu
++- reg: Should be the offset/length value corresponding to the TCU registers
++- #address-cells: Should be <1>;
++- #size-cells: Should be <1>;
++- ranges: Should be one range for the full TCU registers area
++- clocks: List of phandle & clock specifiers for clocks external to the TCU.
++  The "pclk", "rtc", "ext" and "tcu" clocks should be provided.
++- clock-names: List of name strings for the external clocks.
++- #clock-cells: Should be <1>;
++  Clock consumers specify this argument to identify a clock. The valid values
++  may be found in <dt-bindings/clock/ingenic,tcu.h>.
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value should be 1.
++- interrupt-parent : phandle of the interrupt controller.
++- interrupts : Specifies the interrupt the controller is connected to.
++
++Optional properties:
++
++- ingenic,timer-channel: Specifies the TCU channel that should be used as
++  system timer. If not provided, the TCU channel 0 is used for the system timer.
++
++- ingenic,clocksource-channel: Specifies the TCU channel that should be used
++  as clocksource and sched_clock. It must be a different channel than the one
++  used as system timer. If not provided, neither a clocksource nor a
++  sched_clock is instantiated.
++
++
++Children nodes
++==========================================================
++
++
++PWM node:
++---------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-pwm
++  * ingenic,jz4725b-pwm
++- #pwm-cells: Should be 3. See ../pwm/pwm.txt for a description of the cell
++  format.
++- clocks: List of phandle & clock specifiers for the TCU clocks.
++- clock-names: List of name strings for the TCU clocks.
++
++
++Watchdog node:
++--------------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-watchdog
++  * ingenic,jz4780-watchdog
++- clocks: phandle to the RTC clock
++- clock-names: should be "rtc"
++
++
++OST node:
++---------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4725b-ost
++  * ingenic,jz4770-ost
++- clocks: phandle to the OST clock
++- clock-names: should be "ost"
++- interrupts : Specifies the interrupt the OST is connected to.
++
++
++Example
++==========================================================
++
++#include <dt-bindings/clock/jz4770-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
++
++/ {
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_RTC
++			  &cgu JZ4770_CLK_EXT
++			  &cgu JZ4770_CLK_PCLK
++			  &cgu JZ4770_CLK_EXT>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4740-watchdog";
++			reg = <0x0 0x10>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0xff0>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
++
++		ost: timer@e0 {
++			compatible = "ingenic,jz4770-ost";
++			reg = <0xe0 0x20>;
++
++			clocks = <&tcu TCU_CLK_OST>;
++			clock-names = "ost";
++
++			interrupts = <15>;
++		};
++	};
++};
+diff --git a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+index ce1cb72d5345..b12ddc0c2b00 100644
+--- a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+@@ -1,17 +1,4 @@
+ Ingenic Watchdog Timer (WDT) Controller for JZ4740 & JZ4780
+ 
+-Required properties:
+-compatible: "ingenic,jz4740-watchdog" or "ingenic,jz4780-watchdog"
+-reg: Register address and length for watchdog registers
+-clocks: phandle to the RTC clock
+-clock-names: should be "rtc"
+-
+-Example:
+-
+-watchdog: jz4740-watchdog@10002000 {
+-	compatible = "ingenic,jz4740-watchdog";
+-	reg = <0x10002000 0x10>;
+-
+-	clocks = <&cgu JZ4740_CLK_RTC>;
+-	clock-names = "rtc";
+-};
++This documentation has moved; for a description of the devicetree bindings of
++this driver, please refer to ../timer/ingenic,tcu.txt.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
