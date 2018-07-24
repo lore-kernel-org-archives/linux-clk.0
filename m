@@ -1,183 +1,70 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	robin.murphy@arm.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/8] devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on suspend.
-Date: Mon, 30 Jul 2018 10:11:21 +0200
-Message-Id: <20180730081124.30698-6-enric.balletbo@collabora.com>
-In-Reply-To: <20180730081124.30698-1-enric.balletbo@collabora.com>
-References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 00/21] Ingenic JZ47xx TCU patchset v5
+Date: Wed, 25 Jul 2018 01:19:37 +0200
+Message-Id: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Derek Basehore <dbasehore@chromium.org>
+Hi,
 
-This disables the timeout for the DDR clk when the governor is
-suspended or stopped. This makes sure that the suspend frequency is
-set. It also makes sure that the userspace governor will be able to
-change the frequency without failing.
+This is the V5 of my patchset that adds support to the Timer/Counter
+Unit (TCU) present on Ingenic JZ47xx SoCs.
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Way too much has changed since V4, we went from 8 patches in V4 up to
+21 patches in V5.
+I did not know if I had to submit it as V5 or start a new series.
+In doubt, I sent a V5.
 
-Changes in v1: None
+Very succint description of the changes:
 
- drivers/clk/rockchip/clk-ddr.c    | 21 ++++++++++++++++++---
- drivers/devfreq/rk3399_dmc.c      | 20 +++++++++++++++-----
- drivers/devfreq/rk3399_dmc_priv.h |  1 +
- 3 files changed, 34 insertions(+), 8 deletions(-)
+- The interrupt, clocks, clocksource drivers have been merged into one;
+  ingenic-timer now inits the TCU clocks, handles the interrupts,
+  provides a system timer and optionally also a clocksource and
+  sched_clock. The TCU channel #0 will be used as system timer, unless
+  another channel is specified from devicetree.
 
-diff --git a/drivers/clk/rockchip/clk-ddr.c b/drivers/clk/rockchip/clk-ddr.c
-index 707be1bd8910..de00590af167 100644
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -32,6 +32,7 @@ struct rockchip_ddrclk {
- 	int		div_shift;
- 	int		div_width;
- 	int		ddr_flag;
-+	bool		timeout_en;
- 	unsigned long	cached_rate;
- 	struct work_struct set_rate_work;
- 	struct mutex	lock;
-@@ -52,8 +53,9 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 
- 	mutex_lock(&ddrclk->lock);
- 	for (i = 0; i < DDRCLK_SET_RATE_MAX_RETRIES; i++) {
--		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0, &timeout);
--		if (ret == NOTIFY_BAD)
-+		ret = raw_notifier_call_chain(&ddrclk->sync_chain, 0,
-+					      &timeout);
-+		if (ddrclk->timeout_en && ret == NOTIFY_BAD)
- 			goto out;
- 
- 		/*
-@@ -63,7 +65,8 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 		 * at the wrong time.
- 		 */
- 		local_irq_disable();
--		if (ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
-+		if (ddrclk->timeout_en &&
-+		    ktime_after(ktime_add_ns(ktime_get(), DMC_MIN_VBLANK_NS),
- 				timeout)) {
- 			local_irq_enable();
- 			continue;
-@@ -79,6 +82,17 @@ static void rockchip_ddrclk_set_rate_func(struct work_struct *work)
- 	mutex_unlock(&ddrclk->lock);
- }
- 
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable)
-+{
-+	struct clk_hw *hw = __clk_get_hw(clk);
-+	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
-+
-+	mutex_lock(&ddrclk->lock);
-+	ddrclk->timeout_en = enable;
-+	mutex_unlock(&ddrclk->lock);
-+}
-+EXPORT_SYMBOL(rockchip_ddrclk_set_timeout_en);
-+
- int rockchip_ddrclk_register_sync_nb(struct clk *clk, struct notifier_block *nb)
- {
- 	struct clk_hw *hw = __clk_get_hw(clk);
-@@ -232,6 +246,7 @@ struct clk *rockchip_clk_register_ddrclk(const char *name, int flags,
- 	ddrclk->div_shift = div_shift;
- 	ddrclk->div_width = div_width;
- 	ddrclk->ddr_flag = ddr_flag;
-+	ddrclk->timeout_en = true;
- 	mutex_init(&ddrclk->lock);
- 	INIT_WORK(&ddrclk->set_rate_work, rockchip_ddrclk_set_rate_func);
- 	RAW_INIT_NOTIFIER_HEAD(&ddrclk->sync_chain);
-diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-index b4ac9ee605be..323c888b542a 100644
---- a/drivers/devfreq/rk3399_dmc.c
-+++ b/drivers/devfreq/rk3399_dmc.c
-@@ -312,14 +312,18 @@ int rockchip_dmcfreq_register_clk_sync_nb(struct devfreq *devfreq,
- 	 * one notifier is not generally possible. Thus, if more than one sync
- 	 * notifier is registered, disable dmcfreq.
- 	 */
--	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		devfreq_suspend_device(devfreq);
-+	}
- 
- 	ret = rockchip_ddrclk_register_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0)
- 		dmcfreq->num_sync_nb++;
--	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+	else if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		devfreq_resume_device(devfreq);
-+	}
- 
- 	mutex_unlock(&dmcfreq->en_lock);
- 	return ret;
-@@ -336,8 +340,10 @@ int rockchip_dmcfreq_unregister_clk_sync_nb(struct devfreq *devfreq,
- 	ret = rockchip_ddrclk_unregister_sync_nb(dmcfreq->dmc_clk, nb);
- 	if (ret == 0) {
- 		dmcfreq->num_sync_nb--;
--		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0)
-+		if (dmcfreq->num_sync_nb == 1 && dmcfreq->disable_count <= 0) {
-+			rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 			devfreq_resume_device(devfreq);
-+		}
- 	}
- 
- 	mutex_unlock(&dmcfreq->en_lock);
-@@ -352,8 +358,10 @@ int rockchip_dmcfreq_block(struct devfreq *devfreq)
- 	int ret = 0;
- 
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count <= 0) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, false);
- 		ret = devfreq_suspend_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count++;
-@@ -369,8 +377,10 @@ int rockchip_dmcfreq_unblock(struct devfreq *devfreq)
- 	int ret = 0;
- 
- 	mutex_lock(&dmcfreq->en_lock);
--	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1)
-+	if (dmcfreq->num_sync_nb <= 1 && dmcfreq->disable_count == 1) {
-+		rockchip_ddrclk_set_timeout_en(dmcfreq->dmc_clk, true);
- 		ret = devfreq_resume_device(devfreq);
-+	}
- 
- 	if (!ret)
- 		dmcfreq->disable_count--;
-diff --git a/drivers/devfreq/rk3399_dmc_priv.h b/drivers/devfreq/rk3399_dmc_priv.h
-index 8ac0340a4990..1ad46f4b15cc 100644
---- a/drivers/devfreq/rk3399_dmc_priv.h
-+++ b/drivers/devfreq/rk3399_dmc_priv.h
-@@ -7,6 +7,7 @@
- #ifndef __RK3399_DMC_PRIV_H
- #define __RK3399_DMC_PRIV_H
- 
-+void rockchip_ddrclk_set_timeout_en(struct clk *clk, bool enable);
- void rockchip_ddrclk_wait_set_rate(struct clk *clk);
- int rockchip_ddrclk_register_sync_nb(struct clk *clk,
- 				     struct notifier_block *nb);
--- 
-2.18.0
+- The simple-mfd and syscon are gone. The ingenic-timer driver will
+  probe the drivers registered as children in the devicetree.
+
+- The watchdog driver was updated to use the WDT clock and regmap
+  provided by ingenic-timer. This breaks the devicetree ABI, but as
+  explained in the corresponding commit message, right now all Ingenic
+  boards compile the devicetree into the kernel anyway - so it's better
+  to update it now before it's too late.
+
+- The PWM driver was updated to use the TCU timer clocks as well as the
+  regmap provided by ingenic-timer. Unused devicetree compatible strings
+  were removed (the driver was never probed from devicetree), and
+  support for the JZ4725B has been added.
+
+- A new ingenic-ost driver was added, which provides a clocksource and
+  a sched_clock that are more accurate than the ones provided by
+  ingenic-timer (32 or 64-bit vs. 16-bit). It is not available on every
+  SoC.
+
+- Mostly tested on the JZ4725B and JZ4770. It would be great if somebody
+  could test on the JZ4780 and JZ4740.
+
+Thanks,
+-Paul
