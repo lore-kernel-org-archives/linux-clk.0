@@ -1,25 +1,61 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Paul Cercueil <paul@crapouillou.net>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180627121459.13987-1-paul@crapouillou.net>
-Cc: Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Paul Cercueil <paul@crapouillou.net>
-References: <20180627121459.13987-1-paul@crapouillou.net>
-Message-ID: <153090935111.143105.11886484624639527247@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: ingenic: Fix incorrect data for the i2s clock
-Date: Fri, 06 Jul 2018 13:35:51 -0700
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 7/8] clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+Date: Tue, 24 Jul 2018 19:42:20 +0300
+Message-Id: <20180724164221.3307-8-digetx@gmail.com>
+In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
+References: <20180724164221.3307-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-06-27 05:14:58)
-> The register field for configuring the divider for the i2s clock
-> occupies the bits [8-0], which means 9 bits and not 8.
-> =
+Ensure that direct PLLM sourcing is turned off for EMC as we don't support
+that configuration in the clk driver.
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Applied to clk-next
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 68551effb5ca..c71b61162a32 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -800,7 +800,9 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 
+ static void __init tegra20_emc_clk_init(void)
+ {
++	const u32 use_pllm_ud = BIT(29);
+ 	struct clk *clk;
++	u32 emc_reg;
+ 
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+@@ -812,6 +814,14 @@ static void __init tegra20_emc_clk_init(void)
+ 				    &emc_lock);
+ 	clks[TEGRA20_CLK_MC] = clk;
+ 
++	/* un-divided pll_m_out0 is currently unsupported */
++	emc_reg = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++	if (emc_reg & use_pllm_ud) {
++		pr_err("%s: un-divided PllM_out0 used as clock source\n",
++		       __func__);
++		return;
++	}
++
+ 	/*
+ 	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
+ 	 * the same time due to a HW bug, this won't happen because we're
+-- 
+2.18.0
