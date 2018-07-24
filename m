@@ -1,51 +1,112 @@
-Return-Path: <l.stach@pengutronix.de>
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thierry Reding <thierry.reding@gmail.com>,
 	Rob Herring <robh+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-	kernel@pengutronix.de,
-	linux-imx@nxp.com,
-	linux-clk@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lee Jones <lee.jones@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+	linux-pwm@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	patchwork-lst@pengutronix.de
-Subject: [PATCH 1/3] clk: imx6q: reset exclusive gates on init
-Date: Tue, 31 Jul 2018 12:20:07 +0200
-Message-Id: <20180731102009.6710-1-l.stach@pengutronix.de>
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v5 13/21] pwm: jz4740: Add support for the JZ4725B
+Date: Wed, 25 Jul 2018 01:19:50 +0200
+Message-Id: <20180724231958.20659-14-paul@crapouillou.net>
+In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
+References: <20180724231958.20659-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+The PWM in the JZ4725B works the same as in the JZ4740, except that it
+only has 6 channels available instead of 8.
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-jz4740.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index b9ea7037e193..9059a369ae95 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -515,8 +515,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+ v5: New patch
+
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index e1cb618bb234..b19437c75232 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -26,6 +26,10 @@
  
+ #define NUM_PWM 8
+ 
++struct jz4740_soc_info {
++	unsigned int num_pwms;
++};
++
+ struct jz4740_pwm_chip {
+ 	struct pwm_chip chip;
+ 	struct clk *clks[NUM_PWM];
+@@ -195,8 +199,26 @@ static const struct pwm_ops jz4740_pwm_ops = {
+ 	.owner = THIS_MODULE,
+ };
+ 
++static const struct jz4740_soc_info jz4740_soc_info = {
++	.num_pwms = 8,
++};
++
++static const struct jz4740_soc_info jz4725b_soc_info = {
++	.num_pwms = 6,
++};
++
++#ifdef CONFIG_OF
++static const struct of_device_id jz4740_pwm_dt_ids[] = {
++	{ .compatible = "ingenic,jz4740-pwm", .data = &jz4740_soc_info },
++	{ .compatible = "ingenic,jz4725b-pwm", .data = &jz4725b_soc_info },
++	{},
++};
++MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
++#endif
++
+ static int jz4740_pwm_probe(struct platform_device *pdev)
+ {
++	const struct jz4740_soc_info *soc_info;
+ 	struct jz4740_pwm_chip *jz4740;
+ 	struct device *dev = &pdev->dev;
+ 
+@@ -213,9 +235,11 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(jz4740->map))
+ 		return PTR_ERR(jz4740->map);
+ 
++	soc_info = of_device_get_match_data(dev);
++
+ 	jz4740->chip.dev = dev;
+ 	jz4740->chip.ops = &jz4740_pwm_ops;
+-	jz4740->chip.npwm = NUM_PWM;
++	jz4740->chip.npwm = soc_info->num_pwms;
+ 	jz4740->chip.base = -1;
+ 	jz4740->chip.of_xlate = of_pwm_xlate_with_flags;
+ 	jz4740->chip.of_pwm_n_cells = 3;
+@@ -232,14 +256,6 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
+ 	return pwmchip_remove(&jz4740->chip);
+ }
+ 
+-#ifdef CONFIG_OF
+-static const struct of_device_id jz4740_pwm_dt_ids[] = {
+-	{ .compatible = "ingenic,jz4740-pwm", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
+-#endif
+-
+ static struct platform_driver jz4740_pwm_driver = {
+ 	.driver = {
+ 		.name = "jz4740-pwm",
 -- 
-2.18.0
+2.11.0
