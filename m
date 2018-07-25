@@ -1,53 +1,42 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v5] Add display clock controller driver for SDM845
-Date: Mon, 23 Jul 2018 16:24:34 +0530
-Message-Id: <1532343275-7027-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:38038 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729354AbeGYU1Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Jul 2018 16:27:25 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] clk: renesas: r8a77965: Add SATA clock
+Date: Wed, 25 Jul 2018 21:14:17 +0200
+Message-Id: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
- [v5]
-  * Initialize pll config before assigining l/alpha values for
-    pll configure.
-  * Add module description.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
- [v4]
-  * Add comments for the RCGs/CBCRs using the CLK_GET_RATE_NOCACHE flag.
+This patch adds SATA clock to the R8A77965 SoC.
 
- [v3]
-  * Move frequency table macro to common file,
-    add the patch along to maintain dependency.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[wsa: rebased to upstream base]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- [v2]
-  * Removed unused header file includes.
-  * Moved the frequency table macro to a common file [1].
-  * Move to pll config to probe.
-  * Update SoC name in device tree binding and
-    also update the Kconfig.
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index 8fae5e9c4a77..98c97f2cc7cb 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -192,6 +192,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
+ 	DEF_MOD("vin1",			810,	R8A77965_CLK_S0D2),
+ 	DEF_MOD("vin0",			811,	R8A77965_CLK_S0D2),
+ 	DEF_MOD("etheravb",		812,	R8A77965_CLK_S0D6),
++	DEF_MOD("sata0",		815,	R8A77965_CLK_S3D2),
+ 	DEF_MOD("imr1",			822,	R8A77965_CLK_S0D2),
+ 	DEF_MOD("imr0",			823,	R8A77965_CLK_S0D2),
+ 
+-- 
+2.11.0
 
-Add support for the display clock controller found on SDM845
-based devices. This would allow display drivers to probe and
-control their clocks.
-
-Taniya Das (1):
-  clk: qcom: Add display clock controller driver for SDM845
-
- drivers/clk/qcom/Kconfig         |  10 +
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/dispcc-sdm845.c | 687 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 698 insertions(+)
- create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
