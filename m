@@ -1,127 +1,34 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 8/9] clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
-Date: Sat, 28 Jul 2018 00:15:26 +0530
-Message-Id: <20180727184527.13287-9-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
+ Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Paul Burton <paul.burton@mips.com>, Paul Cercueil <paul@crapouillou.net>,
+ Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180724231958.20659-15-paul@crapouillou.net>
+Cc: Paul Cercueil <paul@crapouillou.net>, linux-pwm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-mips@linux-mips.org,
+ linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20180724231958.20659-1-paul@crapouillou.net>
+ <20180724231958.20659-15-paul@crapouillou.net>
+Message-ID: <153256143066.48062.8671703408424915070@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 14/21] clk: jz4740: Add TCU clock
+Date: Wed, 25 Jul 2018 16:30:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Reset Management Unit (RMU) support for Actions Semi S700 SoC.
+Quoting Paul Cercueil (2018-07-24 16:19:51)
+> Add the missing TCU clock to the list of clocks supplied by the CGU for
+> the JZ4740 SoC.
+> =
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/owl-s700.c | 51 ++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-index e7cacd677275..d9c0c7870135 100644
---- a/drivers/clk/actions/owl-s700.c
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -20,8 +20,10 @@
- #include "owl-gate.h"
- #include "owl-mux.h"
- #include "owl-pll.h"
-+#include "owl-reset.h"
- 
- #include <dt-bindings/clock/actions,s700-cmu.h>
-+#include <dt-bindings/reset/actions,s700-reset.h>
- 
- #define CMU_COREPLL		(0x0000)
- #define CMU_DEVPLL		(0x0004)
-@@ -569,20 +571,69 @@ static struct clk_hw_onecell_data s700_hw_clks = {
- 		.num    = CLK_NR_CLKS,
- };
- 
-+static struct owl_reset_map s700_resets[] = {
-+	[RESET_DE]	= { CMU_DEVRST0, BIT(0) },
-+	[RESET_LCD0]	= { CMU_DEVRST0, BIT(1) },
-+	[RESET_DSI]	= { CMU_DEVRST0, BIT(2) },
-+	[RESET_CSI]	= { CMU_DEVRST0, BIT(13) },
-+	[RESET_SI]	= { CMU_DEVRST0, BIT(14) },
-+	[RESET_I2C0]	= { CMU_DEVRST1, BIT(0) },
-+	[RESET_I2C1]	= { CMU_DEVRST1, BIT(1) },
-+	[RESET_I2C2]	= { CMU_DEVRST1, BIT(2) },
-+	[RESET_I2C3]	= { CMU_DEVRST1, BIT(3) },
-+	[RESET_SPI0]	= { CMU_DEVRST1, BIT(4) },
-+	[RESET_SPI1]	= { CMU_DEVRST1, BIT(5) },
-+	[RESET_SPI2]	= { CMU_DEVRST1, BIT(6) },
-+	[RESET_SPI3]	= { CMU_DEVRST1, BIT(7) },
-+	[RESET_UART0]	= { CMU_DEVRST1, BIT(8) },
-+	[RESET_UART1]	= { CMU_DEVRST1, BIT(9) },
-+	[RESET_UART2]	= { CMU_DEVRST1, BIT(10) },
-+	[RESET_UART3]	= { CMU_DEVRST1, BIT(11) },
-+	[RESET_UART4]	= { CMU_DEVRST1, BIT(12) },
-+	[RESET_UART5]	= { CMU_DEVRST1, BIT(13) },
-+	[RESET_UART6]	= { CMU_DEVRST1, BIT(14) },
-+	[RESET_KEY]	= { CMU_DEVRST1, BIT(24) },
-+	[RESET_GPIO]	= { CMU_DEVRST1, BIT(25) },
-+	[RESET_AUDIO]	= { CMU_DEVRST1, BIT(29) },
-+};
-+
- static struct owl_clk_desc s700_clk_desc = {
- 	.clks       = s700_clks,
- 	.num_clks   = ARRAY_SIZE(s700_clks),
- 
- 	.hw_clks    = &s700_hw_clks,
-+
-+	.resets     = s700_resets,
-+	.num_resets = ARRAY_SIZE(s700_resets),
- };
- 
- static int s700_clk_probe(struct platform_device *pdev)
- {
- 	struct owl_clk_desc *desc;
-+	struct owl_reset *reset;
-+	int ret;
- 
- 	desc = &s700_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
- 
-+	/*
-+	 * FIXME: Reset controller registration should be moved to
-+	 * common code, once all SoCs of Owl family supports it.
-+	 */
-+	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	reset->rcdev.of_node = pdev->dev.of_node;
-+	reset->rcdev.ops = &owl_reset_ops;
-+	reset->rcdev.nr_resets = desc->num_resets;
-+	reset->reset_map = desc->resets;
-+	reset->regmap = desc->regmap;
-+
-+	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to register reset controller\n");
-+
- 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
- }
- 
--- 
-2.17.1
+Acked-by: Stephen Boyd <sboyd@kernel.org>
