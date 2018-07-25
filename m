@@ -1,54 +1,57 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Subject: [PATCH 0/5] support a new type of PMIC，including two chips(rk817 and rk809)
-Date: Tue, 31 Jul 2018 14:56:28 +0800
-Message-Id: <1533020197-754-1-git-send-email-tony.xie@rock-chips.com>
-MIME-Version: 1.0
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
- alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
- huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
- zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
- linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- chenjh@rock-chips.com
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+MIME-Version: 1.0
+To: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CADHB5bAns1PmTvq=fG8Rc2S6orEh7wf5XYAGQONTKMsoYv-UTg@mail.gmail.com>
+Cc: mark.rutland@arm.com, support@cubietech.com,
+ Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>, linux@cubietech.com,
+ darren@cubietech.com,
+ =?utf-8?q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+ catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, mkzuffo@lsi.usp.br,
+ linux@armlinux.org.uk, will.deacon@arm.com, jeff.chen@actions-semi.com,
+ robh+dt@kernel.org, thomas liau <thomas.liau@actions-semi.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, pn@denx.de,
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Jon maddog Hall <jon.maddog.hall@gmail.com>, mp-cs@actions-semi.com
+References: <CADHB5bAns1PmTvq=fG8Rc2S6orEh7wf5XYAGQONTKMsoYv-UTg@mail.gmail.com>
+Message-ID: <153249966379.48062.8866967540355341765@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1 01/04] clk: actions: Add Actions Semi S500 SoC clock support
+Date: Tue, 24 Jul 2018 23:21:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-TW9zdCBvZiBmdW5jdGlvbnMgYW5kIHJlZ2lzdGVycyBvZiB0aGUgcms4MTcgYW5kIHJrODA4IGFy
-ZSB0aGUgc2FtZSwKc28gdGhleSBjYW4gc2hhcmUgYWxsbW9zdCBhbGwgY29kZXMuCgpUaGVpciBz
-cGVjaWZpY2F0aW9ucyBhcmUgYXMgZm9sbG93c++8mgogIDEpIFRoZSBSSzgwOSBhbmQgUks4MDkg
-Y29uc2lzdCBvZiA1IERDRENzLCA5IExET3MgYW5kIGhhdmUgdGhlIHNhbWUgcmVnaXN0ZXJzCiAg
-ICAgZm9yIHRoZXNlIGNvbXBvbmVudHMgZXhjZXB0IGRjZGM1LgogIDIpIFRoZSBkY2RjNSBpcyBh
-IGJvb3N0IGRjZGMgZm9yIFJLODE3IGFuZCBpcyBhIGJ1Y2sgZm9yIFJLODA5LgogIDMpIFRoZSBS
-SzgxNyBoYXMgb25lIHN3aXRjaCBidXQgVGhlIFJrODA5IGhhcyB0d28uCgpUb255IFhpZSAoNSk6
-CiAgbWZkOiByazgwODogQWRkIFJLODE3IGFuZCBSSzgwOSBzdXBwb3J0CiAgcmVndWxhdG9yOiBy
-azgwODogYWRkIFJLODA5IGFuZCBSSzgxNyBzdXBwb3J0LgogIGR0LWJpbmRpbmdzOiBtZmQ6IHJr
-ODA4OiBBZGQgYmluZGluZyBpbmZvcm1hdGlvbnMgZm9yIFJLODA5IGFuZCBSSzgxNy4KICBSVEM6
-IFJLODA4OiBhZGQgUks4MDkgYW5kIFJLODE3IHN1cHBvcnQuCiAgY2xrOiBSSzgwODogYWRkIFJL
-ODA5IGFuZCBSSzgxNyBzdXBwb3J0LgoKIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9tZmQvcms4MDgudHh0IHwgIDU1ICsrCiBkcml2ZXJzL2Nsay9LY29uZmlnICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8ICAgNiArLQogZHJpdmVycy9jbGsvY2xrLXJrODA4LmMgICAgICAg
-ICAgICAgICAgICAgICAgICAgfCAgNjIgKystCiBkcml2ZXJzL21mZC9LY29uZmlnICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAgNiArLQogZHJpdmVycy9tZmQvcms4MDguYyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAyMTggKysrKysrKy0KIGRyaXZlcnMvcmVndWxhdG9yL0tj
-b25maWcgICAgICAgICAgICAgICAgICAgICAgIHwgICA0ICstCiBkcml2ZXJzL3JlZ3VsYXRvci9y
-azgwOC1yZWd1bGF0b3IuYyAgICAgICAgICAgICB8IDYzMyArKysrKysrKysrKysrKysrKysrKysr
-Ky0KIGRyaXZlcnMvcnRjL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA0
-ICstCiBkcml2ZXJzL3J0Yy9ydGMtcms4MDguYyAgICAgICAgICAgICAgICAgICAgICAgICB8ICA2
-OCArKy0KIGluY2x1ZGUvbGludXgvbWZkL3JrODA4LmggICAgICAgICAgICAgICAgICAgICAgIHwg
-MTc1ICsrKysrKysKIGtlcm5lbC9yZWJvb3QuYyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgICAxICsKIDExIGZpbGVzIGNoYW5nZWQsIDEyMDMgaW5zZXJ0aW9ucygrKSwgMjkgZGVs
-ZXRpb25zKC0pCgotLSAKMS45LjEKCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
-YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+Quoting Edgar Bernardi Righi (2018-07-18 08:32:34)
+> Add Actions Semi S500 SoC clock support.
+> Basic clock support for S500 SoC was implemented using the Actions
+> Semi Owl clock driver.
+> Tested on a Lemaker Guitar board.
+> =
+
+> This patch depends on patch "[PATCH v6 1/5] clk: actions: Add missing
+> REGMAP_MMIO dependency" by Saravanan Sekar.
+> This patch depends on patch "[PATCH] clk: actions: Add custom delay
+> option to Actions Semi OWL pll clock driver" by Edgar Bernardi Righi.
+
+The depends list can be left out of the commit text and go below a
+triple dash '---' after the sign-off chain.
+
+> =
+
+> File(s) created: "/drivers/clk/actions/owl-s500.c"
+> File(s) updated: "/drivers/clk/actions/Makefile", "/drivers/clk/actions/K=
+config"
+
+Please remove these "Files created" messages from your patches.
+Preferably use git to format your patches before sending too, but using
+diff is OK too I guess.
+
+> =
+
+> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+> =
+
+> diff -uprN -X vanilla/Documentation/dontdiff
+> vanilla/drivers/clk/actions/Kconfig linux/drivers/clk/actions/Kconfig
