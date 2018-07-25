@@ -1,58 +1,67 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/11] clk: renesas: r8a77980: Add RCLK for watchdog timer
-Date: Wed, 11 Jul 2018 16:21:00 +0200
-Message-Id: <20180711142100.3765-12-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ John Crispin <john@phrozen.org>, Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180723142314.1183-1-john@phrozen.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, Christian Lamparter <chunkeey@googlemail.com>,
+ Christian Lamparter <chunkeey@gmail.com>, John Crispin <john@phrozen.org>
+References: <20180723142314.1183-1-john@phrozen.org>
+Message-ID: <153256230312.48062.3889968337420324100@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: fix apss cpu overclocking
+Date: Wed, 25 Jul 2018 16:45:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On R-Car V3H, RCLK can be switched between EXTALR and the On-Chip
-Oscillator using mode pin MD19.
+Quoting John Crispin (2018-07-23 07:23:14)
+> From: Christian Lamparter <chunkeey@googlemail.com>
+> =
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-As Figure 8.1e "Block Diagram of CPG (R-Car V3H)" does not show any
-divider after the On-Chip Oscillator, I assume the OCO runs at 32768 Hz.
----
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> There's an interaction issue between the clk changes:"
+> clk: qcom: ipq4019: Add the apss cpu pll divider clock node
+> clk: qcom: ipq4019: remove fixed clocks and add pll clocks
+> " and the cpufreq-dt.
+> =
 
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index 093677b8927800fa..122d722aca2db7d4 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -41,6 +41,7 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_OCO,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE
-@@ -98,6 +99,8 @@ static const struct cpg_core_clk r8a77980_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",	R8A77980_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
- 
- 	DEF_GEN3_OSC("osc",	R8A77980_CLK_OSC,   CLK_EXTAL,     8),
-+	DEF_RATE("oco",		CLK_OCO,            32768),
-+	DEF_GEN3_MDSEL("r",	R8A77980_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
- };
- 
- static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
-@@ -119,6 +122,7 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
- 	DEF_MOD("tpu0",			 304,	R8A77980_CLK_S3D4),
- 	DEF_MOD("sdif",			 314,	R8A77980_CLK_SD0),
- 	DEF_MOD("pciec0",		 319,	R8A77980_CLK_S2D2),
-+	DEF_MOD("rwdt",			 402,	R8A77980_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A77980_CLK_CP),
- 	DEF_MOD("intc-ap",		 408,	R8A77980_CLK_S0D3),
- 	DEF_MOD("hscif3",		 517,	R8A77980_CLK_S3D1),
--- 
-2.17.1
+> cpufreq-dt is now spamming the kernel-log with the following:
+> =
+
+> [ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
+> for freq 761142857 (-34)
+> =
+
+> This only happens on certain devices like the Compex WPJ428
+> and AVM FritzBox!4040. However, other devices like the Asus
+> RT-AC58U and Meraki MR33 work just fine.
+> =
+
+> The issue stem from the fact that all higher CPU-Clocks
+> are achieved by switching the clock-parent to the P_DDRPLLAPSS
+> (ddrpllapss). Which is set by Qualcomm's proprietary bootcode
+> as part of the DDR calibration.
+> =
+
+> For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
+> at round 533 MHz (ddrpllsdcc =3D 190285714 Hz).
+> =
+
+> whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
+> clocked at a slightly higher 537 MHz ( ddrpllsdcc =3D 192000000 Hz).
+> =
+
+> This patch attempts to fix the issue by modifying
+> clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate=
+()
+> to use a new qcom_find_freq_close() function, which returns the closest
+> matching frequency, instead of the next higher. This way, the SoC in
+> the FB4040 (with its max clock speed of 710.4 MHz) will no longer
+> try to overclock to 761 MHz.
+> =
+
+> Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clo=
+ck node")
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: John Crispin <john@phrozen.org>
+
+Why can't you specify the right frequency in the OPP tables?
