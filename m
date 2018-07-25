@@ -1,58 +1,83 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 05/18] dt-bindings: display: Add compatible for A64 HDMI
-Date: Wed, 18 Jul 2018 16:24:45 +0530
-Message-Id: <20180718105458.22304-6-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 25 Jul 2018 14:07:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: narmstrong@baylibre.com, jbrunet@baylibre.com, mark.rutland@arm.com,
+	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, carlo@caione.org,
+	khilman@baylibre.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: clock: meson8b: use the registers from
+ the HHI syscon
+Message-ID: <20180725200755.GA24555@rob-hp-laptop>
+References: <20180721192846.18811-1-martin.blumenstingl@googlemail.com>
+ <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-HDMI on Allwinner A64 has similar like H3/H5/A83T.
+On Sat, Jul 21, 2018 at 09:28:44PM +0200, Martin Blumenstingl wrote:
+> The clock controller on Meson8/Meson8m2 and Meson8b is part of a
+> register region called "HHI". This register area contains more
+> functionality than just a clock controller:
+> - the clock controller
+> - some reset controller bits
+> - temperature sensor calibration data (on Meson8b and Meson8m2 only)
+> - HDMI controller
+> 
+> The HHI register area may be accessed concurrently. Allow this by using
+> a "system controller" as parent node.
 
-Add compatible a64 and update A83T compatible as fallback.
+Why? A single node can be a provider of multiple things. Maybe the HDMI 
+should be a child since it will involve graph nodes, but the rest can be 
+one node. There should be numerous examples of blocks that are clock and 
+reset controllers.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes for v3:
-- collect Rob r-w-b tag
-Changes for v2:
-- Add fallback compatible
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../bindings/clock/amlogic,meson8b-clkc.txt         | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> index b455c5aa9139..38fb979210d3 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+> @@ -9,15 +9,13 @@ Required Properties:
+>  	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
+>  	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
+>  	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
+> -- reg: it must be composed by two tuples:
+> -	0) physical base address of the xtal register and length of memory
+> -	   mapped region.
+> -	1) physical base address of the clock controller and length of memory
+> -	   mapped region.
+> -
+>  - #clock-cells: should be 1.
+>  - #reset-cells: should be 1.
+>  
+> +Parent node should have the following properties :
+> +- compatible: "syscon", "simple-mfd"
 
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
- 1 file changed, 1 insertion(+)
+These 2 compatibles alone are not valid.
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 3594378fbe72..10b3c77833c2 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
- 
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-a64-dw-hdmi", "allwinner,sun8i-a83t-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
--- 
-2.17.1
+> +- reg: base address and size of the HHI system control register space.
+> +
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+>  preprocessor macros in the dt-bindings/clock/meson8b-clkc.h header and can be
+> @@ -30,9 +28,8 @@ device tree sources).
+>  
+>  Example: Clock controller node:
+>  
+> -	clkc: clock-controller@c1104000 {
+> +	clkc: clock-controller {
+>  		compatible = "amlogic,meson8b-clkc";
+> -		reg = <0xc1108000 0x4>, <0xc1104000 0x460>;
+>  		#clock-cells = <1>;
+>  		#reset-cells = <1>;
+>  	};
+> -- 
+> 2.18.0
+> 
