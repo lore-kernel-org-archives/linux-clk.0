@@ -1,74 +1,85 @@
 Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+From: sboyd@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.18-rc6
+Date: Wed, 25 Jul 2018 10:08:07 -0700
+Message-Id: <20180725170807.12780-1-sboyd@kernel.org>
 MIME-Version: 1.0
-To: Marcel Ziswiler <marcel@ziswiler.com>, Peter Geis <pgwipeout@gmail.com>,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <20180720075422.26563-1-marcel@ziswiler.com>
- <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
- <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
-Message-ID: <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-Date: Thu, 26 Jul 2018 00:31:22 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Peter Geis (2018-07-25 16:42:34)
-> On 7/25/2018 7:24 PM, Stephen Boyd wrote:
-> > Quoting Marcel Ziswiler (2018-07-20 00:54:22)
-> >> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >>
-> >> Actually report the error code from devm_regulator_get() which may as
-> >> well just be a probe deferral.
-> >>
-> >> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >>
-> >> ---
-> >>
-> >>   drivers/clk/tegra/clk-dfll.c | 5 +++--
-> >>   1 file changed, 3 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll=
-.c
-> >> index 48ee43734e05..b2123084e175 100644
-> >> --- a/drivers/clk/tegra/clk-dfll.c
-> >> +++ b/drivers/clk/tegra/clk-dfll.c
-> >> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *=
-pdev,
-> >>   =
+From: Stephen Boyd <sboyd@kernel.org>
 
-> >>          td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
-> >>          if (IS_ERR(td->vdd_reg)) {
-> >> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
-> >> -               return PTR_ERR(td->vdd_reg);
-> >> +               ret =3D PTR_ERR(td->vdd_reg);
-> >> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n=
-", ret);
-> > =
+The following changes since commit 9cc63791fad6d2624878c93f3415da77780e68a7:
 
-> > Do you want to know that a probe defer is happening? Usually patches are
-> > sent to make that error path silent.
-> > =
+  Merge branch 'clk-fix-imx6ul-defs' into clk-fixes (2018-06-29 11:40:29 -0700)
 
-> =
+are available in the Git repository at:
 
-> Just asking as the newbie here, but shouldn't probe deferral be =
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-> regulated to dev_debug?
-> Then pass any other error code as dev_err.
+for you to fetch changes up to 565b9937f44d5ab7956339b6c105c03471ce3243:
 
-Yes probe defer should be relegated to debug level prints. Or really, we
-should introduce a more complicated system to make debugging probe defer
-errors simpler by informing us which driver is probe defering on what
-resource by putting debug prints in each framework that returns probe
-defer errors instead of updating each driver that uses these frameworks
-and thinks it needs to print errors in these cases. And hide all that
-behind some kernel commandline parameter and/or Kconfig option that lets
-us turn the prints off all the time if we're not developing drivers or
-testing things.
+  clk: aspeed: Support HPLL strapping on ast2400 (2018-07-11 09:34:25 -0700)
+
+----------------------------------------------------------------
+One more round of updates for problems seen this -rc series. Drivers fixes
+are:
+
+ - Amlogic Meson audio divider fix and CPU clk critical marking
+
+ - Qualcomm multimedia GDSC marked as 'always on' to keep display working
+
+ - Aspeed fixes for critical clks, resets causing clks to stay disabled, and
+   an incorrect HPLL frequency calculation
+
+ - Marvell Armada 3700 cpu clks would undervolt when switching from low
+   frequencies to high frequencies because the voltage didn't stabilize in
+   time so now we switch to an intermediate frequency
+
+Plus we have a core framework thinko that messed up the debugfs flag
+printing logic to make it not very useful.
+
+----------------------------------------------------------------
+Benjamin Herrenschmidt (1):
+      clk: aspeed: Treat a gate in reset as disabled
+
+Geert Uytterhoeven (1):
+      clk: Really show symbolic clock flags in debugfs
+
+Gregory CLEMENT (1):
+      clk: mvebu: armada-37xx-periph: Fix switching CPU rate from 300Mhz to 1.2GHz
+
+Jerome Brunet (1):
+      clk: meson: audio-divider is one based
+
+Joel Stanley (2):
+      clk: aspeed: Mark bclk (PCIe) and dclk (VGA) as critical
+      clk: aspeed: Support HPLL strapping on ast2400
+
+Neil Armstrong (1):
+      clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+
+Stephen Boyd (1):
+      Merge tag 'meson-clk-fixes-4.18-1' of https://github.com/BayLibre/clk-meson into clk-fixes
+
+Vinod Koul (1):
+      clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
+
+Vivek Gautam (1):
+      clk/mmcc-msm8996: Make mmagic_bimc_gdsc ALWAYS_ON
+
+ drivers/clk/clk-aspeed.c               | 59 +++++++++++++++++++++++++---------
+ drivers/clk/clk.c                      |  3 +-
+ drivers/clk/meson/clk-audio-divider.c  |  2 +-
+ drivers/clk/meson/gxbb.c               |  1 +
+ drivers/clk/mvebu/armada-37xx-periph.c | 38 ++++++++++++++++++++++
+ drivers/clk/qcom/gcc-msm8996.c         |  1 +
+ drivers/clk/qcom/mmcc-msm8996.c        |  1 +
+ 7 files changed, 87 insertions(+), 18 deletions(-)
+
+-- 
+Sent by a computer through tubes
