@@ -1,88 +1,35 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v7 0/5] Add clock driver for Actions S700 SoC
-Date: Thu, 19 Jul 2018 11:06:44 +0200
-Message-Id: <20180719090649.12460-1-sravanhome@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Aapo Vienamo <avienamo@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531396382-5579-3-git-send-email-avienamo@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Aapo Vienamo <avienamo@nvidia.com>
+References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+ <1531396382-5579-3-git-send-email-avienamo@nvidia.com>
+Message-ID: <153255146921.48062.14760155393216024736@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 2/4] clk: tegra: Refactor fractional divider calculation
+Date: Wed, 25 Jul 2018 13:44:29 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds clock support for Actions Semi Owl series S700 SoC
-with relevant clock bindings and device tree info. 
+Quoting Aapo Vienamo (2018-07-12 04:53:00)
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> =
 
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
+> Move this to a separate file so it can be used to calculate the sdmmc
+> clock dividers.
+> =
 
-Changelog v7:
-- Moved cmu (clock controller) dts entry under soc node and
-positioned based on address
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-Changelog v6:
-- Adding Fixes tag for adding REGMAP dependency addition
-
-Changelog v5:
-- Commit message corrections
-- Removed MMC_OWL_CLK_NANDPLL option, as no active consumer
-- Device tree clock label name correction
-
-Changelog v4:
-- dt-bindings use absolute numbering for clocks
-- Patch re-oredering
-
-Changelog v3:
-- Splitted uart clock DTS changes into separate patch
-- Splitted REGMAP Kconfig selection into separate patch
-- General naming convention as "Actions Semi" in dt-binding documentation
-- Patch re-oredering
-- Cleanup and fixed review findings
-
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
-
-Thanks and regards,
-Saravanan,
-Parthiban
-
-
-Saravanan Sekar (5):
-  clk: actions: Add missing REGMAP_MMIO dependency
-  dt-bindings: clock: Add S700 support for Actions Semi Soc's
-  clk: actions: Add S700 SoC clock support
-  arm64: dts: actions: Add Clock Management Unit for S700
-  arm64: dts: actions: Set UART clock reference from CMU
-
- .../{actions,s900-cmu.txt => actions,owl-cmu.txt}  |  20 +-
- arch/arm64/boot/dts/actions/s700-cubieboard7.dts   |   8 +-
- arch/arm64/boot/dts/actions/s700.dtsi              |  14 +
- drivers/clk/actions/Kconfig                        |   7 +
- drivers/clk/actions/Makefile                       |   1 +
- drivers/clk/actions/owl-s700.c                     | 606 +++++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h       | 118 ++++
- 7 files changed, 758 insertions(+), 16 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-
--- 
-2.14.4
+Applied to clk-next
