@@ -1,68 +1,25 @@
-Return-Path: <yibin.gong@nxp.com>
-From: Robin Gong <yibin.gong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>
-CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez
-	<leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell
- King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>, "A.s. Dong"
-	<aisheng.dong@nxp.com>
-Subject: RE: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on power
- off option
-Date: Fri, 27 Jul 2018 09:33:28 +0000
-Message-ID: 
- <DB6PR04MB3223FA7B91D0D43B2EC1EE2A892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-7-o.rempel@pengutronix.de>
-In-Reply-To: <20180726092220.17250-7-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset="gb2312"
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531720472-13093-1-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1531720472-13093-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <153253608315.48062.4678853048610822402@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: qcom: Update SPDX headers for common files
+Date: Wed, 25 Jul 2018 09:28:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogT2xla3NpaiBSZW1wZWwg
-W21haWx0bzpvLnJlbXBlbEBwZW5ndXRyb25peC5kZV0NCj4gU2VudDogMjAxOMTqN9TCMjbI1SAx
-NzoyMg0KPiBUbzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgTWFyayBCcm93biA8
-YnJvb25pZUBrZXJuZWwub3JnPjsNCj4gUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29j
-a2lAaW50ZWwuY29tPg0KPiBDYzogT2xla3NpaiBSZW1wZWwgPG8ucmVtcGVsQHBlbmd1dHJvbml4
-LmRlPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1jbGtAdmdl
-ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBBbmRyZXcgTW9ydG9u
-DQo+IDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgTGlhbSBHaXJkd29vZCA8bGdpcmR3b29k
-QGdtYWlsLmNvbT47DQo+IExlb25hcmQgQ3Jlc3RleiA8bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+
-OyBSb2IgSGVycmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJr
-LnJ1dGxhbmRAYXJtLmNvbT47IE1pY2hhZWwNCj4gVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxp
-YnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBGYWJpbyBF
-c3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSdXNzZWxsDQo+IEtpbmcgPGxpbnV4QGFy
-bWxpbnV4Lm9yZy51az47IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+OyBSb2JpbiBH
-b25nDQo+IDx5aWJpbi5nb25nQG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAu
-Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0ggdjggNi82XSBBUk06IGR0czogaW14NjogUklvVGJvYXJk
-IHByb3ZpZGUgc3RhbmRieSBvbiBwb3dlcg0KPiBvZmYgb3B0aW9uDQo+IA0KPiBUaGlzIGJvYXJk
-LCBhcyB3ZWxsIGFzIHNvbWUgb3RoZXIgYm9hcmRzIHdpdGggaS5NWDYgYW5kIGEgUE1JQywgdXNl
-cyBhDQo+ICJQTUlDX1NUQllfUkVRIiBsaW5lIHRvIG5vdGlmeSB0aGUgUE1JQyBhYm91dCBhIHN0
-YXRlIGNoYW5nZS4NCj4gVGhlIFBNSUMgaXMgcHJvZ3JhbW1lZCBmb3IgYSBzcGVjaWZpYyBzdGF0
-ZSBjaGFuZ2UgYmVmb3JlIHRyaWdnZXJpbmcgdGhlIGxpbmUuDQo+IEluIHRoaXMgY2FzZSwgUE1J
-Q19TVEJZX1JFUSBjYW4gYmUgdXNlZCBmb3Igc3RhbmQgYnksIHNsZWVwIGFuZCBwb3dlciBvZmYN
-Cj4gbW9kZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBPbGVrc2lqIFJlbXBlbCA8by5yZW1wZWxA
-cGVuZ3V0cm9uaXguZGU+DQo+IC0tLQ0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvaW14NmRsLXJpb3Ri
-b2FyZC5kdHMgfCA1ICsrKysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspDQo+
-IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvaW14NmRsLXJpb3Rib2FyZC5kdHMN
-Cj4gYi9hcmNoL2FybS9ib290L2R0cy9pbXg2ZGwtcmlvdGJvYXJkLmR0cw0KPiBpbmRleCAyZTk4
-YzkyYWRmZjcuLmEwZTk3NTNlZTc2NyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMv
-aW14NmRsLXJpb3Rib2FyZC5kdHMNCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvaW14NmRsLXJp
-b3Rib2FyZC5kdHMNCj4gQEAgLTkwLDYgKzkwLDEwIEBADQo+ICAJc3RhdHVzID0gIm9rYXkiOw0K
-PiAgfTsNCj4gDQo+ICsmY2xrcyB7DQo+ICsJZnNsLHBtaWMtc3RieS1wb3dlcm9mZjsNCj4gK307
-DQpJdCdzIGJldHRlciByZW1vdmUgdGhlIGRlZmF1bHQgInN5c2Nvbi1wb3dlcm9mZiIgcG93ZXIg
-b2ZmIG5vZGUuDQo+ICsNCj4gICZmZWMgew0KPiAgCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7
-DQo+ICAJcGluY3RybC0wID0gPCZwaW5jdHJsX2VuZXQ+Ow0KPiBAQCAtMTcwLDYgKzE3NCw3IEBA
-DQo+ICAJCXJlZyA9IDwweDA4PjsNCj4gIAkJaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BpbzU+Ow0K
-PiAgCQlpbnRlcnJ1cHRzID0gPDE2IDg+Ow0KPiArCQlmc2wscG1pYy1zdGJ5LXBvd2Vyb2ZmOw0K
-PiANCj4gIAkJcmVndWxhdG9ycyB7DQo+ICAJCQlyZWdfdmRkY29yZTogc3cxYWIgewkJCQkvKiBW
-RERBUk1fSU4gKi8NCj4gLS0NCj4gMi4xOC4wDQoNCg==
+Quoting Taniya Das (2018-07-15 22:54:32)
+> SPDX headers updated for common/branch/pll/regmap files.
+> =
+
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+
+Applied to clk-next
