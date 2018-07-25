@@ -1,81 +1,31 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v5 0/5] Add clock driver for Actions S700 SoC
-Date: Sun, 15 Jul 2018 22:01:46 +0200
-Message-Id: <20180715200151.10416-1-sravanhome@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Rajan Vaja <rajan.vaja@xilinx.com>, mturquette@baylibre.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Rajan Vaja <rajan.vaja@xilinx.com>
+References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
+Message-ID: <153253678426.48062.18003542444197103522@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
+Date: Wed, 25 Jul 2018 09:39:44 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds clock support for Actions Semi Owl series S700 SoC
-with relevant clock bindings and device tree info. 
+Quoting Rajan Vaja (2018-07-17 06:17:00)
+> Fixed factor clock has two initializations at of_clk_init() time
+> and during platform driver probe. Before of_clk_init() call,
+> node is marked as populated and so its probe never gets called.
+> =
 
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
+> During of_clk_init() fixed factor clock registration may fail if
+> any of its parent clock is not registered. In this case, it doesn't
+> get chance to retry registration from probe. Clear OF_POPULATED
+> flag if fixed factor clock registration fails so that clock
+> registration is attempted again from probe.
+> =
 
-Changelog v5:
-- Commit message corrections
-- Removed MMC_OWL_CLK_NANDPLL option, as no active consumer
-- Device tree clock label name correction
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> ---
 
-Changelog v4:
-- dt-bindings use absolute numbering for clocks
-- Patch re-oredering
-
-Changelog v3:
-- Splitted uart clock DTS changes into separate patch
-- Splitted REGMAP Kconfig selection into separate patch
-- General naming convention as "Actions Semi" in dt-binding documentation
-- Patch re-oredering
-- Cleanup and fixed review findings
-
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
-
-
-Thanks and regards,
-Saravanan,
-Parthiban
-
-Saravanan Sekar (5):
-  clk: actions: Fix the missing REGMAP_MMIO dependency
-  dt-bindings: clock: Add S700 support for Actions Semi Soc's
-  clk: actions: Add S700 SoC clock support
-  arm64: dts: actions: Add Clock Management Unit for S700
-  arm64: dts: actions: Set UART clock reference from CMU
-
- ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +-
- .../boot/dts/actions/s700-cubieboard7.dts     |   8 +-
- arch/arm64/boot/dts/actions/s700.dtsi         |  14 +
- drivers/clk/actions/Kconfig                   |   7 +
- drivers/clk/actions/Makefile                  |   1 +
- drivers/clk/actions/owl-s700.c                | 606 ++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++
- 7 files changed, 758 insertions(+), 16 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-
--- 
-2.18.0
+Applied to clk-next
