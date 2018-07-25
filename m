@@ -1,40 +1,53 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org
-Cc: linux-clk@vger.kernel.org,
-	carlo@caione.org,
-	khilman@baylibre.com,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/2] dt-bindings: clock: meson8b: export the CPU_DIV16 clock
-Date: Sat, 21 Jul 2018 19:25:36 +0200
-Message-Id: <20180721172537.15639-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
-References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180725155517.4872-2-krzk@kernel.org>
+Cc: stable@vger.kernel.org
+References: <20180725155517.4872-1-krzk@kernel.org>
+ <20180725155517.4872-2-krzk@kernel.org>
+Message-ID: <153256251231.48062.2127272830110571402@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/3] clk: s2mps11: Fix matching when built as module and DT node
+ contains compatible
+Date: Wed, 25 Jul 2018 16:48:32 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPU_DIV16 clock is used for the TWD timer on Meson8, Meson8b and
-Meson8m2.
+Quoting Krzysztof Kozlowski (2018-07-25 08:55:15)
+> When driver is built as module and DT node contains clocks compatible
+> (e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
+> module aliases won't match.
+> =
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- include/dt-bindings/clock/meson8b-clkc.h | 1 +
- 1 file changed, 1 insertion(+)
+> The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
+> The modalias from driver: platform:s2mps11-clk
+> =
 
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index a60f47b49231..041560d9a67b 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -103,5 +103,6 @@
- #define CLKID_MPLL1		94
- #define CLKID_MPLL2		95
- #define CLKID_NAND_CLK		112
-+#define CLKID_CPU_DIV16		113
- 
- #endif /* __MESON8B_CLKC_H */
--- 
-2.18.0
+> The devices are instantiated by parent's MFD.  However both Device Tree
+> bindings and parent define the compatible for clocks devices.  In case
+> of module matching this DT compatible will be used.
+> =
+
+> The issue will not happen if this is built-in (no need for module
+> matching) or when clocks DT node does not contain compatible (not
+> correct from bindings perspective but working for driver).
+> =
+
+> Note when backporting to stable kernels: adjust the list of device ID
+> entries.
+> =
+
+> Cc: <stable@vger.kernel.org>
+> Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock =
+MFD cells")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
