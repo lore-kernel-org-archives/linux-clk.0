@@ -1,46 +1,40 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530691628.2900.216.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson: add sub EMMC clock controller driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Martin Blumenstingl
-	 <martin.blumenstingl@googlemail.com>
-Cc: robh@kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
- sboyd@kernel.org,  khilman@baylibre.com, mturquette@baylibre.com,
- linux-kernel@vger.kernel.org,  boris.brezillon@bootlin.com,
- jian.hu@amlogic.com, liang.yang@amlogic.com,  qiufang.dai@amlogic.com,
- miquel.raynal@bootlin.com, carlo@caione.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Date: Wed, 04 Jul 2018 10:07:08 +0200
-In-Reply-To: <ad673997-927e-76f4-23a4-bcf28f269968@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	 <20180703145716.31860-4-yixun.lan@amlogic.com>
-	 <CAFBinCCFQr+_k7bkda0a3wVQdyG8DzEyim6v_OBikUifCxyVXg@mail.gmail.com>
-	 <ad673997-927e-76f4-23a4-bcf28f269968@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 25 Jul 2018 09:22:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 14/21] clk: jz4740: Add TCU clock
+Message-ID: <20180725152205.GA6941@rob-hp-laptop>
+References: <20180724231958.20659-1-paul@crapouillou.net>
+ <20180724231958.20659-15-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180724231958.20659-15-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-07-04 at 15:17 +0800, Yixun Lan wrote:
-> > you are describing the mux and the divider here
-> > however, meson-gx-mmc.c has a few more clock related bits:
-> > - CLK_CORE_PHASE_MASK
-> > - CLK_TX_PHASE_MASK
-> > - CLK_RX_PHASE_MASK
-> > - CLK_V2_TX_DELAY_MASK / CLK_V3_TX_DELAY_MASK
-> > - CLK_V2_RX_DELAY_MASK / CLK_V3_RX_DELAY_MASK
-> > - CLK_V2_ALWAYS_ON / CLK_V3_ALWAYS_ON
-> > 
-> > are these used for the MMC clock or are some of these routed to the
-> > NAND pins as well?
+On Wed, Jul 25, 2018 at 01:19:51AM +0200, Paul Cercueil wrote:
+> Add the missing TCU clock to the list of clocks supplied by the CGU for
+> the JZ4740 SoC.
 > 
-> There clocks are not used in NAND driver..
-> 
-> I understand your concern here, if there clocks are also routed to NAND
-> pins, then we also need to implement them here
-> actually, to answer your question, I need to query the ASIC team..
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
+>  include/dt-bindings/clock/jz4740-cgu.h | 1 +
+>  2 files changed, 7 insertions(+)
 
-Even if the NAND driver does not need to change the phases, it might need to
-make sure these phases are reset on init. It would not hurt to handle these
-phases in your clock controller.
+Acked-by: Rob Herring <robh@kernel.org>
