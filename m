@@ -1,145 +1,44 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kukjin Kim <kgene@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	Anson.Huang@nxp.com,
-	ping.bai@nxp.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V4 7/9] clk: imx: make mux parent strings const
-Date: Wed, 18 Jul 2018 21:37:01 +0800
-Message-Id: <1531921023-18497-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/3] clk/dts: s2mps11: Fix matching as module
+Date: Wed, 25 Jul 2018 17:55:14 +0200
+Message-Id: <20180725155517.4872-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+Hi,
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+The DTS patches depend on 1st clock patch.  I will take them through
+samsung-soc tree in next release.
 
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
+Best regards,
+Krzysztof
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
----
-ChangeLog:
-v1->v4: no changes
----
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+Krzysztof Kozlowski (3):
+  clk: s2mps11: Fix matching when built as module and DT node contains
+    compatible
+  ARM: dts: exynos: Add compatible for s2mps11 clocks node on Exynos542x
+  ARM: dts: exynos: Add compatible for s5m8767 clocks node on Itop Core
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 9903652..e695622 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
- };
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index bc43f68..7fca912 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk_hw *imx_clk_composite(const char *name,
- 				 const char * const *parent_names,
-@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -204,7 +205,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -212,7 +214,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -220,8 +223,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+ arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi |  1 +
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts   |  1 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts       |  1 +
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi   |  1 +
+ drivers/clk/clk-s2mps11.c                       | 30 +++++++++++++++++++++++++
+ 5 files changed, 34 insertions(+)
+
 -- 
-2.7.4
+2.14.1
