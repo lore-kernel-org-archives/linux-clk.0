@@ -1,28 +1,40 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+To: =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-mips@linux-mips.org
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525845367-22185-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1525845367-22185-1-git-send-email-tdas@codeaurora.org>
- <1525845367-22185-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153176222570.48062.14197627616169510732@swboyd.mtv.corp.google.com>
-Subject: Re: [v9] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Mon, 16 Jul 2018 10:30:25 -0700
+In-Reply-To: <20180722212010.3979-16-afaerber@suse.de>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+ James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+ Govindraj Raja <Govindraj.Raja@imgtec.com>,
+ =?utf-8?q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20180722212010.3979-1-afaerber@suse.de>
+ <20180722212010.3979-16-afaerber@suse.de>
+Message-ID: <153256221029.48062.5074371246522411479@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
+Date: Wed, 25 Jul 2018 16:43:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-05-08 22:56:07)
-> Add the RPMh clock driver to control the RPMh managed clock resources on
-> some of the Qualcomm Technologies, Inc. SoCs.
+Quoting Andreas F=C3=A4rber (2018-07-22 14:20:10)
+> From: Govindraj Raja <Govindraj.Raja@imgtec.com>
 > =
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> The SDHost currently clocks the card 4x slower than it
+> should do, because there is a fixed divide by 4 in the
+> sdhost wrapper that is not present in the clock tree.
+> To model this, add a fixed divide by 4 clock node in
+> the SDHost clock path.
+> =
+
+> This will ensure the right clock frequency is selected when
+> the mmc driver tries to configure frequency on card insert.
+> =
+
+> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 > ---
 
-Applied to clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
