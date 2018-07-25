@@ -1,53 +1,55 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 09/18] arm64: defconfig: Enable CONFIG_DRM_SUN4I
-Date: Wed, 18 Jul 2018 16:24:49 +0530
-Message-Id: <20180718105458.22304-10-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Jiancheng Xue <xuejiancheng@hisilicon.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180719015845.GA10768@embeddedor.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+References: <20180719015845.GA10768@embeddedor.com>
+Message-ID: <153256235859.48062.6895683993866147909@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] reset: hisilicon: fix potential NULL pointer dereference
+Date: Wed, 25 Jul 2018 16:45:58 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable DRM Support for Allwinner Display Engine, built as a module.
+Quoting Gustavo A. R. Silva (2018-07-18 18:58:45)
+> There is a potential execution path in which function
+> platform_get_resource() returns NULL. If this happens,
+> we will end up having a NULL pointer dereference.
+> =
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3, v2:
-- none
+> Fix this by adding asanity check in order to avoid a
+> NULL pointer dereference.
+> =
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> This code was detected with the help of Coccinelle.
+> =
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c192a42c2ba3..7c362b0ea27c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -425,6 +425,7 @@ CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_EXYNOS_MIC=y
- CONFIG_DRM_ROCKCHIP=m
-+CONFIG_DRM_SUN4I=m
- CONFIG_ROCKCHIP_ANALOGIX_DP=y
- CONFIG_ROCKCHIP_CDN_DP=y
- CONFIG_ROCKCHIP_DW_HDMI=y
--- 
-2.17.1
+> Cc: stable@vger.kernel.org
+> Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_res=
+et_init")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/clk/hisilicon/reset.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> =
+
+> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+> index 2a5015c..5dfb48b 100644
+> --- a/drivers/clk/hisilicon/reset.c
+> +++ b/drivers/clk/hisilicon/reset.c
+> @@ -109,6 +109,9 @@ struct hisi_reset_controller *hisi_reset_init(struct =
+platform_device *pdev)
+>                 return NULL;
+>  =
+
+>         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res)
+> +               return NULL;
+> +
+>         rstc->membase =3D devm_ioremap(&pdev->dev,
+>                                 res->start, resource_size(res));
+
+Why can't we use devm_ioremap_resource() here instead?
