@@ -1,67 +1,66 @@
-Return-Path: <dmitry.torokhov@gmail.com>
-Return-Path: <dmitry.torokhov@gmail.com>
-Date: Wed, 4 Jul 2018 14:56:23 +0000
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: matti.vaittinen@fi.rohmeurope.com,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, mazziesaccount@gmail.com,
-	Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>,
-	chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180704145623.zgei3ehrwdpcu26r@penguin>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Phil Edworthy <phil.edworthy@renesas.com>,
+ Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Simon Horman <horms@verge.net.au>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+ <20180718130228.GG17271@n2100.armlinux.org.uk>
+ <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
+ <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+Message-ID: <153255822286.48062.3193076486782567960@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH] clk: Add functions to get optional clocks
+Date: Wed, 25 Jul 2018 15:37:02 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Enric,
+Quoting Phil Edworthy (2018-07-18 06:56:26)
+> Hi Russell,
+> =
 
-On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
-> Hi Matti,
-> 
-> Thanks for the patch, a few comments below, some are feedback I
-> received when I sent some patches to this subsystem.
-> 
-> Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> dia dt., 19 de juny 2018 a les 12:57:
-> > +};
-> > +
-> > +/* bd71837 multi function cells */
-> > +static struct mfd_cell bd71837_mfd_cells[] = {
-> > +       {
-> > +               .name = "bd71837-clk",
-> > +       }, {
-> > +               .name = "bd718xx-pwrkey",
-> > +               .resources = &irqs[0],
-> > +               .num_resources = ARRAY_SIZE(irqs),
-> > +       }, {
-> > +               .name = "bd71837-pmic",
-> > +       },
-> nit: no comma at the end
+> On 18 July 2018 14:19, Geert Uytterhoeven wrote:
+> > On Wed, Jul 18, 2018 at 3:02 PM Russell King - ARM Linux  wrote:
+> > > On Wed, Jul 18, 2018 at 01:57:38PM +0100, Phil Edworthy wrote:
+> > > > Behaves the same as (devm_)clk_get except where there is no clock
+> > > > producer. In this case, instead of returning -ENOENT, the function
+> > > > returns NULL. This makes error checking simpler and allows
+> > > > clk_prepare_enable, etc to be called on the returned reference
+> > > > without additional checks.
+> > >
+> > > How does this work with non-DT systems, where looking a clock up which
+> > > isn't yet registered with clkdev returns -ENOENT ?
+> > >
+> > > (clkdev doesn't know when all clocks are registered with it.)
+> > =
 
-Actually, trailing comma is preferred on structures/arrays without
-sentinels, because if one needs to add a new entry/new member, then in
-the diff there will have only one new line added, instead of one line
-being changed (adding now necessary comma) and one added.
+> > Good question.
+> > =
 
-Thanks.
+> > I guess all drivers trying to handle optional clocks this way are alrea=
+dy broken
+> > on non-DT systems where clocks may be registered late...
+> =
 
--- 
-Dmitry
+> So how do non-DT systems that look a clock up which isn't yet
+> registered with clkdev, determine that an optional clock is there
+> or not?
+> =
+
+
+Short answer is they don't. I'd still prefer we have this API though.
+
+Can you rework this patch to be a little more invasive into the
+clk_get() path, perhaps by reworking __of_clk_get_by_name() a little to
+take an 'optional' argument, so that it only returns NULL when the clk
+is looked up from DT? The fallback path in clkdev where we have a DT
+based system looking up a clk through clkdev lookups doesn't seem to be
+a real scenario that we should worry about here. I think sometimes
+people use clkdev lookups when they're migrating to DT systems and
+things aren't wired up properly in DT, but that isn't the norm.
