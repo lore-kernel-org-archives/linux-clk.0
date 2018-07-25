@@ -1,70 +1,28 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:47777 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731930AbeGaB3b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Jul 2018 21:29:31 -0400
-Date: Tue, 31 Jul 2018 07:51:17 +0800
-In-Reply-To: <20180730231244.GA3966@rob-hp-laptop>
-References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-9-icenowy@aosc.io> <20180730231244.GA3966@rob-hp-laptop>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH v3.1 08/10] dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
-To: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
-CC: devicetree@vger.kernel.org,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <F275EA55-B791-4EDC-8796-DB79E95D7008@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+To: Mikko Perttunen <mperttunen@nvidia.com>, mturquette@baylibre.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180711082104.27955-1-mperttunen@nvidia.com>
+Cc: leonard.crestez@nxp.com, cyndis@kapsi.fi, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+References: <20180711082104.27955-1-mperttunen@nvidia.com>
+Message-ID: <153253623910.48062.11060369743420676475@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: core: Potentially free connection id
+Date: Wed, 25 Jul 2018 09:30:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Mikko Perttunen (2018-07-11 01:21:04)
+> Patch "clk: core: Copy connection id" made it so that the connector
+> id (con_id) is kstrdup_const'ed to cater to drivers that pass non-
+> constant connection ids. The patch added the corresponding kfree_const
+> to __clk_free_clk, but struct clk's can be freed also via __clk_put.
+> Add the kfree_const call to __clk_put and add comments to both
+> functions to remind that the logic in them should be kept in sync.
+> =
 
+> Fixes: 253160a8ad06 ("clk: core: Copy connection id")
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
 
-于 2018年7月31日 GMT+08:00 上午7:12:44, Rob Herring <robh@kernel.org> 写到:
->On Fri, Jul 27, 2018 at 01:12:55AM +0800, Icenowy Zheng wrote:
->> Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
->> pin, which is the VCC of HDMI part.
->> 
->> Add a supply property to specify HVCC's regulator in the device tree.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Changes in v3.1:
->> - New patch.
->> 
->>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3
->+++
->>  1 file changed, 3 insertions(+)
->> 
->> diff --git
->a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> index fdb8fb29033f..cb4769913e89 100644
->> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> @@ -97,6 +97,9 @@ Required properties:
->>      first port should be the input endpoint. The second should be
->the
->>      output, usually to an HDMI connector.
->>  
->> +Optional properties:
->> +  - hdmi-supply: the VCC power supply of the controller
->
->"hdmi" doesn't sound like the name of the supply. "hvcc" or just "vcc" 
->would be more appropriate.
-
-Okay. In original versions it used to be "hvcc-supply", and
-I will pick the name again.
-
->
->Rob
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Applied to clk-next
