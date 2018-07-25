@@ -1,34 +1,39 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 5 Jul 2018 14:39:21 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51307 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbeGYRNZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Jul 2018 13:13:25 -0400
+Date: Wed, 25 Jul 2018 10:01:02 -0600
 From: Rob Herring <robh@kernel.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-	lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org, eballetbo@gmail.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v10 2/2] mfd: bd71837: Devicetree bindings for ROHM
- BD71837 PMIC
-Message-ID: <20180705203921.GA28410@rob-hp-laptop>
-References: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
- <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: sboyd@kernel.org, andy.gross@linaro.org, tdas@codeaurora.org,
+        girishm@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        anischal@codeaurora.org, bjorn.andersson@linaro.org,
+        grahamr@codeaurora.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for
+ sdm845 to header
+Message-ID: <20180725160102.GA18545@rob-hp-laptop>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-2-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <8ef84806b7152a4da2bffa0456052e98f4c6e1c6.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20180724174513.174018-2-dianders@chromium.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jul 05, 2018 at 05:32:58PM +0300, Matti Vaittinen wrote:
-> Document devicetree bindings for ROHM BD71837 PMIC MFD.
+On Tue, Jul 24, 2018 at 10:45:12AM -0700, Douglas Anderson wrote:
+> These clocks will need to be defined in the clock driver and
+> referenced in device tree files.
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+> 
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
