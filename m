@@ -1,80 +1,34 @@
-Return-Path: <alexandre.belloni@bootlin.com>
-Date: Tue, 17 Jul 2018 21:16:08 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: nicolas.ferre@microchip.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] rework ULP1 patches
-Message-ID: <20180717191608.GA3211@piout.net>
-References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+To: Aapo Vienamo <avienamo@nvidia.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1531396382-5579-5-git-send-email-avienamo@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+ Aapo Vienamo <avienamo@nvidia.com>
+References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
+ <1531396382-5579-5-git-send-email-avienamo@nvidia.com>
+Message-ID: <153255410351.48062.11833312173486670153@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v6 4/4] clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+Date: Wed, 25 Jul 2018 14:28:23 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 17/07/2018 11:26:53+0300, Claudiu Beznea wrote:
-> Hi,
-> 
-> Based on the discussion at [1] and private discussion I had with Alexandre
-> Belloni on IRC, I reworked ULP1 patches to remove device tree bindings
-> proposed in [1].
-> 
-> The implementation from this patches (mostly patch 4/4) is using
-> device_may_wakeup() API that current Linux code provides and the fact that
-> for the ULP1 the wakeup souces are known and well defined.
-> Basically, this rework (mostly patch 4/4) loops through well defined ULP1
-> wakeup sources and check if those wakeup sources were configured to wake
-> up the system (vid DT or sysfs) and, based on that (and in case of RTC,
-> based on SHDWC.MR), set the PMC fast startup mode and polarity registers.
-> In [1] PMC fast startup mode and polarity registers were configured by
-> introducing new DT bindings.
-> 
-> Since with these patches SHDWC registers are used in ULP1 wakeup sources
-> configuration the patch 4/4 changed a bit the PM initialization phase for
-> SAMA5D2 in order to have mapped also the SHDWC in case ULP1 needs to be
-> initialized. In case ULP1 configuration fails the ULP0 mode is used (same
-> approach as in backup mode case).
-> 
-> I measure the delay introduced in suspend sequence by using an oscilloscope
-> connected to a GPIO and calling gpio_direction_output(PIN, 0) at the beginning
-> of at91_pm_config_ws() and gpio_direction_output(PIN, 1) at the end of
-> at91_pm_config_ws(). With these I measureed on oscilloscope the difference
-> b/w the front changes. The measured time was *1.56ms*. Keep in mind that
-> gpio_direction_output() will call, in the end,
-> atmel_gpio_direction_output() which access 4 registers to toggle the PIN
-> (in at91_pm_config_ws() there are also 4 peripheral register accesses).
-> 
-> Besides this rework, I took the chance and I appended few other patches to
-> this series, based on Wenyou Yang's previous work, related to ULP modes.
-> 
-> Patch 1/4: replaces slow clock with ULP0
-> Patch 2/4: is the Wenyou's patch wich adds ULP1 support
-> Patch 3/4: is defining PMC fast startup registers
-> 
-> The patches were based on v4.18-rc1.
-> 
-> [1] https://patchwork.kernel.org/patch/8595091/
-> 
-> Claudiu Beznea (3):
->   ARM: at91: pm: Use ULP0 naming instead of slow clock
->   ARM: at91: pm: add PMC fast startup registers defines
->   ARM: at91: pm: configure wakeup sources for ULP1 mode
-> 
-> Wenyou Yang (1):
->   ARM: at91: pm: Add ULP1 mode support
-> 
->  arch/arm/mach-at91/pm.c         | 184 +++++++++++++++++++++++++++++++++-------
->  arch/arm/mach-at91/pm.h         |   6 +-
->  arch/arm/mach-at91/pm_suspend.S | 142 ++++++++++++++++++++++++++-----
->  include/linux/clk/at91_pmc.h    |  15 ++++
->  4 files changed, 294 insertions(+), 53 deletions(-)
-> 
+Quoting Aapo Vienamo (2018-07-12 04:53:02)
+> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> =
 
-Applied, thanks.
+> These clocks have low jitter paths to certain parents. To model these
+> correctly, use the sdmmc mux divider clock type.
+> =
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+
+Applied to clk-next
