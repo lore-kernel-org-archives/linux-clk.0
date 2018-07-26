@@ -1,68 +1,41 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	lee.jones@linaro.org,
-	arnd@arndb.de
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 10/10] MAINTAINERS: Add entry for Actions Semi Owl SoCs Reset Management Unit
-Date: Wed,  1 Aug 2018 09:09:15 +0530
-Message-Id: <20180801033915.15880-11-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
-References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:35044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729801AbeGZQkQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jul 2018 12:40:16 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Ben Dooks <ben.dooks@codethink.co.uk>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, jonathanh@nvidia.co,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+ <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
+Message-ID: <153261857589.48062.4721112255504541100@swboyd.mtv.corp.google.com>
+Subject: Re: [Linux-kernel] tegra clock updates and fixes
+Date: Thu, 26 Jul 2018 08:22:55 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add entry for Actions Semi Reset Management Unit driver and its
-bindings under ARCH_ACTIONS. Currently only S700 and S900 SoCs
-of the Owl family are supported.
+Quoting Ben Dooks (2018-07-26 06:32:29)
+> On 2018-07-20 14:45, Ben Dooks wrote:
+> > Hi, this is a set of clock updates and fixes we did when developing
+> > the tegra20/tegra30 auto support. The audio change is due to using
+> > the tegra in clock-slave mode (this hasn't been done before)
+> > =
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 4 ++++
- 1 file changed, 4 insertions(+)
+> > We have also implemented the clock reset status callback as it is
+> > used by some of the driver work we did.
+> =
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9c292ef3c210..25934ae77ba6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1146,13 +1146,17 @@ F:	arch/arm64/boot/dts/actions/
- F:	drivers/clk/actions/
- F:	drivers/clocksource/owl-*
- F:	drivers/pinctrl/actions/*
-+F:	drivers/reset/reset-owl.c
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
-+F:	include/dt-bindings/reset/actions,s700-rmu.h
-+F:	include/dt-bindings/reset/actions,s900-rmu.h
- F:	include/linux/soc/actions/
- F:	Documentation/devicetree/bindings/arm/actions.txt
- F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
-+F:	Documentation/devicetree/bindings/reset/actions,owl-reset.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
- 
- ARM/ADS SPHERE MACHINE SUPPORT
--- 
-2.17.1
+> Is it possible to look at applying the bits of the series that are
+> not currently under discussion? If so should I post a smaller series?
+> =
+
+
+Just send it again please. I'd prefer to see some reviewed-by tags from
+Nvidia folks on bits that are good to merge.
+
