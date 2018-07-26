@@ -1,27 +1,69 @@
-Return-Path: <daniel@zonque.org>
-Subject: Re: [PATCH v4 0/2] clk: Add driver for MAX9485
-To: Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-References: <20180617120535.2529-1-daniel@zonque.org>
- <153090225913.143105.355057835367872610@swboyd.mtv.corp.google.com>
-From: Daniel Mack <daniel@zonque.org>
-Message-ID: <7c828667-3095-0cf6-eb22-335115cba7b0@zonque.org>
-Date: Fri, 6 Jul 2018 20:53:00 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <153090225913.143105.355057835367872610@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+ "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "keescook@chromium.org" <keescook@chromium.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rajan Vaja <RAJANV@xilinx.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+ <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
+ <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
+Message-ID: <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for ZynqMP
+ core
+Date: Thu, 26 Jul 2018 09:36:55 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Friday, July 06, 2018 08:37 PM, Stephen Boyd wrote:
-> Quoting Daniel Mack (2018-06-17 05:05:33)
->> This is v4 of the driver for Maxim's MAX9485 programmable audio clock
->> generator.
->>
-> 
-> Please resend the clk driver. I already applied the binding.
-> 
+Quoting Michal Simek (2018-07-25 02:51:14)
+> On 24.7.2018 20:14, Jolly Shah wrote:
+> >>>  create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+> >>>  create mode 100644 drivers/firmware/xilinx/zynqmp.c  create mode
+> >>> 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+> >>>  create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+> >>>
+> >>
+> >> It looks pretty calm over the last several series that's why when I ge=
+t an answer
+> >> from Stephen or Mike I will take this series via my tree and arm-soc t=
+ree.
+> >>
+> >> I have applied 01-08 here
+> >>  https://github.com/Xilinx/linux-xlnx/commits/zynqmp/soc
+> >>
+> >> Thanks,
+> >> Michal
+> > =
 
-Thanks for the reviews! v5 is coming up in a minute :)
+> > =
+
+> > Thanks for merging the patches. =
+
+> > By mistake I added =E2=80=9CReviewed-by: Stephen Boyd sboyd@kernel.org=
+=E2=80=9D for firmware bindings (Patch01).  Stephen had reviewed clock bind=
+ings only.  Please suggest if I should send a new version with that fix.
+> =
+
+> I have fixed that in my branch and I have asked Shephen to look at clk
+> over chat.
+> =
 
 
-Daniel
+I have some unresolved review comments on v9. I'll give reviewed-by when
+that discussion is resolved.
