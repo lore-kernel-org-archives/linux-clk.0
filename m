@@ -1,65 +1,67 @@
-Return-Path: <avienamo@nvidia.com>
-From: Aapo Vienamo <avienamo@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v5 0/4] Multiplex sdmmc low jitter clock path
-Date: Wed, 11 Jul 2018 17:39:21 +0300
-Message-ID: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
-Return-Path: avienamo@nvidia.com
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45965 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728957AbeGZKi1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 06:38:27 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v8 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
+Date: Thu, 26 Jul 2018 11:22:20 +0200
+Message-Id: <20180726092220.17250-7-o.rempel@pengutronix.de>
+In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-divider to achieve better jitter performance with high speed signaling
-modes. The clock path with the divider is needed by some of the slower
-signaling modes. This series automatically multiplexes the LJ and
-non-LJ clock paths based on the requested frequency.
+This board, as well as some other boards with i.MX6 and a PMIC, uses a
+"PMIC_STBY_REQ" line to notify the PMIC about a state change.
+The PMIC is programmed for a specific state change before triggering the
+line.
+In this case, PMIC_STBY_REQ can be used for stand by, sleep
+and power off modes.
 
-Changelog:
-v5:
-	- Rename div71_get() to div_frac_get()
-	- Rename div71.c to div-frac.c
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-v4:
-	- Add a changelog
-
-v3:
-	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-	  do_div()
-	- Use SPDX tags for new files
-	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-	- Make tegra_clk_sdmmc_mux_ops static
-	- Fix the includes for fence_udelay() in a separate patch
-
-v2:
-	- Fix the type compatibility error on do_div
-
-Aapo Vienamo (1):
-  clk: tegra: Fix includes required by fence_udelay()
-
-Peter De Schrijver (1):
-  clk: tegra: refactor 7.1 div calculation
-
-Peter De-Schrijver (2):
-  clk: tegra: Add sdmmc mux divider clock
-  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-
- drivers/clk/tegra/Makefile           |   2 +
- drivers/clk/tegra/clk-divider.c      |  30 +----
- drivers/clk/tegra/clk-id.h           |   2 -
- drivers/clk/tegra/clk-sdmmc-mux.c    | 249 +++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |  11 --
- drivers/clk/tegra/clk-tegra210.c     |  14 +-
- drivers/clk/tegra/clk.h              |  30 +++++
- drivers/clk/tegra/div-frac.c         |  43 ++++++
- 8 files changed, 341 insertions(+), 40 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
- create mode 100644 drivers/clk/tegra/div-frac.c
-
+diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
+index 2e98c92adff7..a0e9753ee767 100644
+--- a/arch/arm/boot/dts/imx6dl-riotboard.dts
++++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
+@@ -90,6 +90,10 @@
+ 	status = "okay";
+ };
+ 
++&clks {
++	fsl,pmic-stby-poweroff;
++};
++
+ &fec {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_enet>;
+@@ -170,6 +174,7 @@
+ 		reg = <0x08>;
+ 		interrupt-parent = <&gpio5>;
+ 		interrupts = <16 8>;
++		fsl,pmic-stby-poweroff;
+ 
+ 		regulators {
+ 			reg_vddcore: sw1ab {				/* VDDARM_IN */
 -- 
-2.7.4
+2.18.0
+
