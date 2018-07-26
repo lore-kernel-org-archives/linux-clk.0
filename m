@@ -1,180 +1,44 @@
-Return-Path: <dianders@google.com>
+Return-Path: <anders.roxell@linaro.org>
+Return-Path: <anders.roxell@linaro.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+To: gregory.clement@bootlin.com,
+	sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
+Date: Fri, 27 Jul 2018 00:27:21 +0200
+Message-Id: <20180726222721.5787-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-Sender: dianders@google.com
-In-Reply-To: <6248e3cc-f458-7dec-143c-7d2aeccde590@codeaurora.org>
-References: <20180718180431.48580-1-dianders@chromium.org> <20180718180431.48580-3-dianders@chromium.org>
- <6248e3cc-f458-7dec-143c-7d2aeccde590@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 19 Jul 2018 10:55:35 -0700
-Message-ID: <CAD=FV=XrxNgXq1BcMQaQGsb-cHeckxr2LcCKSZxcgX-ikWv4uA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-	Girish Mahadevan <girishm@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	David Brown <david.brown@linaro.org>,
-	"open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+When building armada-37xx-periph, num_parents isn't used in function
+clk_pm_cpu_get_parent:
+drivers/clk/mvebu/armada-37xx-periph.c: In function ‘clk_pm_cpu_get_parent’:
+drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable ‘num_parents’ [-Wunused-variable]
+  int num_parents = clk_hw_get_num_parents(hw);
+      ^~~~~~~~~~~
+Remove the declaration of num_parents to dispose the warning.
 
-On Thu, Jul 19, 2018 at 4:04 AM, Taniya Das <tdas@codeaurora.org> wrote:
-> Hi Doug,
->
-> Please find my comments inline.
->
-> On 7/18/2018 11:34 PM, Douglas Anderson wrote:
->>
->> Add both the interface and core clock.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->>   drivers/clk/qcom/gcc-sdm845.c | 73 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 73 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index 0f694ed4238a..2ee96f9bc217 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
->>         "core_bi_pll_test_se",
->>   };
->>   +static const struct parent_map gcc_parent_map_9[] = {
->> +       { P_BI_TCXO, 0 },
->> +       { P_GPLL0_OUT_MAIN, 1 },
->> +       { P_GPLL0_OUT_EVEN, 6 },
->> +       { P_SLEEP_CLK, 7 },
->
->
-> SRC 7 has 'core_bi_pll_test_se' and not 'sleep_clk'.
->
-> Please use the 'gcc_parent_map_0'
+Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return value in get_parent")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/clk/mvebu/armada-37xx-periph.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Are you sure?  I'm looking at a doc showing the bitfields of
-GCC_QSPI_CORE_CFG_RCGR.  It says:
-
-0x0: bi_tcxo.
-0x1: gpll0_out_main.
-0x6: gpll0_out_even.
-0x7: sleep_clk.
-
-This contrasts with other clocks using 'gcc_parent_map_0' (for
-instance "gcc_qupv3_wrap0_s0_clk_src") where 0x7 is simply not listed
-in my doc.
-
-...so either my doc is wrong or yours is.  Any way to resolve that?
-
-
->> +};
->> +
->> +static const char * const gcc_parent_names_9[] = {
->> +       "bi_tcxo",
->> +       "gpll0",
->> +       "gpll0_out_even",
->> +       "core_pi_sleep_clk",
->> +};
->> +
->>   static struct clk_alpha_pll gpll0 = {
->>         .offset = 0x0,
->>         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
->> @@ -358,6 +372,31 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src =
->> {
->>         },
->>   };
->>   +static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
->> +       F(19200000, P_BI_TCXO, 1, 0, 0),
->> +       F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
->> +       F(75000000, P_GPLL0_OUT_EVEN, 4, 0, 0),
->> +       F(100000000, P_GPLL0_OUT_EVEN, 3, 0, 0),
->
->
-> Is SW planning to use this frequency?
-
-At the moment I actually am using it.  I haven't done signal analysis,
-but in quick testing I couldn't properly read the SPI at faster than a
-25 MHz SPI bus which translates to 100 MHz here.  Interestingly, it
-seems like folks in your boot team came to the same conclusion since I
-see them setting this bus to 100 MHz at
-<https://review.coreboot.org/#/c/coreboot/+/25392/25/src/soc/qualcomm/sdm845/bootblock.c>
-too.
-
-
->> +       F(150000000, P_GPLL0_OUT_EVEN, 2, 0, 0),
->
->
-> F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-
-Sure.  For my edification, is there a reason to use main vs. even?
-
-
->> +       F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
->
->
-> F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-
-No problem.
-
-
->> +       F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
-
-No problem.
-
-
-> Please remove this, the Max supported frequency is 300MHz.
->>
->> +       { }
->> +};
->> +
->> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
->> +       .cmd_rcgr = 0x4b008,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = gcc_parent_map_9,
->> +       .freq_tbl = ftbl_gcc_qspi_core_clk_src,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "gcc_qspi_core_clk_src",
->> +               .parent_names = gcc_parent_names_9,
->> +               .num_parents = 4,
->> +               .ops = &clk_rcg2_floor_ops,
->
->
-> Could we use the rcg2_ops instead?
-
-I'd rather not.  Any reason why you think that'd be a good idea?
-
-Specifically imagine that we have a SPI flash chip that's rated to run
-at a max of 20 MHz.  In the device tree we'd ideally want to specify:
-
-  spi-max-frequency = <20000000>;
-
-It appears that we need to run the SPI core as 4 times the rate of the
-SPI bus, so we'd try to set this clock to 80 MHz.  If we round up
-we'll end up at 100 MHz or 150 MHz for the SPI core and have a SPI bus
-rate of 25 MHz or 37.5 MHz.  That would violate the whole idea of
-"spi-max-frequency".  It's much better to round down to 75 MHz.
-
-
-In general I've always seen that for safety it's always better the
-round clocks down and round voltage up, so I was actually confused by
-the fact that most of the clocks in this file used rcg2_ops instead of
-clk_rcg2_floor_ops...  I'd be curious if we should we change more of
-them to clk_rcg2_floor_ops.  As a random example I'll take
-"gcc_sdcc2_apps_clk_src".  If someone happened to have a full sized SD
-slot and put an MMC card in then you'd be in trouble.  Why?
-
-For MMC a valid rate to request is 52000000.  When the SD card core
-requests this you'll round up to 100 MHz.  Oops.  That makes the card
-not work.
-
-I just happen to have a micro to full size adapter at my desk and a
-2GB MMC card and I can confirm that's a true bug that prevents this
-card from enumerating.  Changing this to a clk_rcg2_floor_ops fixes
-it.  True that it's unlikely anyone will really plug a MMC card into
-this slot, but I fail to see the advantage of rounding up when
-rounding down is safer.
-
-
--Doug
+diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
+index 287e98a7cff4..499f5962c8b0 100644
+--- a/drivers/clk/mvebu/armada-37xx-periph.c
++++ b/drivers/clk/mvebu/armada-37xx-periph.c
+@@ -416,7 +416,6 @@ static unsigned int armada_3700_pm_dvfs_get_cpu_parent(struct regmap *base)
+ static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
+ 
+ 	if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
+-- 
+2.18.0
