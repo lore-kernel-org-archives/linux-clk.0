@@ -1,100 +1,194 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Neil Armstrong <narmstrong@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180712211244.11428-3-yixun.lan@amlogic.com>
-Cc: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
- Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
- Rob Herring <robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Boris Brezillon <boris.brezillon@bootlin.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Liang Yang <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
- Jian Hu <jian.hu@amlogic.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
- <20180712211244.11428-3-yixun.lan@amlogic.com>
-Message-ID: <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
-Date: Thu, 26 Jul 2018 08:20:02 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58023 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728966AbeGZKi1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 06:38:27 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v8 5/6] regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+Date: Thu, 26 Jul 2018 11:22:19 +0200
+Message-Id: <20180726092220.17250-6-o.rempel@pengutronix.de>
+In-Reply-To: <20180726092220.17250-1-o.rempel@pengutronix.de>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Yixun Lan (2018-07-12 14:12:44)
-> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-> new file mode 100644
-> index 000000000000..36c4c7cd69a6
-> --- /dev/null
-> +++ b/drivers/clk/meson/mmc-clkc.c
-> @@ -0,0 +1,367 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk.h>
+On some boards the SoC can use one pin "PMIC_STBY_REQ" to notify th PMIC
+about state changes. In this case internal state of PMIC must be
+preconfigured for upcomming state change.
+It works fine with the current regulator framework, except with the
+power-off case.
 
-Is this include used?
+This patch is providing an optional pm_power_off_prepare handler
+which will configure standby state of the PMIC to disable all power lines.
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/amlogic,meson-mmc-clkc.h>
-> +
-> +#include "clkc.h"
-> +
-> +
-> +static struct clk_regmap *
-> +mmc_clkc_register_other_clk(struct device *dev, struct regmap *map,
-> +                           char *suffix, char *parent_suffix,
-> +                           unsigned long flags,
-> +                           const struct clk_ops *ops, void *data)
-> +{
-> +       struct clk_init_data init;
-> +       struct clk_regmap *clk;
-> +       char *parent;
-> +
-> +       parent =3D kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), parent_s=
-uffix);
-> +       if (!parent)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.ops =3D ops;
-> +       init.flags =3D flags;
-> +       init.parent_names =3D (const char* const []){ parent, };
+In my power consumption test on RIoTBoard, I got the following results:
+power off without this patch:	320 mA
+power off with this patch:	2   mA
+suspend to ram:			40  mA
 
-Can't this just be &parent?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/regulator/pfuze100-regulator.c | 92 ++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-> +       init.num_parents =3D 1;
-> +
-> +       clk =3D mmc_clkc_register_clk(dev, map, &init, suffix, data);
-> +       if (IS_ERR(clk))
-> +               dev_err(dev, "Core %s clock registration failed\n", suffi=
-x);
-> +
-> +       kfree(parent);
-> +       return clk;
-> +}
-> +
-> +static int mmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +       struct clk_hw_onecell_data *onecell_data;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct mmc_clkc_data *data;
-> +       struct regmap *map;
-> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
-> +
-> +       data =3D (struct mmc_clkc_data *)of_device_get_match_data(dev);
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 8d9dbcc775ea..e386e9acb3f7 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -15,6 +15,7 @@
+ #include <linux/regulator/pfuze100.h>
+ #include <linux/i2c.h>
+ #include <linux/slab.h>
++#include <linux/kallsyms.h>
+ #include <linux/regmap.h>
+ 
+ #define PFUZE_NUMREGS		128
+@@ -29,11 +30,17 @@
+ 
+ #define PFUZE100_COINVOL	0x1a
+ #define PFUZE100_SW1ABVOL	0x20
++#define PFUZE100_SW1ABMODE	0x23
+ #define PFUZE100_SW1CVOL	0x2e
++#define PFUZE100_SW1CMODE	0x31
+ #define PFUZE100_SW2VOL		0x35
++#define PFUZE100_SW2MODE	0x38
+ #define PFUZE100_SW3AVOL	0x3c
++#define PFUZE100_SW3AMODE	0x3f
+ #define PFUZE100_SW3BVOL	0x43
++#define PFUZE100_SW3BMODE	0x46
+ #define PFUZE100_SW4VOL		0x4a
++#define PFUZE100_SW4MODE	0x4d
+ #define PFUZE100_SWBSTCON1	0x66
+ #define PFUZE100_VREFDDRCON	0x6a
+ #define PFUZE100_VSNVSVOL	0x6b
+@@ -44,6 +51,13 @@
+ #define PFUZE100_VGEN5VOL	0x70
+ #define PFUZE100_VGEN6VOL	0x71
+ 
++#define PFUZE100_SWxMODE_MASK	0xf
++#define PFUZE100_SWxMODE_APS_APS	0x8
++#define PFUZE100_SWxMODE_APS_OFF	0x4
++
++#define PFUZE100_VGENxLPWR	BIT(6)
++#define PFUZE100_VGENxSTBY	BIT(5)
++
+ enum chips { PFUZE100, PFUZE200, PFUZE3000 = 3 };
+ 
+ struct pfuze_regulator {
+@@ -492,6 +506,69 @@ static inline struct device_node *match_of_node(int index)
+ }
+ #endif
+ 
++static struct pfuze_chip *syspm_pfuze_chip;
++
++static void pfuze_power_off_prepare(void)
++{
++	dev_info(syspm_pfuze_chip->dev, "Configure standy mode for power off");
++
++	/* Switch from default mode: APS/APS to APS/Off */
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1ABMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW1CMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW2MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3AMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW3BMODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_SW4MODE,
++			   PFUZE100_SWxMODE_MASK, PFUZE100_SWxMODE_APS_OFF);
++
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN1VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN2VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN3VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN4VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN5VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++	regmap_update_bits(syspm_pfuze_chip->regmap, PFUZE100_VGEN6VOL,
++			   PFUZE100_VGENxLPWR | PFUZE100_VGENxSTBY,
++			   PFUZE100_VGENxSTBY);
++}
++
++static int pfuze_power_off_prepare_init(struct pfuze_chip *pfuze_chip)
++{
++	if (pfuze_chip->chip_id != PFUZE100) {
++		dev_warn(pfuze_chip->dev, "Requested pm_power_off_prepare handler for not supported chip\n");
++		return -ENODEV;
++	}
++
++	if (pm_power_off_prepare) {
++		dev_warn(pfuze_chip->dev, "pm_power_off_prepare is already registered.\n");
++		return -EBUSY;
++	}
++
++	if (syspm_pfuze_chip) {
++		dev_warn(pfuze_chip->dev, "syspm_pfuze_chip is already set.\n");
++		return -EBUSY;
++	}
++
++	syspm_pfuze_chip = pfuze_chip;
++	pm_power_off_prepare = pfuze_power_off_prepare;
++
++	return 0;
++}
++
+ static int pfuze_identify(struct pfuze_chip *pfuze_chip)
+ {
+ 	unsigned int value;
+@@ -661,6 +738,20 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 		}
+ 	}
+ 
++	if (of_property_read_bool(client->dev.of_node,
++				  "fsl,pmic-stby-poweroff"))
++		return pfuze_power_off_prepare_init(pfuze_chip);
++
++	return 0;
++}
++
++static int pfuze100_regulator_remove(struct i2c_client *client)
++{
++	if (syspm_pfuze_chip) {
++		syspm_pfuze_chip = NULL;
++		pm_power_off_prepare = NULL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -671,6 +762,7 @@ static struct i2c_driver pfuze_driver = {
+ 		.of_match_table = pfuze_dt_ids,
+ 	},
+ 	.probe = pfuze100_regulator_probe,
++	.remove = pfuze100_regulator_remove,
+ };
+ module_i2c_driver(pfuze_driver);
+ 
+-- 
+2.18.0
 
-This cast is unnecessary. Pleas remove.
