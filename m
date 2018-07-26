@@ -1,80 +1,107 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731918AbeGZRY4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 13:24:56 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180726081920.GQ1636@tbergstrom-lnx.Nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, thierry.reding@gmail.com
-References: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
- <1532010175-28364-3-git-send-email-pdeschrijver@nvidia.com>
- <b34c2624-7a55-331e-4462-bb3265f411b5@nvidia.com>
- <153255869581.48062.10244129990637940083@swboyd.mtv.corp.google.com>
- <20180726081920.GQ1636@tbergstrom-lnx.Nvidia.com>
-Message-ID: <153262124609.48062.2614573183952941241@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2 2/2] clk: tegra: Correct clk_out_mux parents
-Date: Thu, 26 Jul 2018 09:07:26 -0700
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55687 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728792AbeGZKi0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 06:38:26 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v8 0/6] provide power off support for iMX6 with external PMIC
+Date: Thu, 26 Jul 2018 11:22:14 +0200
+Message-Id: <20180726092220.17250-1-o.rempel@pengutronix.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Peter De Schrijver (2018-07-26 01:19:20)
-> On Wed, Jul 25, 2018 at 03:44:55PM -0700, Stephen Boyd wrote:
-> > Quoting Jon Hunter (2018-07-19 08:06:50)
-> > > =
+2018.07.26:
+v8 is a rebase against kernel v4.18-rc6. No other changes are made.
+Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
 
-> > > On 19/07/18 15:22, Peter De Schrijver wrote:
-> > > > The first 3 possible parents of clk_out_[1-3] are defined as clk_m,=
- clk_m/2
-> > > > and clk_m/4. However They are actually osc, osc/2 and osc/4. In chi=
-ps prior
-> > > > to Tegra210 clk_m and osc had the same frequency, so this differenc=
-e didn't
-> > > > matter. Since Tegra210 however, clk_m is a divided version of osc. =
-This
-> > > > results in CCF reporting the rate as only half the actual rate on T=
-egra210.
-> > > > To fix this, we add new clocks which have osc, osc/2, osc/4 and the
-> > > > respective extern clock as their possible parents and use them for
-> > > > Tegra210. Also 2 new DT clock defines are added to reflect the new
-> > > > names of clk_m/2 and clk_m/4. The old defines are still kept for ba=
-ckwards
-> > > > compatibility.
-> > > > =
+2018.05.17:
+update patches to version v7
 
-> > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > > I gave this a whirl on the Tegra210 Smaug which uses the PMC CLK_OUT1=
- to
-> > > clock the audio codec, but unfortunately this did not work. The good =
-news
-> > > is that I know why. Basically, for Tegra210 there is a slight change =
-in the
-> > > behaviour of the CLKx_ACCEPT_REQ bit. Essentially, this bit must alwa=
-ys be
-> > > set if you want to use any of the osc clocks to drive the CLK_OUTx. S=
-etting
-> > > this bit does not effect the CLK_OUTx if you are using the CAR to dri=
-ve the
-> > > pin. The simplest thing to do for Tegra210 is to always set the
-> > > CLKx_ACCEPT_REQ. =
+This patch series is providing power off support for Freescale/NXP iMX6 based
+boards with external power management integrated circuit (PMIC).
+As a first step the PMIC is configured to turn off the system if the
+standby pin is asserted. On second step we assert the standby pin.
+For this reason we need to use pm_power_off_prepare.
 
-> > > =
+Usage of stnadby pin for power off is described in official iMX6
+documentation.
 
-> > =
+2018.03.05:
+As this patch set touches multiple subsystems I think it would make
+sense for Shawn Guo to take the all patch set.
+The only part which didn't receive an ACK is regulator stuff. So I would
+hope that Mark Brown can ACK it.
 
-> > So resend with that bit also set?
-> > =
+Kind regards,
+Oleksij Rempel
 
-> =
+2017.12.06:
+Adding Linus. Probably there is no maintainer for this patch set.
+No changes are made, tested on v4.15-rc1.
 
-> We haven't figured out who should set this bit as it has some other
-> side-effects like overriding the pinmux settings. Also not all CLK_OUT
-> clocks appear to behave the same way.
-> =
+2017.10.27:
+Last version of this patch set was send at 20 Jun 2017, this is a rebase against
+kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
+please point me.
 
+changes:
+v7:
+ - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
+ - call imx6q_suspend_finish() directly without cpu_suspend()
 
-Ok! Thanks for letting me know.
+v6:
+ - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
+ - fix "MPIC_STBY_REQ" typo in the comment.
+
+v5:
+ - remove useless includes from pm-imx6.c patch
+ - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
+   patch
+
+v4:
+ - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
+   patch
+ - add Acked-by to "ARM: imx6q: provide documentation for new ..."
+   patch
+
+v3:
+ - set pm_power_off_prepare = NULL on .remove.
+ - documentation and spelling fixes.
+ - use %pf instead of lookup_symbol_name.
+
+Oleksij Rempel (6):
+  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
+    property
+  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
+    is set
+  kernel/reboot.c: export pm_power_off_prepare
+  regulator: pfuze100: add fsl,pmic-stby-poweroff property
+  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+  ARM: dts: imx6: RIoTboard provide standby on power off option
+
+ .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
+ .../bindings/regulator/pfuze100.txt           |  7 ++
+ arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
+ arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
+ drivers/regulator/pfuze100-regulator.c        | 92 +++++++++++++++++++
+ kernel/reboot.c                               |  1 +
+ 6 files changed, 138 insertions(+)
+
+-- 
+2.18.0
 
