@@ -1,107 +1,87 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55687 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbeGZKi0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 06:38:26 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v8 0/6] provide power off support for iMX6 with external PMIC
-Date: Thu, 26 Jul 2018 11:22:14 +0200
-Message-Id: <20180726092220.17250-1-o.rempel@pengutronix.de>
+Received: from hermes.aosc.io ([199.195.250.187]:58102 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730095AbeGZScl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:32:41 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3.1 03/10] drm/sun4i: Add support for A64 mixers
+Date: Fri, 27 Jul 2018 01:12:50 +0800
+Message-Id: <20180726171257.6688-4-icenowy@aosc.io>
+In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
+References: <20180726171257.6688-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018.07.26:
-v8 is a rebase against kernel v4.18-rc6. No other changes are made.
-Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-2018.05.17:
-update patches to version v7
+Mixers in Allwinner have similar capabilities as others SoCs with DE2.
 
-This patch series is providing power off support for Freescale/NXP iMX6 based
-boards with external power management integrated circuit (PMIC).
-As a first step the PMIC is configured to turn off the system if the
-standby pin is asserted. On second step we assert the standby pin.
-For this reason we need to use pm_power_off_prepare.
+Add support for them.
 
-Usage of stnadby pin for power off is described in official iMX6
-documentation.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+[Icenowy: Add mixer0]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes for v3.1:
+- Add mixer0
+Changes for v3:
+- none 
+Changes for v2:
+- New patch
 
-2018.03.05:
-As this patch set touches multiple subsystems I think it would make
-sense for Shawn Guo to take the all patch set.
-The only part which didn't receive an ACK is regulator stuff. So I would
-hope that Mark Brown can ACK it.
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Kind regards,
-Oleksij Rempel
-
-2017.12.06:
-Adding Linus. Probably there is no maintainer for this patch set.
-No changes are made, tested on v4.15-rc1.
-
-2017.10.27:
-Last version of this patch set was send at 20 Jun 2017, this is a rebase against
-kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
-please point me.
-
-changes:
-v7:
- - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
- - call imx6q_suspend_finish() directly without cpu_suspend()
-
-v6:
- - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
- - fix "MPIC_STBY_REQ" typo in the comment.
-
-v5:
- - remove useless includes from pm-imx6.c patch
- - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
-   patch
-
-v4:
- - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
-   patch
- - add Acked-by to "ARM: imx6q: provide documentation for new ..."
-   patch
-
-v3:
- - set pm_power_off_prepare = NULL on .remove.
- - documentation and spelling fixes.
- - use %pf instead of lookup_symbol_name.
-
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic-stby-poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide standby on power off option
-
- .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
- .../bindings/regulator/pfuze100.txt           |  7 ++
- arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
- arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
- drivers/regulator/pfuze100-regulator.c        | 92 +++++++++++++++++++
- kernel/reboot.c                               |  1 +
- 6 files changed, 138 insertions(+)
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index fc3713608f78..8b3d02b146b7 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -569,6 +569,22 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+ 	.mod_rate = 150000000,
+ };
+ 
++static const struct sun8i_mixer_cfg sun50i_a64_mixer0_cfg = {
++	.ccsc		= 0,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0xf,
++	.ui_num		= 3,
++	.vi_num		= 1,
++};
++
++static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
++	.ccsc		= 1,
++	.mod_rate	= 297000000,
++	.scaler_mask	= 0x3,
++	.ui_num		= 1,
++	.vi_num		= 1,
++};
++
+ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
+@@ -594,6 +610,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
+ 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
+ 		.data = &sun8i_v3s_mixer_cfg,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-a64-de2-mixer-0",
++		.data = &sun50i_a64_mixer0_cfg,
++	},
++	{
++		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
++		.data = &sun50i_a64_mixer1_cfg,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
 -- 
 2.18.0
 
