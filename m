@@ -1,138 +1,32 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org,
-	andy.gross@linaro.org
-Cc: tdas@codeaurora.org,
-	girishm@codeaurora.org,
-	anischal@codeaurora.org,
-	bjorn.andersson@linaro.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Brown <david.brown@linaro.org>,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-Date: Wed, 18 Jul 2018 11:04:30 -0700
-Message-Id: <20180718180431.48580-3-dianders@chromium.org>
-In-Reply-To: <20180718180431.48580-1-dianders@chromium.org>
-References: <20180718180431.48580-1-dianders@chromium.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: Stephen Boyd <sboyd@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20180718195620.5331-1-krzk@kernel.org>
+In-Reply-To: <20180718195620.5331-1-krzk@kernel.org>
+Message-ID: <153261822377.48062.13389862802943338719@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: samsung: Remove unused mout_user_aclk400_mcuisp_p4x12
+ variable
+Date: Thu, 26 Jul 2018 08:17:03 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Add both the interface and core clock.
+Quoting Krzysztof Kozlowski (2018-07-18 12:56:20)
+> Remove unused 'mout_user_aclk400_mcuisp_p4x12' variable to fix GCC warnin=
+g:
+> =
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+>     drivers/clk/samsung/clk-exynos4412-isp.c:40:27: warning:
+>         'mout_user_aclk400_mcuisp_p4x12' defined but not used [-Wunused-c=
+onst-variable=3D]
+> =
 
- drivers/clk/qcom/gcc-sdm845.c | 73 +++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 0f694ed4238a..2ee96f9bc217 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
- 	"core_bi_pll_test_se",
- };
- 
-+static const struct parent_map gcc_parent_map_9[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_GPLL0_OUT_MAIN, 1 },
-+	{ P_GPLL0_OUT_EVEN, 6 },
-+	{ P_SLEEP_CLK, 7 },
-+};
-+
-+static const char * const gcc_parent_names_9[] = {
-+	"bi_tcxo",
-+	"gpll0",
-+	"gpll0_out_even",
-+	"core_pi_sleep_clk",
-+};
-+
- static struct clk_alpha_pll gpll0 = {
- 	.offset = 0x0,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-@@ -358,6 +372,31 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-+	F(75000000, P_GPLL0_OUT_EVEN, 4, 0, 0),
-+	F(100000000, P_GPLL0_OUT_EVEN, 3, 0, 0),
-+	F(150000000, P_GPLL0_OUT_EVEN, 2, 0, 0),
-+	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
-+	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gcc_qspi_core_clk_src = {
-+	.cmd_rcgr = 0x4b008,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gcc_parent_map_9,
-+	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gcc_qspi_core_clk_src",
-+		.parent_names = gcc_parent_names_9,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_floor_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
- 	F(9600000, P_BI_TCXO, 2, 0, 0),
- 	F(19200000, P_BI_TCXO, 1, 0, 0),
-@@ -1935,6 +1974,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
-+	.halt_reg = 0x4b000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_cnoc_periph_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_qspi_core_clk = {
-+	.halt_reg = 0x4b004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x4b004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_qspi_core_clk",
-+			.parent_names = (const char *[]){
-+				"gcc_qspi_core_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
- 	.halt_reg = 0x17030,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -3383,6 +3453,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
- 	[GPLL4] = &gpll4.clkr,
- 	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
- 	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
-+	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
-+	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
-+	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_sdm845_resets[] = {
--- 
-2.18.0.233.g985f88cf7e-goog
+Applied to clk-next
