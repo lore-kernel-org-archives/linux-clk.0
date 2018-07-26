@@ -1,125 +1,452 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38372 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeGAPLb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Jul 2018 11:11:31 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, icenowy@aosc.io
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
+Date: Thu, 26 Jul 2018 20:03:00 +0200
+Message-ID: <1571011.jY5lUBhtiX@jernej-laptop>
+In-Reply-To: <20180726171257.6688-11-icenowy@aosc.io>
+References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <8952939.l1hLr1Mv9y@jernej-laptop>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <2676604.ZYCNkuCdbT@jernej-laptop> <CAGb2v67kBRWkJpJogFR4GXgA66dsxVaMVWN8MDiP_wFTqxW-=g@mail.gmail.com>
- <8952939.l1hLr1Mv9y@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 1 Jul 2018 23:11:06 +0800
-Message-ID: <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs if
- they don't have channel 0
-To: =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Rob Herring <robh+dt@kernel.org>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Jul 1, 2018 at 4:27 PM, Jernej Škrabec <jernej.skrabec@siol.net> wrote:
-> Dne četrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai napisal(a):
->> On Thu, Jun 28, 2018 at 12:45 PM, Jernej Škrabec
->>
->> <jernej.skrabec@siol.net> wrote:
->> > Dne četrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsai napisal(a):
->> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec <jernej.skrabec@siol.net>
->> >
->> > wrote:
->> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI encoder.
->> >> > Because of that, all output endpoints on such TCON node will point to a
->> >> > encoder which is part of component framework.
->> >> >
->> >> > Correct current graph traversing algorithm in such way that it doesn't
->> >> > skip output enpoints with id 0 on TV TCONs.
->> >>
->> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs that don't
->> >> have channel 0, it must be skipped.
->> >
->> > I'm not sure where this is stated. I read TCON binding again. Can you
->> > please point me to it?
->>
->> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bind
->> ings/display/sunxi/sun4i-drm.txt#L169
->>
->> Our TCON driver still expects RGB or LVDS panel / bridges on endpoint 0.
->
-> Yes, but that can only happen on TCON which has channel 0. TV TCONs (those
-> with channel 1 only) can't have panels or bridges connected to them, because
-> they are internally always connected to either HDMI or TV encoder or both.
-> Actually, R40 is the only SoC, where same TV TCON can be connected to TV
-> encoder or HDMI. Others have specialized TV TCONs, which are connect to only
-> one encoder.
->
-> IMO TV TCONs are really just stripped down LCD TCONs to support one (or max
-> two) specific encoder.
+Dne četrtek, 26. julij 2018 ob 19:12:57 CEST je Icenowy Zheng napisal(a):
+> From: Jagan Teki <jagan@amarulasolutions.com>
+> 
+> Enable all necessary device tree nodes and add connector node to device
+> trees for all supported A64 boards with HDMI.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> [Icenowy: squash all board patches altogether and change supply name]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3,1:
+> - Squash all enablement patches altogether.
+> - Change supply name to match DT binding & driver change.
+> Changes for v3:
+> - Enable all pipeline components
+> Changes for v2:
+> - none
+> 
+>  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+>  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+>  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+>  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+>  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+>  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+>  6 files changed, 204 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
+> 094cfed13df9..0d8f5571d574 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> @@ -60,6 +60,17 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> 
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+> 
+> @@ -86,6 +97,10 @@
+>  	};
+>  };
+> 
+> +&de {
+> +	status = "okay";
+> +};
+> +
+>  &ehci0 {
+>  	status = "okay";
+>  };
+> @@ -103,6 +118,17 @@
+>  	status = "okay";
+>  };
+> 
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+>  &i2c1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c1_pins>;
+> @@ -120,6 +146,10 @@
+>  	};
+>  };
+> 
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> @@ -300,6 +330,10 @@
+>  	vcc-hdmi-supply = <&reg_dldo1>;
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart0_pins_a>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts index
+> 98dbff19f5cc..2bcf02f46366 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+> @@ -57,6 +57,21 @@
+>  	chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> +
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&de {
+> +	status = "okay";
+>  };
+> 
+>  &ehci0 {
+> @@ -67,6 +82,17 @@
+>  	status = "okay";
+>  };
+> 
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+>  /* i2c1 connected with gpio headers like pine64, bananapi */
+>  &i2c1 {
+>  	pinctrl-names = "default";
+> @@ -78,6 +104,10 @@
+>  	bias-pull-up;
+>  };
+> 
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> @@ -199,6 +229,10 @@
+>  	vcc-hdmi-supply = <&reg_dldo1>;
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart0_pins_a>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts index
+> 3f531393eaee..5445a7a1db51 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+> @@ -58,12 +58,42 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> 
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	wifi_pwrseq: wifi_pwrseq {
+>  		compatible = "mmc-pwrseq-simple";
+>  		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+>  	};
+>  };
+> 
+> +&de {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> @@ -218,6 +248,10 @@
+>  	vcc-hdmi-supply = <&reg_dldo1>;
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart0_pins_a>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts index
+> 1221764f5719..81a8f92c6c35 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+> @@ -57,12 +57,42 @@
+>  	chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> +
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&de {
+> +	status = "okay";
+>  };
+> 
+>  &ehci1 {
+>  	status = "okay";
+>  };
+> 
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> @@ -195,6 +225,10 @@
+>  	vcc-hdmi-supply = <&reg_dldo1>;
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart0_pins_a>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts index
+> 1b9b92e541d2..1b972bade9f6 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+> @@ -62,6 +62,21 @@
+>  	chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> +
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&de {
+> +	status = "okay";
+>  };
+> 
+>  &ehci0 {
+> @@ -82,6 +97,17 @@
+> 
+>  };
+> 
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+>  &i2c1 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c1_pins>;
+> @@ -99,6 +125,10 @@
+>  	};
+>  };
+> 
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc0_pins>;
+> @@ -238,6 +268,10 @@
+>  	status = "disabled";
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  /* On Exp and Euler connectors */
+>  &uart0 {
+>  	pinctrl-names = "default";
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts index
+> c21f2331add6..eff44b069b1d 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+> @@ -61,6 +61,17 @@
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> 
+> +	connector {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&hdmi_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	reg_vcc1v8: vcc1v8 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vcc1v8";
+> @@ -69,6 +80,10 @@
+>  	};
+>  };
+> 
+> +&de {
+> +	status = "okay";
+> +};
+> +
+>  &ehci0 {
+>  	status = "okay";
+>  };
+> @@ -86,6 +101,17 @@
+>  	status = "okay";
+>  };
+> 
+> +&hdmi {
+> +	hdmi-supply = <&reg_dldo1>;
+> +	status = "okay";
+> +};
+> +
+> +&hdmi_out {
+> +	hdmi_out_con: endpoint {
+> +		remote-endpoint = <&hdmi_con_in>;
+> +	};
+> +};
+> +
+>  &mdio {
+>  	ext_rgmii_phy: ethernet-phy@1 {
+>  		compatible = "ethernet-phy-ieee802.3-c22";
+> @@ -93,6 +119,10 @@
+>  	};
+>  };
+> 
+> +&mixer1 {
+> +	status = "okay";
+> +};
+> +
+>  &mmc2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&mmc2_pins>;
+> @@ -138,6 +168,10 @@
+>  	vcc-hdmi-supply = <&reg_dldo1>;
 
-I agree. We've seen these first in the H3, and the reverse, TCONs only with
-LCD, on the A23/A33.
+How is it possible to have vcc-hdmi-supply already defined? Did I miss some 
+patch?
 
->> So I guess this was sort of implied historically. It's no longer true.
->> This is something we should probably fix.
->
-> Fixed in what way? You mean update bindings to mention that TCON output
-> endpoint 0 is reserved for panels or bridges?
+Best regards,
+Jernej
 
-Either that, or have the drm driver look at other endpoints. I guess we
-should ask Maxime if this is already done or not, since the DSI driver
-isn't endpoint 0 in the A33 dtsi.
-
->>
->> In practice our drivers don't look at it (yet), but rely on the downstream
->> encoder type to determine which channel to use.
->>
->> But please add the "allwinner,tcon-channel" property as specified in
->> the binding.
->
-> It's my understanding of TCON binding documentation that property
-> "allwinner,tcon-channel" is needed only if TCON supports both channels. TV
-> TCON clearly supports only channel 1. In that case, there is no doubt to which
-> channel output endpoint belongs.
->
-> If that's not true, dt bindings documentation should be reworded to contain
-> word "needed" or something similar. Currently, no DT for newer SoC contains
-> that property (for example, A83T, H3, H5 or even A33). On A33 this is even
-> more interesting, since tcon0 has only channel 0 and has DSI output endpoint
-> with number 1. According to TCON binding docs, if "allwinner,tcon-channel" is
-> not preset, endpoint number represent channel. So, that would mean DSI needs
-> channel 1 on tcon which supports clearly only channel 0. So either there TCON
-> bindings documentation needs updates or DT for A33 has to be updated.
-
-Maxime? You did the A33 DSI stuff.
-
-> BTW, "allwinner,tcon-channel" property is not used at all in the code.
-
-Yes I'm aware. We just base the channel selection on the encoder type instead.
-TV-like ones use channel 1, LCD ones use channel 0.
-
->>
->> > So on TV TCONs on R40 (without channel 0) TVE would be endpoint 1 and HDMI
->> > endpoint 2 (or the other way around)?
->>
->> Which one goes first doesn't quite matter. IIRC there's also a mux for TVE?
->
-> AFAIK, TV TCON is by default connected to TV encoder unless HDMI mux in TCON
-> TOP points to it. I think it's best put TVE with lower number since it's
-> default and HDMI with higher number.
-
-Ok. As long as its specified in the binding, as a contract between the dts
-and the graph parsing code.
-
-Regards
-ChenYu
+>  };
+> 
+> +&tcon1 {
+> +	status = "okay";
+> +};
+> +
+>  &uart0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart0_pins_a>;
