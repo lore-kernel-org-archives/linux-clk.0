@@ -1,103 +1,68 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: clock: Modify Actions Soc clock
- bindings
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
- linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
- devicetree@vger.kernel.org
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-4-sravanhome@gmail.com>
- <20180630093202.GB7320@Mani-XPS-13-9360>
-From: Saravanan Sekar <sravanhome@gmail.com>
-Message-ID: <15070ea0-aebf-2b7d-89f0-b21e729c927e@gmail.com>
-Date: Sun, 1 Jul 2018 19:26:20 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180630093202.GB7320@Mani-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
+Date: Thu, 26 Jul 2018 17:35:12 +0200
+Message-Id: <20180726153517.10020-7-geert+renesas@glider.be>
+In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
+References: <20180726153517.10020-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mani
+Add support for defining fixed rate clocks, to be used for on-chip
+oscillators.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-On 06/30/18 11:32, Manivannan Sadhasivam wrote:
-> Hi Saravanan,
->
-> I agree with modifying the existing binding to accomodate other
-> SoC's of the same family. But the binding should be
-> "actions,owl-cmu.txt" since it reflects the family name.
-
-Agree, will modify the name
-
-> Andreas, what do you think?
->
-> On Thu, Jun 28, 2018 at 09:18:05PM +0200, Saravanan Sekar wrote:
->> Modify clock bindings common Actions Semi Soc family S700/S900.
->>
->> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->> ---
->>   ...tions,s900-cmu.txt => actions,sx00-cmu.txt} | 18 ++++++++++--------
->>   1 file changed, 10 insertions(+), 8 deletions(-)
->>   rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,sx00-cmu.txt} (71%)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->> similarity index 71%
->> rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
->> rename to Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->> index 93e4fb827cd6..8dc7edb4d198 100644
->> --- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
->> +++ b/Documentation/devicetree/bindings/clock/actions,sx00-cmu.txt
->> @@ -1,12 +1,14 @@
->> -* Actions S900 Clock Management Unit (CMU)
->> +* Actions S900/S700 Clock Management Unit (CMU)
->>   
-> Same as above. Should be Actions OWL SoC's Clock Management Unit (CMU).
-
-sure
-
->> -The Actions S900 clock management unit generates and supplies clock to various
->> -controllers within the SoC. The clock binding described here is applicable to
->> -S900 SoC.
->> +The Actions S900/S700 clock management unit generates and supplies clock to
->> +various controllers within the SoC. The clock binding described here is
->> +applicable to S900/S700 SoC.
->>   
->>   Required Properties:
->>   
->> -- compatible: should be "actions,s900-cmu"
->> +- compatible: should be one of this
-> Change to: compatible: should be one of the following:
-
-sure
-
-> Thanks,
-> Mani
->
->> +	"actions,s900-cmu"
->> +	"actions,s700-cmu"
->>   - reg: physical base address of the controller and length of memory mapped
->>     region.
->>   - clocks: Reference to the parent clocks ("hosc", "losc")
->> @@ -15,9 +17,9 @@ Required Properties:
->>   Each clock is assigned an identifier, and client nodes can use this identifier
->>   to specify the clock which they consume.
->>   
->> -All available clocks are defined as preprocessor macros in
->> -dt-bindings/clock/actions,s900-cmu.h header and can be used in device
->> -tree sources.
->> +All available clocks are defined as preprocessor macros in corresponding
->> +dt-bindings/clock/actions,s900-cmu.h or s700-cmu.h header and can be used in
->> +device tree sources.
->>   
->>   External clocks:
->>   
->> -- 
->> 2.18.0
->>
-
-Thanks,
-Saravanan
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index f4b013e9352d9efc..e04338932786bc14 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 		}
+ 		break;
+ 
++	case CLK_TYPE_FR:
++		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
++					      core->mult);
++		break;
++
+ 	default:
+ 		if (info->cpg_clk_register)
+ 			clk = info->cpg_clk_register(dev, core, info,
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 642f720b9b055337..87bb8f368d4ecd18 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -38,6 +38,7 @@ enum clk_types {
+ 	CLK_TYPE_FF,		/* Fixed Factor Clock */
+ 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
+ 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
++	CLK_TYPE_FR,		/* Fixed Rate Clock */
+ 
+ 	/* Custom definitions start here */
+ 	CLK_TYPE_CUSTOM,
+@@ -56,6 +57,8 @@ enum clk_types {
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
+ #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
+ 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
++#define DEF_RATE(_name, _id, _rate)	\
++	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
+ 
+     /*
+      * Definitions of Module Clocks
+-- 
+2.17.1
