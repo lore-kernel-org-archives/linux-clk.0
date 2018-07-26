@@ -1,64 +1,65 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/11] clk: renesas: rcar-gen3: OSC and RCLK improvements
-Date: Wed, 11 Jul 2018 16:20:49 +0200
-Message-Id: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-cys01nam02on0047.outbound.protection.outlook.com ([104.47.37.47]:11508
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730030AbeGZOUL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jul 2018 10:20:11 -0400
+From: Rajan Vaja <RAJANV@xilinx.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of
+ failure
+Date: Thu, 26 Jul 2018 13:03:16 +0000
+Message-ID: <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
+References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
+ <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
+In-Reply-To: <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi all,
-
-This patch series contains various improvements for OSC and RCLK
-handling on R-Car Gen3 SoCs.
-
-This has been tested on R-Car H3 ES1.0/ES2.0, R-Car M3-W ES1.0, R-Car
-D3, and R-Car E3.
-The R-Car V3H (r8a77980) patches were compile-tested only due to lack of
-hardware.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (11):
-  clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-  clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-  clk: renesas: r8a77980: Add OSC predivider configuration and clock
-  clk: renesas: cpg-mssr: Add support for fixed rate clocks
-  clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-  clk: renesas: r8a77990: Correct RCLK handling
-  clk: renesas: r8a77995: Correct RCLK handling
-  clk: renesas: rcar-gen3: Add support for mode pin clock selection
-  clk: renesas: r8a77980: Add RCLK for watchdog timer
-
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 28 ++++++-----
- drivers/clk/renesas/r8a77990-cpg-mssr.c |  9 +++-
- drivers/clk/renesas/r8a77995-cpg-mssr.c |  9 +++-
- drivers/clk/renesas/rcar-gen3-cpg.c     | 40 +++++++++++----
- drivers/clk/renesas/rcar-gen3-cpg.h     | 25 ++++++++--
- drivers/clk/renesas/renesas-cpg-mssr.c  |  5 ++
- drivers/clk/renesas/renesas-cpg-mssr.h  |  3 ++
- 10 files changed, 189 insertions(+), 128 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
+aGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiAyNSBKdWx5IDIwMTgg
+MTA6MTEgUE0NCj4gVG86IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgbXR1cnF1ZXR0
+ZUBiYXlsaWJyZS5jb20NCj4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IFJhamFuIFZhamENCj4gPFJBSkFOVkB4aWxpbnguY29tPg0K
+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBjbGs6IGNsay1maXhlZC1mYWN0b3I6IENsZWFyIE9GX1BP
+UFVMQVRFRCBmbGFnIGluIGNhc2Ugb2YNCj4gZmFpbHVyZQ0KPiANCj4gUXVvdGluZyBSYWphbiBW
+YWphICgyMDE4LTA3LTE3IDA2OjE3OjAwKQ0KPiA+IEZpeGVkIGZhY3RvciBjbG9jayBoYXMgdHdv
+IGluaXRpYWxpemF0aW9ucyBhdCBvZl9jbGtfaW5pdCgpIHRpbWUNCj4gPiBhbmQgZHVyaW5nIHBs
+YXRmb3JtIGRyaXZlciBwcm9iZS4gQmVmb3JlIG9mX2Nsa19pbml0KCkgY2FsbCwNCj4gPiBub2Rl
+IGlzIG1hcmtlZCBhcyBwb3B1bGF0ZWQgYW5kIHNvIGl0cyBwcm9iZSBuZXZlciBnZXRzIGNhbGxl
+ZC4NCj4gPg0KPiA+IER1cmluZyBvZl9jbGtfaW5pdCgpIGZpeGVkIGZhY3RvciBjbG9jayByZWdp
+c3RyYXRpb24gbWF5IGZhaWwgaWYNCj4gPiBhbnkgb2YgaXRzIHBhcmVudCBjbG9jayBpcyBub3Qg
+cmVnaXN0ZXJlZC4gSW4gdGhpcyBjYXNlLCBpdCBkb2Vzbid0DQo+ID4gZ2V0IGNoYW5jZSB0byBy
+ZXRyeSByZWdpc3RyYXRpb24gZnJvbSBwcm9iZS4gQ2xlYXIgT0ZfUE9QVUxBVEVEDQo+ID4gZmxh
+ZyBpZiBmaXhlZCBmYWN0b3IgY2xvY2sgcmVnaXN0cmF0aW9uIGZhaWxzIHNvIHRoYXQgY2xvY2sN
+Cj4gPiByZWdpc3RyYXRpb24gaXMgYXR0ZW1wdGVkIGFnYWluIGZyb20gcHJvYmUuDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBSYWphbiBWYWphIDxyYWphbi52YWphQHhpbGlueC5jb20+DQo+ID4g
+LS0tDQo+ID4gIGRyaXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYyB8IDkgKysrKysrKystDQo+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGstZml4ZWQtZmFjdG9yLmMgYi9kcml2ZXJz
+L2Nsay9jbGstZml4ZWQtZmFjdG9yLmMNCj4gPiBpbmRleCBkNzJlZjJkLi5mM2FlNGZmIDEwMDY0
+NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYw0KPiA+ICsrKyBiL2Ry
+aXZlcnMvY2xrL2Nsay1maXhlZC1mYWN0b3IuYw0KPiA+IEBAIC0xNzcsOCArMTc3LDE1IEBAIHN0
+YXRpYyBzdHJ1Y3QgY2xrICpfb2ZfZml4ZWRfZmFjdG9yX2Nsa19zZXR1cChzdHJ1Y3QNCj4gZGV2
+aWNlX25vZGUgKm5vZGUpDQo+ID4NCj4gPiAgICAgICAgIGNsayA9IGNsa19yZWdpc3Rlcl9maXhl
+ZF9mYWN0b3IoTlVMTCwgY2xrX25hbWUsIHBhcmVudF9uYW1lLCBmbGFncywNCj4gPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbXVsdCwgZGl2KTsNCj4gPiAtICAgICAg
+IGlmIChJU19FUlIoY2xrKSkNCj4gPiArICAgICAgIGlmIChJU19FUlIoY2xrKSkgew0KPiA+ICsg
+ICAgICAgICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICAgKiBJZiBwYXJlbnQgY2xvY2sg
+aXMgbm90IHJlZ2lzdGVyZWQsIHJlZ2lzdHJhdGlvbiB3b3VsZCBmYWlsLg0KPiA+ICsgICAgICAg
+ICAgICAgICAgKiBDbGVhciBPRl9QT1BVTEFURUQgZmxhZyBzbyB0aGF0IGNsb2NrIHJlZ2lzdHJh
+dGlvbiBjYW4gYmUNCj4gPiArICAgICAgICAgICAgICAgICogYXR0ZW1wdGVkIGFnYWluIGZyb20g
+cHJvYmUgZnVuY3Rpb24uDQo+ID4gKyAgICAgICAgICAgICAgICAqLw0KPiA+ICsgICAgICAgICAg
+ICAgICBvZl9ub2RlX2NsZWFyX2ZsYWcobm9kZSwgT0ZfUE9QVUxBVEVEKTsNCj4gPiAgICAgICAg
+ICAgICAgICAgcmV0dXJuIGNsazsNCj4gPiArICAgICAgIH0NCj4gDQo+IEJUVywgdGhpcyBwYXRj
+aCB3YXMgc2VyaW91c2x5IG1hbmdsZWQgZm9yIG1lIHNvIEkgaGFkIHRvIGFwcGx5IGl0IGJ5DQo+
+IGhhbmQuIFBsZWFzZSBiZSBtb3JlIGNhcmVmdWwgbmV4dCB0aW1lIGFuZCBjb25zaWRlciB1c2lu
+ZyBzb21ldGhpbmcgbGlrZQ0KPiBnaXQtc2VuZC1lbWFpbCBhbmQgZ2l0LWZvcm1hdC1wYXRjaCB0
+byBzZW5kIHBhdGNoZXMuDQpbUmFqYW5dIEkgdXNlZCBnaXQtc2VuZC1lbWFpbCBvbmx5IGFuZCBz
+ZW50IHNhbWUgd2F5IGFzIEkgdXNlZCB0byBzZW5kIG90aGVyIHBhdGNoZXMuIE5vdCBzdXJlIHdo
+ZXJlIHdhcyBpc3N1ZS4NClNvcnJ5IGZvciB0aGUgaW5jb252ZW5pZW5jZS4gIA0KDQo=
