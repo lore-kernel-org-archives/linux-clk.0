@@ -1,66 +1,88 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Mark Rutland <mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date: Mon, 09 Jul 2018 14:52:41 +0300
-Message-ID: <1722318.xXycuB2Qx5@dimapc>
-In-Reply-To: <153109441777.143105.8459253820659446035@swboyd.mtv.corp.google.com>
-References: <20180617145539.4758-1-digetx@gmail.com> <20180617145539.4758-7-digetx@gmail.com> <153109441777.143105.8459253820659446035@swboyd.mtv.corp.google.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+To: Rajan Vaja <RAJANV@xilinx.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>
+References: <1531833420-27175-1-git-send-email-rajan.vaja@xilinx.com>
+ <153253683456.48062.11538822357721957211@swboyd.mtv.corp.google.com>
+ <CY1PR02MB2091CE50B9163419EB7D67EFB72B0@CY1PR02MB2091.namprd02.prod.outlook.com>
+Message-ID: <153261883266.48062.5136812490732432669@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in case of failure
+Date: Thu, 26 Jul 2018 08:27:12 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday, 9 July 2018 03:00:17 MSK Stephen Boyd wrote:
-> Quoting Dmitry Osipenko (2018-06-17 07:55:37)
-> 
-> > Kernel should never gate the EMC clock as it causes immediate lockup, so
-> > removing clk-gate functionality doesn't affect anything. Turning EMC clk
-> > gate into divider allows to implement glitch-less EMC scaling, avoiding
-> > reparenting to a backup clock.
-> > 
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > ---
-> 
-> Who's supposed to apply this? Me? Thierry? The "To:" line is not
-> useful when every maintainer is there.
+Quoting Rajan Vaja (2018-07-26 06:03:16)
+> Hi Stephen,
+> =
 
-That's up to you and Thierry to decide. Perhaps it would be less churning if 
-you'll give your ack on the 'clk:' patches and Thierry will handle the whole 
-series on his own.
+> > -----Original Message-----
+> > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > Sent: 25 July 2018 10:11 PM
+> > To: Rajan Vaja <RAJANV@xilinx.com>; mturquette@baylibre.com
+> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Rajan Vaja
+> > <RAJANV@xilinx.com>
+> > Subject: Re: [PATCH] clk: clk-fixed-factor: Clear OF_POPULATED flag in =
+case of
+> > failure
+> > =
 
-> > diff --git a/drivers/clk/tegra/clk-tegra20.c
-> > b/drivers/clk/tegra/clk-tegra20.c index cc857d4d4a86..2bd35418716a 100644
-> > --- a/drivers/clk/tegra/clk-tegra20.c
-> > +++ b/drivers/clk/tegra/clk-tegra20.c
-> > @@ -799,6 +798,31 @@ static struct tegra_periph_init_data
-> > tegra_periph_nodiv_clk_list[] = {> 
-> >         TEGRA_INIT_DATA_NODIV("disp2",  mux_pllpdc_clkm, CLK_SOURCE_DISP2,
-> >         30, 2, 26,  0, TEGRA20_CLK_DISP2),>  
-> >  };
-> > 
-> > +static void __init tegra20_emc_clk_init(void)
-> > +{
-> > +       struct clk *clk;
-> > +
-> > +       clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-> > +                              ARRAY_SIZE(mux_pllmcp_clkm),
-> > +                              CLK_SET_RATE_NO_REPARENT,
-> > +                              clk_base + CLK_SOURCE_EMC,
-> > +                              30, 2, 0, &emc_lock);
-> > +
-> > +       clk = tegra_clk_register_mc("mc", "emc_mux", clk_base +
-> > CLK_SOURCE_EMC, +                                   &emc_lock);
-> > +       clks[TEGRA20_CLK_MC] = clk;
-> > +
-> > +       /*
-> > +        * Note that 'emc_mux' source and 'emc' rate shouldn't be changed
-> > at +        * the same time due to a HW bug, this won't happen because
-> > we're +        * defining 'emc_mux' and 'emc' as a distinct clocks.
-> 
-> s/ a//
+> > Quoting Rajan Vaja (2018-07-17 06:17:00)
+> > > Fixed factor clock has two initializations at of_clk_init() time
+> > > and during platform driver probe. Before of_clk_init() call,
+> > > node is marked as populated and so its probe never gets called.
+> > >
+> > > During of_clk_init() fixed factor clock registration may fail if
+> > > any of its parent clock is not registered. In this case, it doesn't
+> > > get chance to retry registration from probe. Clear OF_POPULATED
+> > > flag if fixed factor clock registration fails so that clock
+> > > registration is attempted again from probe.
+> > >
+> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> > > ---
+> > >  drivers/clk/clk-fixed-factor.c | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-f=
+actor.c
+> > > index d72ef2d..f3ae4ff 100644
+> > > --- a/drivers/clk/clk-fixed-factor.c
+> > > +++ b/drivers/clk/clk-fixed-factor.c
+> > > @@ -177,8 +177,15 @@ static struct clk *_of_fixed_factor_clk_setup(st=
+ruct
+> > device_node *node)
+> > >
+> > >         clk =3D clk_register_fixed_factor(NULL, clk_name, parent_name=
+, flags,
+> > >                                         mult, div);
+> > > -       if (IS_ERR(clk))
+> > > +       if (IS_ERR(clk)) {
+> > > +               /*
+> > > +                * If parent clock is not registered, registration wo=
+uld fail.
+> > > +                * Clear OF_POPULATED flag so that clock registration=
+ can be
+> > > +                * attempted again from probe function.
+> > > +                */
+> > > +               of_node_clear_flag(node, OF_POPULATED);
+> > >                 return clk;
+> > > +       }
+> > =
 
-I can adjust the comment and re-spin the series if something more important 
-will pop up, otherwise that could addressed while applying the patch. 
+> > BTW, this patch was seriously mangled for me so I had to apply it by
+> > hand. Please be more careful next time and consider using something like
+> > git-send-email and git-format-patch to send patches.
+> [Rajan] I used git-send-email only and sent same way as I used to send ot=
+her patches. Not sure where was issue.
+> Sorry for the inconvenience.  =
+
+> =
+
+
+It must be your Outlook server messing things up. I see
+Content-Transfer-Encoding: quoted-printable in the headers, which
+probably caused my MUA to choke and line break things in the wrong
+place.
