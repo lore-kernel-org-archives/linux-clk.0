@@ -1,444 +1,342 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58400 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbeGZSg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:36:59 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Fri, 27 Jul 2018 01:12:57 +0800
-Message-Id: <20180726171257.6688-11-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1532345193-18108-3-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1532345193-18108-1-git-send-email-anischal@codeaurora.org>
+ <1532345193-18108-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <153262575082.48062.16264904338225269915@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: qcom: Add camera clock controller driver for SDM845
+Date: Thu, 26 Jul 2018 10:22:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+Quoting Amit Nischal (2018-07-23 04:26:33)
+> diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm=
+845.c
+> new file mode 100644
+> index 0000000..61e5ec2
+> --- /dev/null
+> +++ b/drivers/clk/qcom/camcc-sdm845.c
+> @@ -0,0 +1,1736 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
 
-Enable all necessary device tree nodes and add connector node to device
-trees for all supported A64 boards with HDMI.
+Is this include used?
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: squash all board patches altogether and change supply name]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3,1:
-- Squash all enablement patches altogether.
-- Change supply name to match DT binding & driver change.
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,camcc-sdm845.h>
+> +
+> +#include "common.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "gdsc.h"
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_CAM_CC_PLL0_OUT_EVEN,
+> +       P_CAM_CC_PLL1_OUT_EVEN,
+> +       P_CAM_CC_PLL2_OUT_EVEN,
+> +       P_CAM_CC_PLL3_OUT_EVEN,
+> +       P_CORE_BI_PLL_TEST_SE,
+> +};
+> +
+> +static const struct parent_map cam_cc_parent_map_0[] =3D {
+> +       { P_BI_TCXO, 0 },
+> +       { P_CAM_CC_PLL2_OUT_EVEN, 1 },
+> +       { P_CAM_CC_PLL1_OUT_EVEN, 2 },
+> +       { P_CAM_CC_PLL3_OUT_EVEN, 5 },
+> +       { P_CAM_CC_PLL0_OUT_EVEN, 6 },
+> +       { P_CORE_BI_PLL_TEST_SE, 7 },
+> +};
+> +
+> +static const char * const cam_cc_parent_names_0[] =3D {
+> +       "bi_tcxo",
+> +       "cam_cc_pll2_out_even",
+> +       "cam_cc_pll1_out_even",
+> +       "cam_cc_pll3_out_even",
+> +       "cam_cc_pll0_out_even",
+> +       "core_bi_pll_test_se",
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll0 =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr =3D {
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "cam_cc_pll0",
+> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static const struct clk_div_table post_div_table_fabia_even[] =3D {
+> +       { 0x0, 1 },
+> +       { 0x1, 2 },
+> +       { }
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv cam_cc_pll0_out_even =3D {
+> +       .offset =3D 0x0,
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_fabia_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_fabia_even),
+> +       .width =3D 4,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_pll0_out_even",
+> +               .parent_names =3D (const char *[]){ "cam_cc_pll0" },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_fabia_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll1 =3D {
+> +       .offset =3D 0x1000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr =3D {
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "cam_cc_pll1",
+> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv cam_cc_pll1_out_even =3D {
+> +       .offset =3D 0x1000,
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_fabia_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_fabia_even),
+> +       .width =3D 4,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_pll1_out_even",
+> +               .parent_names =3D (const char *[]){ "cam_cc_pll1" },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_fabia_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll2 =3D {
+> +       .offset =3D 0x2000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr =3D {
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "cam_cc_pll2",
+> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv cam_cc_pll2_out_even =3D {
+> +       .offset =3D 0x2000,
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_fabia_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_fabia_even),
+> +       .width =3D 4,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_pll2_out_even",
+> +               .parent_names =3D (const char *[]){ "cam_cc_pll2" },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_fabia_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll cam_cc_pll3 =3D {
+> +       .offset =3D 0x3000,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr =3D {
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "cam_cc_pll3",
+> +                       .parent_names =3D (const char *[]){ "bi_tcxo" },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_fabia_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll_postdiv cam_cc_pll3_out_even =3D {
+> +       .offset =3D 0x3000,
+> +       .post_div_shift =3D 8,
+> +       .post_div_table =3D post_div_table_fabia_even,
+> +       .num_post_div =3D ARRAY_SIZE(post_div_table_fabia_even),
+> +       .width =3D 4,
+> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_pll3_out_even",
+> +               .parent_names =3D (const char *[]){ "cam_cc_pll3" },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_alpha_pll_postdiv_fabia_ops,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
+> +       F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
+> +       F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
+> +       F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
+> +       F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_bps_clk_src =3D {
+> +       .cmd_rcgr =3D 0x600c,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D cam_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_cam_cc_bps_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_bps_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_shared_ops,
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
- 6 files changed, 204 insertions(+)
+Why are shared ops used in this driver?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 094cfed13df9..0d8f5571d574 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -120,6 +146,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -300,6 +330,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 98dbff19f5cc..2bcf02f46366 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -57,6 +57,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -67,6 +82,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
-@@ -78,6 +104,10 @@
- 	bias-pull-up;
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -199,6 +229,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 3f531393eaee..5445a7a1db51 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -58,12 +58,42 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -218,6 +248,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index 1221764f5719..81a8f92c6c35 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -57,12 +57,42 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci1 {
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -195,6 +225,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 1b9b92e541d2..1b972bade9f6 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -62,6 +62,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -82,6 +97,17 @@
- 
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -99,6 +125,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -238,6 +268,10 @@
- 	status = "disabled";
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- /* On Exp and Euler connectors */
- &uart0 {
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index c21f2331add6..eff44b069b1d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc1v8: vcc1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc1v8";
-@@ -69,6 +80,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -86,6 +101,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hdmi-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-@@ -93,6 +119,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc2_pins>;
-@@ -138,6 +168,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.18.0
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_cam_cc_cci_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       F(37500000, P_CAM_CC_PLL0_OUT_EVEN, 16, 0, 0),
+> +       F(50000000, P_CAM_CC_PLL0_OUT_EVEN, 12, 0, 0),
+> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
+> +       { }
+> +};
+> +
+[...]
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_mclk0_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_mclk1_clk_src =3D {
+> +       .cmd_rcgr =3D 0x4024,
+> +       .mnd_width =3D 8,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D cam_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_cam_cc_mclk0_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_mclk1_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_mclk2_clk_src =3D {
+> +       .cmd_rcgr =3D 0x4044,
+> +       .mnd_width =3D 8,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D cam_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_cam_cc_mclk0_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_mclk2_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_mclk3_clk_src =3D {
+> +       .cmd_rcgr =3D 0x4064,
+> +       .mnd_width =3D 8,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D cam_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_cam_cc_mclk0_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_mclk3_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       F(60000000, P_CAM_CC_PLL0_OUT_EVEN, 10, 0, 0),
+> +       F(66666667, P_CAM_CC_PLL0_OUT_EVEN, 9, 0, 0),
+> +       F(73846154, P_CAM_CC_PLL2_OUT_EVEN, 6.5, 0, 0),
+> +       F(80000000, P_CAM_CC_PLL2_OUT_EVEN, 6, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_slow_ahb_clk_src =3D {
+> +       .cmd_rcgr =3D 0x6054,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D cam_cc_parent_map_0,
+> +       .freq_tbl =3D ftbl_cam_cc_slow_ahb_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "cam_cc_slow_ahb_clk_src",
+> +               .parent_names =3D cam_cc_parent_names_0,
+> +               .num_parents =3D 6,
+> +               .flags =3D CLK_SET_RATE_PARENT,
 
+Is CLK_SET_RATE_PARENT intentionally set on these RCGs so that they can
+reconfigure the PLL frequency? Wouldn't that be a fixed rate PLL
+frequency?
+
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+[...]
+> +
+> +static int cam_cc_sdm845_probe(struct platform_device *pdev)
+> +{
+> +       struct regmap *regmap;
+> +       struct alpha_pll_config cam_cc_pll_config =3D { };
+> +
+> +       regmap =3D qcom_cc_map(pdev, &cam_cc_sdm845_desc);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       cam_cc_pll_config.l =3D 0x1f,
+> +       cam_cc_pll_config.alpha =3D 0x4000,
+
+Replace these commas with semicolons.
+
+> +       clk_fabia_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll_config);
+> +
+> +       cam_cc_pll_config.l =3D 0x2a,
+> +       cam_cc_pll_config.alpha =3D 0x1556,
+> +       clk_fabia_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll_config);
+
+All over this function.
+
+Can you also add comments in the commit text and code describing why
+oddities like CLK_SET_RATE_PARENT on RCGs and shared rcg ops is used?
