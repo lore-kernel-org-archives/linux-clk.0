@@ -1,102 +1,92 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-To: Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <153247398093.48062.2891509901572895687@swboyd.mtv.corp.google.com>
-Cc: grahamr@codeaurora.org, linux-clk <linux-clk@vger.kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>, Doug Anderson <dianders@chromium.org>,
- Taniya Das <tdas@codeaurora.org>, Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Amit Kucheria <amit.kucheria@linaro.org>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
- <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
- <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
- <20180720175612.76528.53638@harbor.lan>
- <153247398093.48062.2891509901572895687@swboyd.mtv.corp.google.com>
-Message-ID: <20180725055135.96956.13008@harbor.lan>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-Date: Tue, 24 Jul 2018 22:51:38 -0700
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 26 Jul 2018 09:55:16 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Marcel Ziswiler <marcel@ziswiler.com>, Peter Geis <pgwipeout@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Marcel Ziswiler
+ <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver
+ <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-tegra-owner@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
+In-Reply-To: <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
+References: <20180720075422.26563-1-marcel@ziswiler.com>
+ <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
+ <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
+ <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
+Message-ID: <13595e6b8bfb364023648297cad7da1b@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2018-07-24 16:13:00)
-> Quoting Michael Turquette (2018-07-20 10:56:12)
-> > Quoting Stephen Boyd (2018-07-20 10:12:29)
-> > > =
+On 26.07.2018 09:31, Stephen Boyd wrote:
+> Quoting Peter Geis (2018-07-25 16:42:34)
+>> On 7/25/2018 7:24 PM, Stephen Boyd wrote:
+>> > Quoting Marcel Ziswiler (2018-07-20 00:54:22)
+>> >> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>> >>
+>> >> Actually report the error code from devm_regulator_get() which may as
+>> >> well just be a probe deferral.
+>> >>
+>> >> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>> >>
+>> >> ---
+>> >>
+>> >>   drivers/clk/tegra/clk-dfll.c | 5 +++--
+>> >>   1 file changed, 3 insertions(+), 2 deletions(-)
+>> >>
+>> >> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+>> >> index 48ee43734e05..b2123084e175 100644
+>> >> --- a/drivers/clk/tegra/clk-dfll.c
+>> >> +++ b/drivers/clk/tegra/clk-dfll.c
+>> >> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *pdev,
+>> >>
+>> >>          td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+>> >>          if (IS_ERR(td->vdd_reg)) {
+>> >> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+>> >> -               return PTR_ERR(td->vdd_reg);
+>> >> +               ret = PTR_ERR(td->vdd_reg);
+>> >> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
+>> >
+>> > Do you want to know that a probe defer is happening? Usually patches are
+>> > sent to make that error path silent.
+>> >
+>>
+>> Just asking as the newbie here, but shouldn't probe deferral be
+>> regulated to dev_debug?
+>> Then pass any other error code as dev_err.
+> 
+> Yes probe defer should be relegated to debug level prints. Or really, we
+> should introduce a more complicated system to make debugging probe defer
+> errors simpler by informing us which driver is probe defering on what
+> resource by putting debug prints in each framework that returns probe
+> defer errors instead of updating each driver that uses these frameworks
+> and thinks it needs to print errors in these cases. And hide all that
+> behind some kernel commandline parameter and/or Kconfig option that lets
+> us turn the prints off all the time if we're not developing drivers or
+> testing things.
 
-> > > For one thing, a driver should be able to figure out what the
-> > > performance state requirement is for a particular frequency. I'd like=
- to
-> > > see an API that a driver can pass something like a (device, genpd, cl=
-k,
-> > > frequency) tuple and get back the performance state required for that
-> > > device's clk frequency within that genpd by querying OPP tables. If we
-> > > had this API, then SoC vendors could design OPP tables for their on-S=
-oC
-> > > devices that describe the set of max frequencies a device can operate=
- at
-> > > for a specific performance state and driver authors would be able to
-> > > query that information and manually set genpd performance states when
-> > > they change clk frequencies. In Qualcomm designs this would be their
-> > =
+Afaict, that is already there in:
+drivers/base/dd.c:really_probe()
 
-> > I want to make sure I understand your proposal here. You want consumer
-> > drivers to call the clk api's the manage clks, and you also want them to
-> > use runtime/genpd apis to manage the power rails (with synchronicity
-> > provided by a new api to set the right genpd/power rail state based on
-> > clk freq). Do I have that right?
-> =
-
-> Yes. That is one option that I'd like to explore. We definitely have a
-> case where drivers don't set any rate at all, they just set a power rail
-> state with the performance state APIs. But it also seems complicated to
-> do it all through the OPP APIs, so maybe duplicating a bunch of stuff in
-> each driver will show that is good or bad.
-> =
-
-> > =
-
-> > Sounds OK to me, but why not fold the clk_set_rate part into the genpd
-> > as well? It's possible to have a genpd call clk_enable/clk_disable (see
-> > include/linux/pm_clock.h, drivers/base/power/clock_ops.c and it's
-> > various users under arch/arm/mach-* and drivers/*). Gating clocks within
-> > a genpd callback feels analogous to setting clock rate.
-> > =
-
-> =
-
-> I suppose it should be possible to make a genpd for the clk rate and clk
-> enable/disable state and put that behind the genpd performance state API
-> so that it mirrors the OPP set_rate API. Then it is analogous to setting
-> a rate and having a state of 0 mean the voltage requirement is gone. Of
-> course, then we've replaced the word 'rate' with 'state' and I'm all
-> happy now, which seems hypocritical! I semi-alluded to this idea in the
-> second half of my email where I said we can turn OPP into a genpd that
-> accepts performance state requests via the genpd performance state API,
-> so I'm happy to look at how this would work too. It would be nice for
-> drivers to just request a performance state and have that fall into a
-> genpd for the clk rate and enable/disable state and also go affect the
-> performance state of a voltage domain genpd. Everything could be done on
-> the backend in genpd then and drivers wouldn't do much with clks
-> directly.
-> =
+So I suggest to just silence the EPROBE_DEFER case, e.g.\
 
 
-Right, and for SoCs with complex power management hardware, I feel that
-having a genpd backend that Knows All The Stuff will be really helpful
-to the soc platform driver authors.
+	if (IS_ERR(td->vdd_reg)) {
+		ret = PTR_ERR(td->vdd_reg);
+		if (ret != -EPROBE_DEFER)
+			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", ret);
 
-Lots of out-of-tree Whole Chip Power Management frameworks have shipped
-in devices. I wonder if finally uniting performance and idle power
-management in genpd will provide a path forward towards an
-upstream-acceptable solution?
+		return ret;
+	}
 
-I think it would be ideal if we could nest all of the power primitives
-within this layer (clocks, regulators, pmic/firmware messaging, avs,
-etc) instead of having peer layers/subsystems.
+--
+Stefan
 
-Regards,
-Mike
+
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
