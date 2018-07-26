@@ -1,86 +1,56 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 5 Jul 2018 10:56:50 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Enric Balletbo Serra <eballetbo@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Lee Jones <lee.jones@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Sebastian Reichel <sre@kernel.org>,
-	chenjh@rock-chips.com, Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-clk@vger.kernel.org,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
-	heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180705075650.GA7683@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <7e1888375c979accc402e9ddd7316e528b2ac52c.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <CAFqH_51izuVgHukAORvwjZqGhxy85tdNdaHL9mOUnPnbCQmQjA@mail.gmail.com>
- <20180704145623.zgei3ehrwdpcu26r@penguin>
- <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2484 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbeGZJfI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 05:35:08 -0400
+Date: Thu, 26 Jul 2018 11:19:20 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Jon Hunter <jonathanh@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra: Correct clk_out_mux parents
+Message-ID: <20180726081920.GQ1636@tbergstrom-lnx.Nvidia.com>
+References: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
+ <1532010175-28364-3-git-send-email-pdeschrijver@nvidia.com>
+ <b34c2624-7a55-331e-4462-bb3265f411b5@nvidia.com>
+ <153255869581.48062.10244129990637940083@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAFqH_50UshTTc0Cv0wBhUoPdm0jZVgcvRKr3qzb=M-jCcMhdtA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <153255869581.48062.10244129990637940083@swboyd.mtv.corp.google.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Jul 04, 2018 at 06:57:39PM +0200, Enric Balletbo Serra wrote:
-> Missatge de Dmitry Torokhov <dmitry.torokhov@gmail.com> del dia dc., 4
-> de jul. 2018 a les 17:10:
-> >
-> > Hi Enric,
-> >
-> > On Tue, Jun 26, 2018 at 11:06:33AM +0200, Enric Balletbo Serra wrote:
-> > > Hi Matti,
-> > >
-> > > Thanks for the patch, a few comments below, some are feedback I
-> > > received when I sent some patches to this subsystem.
-> > >
-> > > Missatge de Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com> del
-> > > dia dt., 19 de juny 2018 a les 12:57:
-> > > > +};
-> > > > +
-> > > > +/* bd71837 multi function cells */
-> > > > +static struct mfd_cell bd71837_mfd_cells[] = {
-> > > > +       {
-> > > > +               .name = "bd71837-clk",
-> > > > +       }, {
-> > > > +               .name = "bd718xx-pwrkey",
-> > > > +               .resources = &irqs[0],
-> > > > +               .num_resources = ARRAY_SIZE(irqs),
-> > > > +       }, {
-> > > > +               .name = "bd71837-pmic",
-> > > > +       },
-> > > nit: no comma at the end
-> >
-> > Actually, trailing comma is preferred on structures/arrays without
-> > sentinels, because if one needs to add a new entry/new member, then in
-> > the diff there will have only one new line added, instead of one line
-> > being changed (adding now necessary comma) and one added.
-> >
+On Wed, Jul 25, 2018 at 03:44:55PM -0700, Stephen Boyd wrote:
+> Quoting Jon Hunter (2018-07-19 08:06:50)
+> > 
+> > On 19/07/18 15:22, Peter De Schrijver wrote:
+> > > The first 3 possible parents of clk_out_[1-3] are defined as clk_m, clk_m/2
+> > > and clk_m/4. However They are actually osc, osc/2 and osc/4. In chips prior
+> > > to Tegra210 clk_m and osc had the same frequency, so this difference didn't
+> > > matter. Since Tegra210 however, clk_m is a divided version of osc. This
+> > > results in CCF reporting the rate as only half the actual rate on Tegra210.
+> > > To fix this, we add new clocks which have osc, osc/2, osc/4 and the
+> > > respective extern clock as their possible parents and use them for
+> > > Tegra210. Also 2 new DT clock defines are added to reflect the new
+> > > names of clk_m/2 and clk_m/4. The old defines are still kept for backwards
+> > > compatibility.
+> > > 
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > I gave this a whirl on the Tegra210 Smaug which uses the PMC CLK_OUT1 to
+> > clock the audio codec, but unfortunately this did not work. The good news
+> > is that I know why. Basically, for Tegra210 there is a slight change in the
+> > behaviour of the CLKx_ACCEPT_REQ bit. Essentially, this bit must always be
+> > set if you want to use any of the osc clocks to drive the CLK_OUTx. Setting
+> > this bit does not effect the CLK_OUTx if you are using the CAR to drive the
+> > pin. The simplest thing to do for Tegra210 is to always set the
+> > CLKx_ACCEPT_REQ. 
+> > 
 > 
-> Many thanks for sharing your knowledge! That looks to me a good
-> reason.
-
-So in this specific ecample leaving the comma does not help. The opening
-brace for new array element would be added to same line where the comma
-is, right? In any case - this was educating and makes perfect sense for
-arrays with simple items. Thanks.
-
-> Matti, I don't want to beat about the bush with these nitpicks. It is
-> not my intention. So I'd say, do what the maintainer wants :)
+> So resend with that bit also set?
 > 
-No problem.
 
-Br,
-	Matti Vaittinen
+We haven't figured out who should set this bit as it has some other
+side-effects like overriding the pinmux settings. Also not all CLK_OUT
+clocks appear to behave the same way.
+
+Peter.
