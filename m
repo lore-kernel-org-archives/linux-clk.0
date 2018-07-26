@@ -1,46 +1,109 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1532337101.26720.89.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] meson8b: add the CPU_DIV16 clock for the ARM TWD
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
-Cc: linux-clk@vger.kernel.org, carlo@caione.org, khilman@baylibre.com,
-	sboyd@kernel.org, mturquette@baylibre.com
-Date: Mon, 23 Jul 2018 11:11:41 +0200
-In-Reply-To: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
-References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:58365 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730085AbeGZSgd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jul 2018 14:36:33 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3.1 09/10] drm/sun4i: Add support for HDMI voltage regulator
+Date: Fri, 27 Jul 2018 01:12:56 +0800
+Message-Id: <20180726171257.6688-10-icenowy@aosc.io>
+In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
+References: <20180726171257.6688-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, 2018-07-21 at 19:25 +0200, Martin Blumenstingl wrote:
-> Carlo sent a .dts patch for the ARM TWD (timer watchdog) a long time
-> ago: [0]
-> This patch was never applied. While resurrecting it I found out (by
-> trial and error) that the TWD clock is derived from the CPU clock by
-> dividing the existing CPU clock by 16.
-> An additional hint was also given by Neil's clock measurer patch [1]
-> as the GX SoCs explicitly define a "sys_cpu_div16" clock with ID 18,
-> however old u-boot seems to call that CTS_LED_PLL_CLK. The rate of
-> this clock also matches CPU clock divided by 16 on my boards.
-> 
-> It's not clear if there is an additional gate for this clock. If there
-> is then it's not documented anywhere.
-> 
-> 
-> [0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-December/391928.html
-> [1] https://patchwork.kernel.org/patch/10504083/
-> 
-> Martin Blumenstingl (2):
->   dt-bindings: clock: meson8b: export the CPU_DIV16 clock
->   clk: meson: meson8b: add the CPU_DIV16 clock
-> 
->  drivers/clk/meson/meson8b.c              | 12 ++++++++++++
->  drivers/clk/meson/meson8b.h              |  2 +-
->  include/dt-bindings/clock/meson8b-clkc.h |  1 +
->  3 files changed, 14 insertions(+), 1 deletion(-)
-> 
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Queued for 4.20
-Thx
+Some boards have HDMI VCC pin connected to voltage regulator which may
+not be turned on by default.
+
+Add support for such boards by adding voltage regulator handling code to
+HDMI driver.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v3.1:
+- New patch. (Replaced "drm: sun4i: add support for HVCC regulator
+  for DWC HDMI glue" by Icenowy.)
+
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 17 ++++++++++++++++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 31875b636434..bf7bf4f2fb29 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -125,10 +125,22 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 		return PTR_ERR(hdmi->clk_tmds);
+ 	}
+ 
++	hdmi->regulator = devm_regulator_get(dev, "hdmi");
++	if (IS_ERR(hdmi->regulator)) {
++		dev_err(dev, "Couldn't get regulator\n");
++		return PTR_ERR(hdmi->regulator);
++	}
++
++	ret = regulator_enable(hdmi->regulator);
++	if (ret) {
++		dev_err(dev, "Failed to enable regulator\n");
++		return ret;
++	}
++
+ 	ret = reset_control_deassert(hdmi->rst_ctrl);
+ 	if (ret) {
+ 		dev_err(dev, "Could not deassert ctrl reset control\n");
+-		return ret;
++		goto err_disable_regulator;
+ 	}
+ 
+ 	ret = clk_prepare_enable(hdmi->clk_tmds);
+@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	clk_disable_unprepare(hdmi->clk_tmds);
+ err_assert_ctrl_reset:
+ 	reset_control_assert(hdmi->rst_ctrl);
++err_disable_regulator:
++	regulator_disable(hdmi->regulator);
+ 
+ 	return ret;
+ }
+@@ -196,6 +210,7 @@ static void sun8i_dw_hdmi_unbind(struct device *dev, struct device *master,
+ 	sun8i_hdmi_phy_remove(hdmi);
+ 	clk_disable_unprepare(hdmi->clk_tmds);
+ 	reset_control_assert(hdmi->rst_ctrl);
++	regulator_disable(hdmi->regulator);
+ }
+ 
+ static const struct component_ops sun8i_dw_hdmi_ops = {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index aadbe0a10b0c..7fdc1ecd2892 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -10,6 +10,7 @@
+ #include <drm/drm_encoder.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ 
+ #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
+ 	struct drm_encoder		encoder;
+ 	struct sun8i_hdmi_phy		*phy;
+ 	struct dw_hdmi_plat_data	plat_data;
++	struct regulator		*regulator;
+ 	struct reset_control		*rst_ctrl;
+ };
+ 
+-- 
+2.18.0
+
