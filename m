@@ -1,89 +1,60 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <e89f28253070abae5dc755800feee500cc3396ce.camel@baylibre.com>
-Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
- <narmstrong@baylibre.com>,  Yixun Lan <yixun.lan@amlogic.com>
-Cc: Rob Herring <robh@kernel.org>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- Boris Brezillon <boris.brezillon@bootlin.com>,  Liang Yang
- <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Miquel
- Raynal <miquel.raynal@bootlin.com>, Carlo Caione <carlo@caione.org>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
-Date: Mon, 30 Jul 2018 10:57:26 +0200
-In-Reply-To: <153270995155.48062.4302847978258086624@swboyd.mtv.corp.google.com>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
-	 <20180712211244.11428-3-yixun.lan@amlogic.com>
-	 <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
-	 <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
-	 <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
-	 <153270995155.48062.4302847978258086624@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <gustavo@embeddedor.com>
+Subject: Re: [PATCH] reset: hisilicon: fix potential NULL pointer dereference
+To: Stephen Boyd <sboyd@kernel.org>,
+ Jiancheng Xue <xuejiancheng@hisilicon.com>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180719015845.GA10768@embeddedor.com>
+ <153256235859.48062.6895683993866147909@swboyd.mtv.corp.google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <0d7972a9-a874-f94f-aafc-7067d561fafb@embeddedor.com>
+Date: Wed, 25 Jul 2018 19:25:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <153256235859.48062.6895683993866147909@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-07-27 at 09:45 -0700, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2018-07-27 09:41:40)
-> > Quoting Yixun Lan (2018-07-27 07:52:23)
-> > > HI Stephen:
-> > > 
-> > > On 07/26/2018 11:20 PM, Stephen Boyd wrote:
-> > > > Quoting Yixun Lan (2018-07-12 14:12:44)
-> > > > > diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..36c4c7cd69a6
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/clk/meson/mmc-clkc.c
-> > > > > @@ -0,0 +1,367 @@
-> > > > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > > > > +/*
-> > > > > + * Amlogic Meson MMC Sub Clock Controller Driver
-> > > > > + *
-> > > > > + * Copyright (c) 2017 Baylibre SAS.
-> > > > > + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> > > > > + *
-> > > > > + * Copyright (c) 2018 Amlogic, inc.
-> > > > > + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> > > > > + */
-> > > > > +
-> > > > > +#include <linux/clk.h>
-> > > > 
-> > > > Is this include used?
-> > > > 
-> > > 
-> > > this is needed by clk_get_rate()
-> > > see drivers/clk/meson/mmc-clkc.c:204
-> > 
-> > Hmm ok. That's unfortunate.
+Hi Stephen,
+
+On 07/25/2018 06:45 PM, Stephen Boyd wrote:
+> Quoting Gustavo A. R. Silva (2018-07-18 18:58:45)
+>> There is a potential execution path in which function
+>> platform_get_resource() returns NULL. If this happens,
+>> we will end up having a NULL pointer dereference.
+>>
+>> Fix this by adding asanity check in order to avoid a
+>> NULL pointer dereference.
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/clk/hisilicon/reset.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+>> index 2a5015c..5dfb48b 100644
+>> --- a/drivers/clk/hisilicon/reset.c
+>> +++ b/drivers/clk/hisilicon/reset.c
+>> @@ -109,6 +109,9 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+>>                 return NULL;
+>>  
+>>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +       if (!res)
+>> +               return NULL;
+>> +
+>>         rstc->membase = devm_ioremap(&pdev->dev,
+>>                                 res->start, resource_size(res));
 > 
-> You should be able to read the hardware to figure out the clk frequency?
-> This may be a sign that the phase clk_ops are bad and should be passing
-> in the frequency of the parent clk to the op so that phase can be
-> calculated. Jerome?
+> Why can't we use devm_ioremap_resource() here instead?
 > 
 
-It could be a away to do it but:
-a) if we modify the API, we would need to update every clock driver using it.
-   There is not that many users of the phase API but still, it is annoying
-b) This particular driver need the parent rate, other might need something else
-I guess. (parent phase ??, duty cycle ??) 
+You're right. I think we can perfectly use devm_ioremap_resource here and remove the null check.
 
-I think the real problem here it that you are using the consumer API. You should
-be using the provider API like clk_hw_get_rate. Look at the clk-divider.c which
-use clk_hw_round_rate() on the parent clock. 
+I'll send patch for this shortly.
 
-Clock drivers should deal with 'struct clk_hw', not 'struct clk'. I think it was
-mentioned in the past that the 'clk' within 'struct clk_hw' might be removed
-someday.
-
-Yixun, please don't put your clock driver within the controller driver. Please
-implement your 'phase-delay' clock in its own file and export the ops, like
-every other clock in the amlogic directory. Also, please review your list of
-'#define', some of them are unnecessary copy/paste from the MMC driver.
-
-Regards
-
-Jerome
+Thanks
+--
+Gustavo
