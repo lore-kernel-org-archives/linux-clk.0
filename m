@@ -1,41 +1,154 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian
- Hu <jian.hu@amlogic.com>, Jianxin Qin <jianxin.qin@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v2 0/2] clk: meson-axg: add pcie related clocks
-Date: Mon, 2 Jul 2018 21:31:16 +0000
-Message-ID: <20180702213118.19222-1-yixun.lan@amlogic.com>
+Return-Path: <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
+ "A.s. Dong" <aisheng.dong@nxp.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-2-o.rempel@pengutronix.de>
+ <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+Date: Thu, 26 Jul 2018 13:37:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf"
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series try to add clocks for the pcie driver,
-Due to ASIC desigin, the mipi clock is also required by the pcie
-controller, so we also added in this patch series.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
+Content-Type: multipart/mixed; boundary="G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Robin Gong <yibin.gong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>,
+ "A.s. Dong" <aisheng.dong@nxp.com>
+Message-ID: <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-2-o.rempel@pengutronix.de>
+ <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+In-Reply-To: <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+
+--G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO
+Content-Type: text/plain; charset=gbk
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On 26.07.2018 11:51, Robin Gong wrote:
+>=20
+>=20
+>> -----Original Message-----
+>> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
+>> Sent: 2018=C4=EA7=D4=C226=C8=D5 17:22
+>> To: Shawn Guo <shawnguo@kernel.org>; Mark Brown <broonie@kernel.org>;
+>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Morton=
+
+>> <akpm@linux-foundation.org>; Liam Girdwood <lgirdwood@gmail.com>;
+>> Leonard Crestez <leonard.crestez@nxp.com>; Rob Herring
+>> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Michael
+>> Turquette <mturquette@baylibre.com>; Stephen Boyd
+>> <sboyd@codeaurora.org>; Fabio Estevam <fabio.estevam@nxp.com>; Russell=
+
+>> King <linux@armlinux.org.uk>; dl-linux-imx <linux-imx@nxp.com>; Robin =
+Gong
+>> <yibin.gong@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+>> Subject: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+>> fsl,pmic-stby-poweroff property
+>>
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> ---
+>>  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> index a45ca67a9d5f..e1308346e00d 100644
+>> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+>> @@ -6,6 +6,14 @@ Required properties:
+>>  - interrupts: Should contain CCM interrupt
+>>  - #clock-cells: Should be <1>
+>>
+>> +Optional properties:
+>> +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signa=
+l
+>> +  on power off.
+>> +  Use this property if the SoC should be powered off by external powe=
+r
+>> +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
+> PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
+
+No. First, it was only one customer specific issue. After some research
+I found even publicly available boards (for example RioTboard) which has
+same/similar design. After seeing this in imx6 documentation as valid
+power off way, I have no doubts - there should be even more devices doin
+this in the wild.
+
+> Don't understand
+> why not follow normal board design guide to power off pmic by PMIC_ON_R=
+EQ.
+> How to power on board again then?
+
+Power cycle. Without this patch, power of is not real power off. So,
+power cycle, is expected behavior for user interaction. On usual PC,
+reset button will not enable PC as well.
 
 
-Changes since v1 at [1]:
-  -- Separate dt-binding header files
-  -- use table to exclude unwanted clock parent
+--G2Tm66CxLRos6R6xC1wkdggvshNUH6LPO--
 
-[1] https://lkml.kernel.org/r/20180621122620.13195-1-yixun.lan@amlogic.com
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Yixun Lan (2):
-  clk: meson-axg: add pcie and mipi clock bindings
-  clk: meson-axg: add clocks required by pcie driver
+-----BEGIN PGP SIGNATURE-----
 
- drivers/clk/meson/axg.c              | 148 +++++++++++++++++++++++++++
- drivers/clk/meson/axg.h              |   6 +-
- include/dt-bindings/clock/axg-clkc.h |   3 +
- 3 files changed, 156 insertions(+), 1 deletion(-)
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltZsoUACgkQdQOiSHVI
+77TWzQgAhQoMOjx7+S1Qm1rZPtMblz6hK1z0mNYWGfIGeg8cdj3+Aoo5ypnLb7+6
+MaMowFsPSn+MLu9KyaKTxhdSP+QBC9kGWqj7Dg13MILlNJJRvk5wLjYxEtbuU31H
+K0H8B2gIL9lKA7frgkndteGYeJFYM9ziaWnj1sLRzsud3TJJHx5WBYLCXI0OuLXx
+YD4H8fB2xR89Fj2Jqeaugux1Ewu99a/jUbX3PSi0trAi+AmLN83Yg1+c43r5O2Yn
+kfWatgPLmK7CMBoTZCKVZZwAG1auPkLnNXp0vSXwkoSnZaPKTzTahzCoKFb49wJ0
+PsMc7Rki7cPb+4x3ia0vwxAa/umtYw==
+=pEPP
+-----END PGP SIGNATURE-----
 
--- 
-2.18.0
+--CmSIAI6FGWQju5vbxnKfqJmQv2oAuY0pf--
