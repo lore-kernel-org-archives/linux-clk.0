@@ -1,61 +1,42 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v10 07/10] firmware: xilinx: Add debugfs for IOCTL API
-Date: Tue, 17 Jul 2018 12:59:04 -0700
-Message-ID: <1531857547-16652-8-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44207 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729155AbeGZNb5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 09:31:57 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20180725191417.3313-1-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 26 Jul 2018 14:15:12 +0200
+Message-ID: <CAMuHMdXztHNAsOakhKF0AYy4xEPM=d=NUwZQJA=JNvW-gX1RqQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77965: Add SATA clock
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+On Wed, Jul 25, 2018 at 9:14 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds SATA clock to the R8A77965 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [wsa: rebased to upstream base]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add debugfs file to set/get IOCTL using debugfs interface.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp-debug.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
-index fcbdd6e..fc11db9 100644
---- a/drivers/firmware/xilinx/zynqmp-debug.c
-+++ b/drivers/firmware/xilinx/zynqmp-debug.c
-@@ -32,6 +32,7 @@ static char debugfs_buf[PAGE_SIZE];
- #define PM_API(id)		 {id, #id, strlen(#id)}
- static struct pm_api_info pm_api_list[] = {
- 	PM_API(PM_GET_API_VERSION),
-+	PM_API(PM_IOCTL),
- };
- 
- /**
-@@ -95,6 +96,15 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
- 		sprintf(debugfs_buf, "PM-API Version = %d.%d\n",
- 			pm_api_version >> 16, pm_api_version & 0xffff);
- 		break;
-+	case PM_IOCTL:
-+		ret = eemi_ops->ioctl(pm_api_arg[0], pm_api_arg[1],
-+				      pm_api_arg[2], pm_api_arg[3],
-+				      &pm_api_ret[0]);
-+		if (!ret && (pm_api_arg[1] == IOCTL_GET_PLL_FRAC_MODE ||
-+			     pm_api_arg[1] == IOCTL_GET_PLL_FRAC_DATA))
-+			sprintf(debugfs_buf, "IOCTL return value: %u\n",
-+				pm_api_ret[1]);
-+		break;
- 	default:
- 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
- 		ret = -EINVAL;
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
