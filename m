@@ -1,33 +1,35 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1531738834.12853.64.camel@baylibre.com>
-Subject: Re: [RESEND PATCH v2 2/2] clk: meson-g12a: Add EE Clock controller
- driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Rob Herring <robh@kernel.org>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
- <yixun.lan@amlogic.com>,  Qiufang Dai <qiufang.dai@amlogic.com>, "Bo.yang"
- <bo.yang@amlogic.com>, "Xingyu.chen" <xingyu.chen@amlogic.com>,
- "Qianggui,song" <qianggui.song@amlogic.com>,  "Sunny.luo"
- <sunny.luo@amlogic.com>, linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Mon, 16 Jul 2018 13:00:34 +0200
-In-Reply-To: <1531728707-192230-3-git-send-email-jian.hu@amlogic.com>
-References: <1531728707-192230-1-git-send-email-jian.hu@amlogic.com>
-	 <1531728707-192230-3-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from imap1.codethink.co.uk ([176.9.8.82]:58176 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbeGZOtZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 10:49:25 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Thu, 26 Jul 2018 14:32:29 +0100
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+To: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-kernel@lists.codethink.co.uk, jonathanh@nvidia.co,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com
+Subject: Re: [Linux-kernel] tegra clock updates and fixes
+In-Reply-To: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
+Message-ID: <16564340083ea64de8c956ba65ea59f8@codethink.co.uk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-07-16 at 16:11 +0800, Jian Hu wrote:
-> Add a Clock driver for the Everything-Else part
-> of the Amlogic Meson-G12A SoC.
+On 2018-07-20 14:45, Ben Dooks wrote:
+> Hi, this is a set of clock updates and fixes we did when developing
+> the tegra20/tegra30 auto support. The audio change is due to using
+> the tegra in clock-slave mode (this hasn't been done before)
 > 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> We have also implemented the clock reset status callback as it is
+> used by some of the driver work we did.
 
-Point raised about fdiv gates remains un-answered.
-Please address all the point raised before reposting your patches.
+Is it possible to look at applying the bits of the series that are
+not currently under discussion? If so should I post a smaller series?
+
+-- 
+Ben
