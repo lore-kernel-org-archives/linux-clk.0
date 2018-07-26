@@ -1,131 +1,66 @@
-Return-Path: <hayashibara.keiji@socionext.com>
-From: Keiji Hayashibara <hayashibara.keiji@socionext.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	yamada.masahiro@socionext.com,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: masami.hiramatsu@linaro.org,
-	jaswinder.singh@linaro.org,
-	linux-kernel@vger.kernel.org,
-	hayashibara.keiji@socionext.com,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH] clk: uniphier: add clock frequency support for SPI
-Date: Thu, 19 Jul 2018 14:23:48 +0900
-Message-Id: <1531977828-8276-1-git-send-email-hayashibara.keiji@socionext.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Thu, 26 Jul 2018 21:20:25 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: afaerber@suse.de
+Cc: sravanhome@gmail.com, sboyd@kernel.org, mark.rutland@arm.com,
+	devicetree@vger.kernel.org, linux@cubietech.com,
+	support@cubietech.com, catalin.marinas@arm.com,
+	mturquette@baylibre.com, will.deacon@arm.com,
+	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+	darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v7 5/5] arm64: dts: actions: Set UART clock reference
+ from CMU
+Message-ID: <20180726155025.GA5220@Mani-XPS-13-9360>
+References: <20180719090649.12460-1-sravanhome@gmail.com>
+ <20180719090649.12460-6-sravanhome@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180719090649.12460-6-sravanhome@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Hi Andreas,
 
-Add clock control for SPI controller on UniPhier SoCs.
+On Thu, Jul 19, 2018 at 11:06:49AM +0200, Saravanan Sekar wrote:
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
- drivers/clk/uniphier/clk-uniphier-peri.c | 9 +++++++++
- drivers/clk/uniphier/clk-uniphier-sys.c  | 8 ++++++++
- 2 files changed, 17 insertions(+)
+Will you be queuing up the dts patches through actions tree?
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-index 521c80e..89b3ac3 100644
---- a/drivers/clk/uniphier/clk-uniphier-peri.c
-+++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-@@ -27,6 +27,12 @@
- #define UNIPHIER_PERI_CLK_FI2C(idx, ch)					\
- 	UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
- 
-+#define UNIPHIER_PERI_CLK_SCSSI(idx)					\
-+	UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
-+
-+#define UNIPHIER_PERI_CLK_MCSSI(idx)					\
-+	UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
-+
- const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
- 	UNIPHIER_PERI_CLK_UART(0, 0),
- 	UNIPHIER_PERI_CLK_UART(1, 1),
-@@ -38,6 +44,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
- 	UNIPHIER_PERI_CLK_I2C(6, 2),
- 	UNIPHIER_PERI_CLK_I2C(7, 3),
- 	UNIPHIER_PERI_CLK_I2C(8, 4),
-+	UNIPHIER_PERI_CLK_SCSSI(11),
- 	{ /* sentinel */ }
- };
- 
-@@ -53,5 +60,7 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
- 	UNIPHIER_PERI_CLK_FI2C(8, 4),
- 	UNIPHIER_PERI_CLK_FI2C(9, 5),
- 	UNIPHIER_PERI_CLK_FI2C(10, 6),
-+	UNIPHIER_PERI_CLK_SCSSI(11),
-+	UNIPHIER_PERI_CLK_MCSSI(12),
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index 4f5ff9f..a2c3c10 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -93,6 +93,7 @@ const struct uniphier_clk_data uniphier_ld4_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 5625, 512),	/* 270 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 16),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 16),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 32),
- 	UNIPHIER_LD4_SYS_CLK_NAND(2),
- 	UNIPHIER_LD4_SYS_CLK_SD,
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
-@@ -108,6 +109,7 @@ const struct uniphier_clk_data uniphier_pro4_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("gpll", -1, "ref", 10, 1),		/* 250 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "a2pll", 1, 8),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 32),
-+	UNIPHIER_CLK_FACTOR("spi", 1, "spll", 1, 32),
- 	UNIPHIER_LD4_SYS_CLK_NAND(2),
- 	UNIPHIER_LD4_SYS_CLK_SD,
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
-@@ -130,6 +132,7 @@ const struct uniphier_clk_data uniphier_sld8_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("vpll27a", -1, "ref", 270, 25),	/* 270 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 20),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 16),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 32),
- 	UNIPHIER_LD4_SYS_CLK_NAND(2),
- 	UNIPHIER_LD4_SYS_CLK_SD,
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "upll", 1, 12),
-@@ -143,6 +146,7 @@ const struct uniphier_clk_data uniphier_pro5_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("dapll2", -1, "dapll1", 144, 125),	/* 2949.12 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "dapll2", 1, 40),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 48),
- 	UNIPHIER_PRO5_SYS_CLK_NAND(2),
- 	UNIPHIER_PRO5_SYS_CLK_SD,
- 	UNIPHIER_LD4_SYS_CLK_STDMAC(8),				/* HSC */
-@@ -158,6 +162,7 @@ const struct uniphier_clk_data uniphier_pxs2_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("spll", -1, "ref", 96, 1),		/* 2400 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 27),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 48),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 48),
- 	UNIPHIER_PRO5_SYS_CLK_NAND(2),
- 	UNIPHIER_PRO5_SYS_CLK_SD,
- 	UNIPHIER_PRO4_SYS_CLK_ETHER(6),
-@@ -180,6 +185,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("vspll", -1, "ref", 80, 1),		/* 2000 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 40),
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
- 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
- 	/* Index 5 reserved for eMMC PHY */
-@@ -213,6 +219,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("vppll", -1, "ref", 504, 5),	/* 2520 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 40),
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
- 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
- 	/* Index 5 reserved for eMMC PHY */
-@@ -254,6 +261,7 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
- 	UNIPHIER_CLK_FACTOR("s2pll", -1, "ref", 88, 1),		/* IPP: 2400 MHz */
- 	UNIPHIER_CLK_FACTOR("uart", 0, "spll", 1, 34),
- 	UNIPHIER_CLK_FACTOR("i2c", 1, "spll", 1, 40),
-+	UNIPHIER_CLK_FACTOR("spi", -1, "spll", 1, 40),
- 	UNIPHIER_LD20_SYS_CLK_SD,
- 	UNIPHIER_LD11_SYS_CLK_NAND(2),
- 	UNIPHIER_LD11_SYS_CLK_EMMC(4),
--- 
-2.7.4
+Thanks,
+Mani
+
+>  arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> index ef79d7905f44..c08808ca3346 100644
+> --- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> +++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
+> @@ -28,12 +28,6 @@
+>  		device_type = "memory";
+>  		reg = <0x1 0xe0000000 0x0 0x0>;
+>  	};
+> -
+> -	uart3_clk: uart3-clk {
+> -		compatible = "fixed-clock";
+> -		clock-frequency = <921600>;
+> -		#clock-cells = <0>;
+> -	};
+>  };
+>  
+>  &timer {
+> @@ -42,5 +36,5 @@
+>  
+>  &uart3 {
+>  	status = "okay";
+> -	clocks = <&uart3_clk>;
+> +	clocks = <&cmu CLK_UART3>;
+>  };
+> -- 
+> 2.14.4
+> 
