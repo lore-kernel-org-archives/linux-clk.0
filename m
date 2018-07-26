@@ -1,36 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 20 Jul 2018 11:45:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
-Subject: Re: [PATCH v5 03/11] dt-bindings: mediatek: add MT6765 power
- dt-bindings
-Message-ID: <20180720174501.GA32241@rob-hp-laptop>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
- <1531817552-17221-4-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailoutvs62.siol.net ([185.57.226.253]:55459 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731823AbeGZTOw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Jul 2018 15:14:52 -0400
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, icenowy@aosc.io
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] [PATCH v3.1 03/10] drm/sun4i: Add support for A64 mixers
+Date: Thu, 26 Jul 2018 19:56:55 +0200
+Message-ID: <2948057.WQhAQCpXUX@jernej-laptop>
+In-Reply-To: <20180726171257.6688-4-icenowy@aosc.io>
+References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-4-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531817552-17221-4-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 17, 2018 at 04:52:24PM +0800, Mars Cheng wrote:
-> This adds power dt-bindings for MT6765
+Dne četrtek, 26. julij 2018 ob 19:12:50 CEST je Icenowy Zheng napisal(a):
+> From: Jagan Teki <jagan@amarulasolutions.com>
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 ++++++
->  1 file changed, 6 insertions(+)
+> Mixers in Allwinner have similar capabilities as others SoCs with DE2.
+> 
+> Add support for them.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> [Icenowy: Add mixer0]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+Best regards,
+Jernej
+
+
+
