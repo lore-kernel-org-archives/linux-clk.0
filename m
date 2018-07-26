@@ -1,168 +1,64 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
- <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
-Date: Tue, 10 Jul 2018 17:17:05 +0100
+Return-Path: <festevam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAOMZO5AtZDLiVu_qwmACXXx-o9qKAoj9yZh8ZG54are6U44XPQ@mail.gmail.com>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <20180726143232.ds22exgxiv6zlsn5@pengutronix.de> <CAOMZO5AtZDLiVu_qwmACXXx-o9qKAoj9yZh8ZG54are6U44XPQ@mail.gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 26 Jul 2018 12:18:19 -0300
+Message-ID: <CAOMZO5ASyzL2qHEDHTJcwkBPHL5DGO1pKrWyWqgtRAKOgG4Usg@mail.gmail.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+	Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>, Stefan Wahren <stefan.wahren@i2se.com>,
+	linux-clk <linux-clk@vger.kernel.org>, Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Uwe,
 
-On 09/07/18 17:38, Aapo Vienamo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Move this to a separate file so it can be used to calculate the sdmmc
-> clock dividers.
+On Thu, Jul 26, 2018 at 12:04 PM, Fabio Estevam <festevam@gmail.com> wrote:
+> Hi Uwe,
+>
+> On Thu, Jul 26, 2018 at 11:32 AM, Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> wrote:
+>
+>> Fabio: Doesn't that look bad enough to let the hardware guys at NXP
+>> look into that?
+>
+> Yes, I think we should ask for their help on this problem.
 
-Sorry for not commenting sooner, but what is the motivation for moving
-this to its own file? I don't see why we need to do this in order to use
-elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
-and now we have a div71.c which seems quite specific.
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/Makefile      |  1 +
->  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
->  drivers/clk/tegra/clk.h         |  3 +++
->  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 52 insertions(+), 25 deletions(-)
->  create mode 100644 drivers/clk/tegra/div71.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index b716923..6d4f563 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
->  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> +obj-y					+= div71.o
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index 16e0aee..ad87858 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -32,35 +32,15 @@
->  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
->  		   unsigned long parent_rate)
->  {
-> -	u64 divider_ux1 = parent_rate;
-> -	u8 flags = divider->flags;
-> -	int mul;
-> -
-> -	if (!rate)
-> -		return 0;
-> -
-> -	mul = get_mul(divider);
-> -
-> -	if (!(flags & TEGRA_DIVIDER_INT))
-> -		divider_ux1 *= mul;
-> -
-> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> -		divider_ux1 += rate - 1;
-> -
-> -	do_div(divider_ux1, rate);
-> -
-> -	if (flags & TEGRA_DIVIDER_INT)
-> -		divider_ux1 *= mul;
-> +	int div;
->  
-> -	divider_ux1 -= mul;
-> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> +			divider->flags);
->  
-> -	if ((s64)divider_ux1 < 0)
-> +	if (div < 0)
->  		return 0;
->  
-> -	if (divider_ux1 > get_max_div(divider))
-> -		return get_max_div(divider);
-> -
-> -	return divider_ux1;
-> +	return div;
->  }
->  
->  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e3b9c22..149cc70 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
->  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
->  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags);
-> +
->  
->  /* Combined read fence with delay */
->  #define fence_udelay(delay, reg)	\
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..1eecc84
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <asm/div64.h>
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags)
-> +{
-> +	u64 divider_ux1 = parent_rate;
-> +	int mul;
-> +
-> +	if (!rate)
-> +		return 0;
-> +
-> +	mul = 1 << frac_width;
-> +
-> +	if (!(flags & TEGRA_DIVIDER_INT))
-> +		divider_ux1 *= mul;
-> +
-> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +		divider_ux1 += rate - 1;
-> +
-> +	do_div(divider_ux1, rate);
-> +
-> +	if (flags & TEGRA_DIVIDER_INT)
-> +		divider_ux1 *= mul;
-> +
-> +	if (divider_ux1 < mul)
-> +		return 0;
-> +
-> +	divider_ux1 -= mul;
-> +
-> +	if (divider_ux1 > div_mask(width))
-> +		return div_mask(width);
-> +
-> +	return divider_ux1;
-> +}
+We are changing the ref_io while it is already feeding SSP, which is
+not a good practice.
 
-I don't see anything in the above that makes this 7.1? It seems that the
-fractional width is being passed meaning it could be m.n unless I am missing
-something.
+It would be better if we could change the ref_io frequency first, and
+then feed the SSP clock afterwards:
 
-Cheers
-Jon
+--- a/drivers/clk/mxs/clk-imx28.c
++++ b/drivers/clk/mxs/clk-imx28.c
+@@ -110,12 +110,6 @@ static void __init clk_misc_init(void)
+        writel_relaxed(val, ENET);
 
--- 
-nvpublic
+        /*
+-        * Source ssp clock from ref_io than ref_xtal,
+-        * as ref_xtal only provides 24 MHz as maximum.
+-        */
+-       writel_relaxed(0xf << BP_CLKSEQ_BYPASS_SSP0, CLKSEQ + CLR);
+-
+-       /*
+         * 480 MHz seems too high to be ssp clock source directly,
+         * so set frac0 to get a 288 MHz ref_io0 and ref_io1.
+         */
+@@ -123,6 +117,12 @@ static void __init clk_misc_init(void)
+        val &=3D ~((0x3f << BP_FRAC0_IO0FRAC) | (0x3f << BP_FRAC0_IO1FRAC))=
+;
+        val |=3D (30 << BP_FRAC0_IO0FRAC) | (30 << BP_FRAC0_IO1FRAC);
+        writel_relaxed(val, FRAC0);
++
++       /*
++        * Source ssp clock from ref_io than ref_xtal,
++        * as ref_xtal only provides 24 MHz as maximum.
++        */
++       writel_relaxed(0xf << BP_CLKSEQ_BYPASS_SSP0, CLKSEQ + CLR);
+ }
