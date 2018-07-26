@@ -1,71 +1,148 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Phil Edworthy <phil.edworthy@renesas.com>,
- Russell King <linux@armlinux.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Sean Wang <sean.wang@mediatek.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <TY1PR01MB1769925385A6FB44A431AA07F52A0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@verge.net.au>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
- <20180718130228.GG17271@n2100.armlinux.org.uk>
- <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
- <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
- <153255822286.48062.3193076486782567960@swboyd.mtv.corp.google.com>
- <TY1PR01MB1769925385A6FB44A431AA07F52A0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Message-ID: <153271021758.48062.12757198387330928176@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH] clk: Add functions to get optional clocks
-Date: Fri, 27 Jul 2018 09:50:17 -0700
+In-Reply-To: <1531908387.8953.147.camel@mtkswgap22>
+Cc: mark.rutland@arm.com, airlied@linux.ie, mturquette@baylibre.com,
+ dri-devel@lists.freedesktop.org, ulrich.hecht+renesas@gmail.com,
+ lee.jones@linaro.org, linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+ ck.hu@mediatek.com, robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
+ matthias.bgg@gmail.com, mchehab@kernel.org,
+ linux-arm-kernel@lists.infradead.org, Matthias Brugger <mbrugger@suse.com>,
+ gregkh@linuxfoundation.org, rdunlap@infradead.org, sboyd@codeaurora.org,
+ linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+ matthias.bgg@kernel.org, pi-cheng.chen@linaro.org, davem@davemloft.net
+References: <20180717220328.792-1-matthias.bgg@kernel.org>
+ <20180717220328.792-5-matthias.bgg@kernel.org>
+ <1531882655.8953.83.camel@mtkswgap22> <51066716.k5MkZnrqCl@avalon>
+ <1531908387.8953.147.camel@mtkswgap22>
+Message-ID: <153259051470.48062.4735087631606629738@swboyd.mtv.corp.google.com>
+Subject: Re: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys through a pdev
+Date: Thu, 26 Jul 2018 00:35:14 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Phil Edworthy (2018-07-27 08:38:12)
-> On 25 July 2018 23:37, Stephen Boyd wrote:
-> > Short answer is they don't. I'd still prefer we have this API though.
+Quoting Sean Wang (2018-07-18 03:06:27)
+> On Wed, 2018-07-18 at 11:05 +0300, Laurent Pinchart wrote:
+> > Hi Sean,
 > > =
 
-> > Can you rework this patch to be a little more invasive into the
-> > clk_get() path, perhaps by reworking __of_clk_get_by_name() a little to
-> > take an 'optional' argument, so that it only returns NULL when the clk =
-is
-> > looked up from DT? The fallback path in clkdev where we have a DT based
-> > system looking up a clk through clkdev lookups doesn't seem to be a real
-> > scenario that we should worry about here. I think sometimes people use
-> > clkdev lookups when they're migrating to DT systems and things aren't w=
-ired
-> > up properly in DT, but that isn't the norm.
-> Do you mean something like this:
+> > On Wednesday, 18 July 2018 05:57:35 EEST Sean Wang wrote:
+> > > On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
+> > > > From: Matthias Brugger <mbrugger@suse.com>
+> > > > =
+
+> > > > The MMSYS subsystem includes clocks and drm components.
+> > > > This patch adds an initailization path through a platform device
+> > > > for the clock part, so that both drivers get probed from the same
+> > > > device tree compatible.
+> > > =
+
+> > > Sorry for that I should have a response earlier for the series.
+> > > =
+
+> > > Some points I felt they're not exactly right and should be fixed up
+> > > before we're moving on
+> > > =
+
+> > > Currently, drm driver have a wrong reference to the dt-binding,
+> > > "mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys", they should be all
+> > > for the subsystem exporting clock and reset line such common resource=
+ to
+> > > its sub-devices. Every subsystem has a similar shape. I hope mmsys
+> > > shouldn't be an exception.
+> > > =
+
+> > > DRM device needs to have its own dt-binding show how connections betw=
+een
+> > > DRM components being made and its node should be put under mmsys node.
+> > > =
+
+> > > In this way, it becomes easy to see how the topology of the subsystem=
+ is
+> > > and grows, like a tree "device tree", instead of hiding the details in
+> > > the implementation.
+> > > =
+
+> > > The similar example we already did for audsys on mt2701 and mt7623 as
+> > > below
+> > > =
+
+> > >     audsys: clock-controller@11220000 {
+> > >             =
+
+> > compatible =3D "mediatek,mt7623-audsys",
+> > >             =
+
+> >            "mediatek,mt2701-audsys",
+> > >             =
+
+> >            "syscon";
+> > >             =
+
+> >       ...
+> > > =
+
+> > >             =
+
+> > afe: audio-controller {
+> > >             =
+
+> >       compatible =3D "mediatek,mt7623-audio",
+> > >             =
+
+> >               =
+
+> >      "mediatek,mt2701-audio";
+> > > =
+
+> > >             =
+
+> >       ...
+> > >             =
+
+> > };
+> > >     };
+> > =
+
+> > This looks very strange to me. I'm not familiar with the hardware =
+
+> > architecture, but a clock controller that includes an audio controller =
+seems =
+
+> > like a very weird design. It's usually the other way around, you have a=
+n audio
 > =
 
-[...]
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 907202b..830209a 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -771,6 +771,7 @@ static inline void clk_bulk_disable_unprepare(int num=
-_clks,
->  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
->  struct clk *of_clk_get(struct device_node *np, int index);
->  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-> +struct clk *of_clk_get_by_name_optional(struct device_node *np, const ch=
-ar *name);
->  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
->  #else
->  static inline struct clk *of_clk_get(struct device_node *np, int index)
+> yes, naming audsys as clock controller is really not good. it should be
+> worth a better naming.
 > =
 
-> ---
-> A lot of drivers use devm_clk_get() so I think a devm_clk_get_optional()
-> version would be useful. That would probably need an additional
-> clk_get_optional() function.
+> mtk subsystem AFAIK works as a container, at least provides clocks,
+> reset, syscon access, these common resource to these devices running on
+> the subsystem. It also has a power gate independent from other
+> subsystem, that can be controlled when these devices all powered down
+> or once up.
 > =
 
+> And it should be better that we don't assume what exact devices are
+> running on since it is possible that there're different devices running
+> on the same subsystem per SoC. mtk has many subsystem working in this
+> way. mmsys is just a case. we can see in [1]
+> =
 
-Yes, this would be the first patch, and then the second patch would add
-clk_get_optional() and devm_clk_get_optional(). We shouldn't encourage
-consumers to move from device based to DT node based clk_get() for the
-optional clk API.
+> =
+
+> [1]
+> https://elixir.bootlin.com/linux/v4.18-rc5/source/Documentation/devicetre=
+e/bindings/arm/mediatek
+>  =
+
+
+Sean, is this an ack for this patch series? I think the consensus is to
+not modify DT to add a subnode for the "clk" part of the hardware, but
+instead either register the clks from the device driver that has the clk
+hardware inside of it, or do what this patch series does and register a
+device in software from the "parent" device driver so that logically clk
+things are contained in drivers/clk/
