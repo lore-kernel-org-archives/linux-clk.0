@@ -1,62 +1,80 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Wed, 4 Jul 2018 11:47:15 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-	mazziesaccount@gmail.com, arnd@arndb.de, dmitry.torokhov@gmail.com,
-	sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-	linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-	heiko@sntech.de, gregkh@linuxfoundation.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 0/4] mfd/regulator/clk/input: bd71837: ROHM BD71837
- PMIC driver
-Message-ID: <20180704084715.GI2118@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <20180621103400.GB6076@localhost.localdomain>
- <20180703070200.GC20176@dell>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731918AbeGZRY4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Jul 2018 13:24:56 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180703070200.GC20176@dell>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180726081920.GQ1636@tbergstrom-lnx.Nvidia.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, thierry.reding@gmail.com
+References: <1532010175-28364-1-git-send-email-pdeschrijver@nvidia.com>
+ <1532010175-28364-3-git-send-email-pdeschrijver@nvidia.com>
+ <b34c2624-7a55-331e-4462-bb3265f411b5@nvidia.com>
+ <153255869581.48062.10244129990637940083@swboyd.mtv.corp.google.com>
+ <20180726081920.GQ1636@tbergstrom-lnx.Nvidia.com>
+Message-ID: <153262124609.48062.2614573183952941241@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 2/2] clk: tegra: Correct clk_out_mux parents
+Date: Thu, 26 Jul 2018 09:07:26 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 03, 2018 at 08:02:00AM +0100, Lee Jones wrote:
-> On Thu, 21 Jun 2018, Matti Vaittinen wrote:
-> 
-> > On Tue, Jun 19, 2018 at 01:55:31PM +0300, Matti Vaittinen wrote:
-> > > Patch series adding support for ROHM BD71837 PMIC.
-> > > 
-> > What is the preferred way when I send updated patches:
-> > 
-> > 1. always resend _all_ unapplied patches even if there is no changes to
-> >    some of them. (patch-vN mail thread contains _all_ unapplied patches)
-> > 2. only resend changed patches (patch-vN mail thread contains only
-> >    patches that were changed from patch-vN-1)
-> > 
-> > I have currently used approach 1 - so that no patches would be
-> > accidentally forgotten - but downside is that people need to check if
-> > they have already reviewed some of the patches. I'd rather not caused
-> > any extra work. What is the most convenient way for you guys?
-> 
-> Option 1 is preferred.
-> 
-> Just ensure you apply any tags you have collected so reviewers can see
-> which patches are pending a review.  It's also a good idea to keep a
-> succinct change log between the "--" marker and the diff stat where
-> you can state "v4: No change" or the like.
+Quoting Peter De Schrijver (2018-07-26 01:19:20)
+> On Wed, Jul 25, 2018 at 03:44:55PM -0700, Stephen Boyd wrote:
+> > Quoting Jon Hunter (2018-07-19 08:06:50)
+> > > =
 
-Right. Thanks. Just one question - what if I get reviewed-by for a
-patch which I later rework? Like this MFD patch where I got reviewed-by
-from Linus Walleij for v6 - but which I reworked due to comments from
-Enric and Dmitry. I have not kept the reviewed-by as the patch is not
-exactly the same Linus was originally reviewing. I guess the tags should
-be only kept for patches which are unchanged, right?
-> 
-> -- 
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+> > > On 19/07/18 15:22, Peter De Schrijver wrote:
+> > > > The first 3 possible parents of clk_out_[1-3] are defined as clk_m,=
+ clk_m/2
+> > > > and clk_m/4. However They are actually osc, osc/2 and osc/4. In chi=
+ps prior
+> > > > to Tegra210 clk_m and osc had the same frequency, so this differenc=
+e didn't
+> > > > matter. Since Tegra210 however, clk_m is a divided version of osc. =
+This
+> > > > results in CCF reporting the rate as only half the actual rate on T=
+egra210.
+> > > > To fix this, we add new clocks which have osc, osc/2, osc/4 and the
+> > > > respective extern clock as their possible parents and use them for
+> > > > Tegra210. Also 2 new DT clock defines are added to reflect the new
+> > > > names of clk_m/2 and clk_m/4. The old defines are still kept for ba=
+ckwards
+> > > > compatibility.
+> > > > =
+
+> > > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > > I gave this a whirl on the Tegra210 Smaug which uses the PMC CLK_OUT1=
+ to
+> > > clock the audio codec, but unfortunately this did not work. The good =
+news
+> > > is that I know why. Basically, for Tegra210 there is a slight change =
+in the
+> > > behaviour of the CLKx_ACCEPT_REQ bit. Essentially, this bit must alwa=
+ys be
+> > > set if you want to use any of the osc clocks to drive the CLK_OUTx. S=
+etting
+> > > this bit does not effect the CLK_OUTx if you are using the CAR to dri=
+ve the
+> > > pin. The simplest thing to do for Tegra210 is to always set the
+> > > CLKx_ACCEPT_REQ. =
+
+> > > =
+
+> > =
+
+> > So resend with that bit also set?
+> > =
+
+> =
+
+> We haven't figured out who should set this bit as it has some other
+> side-effects like overriding the pinmux settings. Also not all CLK_OUT
+> clocks appear to behave the same way.
+> =
+
+
+Ok! Thanks for letting me know.
+
