@@ -1,34 +1,33 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>,
- Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Paul Burton <paul.burton@mips.com>, Paul Cercueil <paul@crapouillou.net>,
- Ralf Baechle <ralf@linux-mips.org>, Rob Herring <robh+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Anders Roxell <anders.roxell@linaro.org>, gregory.clement@bootlin.com,
+ mturquette@baylibre.com
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180724231958.20659-15-paul@crapouillou.net>
-Cc: Paul Cercueil <paul@crapouillou.net>, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-mips@linux-mips.org,
- linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20180724231958.20659-1-paul@crapouillou.net>
- <20180724231958.20659-15-paul@crapouillou.net>
-Message-ID: <153256143066.48062.8671703408424915070@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5 14/21] clk: jz4740: Add TCU clock
-Date: Wed, 25 Jul 2018 16:30:30 -0700
+In-Reply-To: <20180726222721.5787-1-anders.roxell@linaro.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Anders Roxell <anders.roxell@linaro.org>
+References: <20180726222721.5787-1-anders.roxell@linaro.org>
+Message-ID: <153271055369.48062.7965396244056342743@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: mvebu: armada-37xx-periph: Remove unused var num_parents
+Date: Fri, 27 Jul 2018 09:55:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Paul Cercueil (2018-07-24 16:19:51)
-> Add the missing TCU clock to the list of clocks supplied by the CGU for
-> the JZ4740 SoC.
+Quoting Anders Roxell (2018-07-26 15:27:21)
+> When building armada-37xx-periph, num_parents isn't used in function
+> clk_pm_cpu_get_parent:
+> drivers/clk/mvebu/armada-37xx-periph.c: In function =E2=80=98clk_pm_cpu_g=
+et_parent=E2=80=99:
+> drivers/clk/mvebu/armada-37xx-periph.c:419:6: warning: unused variable =
+=E2=80=98num_parents=E2=80=99 [-Wunused-variable]
+>   int num_parents =3D clk_hw_get_num_parents(hw);
+>       ^~~~~~~~~~~
+> Remove the declaration of num_parents to dispose the warning.
 > =
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Fixes: 616bf80d381d ("clk: mvebu: armada-37xx-periph: Fix wrong return va=
+lue in get_parent")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
