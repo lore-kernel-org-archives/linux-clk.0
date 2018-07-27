@@ -1,48 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from imap1.codethink.co.uk ([176.9.8.82]:35610 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388218AbeGWKdS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Jul 2018 06:33:18 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 23 Jul 2018 10:32:58 +0100
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pgaikwad@nvidia.com,
-        jonathanh@nvidia.co, thierry.reding@gmail.com,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH 2/8] clk: tegra: host1x has fractional divider
-In-Reply-To: <20180723085010.GK1636@tbergstrom-lnx.Nvidia.com>
-References: <20180720134532.13148-1-ben.dooks@codethink.co.uk>
- <20180720134532.13148-3-ben.dooks@codethink.co.uk>
- <20180723085010.GK1636@tbergstrom-lnx.Nvidia.com>
-Message-ID: <7df28a76490315402d28ad7de43dc0db@codethink.co.uk>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1532680211.32306.36.camel@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Robin Gong <yibin.gong@nxp.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>,  Shawn Guo <shawnguo@kernel.org>, Mark Brown
+ <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob
+ Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>, "A.s. Dong"
+ <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King
+ <linux@armlinux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Leonard
+ Crestez <leonard.crestez@nxp.com>,  "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 27 Jul 2018 10:30:11 +0200
+In-Reply-To: <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+	 <20180726092220.17250-2-o.rempel@pengutronix.de>
+	 <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+	 <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+	 <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Robin,
 
-
-On 2018-07-23 09:50, Peter De Schrijver wrote:
-> On Fri, Jul 20, 2018 at 02:45:26PM +0100, Ben Dooks wrote:
->> The host1x clock according to both tegra2 and tegra3 manuals is
->> an 8bit divider with lsb being fractional. This is running into
->> an issue where the host1x is being set on a tegra20a system to
->> 266.4MHz but ends up at 222MHz instead.
->> 
+Am Freitag, den 27.07.2018, 01:51 +0000 schrieb Robin Gong:
+[...]
+> > > > ---
+> > > >  Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > index a45ca67a9d5f..e1308346e00d 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > > > @@ -6,6 +6,14 @@ Required properties:
+> > > >  - interrupts: Should contain CCM interrupt
+> > > >  - #clock-cells: Should be <1>
+> > > > 
+> > > > +Optional properties:
+> > > > +- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ
+> > > > +signal
+> > > > +  on power off.
+> > > > +  Use this property if the SoC should be powered off by external
+> > > > +power
+> > > > +  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
+> > > 
+> > > PMIC_ON_REQ didn't connect to any pin of PMIC in your case?
+> > 
+> > No. First, it was only one customer specific issue. After some research I found
+> > even publicly available boards (for example RioTboard) which has same/similar
+> > design. After seeing this in imx6 documentation as valid power off way, I have
+> > no doubts - there should be even more devices doin this in the wild.
 > 
-> The fact the hw has a fractional divider, does not mean we're allowed 
-> to use
-> it. Due to the non 50% duty cycle of fractional divided clocks, they 
-> are not
-> allowed for certain peripherals. Do you have information indicating 
-> this is
-> ok for the host1x clock?
+> Not sure why the customer didn't follow reference design, since PMIC_ON_REQ can
+> provide power off/on feature by pressing ONOFF key which connected ONOFF
+> pin of i.mx6(ONOFF will toggle PMIC_ON_REQ to power off/on PMIC). The official
+> power off/on way (PMIC_ON_REQ) can also power off all power rails of PFUZE except
+> snvs as your patch did on PMIC_STBY_REQ.  PMIC_STBY_REQ is used to notify pmic
+> switch power mode (PFM/APS) or decrease voltage to save power in kernel suspend,
+> not power off....I am not sure if we need this patchset to 'workaround' the board issue.
+> 
+Not all boards follow the reference design, that's a fact of life.
 
-Only that's what was setup for the systems we're using.
-We couldn't match the 2.6 working system without these changes.
+Please look at the i.MX6Q reference manual. The sequence implemented in
+this patchset can be found as a valid way to power off the system in
+"60.4.3 Power mode transitions" "Normal ON to OFF with external PMIC",
+so there is hardly any way to argue that this is a board specific
+quirk. This is one of the Freescale/NXP recommended sequences to turn
+off the system.
 
--- 
-Ben
-
+Regards,
+Lucas
