@@ -1,68 +1,121 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:31228 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729708AbeGQSyQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:54:16 -0400
-Date: Wed, 18 Jul 2018 02:19:29 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Mars Cheng <mars.cheng@mediatek.com>
-Cc: kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: Re: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
-Message-ID: <201807180244.Xwu9lTTR%fengguang.wu@intel.com>
-References: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
+To: Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+ <20180712211244.11428-3-yixun.lan@amlogic.com>
+ <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione
+	<carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Boris Brezillon
+	<boris.brezillon@bootlin.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
+	Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+Date: Fri, 27 Jul 2018 22:52:23 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Owen,
+HI Stephen:
 
-Thank you for the patch! Perhaps something to improve:
+On 07/26/2018 11:20 PM, Stephen Boyd wrote:
+> Quoting Yixun Lan (2018-07-12 14:12:44)
+>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+>> new file mode 100644
+>> index 000000000000..36c4c7cd69a6
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/mmc-clkc.c
+>> @@ -0,0 +1,367 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2017 Baylibre SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+> 
+> Is this include used?
+> 
+this is needed by clk_get_rate()
+see drivers/clk/meson/mmc-clkc.c:204
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.18-rc5 next-20180717]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/module.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/platform_device.h>
+>> +#include <dt-bindings/clock/amlogic,meson-mmc-clkc.h>
+>> +
+>> +#include "clkc.h"
+>> +
+>> +
+>> +static struct clk_regmap *
+>> +mmc_clkc_register_other_clk(struct device *dev, struct regmap *map,
+>> +                           char *suffix, char *parent_suffix,
+>> +                           unsigned long flags,
+>> +                           const struct clk_ops *ops, void *data)
+>> +{
+>> +       struct clk_init_data init;
+>> +       struct clk_regmap *clk;
+>> +       char *parent;
+>> +
+>> +       parent = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), parent_suffix);
+>> +       if (!parent)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.ops = ops;
+>> +       init.flags = flags;
+>> +       init.parent_names = (const char* const []){ parent, };
+> 
+> Can't this just be &parent?
+sure, I can fix this
 
-url:    https://github.com/0day-ci/linux/commits/Mars-Cheng/Add-basic-SoC-support-for-mt6765/20180717-205540
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+> 
+>> +       init.num_parents = 1;
+>> +
+>> +       clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
+>> +       if (IS_ERR(clk))
+>> +               dev_err(dev, "Core %s clock registration failed\n", suffix);
+>> +
+>> +       kfree(parent);
+>> +       return clk;
+>> +}
+>> +
+>> +static int mmc_clkc_probe(struct platform_device *pdev)
+>> +{
+>> +       struct clk_hw_onecell_data *onecell_data;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct mmc_clkc_data *data;
+>> +       struct regmap *map;
+>> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
+>> +
+>> +       data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
+> 
+> This cast is unnecessary. Pleas remove.
+> 
+Ok, I will try to fix in next version
 
 
-sparse warnings: (new ones prefixed by >>)
+this was trying to silence the ’const‘ cast warning [1]
+I could make a 'const struct mmc_clkc_data *data' declare, but need to
+fix further cast warning issue..
 
->> drivers/soc/mediatek/mtk-scpsys-ext.c:83:5: sparse: symbol 'bus_ctrl_set_release' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:114:5: sparse: symbol 'bus_ctrl_set' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:119:5: sparse: symbol 'bus_ctrl_release' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:124:5: sparse: symbol 'bus_clk_enable_disable' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:161:5: sparse: symbol 'bus_clk_enable' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:192:27: sparse: symbol 'bus_mask_set_clr_ctrl' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:197:26: sparse: symbol 'ext_bus_ctrl' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:202:26: sparse: symbol 'ext_cg_ctrl' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:210:15: sparse: symbol 'syscon_regmap_lookup_by_phandle_idx' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:231:5: sparse: symbol 'scpsys_ext_regmap_init' was not declared. Should it be static?
-   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
->> drivers/soc/mediatek/mtk-scpsys-ext.c:324:5: sparse: symbol 'scpsys_ext_clk_init' was not declared. Should it be static?
->> drivers/soc/mediatek/mtk-scpsys-ext.c:336:5: sparse: symbol 'scpsys_ext_attr_init' was not declared. Should it be static?
-   include/linux/slab.h:631:13: sparse: call with no type!
 
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+[1] drivers/clk/meson/mmc-clkc.c: In function ‘mmc_clkc_probe’:
+drivers/clk/meson/mmc-clkc.c:302:7: warning: assignment discards ‘const’
+qualifier from pointer target type [-Wdiscarded-qualifiers]
+  data = of_device_get_match_data(dev);
+       ^
