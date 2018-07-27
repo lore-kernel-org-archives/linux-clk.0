@@ -1,41 +1,115 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH 0/2] Add QCOM camera clock controller driver
-Date: Mon, 23 Jul 2018 16:56:31 +0530
-Message-Id: <1532345193-18108-1-git-send-email-anischal@codeaurora.org>
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/9] dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
+Date: Sat, 28 Jul 2018 00:15:22 +0530
+Message-Id: <20180727184527.13287-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds a driver and device tree documentation binding
-for the camera clock controller on some Qualcomm Technologies, Inc, SoCs
-such as SDM845. This would allow camera drivers to probe and control their
-clocks.
+Add device tree binding constants for Actions Semi S900 SoC Reset
+Management Unit (RMU).
 
-Amit Nischal (2):
-  dt-bindings: clock: Introduce QCOM Camera clock bindings
-  clk: qcom: Add camera clock controller driver for SDM845
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../dt-bindings/reset/actions,s900-reset.h    | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
 
- .../devicetree/bindings/clock/qcom,camcc.txt       |   18 +
- drivers/clk/qcom/Kconfig                           |    8 +
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/camcc-sdm845.c                    | 1736 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,camcc-sdm845.h      |  116 ++
- 5 files changed, 1879 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc.txt
- create mode 100644 drivers/clk/qcom/camcc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,camcc-sdm845.h
-
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+diff --git a/include/dt-bindings/reset/actions,s900-reset.h b/include/dt-bindings/reset/actions,s900-reset.h
+new file mode 100644
+index 000000000000..42c19d02e43b
+--- /dev/null
++++ b/include/dt-bindings/reset/actions,s900-reset.h
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++//
++// Device Tree binding constants for Actions Semi S900 Reset Management Unit
++//
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef __DT_BINDINGS_ACTIONS_S900_RESET_H
++#define __DT_BINDINGS_ACTIONS_S900_RESET_H
++
++#define RESET_CHIPID				0
++#define RESET_CPU_SCNT				1
++#define RESET_SRAMI				2
++#define RESET_DDR_CTL_PHY			3
++#define RESET_DMAC				4
++#define RESET_GPIO				5
++#define RESET_BISP_AXI				6
++#define RESET_CSI0				7
++#define RESET_CSI1				8
++#define RESET_DE				9
++#define RESET_DSI				10
++#define RESET_GPU3D_PA				11
++#define RESET_GPU3D_PB				12
++#define RESET_HDE				13
++#define RESET_I2C0				14
++#define RESET_I2C1				15
++#define RESET_I2C2				16
++#define RESET_I2C3				17
++#define RESET_I2C4				18
++#define RESET_I2C5				19
++#define RESET_IMX				20
++#define RESET_NANDC0				21
++#define RESET_NANDC1				22
++#define RESET_SD0				23
++#define RESET_SD1				24
++#define RESET_SD2				25
++#define RESET_SD3				26
++#define RESET_SPI0				27
++#define RESET_SPI1				28
++#define RESET_SPI2				29
++#define RESET_SPI3				30
++#define RESET_UART0				31
++#define RESET_UART1				32
++#define RESET_UART2				33
++#define RESET_UART3				34
++#define RESET_UART4				35
++#define RESET_UART5				36
++#define RESET_UART6				37
++#define RESET_HDMI				38
++#define RESET_LVDS				39
++#define RESET_EDP				40
++#define RESET_USB2HUB				41
++#define RESET_USB2HSIC				42
++#define RESET_USB3				43
++#define RESET_PCM1				44
++#define RESET_AUDIO				45
++#define RESET_PCM0				46
++#define RESET_SE				47
++#define RESET_GIC				48
++#define RESET_DDR_CTL_PHY_AXI			49
++#define RESET_CMU_DDR				50
++#define RESET_DMM				51
++#define RESET_HDCP2TX				52
++#define RESET_ETHERNET				53
++
++#endif /* __DT_BINDINGS_ACTIONS_S900_RESET_H */
+-- 
+2.17.1
