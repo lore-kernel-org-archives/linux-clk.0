@@ -1,55 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58142 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730095AbeGZSdK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:33:10 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 04/10] drm/sun4i: Add support for A64 display engine
-Date: Fri, 27 Jul 2018 01:12:51 +0800
-Message-Id: <20180726171257.6688-5-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 6/9] arm64: dts: actions: Add Reset Controller support for S900 SoC
+Date: Sat, 28 Jul 2018 00:15:24 +0530
+Message-Id: <20180727184527.13287-7-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+Add reset controller property and bindings header for the
+Actions Semi S900 SoC DTS.
 
-Display Engine(DE2) in Allwinner A64 has two mixers and tcons.
-
-The routing for mixer0 is through tcon0 and connected to
-LVDS/RGB/MIPI-DSI controller.
-
-The routing for mixer1 is through tcon1 and connected to HDMI.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-Changes for v3.1, v3, v2:
-- none
+ arch/arm64/boot/dts/actions/s900.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index dd19d674055c..e3c1c436b9d5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -421,6 +421,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun8i-r40-display-engine" },
- 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
- 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
-+	{ .compatible = "allwinner,sun50i-a64-display-engine" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index aa3a49b0d646..4fbb39fd7971 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -6,6 +6,7 @@
+ 
+ #include <dt-bindings/clock/actions,s900-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/actions,s900-reset.h>
+ 
+ / {
+ 	compatible = "actions,s900";
+@@ -172,6 +173,7 @@
+ 			reg = <0x0 0xe0160000 0x0 0x1000>;
+ 			clocks = <&hosc>, <&losc>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		pinctrl: pinctrl@e01b0000 {
 -- 
-2.18.0
-
+2.17.1
