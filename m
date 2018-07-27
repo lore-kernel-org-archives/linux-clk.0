@@ -1,182 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45980 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387989AbeGTUHT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Jul 2018 16:07:19 -0400
-MIME-Version: 1.0
-References: <1532079581-978-1-git-send-email-narmstrong@baylibre.com> <1532079581-978-2-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1532079581-978-2-git-send-email-narmstrong@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 20 Jul 2018 21:17:30 +0200
-Message-ID: <CAFBinCCbzJ3Un3Naqc1ONq6gK3gDsAY+pSyHabaivjySFuzbZw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: meson: Add vid_pll divider driver
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl SoCs
+Date: Sat, 28 Jul 2018 00:15:18 +0530
+Message-Id: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Neil,
+This patchset adds Reset Controller (RMU) support for Actions Semi
+Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+the clock subsystem in hardware. Hence, in software we integrate RMU
+support into common clock driver inorder to maintain compatibility.
 
-On Fri, Jul 20, 2018 at 11:40 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add support the VID_PLL fully programmable divider used right after the
-> HDMI PLL clock source. It is used to achieve complex fractional division
-> with a programmble bitfield.
-I assume you have no other information that the S912 datasheet, pages
-64 and 77 which describe the HHI_VID_PLL_CLK_DIV register?
+This patch series depends on the recently posted S700 clk series:
+"[PATCH v7 0/5] Add clock driver for Actions S700 SoC". For the S700 clk
+series, driver and bindings patches are applied through the clk tree.
+But the DTS patches are not yet picked up by the platform maintainer,
+Andreas.
 
-more comments inline
+Hence, Andreas is expected to pick the DTS patches in this series once
+reviewed by the maintainers along with S700 clk DTS patches.
 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->
-> ---
->  drivers/clk/meson/Makefile      |  2 +-
->  drivers/clk/meson/clkc.h        |  6 +++
->  drivers/clk/meson/vid-pll-div.c | 90 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 97 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/vid-pll-div.c
->
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c4..0234767 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Meson specific clk
->  #
->
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) += clk-triphase.o sclk-div.o
->  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 6b96d55..9166605 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -90,6 +90,11 @@ struct meson_clk_phase_data {
->  int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
->  unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
->
-> +struct meson_vid_pll_div_data {
-> +       struct parm val;
-> +       struct parm sel;
-> +};
-> +
->  #define MESON_GATE(_name, _reg, _bit)                                  \
->  struct clk_regmap _name = {                                            \
->         .data = &(struct clk_regmap_gate_data){                         \
-> @@ -112,5 +117,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
->  extern const struct clk_ops meson_clk_mpll_ro_ops;
->  extern const struct clk_ops meson_clk_mpll_ops;
->  extern const struct clk_ops meson_clk_phase_ops;
-> +extern const struct clk_ops meson_vid_pll_div_ro_ops;
->
->  #endif /* __CLKC_H */
-> diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-> new file mode 100644
-> index 0000000..5f267be
-> --- /dev/null
-> +++ b/drivers/clk/meson/vid-pll-div.c
-> @@ -0,0 +1,90 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 BayLibre, SAS.
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc.h"
-> +
-> +static inline struct meson_vid_pll_div_data *
-> +meson_vid_pll_div_data(struct clk_regmap *clk)
-> +{
-> +       return (struct meson_vid_pll_div_data *)clk->data;
-> +}
-> +
-> +/*
-> + * This vid_pll divided is a fully programmable fractionnal divider to
-> + * achieve complex video clock rates.
-> + *
-> + * Here are provided the commonly used fraction values provided by Amlogic.
-> + */
-> +
-> +struct vid_pll_div {
-> +       unsigned int shift_val;
-> +       unsigned int shift_sel;
-> +       unsigned int frac_top;
-maybe call it divider?
+Because of the absence of the S500 SoC clk support, the reset controller
+registration code is added to both S700 and S900 SoC clk drivers for now.
+But once S500 clk support is added, the reset controller registration part
+will be moved to Owl SoCs common clk code.
 
-> +       unsigned int frac_bot;
-maybe call it multiplier?
+Thanks,
+Mani
 
-> +};
-> +
-> +#define VID_PLL_DIV(_val, _sel, _ft, _fb)                              \
-> +       {                                                               \
-> +               .shift_val = (_val),                                    \
-> +               .shift_sel = (_sel),                                    \
-> +               .frac_top = (_ft),                                      \
-> +               .frac_bot = (_fb),                                      \
-> +       }
-> +
-> +static const struct vid_pll_div vid_pll_div_table[] = {
-> +       VID_PLL_DIV(0x0aaa, 0, 2, 1),   /* 2/1  => /2 */
-> +       VID_PLL_DIV(0x5294, 2, 5, 2),   /* 5/2  => /2.5 */
-> +       VID_PLL_DIV(0x0db6, 0, 3, 1),   /* 3/1  => /3 */
-> +       VID_PLL_DIV(0x36cc, 1, 7, 2),   /* 7/2  => /3.5 */
-> +       VID_PLL_DIV(0x6666, 2, 15, 4),  /* 15/4 => /3.75 */
-> +       VID_PLL_DIV(0x0ccc, 4, 4, 1),   /* 4/1  => /4 */
-is the shift_sel (second parameter) correct here? the public S912
-datasheet, page 77 states that CLK_SEL is only 2 bit wide (and "4"
-exceeds that)
+Manivannan Sadhasivam (9):
+  clk: actions: Cache regmap info in private clock descriptor
+  dt-bindings: clock: Add reset controller bindings for Actions Semi Owl
+    SoCs
+  dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
+  dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
+  arm64: dts: actions: Add Reset Controller support for S700 SoC
+  arm64: dts: actions: Add Reset Controller support for S900 SoC
+  clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
+  clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
+  clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
 
-> +       VID_PLL_DIV(0x739c, 2, 5, 1),   /* 5/1  => /5 */
-> +       VID_PLL_DIV(0x0e38, 0, 6, 1),   /* 6/1  => /6 */
-> +       VID_PLL_DIV(0x0000, 3, 25, 4),  /* 25/4 => /6.25 */
-> +       VID_PLL_DIV(0x3c78, 1, 7, 1),   /* 7/1  => /7 */
-> +       VID_PLL_DIV(0x78f0, 2, 15, 2),  /* 15/2 => /7.5 */
-> +       VID_PLL_DIV(0x0fc0, 0, 12, 1),  /* 12/1 => /12 */
-> +       VID_PLL_DIV(0x3f80, 1, 14, 1),  /* 14/1 => /14 */
-> +       VID_PLL_DIV(0x7f80, 2, 15, 1),  /* 15/1 => /15 */
-> +};
-> +
-> +#define to_meson_vid_pll_div(_hw) container_of(_hw, struct meson_vid_pll_div, hw)
-> +
-> +const struct vid_pll_div *_get_table_val(unsigned int shift_val,
-> +                                        unsigned int shift_sel)
-> +{
-> +       int i;
-> +
-> +       for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
-> +               if (vid_pll_div_table[i].shift_val == shift_val &&
-> +                   vid_pll_div_table[i].shift_sel == shift_sel)
-> +                       return &vid_pll_div_table[i];
-> +       }
-> +
-> +       return NULL;
-> +}
-> +
-> +static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
-> +                                                  unsigned long parent_rate)
-> +{
-> +       struct clk_regmap *clk = to_clk_regmap(hw);
-> +       struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
-> +       const struct vid_pll_div *div;
-> +
-> +       div = _get_table_val(meson_parm_read(clk->map, &pll_div->val),
-> +                            meson_parm_read(clk->map, &pll_div->sel));
-> +       if (!div || !div->frac_top) {
-> +               pr_info("%s: Invalid config value for vid_pll_div\n", __func__);
-> +               return parent_rate;
-> +       }
-> +
-> +       return DIV_ROUND_UP_ULL(parent_rate * div->frac_bot, div->frac_top);
-with the rename above this would read:
-return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
+ .../bindings/clock/actions,owl-cmu.txt        |  2 +
+ arch/arm64/boot/dts/actions/s700.dtsi         |  2 +
+ arch/arm64/boot/dts/actions/s900.dtsi         |  2 +
+ drivers/clk/actions/Kconfig                   |  1 +
+ drivers/clk/actions/Makefile                  |  1 +
+ drivers/clk/actions/owl-common.c              |  3 +-
+ drivers/clk/actions/owl-common.h              |  5 +-
+ drivers/clk/actions/owl-reset.c               | 72 ++++++++++++++++
+ drivers/clk/actions/owl-reset.h               | 32 +++++++
+ drivers/clk/actions/owl-s700.c                | 55 +++++++++++-
+ drivers/clk/actions/owl-s900.c                | 86 ++++++++++++++++++-
+ .../dt-bindings/reset/actions,s700-reset.h    | 34 ++++++++
+ .../dt-bindings/reset/actions,s900-reset.h    | 65 ++++++++++++++
+ 13 files changed, 354 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-reset.c
+ create mode 100644 drivers/clk/actions/owl-reset.h
+ create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
+ create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
 
-
-Regards
-Martin
+-- 
+2.17.1
