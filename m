@@ -1,60 +1,89 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Tue, 3 Jul 2018 09:21:07 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
- <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel
- Raynal <miquel.raynal@bootlin.com>, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
- Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-Message-ID: <20180703092107.51497a8f@bbrezillon>
-In-Reply-To: <20180703145716.31860-3-yixun.lan@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	<20180703145716.31860-3-yixun.lan@amlogic.com>
+Return-Path: <yibin.gong@nxp.com>
+From: Robin Gong <yibin.gong@nxp.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+	Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>
+CC: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Leonard Crestez
+	<leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>, Russell
+ King <linux@armlinux.org.uk>, dl-linux-imx <linux-imx@nxp.com>, "A.s. Dong"
+	<aisheng.dong@nxp.com>
+Subject: RE: [PATCH v8 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Date: Fri, 27 Jul 2018 09:15:40 +0000
+Message-ID: 
+ <DB6PR04MB3223A62E5609BF6431ABEA40892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+ <20180726092220.17250-3-o.rempel@pengutronix.de>
+In-Reply-To: <20180726092220.17250-3-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 3 Jul 2018 14:57:15 +0000
-Yixun Lan <yixun.lan@amlogic.com> wrote:
-
-> Add two clock bindings IDs which provided by the EMMC clock controller,
-> These two clocks will be used by EMMC or NAND driver.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 include/dt-bindings/clock/emmc-clkc.h
-> 
-> diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
-> new file mode 100644
-> index 000000000000..d9972c400e58
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/emmc-clkc.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Meson EMMC sub clock tree IDs
-> + *
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __EMMC_CLKC_H
-> +#define __EMMC_CLKC_H
-> +
-> +#define CLKID_EMMC_C_MUX				0
-
-Looks like the MUX clk is the parent of the DIV one, and I guess the clk
-driver is able to select the best parent+div pair for a requested rate.
-Do you really need to expose the MUX to users?
-
-> +#define CLKID_EMMC_C_DIV				1
-> +
-> +#endif
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogT2xla3NpaiBSZW1wZWwg
+W21haWx0bzpvLnJlbXBlbEBwZW5ndXRyb25peC5kZV0NCj4gU2VudDogMjAxOMTqN9TCMjbI1SAx
+NzoyMg0KPiBUbzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJuZWwub3JnPjsgTWFyayBCcm93biA8
+YnJvb25pZUBrZXJuZWwub3JnPjsNCj4gUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29j
+a2lAaW50ZWwuY29tPg0KPiBDYzogT2xla3NpaiBSZW1wZWwgPG8ucmVtcGVsQHBlbmd1dHJvbml4
+LmRlPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1jbGtAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBBbmRyZXcgTW9ydG9u
+DQo+IDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgTGlhbSBHaXJkd29vZCA8bGdpcmR3b29k
+QGdtYWlsLmNvbT47DQo+IExlb25hcmQgQ3Jlc3RleiA8bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+
+OyBSb2IgSGVycmluZw0KPiA8cm9iaCtkdEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5kIDxtYXJr
+LnJ1dGxhbmRAYXJtLmNvbT47IE1pY2hhZWwNCj4gVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxp
+YnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBGYWJpbyBF
+c3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+OyBSdXNzZWxsDQo+IEtpbmcgPGxpbnV4QGFy
+bWxpbnV4Lm9yZy51az47IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+OyBSb2JpbiBH
+b25nDQo+IDx5aWJpbi5nb25nQG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAu
+Y29tPg0KPiBTdWJqZWN0OiBbUEFUQ0ggdjggMi82XSBBUk06IGlteDY6IHJlZ2lzdGVyIHBtX3Bv
+d2VyX29mZiBoYW5kbGVyIGlmDQo+ICJmc2wscG1pYy1zdGJ5LXBvd2Vyb2ZmIiBpcyBzZXQNCj4g
+DQo+IE9uZSBvZiB0aGUgRnJlZXNjYWxlIHJlY29tbWVuZGVkIHNlcXVlbmNlcyBmb3IgcG93ZXIg
+b2ZmIHdpdGggZXh0ZXJuYWwNCj4gUE1JQyBpcyB0aGUgZm9sbG93aW5nOg0KPiAuLi4NCj4gMy4g
+IFNvQyBpcyBwcm9ncmFtbWluZyBQTUlDIGZvciBwb3dlciBvZmYgd2hlbiBzdGFuZGJ5IGlzIGFz
+c2VydGVkLg0KPiA0LiAgSW4gQ0NNIFNUT1AgbW9kZSwgU3RhbmRieSBpcyBhc3NlcnRlZCwgUE1J
+QyBnYXRlcyBTb0Mgc3VwcGxpZXMuDQo+IA0KPiBTZWU6DQo+IGh0dHBzOi8vZW1lYTAxLnNhZmVs
+aW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cCUzQSUyRiUyRnd3dy4NCj4gbnhw
+LmNvbSUyRmFzc2V0cyUyRmRvY3VtZW50cyUyRmRhdGElMkZlbiUyRnJlZmVyZW5jZS1tYW51YWxz
+JTJGSU0NCj4gWDZEUVJNLnBkZiZhbXA7ZGF0YT0wMiU3QzAxJTdDeWliaW4uZ29uZyU0MG54cC5j
+b20lN0MxOTNmZDE5ZTNhDQo+IDQwNDE2ZmZhNGEwOGQ1ZjJkOTU4M2MlN0M2ODZlYTFkM2JjMmI0
+YzZmYTkyY2Q5OWM1YzMwMTYzNSU3QzAlN0MxDQo+ICU3QzYzNjY4MTkzNzY2MTkxNDA3NiZhbXA7
+c2RhdGE9bElDQWVsWXBVaDQlMkZ0JTJGczdOOW1kazJjTFFNaQ0KPiBjSGNPcVEwN3ZUT1VveU5Z
+JTNEJmFtcDtyZXNlcnZlZD0wDQo+IHBhZ2UgNTA4Mw0KPiANCj4gVGhpcyBwYXRjaCBpbXBsZW1l
+bnRzIHN0ZXAgNC4gb2YgdGhpcyBzZXF1ZW5jZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9sZWtz
+aWogUmVtcGVsIDxvLnJlbXBlbEBwZW5ndXRyb25peC5kZT4NCj4gLS0tDQo+ICBhcmNoL2FybS9t
+YWNoLWlteC9wbS1pbXg2LmMgfCAyNSArKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
+L21hY2gtaW14L3BtLWlteDYuYyBiL2FyY2gvYXJtL21hY2gtaW14L3BtLWlteDYuYw0KPiBpbmRl
+eCAwMTc1MzlkZDcxMmIuLjJmNWM2NDNmNjJmYiAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vbWFj
+aC1pbXgvcG0taW14Ni5jDQo+ICsrKyBiL2FyY2gvYXJtL21hY2gtaW14L3BtLWlteDYuYw0KPiBA
+QCAtNjAxLDYgKzYwMSwyOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaW14Nl9wbV9jb21tb25faW5p
+dChjb25zdCBzdHJ1Y3QNCj4gaW14Nl9wbV9zb2NkYXRhDQo+ICAJCQkJICAgSU1YNlFfR1BSMV9H
+SU5UKTsNCj4gIH0NCj4gDQo+ICtzdGF0aWMgdm9pZCBpbXg2X3BtX3N0YnlfcG93ZXJvZmYodm9p
+ZCkgew0KPiArCWlteDZfc2V0X2xwbShTVE9QX1BPV0VSX09GRik7DQo+ICsJaW14NnFfc3VzcGVu
+ZF9maW5pc2goMCk7DQo+ICsNCj4gKwltZGVsYXkoMTAwMCk7DQo+ICsNCj4gKwlwcl9lbWVyZygi
+VW5hYmxlIHRvIHBvd2Vyb2ZmIHN5c3RlbVxuIik7IH0NCj4gKw0KPiArc3RhdGljIGludCBpbXg2
+X3BtX3N0YnlfcG93ZXJvZmZfcHJvYmUodm9pZCkgew0KPiArCWlmIChwbV9wb3dlcl9vZmYpIHsN
+Cj4gKwkJcHJfd2FybigiJXM6IHBtX3Bvd2VyX29mZiBhbHJlYWR5IGNsYWltZWQgICVwICVwZiFc
+biIsDQo+ICsJCQlfX2Z1bmNfXywgcG1fcG93ZXJfb2ZmLCBwbV9wb3dlcl9vZmYpOw0KJ3N5c2Nv
+bi1wb3dlcm9mZicgYW5kICdwbWljLXN0YnktcG93ZXJvZmYgJyBzaG91bGQgYmUgY2hvc2VuIGFz
+IGEgc2luZ2xlDQpQb3dlcm9mZiB3YXkgZm9yIGFueSBpLm14NiBib2FyZC4gV2h5IG5vdCBkZWxl
+dGUgZGlyZWN0bHkgJ3N5c2Nvbi1wb3dlcm9mZicgaW4gZHRzIA0KdG8gYXZvaWQgc3VjaCB0d28g
+cG93ZXIgb2ZmIHdheXMgY29leGlzdD8NCj4gKwkJcmV0dXJuIC1FQlVTWTsNCj4gKwl9DQo+ICsN
+Cj4gKwlwbV9wb3dlcl9vZmYgPSBpbXg2X3BtX3N0YnlfcG93ZXJvZmY7DQo+ICsJcmV0dXJuIDA7
+DQo+ICt9DQo+ICsNCj4gIHZvaWQgX19pbml0IGlteDZfcG1fY2NtX2luaXQoY29uc3QgY2hhciAq
+Y2NtX2NvbXBhdCkgIHsNCj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wOw0KPiBAQCAtNjE3LDYg
+KzYzOSw5IEBAIHZvaWQgX19pbml0IGlteDZfcG1fY2NtX2luaXQoY29uc3QgY2hhcg0KPiAqY2Nt
+X2NvbXBhdCkNCj4gIAl2YWwgPSByZWFkbF9yZWxheGVkKGNjbV9iYXNlICsgQ0xQQ1IpOw0KPiAg
+CXZhbCAmPSB+Qk1fQ0xQQ1JfTFBNOw0KPiAgCXdyaXRlbF9yZWxheGVkKHZhbCwgY2NtX2Jhc2Ug
+KyBDTFBDUik7DQo+ICsNCj4gKwlpZiAob2ZfcHJvcGVydHlfcmVhZF9ib29sKG5wLCAiZnNsLHBt
+aWMtc3RieS1wb3dlcm9mZiIpKQ0KPiArCQlpbXg2X3BtX3N0YnlfcG93ZXJvZmZfcHJvYmUoKTsN
+Cj4gIH0NCj4gDQo+ICB2b2lkIF9faW5pdCBpbXg2cV9wbV9pbml0KHZvaWQpDQo+IC0tDQo+IDIu
+MTguMA0KDQo=
