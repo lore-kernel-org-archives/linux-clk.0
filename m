@@ -1,64 +1,100 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/11] clk: renesas: cpg-mssr: Add support for fixed rate clocks
-Date: Wed, 11 Jul 2018 16:20:55 +0200
-Message-Id: <20180711142100.3765-7-geert+renesas@glider.be>
-In-Reply-To: <20180711142100.3765-1-geert+renesas@glider.be>
-References: <20180711142100.3765-1-geert+renesas@glider.be>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:34896 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730354AbeG0Osf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jul 2018 10:48:35 -0400
+Date: Fri, 27 Jul 2018 21:26:11 +0800
+In-Reply-To: <20180727125615.ju23ecgm6y4rz7p5@flea>
+References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io> <20180727125615.ju23ecgm6y4rz7p5@flea>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
+To: linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: devicetree@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <8DF4600E-DFE4-47CD-B541-FFDD903A65FB@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for defining fixed rate clocks, to be used for on-chip
-oscillators.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
- drivers/clk/renesas/renesas-cpg-mssr.h | 3 +++
- 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9efc..e04338932786bc14 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -313,6 +313,11 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
- 		}
- 		break;
- 
-+	case CLK_TYPE_FR:
-+		clk = clk_register_fixed_rate(NULL, core->name, NULL, 0,
-+					      core->mult);
-+		break;
-+
- 	default:
- 		if (info->cpg_clk_register)
- 			clk = info->cpg_clk_register(dev, core, info,
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 642f720b9b055337..87bb8f368d4ecd18 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -38,6 +38,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_DIV6P1,	/* DIV6 Clock with 1 parent clock */
- 	CLK_TYPE_DIV6_RO,	/* DIV6 Clock read only with extra divisor */
-+	CLK_TYPE_FR,		/* Fixed Rate Clock */
- 
- 	/* Custom definitions start here */
- 	CLK_TYPE_CUSTOM,
-@@ -56,6 +57,8 @@ enum clk_types {
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6P1, _parent, .offset = _offset)
- #define DEF_DIV6_RO(_name, _id, _parent, _offset, _div)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_DIV6_RO, _parent, .offset = _offset, .div = _div, .mult = 1)
-+#define DEF_RATE(_name, _id, _rate)	\
-+	DEF_TYPE(_name, _id, CLK_TYPE_FR, .mult = _rate)
- 
-     /*
-      * Definitions of Module Clocks
--- 
-2.17.1
+于 2018年7月27日 GMT+08:00 下午8:56:15, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> index 1b9b92e541d2..1b972bade9f6 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>> @@ -62,6 +62,21 @@
+>>  	chosen {
+>>  		stdout-path = "serial0:115200n8";
+>>  	};
+>> +
+>> +	connector {
+>> +		compatible = "hdmi-connector";
+>> +		type = "a";
+>> +
+>> +		port {
+>> +			hdmi_con_in: endpoint {
+>> +				remote-endpoint = <&hdmi_out_con>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&de {
+>> +	status = "okay";
+>>  };
+>>  
+>>  &ehci0 {
+>> @@ -82,6 +97,17 @@
+>>  
+>>  };
+>>  
+>> +&hdmi {
+>> +	hdmi-supply = <&reg_dldo1>;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&hdmi_out {
+>> +	hdmi_out_con: endpoint {
+>> +		remote-endpoint = <&hdmi_con_in>;
+>> +	};
+>> +};
+>> +
+>>  &i2c1 {
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&i2c1_pins>;
+>> @@ -99,6 +125,10 @@
+>>  	};
+>>  };
+>>  
+>> +&mixer1 {
+>> +	status = "okay";
+>> +};
+>> +
+>>  &mmc0 {
+>>  	pinctrl-names = "default";
+>>  	pinctrl-0 = <&mmc0_pins>;
+>> @@ -238,6 +268,10 @@
+>>  	status = "disabled";
+>>  };
+>>  
+>> +&tcon1 {
+>> +	status = "okay";
+>> +};
+>
+>Is it working or not on the pine64?
+
+Not tested yet, as my main A64 device is Pine A64-LTS now.
+
+>
+>Maxime
