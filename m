@@ -1,67 +1,201 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:55543 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726789AbeGMKSO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:18:14 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-clk@vger.kernel.org
-Subject: Re: [bug report] clk: mvebu: armada-37xx-periph: prepare cpu clk to be used with DVFS
-References: <20180620201208.rzzc3lpu2lmyy4sz@kili.mountain>
-Date: Fri, 13 Jul 2018 12:04:15 +0200
-In-Reply-To: <20180620201208.rzzc3lpu2lmyy4sz@kili.mountain> (Dan Carpenter's
-        message of "Thu, 21 Jun 2018 11:06:28 +0300")
-Message-ID: <87r2k7bgf4.fsf@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 7/9] clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
+Date: Sat, 28 Jul 2018 00:15:25 +0530
+Message-Id: <20180727184527.13287-8-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Dan,
+Add Reset Management Unit (RMU) support for Actions Semi Owl SoCs.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Kconfig      |  1 +
+ drivers/clk/actions/Makefile     |  1 +
+ drivers/clk/actions/owl-common.h |  2 +
+ drivers/clk/actions/owl-reset.c  | 72 ++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-reset.h  | 32 ++++++++++++++
+ 5 files changed, 108 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-reset.c
+ create mode 100644 drivers/clk/actions/owl-reset.h
+
+diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+index dc38c85a4833..04f0a6355726 100644
+--- a/drivers/clk/actions/Kconfig
++++ b/drivers/clk/actions/Kconfig
+@@ -2,6 +2,7 @@ config CLK_ACTIONS
+ 	bool "Clock driver for Actions Semi SoCs"
+ 	depends on ARCH_ACTIONS || COMPILE_TEST
+ 	select REGMAP_MMIO
++	select RESET_CONTROLLER
+ 	default ARCH_ACTIONS
  
- On jeu., juin 21 2018, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-
-> Hello Gregory CLEMENT,
->
-> The patch 9818a7a4fd10: "clk: mvebu: armada-37xx-periph: prepare cpu
-> clk to be used with DVFS" from Nov 30, 2017, leads to the following
-> static checker warning:
->
-> 	drivers/clk/mvebu/armada-37xx-periph.c:432 clk_pm_cpu_get_parent()
-> 	warn: signedness bug returning '(-22)'
-
-Thanks, I finally took time to take care of it and I am going to post a
-fix.
-
-Gregory
-
->
-> drivers/clk/mvebu/armada-37xx-periph.c
->    418  static u8 clk_pm_cpu_get_parent(struct clk_hw *hw)
->                ^^
->    419  {
->    420          struct clk_pm_cpu *pm_cpu = to_clk_pm_cpu(hw);
->    421          int num_parents = clk_hw_get_num_parents(hw);
->    422          u32 val;
->    423  
->    424          if (armada_3700_pm_dvfs_is_enabled(pm_cpu->nb_pm_base)) {
->    425                  val = armada_3700_pm_dvfs_get_cpu_parent(pm_cpu->nb_pm_base);
->    426          } else {
->    427                  val = readl(pm_cpu->reg_mux) >> pm_cpu->shift_mux;
->    428                  val &= pm_cpu->mask_mux;
->    429          }
->    430  
->    431          if (val >= num_parents)
->    432                  return -EINVAL;
->                                ^^^^^^^
->    433  
->    434          return val;
->    435  }
->
-> regards,
-> dan carpenter
-
+ if CLK_ACTIONS
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 78c17d56f991..ccfdf9781cef 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -7,6 +7,7 @@ clk-owl-y			+= owl-divider.o
+ clk-owl-y			+= owl-factor.o
+ clk-owl-y			+= owl-composite.o
+ clk-owl-y			+= owl-pll.o
++clk-owl-y			+= owl-reset.o
+ 
+ # SoC support
+ obj-$(CONFIG_CLK_OWL_S700)	+= owl-s700.o
+diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+index 56f01f7774aa..4dc7f286831f 100644
+--- a/drivers/clk/actions/owl-common.h
++++ b/drivers/clk/actions/owl-common.h
+@@ -26,6 +26,8 @@ struct owl_clk_desc {
+ 	struct owl_clk_common		**clks;
+ 	unsigned long			num_clks;
+ 	struct clk_hw_onecell_data	*hw_clks;
++	struct owl_reset_map		*resets;
++	unsigned long			num_resets;
+ 	struct regmap			*regmap;
+ };
+ 
+diff --git a/drivers/clk/actions/owl-reset.c b/drivers/clk/actions/owl-reset.c
+new file mode 100644
+index 000000000000..91b161cc68de
+--- /dev/null
++++ b/drivers/clk/actions/owl-reset.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++//
++// Actions Semi Owl SoCs Reset Management Unit driver
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/regmap.h>
++#include <linux/reset-controller.h>
++
++#include "owl-reset.h"
++
++static int owl_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	struct owl_reset *reset = to_owl_reset(rcdev);
++	const struct owl_reset_map *map = &reset->reset_map[id];
++	u32 reg;
++
++	regmap_read(reset->regmap, map->reg, &reg);
++	regmap_write(reset->regmap, map->reg, reg & ~map->bit);
++
++	return 0;
++}
++
++static int owl_reset_deassert(struct reset_controller_dev *rcdev,
++			      unsigned long id)
++{
++	struct owl_reset *reset = to_owl_reset(rcdev);
++	const struct owl_reset_map *map = &reset->reset_map[id];
++	u32 reg;
++
++	regmap_read(reset->regmap, map->reg, &reg);
++	regmap_write(reset->regmap, map->reg, reg | map->bit);
++
++	return 0;
++}
++
++static int owl_reset_reset(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	owl_reset_assert(rcdev, id);
++	udelay(1);
++	owl_reset_deassert(rcdev, id);
++
++	return 0;
++}
++
++static int owl_reset_status(struct reset_controller_dev *rcdev,
++			    unsigned long id)
++{
++	struct owl_reset *reset = to_owl_reset(rcdev);
++	const struct owl_reset_map *map = &reset->reset_map[id];
++	u32 reg;
++
++	regmap_read(reset->regmap, map->reg, &reg);
++
++	/*
++	 * The reset control API expects 0 if reset is not asserted,
++	 * which is the opposite of what our hardware uses.
++	 */
++	return !(map->bit & reg);
++}
++
++const struct reset_control_ops owl_reset_ops = {
++	.assert		= owl_reset_assert,
++	.deassert	= owl_reset_deassert,
++	.reset		= owl_reset_reset,
++	.status		= owl_reset_status,
++};
+diff --git a/drivers/clk/actions/owl-reset.h b/drivers/clk/actions/owl-reset.h
+new file mode 100644
+index 000000000000..1a5e987ba99b
+--- /dev/null
++++ b/drivers/clk/actions/owl-reset.h
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++//
++// Actions Semi Owl SoCs Reset Management Unit driver
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_RESET_H_
++#define _OWL_RESET_H_
++
++#include <linux/reset-controller.h>
++#include <linux/spinlock.h>
++
++struct owl_reset_map {
++	u16	reg;
++	u32	bit;
++};
++
++struct owl_reset {
++	struct reset_controller_dev	rcdev;
++	struct owl_reset_map		*reset_map;
++	struct regmap			*regmap;
++};
++
++static inline struct owl_reset *to_owl_reset(struct reset_controller_dev *rcdev)
++{
++	return container_of(rcdev, struct owl_reset, rcdev);
++}
++
++extern const struct reset_control_ops owl_reset_ops;
++
++#endif /* _OWL_RESET_H_ */
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.17.1
