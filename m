@@ -1,64 +1,63 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 11 Jul 2018 16:28:28 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <anson.huang@nxp.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	"michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Message-ID: <20180711082827.GA6959@dragon>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180628005217.GC22683@dragon>
- <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
- <20180701021947.GA4348@dragon>
- <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 5/9] arm64: dts: actions: Add Reset Controller support for S700 SoC
+Date: Sat, 28 Jul 2018 00:15:23 +0530
+Message-Id: <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Jul 06, 2018 at 10:15:34AM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2018-06-30 19:19:49)
-> > On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
-> > > Quoting Shawn Guo (2018-06-27 17:52:18)
-> > > > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> > > > > Gentle Ping...
-> > > > 
-> > > > I cannot apply this dts patch until the clock patch is landed on
-> > > > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-> > > > created by clock patch.
-> > > > 
-> > > 
-> > > Does it matter if that clk ID changes across branches? Or is everything
-> > > good if it just exists as some number?
-> > 
-> > We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
-> > it doesn't matter if IMX6UL_CLK_GPIO1 changes.
-> > 
-> > > The patch adding the define
-> > > conflicts with another patch to fix the numbering scheme to be
-> > > incremental instead of changing IMX6UL and IMX6ULL which is annoying.
-> > > I'll probably make a topic branch just for the fix and merge it into
-> > > clk-fixes and this branch so you can pick it up from there if you like.
-> > 
-> > It will be good if you can have a topic branch.  Otherwise, we are also
-> > fine to wait till the clock patches lands on mainline.
-> > 
-> 
-> Ok. The topic branch is out there as clk-imx-gpio-gates
+Add reset controller property and bindings header for the
+Actions Semi S700 SoC DTS.
 
-Thanks.  I applied dts patch now.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s700.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Shawn
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 59d29e4ca404..db4c544d5311 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -5,6 +5,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/actions,s700-cmu.h>
++#include <dt-bindings/reset/actions,s900-reset.h>
+ 
+ / {
+ 	compatible = "actions,s700";
+@@ -165,6 +166,7 @@
+ 			reg = <0x0 0xe0168000 0x0 0x1000>;
+ 			clocks = <&hosc>, <&losc>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		sps: power-controller@e01b0100 {
+-- 
+2.17.1
