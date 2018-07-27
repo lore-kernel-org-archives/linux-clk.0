@@ -1,64 +1,58 @@
-Return-Path: <michals@xilinx.com>
-Return-Path: michal.simek@xilinx.com
-Subject: Re: [PATCH v10 10/10] drivers: clk: Add ZynqMP clock driver
-To: Jolly Shah <jolly.shah@xilinx.com>, <ard.biesheuvel@linaro.org>,
-	<mingo@kernel.org>, <gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tejas Patel
-	<tejasp@xilinx.com>, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-	Jolly Shah <jollys@xilinx.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
- <1531857547-16652-11-git-send-email-jollys@xilinx.com>
-From: Michal Simek <michal.simek@xilinx.com>
-Message-ID: <6dadc5a6-7bc1-0e37-4df6-0278d9046c96@xilinx.com>
-Date: Thu, 19 Jul 2018 12:30:30 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:46990 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389453AbeG0VZz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jul 2018 17:25:55 -0400
+Date: Fri, 27 Jul 2018 22:02:17 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
+Message-ID: <20180727200217.GF7701@piout.net>
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+ <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <1531857547-16652-11-git-send-email-jollys@xilinx.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen and Mike,
-
-On 17.7.2018 21:59, Jolly Shah wrote:
-> From: Jolly Shah <jolly.shah@xilinx.com>
+On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
+> Quoting Alexandre Belloni (2018-07-17 15:27:41)
+> > This is the promised rework of the at91 PMC clocks driver. It is mainly
+> > necessary to remove the DTC warnings but it also complies with the CCF
+> > rule that there should be one node per controller instead of one node
+> > per clock.
+> > 
+> > This only handles the PMC, I'm planning to also rework the SCKC bindings
+> > later (without breaking the DT ABI).
+> > 
+> > The series is based on top of clk-next plus at91-dt so I don't think it
+> > is convenient to have it this cycle. However, I would really like to
+> > ensure we agree on the new bindings this cycle before converting all the
+> > other platforms as this is a bit tedious.
+> > 
+> > The first two patches are actually fixes and may be considered for this
+> > cycle.
+> > 
+> > One nice note:
+> > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
 > 
-> This patch adds CCF compliant clock driver for ZynqMP.
-> Clock driver queries supported clock information from
-> firmware and regiters pll and output clocks with CCF.
+> Patches look mostly good. Rob is happy with the bindings and so am I.
 > 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Tejas Patel <tejasp@xilinx.com>
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
->  drivers/clk/Kconfig                  |   1 +
->  drivers/clk/Makefile                 |   1 +
->  drivers/clk/zynqmp/Kconfig           |  10 +
->  drivers/clk/zynqmp/Makefile          |   4 +
->  drivers/clk/zynqmp/clk-gate-zynqmp.c | 144 +++++++
->  drivers/clk/zynqmp/clk-mux-zynqmp.c  | 141 +++++++
->  drivers/clk/zynqmp/clk-zynqmp.h      |  68 ++++
->  drivers/clk/zynqmp/clkc.c            | 719 +++++++++++++++++++++++++++++++++++
->  drivers/clk/zynqmp/divider.c         | 217 +++++++++++
->  drivers/clk/zynqmp/pll.c             | 335 ++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h |   1 +
->  11 files changed, 1641 insertions(+)
->  create mode 100644 drivers/clk/zynqmp/Kconfig
->  create mode 100644 drivers/clk/zynqmp/Makefile
->  create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
->  create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
->  create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
->  create mode 100644 drivers/clk/zynqmp/clkc.c
->  create mode 100644 drivers/clk/zynqmp/divider.c
->  create mode 100644 drivers/clk/zynqmp/pll.c
+> One general question is why the drivers can't be moved to real platform
+> drivers instead of using OF_CLK_DECLARE?
+> 
 
-DT binding was reviewed by Stephen but I can't see any review for the
-driver itself. Should I wait for your review or do you want to take
-binding doc 09/10 and 10/10 separately or this can go via arm-soc tree?
+I actually didn't try. I'll do it early next week. I'm not sure how this
+will work with the PM handling on sama5d2 but I'll probably figure
+something out.
 
-Thanks,
-Michal
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
