@@ -1,62 +1,45 @@
-Return-Path: <pn@denx.de>
-Subject: Re: [PATCH 5/9] arm64: dts: actions: Add Reset Controller support for
- S700 SoC
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- afaerber@suse.de, robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org, liuwei@actions-semi.com,
- mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org,
- daniel.thompson@linaro.org, amit.kucheria@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
- thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
- edgar.righi@lsitec.org.br, sravanhome@gmail.com
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
- <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
-From: Parthiban Nallathambi <pn@denx.de>
-Message-ID: <6df29971-c9e6-7015-9955-6a8159cc0f47@denx.de>
-Date: Sun, 29 Jul 2018 20:34:41 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh+dt@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Cc: devicetree@vger.kernel.org, Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Message-ID: <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
+Date: Fri, 27 Jul 2018 10:03:22 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mani,
+Quoting Alexandre Belloni (2018-07-17 15:27:41)
+> This is the promised rework of the at91 PMC clocks driver. It is mainly
+> necessary to remove the DTC warnings but it also complies with the CCF
+> rule that there should be one node per controller instead of one node
+> per clock.
+> =
 
-On 07/27/2018 08:45 PM, Manivannan Sadhasivam wrote:
-> Add reset controller property and bindings header for the
-> Actions Semi S700 SoC DTS.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 59d29e4ca404..db4c544d5311 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -5,6 +5,7 @@
->  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/actions,s700-cmu.h>
-> +#include <dt-bindings/reset/actions,s900-reset.h>
+> This only handles the PMC, I'm planning to also rework the SCKC bindings
+> later (without breaking the DT ABI).
+> =
 
-Typo here, this should be s700-reset.h
+> The series is based on top of clk-next plus at91-dt so I don't think it
+> is convenient to have it this cycle. However, I would really like to
+> ensure we agree on the new bindings this cycle before converting all the
+> other platforms as this is a bit tedious.
+> =
 
->  
->  / {
->  	compatible = "actions,s700";
-> @@ -165,6 +166,7 @@
->  			reg = <0x0 0xe0168000 0x0 0x1000>;
->  			clocks = <&hosc>, <&losc>;
->  			#clock-cells = <1>;
-> +			#reset-cells = <1>;
->  		};
->  
->  		sps: power-controller@e01b0100 {
-> 
+> The first two patches are actually fixes and may be considered for this
+> cycle.
+> =
 
--- 
-Thanks,
-Parthiban N
+> One nice note:
+> at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
+
+Patches look mostly good. Rob is happy with the bindings and so am I.
+
+One general question is why the drivers can't be moved to real platform
+drivers instead of using OF_CLK_DECLARE?
