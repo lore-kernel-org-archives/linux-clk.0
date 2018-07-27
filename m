@@ -1,73 +1,110 @@
-Return-Path: <avienamo@nvidia.com>
-From: Aapo Vienamo <avienamo@nvidia.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v6 0/4] Multiplex sdmmc low jitter clock path
-Date: Thu, 12 Jul 2018 14:52:58 +0300
-Message-ID: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
-Return-Path: avienamo@nvidia.com
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Neil Armstrong <narmstrong@baylibre.com>, Yixun Lan <yixun.lan@amlogic.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, yixun.lan@amlogic.com,
+ linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@bootlin.com>,
+ Liang Yang <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Carlo Caione <carlo@caione.org>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+ <20180712211244.11428-3-yixun.lan@amlogic.com>
+ <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+ <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+Message-ID: <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
+Date: Fri, 27 Jul 2018 09:41:40 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-divider to achieve better jitter performance with high speed signaling
-modes. The clock path with the divider is needed by some of the slower
-signaling modes. This series automatically multiplexes the LJ and
-non-LJ clock paths based on the requested frequency.
+Quoting Yixun Lan (2018-07-27 07:52:23)
+> HI Stephen:
+> =
 
-Changelog:
-v6:
-	- Rename div-frac.c to clk-utils.c
-	- Fix checkpatch errors and warnings introduced in v5
-	- Replace int mul = 2 with a macro in clk-sdmmc-mux.c
-	- Remove unnecessary space from clk_sdmmc_mux_enable() return
-	- Free sdmmc_mux if clk_register() fails in
-	  tegra_clk_register_sdmmc_mux_div()
+> On 07/26/2018 11:20 PM, Stephen Boyd wrote:
+> > Quoting Yixun Lan (2018-07-12 14:12:44)
+> >> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc=
+.c
+> >> new file mode 100644
+> >> index 000000000000..36c4c7cd69a6
+> >> --- /dev/null
+> >> +++ b/drivers/clk/meson/mmc-clkc.c
+> >> @@ -0,0 +1,367 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> +/*
+> >> + * Amlogic Meson MMC Sub Clock Controller Driver
+> >> + *
+> >> + * Copyright (c) 2017 Baylibre SAS.
+> >> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> >> + *
+> >> + * Copyright (c) 2018 Amlogic, inc.
+> >> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> > =
 
-v5:
-	- Rename div71_get() to div_frac_get()
-	- Rename div71.c to div-frac.c
+> > Is this include used?
+> > =
 
-v4:
-	- Add a changelog
+> this is needed by clk_get_rate()
+> see drivers/clk/meson/mmc-clkc.c:204
 
-v3:
-	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-	  do_div()
-	- Use SPDX tags for new files
-	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-	- Make tegra_clk_sdmmc_mux_ops static
-	- Fix the includes for fence_udelay() in a separate patch
+Hmm ok. That's unfortunate.
 
-v2:
-	- Fix the type compatibility error on do_div
+> =
 
-Aapo Vienamo (1):
-  clk: tegra: Fix includes required by fence_udelay()
+> > =
 
-Peter De Schrijver (1):
-  clk: tegra: Refactor fractional divider calculation
+> >> +       init.num_parents =3D 1;
+> >> +
+> >> +       clk =3D mmc_clkc_register_clk(dev, map, &init, suffix, data);
+> >> +       if (IS_ERR(clk))
+> >> +               dev_err(dev, "Core %s clock registration failed\n", su=
+ffix);
+> >> +
+> >> +       kfree(parent);
+> >> +       return clk;
+> >> +}
+> >> +
+> >> +static int mmc_clkc_probe(struct platform_device *pdev)
+> >> +{
+> >> +       struct clk_hw_onecell_data *onecell_data;
+> >> +       struct device *dev =3D &pdev->dev;
+> >> +       struct mmc_clkc_data *data;
+> >> +       struct regmap *map;
+> >> +       struct clk_regmap *mux, *div, *core, *rx, *tx;
+> >> +
+> >> +       data =3D (struct mmc_clkc_data *)of_device_get_match_data(dev);
+> > =
 
-Peter De-Schrijver (2):
-  clk: tegra: Add sdmmc mux divider clock
-  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
+> > This cast is unnecessary. Pleas remove.
+> > =
 
- drivers/clk/tegra/Makefile           |   2 +
- drivers/clk/tegra/clk-divider.c      |  30 +----
- drivers/clk/tegra/clk-id.h           |   2 -
- drivers/clk/tegra/clk-sdmmc-mux.c    | 251 +++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |  11 --
- drivers/clk/tegra/clk-tegra210.c     |  14 +-
- drivers/clk/tegra/clk-utils.c        |  43 ++++++
- drivers/clk/tegra/clk.h              |  30 +++++
- 8 files changed, 343 insertions(+), 40 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
- create mode 100644 drivers/clk/tegra/clk-utils.c
+> Ok, I will try to fix in next version
+> =
 
--- 
-2.7.4
+> =
+
+> this was trying to silence the =E2=80=99const=E2=80=98 cast warning [1]
+> I could make a 'const struct mmc_clkc_data *data' declare, but need to
+> fix further cast warning issue..
+> =
+
+> =
+
+> [1] drivers/clk/meson/mmc-clkc.c: In function =E2=80=98mmc_clkc_probe=E2=
+=80=99:
+> drivers/clk/meson/mmc-clkc.c:302:7: warning: assignment discards =E2=80=
+=98const=E2=80=99
+> qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   data =3D of_device_get_match_data(dev);
+>        ^
+
+Yes. Casting away const is a bad idea.
