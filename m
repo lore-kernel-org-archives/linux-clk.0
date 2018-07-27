@@ -1,102 +1,45 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 16/18] arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
-Date: Wed, 18 Jul 2018 16:24:56 +0530
-Message-Id: <20180718105458.22304-17-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v5] clk: qcom: Add display clock controller driver for
+ SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1532343275-7027-1-git-send-email-tdas@codeaurora.org>
+ <1532343275-7027-2-git-send-email-tdas@codeaurora.org>
+ <153264274182.48062.5474788613503562604@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <e9771a35-d35f-18d2-2447-2c969cb8fc09@codeaurora.org>
+Date: Fri, 27 Jul 2018 13:15:55 +0530
+MIME-Version: 1.0
+In-Reply-To: <153264274182.48062.5474788613503562604@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable all necessary HDMI pipeline nodes with HDMI out
-connector on a64-olinuxino board.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
 
- .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
+On 7/27/2018 3:35 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-23 03:54:35)
+>> Add support for the display clock controller found on SDM845
+>> based devices. This would allow display drivers to probe and
+>> control their clocks.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+> 
+> This is fine to merge as long as you're ok with removing the no rate
+> cache flag. I can do that myself so you don't have to resend.
+> 
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 3f531393eaee..0292149ee40a 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -58,12 +58,42 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -218,6 +248,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
+Thanks, please go ahead and remove the flags, in case the display 
+drivers would require the flags for any proper use case then we could 
+think on re-introducing them.
+
 -- 
-2.17.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
