@@ -1,39 +1,80 @@
-Return-Path: <afaerber@suse.de>
-Subject: Re: [PATCH v4 1/5] clk: actions: Add REGMAP as dependency
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: manivannan.sadhasivam@linaro.org, sboyd@kernel.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, linux@cubietech.com, support@cubietech.com,
- catalin.marinas@arm.com, mturquette@baylibre.com, will.deacon@arm.com,
- linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
- darren@cubietech.com, robh+dt@kernel.org, jeff.chen@actions-semi.com,
- pn@denx.de, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mp-cs@actions-semi.com
-References: <20180715123145.16975-1-sravanhome@gmail.com>
- <20180715123145.16975-2-sravanhome@gmail.com>
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Message-ID: <b0e29fe8-c16a-e783-8877-d01f052ba963@suse.de>
-Date: Sun, 15 Jul 2018 14:35:53 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:36555 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728384AbeG0OVT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jul 2018 10:21:19 -0400
+Date: Fri, 27 Jul 2018 14:59:12 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3.1 00/10] arm64: allwinner: Add A64 DE2 HDMI support
+Message-ID: <20180727125912.e5js7krmthto6gmz@flea>
+References: <20180726171257.6688-1-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <20180715123145.16975-2-sravanhome@gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="anrqhmutbeiy5itt"
+In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
 
-Am 15.07.2018 um 14:31 schrieb Saravanan Sekar:
-> Add REGMAP as dependency to avoid undefined reference to regmap symbol
+--anrqhmutbeiy5itt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is this a bugfix for S900? Then please add a Fixes: line. If not, why is
-it a separate patch and not in 3/5?
+On Fri, Jul 27, 2018 at 01:12:47AM +0800, Icenowy Zheng wrote:
+> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
+/H3/H5.
+>=20
+> A64 behaviour similar to Allwinner A83T where
+> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
+> Mixer1 =3D> TCON1 =3D> HDMI
+> as per Display System Block Diagram from the A64 user manual.
+>=20
+> This is third patch-set followed with previous RFC[1], first and second
+> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
+> rest will add eventually.
+>=20
+> I just rebased and slightly re-integrated the patchset according to the
+> requirments of the maintainer, and added the mixer0->tcon0 pipeline.
+> The further maintainship of the patchset still needs to be discussed
+> between I and Jagan.
 
-Also, the subject is fine as is, but please add a full stop at the end
-of the sentence in the commit message.
+Beside the comment on the pine64, it looks good to me. Can you
+resubmit those patches after rc1 is out?
 
-Regards,
-Andreas
+Thanks!
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+--anrqhmutbeiy5itt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbFx8ACgkQ0rTAlCFN
+r3Rh4w//YULFl9J+chHjxWnvahKtcxglkDFlvK0R3Ht0O0wkegqgZci5c425DsnK
+1ISyKxPobr41n6NRuwAje2hqwZte2DoSM3E/TQ749KtzcJGqJHc6jk07+t5oz7CT
+JKi3xip659H/78FOhE/gXxc6XfgKVT+YzH2FbBAJL/Q8wid0O3INJiy+3oqX0ffV
+RUtk23mAMLPe74ku8lvJKxlISZxaapB8W5515IN7oqJBoOfvTJVapQB2Mc/GJXN/
+VsfbDvKKeYLUH9nd+no7iLVkbsb4Jr4byU2pxDCol/jh/t/91AXi7pbLaL4rzfko
+XNiQzohYBbYoTnVIjmxVgYiL8bCI4MUFJ1FH0MCQiP2w0c4bxVSVKZEXzXIqtPaL
+GfZDKGKYUHqiUz8+4LKgV6oNi2xhpD10dXS2H30Rd7rcpbQN9ROibBrdf+0iIvay
+I0+upoQSS1AQcgUGyREum0dQq3QA0dqFeAV76LxXIntcXt2IZ4hw30GwDNBqhi3D
+v/q2NceMeYxM12aAzVg9pkZwY6XGjn9ftdmvXzLLr2OR8+h22Y75dhA7FSEzEPLz
+chxk4lAOyQWDezye0o0+wbEQXii7jxb/E3QLb7JF2EZ6awEG+7aakAuySkG1HJsG
+518FmSA41GV4a/Wtc2+xrThNOr1MIBtgEFiZYzn/V4Kf4bRiV84=
+=/5kr
+-----END PGP SIGNATURE-----
+
+--anrqhmutbeiy5itt--
