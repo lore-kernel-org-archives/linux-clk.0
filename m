@@ -1,155 +1,71 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com> <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Jul 2018 10:55:53 +0200
-Message-ID: <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, Simon Horman <horms@verge.net.au>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Phil Edworthy <phil.edworthy@renesas.com>,
+ Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <TY1PR01MB1769925385A6FB44A431AA07F52A0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Simon Horman <horms@verge.net.au>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+ <20180718130228.GG17271@n2100.armlinux.org.uk>
+ <CAMuHMdUjzVBXn-goAwbTBULfo=HrJEY6eBae4w7Z6qA-gScUUw@mail.gmail.com>
+ <OSBPR01MB1766E6AFE37986B2E2B5E35DF5530@OSBPR01MB1766.jpnprd01.prod.outlook.com>
+ <153255822286.48062.3193076486782567960@swboyd.mtv.corp.google.com>
+ <TY1PR01MB1769925385A6FB44A431AA07F52A0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Message-ID: <153271021758.48062.12757198387330928176@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH] clk: Add functions to get optional clocks
+Date: Fri, 27 Jul 2018 09:50:17 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Phil,
+Quoting Phil Edworthy (2018-07-27 08:38:12)
+> On 25 July 2018 23:37, Stephen Boyd wrote:
+> > Short answer is they don't. I'd still prefer we have this API though.
+> > =
 
-On Mon, Jul 30, 2018 at 10:36 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> Quite a few drivers get an optional clock, e.g. a clock required
-> to access peripheral's registers that is always enabled on some
-> devices.
->
-> This function behaves the same as of_clk_get_by_name() except that
-> it will return NULL instead of -ENOENT. This makes error checking
-> for users easier and allows clk_prepare_enable, etc to be called
-> on the returned reference without additional checks.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > Can you rework this patch to be a little more invasive into the
+> > clk_get() path, perhaps by reworking __of_clk_get_by_name() a little to
+> > take an 'optional' argument, so that it only returns NULL when the clk =
+is
+> > looked up from DT? The fallback path in clkdev where we have a DT based
+> > system looking up a clk through clkdev lookups doesn't seem to be a real
+> > scenario that we should worry about here. I think sometimes people use
+> > clkdev lookups when they're migrating to DT systems and things aren't w=
+ired
+> > up properly in DT, but that isn't the norm.
+> Do you mean something like this:
+> =
 
-Thanks for your patch!
-
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
->
->  static struct clk *__of_clk_get_by_name(struct device_node *np,
->                                         const char *dev_id,
-> -                                       const char *name)
-> +                                       const char *name,
-> +                                       bool optional)
->  {
->         struct clk *clk = ERR_PTR(-ENOENT);
->
-> @@ -73,6 +74,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
->                 if (!IS_ERR(clk)) {
->                         break;
->                 } else if (name && index >= 0) {
-> +                       if (optional && PTR_ERR(clk) == -ENOENT)
-> +                               clk = NULL;
-
-This only handles the "name && index >= 0" case.
-If that condition is never true, the loop will end, eventually, and the last
-value of clk will be returned. Hence there should be a similar check at the
-end of the function.
-
->                         if (PTR_ERR(clk) != -EPROBE_DEFER)
->                                 pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
->                                         np, name ? name : "", index);
-
-Hence if not found, this will always print an error, even if the clock is
-optional?
-
-> @@ -106,15 +109,38 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
->         if (!np)
->                 return ERR_PTR(-ENOENT);
->
-> -       return __of_clk_get_by_name(np, np->full_name, name);
-> +       return __of_clk_get_by_name(np, np->full_name, name, false);
->  }
->  EXPORT_SYMBOL(of_clk_get_by_name);
->
-> +/**
-> + * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
-> + * by a device node
-> + * @np: pointer to clock consumer node
-> + * @name: name of consumer's clock input, or NULL for the first clock reference
-> + *
-> + * This function parses the clocks and clock-names properties,
-> + * and uses them to look up the struct clk from the registered list of clock
-> + * providers.
-> + * It behaves the same as of_clk_get_by_name(), except when no clock is found.
-> + * In this case, instead of returning -ENOENT, it returns NULL.
-> + */
-> +struct clk *of_clk_get_by_name_optional(struct device_node *np,
-> +                                       const char *name)
-> +{
-> +       if (!np)
-> +               return ERR_PTR(-ENOENT);
-
-Shouldn't this return NULL?
-Or let __of_clk_get_by_name() handle that (cfr. above)?
-
-Hmm, of_clk_get_by_name() has a similar check, while the current
-__of_clk_get_by_name() already handle np == NULL, too.
-
-> +
-> +       return __of_clk_get_by_name(np, np->full_name, name, true);
-> +}
-> +EXPORT_SYMBOL(of_clk_get_by_name_optional);
-> +
->  #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
->
->  static struct clk *__of_clk_get_by_name(struct device_node *np,
->                                         const char *dev_id,
-> -                                       const char *name)
-> +                                       const char *name,
-> +                                       bool optional)
->  {
->         return ERR_PTR(-ENOENT);
->  }
-> @@ -197,7 +223,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
->         struct clk *clk;
->
->         if (dev && dev->of_node) {
-> -               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-> +               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
->                 if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
->                         return clk;
->         }
+[...]
 > diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 4f750c4..8cb5455 100644
+> index 907202b..830209a 100644
 > --- a/include/linux/clk.h
 > +++ b/include/linux/clk.h
-> @@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+> @@ -771,6 +771,7 @@ static inline void clk_bulk_disable_unprepare(int num=
+_clks,
 >  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
 >  struct clk *of_clk_get(struct device_node *np, int index);
 >  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
-> +struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
+> +struct clk *of_clk_get_by_name_optional(struct device_node *np, const ch=
+ar *name);
 >  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
 >  #else
 >  static inline struct clk *of_clk_get(struct device_node *np, int index)
+> =
 
-No dummy version of of_clk_get_by_name_optional() for the !CLK || !COMMON_CLK
-case?
+> ---
+> A lot of drivers use devm_clk_get() so I think a devm_clk_get_optional()
+> version would be useful. That would probably need an additional
+> clk_get_optional() function.
+> =
 
-It seems of_clk_get_by_name() and of_clk_get_by_name_optional() can just
-be simple wrappers around __of_clk_get_by_name(), differing only in the
-value of the "optional" parameter. Hence I think it makes sense to move them
-to the header file, and make them static inline.
-Then only __of_clk_get_by_name() needs a (static inline) dummy for the !OF ||
-!COMMON_CLK case.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yes, this would be the first patch, and then the second patch would add
+clk_get_optional() and devm_clk_get_optional(). We shouldn't encourage
+consumers to move from device based to DT node based clk_get() for the
+optional clk API.
