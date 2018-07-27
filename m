@@ -1,55 +1,133 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Marcel Ziswiler <marcel@ziswiler.com>, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180720075422.26563-1-marcel@ziswiler.com>
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-References: <20180720075422.26563-1-marcel@ziswiler.com>
-Message-ID: <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-Date: Wed, 25 Jul 2018 16:24:55 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/9] clk: actions: Cache regmap info in private clock descriptor
+Date: Sat, 28 Jul 2018 00:15:19 +0530
+Message-Id: <20180727184527.13287-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Marcel Ziswiler (2018-07-20 00:54:22)
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> =
+In order to support the reset controller, regmap info needs to
+be cached in the private clock descriptor, owl_clk_desc. Hence,
+save that and also make the clock descriptor struct non const.
 
-> Actually report the error code from devm_regulator_get() which may as
-> well just be a probe deferral.
-> =
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-common.c | 3 ++-
+ drivers/clk/actions/owl-common.h | 3 ++-
+ drivers/clk/actions/owl-s700.c   | 4 ++--
+ drivers/clk/actions/owl-s900.c   | 4 ++--
+ 4 files changed, 8 insertions(+), 6 deletions(-)
 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> =
-
-> ---
-> =
-
->  drivers/clk/tegra/clk-dfll.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> =
-
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 48ee43734e05..b2123084e175 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_device *pde=
-v,
->  =
-
->         td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
->         if (IS_ERR(td->vdd_reg)) {
-> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
-> -               return PTR_ERR(td->vdd_reg);
-> +               ret =3D PTR_ERR(td->vdd_reg);
-> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n", =
-ret);
-
-Do you want to know that a probe defer is happening? Usually patches are
-sent to make that error path silent.
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 61c1071b5180..32dd29e0a37e 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -39,7 +39,7 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
+ }
+ 
+ int owl_clk_regmap_init(struct platform_device *pdev,
+-			 const struct owl_clk_desc *desc)
++			struct owl_clk_desc *desc)
+ {
+ 	void __iomem *base;
+ 	struct regmap *regmap;
+@@ -57,6 +57,7 @@ int owl_clk_regmap_init(struct platform_device *pdev,
+ 	}
+ 
+ 	owl_clk_set_regmap(desc, regmap);
++	desc->regmap = regmap;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+index 4fd726ec54a6..56f01f7774aa 100644
+--- a/drivers/clk/actions/owl-common.h
++++ b/drivers/clk/actions/owl-common.h
+@@ -26,6 +26,7 @@ struct owl_clk_desc {
+ 	struct owl_clk_common		**clks;
+ 	unsigned long			num_clks;
+ 	struct clk_hw_onecell_data	*hw_clks;
++	struct regmap			*regmap;
+ };
+ 
+ static inline struct owl_clk_common *
+@@ -35,7 +36,7 @@ static inline struct owl_clk_common *
+ }
+ 
+ int owl_clk_regmap_init(struct platform_device *pdev,
+-			 const struct owl_clk_desc *desc);
++			struct owl_clk_desc *desc);
+ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
+ 
+ #endif /* _OWL_COMMON_H_ */
+diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
+index 5e9531392ee5..e7cacd677275 100644
+--- a/drivers/clk/actions/owl-s700.c
++++ b/drivers/clk/actions/owl-s700.c
+@@ -569,7 +569,7 @@ static struct clk_hw_onecell_data s700_hw_clks = {
+ 		.num    = CLK_NR_CLKS,
+ };
+ 
+-static const struct owl_clk_desc s700_clk_desc = {
++static struct owl_clk_desc s700_clk_desc = {
+ 	.clks       = s700_clks,
+ 	.num_clks   = ARRAY_SIZE(s700_clks),
+ 
+@@ -578,7 +578,7 @@ static const struct owl_clk_desc s700_clk_desc = {
+ 
+ static int s700_clk_probe(struct platform_device *pdev)
+ {
+-	const struct owl_clk_desc *desc;
++	struct owl_clk_desc *desc;
+ 
+ 	desc = &s700_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
+index 7f60ed6afe63..bb7ee872d316 100644
+--- a/drivers/clk/actions/owl-s900.c
++++ b/drivers/clk/actions/owl-s900.c
+@@ -684,7 +684,7 @@ static struct clk_hw_onecell_data s900_hw_clks = {
+ 	.num	= CLK_NR_CLKS,
+ };
+ 
+-static const struct owl_clk_desc s900_clk_desc = {
++static struct owl_clk_desc s900_clk_desc = {
+ 	.clks	    = s900_clks,
+ 	.num_clks   = ARRAY_SIZE(s900_clks),
+ 
+@@ -693,7 +693,7 @@ static const struct owl_clk_desc s900_clk_desc = {
+ 
+ static int s900_clk_probe(struct platform_device *pdev)
+ {
+-	const struct owl_clk_desc *desc;
++	struct owl_clk_desc *desc;
+ 
+ 	desc = &s900_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+-- 
+2.17.1
