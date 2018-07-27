@@ -1,755 +1,675 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: actions: Add S700 SoC clock support
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: afaerber@suse.de, sboyd@kernel.org, pn@denx.de,
- linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
- mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
- devicetree@vger.kernel.org
-References: <20180626192820.28237-3-sravanhome@gmail.com>
- <20180628191805.3722-1-sravanhome@gmail.com>
- <20180628191805.3722-3-sravanhome@gmail.com>
- <20180630092236.GA7320@Mani-XPS-13-9360>
-From: Saravanan Sekar <sravanhome@gmail.com>
-Message-ID: <df15de45-9ec5-4f62-f413-b6206dbe94df@gmail.com>
-Date: Sun, 1 Jul 2018 19:23:58 +0200
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:36319 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730340AbeG0PeA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Jul 2018 11:34:00 -0400
+Date: Fri, 27 Jul 2018 22:11:20 +0800
+In-Reply-To: <CAMty3ZDZfhCjekd2eSHNFS9aagpwdG0rwL1jamuwoA=vWcd86w@mail.gmail.com>
+References: <20180726171257.6688-1-icenowy@aosc.io> <20180726171257.6688-11-icenowy@aosc.io> <20180727125615.ju23ecgm6y4rz7p5@flea> <8DF4600E-DFE4-47CD-B541-FFDD903A65FB@aosc.io> <CAMty3ZDZfhCjekd2eSHNFS9aagpwdG0rwL1jamuwoA=vWcd86w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180630092236.GA7320@Mani-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
+To: jagan@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <2E41BEB6-6D69-4597-9559-25389B310209@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
-On 06/30/18 11:22, Manivannan Sadhasivam wrote:
-> Hi Saravanan,
->
-> On Thu, Jun 28, 2018 at 09:18:04PM +0200, Saravanan Sekar wrote:
->> Add Actions Semi S700 SoC clock support
+于 2018年7月27日 GMT+08:00 下午9:57:08, Jagan Teki <jagan@amarulasolutions.com> 写到:
+>On Fri, Jul 27, 2018 at 6:56 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
 >>
->> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->> ---
->>   drivers/clk/actions/Kconfig    |   7 +
->>   drivers/clk/actions/Makefile   |   1 +
->>   drivers/clk/actions/owl-s700.c | 614 +++++++++++++++++++++++++++++++++
->>   3 files changed, 622 insertions(+)
->>   create mode 100644 drivers/clk/actions/owl-s700.c
 >>
->> diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
->> index 8854adb37847..d883b48e4607 100644
->> --- a/drivers/clk/actions/Kconfig
->> +++ b/drivers/clk/actions/Kconfig
->> @@ -1,6 +1,7 @@
->>   config CLK_ACTIONS
->>   	bool "Clock driver for Actions Semi SoCs"
->>   	depends on ARCH_ACTIONS || COMPILE_TEST
->> +	select REGMAP_MMIO
-> This change should be in a separate patch.
-
-I don't see any specifc reason to split this as seperate patch, since 
-driver is bound to regmap
-
-
->>   	default ARCH_ACTIONS
->>   
->>   if CLK_ACTIONS
->> @@ -11,4 +12,10 @@ config CLK_OWL_S900
->>   	bool "Support for the Actions Semi OWL S900 clocks"
->>   	depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
->>   	default ARM64 && ARCH_ACTIONS
->> +
->> +config CLK_OWL_S700
->> +	bool "Support for the Actions Semi OWL S700 clocks"
->> +	depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
->> +	default ARM64 && ARCH_ACTIONS
->> +
-> It's good to keep the symbols alphabetically sorted (ascending order)
-
-Will change the order
-
->>   endif
->> diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
->> index 76e431434d10..a860973d940d 100644
->> --- a/drivers/clk/actions/Makefile
->> +++ b/drivers/clk/actions/Makefile
->> @@ -9,4 +9,5 @@ clk-owl-y			+= owl-composite.o
->>   clk-owl-y			+= owl-pll.o
->>   
->>   # SoC support
->> +obj-$(CONFIG_CLK_OWL_S900)	+= owl-s700.o
-> Should be CONFIG_CLK_OWL_S700
-
-I will correct it
-
->>   obj-$(CONFIG_CLK_OWL_S900)	+= owl-s900.o
->> diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
->> new file mode 100644
->> index 000000000000..cc8d1f947171
->> --- /dev/null
->> +++ b/drivers/clk/actions/owl-s700.c
->> @@ -0,0 +1,614 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Actions S700 clock driver
->> + *
->> + * Copyright (c) 2014 Actions Semi Inc.
->> + * Author: David Liu <liuwei@actions-semi.com>
->> + *
->> + * Author: Pathiban Nallathambi <pn@denx.de>
->> + * Author: Saravanan Sekar <sravanhome@gmail.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "owl-common.h"
->> +#include "owl-composite.h"
->> +#include "owl-divider.h"
->> +#include "owl-factor.h"
->> +#include "owl-fixed-factor.h"
->> +#include "owl-gate.h"
->> +#include "owl-mux.h"
->> +#include "owl-pll.h"
->> +
->> +#include <dt-bindings/clock/actions,s700-cmu.h>
->> +
->> +#define CMU_COREPLL		(0x0000)
->> +#define CMU_DEVPLL		(0x0004)
->> +#define CMU_DDRPLL		(0x0008)
->> +#define CMU_NANDPLL		(0x000C)
->> +#define CMU_DISPLAYPLL		(0x0010)
->> +#define CMU_AUDIOPLL		(0x0014)
->> +#define CMU_TVOUTPLL		(0x0018)
->> +#define CMU_BUSCLK		(0x001C)
->> +#define CMU_SENSORCLK		(0x0020)
->> +#define CMU_LCDCLK		(0x0024)
->> +#define CMU_DSIPLLCLK		(0x0028)
->> +#define CMU_CSICLK		(0x002C)
->> +#define CMU_DECLK		(0x0030)
->> +#define CMU_SICLK		(0x0034)
->> +#define CMU_BUSCLK1		(0x0038)
->> +#define CMU_HDECLK		(0x003C)
->> +#define CMU_VDECLK		(0x0040)
->> +#define CMU_VCECLK		(0x0044)
->> +#define CMU_NANDCCLK		(0x004C)
->> +#define CMU_SD0CLK		(0x0050)
->> +#define CMU_SD1CLK		(0x0054)
->> +#define CMU_SD2CLK		(0x0058)
->> +#define CMU_UART0CLK		(0x005C)
->> +#define CMU_UART1CLK		(0x0060)
->> +#define CMU_UART2CLK		(0x0064)
->> +#define CMU_UART3CLK		(0x0068)
->> +#define CMU_UART4CLK		(0x006C)
->> +#define CMU_UART5CLK		(0x0070)
->> +#define CMU_UART6CLK		(0x0074)
->> +#define CMU_PWM0CLK		(0x0078)
->> +#define CMU_PWM1CLK		(0x007C)
->> +#define CMU_PWM2CLK		(0x0080)
->> +#define CMU_PWM3CLK		(0x0084)
->> +#define CMU_PWM4CLK		(0x0088)
->> +#define CMU_PWM5CLK		(0x008C)
->> +#define CMU_GPU3DCLK		(0x0090)
->> +#define CMU_CORECTL		(0x009C)
->> +#define CMU_DEVCLKEN0		(0x00A0)
->> +#define CMU_DEVCLKEN1		(0x00A4)
->> +#define CMU_DEVRST0		(0x00A8)
->> +#define CMU_DEVRST1		(0x00AC)
->> +#define CMU_USBPLL		(0x00B0)
->> +#define CMU_ETHERNETPLL		(0x00B4)
->> +#define CMU_CVBSPLL		(0x00B8)
->> +#define CMU_SSTSCLK		(0x00C0)
->> +
->> +static struct clk_pll_table clk_audio_pll_table[] = {
->> +	{0, 45158400}, {1, 49152000},
->> +	{0, 0},
->> +};
->> +
->> +static struct clk_pll_table clk_cvbs_pll_table[] = {
->> +	{27, 29*12000000}, {28, 30*12000000}, {29, 31*12000000},
-> Please leave a space around *
-
-will change it
-
->> +	{30, 32*12000000}, {31, 33*12000000}, {32, 34*12000000},
->> +	{33, 35*12000000}, {34, 36*12000000}, {35, 37*12000000},
->> +	{36, 38*12000000}, {37, 39*12000000}, {38, 40*12000000},
->> +	{39, 41*12000000}, {40, 42*12000000}, {41, 43*12000000},
->> +	{42, 44*12000000}, {43, 45*12000000}, {0, 0},
->> +};
->> +
->> +/* pll clocks */
->> +static OWL_PLL_NO_PARENT(clk_core_pll,   "core_pll", CMU_COREPLL, 12000000, 9, 0, 8,  4, 174, NULL, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_dev_pll,    "dev_pll", CMU_DEVPLL,  6000000, 8, 0, 8, 8, 126, NULL, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_ddr_pll,    "ddr_pll", CMU_DDRPLL, 6000000, 8, 0, 8,  2,  180, NULL, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_nand_pll,   "nand_pll", CMU_NANDPLL,  6000000, 8, 0, 8,  2, 86, NULL, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_display_pll, "display_pll", CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 140, NULL, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_cvbs_pll, "cvbs_pll", CMU_CVBSPLL, 0, 8, 0, 8, 27, 43, clk_cvbs_pll_table, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_audio_pll,  "audio_pll", CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table, CLK_IGNORE_UNUSED);
->> +static OWL_PLL_NO_PARENT(clk_ethernet_pll, "ethernet_pll", CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED);
->> +
->> +
-> Remove extra new line
-
-will remove
-
->> +static const char *cpu_clk_mux_p[] = {"losc", "hosc", "core_pll", "noc1_clk_div"};
->> +static const char *dev_clk_p[] = { "hosc", "dev_pll"};
->> +static const char *noc_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_pll", "cvbs_pll"};
->> +
->> +static const char *csi_clk_mux_p[] = { "display_pll", "dev_clk"};
->> +static const char *de_clk_mux_p[] = { "display_pll", "dev_clk"};
->> +static const char *hde_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_pll"};
->> +static const char *nand_clk_mux_p[] = { "nand_pll", "display_pll", "dev_clk", "ddr_pll"};
->> +static const char *sd_clk_mux_p[] = { "dev_clk", "nand_pll", };
->> +static const char *uart_clk_mux_p[] = { "hosc", "dev_pll"};
->> +static const char *pwm_clk_mux_p[] = { "losc", "hosc"};
->> +static const char *gpu_clk_mux_p[] = { "dev_clk", "display_pll", "nand_pll", "ddr_clk", "cvbs_pll"};
->> +static const char *lcd_clk_mux_p[] = { "display_pll", "dev_clk" };
->> +static const char *i2s_clk_mux_p[] = { "audio_pll" };
->> +static const char *sensor_clk_mux_p[] = { "hosc", "si"};
->> +
->> +
-> Remove extra new line
-
-will remove
-
->> +/* mux clocks */
->> +static OWL_MUX(clk_cpu,  "cpu_clk", cpu_clk_mux_p,  CMU_BUSCLK, 0, 2, CLK_SET_RATE_PARENT);
->> +static OWL_MUX(clk_dev,  "dev_clk", dev_clk_p, CMU_DEVPLL, 12, 1, CLK_SET_RATE_PARENT);
->> +static OWL_MUX(clk_noc0_clk_mux,  "noc0_clk_mux", noc_clk_mux_p, CMU_BUSCLK, 4, 3, CLK_SET_RATE_PARENT);
-> Keep the spacing consistent.
-
-will remove extra space
-
->> +static OWL_MUX(clk_noc1_clk_mux,	"noc1_clk_mux", noc_clk_mux_p, CMU_BUSCLK1, 4, 3, CLK_SET_RATE_PARENT);
-> ditto
->
->> +static OWL_MUX(clk_hp_clk_mux, "hp_clk_mux", noc_clk_mux_p, CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
->> +
->> +static struct clk_factor_table sd_factor_table[] = {
->> +	/* bit0 ~ 4 */
->> +	{0, 1, 1}, {1, 1, 2}, {2, 1, 3}, {3, 1, 4},
->> +	{4, 1, 5}, {5, 1, 6}, {6, 1, 7}, {7, 1, 8},
->> +	{8, 1, 9}, {9, 1, 10}, {10, 1, 11}, {11, 1, 12},
->> +	{12, 1, 13}, {13, 1, 14}, {14, 1, 15}, {15, 1, 16},
->> +	{16, 1, 17}, {17, 1, 18}, {18, 1, 19}, {19, 1, 20},
->> +	{20, 1, 21}, {21, 1, 22}, {22, 1, 23}, {23, 1, 24},
->> +	{24, 1, 25}, {25, 1, 26},
->> +
->> +	/* bit8: /128 */
->> +	{256, 1, 1 * 128}, {257, 1, 2 * 128}, {258, 1, 3 * 128}, {259, 1, 4 * 128},
->> +	{260, 1, 5 * 128}, {261, 1, 6 * 128}, {262, 1, 7 * 128}, {263, 1, 8 * 128},
->> +	{264, 1, 9 * 128}, {265, 1, 10 * 128}, {266, 1, 11 * 128}, {267, 1, 12 * 128},
->> +	{268, 1, 13 * 128}, {269, 1, 14 * 128}, {270, 1, 15 * 128}, {271, 1, 16 * 128},
->> +	{272, 1, 17 * 128}, {273, 1, 18 * 128}, {274, 1, 19 * 128}, {275, 1, 20 * 128},
->> +	{276, 1, 21 * 128}, {277, 1, 22 * 128}, {278, 1, 23 * 128}, {279, 1, 24 * 128},
->> +	{280, 1, 25 * 128}, {281, 1, 26 * 128},
->> +
->> +	{0, 0},
->> +};
->> +
->> +static struct clk_factor_table lcd_factor_table[] = {
->> +	/* bit0 ~ 3 */
->> +	{0, 1, 1}, {1, 1, 2}, {2, 1, 3}, {3, 1, 4},
->> +	{4, 1, 5}, {5, 1, 6}, {6, 1, 7}, {7, 1, 8},
->> +	{8, 1, 9}, {9, 1, 10}, {10, 1, 11}, {11, 1, 12},
->> +
->> +	/* bit8: /7 */
->> +	{256, 1, 1 * 7}, {257, 1, 2 * 7}, {258, 1, 3 * 7}, {259, 1, 4 * 7},
->> +	{260, 1, 5 * 7}, {261, 1, 6 * 7}, {262, 1, 7 * 7}, {263, 1, 8 * 7},
->> +	{264, 1, 9 * 7}, {265, 1, 10 * 7}, {266, 1, 11 * 7}, {267, 1, 12 * 7},
->> +	{0, 0},
->> +};
->> +
->> +
-> Remove extra new line
-
-sure
-
->> +static struct clk_div_table hdmia_div_table[] = {
->> +	{0, 1},   {1, 2},   {2, 3},   {3, 4},
->> +	{4, 6},   {5, 8},   {6, 12},  {7, 16},
->> +	{8, 24},
->> +	{0, 0},
->> +};
->> +
->> +static struct clk_div_table rmii_div_table[] = {
->> +	{0, 4},   {1, 10},
->> +};
->> +
->> +
-> Remove extra new line
-
-sure
-
-
->> +/* divider clocks */
->> +static OWL_DIVIDER(clk_noc0, "noc0_clk", "noc0_clk_mux", CMU_BUSCLK, 16, 2, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_noc1, "noc1_clk", "noc1_clk_mux", CMU_BUSCLK1, 16, 2, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_noc1_clk_div, "noc1_clk_div", "noc1_clk", CMU_BUSCLK1, 20, 1, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_hp_clk_div, "hp_clk_div", "hp_clk_mux", CMU_BUSCLK1, 12, 2, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_ahb, "ahb_clk", "hp_clk_div", CMU_BUSCLK1, 2, 2, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_apb, "apb_clk", "ahb_clk", CMU_BUSCLK1, 14, 2, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_sensor0, "sensor0", "sensor_src", CMU_SENSORCLK, 0, 4, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_sensor1, "sensor1", "sensor_src", CMU_SENSORCLK, 8, 4, NULL, 0, 0);
->> +static OWL_DIVIDER(clk_rmii_ref, "rmii_ref", "ethernet_pll", CMU_ETHERNETPLL, 2, 1, rmii_div_table, 0, 0);
->> +
->> +static struct clk_factor_table de_factor_table[] = {
->> +	{0, 1, 1}, {1, 2, 3}, {2, 1, 2}, {3, 2, 5},
->> +	{4, 1, 3}, {5, 1, 4}, {6, 1, 6}, {7, 1, 8},
->> +	{8, 1, 12}, {0, 0, 0},
->> +};
->> +
->> +static struct clk_factor_table hde_factor_table[] = {
->> +	{0, 1, 1}, {1, 2, 3}, {2, 1, 2}, {3, 2, 5},
->> +	{4, 1, 3}, {5, 1, 4}, {6, 1, 6}, {7, 1, 8},
->> +	{0, 0, 0},
->> +};
->> +
->> +/* gate clocks */
->> +static OWL_GATE(clk_gpio, "gpio", "apb_clk", CMU_DEVCLKEN1, 25, 0, 0);
->> +static OWL_GATE(clk_dmac, "dmac", "hp_clk_div", CMU_DEVCLKEN0, 17, 0, 0);
->> +static OWL_GATE(clk_timer, "timer", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
-> Timer clk enable bit should be 22 according to the datasheet I have.
-
-Thanks for pointing out, I have refered datasheet and will correct it
-
->> +static OWL_GATE_NO_PARENT(clk_dsi, "dsi_clk", CMU_DEVCLKEN0, 2, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_tvout, "tvout_clk", CMU_DEVCLKEN0, 3, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_hdmi_dev, "hdmi_dev", CMU_DEVCLKEN0, 5, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb3_480mpll0, "usb3_480mpll0", CMU_USBPLL, 3, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb3_480mphy0, "usb3_480mphy0", CMU_USBPLL, 2, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb3_5gphy, "usb3_5gphy", CMU_USBPLL, 1, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb3_cce, "usb3_cce", CMU_DEVCLKEN0, 25, 0, 0);
->> +static OWL_GATE(clk_i2c0, "i2c0", "hosc", CMU_DEVCLKEN1, 0, 0, 0);
->> +static OWL_GATE(clk_i2c1, "i2c1", "hosc", CMU_DEVCLKEN1, 1, 0, 0);
->> +static OWL_GATE(clk_i2c2, "i2c2", "hosc", CMU_DEVCLKEN1, 2, 0, 0);
->> +static OWL_GATE(clk_i2c3, "i2c3", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
->> +static OWL_GATE(clk_spi0, "spi0", "ahb_clk", CMU_DEVCLKEN1, 4, 0, 0);
->> +static OWL_GATE(clk_spi1, "spi1", "ahb_clk", CMU_DEVCLKEN1, 5, 0, 0);
->> +static OWL_GATE(clk_spi2, "spi2", "ahb_clk", CMU_DEVCLKEN1, 6, 0, 0);
->> +static OWL_GATE(clk_spi3, "spi3", "ahb_clk", CMU_DEVCLKEN1, 7, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h0_pllen, "usbh0_pllen", CMU_USBPLL, 12, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h0_phy, "usbh0_phy", CMU_USBPLL, 10, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h0_cce, "usbh0_cce", CMU_DEVCLKEN0, 26, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h1_pllen, "usbh1_pllen", CMU_USBPLL, 13, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h1_phy, "usbh1_phy", CMU_USBPLL, 11, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_usb2h1_cce, "usbh1_cce", CMU_DEVCLKEN0, 27, 0, 0);
->> +static OWL_GATE_NO_PARENT(clk_irc_switch, "irc_switch", CMU_DEVCLKEN1, 15, 0, 0);
->> +
->> +/* composite clocks */
->> +
->> +static OWL_COMP_DIV(clk_csi, "csi", csi_clk_mux_p,
->> +			OWL_MUX_HW(CMU_CSICLK, 4, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 13, 0),
->> +			OWL_DIVIDER_HW(CMU_CSICLK, 0, 4, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_si, "si", csi_clk_mux_p,
->> +			OWL_MUX_HW(CMU_SICLK, 4, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 14,  0),
->> +			OWL_DIVIDER_HW(CMU_SICLK, 0, 4, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_de, "de", de_clk_mux_p,
->> +			OWL_MUX_HW(CMU_DECLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 0,  0),
->> +			OWL_FACTOR_HW(CMU_DECLK, 0, 3, 0, de_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_hde, "hde", hde_clk_mux_p,
->> +			OWL_MUX_HW(CMU_HDECLK, 4, 2),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 9, 0),
->> +			OWL_FACTOR_HW(CMU_HDECLK, 0, 3, 0, hde_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_vde, "vde", hde_clk_mux_p,
->> +			OWL_MUX_HW(CMU_VDECLK, 4, 2),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 10,  0),
->> +			OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, hde_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_vce, "vce", hde_clk_mux_p,
->> +			OWL_MUX_HW(CMU_VCECLK, 4, 2),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 11, 0),
->> +			OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, hde_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_nand, "nand", nand_clk_mux_p,
->> +			OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 21, 0),
->> +			OWL_DIVIDER_HW(CMU_NANDCCLK, 0, 3, 0, NULL),
->> +			CLK_SET_RATE_PARENT);
->> +
->> +static OWL_COMP_FACTOR(clk_sd0, "sd0", sd_clk_mux_p,
->> +			OWL_MUX_HW(CMU_SD0CLK, 9, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 22, 0),
->> +			OWL_FACTOR_HW(CMU_SD0CLK, 0, 9, 0, sd_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_sd1, "sd1", sd_clk_mux_p,
->> +			OWL_MUX_HW(CMU_SD1CLK, 9, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 23, 0),
->> +			OWL_FACTOR_HW(CMU_SD1CLK, 0, 9, 0, sd_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_FACTOR(clk_sd2, "sd2", sd_clk_mux_p,
->> +			OWL_MUX_HW(CMU_SD2CLK, 9, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 24, 0),
->> +			OWL_FACTOR_HW(CMU_SD2CLK, 0, 9, 0, sd_factor_table),
->> +#ifdef CONFIG_MMC_OWL_CLK_NANDPLL
->  From where this define comes from?
-
-Will add this options in the kconfig
-
-
->> +			CLK_SET_RATE_PARENT);
->> +#else
->> +			0);
->> +#endif
->> +
->> +static OWL_COMP_DIV(clk_uart0, "uart0", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART0CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 8, 0),
->> +			OWL_DIVIDER_HW(CMU_UART0CLK, 0, 9, CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart1, "uart1", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART1CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 9, 0),
->> +			OWL_DIVIDER_HW(CMU_UART1CLK, 0, 9, CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart2, "uart2", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART2CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 10, 0),
->> +			OWL_DIVIDER_HW(CMU_UART2CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart3, "uart3", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART3CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 11, 0),
->> +			OWL_DIVIDER_HW(CMU_UART3CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart4, "uart4", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART4CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 12, 0),
->> +			OWL_DIVIDER_HW(CMU_UART4CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart5, "uart5", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART5CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 13, 0),
->> +			OWL_DIVIDER_HW(CMU_UART5CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_uart6, "uart6", uart_clk_mux_p,
->> +			OWL_MUX_HW(CMU_UART6CLK, 16, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 14, 0),
->> +			OWL_DIVIDER_HW(CMU_UART6CLK, 0, 9,  CLK_DIVIDER_ROUND_CLOSEST, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_pwm0, "pwm0", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM0CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 16, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM0CLK, 0, 10, 0, NULL),
->> +			CLK_IGNORE_UNUSED);
->> +
->> +static OWL_COMP_DIV(clk_pwm1, "pwm1", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM1CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 17, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM1CLK, 0, 10, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_pwm2, "pwm2", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM2CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 18, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM2CLK, 0, 10, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_pwm3, "pwm3", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM3CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 19, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM3CLK, 0, 10, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_pwm4, "pwm4", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM4CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 20, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM4CLK, 0, 10, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_pwm5, "pwm5", pwm_clk_mux_p,
->> +			OWL_MUX_HW(CMU_PWM5CLK, 12, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 21, 0),
->> +			OWL_DIVIDER_HW(CMU_PWM5CLK, 0, 10, 0, NULL),
->> +			0);
->> +
->> +static	OWL_COMP_FACTOR(clk_gpu3d, "gpu3d", gpu_clk_mux_p,
-> Please keep spacing consistent
->
->> +			OWL_MUX_HW(CMU_GPU3DCLK, 4, 3),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 8, 0),
->> +			OWL_FACTOR_HW(CMU_GPU3DCLK, 0, 3, 0, hde_factor_table),
->> +			0);
->> +
->> +static	OWL_COMP_FACTOR(clk_lcd, "lcd", lcd_clk_mux_p,
-> ditto
->
->> +			OWL_MUX_HW(CMU_LCDCLK, 12, 2),
->> +			OWL_GATE_HW(CMU_DEVCLKEN0, 1, 0),
->> +			OWL_FACTOR_HW(CMU_LCDCLK, 0, 9, 0, lcd_factor_table),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_hdmi_audio, "hdmia", i2s_clk_mux_p,
->> +			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),/*CMU_AUDIOPLL 24,1 unused*/
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 28, 0),
->> +			OWL_DIVIDER_HW(CMU_AUDIOPLL, 24, 4, 0, hdmia_div_table),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_i2srx, "i2srx", i2s_clk_mux_p,
->> +			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 27, 0),
->> +			OWL_DIVIDER_HW(CMU_AUDIOPLL, 20, 4, 0, hdmia_div_table),
->> +			0);
->> +
->> +static OWL_COMP_DIV(clk_i2stx, "i2stx", i2s_clk_mux_p,
->> +			OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 26, 0),
->> +			OWL_DIVIDER_HW(CMU_AUDIOPLL, 16, 4, 0, hdmia_div_table),
->> +			0);
->> +
->> +/* for bluetooth pcm communication */
->> +static OWL_COMP_FIXED_FACTOR(clk_pcm1, "pcm1", "audio_pll",
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
->> +			1, 2, 0);
->> +
->> +static OWL_COMP_DIV(clk_senor_src, "sensor_src", sensor_clk_mux_p,
-> Should be clk_sensor_src.
-
-Will correct the typo
-
-> Thanks,
-> Mani
->
->> +			OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
->> +			{0},
->> +			OWL_DIVIDER_HW(CMU_SENSORCLK, 5, 2, 0, NULL),
->> +			0);
->> +
->> +static OWL_COMP_FIXED_FACTOR(clk_ethernet, "ethernet", "ethernet_pll",
->> +			OWL_GATE_HW(CMU_DEVCLKEN1, 23, 0),
->> +			1, 20, 0);
->> +
->> +static OWL_COMP_DIV_FIXED(clk_thermal_sensor, "thermal_sensor", "hosc",
->> +				OWL_GATE_HW(CMU_DEVCLKEN0, 31, 0),
->> +				OWL_DIVIDER_HW(CMU_SSTSCLK, 20, 10, 0, NULL),
->> +				0);
->> +
->> +static struct owl_clk_common *s700_clks[] = {
->> +	&clk_core_pll.common,
->> +	&clk_dev_pll.common,
->> +	&clk_ddr_pll.common,
->> +	&clk_nand_pll.common,
->> +	&clk_display_pll.common,
->> +	&clk_cvbs_pll .common,
->> +	&clk_audio_pll.common,
->> +	&clk_ethernet_pll.common,
->> +	&clk_cpu.common,
->> +	&clk_dev.common,
->> +	&clk_ahb.common,
->> +	&clk_apb.common,
->> +	&clk_dmac.common,
->> +	&clk_noc0_clk_mux.common,
->> +	&clk_noc1_clk_mux.common,
->> +	&clk_hp_clk_mux.common,
->> +	&clk_hp_clk_div.common,
->> +	&clk_noc1_clk_div.common,
->> +	&clk_noc0.common,
->> +	&clk_noc1.common,
->> +	&clk_senor_src.common,
->> +	&clk_gpio.common,
->> +	&clk_timer.common,
->> +	&clk_dsi.common,
->> +	&clk_csi.common,
->> +	&clk_si.common,
->> +	&clk_de.common,
->> +	&clk_hde.common,
->> +	&clk_vde.common,
->> +	&clk_vce.common,
->> +	&clk_nand.common,
->> +	&clk_sd0.common,
->> +	&clk_sd1.common,
->> +	&clk_sd2.common,
->> +	&clk_uart0.common,
->> +	&clk_uart1.common,
->> +	&clk_uart2.common,
->> +	&clk_uart3.common,
->> +	&clk_uart4.common,
->> +	&clk_uart5.common,
->> +	&clk_uart6.common,
->> +	&clk_pwm0.common,
->> +	&clk_pwm1.common,
->> +	&clk_pwm2.common,
->> +	&clk_pwm3.common,
->> +	&clk_pwm4.common,
->> +	&clk_pwm5.common,
->> +	&clk_gpu3d.common,
->> +	&clk_i2c0.common,
->> +	&clk_i2c1.common,
->> +	&clk_i2c2.common,
->> +	&clk_i2c3.common,
->> +	&clk_spi0.common,
->> +	&clk_spi1.common,
->> +	&clk_spi2.common,
->> +	&clk_spi3.common,
->> +	&clk_usb3_480mpll0.common,
->> +	&clk_usb3_480mphy0.common,
->> +	&clk_usb3_5gphy.common,
->> +	&clk_usb3_cce.common,
->> +	&clk_lcd.common,
->> +	&clk_hdmi_audio.common,
->> +	&clk_i2srx.common,
->> +	&clk_i2stx.common,
->> +	&clk_sensor0.common,
->> +	&clk_sensor1.common,
->> +	&clk_hdmi_dev.common,
->> +	&clk_ethernet.common,
->> +	&clk_rmii_ref.common,
->> +	&clk_usb2h0_pllen.common,
->> +	&clk_usb2h0_phy.common,
->> +	&clk_usb2h0_cce.common,
->> +	&clk_usb2h1_pllen.common,
->> +	&clk_usb2h1_phy.common,
->> +	&clk_usb2h1_cce.common,
->> +	&clk_tvout.common,
->> +	&clk_thermal_sensor.common,
->> +	&clk_irc_switch.common,
->> +	&clk_pcm1.common,
->> +};
->> +
->> +static struct clk_hw_onecell_data s700_hw_clks = {
->> +	.hws    = {
->> +			[CLK_CORE_PLL]				= &clk_core_pll.common.hw,
->> +			[CLK_DEV_PLL]				= &clk_dev_pll.common.hw,
->> +			[CLK_DDR_PLL]				= &clk_ddr_pll.common.hw,
->> +			[CLK_NAND_PLL]				= &clk_nand_pll.common.hw,
->> +			[CLK_DISPLAY_PLL]			= &clk_display_pll.common.hw,
->> +			[CLK_CVBS_PLL]				= &clk_cvbs_pll .common.hw,
->> +			[CLK_AUDIO_PLL]				= &clk_audio_pll.common.hw,
->> +			[CLK_ETHERNET_PLL]			= &clk_ethernet_pll.common.hw,
->> +			[CLK_CPU]				= &clk_cpu.common.hw,
->> +			[CLK_DEV]				= &clk_dev.common.hw,
->> +			[CLK_AHB]				= &clk_ahb.common.hw,
->> +			[CLK_APB]				= &clk_apb.common.hw,
->> +			[CLK_DMAC]				= &clk_dmac.common.hw,
->> +			[CLK_NOC0_CLK_MUX]			= &clk_noc0_clk_mux.common.hw,
->> +			[CLK_NOC1_CLK_MUX]			= &clk_noc1_clk_mux.common.hw,
->> +			[CLK_HP_CLK_MUX]			= &clk_hp_clk_mux.common.hw,
->> +			[CLK_HP_CLK_DIV]			= &clk_hp_clk_div.common.hw,
->> +			[CLK_NOC1_CLK_DIV]			= &clk_noc1_clk_div.common.hw,
->> +			[CLK_NOC0]				= &clk_noc0.common.hw,
->> +			[CLK_NOC1]				= &clk_noc1.common.hw,
->> +			[CLK_SENOR_SRC]				= &clk_senor_src.common.hw,
->> +			[CLK_GPIO]				= &clk_gpio.common.hw,
->> +			[CLK_TIMER]				= &clk_timer.common.hw,
->> +			[CLK_DSI]				= &clk_dsi.common.hw,
->> +			[CLK_CSI]				= &clk_csi.common.hw,
->> +			[CLK_SI]				= &clk_si.common.hw,
->> +			[CLK_DE]				= &clk_de.common.hw,
->> +			[CLK_HDE]				= &clk_hde.common.hw,
->> +			[CLK_VDE]				= &clk_vde.common.hw,
->> +			[CLK_VCE]				= &clk_vce.common.hw,
->> +			[CLK_NAND]				= &clk_nand.common.hw,
->> +			[CLK_SD0]				= &clk_sd0.common.hw,
->> +			[CLK_SD1]				= &clk_sd1.common.hw,
->> +			[CLK_SD2]				= &clk_sd2.common.hw,
->> +			[CLK_UART0]				= &clk_uart0.common.hw,
->> +			[CLK_UART1]				= &clk_uart1.common.hw,
->> +			[CLK_UART2]				= &clk_uart2.common.hw,
->> +			[CLK_UART3]				= &clk_uart3.common.hw,
->> +			[CLK_UART4]				= &clk_uart4.common.hw,
->> +			[CLK_UART5]				= &clk_uart5.common.hw,
->> +			[CLK_UART6]				= &clk_uart6.common.hw,
->> +			[CLK_PWM0]				= &clk_pwm0.common.hw,
->> +			[CLK_PWM1]				= &clk_pwm1.common.hw,
->> +			[CLK_PWM2]				= &clk_pwm2.common.hw,
->> +			[CLK_PWM3]				= &clk_pwm3.common.hw,
->> +			[CLK_PWM4]				= &clk_pwm4.common.hw,
->> +			[CLK_PWM5]				= &clk_pwm5.common.hw,
->> +			[CLK_GPU3D]				= &clk_gpu3d.common.hw,
->> +			[CLK_I2C0]				= &clk_i2c0.common.hw,
->> +			[CLK_I2C1]				= &clk_i2c1.common.hw,
->> +			[CLK_I2C2]				= &clk_i2c2.common.hw,
->> +			[CLK_I2C3]				= &clk_i2c3.common.hw,
->> +			[CLK_SPI0]				= &clk_spi0.common.hw,
->> +			[CLK_SPI1]				= &clk_spi1.common.hw,
->> +			[CLK_SPI2]				= &clk_spi2.common.hw,
->> +			[CLK_SPI3]				= &clk_spi3.common.hw,
->> +			[CLK_USB3_480MPLL0]			= &clk_usb3_480mpll0.common.hw,
->> +			[CLK_USB3_480MPHY0]			= &clk_usb3_480mphy0.common.hw,
->> +			[CLK_USB3_5GPHY]			= &clk_usb3_5gphy.common.hw,
->> +			[CLK_USB3_CCE]				= &clk_usb3_cce.common.hw,
->> +			[CLK_LCD]				= &clk_lcd.common.hw,
->> +			[CLK_HDMI_AUDIO]			= &clk_hdmi_audio.common.hw,
->> +			[CLK_I2SRX]				= &clk_i2srx.common.hw,
->> +			[CLK_I2STX]				= &clk_i2stx.common.hw,
->> +			[CLK_SENSOR0]				= &clk_sensor0.common.hw,
->> +			[CLK_SENSOR1]				= &clk_sensor1.common.hw,
->> +			[CLK_HDMI_DEV]				= &clk_hdmi_dev.common.hw,
->> +			[CLK_ETHERNET]				= &clk_ethernet.common.hw,
->> +			[CLK_RMII_REF]				= &clk_rmii_ref.common.hw,
->> +			[CLK_USB2H0_PLLEN]			= &clk_usb2h0_pllen.common.hw,
->> +			[CLK_USB2H0_PHY]			= &clk_usb2h0_phy.common.hw,
->> +			[CLK_USB2H0_CCE]			= &clk_usb2h0_cce.common.hw,
->> +			[CLK_USB2H1_PLLEN]			= &clk_usb2h1_pllen.common.hw,
->> +			[CLK_USB2H1_PHY]			= &clk_usb2h1_phy.common.hw,
->> +			[CLK_USB2H1_CCE]			= &clk_usb2h1_cce.common.hw,
->> +			[CLK_TVOUT]				= &clk_tvout.common.hw,
->> +			[CLK_THERMAL_SENSOR]			= &clk_thermal_sensor.common.hw,
->> +			[CLK_IRC_SWITCH]			= &clk_irc_switch.common.hw,
->> +			[CLK_PCM1]				= &clk_pcm1.common.hw,
->> +		},
->> +		.num    = CLK_NR_CLKS,
->> +};
->> +
->> +static const struct owl_clk_desc s700_clk_desc = {
->> +	.clks       = s700_clks,
->> +	.num_clks   = ARRAY_SIZE(s700_clks),
->> +
->> +	.hw_clks    = &s700_hw_clks,
->> +};
->> +
->> +static int s700_clk_probe(struct platform_device *pdev)
->> +{
->> +	const struct owl_clk_desc *desc;
->> +
->> +	desc = &s700_clk_desc;
->> +	owl_clk_regmap_init(pdev, desc);
->> +
->> +	return owl_clk_probe(&pdev->dev, desc->hw_clks);
->> +}
->> +
->> +static const struct of_device_id s700_clk_of_match[] = {
->> +	{ .compatible = "actions,s700-cmu", },
->> +	{ /* sentinel */ }
->> +};
->> +
->> +static struct platform_driver s700_clk_driver = {
->> +	.probe = s700_clk_probe,
->> +	.driver = {
->> +		.name = "s700-cmu",
->> +		.of_match_table = s700_clk_of_match
->> +	},
->> +};
->> +
->> +static int __init s700_clk_init(void)
->> +{
->> +	return platform_driver_register(&s700_clk_driver);
->> +}
->> +core_initcall(s700_clk_init);
->> -- 
->> 2.18.0
+>> 于 2018年7月27日 GMT+08:00 下午8:56:15, Maxime Ripard
+><maxime.ripard@bootlin.com> 写到:
+>>>On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
+>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>>b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>>> index 1b9b92e541d2..1b972bade9f6 100644
+>>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+>>>> @@ -62,6 +62,21 @@
+>>>>      chosen {
+>>>>              stdout-path = "serial0:115200n8";
+>>>>      };
+>>>> +
+>>>> +    connector {
+>>>> +            compatible = "hdmi-connector";
+>>>> +            type = "a";
+>>>> +
+>>>> +            port {
+>>>> +                    hdmi_con_in: endpoint {
+>>>> +                            remote-endpoint = <&hdmi_out_con>;
+>>>> +                    };
+>>>> +            };
+>>>> +    };
+>>>> +};
+>>>> +
+>>>> +&de {
+>>>> +    status = "okay";
+>>>>  };
+>>>>
+>>>>  &ehci0 {
+>>>> @@ -82,6 +97,17 @@
+>>>>
+>>>>  };
+>>>>
+>>>> +&hdmi {
+>>>> +    hdmi-supply = <&reg_dldo1>;
+>>>> +    status = "okay";
+>>>> +};
+>>>> +
+>>>> +&hdmi_out {
+>>>> +    hdmi_out_con: endpoint {
+>>>> +            remote-endpoint = <&hdmi_con_in>;
+>>>> +    };
+>>>> +};
+>>>> +
+>>>>  &i2c1 {
+>>>>      pinctrl-names = "default";
+>>>>      pinctrl-0 = <&i2c1_pins>;
+>>>> @@ -99,6 +125,10 @@
+>>>>      };
+>>>>  };
+>>>>
+>>>> +&mixer1 {
+>>>> +    status = "okay";
+>>>> +};
+>>>> +
+>>>>  &mmc0 {
+>>>>      pinctrl-names = "default";
+>>>>      pinctrl-0 = <&mmc0_pins>;
+>>>> @@ -238,6 +268,10 @@
+>>>>      status = "disabled";
+>>>>  };
+>>>>
+>>>> +&tcon1 {
+>>>> +    status = "okay";
+>>>> +};
+>>>
+>>>Is it working or not on the pine64?
 >>
+>> Not tested yet, as my main A64 device is Pine A64-LTS now.
+>
+>I have seen BPI-M64 seems failing.
+>
+>[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+>[    0.000000] Linux version
+>4.18.0-rc6-next-20180727-00014-gc7092bc38139 (jagan@jagan-XPS-13-9350)
+>(gcc version 6.3.1 20170109 (Linaro GCC 6.3-2
+>017.02)) #1 SMP PREEMPT Fri Jul 27 19:05:15 IST 2018
+>[    0.000000] Machine model: BananaPi-M64
+>[    0.000000] efi: Getting EFI parameters from FDT:
+>[    0.000000] efi: UEFI not found.
+>[    0.000000] cma: Reserved 32 MiB at 0x00000000bc000000
+>[    0.000000] NUMA: No NUMA configuration found
+>[    0.000000] NUMA: Faking a node at [mem
+>0x0000000000000000-0x00000000bdffffff]
+>[    0.000000] NUMA: NODE_DATA [mem 0xbbfd7780-0xbbfd8f3f]
+>[    0.000000] Zone ranges:
+>[    0.000000]   DMA32    [mem 0x0000000040000000-0x00000000bdffffff]
+>[    0.000000]   Normal   empty
+>[    0.000000] Movable zone start for each node
+>[    0.000000] Early memory node ranges
+>[    0.000000]   node   0: [mem 0x0000000040000000-0x00000000bdffffff]
+>[    0.000000] Initmem setup node 0 [mem
+>0x0000000040000000-0x00000000bdffffff]
+>[    0.000000] psci: probing for conduit method from DT.
+>[    0.000000] psci: PSCIv0.2 detected in firmware.
+>[    0.000000] psci: Using standard PSCI v0.2 function IDs
+>[    0.000000] psci: Trusted OS migration not required
+>[    0.000000] random: get_random_bytes called from
+>start_kernel+0xa4/0x414 with crng_init=0
+>[    0.000000] percpu: Embedded 23 pages/cpu @(____ptrval____) s56728
+>r8192 d29288 u94208
+>[    0.000000] Detected VIPT I-cache on CPU0
+>[    0.000000] CPU features: enabling workaround for ARM erratum 843419
+>[    0.000000] CPU features: enabling workaround for ARM erratum 845719
+>[    0.000000] CPU features: detected: Kernel page table isolation
+>(KPTI)
+>[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages:
+>508032
+>[    0.000000] Policy zone: DMA32
+>[    0.000000] Kernel command line: console=ttyS0,115200 earlyprintk
+>root=/dev/mmcblk0p2 rootwait
+>[    0.000000] Memory: 1979032K/2064384K available (10812K kernel
+>code, 1382K rwdata, 5096K rodata, 1344K init, 382K bss, 52584K
+>reserved, 32768K
+> cma-reserved)
+>[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4,
+>Nodes=1
+>[    0.000000] rcu: Preemptible hierarchical RCU implementation.
+>[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=64 to
+>nr_cpu_ids=4.
+>[    0.000000]  Tasks RCU enabled.
+>[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16,
+>nr_cpu_ids=4
+>[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+>[    0.000000] GIC: Using split EOI/Deactivate mode
+>[    0.000000] Persistent clock returned invalid value
+>[    0.000000] arch_timer: cp15 timer(s) running at 24.00MHz (phys).
+>[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff
+>max_cycles: 0x588fe9dc0, max_idle_ns: 440795202592 ns
+>[    0.000004] sched_clock: 56 bits at 24MHz, resolution 41ns, wraps
+>every 4398046511097ns
+>[    0.000491] Console: colour dummy device 80x25
+>[    0.000575] Calibrating delay loop (skipped), value calculated
+>using timer frequency.. 48.00 BogoMIPS (lpj=96000)
+>[    0.000589] pid_max: default: 32768 minimum: 301
+>[    0.000671] Security Framework initialized
+>[    0.001977] Dentry cache hash table entries: 262144 (order: 9,
+>2097152 bytes)
+>[    0.002635] Inode-cache hash table entries: 131072 (order: 8,
+>1048576 bytes)
+>[    0.002684] Mount-cache hash table entries: 4096 (order: 3, 32768
+>bytes)
+>[    0.002713] Mountpoint-cache hash table entries: 4096 (order: 3,
+>32768 bytes)
+>[    0.024041] ASID allocator initialised with 32768 entries
+>[    0.032035] rcu: Hierarchical SRCU implementation.
+>[    0.041639] EFI services will not be available.
+>[    0.048073] smp: Bringing up secondary CPUs ...
+>[    0.080932] Detected VIPT I-cache on CPU1
+>[    0.080992] CPU1: Booted secondary processor 0x0000000001
+>[0x410fd034]
+>[    0.112631] Detected VIPT I-cache on CPU2
+>[    0.112667] CPU2: Booted secondary processor 0x0000000002
+>[0x410fd034]
+>[    0.144707] Detected VIPT I-cache on CPU3
+>[    0.144739] CPU3: Booted secondary processor 0x0000000003
+>[0x410fd034]
+>[    0.144814] smp: Brought up 1 node, 4 CPUs
+>[    0.144840] SMP: Total of 4 processors activated.
+>[    0.144849] CPU features: detected: 32-bit EL0 Support
+>[    0.154877] CPU: All CPU(s) started at EL2
+>[    0.154897] alternatives: patching kernel code
+>[    0.156490] devtmpfs: initialized
+>[    0.161841] clocksource: jiffies: mask: 0xffffffff max_cycles:
+>0xffffffff, max_idle_ns: 7645041785100000 ns
+>[    0.161905] futex hash table entries: 1024 (order: 4, 65536 bytes)
+>[    0.163334] pinctrl core: initialized pinctrl subsystem
+>[    0.164938] DMI not present or invalid.
+>[    0.165455] NET: Registered protocol family 16
+>[    0.165896] audit: initializing netlink subsys (disabled)
+>[    0.166040] audit: type=2000 audit(0.160:1): state=initialized
+>audit_enabled=0 res=1
+>[    0.167564] cpuidle: using governor menu
+>[    0.167960] vdso: 2 pages (1 code @ (____ptrval____), 1 data @
+>(____ptrval____))
+>[    0.167974] hw-breakpoint: found 6 breakpoint and 4 watchpoint
+>registers.
+>[    0.171685] DMA: preallocated 256 KiB pool for atomic allocations
+>[    0.172948] Serial: AMBA PL011 UART driver
+>[    0.195691] HugeTLB registered 2.00 MiB page size, pre-allocated 0
+>pages
+>[    0.196128] cryptd: max_cpu_qlen set to 1000
+>[    0.196923] ACPI: Interpreter disabled.
+>[    0.198046] vgaarb: loaded
+>[    0.198380] SCSI subsystem initialized
+>[    0.199024] usbcore: registered new interface driver usbfs
+>[    0.199093] usbcore: registered new interface driver hub
+>[    0.199167] usbcore: registered new device driver usb
+>[    0.200125] pps_core: LinuxPPS API ver. 1 registered
+>[    0.200137] pps_core: Software ver. 5.3.6 - Copyright 2005-2007
+>Rodolfo Giometti <giometti@linux.it>
+>[    0.200166] PTP clock support registered
+>[    0.200335] EDAC MC: Ver: 3.0.0
+>[    0.201397] Advanced Linux Sound Architecture Driver Initialized.
+>[    0.202248] clocksource: Switched to clocksource arch_sys_counter
+>[    0.202467] VFS: Disk quotas dquot_6.6.0
+>[    0.202538] VFS: Dquot-cache hash table entries: 512 (order 0, 4096
+>bytes)
+>[    0.202946] pnp: PnP ACPI: disabled
+>[    0.210691] NET: Registered protocol family 2
+>[    0.211403] tcp_listen_portaddr_hash hash table entries: 1024
+>(order: 2, 16384 bytes)
+>[    0.211468] TCP established hash table entries: 16384 (order: 5,
+>131072 bytes)
+>[    0.211683] TCP bind hash table entries: 16384 (order: 6, 262144
+>bytes)
+>[    0.211987] TCP: Hash tables configured (established 16384 bind
+>16384)
+>[    0.212142] UDP hash table entries: 1024 (order: 3, 32768 bytes)
+>[    0.212209] UDP-Lite hash table entries: 1024 (order: 3, 32768
+>bytes)
+>[    0.212390] NET: Registered protocol family 1
+>[    0.212813] RPC: Registered named UNIX socket transport module.
+>[    0.212821] RPC: Registered udp transport module.
+>[    0.212827] RPC: Registered tcp transport module.
+>[    0.212833] RPC: Registered tcp NFSv4.1 backchannel transport
+>module.
+>[    0.213695] kvm [1]: 8-bit VMID
+>[    0.215775] kvm [1]: vgic interrupt IRQ1
+>[    0.215975] kvm [1]: Hyp mode initialized successfully
+>[    0.220557] Initialise system trusted keyrings
+>[    0.220710] workingset: timestamp_bits=45 max_order=19
+>bucket_order=0
+>[    0.229546] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+>[    0.230522] NFS: Registering the id_resolver key type
+>[    0.230557] Key type id_resolver registered
+>[    0.230564] Key type id_legacy registered
+>[    0.230580] nfs4filelayout_init: NFSv4 File Layout Driver
+>Registering...
+>[    0.230785] 9p: Installing v9fs 9p2000 file system support
+>[    0.230909] pstore: using deflate compression
+>[    0.234029] Key type asymmetric registered
+>[    0.234046] Asymmetric key parser 'x509' registered
+>[    0.234104] Block layer SCSI generic (bsg) driver version 0.4
+>loaded (major 244)
+>[    0.234115] io scheduler noop registered
+>[    0.234122] io scheduler deadline registered
+>[    0.234384] io scheduler cfq registered (default)
+>[    0.234394] io scheduler mq-deadline registered
+>[    0.234402] io scheduler kyber registered
+>[    0.235702] sun50i-de2-bus 1000000.de2: DMA mask not set
+>[    0.235744] sun50i-de2-bus 1000000.de2: Error couldn't map SRAM to
+>device
+>[    0.236353] sun4i-usb-phy 1c19400.phy: DMA mask not set
+>[    0.236428] sun4i-usb-phy 1c19400.phy: Couldn't request ID GPIO
+>[    0.239670] sun50i-a64-pinctrl 1c20800.pinctrl: DMA mask not set
+>[    0.241173] sun50i-a64-r-pinctrl 1f02c00.pinctrl: DMA mask not set
+>[    0.242701] sun50i-a64-r-pinctrl 1f02c00.pinctrl: initialized sunXi
+>PIO driver
+>[    0.246771] EINJ: ACPI disabled.
+>[    0.249349] sun50i-a64-ccu 1c20000.clock: DMA mask not set
+>[    0.252866] sunxi-sram 1c00000.syscon: DMA mask not set
+>[    0.253218] sram 18000.sram: DMA mask not set
+>[    0.259221] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+>[    0.261898] SuperH (H)SCI(F) driver initialized
+>[    0.262440] msm_serial: driver initialized
+>[    0.263282] sun4i-drm display-engine: DMA mask not set
+>[    0.263852] sun4i-tcon 1c0c000.lcd-controller: DMA mask not set
+>[    0.263952] sun4i-tcon 1c0d000.lcd-controller: DMA mask not set
+>[    0.264879] sun8i-dw-hdmi 1ee0000.hdmi: DMA mask not set
+>[    0.265396] cacheinfo: Unable to detect cache hierarchy for CPU 0
+>[    0.273880] loop: module loaded
+>[    0.279047] libphy: Fixed MDIO Bus: probed
+>[    0.279631] tun: Universal TUN/TAP device driver, 1.6
+>[    0.280729] thunder_xcv, ver 1.0
+>[    0.280798] thunder_bgx, ver 1.0
+>[    0.280852] nicpf, ver 1.0
+>[    0.281358] e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
+>[    0.281367] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+>[    0.281427] igb: Intel(R) Gigabit Ethernet Network Driver - version
+>5.4.0-k
+>[    0.281435] igb: Copyright (c) 2007-2014 Intel Corporation.
+>[    0.281490] igbvf: Intel(R) Gigabit Virtual Function Network Driver
+>- version 2.4.0-k
+>[    0.281498] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
+>[    0.281875] sky2: driver version 1.30
+>[    0.282744] VFIO - User Level meta-driver version: 0.3
+>[    0.284239] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI)
+>Driver
+>[    0.284252] ehci-pci: EHCI PCI platform driver
+>[    0.284303] ehci-platform: EHCI generic platform driver
+>[    0.284417] ehci-platform 1c1a000.usb: DMA mask not set
+>[    0.284559] ehci-platform 1c1a000.usb: EHCI Host Controller
+>[    0.284587] ehci-platform 1c1a000.usb: new USB bus registered,
+>assigned bus number 1
+>[    0.285256] ehci-platform 1c1a000.usb: irq 14, io mem 0x01c1a000
+>[    0.298255] ehci-platform 1c1a000.usb: USB 2.0 started, EHCI 1.00
+>[    0.299042] hub 1-0:1.0: USB hub found
+>[    0.299079] hub 1-0:1.0: 1 port detected
+>[    0.299554] ehci-platform 1c1b000.usb: DMA mask not set
+>[    0.299832] ehci-orion: EHCI orion driver
+>[    0.300060] ehci-exynos: EHCI EXYNOS driver
+>[    0.300186] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+>[    0.300219] ohci-pci: OHCI PCI platform driver
+>[    0.300309] ohci-platform: OHCI generic platform driver
+>[    0.300404] ohci-platform 1c1a400.usb: DMA mask not set
+>[    0.300502] ohci-platform 1c1a400.usb: Generic Platform OHCI
+>controller
+>[    0.300528] ohci-platform 1c1a400.usb: new USB bus registered,
+>assigned bus number 2
+>[    0.300860] ohci-platform 1c1a400.usb: irq 15, io mem 0x01c1a400
+>[    0.362977] hub 2-0:1.0: USB hub found
+>[    0.363017] hub 2-0:1.0: 1 port detected
+>[    0.363420] ohci-platform 1c1b400.usb: DMA mask not set
+>[    0.363676] ohci-exynos: OHCI EXYNOS driver
+>[    0.364386] usbcore: registered new interface driver usb-storage
+>[    0.364713] musb-sunxi 1c19000.usb: DMA mask not set
+>[    0.367499] sun6i-rtc 1f00000.rtc: DMA mask not set
+>[    0.367858] sun6i-rtc 1f00000.rtc: rtc core: registered rtc-sun6i as
+>rtc0
+>[    0.367871] sun6i-rtc 1f00000.rtc: RTC enabled
+>[    0.368196] i2c /dev entries driver
+>[    0.372718] pwrseq_simple wifi_pwrseq: DMA mask not set
+>[    0.373113] sdhci: Secure Digital Host Controller Interface driver
+>[    0.373125] sdhci: Copyright(c) Pierre Ossman
+>[    0.373456] Synopsys Designware Multimedia Card Interface Driver
+>[    0.374617] sdhci-pltfm: SDHCI platform and OF driver helper
+>[    0.375695] leds-gpio leds: DMA mask not set
+>[    0.376136] ledtrig-cpu: registered to indicate activity on CPUs
+>[    0.377457] usbcore: registered new interface driver usbhid
+>[    0.377472] usbhid: USB HID core driver
+>[    0.380972] NET: Registered protocol family 17
+>[    0.381230] 9pnet: Installing 9P2000 support
+>[    0.381304] Key type dns_resolver registered
+>[    0.381985] registered taskstats version 1
+>[    0.381994] Loading compiled-in X.509 certificates
+>[    0.390508] sunxi-de2-clks 1000000.clock: DMA mask not set
+>[    0.392353] sun8i-mixer 1200000.mixer: DMA mask not set
+>[    0.402857] sun4i-drm display-engine: bound 1200000.mixer (ops
+>sun8i_mixer_ops)
+>[    0.403112] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+>(ops sun4i_tcon_ops)
+>[    0.403172] sun8i-dw-hdmi 1ee0000.hdmi: Couldn't get regulator
+>[    0.403191] sun4i-drm display-engine: failed to bind 1ee0000.hdmi
+>(ops sun8i_dw_hdmi_ops): -517
+>[    0.403322] sun4i-drm display-engine: Couldn't bind all pipelines
+>components
+>[    0.403422] sun4i-drm display-engine: master bind failed: -517
+>[    0.404396] sunxi-rsb 1f03400.rsb: DMA mask not set
+>[    0.404487] sunxi-rsb 1f03400.rsb: RSB running at 3000000 Hz
+>[    0.404925] axp20x-rsb sunxi-rsb-3a3: AXP20x variant AXP803 found
+>[    0.407592] dcdc1: supplied by regulator-dummy
+>[    0.407904] dcdc2: supplied by regulator-dummy
+>[    0.408131] dcdc4: supplied by regulator-dummy
+>[    0.408355] dcdc5: supplied by regulator-dummy
+>[    0.408608] dcdc6: supplied by regulator-dummy
+>[    0.408822] dc1sw: supplied by regulator-dummy
+>[    0.409052] aldo1: supplied by regulator-dummy
+>[    0.409167] afvcc-csi: Bringing 3300000uV into 2800000-2800000uV
+>[    0.409380] aldo2: supplied by regulator-dummy
+>[    0.409598] aldo3: supplied by regulator-dummy
+>[    0.409836] dldo1: supplied by regulator-dummy
+>[    0.410087] dldo2: supplied by regulator-dummy
+>[    0.410160] vcc-wifi: Bringing 2900000uV into 3300000-3300000uV
+>[    0.410393] dldo3: supplied by regulator-dummy
+>[    0.410623] dldo4: supplied by regulator-dummy
+>[    0.410884] eldo1: supplied by regulator-dummy
+>[    0.411113] eldo2: supplied by regulator-dummy
+>[    0.411333] eldo3: supplied by regulator-dummy
+>[    0.411596] fldo1: supplied by regulator-dummy
+>[    0.411835] fldo2: supplied by regulator-dummy
+>[    0.412088] rtc-ldo: supplied by regulator-dummy
+>[    0.412300] ldo-io0: supplied by regulator-dummy
+>[    0.412561] ldo-io1: supplied by regulator-dummy
+>[    0.412846] drivevbus: supplied by regulator-dummy
+>[    0.413096] axp20x-rsb sunxi-rsb-3a3: AXP20X driver loaded
+>[    0.413597] sun4i-usb-phy 1c19400.phy: Couldn't request ID GPIO
+>[    0.419074] sun50i-a64-pinctrl 1c20800.pinctrl: initialized sunXi
+>PIO driver
+>[    0.419935] dw-apb-uart 1c28000.serial: DMA mask not set
+>[    0.420349] console [ttyS0] disabled
+>[    0.440883] 1c28000.serial: ttyS0 at MMIO 0x1c28000 (irq = 21,
+>base_baud = 1500000) is a U6_16550A
+>[    1.757108] console [ttyS0] enabled
+>[    1.761887] dw-apb-uart 1c28400.serial: DMA mask not set
+>[    1.788099] 1c28400.serial: ttyS1 at MMIO 0x1c28400 (irq = 22,
+>base_baud = 1500000) is a U6_16550A
+>[    1.802439] mv64xxx_i2c 1c2b000.i2c: DMA mask not set
+>[    1.809485] sunxi-mmc 1c0f000.mmc: DMA mask not set
+>[    1.814529] sunxi-mmc 1c0f000.mmc: Linked as a consumer to
+>regulator.1
+>[    1.821642] WARNING: CPU: 2 PID: 50 at
+>./include/linux/dma-mapping.h:516 sunxi_mmc_probe+0x1f4/0x508
+>[    1.830760] Modules linked in:
+>[    1.833818] CPU: 2 PID: 50 Comm: kworker/2:1 Not tainted
+>4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
+>[    1.843281] Hardware name: BananaPi-M64 (DT)
+>[    1.847554] Workqueue: events deferred_probe_work_func
+>[    1.852689] pstate: 60000005 (nZCv daif -PAN -UAO)
+>[    1.857476] pc : sunxi_mmc_probe+0x1f4/0x508
+>[    1.861742] lr : sunxi_mmc_probe+0x1d4/0x508
+>[    1.866004] sp : ffff00000975bb60
+>[    1.869313] x29: ffff00000975bb60 x28: 0000000000000000
+>[    1.874621] x27: ffff0000096abce8 x26: ffff00000917de78
+>[    1.879929] x25: 0000000000000000 x24: ffff80007897fdd8
+>[    1.885237] x23: ffff000009169000 x22: ffff000008b17000
+>[    1.890545] x21: ffff80007897fd80 x20: ffff800079063410
+>[    1.895852] x19: ffff80007897f800 x18: ffffffffffffffff
+>[    1.901160] x17: 0000000000000000 x16: 0000000000000000
+>[    1.906468] x15: ffff0000091696c8 x14: ffff00008975ba37
+>[    1.911775] x13: ffffff0000000000 x12: 0000000000000008
+>[    1.917083] x11: 0101010101010101 x10: ffffff7f7fffffff
+>[    1.922390] x9 : 0000000000000000 x8 : ffff800078fe4140
+>[    1.927697] x7 : ffff800078fe4140 x6 : ffff800078fe4141
+>[    1.933004] x5 : ffff800078879ec0 x4 : ffff8000789b3000
+>[    1.938311] x3 : ffff8000789b3100 x2 : 0000000000000000
+>[    1.943618] x1 : ffff8000791327c0 x0 : 0000000000000000
+>[    1.948926] Call trace:
+>[    1.951373]  sunxi_mmc_probe+0x1f4/0x508
+>[    1.955293]  platform_drv_probe+0x50/0xa8
+>[    1.959299]  really_probe+0x1fc/0x290
+>[    1.962959]  driver_probe_device+0x58/0x100
+>[    1.967138]  __device_attach_driver+0x9c/0xf8
+>[    1.971490]  bus_for_each_drv+0x70/0xc8
+>[    1.975322]  __device_attach+0xdc/0x138
+>[    1.979153]  device_initial_probe+0x10/0x18
+>[    1.983331]  bus_probe_device+0x94/0xa0
+>[    1.987162]  deferred_probe_work_func+0x6c/0xa0
+>[    1.991690]  process_one_work+0x1c8/0x318
+>[    1.995697]  worker_thread+0x234/0x428
+>[    1.999443]  kthread+0xf8/0x128
+>[    2.002584]  ret_from_fork+0x10/0x18
+>[    2.006154] ---[ end trace 7f686a1ed4dfbded ]---
+>[    2.011182] sunxi-mmc 1c0f000.mmc: swiotlb: coherent allocation
+>failed, size=4096
+>[    2.018674] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
+>     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
+>[    2.029524] Hardware name: BananaPi-M64 (DT)
+>[    2.033793] Workqueue: events deferred_probe_work_func
+>[    2.038924] Call trace:
+>[    2.041372]  dump_backtrace+0x0/0x150
+>[    2.045031]  show_stack+0x14/0x20
+>[    2.048346]  dump_stack+0x8c/0xac
+>[    2.051660]  swiotlb_alloc+0x130/0x170
+>[    2.055406]  __dma_alloc+0xc4/0x1b0
+>[    2.058893]  sunxi_mmc_probe+0x34c/0x508
+>[    2.062812]  platform_drv_probe+0x50/0xa8
+>[    2.066817]  really_probe+0x1fc/0x290
+>[    2.070475]  driver_probe_device+0x58/0x100
+>[    2.074653]  __device_attach_driver+0x9c/0xf8
+>[    2.079004]  bus_for_each_drv+0x70/0xc8
+>[    2.082835]  __device_attach+0xdc/0x138
+>[    2.086667]  device_initial_probe+0x10/0x18
+>[    2.090844]  bus_probe_device+0x94/0xa0
+>[    2.094675]  deferred_probe_work_func+0x6c/0xa0
+>[    2.099202]  process_one_work+0x1c8/0x318
+>[    2.103209]  worker_thread+0x234/0x428
+>[    2.106954]  kthread+0xf8/0x128
+>[    2.110092]  ret_from_fork+0x10/0x18
+>[    2.113685] sunxi-mmc 1c0f000.mmc: Failed to allocate DMA descriptor
+>mem
+>[    2.120519] sunxi-mmc 1c0f000.mmc: Dropping the link to regulator.1
+>[    2.126845] sunxi-mmc: probe of 1c0f000.mmc failed with error -12
+>[    2.134550] sunxi-mmc 1c10000.mmc: DMA mask not set
+>[    2.139583] sunxi-mmc 1c10000.mmc: Linked as a consumer to
+>regulator.11
+>[    2.146279] sunxi-mmc 1c10000.mmc: Linked as a consumer to
+>regulator.13
+>[    2.153403] sunxi-mmc 1c10000.mmc: swiotlb: coherent allocation
+>failed, size=4096
+>[    2.160898] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
+>     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
+>[    2.171749] Hardware name: BananaPi-M64 (DT)
+>[    2.176026] Workqueue: events deferred_probe_work_func
+>[    2.181159] Call trace:
+>[    2.183608]  dump_backtrace+0x0/0x150
+>[    2.187269]  show_stack+0x14/0x20
+>[    2.190583]  dump_stack+0x8c/0xac
+>[    2.193899]  swiotlb_alloc+0x130/0x170
+>[    2.197645]  __dma_alloc+0xc4/0x1b0
+>[    2.201135]  sunxi_mmc_probe+0x34c/0x508
+>[    2.205056]  platform_drv_probe+0x50/0xa8
+>[    2.209061]  really_probe+0x1fc/0x290
+>[    2.212719]  driver_probe_device+0x58/0x100
+>[    2.216897]  __device_attach_driver+0x9c/0xf8
+>[    2.221249]  bus_for_each_drv+0x70/0xc8
+>[    2.225081]  __device_attach+0xdc/0x138
+>[    2.228912]  device_initial_probe+0x10/0x18
+>[    2.233090]  bus_probe_device+0x94/0xa0
+>[    2.236922]  deferred_probe_work_func+0x6c/0xa0
+>[    2.241450]  process_one_work+0x1c8/0x318
+>[    2.245456]  worker_thread+0x234/0x428
+>[    2.249202]  kthread+0xf8/0x128
+>[    2.252341]  ret_from_fork+0x10/0x18
+>[    2.255939] sunxi-mmc 1c10000.mmc: Failed to allocate DMA descriptor
+>mem
+>[    2.262765] sunxi-mmc 1c10000.mmc: Dropping the link to regulator.13
+>[    2.269180] sunxi-mmc 1c10000.mmc: Dropping the link to regulator.11
+>[    2.275574] sunxi-mmc: probe of 1c10000.mmc failed with error -12
+>[    2.283233] sunxi-mmc 1c11000.mmc: DMA mask not set
+>[    2.288259] sunxi-mmc 1c11000.mmc: Linked as a consumer to
+>regulator.1
+>[    2.295295] sunxi-mmc 1c11000.mmc: swiotlb: coherent allocation
+>failed, size=4096
+>[    2.302792] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
+>     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
+>[    2.313642] Hardware name: BananaPi-M64 (DT)
+>[    2.317920] Workqueue: events deferred_probe_work_func
+>[    2.323052] Call trace:
+>[    2.325501]  dump_backtrace+0x0/0x150
+>[    2.329162]  show_stack+0x14/0x20
+>[    2.332476]  dump_stack+0x8c/0xac
+>[    2.335790]  swiotlb_alloc+0x130/0x170
+>[    2.339537]  __dma_alloc+0xc4/0x1b0
+>[    2.343026]  sunxi_mmc_probe+0x34c/0x508
+>[    2.346946]  platform_drv_probe+0x50/0xa8
+>[    2.350951]  really_probe+0x1fc/0x290
+>[    2.354610]  driver_probe_device+0x58/0x100
+>[    2.358789]  __device_attach_driver+0x9c/0xf8
+>[    2.363141]  bus_for_each_drv+0x70/0xc8
+>[    2.366973]  __device_attach+0xdc/0x138
+>[    2.370804]  device_initial_probe+0x10/0x18
+>[    2.374983]  bus_probe_device+0x94/0xa0
+>[    2.378815]  deferred_probe_work_func+0x6c/0xa0
+>[    2.383343]  process_one_work+0x1c8/0x318
+>[    2.387349]  worker_thread+0x234/0x428
+>[    2.391095]  kthread+0xf8/0x128
+>[    2.394235]  ret_from_fork+0x10/0x18
+>[    2.397830] sunxi-mmc 1c11000.mmc: Failed to allocate DMA descriptor
+>mem
+>[    2.404650] sunxi-mmc 1c11000.mmc: Dropping the link to regulator.1
+>[    2.410967] sunxi-mmc: probe of 1c11000.mmc failed with error -12
+>[    2.430226] sun4i-drm display-engine: bound 1200000.mixer (ops
+>sun8i_mixer_ops)
+>[    2.437766] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+>(ops sun4i_tcon_ops)
+>[    2.445889] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to
+>regulator.10
+>[    2.453957] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller
+>v1.32a with HDCP (sun8i_dw_hdmi_phy)
+>[    2.463964] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI
+>I2C bus driver
+>[    2.472454] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
+>sun8i_dw_hdmi_ops)
+>[    2.479866] [drm] Supports vblank timestamp caching Rev 2
+>(21.10.2013).
+>[    2.486486] [drm] No driver support for vblank timestamp query.
+>[    2.648129] random: fast init done
+>[    2.699113] WARNING: CPU: 2 PID: 50 at
+>./include/linux/dma-mapping.h:516 drm_gem_cma_create+0x68/0x128
+>[    2.708404] Modules linked in:
+>[    2.711464] CPU: 2 PID: 50 Comm: kworker/2:1 Tainted: G        W
+>     4.18.0-rc6-next-20180727-00014-gc7092bc38139 #1
+>[    2.722314] Hardware name: BananaPi-M64 (DT)
+>[    2.726585] Workqueue: events deferred_probe_work_func
+>[    2.731720] pstate: 80000005 (Nzcv daif -PAN -UAO)
+>[    2.736505] pc : drm_gem_cma_create+0x68/0x128
+>[    2.740944] lr : drm_gem_cma_create+0x40/0x128
+>[    2.745380] sp : ffff00000975b870
+>[    2.748689] x29: ffff00000975b870 x28: ffff800078d34c18
+>[    2.753997] x27: ffff800078d34d00 x26: ffff8000789b3f00
+>[    2.759304] x25: ffff80007897f800 x24: ffff800078d126f0
+>[    2.764613] x23: ffff000008b17000 x22: ffff000009169000
+>[    2.769920] x21: ffff800079060810 x20: ffff800078d12600
+>[    2.775228] x19: 00000000004f2000 x18: ffffffffffffffff
+>[    2.780536] x17: 0000000000000000 x16: 0000000000000000
+>[    2.785843] x15: ffff80007897fab0 x14: 00000387000003a6
+>[    2.791151] x13: 0000038400000384 x12: 0000000000000028
+>[    2.796458] x11: 0101010101010101 x10: 0000000000000000
+>[    2.801765] x9 : 00000000010ffff0 x8 : ffff8000789b07c0
+>[    2.807073] x7 : 0000000000100000 x6 : 00000000001004f2
+>[    2.812380] x5 : 0000000000000000 x4 : 0000000000000010
+>[    2.817688] x3 : 0000000000000000 x2 : d1022ccae126e900
+>[    2.822996] x1 : ffff8000791327c0 x0 : 0000000000000000
+>[    2.828303] Call trace:
+>[    2.830750]  drm_gem_cma_create+0x68/0x128
+>[    2.834842]  drm_gem_cma_dumb_create+0x40/0xa8
+>[    2.839283]  drm_mode_create_dumb+0x94/0xb0
+>[    2.843465]  drm_client_framebuffer_create+0x90/0x1f8
+>[    2.848511]  drm_fb_helper_generic_probe+0x4c/0x238
+>[    2.853385]  __drm_fb_helper_initial_config_and_unlock+0x1e0/0x3a0
+>[    2.859557]  drm_fb_helper_fbdev_setup+0xcc/0x1c8
+>[    2.864255]  drm_fbdev_cma_init+0x9c/0xc8
+>[    2.868260]  drm_fb_cma_fbdev_init+0xc/0x20
+>[    2.872441]  sun4i_framebuffer_init+0x48/0x58
+>[    2.876793]  sun4i_drv_bind+0x180/0x1d0
+>[    2.880627]  try_to_bring_up_master+0x144/0x1a8
+>[    2.885153]  component_add+0x98/0x160
+>[    2.888811]  sun8i_mixer_probe+0x18/0x20
+>[    2.892731]  platform_drv_probe+0x50/0xa8
+>[    2.896736]  really_probe+0x1fc/0x290
+>[    2.900395]  driver_probe_device+0x58/0x100
+>[    2.904573]  __device_attach_driver+0x9c/0xf8
+>[    2.908925]  bus_for_each_drv+0x70/0xc8
+>[    2.912757]  __device_attach+0xdc/0x138
+>[    2.916588]  device_initial_probe+0x10/0x18
+>[    2.920766]  bus_probe_device+0x94/0xa0
+>[    2.924599]  deferred_probe_work_func+0x6c/0xa0
+>[    2.929128]  process_one_work+0x1c8/0x318
+>[    2.933134]  worker_thread+0x234/0x428
+>[    2.936880]  kthread+0xf8/0x128
+>[    2.940020]  ret_from_fork+0x10/0x18
+>[    2.943591] ---[ end trace 7f686a1ed4dfbdee ]---
+>[    2.949730] sun4i-drm display-engine:
+>[drm:drm_fb_helper_fbdev_setup] *ERROR* Failed to set fbdev
+
+Have you configured a big enough CMA?
+
+>configuration
+>[    2.959846] sun4i-drm display-engine: Couldn't create our
+>framebuffer
+>[    2.966492] sun4i-drm display-engine: master bind failed: -12
+>[    2.972352] sun8i-mixer: probe of 1200000.mixer failed with error
+>-12
+>[    2.980094] sun4i-usb-phy 1c19400.phy: Linked as a consumer to
+>regulator.22
+>[    2.988807] ehci-platform 1c1b000.usb: EHCI Host Controller
+>[    2.994429] ehci-platform 1c1b000.usb: new USB bus registered,
+>assigned bus number 3
+>[    3.002709] ehci-platform 1c1b000.usb: irq 16, io mem 0x01c1b000
+>[    3.022268] ehci-platform 1c1b000.usb: USB 2.0 started, EHCI 1.00
+>[    3.029045] hub 3-0:1.0: USB hub found
+>[    3.032841] hub 3-0:1.0: 1 port detected
+>[    3.038440] ohci-platform 1c1b400.usb: Generic Platform OHCI
+>controller
+>[    3.045089] ohci-platform 1c1b400.usb: new USB bus registered,
+>assigned bus number 4
+>[    3.053135] ohci-platform 1c1b400.usb: irq 17, io mem 0x01c1b400
+>[    3.122925] hub 4-0:1.0: USB hub found
+>[    3.126713] hub 4-0:1.0: 1 port detected
+>[    3.132346] usb_phy_generic usb_phy_generic.2.auto:
+>usb_phy_generic.2.auto supply vcc not found, using dummy regulator
+>[    3.143150] usb_phy_generic usb_phy_generic.2.auto: Linked as a
+>consumer to regulator.0
+>[    3.151793] musb-hdrc musb-hdrc.3.auto: MUSB HDRC host driver
+>[    3.157559] musb-hdrc musb-hdrc.3.auto: new USB bus registered,
+>assigned bus number 5
+>[    3.166017] hub 5-0:1.0: USB hub found
+>[    3.169808] hub 5-0:1.0: 1 port detected
+>[    3.174817] sun6i-rtc 1f00000.rtc: setting system clock to
+>1970-01-01 00:00:09 UTC (9)
+>[    3.183177] vcc-wifi-io: disabling
+>[    3.186642] cpvdd: disabling
+>[    3.189573] ALSA device list:
+>[    3.192551]   No soundcards found.
+>[    3.196433] Waiting for root device /dev/mmcblk0p2...
+>[    3.374265] usb 3-1: new high-speed USB device number 2 using
+>ehci-platform
+>[    3.535499] hub 3-1:1.0: USB hub found
+>[    3.539377] hub 3-1:1.0: 4 ports detected
