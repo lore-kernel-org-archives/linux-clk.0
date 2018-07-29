@@ -1,87 +1,62 @@
-Return-Path: <julia.lawall@lip6.fr>
-Date: Wed, 18 Jul 2018 16:53:08 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-To: matthias.bgg@kernel.org
-cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-    ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-    robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-    sboyd@codeaurora.org, lee.jones@linaro.org, davem@davemloft.net,
-    gregkh@linuxfoundation.org, mchehab@kernel.org, rdunlap@infradead.org,
-    pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
-    linux-clk@vger.kernel.org, linux@armlinux.org.uk, matthias.bgg@gmail.com,
-    dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
-    Matthias Brugger <mbrugger@suse.com>, kbuild-all@01.org
-Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
- platform device probing (fwd)
-Message-ID: <alpine.DEB.2.20.1807181651360.3113@hadrien>
+Return-Path: <pn@denx.de>
+Subject: Re: [PATCH 5/9] arm64: dts: actions: Add Reset Controller support for
+ S700 SoC
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+ afaerber@suse.de, robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+ mp-cs@actions-semi.com, 96boards@ucrobotics.com, devicetree@vger.kernel.org,
+ daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ hzhang@ucrobotics.com, bdong@ucrobotics.com, manivannanece23@gmail.com,
+ thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+ edgar.righi@lsitec.org.br, sravanhome@gmail.com
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
+From: Parthiban Nallathambi <pn@denx.de>
+Message-ID: <6df29971-c9e6-7015-9955-6a8159cc0f47@denx.de>
+Date: Sun, 29 Jul 2018 20:34:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180727184527.13287-6-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Mani,
 
-Please check on whether the kfree in the remove function is still needed.
-Also the platform_driver structure has two probe fields.
+On 07/27/2018 08:45 PM, Manivannan Sadhasivam wrote:
+> Add reset controller property and bindings header for the
+> Actions Semi S700 SoC DTS.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/actions/s700.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+> index 59d29e4ca404..db4c544d5311 100644
+> --- a/arch/arm64/boot/dts/actions/s700.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
+> @@ -5,6 +5,7 @@
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/actions,s700-cmu.h>
+> +#include <dt-bindings/reset/actions,s900-reset.h>
 
-julia
+Typo here, this should be s700-reset.h
 
----------- Forwarded message ----------
-Date: Wed, 18 Jul 2018 22:31:13 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
-    platform device probing
+>  
+>  / {
+>  	compatible = "actions,s700";
+> @@ -165,6 +166,7 @@
+>  			reg = <0x0 0xe0168000 0x0 0x1000>;
+>  			clocks = <&hosc>, <&losc>;
+>  			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+>  		};
+>  
+>  		sps: power-controller@e01b0100 {
+> 
 
-In-Reply-To: <20180717220328.792-4-matthias.bgg@kernel.org>
-References: <20180717220328.792-4-matthias.bgg@kernel.org>
-TO: matthias.bgg@kernel.org
-
-Hi Matthias,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on sof-driver-fuweitax/master]
-[also build test WARNING on v4.18-rc5 next-20180718]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/matthias-bgg-kernel-org/arm-arm64-mediatek-Fix-mmsys-device-probing/20180718-191916
-base:   https://github.com/fuweitax/linux master
-:::::: branch date: 3 hours ago
-:::::: commit date: 3 hours ago
-
->> drivers/clk/mediatek/clk-mt8173.c:1195:1-6: WARNING: invalid free of devm_ allocated data
---
->> drivers/clk/mediatek/clk-mt8173.c:1200:48-49: probe: first occurrence line 1201, second occurrence line 1202
-
-# https://github.com/0day-ci/linux/commit/112857d0f58413a87875dfc9e1b43fdfde3b55eb
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 112857d0f58413a87875dfc9e1b43fdfde3b55eb
-vim +1195 drivers/clk/mediatek/clk-mt8173.c
-
-112857d0 Matthias Brugger 2018-07-18  1189
-112857d0 Matthias Brugger 2018-07-18  1190  static int mtk_mmsys_remove(struct platform_device *pdev)
-112857d0 Matthias Brugger 2018-07-18  1191  {
-112857d0 Matthias Brugger 2018-07-18  1192  	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
-112857d0 Matthias Brugger 2018-07-18  1193
-112857d0 Matthias Brugger 2018-07-18  1194  	kfree(private->clk_data);
-112857d0 Matthias Brugger 2018-07-18 @1195  	kfree(private);
-112857d0 Matthias Brugger 2018-07-18  1196
-112857d0 Matthias Brugger 2018-07-18  1197  	return 0;
-29859d93 James Liao       2015-05-20  1198  }
-112857d0 Matthias Brugger 2018-07-18  1199
-112857d0 Matthias Brugger 2018-07-18 @1200  static struct platform_driver clk_mt8173_mm_drv = {
-112857d0 Matthias Brugger 2018-07-18 @1201  	.probe = mtk_mmsys_probe,
-112857d0 Matthias Brugger 2018-07-18 @1202  	.probe = mtk_mmsys_remove,
-112857d0 Matthias Brugger 2018-07-18  1203  	.driver = {
-112857d0 Matthias Brugger 2018-07-18  1204  		.name = "clk-mt8173-mm",
-112857d0 Matthias Brugger 2018-07-18  1205  	},
-112857d0 Matthias Brugger 2018-07-18  1206  };
-112857d0 Matthias Brugger 2018-07-18  1207  module_platform_driver(clk_mt8173_mm_drv);
-29859d93 James Liao       2015-05-20  1208
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Thanks,
+Parthiban N
