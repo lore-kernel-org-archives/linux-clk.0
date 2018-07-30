@@ -1,228 +1,114 @@
-Return-Path: <alexandre.belloni@bootlin.com>
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 04/16] clk: at91: audio-pll: separate registration from DT parsing
-Date: Wed, 18 Jul 2018 00:27:45 +0200
-Message-Id: <20180717222757.10253-5-alexandre.belloni@bootlin.com>
-In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
-References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+Return-Path: <anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Date: Mon, 30 Jul 2018 16:58:56 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
+ Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+ Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+In-Reply-To: <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
+ <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
+ <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
+ <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
+Message-ID: <07e0321116993d27d6585bd1a186328d@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Separate registration out of of_sama5d2_clk_audio_pll*_setup to allow other
-code to use it.
+On 2018-07-25 12:28, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-07-12 05:30:21)
+>> On 2018-07-09 11:45, Stephen Boyd wrote:
+>> > Quoting Amit Nischal (2018-06-06 04:41:46)
+>> >> To turn on the gpu_gx_gdsc, there is a hardware requirement to
+>> >> turn on the root clock (GFX3D RCG) first which would be the turn
+>> >> on signal for the gdsc along with the SW_COLLAPSE. As per the
+>> >> current implementation of clk_rcg2_shared_ops, it clears the
+>> >> root_enable bit in the enable() and set_rate() clock ops. But due
+>> >> to the above said requirement for GFX3D shared RCG, root_enable bit
+>> >> would be already set by gdsc driver and rcg2_shared_ops should not
+>> >> clear
+>> >> the root unless the disable is called.
+>> >>
+>> >
+>> > It sounds like the GDSC enable is ANDed with the RCG's root enable
+>> > bit?
+>> 
+>> Here, the root clock (GFX3D RCG) needs to be enabled first before
+>> writing to SW_COLLAPSE bit of the GDSC. RCG's CLK_ON signal would
+>> power up the GDSC.
+>> 
+>> > Does the RCG need to be clocking for the GDSC to actually turn on?
+>> > Or is it purely that the enable bit is logically combined that way so
+>> > that if the RCG is parented to a PLL that's off the GDSC will still
+>> > turn
+>> > on?
+>> >
+>> 
+>> Yes, the RCG needs to be clocking for the GPU_GX GDSC to actually turn
+>> on.
+> 
+> Cool, please add these details to the commit text.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/clk-audio-pll.c | 147 +++++++++++++++++++++++--------
- 1 file changed, 109 insertions(+), 38 deletions(-)
+Thanks. I will add these details in the commit text in the next patch 
+series.
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index b3eaf654fac9..f326023a50a3 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -444,85 +444,156 @@ static const struct clk_ops audio_pll_pmc_ops = {
- 	.set_rate = clk_audio_pll_pmc_set_rate,
- };
- 
--static int of_sama5d2_clk_audio_pll_setup(struct device_node *np,
--					  struct clk_init_data *init,
--					  struct clk_hw *hw,
--					  struct regmap **clk_audio_regmap)
-+struct clk_hw * __init
-+at91_clk_register_audio_pll_frac(struct regmap *regmap, const char *name,
-+				 const char *parent_name)
- {
--	struct regmap *regmap;
--	const char *parent_names[1];
-+	struct clk_audio_frac *frac_ck;
-+	struct clk_init_data init = {};
- 	int ret;
- 
--	regmap = syscon_node_to_regmap(of_get_parent(np));
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
-+	frac_ck = kzalloc(sizeof(*frac_ck), GFP_KERNEL);
-+	if (!frac_ck)
-+		return ERR_PTR(-ENOMEM);
- 
--	init->name = np->name;
--	of_clk_parent_fill(np, parent_names, 1);
--	init->parent_names = parent_names;
--	init->num_parents = 1;
-+	init.name = name;
-+	init.ops = &audio_pll_frac_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_GATE;
- 
--	hw->init = init;
--	*clk_audio_regmap = regmap;
-+	frac_ck->hw.init = &init;
-+	frac_ck->regmap = regmap;
- 
--	ret = clk_hw_register(NULL, hw);
--	if (ret)
--		return ret;
-+	ret = clk_hw_register(NULL, &frac_ck->hw);
-+	if (ret) {
-+		kfree(frac_ck);
-+		return ERR_PTR(ret);
-+	}
- 
--	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
-+	return &frac_ck->hw;
- }
- 
- static void __init of_sama5d2_clk_audio_pll_frac_setup(struct device_node *np)
- {
--	struct clk_audio_frac *frac_ck;
--	struct clk_init_data init = {};
-+	struct clk_hw *hw;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct regmap *regmap;
- 
--	frac_ck = kzalloc(sizeof(*frac_ck), GFP_KERNEL);
--	if (!frac_ck)
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap))
- 		return;
- 
--	init.ops = &audio_pll_frac_ops;
--	init.flags = CLK_SET_RATE_GATE;
-+	parent_name = of_clk_get_parent_name(np, 0);
- 
--	if (of_sama5d2_clk_audio_pll_setup(np, &init, &frac_ck->hw,
--					   &frac_ck->regmap))
--		kfree(frac_ck);
-+	hw = at91_clk_register_audio_pll_frac(regmap, name, parent_name);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
- }
- 
--static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
-+struct clk_hw * __init
-+at91_clk_register_audio_pll_pad(struct regmap *regmap, const char *name,
-+				const char *parent_name)
- {
- 	struct clk_audio_pad *apad_ck;
--	struct clk_init_data init = {};
-+	struct clk_init_data init;
-+	int ret;
- 
- 	apad_ck = kzalloc(sizeof(*apad_ck), GFP_KERNEL);
- 	if (!apad_ck)
--		return;
-+		return ERR_PTR(-ENOMEM);
- 
-+	init.name = name;
- 	init.ops = &audio_pll_pad_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
- 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
- 		CLK_SET_RATE_PARENT;
- 
--	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apad_ck->hw,
--					   &apad_ck->regmap))
-+	apad_ck->hw.init = &init;
-+	apad_ck->regmap = regmap;
-+
-+	ret = clk_hw_register(NULL, &apad_ck->hw);
-+	if (ret) {
- 		kfree(apad_ck);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return &apad_ck->hw;
- }
- 
--static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
-+static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
-+{
-+	struct clk_hw *hw;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	hw = at91_clk_register_audio_pll_pad(regmap, name, parent_name);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
-+}
-+
-+struct clk_hw * __init
-+at91_clk_register_audio_pll_pmc(struct regmap *regmap, const char *name,
-+				const char *parent_name)
- {
- 	struct clk_audio_pmc *apmc_ck;
--	struct clk_init_data init = {};
-+	struct clk_init_data init;
-+	int ret;
- 
- 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
- 	if (!apmc_ck)
--		return;
-+		return ERR_PTR(-ENOMEM);
- 
-+	init.name = name;
- 	init.ops = &audio_pll_pmc_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
- 	init.flags = CLK_SET_RATE_GATE | CLK_SET_PARENT_GATE |
- 		CLK_SET_RATE_PARENT;
- 
--	if (of_sama5d2_clk_audio_pll_setup(np, &init, &apmc_ck->hw,
--					   &apmc_ck->regmap))
-+	apmc_ck->hw.init = &init;
-+	apmc_ck->regmap = regmap;
-+
-+	ret = clk_hw_register(NULL, &apmc_ck->hw);
-+	if (ret) {
- 		kfree(apmc_ck);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return &apmc_ck->hw;
-+}
-+
-+static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
-+{
-+	struct clk_hw *hw;
-+	const char *name = np->name;
-+	const char *parent_name;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(of_get_parent(np));
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+
-+	hw = at91_clk_register_audio_pll_pmc(regmap, name, parent_name);
-+	if (IS_ERR(hw))
-+		return;
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
- }
- 
- CLK_OF_DECLARE(of_sama5d2_clk_audio_pll_frac_setup,
--- 
-2.18.0
+> 
+>> 
+>> >> Add support for the same by reusing the existing clk_rcg2_shared_ops
+>> >> and deriving "clk_rcg2_gfx3d_ops" clk_ops for GFX3D clock to
+>> >> take care of the root set/clear requirement.
+>> >
+>> > Anyway, this patch will probably significantly change given that the
+>> > RCG
+>> > is a glorified div-2 that muxes between a safe CXO speed and a
+>> > configurable PLL frequency. A lot of the logic can probably just be
+>> > hardcoded then.
+>> >
+>> 
+>> Thanks for the suggestion.
+>> We are planning to introduce the "clk_rcg2_gfx3d_determine_rate" op
+>> which will
+>> always return the best parent as ‘GPU_CC_PLL0_OUT_EVEN’ and 
+>> best_parent
+>> rate equal to twice of the requested rate. With this approach 
+>> frequency
+>> table
+>> for rcg2 structure would not be required as all the supported
+>> frequencies would
+>> be derived from the GPU_CC_PLL0_OUT_EVEN src with a divider of 2.
+>> 
+>> Also, we will add support to check the requested rate if falls within
+>> allowed
+>> set_rate range. This will make sure that the source PLL would not go 
+>> out
+>> of
+>> the supported range. set_rate_range would be set by the GPUCC driver
+>> with min/max
+>> value by calling below API.
+>> 
+>> clk_hw_set_rate_range(&gpu_cc_gx_gfx3d_clk_src.clkr.hw, 180000000,
+>> 710000000)
+> 
+> Ok. Sounds good! Is the rate range call really needed? It can't be
+> determined in the PLL code with some table or avoided by making sure 
+> GPU
+> uses OPP table with only approved frequencies?
+> 
+
+Currently fabia PLL code does not have any table to check this and 
+intention
+was to avoid relying on the client to call set_rate with only approved
+frequencies so we have added the set_rate_range() call in the GPUCC 
+driver
+in order to set the rate range.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
