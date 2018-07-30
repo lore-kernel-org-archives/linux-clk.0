@@ -1,110 +1,82 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Mon, 30 Jul 2018 21:39:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+	devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+	bdong@ucrobotics.com, manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+	pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
+Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
+ SoCs
+Message-ID: <20180730160904.GA2511@Mani-XPS-13-9360>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
+ <20180730151131.GA28633@mani>
+ <1532965111.3471.14.camel@pengutronix.de>
 MIME-Version: 1.0
-To: Stefan Agner <stefan@agner.ch>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <13595e6b8bfb364023648297cad7da1b@agner.ch>
-Cc: Marcel Ziswiler <marcel@ziswiler.com>, Peter Geis <pgwipeout@gmail.com>,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- Marcel Ziswiler <marcel.ziswiler@toradex.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
- linux-tegra-owner@vger.kernel.org
-References: <20180720075422.26563-1-marcel@ziswiler.com>
- <153256109511.48062.12389268791907553857@swboyd.mtv.corp.google.com>
- <b202fe11-108f-c62c-bb6d-9e3a7de5a964@gmail.com>
- <153259028259.48062.10565668407094066922@swboyd.mtv.corp.google.com>
- <13595e6b8bfb364023648297cad7da1b@agner.ch>
-Message-ID: <153262332731.48062.8709620189648679243@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: tegra: probe deferral error reporting
-Date: Thu, 26 Jul 2018 09:42:07 -0700
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <1532965111.3471.14.camel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stefan Agner (2018-07-26 00:55:16)
-> On 26.07.2018 09:31, Stephen Boyd wrote:
-> > Quoting Peter Geis (2018-07-25 16:42:34)
-> >> On 7/25/2018 7:24 PM, Stephen Boyd wrote:
-> >> > Quoting Marcel Ziswiler (2018-07-20 00:54:22)
-> >> >> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >> >>
-> >> >> Actually report the error code from devm_regulator_get() which may =
-as
-> >> >> well just be a probe deferral.
-> >> >>
-> >> >> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> >> >>
-> >> >> ---
-> >> >>
-> >> >>   drivers/clk/tegra/clk-dfll.c | 5 +++--
-> >> >>   1 file changed, 3 insertions(+), 2 deletions(-)
-> >> >>
-> >> >> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-d=
-fll.c
-> >> >> index 48ee43734e05..b2123084e175 100644
-> >> >> --- a/drivers/clk/tegra/clk-dfll.c
-> >> >> +++ b/drivers/clk/tegra/clk-dfll.c
-> >> >> @@ -1609,8 +1609,9 @@ int tegra_dfll_register(struct platform_devic=
-e *pdev,
-> >> >>
-> >> >>          td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
-> >> >>          if (IS_ERR(td->vdd_reg)) {
-> >> >> -               dev_err(td->dev, "couldn't get vdd_cpu regulator\n"=
-);
-> >> >> -               return PTR_ERR(td->vdd_reg);
-> >> >> +               ret =3D PTR_ERR(td->vdd_reg);
-> >> >> +               dev_err(td->dev, "couldn't get vdd_cpu regulator: %=
-d\n", ret);
-> >> >
-> >> > Do you want to know that a probe defer is happening? Usually patches=
- are
-> >> > sent to make that error path silent.
-> >> >
-> >>
-> >> Just asking as the newbie here, but shouldn't probe deferral be
-> >> regulated to dev_debug?
-> >> Then pass any other error code as dev_err.
-> > =
+Hi Philipp,
 
-> > Yes probe defer should be relegated to debug level prints. Or really, we
-> > should introduce a more complicated system to make debugging probe defer
-> > errors simpler by informing us which driver is probe defering on what
-> > resource by putting debug prints in each framework that returns probe
-> > defer errors instead of updating each driver that uses these frameworks
-> > and thinks it needs to print errors in these cases. And hide all that
-> > behind some kernel commandline parameter and/or Kconfig option that lets
-> > us turn the prints off all the time if we're not developing drivers or
-> > testing things.
-> =
+On Mon, Jul 30, 2018 at 05:38:31PM +0200, Philipp Zabel wrote:
+> On Mon, 2018-07-30 at 20:41 +0530, Manivannan Sadhasivam wrote:
+> > Hi Andreas,
+> > 
+> > On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
+> > > Hi Mani,
+> > > 
+> > > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
+> > > > This patchset adds Reset Controller (RMU) support for Actions Semi
+> > > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+> > > > the clock subsystem in hardware. Hence, in software we integrate RMU
+> > > > support into common clock driver inorder to maintain compatibility.
+> > > 
+> > > Can this not be placed into drivers/reset/ by using mfd-simple with a
+> > > sub-node in DT?
+> > > 
+> > 
+> > Actually I was not sure where to place this reset controller driver. When I
+> > looked into other similar ones such as sunxi, they just integrated into the
+> > clk subsystem. So I just chose that path. But yeah, this is hacky!
+> > 
+> > But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
+> > are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
+> > RMU has only 2 registers, the HW designers decided to use up the CMU memory
+> > map. So, maybe syscon would be best option I think. What is your opinion?
+> 
+> Using syscon seems cleaner than stuffing the regmap into owl_clk_desc.
+> 
 
-> Afaict, that is already there in:
-> drivers/base/dd.c:really_probe()
+Okay.
 
-All of it isn't really there when you consider devices may have many
-different resources they're trying to get and then tracking down the one
-driver that isn't probed and providing the resource fails. Then you get
-to resort to hacking prints into the driver to see what particular
-resource is probe defering.
+> > Even if we go for syscon, we should place the reset driver within clk
+> > framework as I can see other SoCs like Mediatek are doing the same. But again
+> > I'm not sure!
+> 
+> Me neither. If the CMU and RMU are really separate and only share the
+> memory map, a syscon driver could live in drivers/reset without
+> problems.
+> It's only when there are interactions between clocks and resets that you
+> really want to have the reset driver integrated with clk.
+> 
 
-> =
+Okay. Then I will add it as a syscon driver under drivers/reset.
 
-> So I suggest to just silence the EPROBE_DEFER case, e.g.\
-> =
+I hope that Andreas would also be happy with this.
 
-> =
+Thanks a lot for your response!
 
->         if (IS_ERR(td->vdd_reg)) {
->                 ret =3D PTR_ERR(td->vdd_reg);
->                 if (ret !=3D -EPROBE_DEFER)
->                         dev_err(td->dev, "couldn't get vdd_cpu regulator:=
- %d\n", ret);
-> =
+Regards,
+Mani
 
->                 return ret;
->         }
-> =
-
-
-Sure this is fine.
+> regards
+> Philipp
