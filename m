@@ -1,52 +1,31 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:58311 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730085AbeGZSfp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Jul 2018 14:35:45 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3.1 08/10] dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
-Date: Fri, 27 Jul 2018 01:12:55 +0800
-Message-Id: <20180726171257.6688-9-icenowy@aosc.io>
-In-Reply-To: <20180726171257.6688-1-icenowy@aosc.io>
-References: <20180726171257.6688-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v3 0/2] clk: Add functions to get optional clocks
+Date: Mon, 30 Jul 2018 14:31:47 +0100
+Message-Id: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
-pin, which is the VCC of HDMI part.
+Quite a few drivers get an optional clock, e.g. a bus clock required to 
+access peripheral's registers that is always enabled on some devices.
 
-Add a supply property to specify HVCC's regulator in the device tree.
+Phil Edworthy (2):
+  clk: Add of_clk_get_by_name_optional() function
+  clk: Add functions to get optional clocks
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v3.1:
-- New patch.
+ drivers/clk/clk-devres.c | 18 +++++++++++++++--
+ drivers/clk/clkdev.c     | 51 +++++++++++++++++++++++++++++++++++++++++++-----
+ include/linux/clk.h      | 35 +++++++++++++++++++++++++++++++++
+ 3 files changed, 97 insertions(+), 7 deletions(-)
 
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index fdb8fb29033f..cb4769913e89 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -97,6 +97,9 @@ Required properties:
-     first port should be the input endpoint. The second should be the
-     output, usually to an HDMI connector.
- 
-+Optional properties:
-+  - hdmi-supply: the VCC power supply of the controller
-+
- DWC HDMI PHY
- ------------
- 
 -- 
-2.18.0
-
+2.7.4
