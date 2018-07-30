@@ -1,162 +1,47 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [RFC PATCH 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-To: Douglas Anderson <dianders@chromium.org>, sboyd@kernel.org,
- andy.gross@linaro.org
-Cc: girishm@codeaurora.org, anischal@codeaurora.org,
- bjorn.andersson@linaro.org, Michael Turquette <mturquette@baylibre.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- David Brown <david.brown@linaro.org>, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20180718180431.48580-1-dianders@chromium.org>
- <20180718180431.48580-3-dianders@chromium.org>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <6248e3cc-f458-7dec-143c-7d2aeccde590@codeaurora.org>
-Date: Thu, 19 Jul 2018 16:34:49 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180718180431.48580-3-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Message-ID: <884376f1fd82a99e5d47eeba1fd1aaa3b19bc604.camel@linux.intel.com>
+Subject: Re: [PATCH v3 1/2] clk: Add of_clk_get_by_name_optional() function
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Phil Edworthy <phil.edworthy@renesas.com>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King
+	 <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
+ <horms@verge.net.au>,  linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
+Date: Mon, 30 Jul 2018 19:03:42 +0300
+In-Reply-To: <1532957509-14541-2-git-send-email-phil.edworthy@renesas.com>
+References: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
+	 <1532957509-14541-2-git-send-email-phil.edworthy@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Doug,
-
-Please find my comments inline.
-
-On 7/18/2018 11:34 PM, Douglas Anderson wrote:
-> Add both the interface and core clock.
+On Mon, 2018-07-30 at 14:31 +0100, Phil Edworthy wrote:
+> Quite a few drivers get an optional clock, e.g. a clock required
+> to access peripheral's registers that is always enabled on some
+> devices.
 > 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
->   drivers/clk/qcom/gcc-sdm845.c | 73 +++++++++++++++++++++++++++++++++++
->   1 file changed, 73 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 0f694ed4238a..2ee96f9bc217 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -162,6 +162,20 @@ static const char * const gcc_parent_names_10[] = {
->   	"core_bi_pll_test_se",
->   };
->   
-> +static const struct parent_map gcc_parent_map_9[] = {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_GPLL0_OUT_MAIN, 1 },
-> +	{ P_GPLL0_OUT_EVEN, 6 },
-> +	{ P_SLEEP_CLK, 7 },
+> This function behaves the same as of_clk_get_by_name() except that
+> it will return NULL instead of -EINVAL.
 
-SRC 7 has 'core_bi_pll_test_se' and not 'sleep_clk'.
+I'm puzzled a bit.
 
-Please use the 'gcc_parent_map_0'
+__of_clk_get() may return few error codes, and to me ENOENT sounds
+correct when clock is not found. Other error codes should be passed to
+the caller even for optional clocks.
 
-> +};
-> +
-> +static const char * const gcc_parent_names_9[] = {
-> +	"bi_tcxo",
-> +	"gpll0",
-> +	"gpll0_out_even",
-> +	"core_pi_sleep_clk",
-> +};
-> +
->   static struct clk_alpha_pll gpll0 = {
->   	.offset = 0x0,
->   	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> @@ -358,6 +372,31 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
->   	},
->   };
->   
-> +static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
-> +	F(75000000, P_GPLL0_OUT_EVEN, 4, 0, 0),
-> +	F(100000000, P_GPLL0_OUT_EVEN, 3, 0, 0),
+If above is not true, we need to understand what circumstances for each
+possible returned code are, and fix / act accordingly.
 
-Is SW planning to use this frequency?
+P.S. Possible way like regulator framework does is to return -ENODEV.
 
-> +	F(150000000, P_GPLL0_OUT_EVEN, 2, 0, 0),
+So, basically what I'm asking here is to be sure that single error code
+(for now supposed -EINVAL) in this case is _the_ error code for absent /
+can't be found clock.
 
-F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-
-> +	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
-
-F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-
-> +	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
-Please remove this, the Max supported frequency is 300MHz.
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
-> +	.cmd_rcgr = 0x4b008,
-> +	.mnd_width = 0,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_parent_map_9,
-> +	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gcc_qspi_core_clk_src",
-> +		.parent_names = gcc_parent_names_9,
-> +		.num_parents = 4,
-> +		.ops = &clk_rcg2_floor_ops,
-
-Could we use the rcg2_ops instead?
-
-> +	},
-> +};
-> +
->   static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
->   	F(9600000, P_BI_TCXO, 2, 0, 0),
->   	F(19200000, P_BI_TCXO, 1, 0, 0),
-> @@ -1935,6 +1974,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
-> +	.halt_reg = 0x4b000,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x4b000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qspi_cnoc_periph_ahb_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qspi_core_clk = {
-> +	.halt_reg = 0x4b004,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x4b004,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qspi_core_clk",
-> +			.parent_names = (const char *[]){
-> +				"gcc_qspi_core_clk_src",
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
->   	.halt_reg = 0x17030,
->   	.halt_check = BRANCH_HALT_VOTED,
-> @@ -3383,6 +3453,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
->   	[GPLL4] = &gpll4.clkr,
->   	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
->   	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
-> +	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
-> +	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
-> +	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
->   };
->   
->   static const struct qcom_reset_map gcc_sdm845_resets[] = {
-> 
+>  - Fix check for clock not present. __of_clk_get() returns -EINVAL
+>    if it's not there. Cover case of when there is no clock name.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
