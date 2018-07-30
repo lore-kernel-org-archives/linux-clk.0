@@ -1,62 +1,114 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <1530612075.2900.204.camel@baylibre.com>
-Subject: Re: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Boris Brezillon
-	 <boris.brezillon@bootlin.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman
- <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
- <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
- <jian.hu@amlogic.com>,  linux-clk@vger.kernel.org,
- linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,  devicetree@vger.kernel.org
-Date: Tue, 03 Jul 2018 12:01:15 +0200
-In-Reply-To: <1aedbb15-1373-adde-f5bb-bce3701d50b0@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-	 <20180703145716.31860-3-yixun.lan@amlogic.com>
-	 <20180703092107.51497a8f@bbrezillon>
-	 <4b88c509-27ea-2605-023b-de208921e157@amlogic.com>
-	 <1530605373.2900.158.camel@baylibre.com>
-	 <1aedbb15-1373-adde-f5bb-bce3701d50b0@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38039 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbeG3NY6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jul 2018 09:24:58 -0400
+Received: by mail-lf1-f67.google.com with SMTP id a4-v6so7930602lff.5
+        for <linux-clk@vger.kernel.org>; Mon, 30 Jul 2018 04:50:21 -0700 (PDT)
+Date: Mon, 30 Jul 2018 14:50:08 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: lgirdwood@gmail.com, broonie@kernel.org, lee.jones@linaro.org,
+        matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc: linux-clk@vger.kernel.org
+Subject: [PATCH] regulator: bd71837: adobt MFD changes to regulator driver
+Message-ID: <20180730115008.GA30634@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-07-03 at 17:56 +0800, Yixun Lan wrote:
-> > > Yes, It's true, the mux is parent of the div clock.
-> > > 
-> > > while testing for the NAND driver, I find it's kind of loose about the
-> > > parent of the clock, so selecting the div (and let CCF decide freely) is
-> > > actually works fine
-> > > 
-> > > but for the EMMC driver, especially when running at high clock, it's
-> > > kind of picky about the parent of the clock, 
-> > 
-> > It would be nice to get an explanation about this behavior.
-> > it seems that even of the rate provided by CLKID_SD_EMMC_X_CLK0 (main clock
-> > controller) is correct, the eMMC cannot reliably tune with it.
-> > 
-> > Could you elaborate on this ?
-> > 
-> 
-> It's during my own test in AXG platform, I found clock path
-> a) fclk_div2 -> sd_emmc_c_clk0_sel -> sd_emmc_c_clk0_div ->
-> sd_emmc_c_clk0 -> sd_emmc_c_mux -> sd_emmc_c_div
-> 
-> b) fclk_div2 -> sd_emmc_c_mux -> sd_emmc_c_div
-> 
-> path a) doesn't work in EMMC driver, even both clock parent of them from
-> the same fclk_div2 source.
-> 
->  sd_emmc_c_mux -> sd_emmc_c_div is the clock from the EMMC register base.
-> I believe it's ASIC design issue
+MFD part for bd71837 was changed during the review. Clean regulator part to
+match changed MFD:
+- renamed header file => fix include
+- remove unused platdata as also type definition was removed
+- Kconfig option for MFD part was changed => fix depends on clause
+- Rename Kconfig option for regulators
+  As Kconfig option for regulators gets now used (when dependency to MFD is
+  satisfied) change it so that it won't require new change when support for
+  bd71847 is added.
 
-yes Yixun, I did the same test. What I meant with this question is: could you
-confirm there a problem with this clock, and what it is exactly so we can adjust
-the clock as necessary.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-If FDIV2 entry to this clock is broken, maybe it should be removed.
+---
+
+Please note that the MFD part is still not accepted/applied but I don't
+expect big (any?) new changes to it. v11 of MFD part was sent for review
+here:
+https://lore.kernel.org/lkml/cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com/
+
+ drivers/regulator/Kconfig             | 4 ++--
+ drivers/regulator/Makefile            | 2 +-
+ drivers/regulator/bd71837-regulator.c | 7 +------
+ 3 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 2964eaea94c0..ff33b4c34d41 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -180,9 +180,9 @@ config REGULATOR_BCM590XX
+ 	  BCM590xx PMUs. This will enable support for the software
+ 	  controllable LDO/Switching regulators.
+ 
+-config REGULATOR_BD71837
++config REGULATOR_BD718XX
+ 	tristate "ROHM BD71837 Power Regulator"
+-	depends on MFD_BD71837
++	depends on MFD_ROHM_BD718XX
+ 	help
+ 	  This driver supports voltage regulators on ROHM BD71837 PMIC.
+ 	  This will enable support for the software controllable buck
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index bd818ceb7c72..b03a7e71d30b 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,7 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
+-obj-$(CONFIG_REGULATOR_BD71837) += bd71837-regulator.o
++obj-$(CONFIG_REGULATOR_BD718XX) += bd71837-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 3a487255482c..0f8ac8dec3e1 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -7,7 +7,7 @@
+ #include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+-#include <linux/mfd/bd71837.h>
++#include <linux/mfd/rohm-bd718x7.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+@@ -490,7 +490,6 @@ struct reg_init {
+ static int bd71837_probe(struct platform_device *pdev)
+ {
+ 	struct bd71837_pmic *pmic;
+-	struct bd71837_board *pdata;
+ 	struct regulator_config config = { 0 };
+ 	struct reg_init pmic_regulator_inits[] = {
+ 		{
+@@ -558,7 +557,6 @@ static int bd71837_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 	platform_set_drvdata(pdev, pmic);
+-	pdata = dev_get_platdata(pmic->mfd->dev);
+ 
+ 	/* Register LOCK release */
+ 	err = regmap_update_bits(pmic->mfd->regmap, BD71837_REG_REGLOCK,
+@@ -578,9 +576,6 @@ static int bd71837_probe(struct platform_device *pdev)
+ 
+ 		desc = &pmic->descs[i];
+ 
+-		if (pdata)
+-			config.init_data = pdata->init_data[i];
+-
+ 		config.dev = pdev->dev.parent;
+ 		config.driver_data = pmic;
+ 		config.regmap = pmic->mfd->regmap;
+-- 
+2.14.3
+
