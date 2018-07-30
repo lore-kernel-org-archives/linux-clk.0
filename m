@@ -1,32 +1,38 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 04/13] clk: davinci: psc-dm646x: use two lookup entries
- for the aemif clock
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <20180628095748.4462-5-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f4964264-55b9-0cb7-c36e-f49d71f689d7@lechnology.com>
-Date: Fri, 6 Jul 2018 12:41:22 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35325 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727016AbeG3MXr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jul 2018 08:23:47 -0400
+Date: Mon, 30 Jul 2018 13:49:18 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        eballetbo@gmail.com, linus.walleij@linaro.org,
+        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v11 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180730104918.GB8862@localhost.localdomain>
+References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+ <04328e559dcb38b8722248af5a2de028d4237224.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20180628095748.4462-5-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <04328e559dcb38b8722248af5a2de028d4237224.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28/2018 04:57 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Jul 30, 2018 at 01:46:37PM +0300, Matti Vaittinen wrote:
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
 > 
-> We want to be able to get the clock both from the board file by its
-> con_id and from the aemif driver by dev_id.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
+Please note - this patch is unchanged from previous version so I 
+maintained the reviewed-by and acked by statements.
 
-Applied to clk-davinci-4.19.
+Br,
+	Matti Vaittinen
 
-Thanks.
