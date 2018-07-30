@@ -1,25 +1,48 @@
 Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+To: Amit Daniel Kachhap <amit.kachhap@arm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
 From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1531720472-13093-1-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1531720472-13093-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <153253608315.48062.4678853048610822402@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: qcom: Update SPDX headers for common files
-Date: Wed, 25 Jul 2018 09:28:03 -0700
+In-Reply-To: <20180730114056.GA17362@e107155-lin>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
+ LAK <linux-arm-kernel@lists.infradead.org>
+References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
+ <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
+ <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+ <20180730114056.GA17362@e107155-lin>
+Message-ID: <153296797329.17365.14490424418553594815@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
+Date: Mon, 30 Jul 2018 09:26:13 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-07-15 22:54:32)
-> SPDX headers updated for common/branch/pll/regmap files.
+Quoting Sudeep Holla (2018-07-30 04:40:56)
+> On Mon, Jul 30, 2018 at 11:03:51AM +0530, Amit Daniel Kachhap wrote:
+> > Hi,
+> > =
+
+> > On Fri, Jul 27, 2018 at 10:07 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
+> > >> This fix rounds the clock rate properly by using quotient and not
+> > >> remainder in the calculation. This issue was found while testing HDMI
+> > >> in the Juno platform.
+> > >>
+> > >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> > >
+> > > Any Fixes: tag here?
+> > Yes, This patch is tested with Linux v4.18-rc6 tag.
+> >
 > =
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+> No Stephen meant the commit that this fixes, something like below:
+> =
 
-Applied to clk-next
+> Fixes: 6d6a1d82eaef ("clk: add support for clocks provided by SCMI")
+> =
+
+> so that it can get backported if required.
+> =
+
+
+Yep! Thanks!
