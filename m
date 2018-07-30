@@ -1,87 +1,155 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Sun, 15 Jul 2018 19:53:45 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Saravanan Sekar <sravanhome@gmail.com>
-Cc: afaerber@suse.de, sboyd@kernel.org, mark.rutland@arm.com,
-	devicetree@vger.kernel.org, linux@cubietech.com,
-	support@cubietech.com, catalin.marinas@arm.com,
-	mturquette@baylibre.com, will.deacon@arm.com,
-	linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
-	darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
-Subject: Re: [PATCH v4 0/5] Add clock driver for Actions S700 SoC
-Message-ID: <20180715142345.GB9980@Mani-XPS-13-9360>
-References: <20180715123145.16975-1-sravanhome@gmail.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180715123145.16975-1-sravanhome@gmail.com>
+References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com> <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jul 2018 10:55:53 +0200
+Message-ID: <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Simon Horman <horms@verge.net.au>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Saravanan,
+Hi Phil,
 
-On Sun, Jul 15, 2018 at 02:31:40PM +0200, Saravanan Sekar wrote:
-> Changelog v4:
-> - dt-bindings use absolute numbering for clocks
-> - Patch re-oredering
-> 
-> Changelog v3:
-> - Splitted uart clock DTS changes into separate patch
-> - Splitted REGMAP Kconfig selection into separate patch
-> - General naming convention as "Actions Semi" in dt-binding documentation
-> - Patch re-oredering
-> - Cleanup and fixed review findings
-> 
-> Changelog v2:
-> Fixed 0 day compilation warning
-> Modified existing dts Actions S900 clock bindings common to Actions
-> Soc family
-> 
+On Mon, Jul 30, 2018 at 10:36 AM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> Quite a few drivers get an optional clock, e.g. a clock required
+> to access peripheral's registers that is always enabled on some
+> devices.
+>
+> This function behaves the same as of_clk_get_by_name() except that
+> it will return NULL instead of -ENOENT. This makes error checking
+> for users easier and allows clk_prepare_enable, etc to be called
+> on the returned reference without additional checks.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 
-Usually Changelog comes at the end of cover letter.
+Thanks for your patch!
 
-> This patchset adds clock support for Actions Semi OWL series S700 SoC
-> with relevant clock bindings and device tree info. 
-> 
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
+>
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                                         const char *dev_id,
+> -                                       const char *name)
+> +                                       const char *name,
+> +                                       bool optional)
+>  {
+>         struct clk *clk = ERR_PTR(-ENOENT);
+>
+> @@ -73,6 +74,8 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                 if (!IS_ERR(clk)) {
+>                         break;
+>                 } else if (name && index >= 0) {
+> +                       if (optional && PTR_ERR(clk) == -ENOENT)
+> +                               clk = NULL;
 
-Nit: Since we agreed to use the family name as Owl everywhere, the above
-instance should be changed accordingly.
+This only handles the "name && index >= 0" case.
+If that condition is never true, the loop will end, eventually, and the last
+value of clk will be returned. Hence there should be a similar check at the
+end of the function.
 
-> Changed the UART clock using CMU instance and changes are tested in
-> cubieboard7
-> 
-> Thanks and regards,
-> Saravanan,
-> Parthiban
-> 
-> *** BLURB HERE ***
+>                         if (PTR_ERR(clk) != -EPROBE_DEFER)
+>                                 pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
+>                                         np, name ? name : "", index);
 
-Please remove the above line.
+Hence if not found, this will always print an error, even if the clock is
+optional?
 
-Thanks,
-Mani
+> @@ -106,15 +109,38 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
+>         if (!np)
+>                 return ERR_PTR(-ENOENT);
+>
+> -       return __of_clk_get_by_name(np, np->full_name, name);
+> +       return __of_clk_get_by_name(np, np->full_name, name, false);
+>  }
+>  EXPORT_SYMBOL(of_clk_get_by_name);
+>
+> +/**
+> + * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
+> + * by a device node
+> + * @np: pointer to clock consumer node
+> + * @name: name of consumer's clock input, or NULL for the first clock reference
+> + *
+> + * This function parses the clocks and clock-names properties,
+> + * and uses them to look up the struct clk from the registered list of clock
+> + * providers.
+> + * It behaves the same as of_clk_get_by_name(), except when no clock is found.
+> + * In this case, instead of returning -ENOENT, it returns NULL.
+> + */
+> +struct clk *of_clk_get_by_name_optional(struct device_node *np,
+> +                                       const char *name)
+> +{
+> +       if (!np)
+> +               return ERR_PTR(-ENOENT);
 
-> 
-> Saravanan Sekar (5):
->   clk: actions: Add REGMAP as dependency
->   dt-bindings: clock: Add S700 support for Actions Semi Soc's
->   clk: actions: Add S700 SoC clock support
->   arm64: dts: actions: Enable clock controller for S700
->   arm64: dts: actions: Set UART clock reference from CMU
-> 
->  ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +-
->  .../boot/dts/actions/s700-cubieboard7.dts     |   8 +-
->  arch/arm64/boot/dts/actions/s700.dtsi         |  14 +
->  drivers/clk/actions/Kconfig                   |  14 +
->  drivers/clk/actions/Makefile                  |   1 +
->  drivers/clk/actions/owl-s700.c                | 610 ++++++++++++++++++
->  include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++
->  7 files changed, 769 insertions(+), 16 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
->  create mode 100644 drivers/clk/actions/owl-s700.c
->  create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-> 
-> -- 
-> 2.18.0
-> 
+Shouldn't this return NULL?
+Or let __of_clk_get_by_name() handle that (cfr. above)?
+
+Hmm, of_clk_get_by_name() has a similar check, while the current
+__of_clk_get_by_name() already handle np == NULL, too.
+
+> +
+> +       return __of_clk_get_by_name(np, np->full_name, name, true);
+> +}
+> +EXPORT_SYMBOL(of_clk_get_by_name_optional);
+> +
+>  #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
+>
+>  static struct clk *__of_clk_get_by_name(struct device_node *np,
+>                                         const char *dev_id,
+> -                                       const char *name)
+> +                                       const char *name,
+> +                                       bool optional)
+>  {
+>         return ERR_PTR(-ENOENT);
+>  }
+> @@ -197,7 +223,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+>         struct clk *clk;
+>
+>         if (dev && dev->of_node) {
+> -               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
+> +               clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
+>                 if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+>                         return clk;
+>         }
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index 4f750c4..8cb5455 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+>  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+>  struct clk *of_clk_get(struct device_node *np, int index);
+>  struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+> +struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
+>  struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+>  #else
+>  static inline struct clk *of_clk_get(struct device_node *np, int index)
+
+No dummy version of of_clk_get_by_name_optional() for the !CLK || !COMMON_CLK
+case?
+
+It seems of_clk_get_by_name() and of_clk_get_by_name_optional() can just
+be simple wrappers around __of_clk_get_by_name(), differing only in the
+value of the "optional" parameter. Hence I think it makes sense to move them
+to the header file, and make them static inline.
+Then only __of_clk_get_by_name() needs a (static inline) dummy for the !OF ||
+!COMMON_CLK case.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
