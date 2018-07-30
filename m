@@ -1,130 +1,130 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 3 Jul 2018 08:04:16 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: matthias.bgg@kernel.org, ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com, ck.hu@mediatek.com,
-	p.zabel@pengutronix.de, airlied@linux.ie, robh+dt@kernel.org,
-	mark.rutland@arm.com, mturquette@baylibre.com, sboyd@codeaurora.org,
-	davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+Return-Path: <enric.balletbo@collabora.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Will Deacon <will.deacon@arm.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Derek Basehore <dbasehore@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	Lin Huang <hl@rock-chips.com>,
+	kernel@collabora.com,
+	robin.murphy@arm.com,
+	Sean Paul <seanpaul@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-Message-ID: <20180703070416.GD20176@dell>
-References: <cover.1524820923.git.mbrugger@suse.com>
- <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
- <20180430103029.GD5147@dell>
- <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <4ead47f6-2f69-2afa-bfcc-a240a9845dc4@gmail.com>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Yao <markyao0591@gmail.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Brian Norris <briannorris@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Jeffy Chen <jeffy.chen@rock-chips.com>,
+	Nickey Yang <nickey.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	Klaus Goger <klaus.goger@theobroma-systems.com>,
+	Randy Li <ayaka@soulik.info>,
+	Chris Zhong <zyw@rock-chips.com>,
+	Shunqian Zheng <zhengsq@rock-chips.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 0/8] Add support for drm/rockchip to dynamically control the DDR frequency.
+Date: Mon, 30 Jul 2018 10:11:16 +0200
+Message-Id: <20180730081124.30698-1-enric.balletbo@collabora.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 25 Jun 2018, Matthias Brugger wrote:
+Dear all,
 
-> 
-> 
-> On 30/04/18 12:30, Lee Jones wrote:
-> > On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
-> > 
-> >> From: Matthias Brugger <mbrugger@suse.com>
-> >>
-> >> Add binding description for the mmsys mfd for some Mediatek
-> >> devices. mmsys has some registers to control clock gates (which is
-> >> used in the clk driver) and some registers to set the routing and enable
-> >> the differnet blocks of the display subsystem.
-> >>
-> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> >> ---
-> >>  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
-> >>  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
-> >>  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
-> >>  3 files changed, 28 insertions(+), 3 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> >> index 4eb8bbe15c01..4468345f8b1a 100644
-> >> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> >> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
-> >>  Required Properties:
-> >>  
-> >>  - compatible: Should be one of:
-> >> -	- "mediatek,mt2701-mmsys", "syscon"
-> >>  	- "mediatek,mt2712-mmsys", "syscon"
-> >>  	- "mediatek,mt6797-mmsys", "syscon"
-> >> -	- "mediatek,mt8173-mmsys", "syscon"
-> >>  - #clock-cells: Must be 1
-> >>  
-> >>  The mmsys controller uses the common clk binding from
-> >> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> >> index 383183a89164..85a3b4ec06cd 100644
-> >> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> >> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> >> @@ -9,7 +9,7 @@ function block.
-> >>  
-> >>  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
-> >>  For a description of the MMSYS_CONFIG binding, see
-> >> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
-> >> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> >>  
-> >>  DISP function blocks
-> >>  ====================
-> >> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> >> new file mode 100644
-> >> index 000000000000..2331ae16917e
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> >> @@ -0,0 +1,27 @@
-> >> +MediaTek MMSYS Multifunction Device Driver
-> > 
-> > What is "MMSYS"?
-> > 
-> > "Multi-Function Driver"s are specific to Linux.
-> > 
-> > What actually is the device?
-> 
-> It's includes all the DRM parts of the SoC together with the clocks for the
-> device. MMSYS IMHO stands for Multi-Media-System.
+The rk3399 platform has a DFI controller that can monitor DDR load and a
+DMC driver that talks with the TF-A (Trusted Firmware-A) to dynamically
+set the DDR frequency with following flow.
 
-Please update the document with that information.
+             kernel                          Trusted Firmware-A
+                                                  (bl31)
+        monitor ddr load
+                |
+                |
+        get_target_rate
+                |
+                |           pass rate to TF-A
+        clk_set_rate(ddr) --------------------->run ddr dvs flow
+                                                    |
+                                                    |
+                 <------------------------------end ddr dvs flow
+                |
+                |
+              return
 
-Is there a datasheet I can view?
+These patches add support for devfreq to dynamically control the DDR
+frequency into the drm rockchip driver. By default it uses the
+'simple_ondemand' governor which can adjust the frequency based on the
+DDR load.
 
-> >> +MMSYS is a multifunction device with the following sub modules:
-> >> +- clocks for the multi-media subsystem
-> >> +- central node for the DRM subsystem.
-> >> +
-> >> +This document describes the binding for MFD device. The MFD takes care to initailize
-> >> +the clock driver and the DRM driver. More info see
-> >> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> >> +
-> >> +Required properties:
-> >> +- compatible: Should be one of:
-> >> +	- "mediatek,mt2701-mmsys", "syscon"
-> >> +	- "mediatek,mt8173-mmsys", "syscon"
-> >> +- #clock-cells: Must be 1
-> >> +
-> >> +Optional properties:
-> >> +- power-domains: list of powerdomains needed for the subsystem to work
-> >> +
-> >> +Example:
-> >> +
-> >> +mmsys: clock-controller@14000000 {
-> >> +	compatible = "mediatek,mt8173-mmsys", "syscon";
-> >> +	reg = <0 0x14000000 0 0x1000>;
-> >> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-> >> +	#clock-cells = <1>;
-> >> +};
-> > 
+Waiting for your feedback.
+
+Best regards,
+ Enric
+
+Changes in v1:
+- [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+- [RFC 1/10] s/Generic/General/ (Robin Murphy)
+- [RFC 2/10] Add reviewed and acked tags from Chanwoo Choi and Rob Herring
+- [RFC 3/10] Add an explanation for platform SIP calls.
+- [RFC 3/10] Change if statement for a switch.
+- [RFC 3/10] Rename ddr_flag to odt_enable to be more clear.
+- [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
+- [RFC 7/10] Removed from the series. I did not found a use case where this matters.
+- [RFC 8/10] Move rk3399-dram.h to dt-includes.
+- [RFC 8/10] Put sdram default values under the dmc node.
+- [RFC 8/10] Removed rk3399-dram-default-timing.dts
+
+Derek Basehore (2):
+  devfreq: rk3399_dmc / clk: rockchip: Sync with vblank in the kernel
+    for DDRfreq.
+  devfreq: rk3399_dmc / clk: rockchip: Disable DDR clk timeout on
+    suspend.
+
+Enric Balletbo i Serra (3):
+  devfreq: rockchip-dfi: Move GRF definitions to a common place.
+  dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
+  devfreq: rk3399_dmc: Pass ODT and auto power down parameters to TF-A.
+
+Lin Huang (2):
+  arm64: dts: rk3399: Add dfi and dmc nodes.
+  arm64: dts: rockchip: Enable dmc and dfi nodes on gru.
+
+Sean Paul (1):
+  drm: rockchip: Add DDR devfreq support.
+
+ .../bindings/devfreq/rk3399_dmc.txt           |   2 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi  |  21 ++
+ .../boot/dts/rockchip/rk3399-op1-opp.dtsi     |  29 +++
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  51 ++++-
+ drivers/clk/rockchip/clk-ddr.c                | 157 +++++++++++--
+ drivers/clk/rockchip/clk.c                    |   2 +-
+ drivers/clk/rockchip/clk.h                    |   3 +-
+ drivers/devfreq/event/rockchip-dfi.c          |  23 +-
+ drivers/devfreq/rk3399_dmc.c                  | 209 +++++++++++++++---
+ drivers/devfreq/rk3399_dmc_priv.h             |  16 ++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |  46 ++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |   9 +
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |  35 +++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   |  34 +++
+ include/dt-bindings/power/rk3399-dram.h       |  73 ++++++
+ include/soc/rockchip/rk3399_dmc.h             |  42 ++++
+ include/soc/rockchip/rk3399_grf.h             |  21 ++
+ include/soc/rockchip/rockchip_sip.h           |   1 +
+ 18 files changed, 704 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/devfreq/rk3399_dmc_priv.h
+ create mode 100644 include/dt-bindings/power/rk3399-dram.h
+ create mode 100644 include/soc/rockchip/rk3399_dmc.h
+ create mode 100644 include/soc/rockchip/rk3399_grf.h
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.18.0
