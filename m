@@ -1,302 +1,181 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Paul Burton <paul.burton@mips.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Lee Jones <lee.jones@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-mips@linux-mips.org,
-	linux-doc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v5 10/21] pwm: jz4740: Use regmap and clocks from TCU driver
-Date: Wed, 25 Jul 2018 01:19:47 +0200
-Message-Id: <20180724231958.20659-11-paul@crapouillou.net>
-In-Reply-To: <20180724231958.20659-1-paul@crapouillou.net>
-References: <20180724231958.20659-1-paul@crapouillou.net>
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v2 2/2] clk: Add functions to get optional clocks
+Date: Mon, 30 Jul 2018 09:36:08 +0100
+Message-Id: <1532939768-7018-3-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The ingenic-timer "TCU" driver provides us with a regmap, that we can
-use to safely access the TCU registers.
+Behaves the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
-It also provides us with clocks, that can be (un)gated, reparented or
-reclocked from devicetree, instead of having these settings hardcoded in
-this driver.
-
-While this driver is devicetree-compatible, it is never (as of now)
-probed from devicetree, so this change does not introduce a ABI problem
-with current devicetree files.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/pwm/Kconfig      |   2 +
- drivers/pwm/pwm-jz4740.c | 126 +++++++++++++++++++++++++++++++----------------
- 2 files changed, 86 insertions(+), 42 deletions(-)
+ drivers/clk/clk-devres.c | 18 ++++++++++++++++--
+ drivers/clk/clkdev.c     | 17 +++++++++++++++--
+ include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 4 deletions(-)
 
- v5: New patch
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index a4d262db9945..58359bf22b96 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -202,6 +202,8 @@ config PWM_IMX
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
- 	depends on MACH_INGENIC
-+	depends on COMMON_CLK
-+	select INGENIC_TIMER
- 	help
- 	  Generic PWM framework driver for Ingenic JZ47xx based
- 	  machines.
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index a7b134af5e04..0fc84f0369f6 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -14,21 +14,22 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
--
--#include <asm/mach-jz4740/timer.h>
-+#include <linux/regmap.h>
- 
- #define NUM_PWM 8
- 
- struct jz4740_pwm_chip {
- 	struct pwm_chip chip;
--	struct clk *clk;
-+	struct clk *clks[NUM_PWM];
-+	struct regmap *map;
- };
- 
- static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
-@@ -38,6 +39,11 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
- 
- static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-+	struct clk *clk;
-+	char clk_name[16];
-+	int ret;
-+
- 	/*
- 	 * Timers 0 and 1 are used for system tasks, so they are unavailable
- 	 * for use as PWMs.
-@@ -45,65 +51,89 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 	if (pwm->hwpwm < 2)
- 		return -EBUSY;
- 
--	jz4740_timer_start(pwm->hwpwm);
-+	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
- 
-+	clk = clk_get(chip->dev, clk_name);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		clk_put(clk);
-+		return ret;
-+	}
-+
-+	jz->clks[pwm->hwpwm] = clk;
- 	return 0;
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..a2bb01a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
+ 	clk_put(*(struct clk **)res);
  }
  
- static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
+-struct clk *devm_clk_get(struct device *dev, const char *id)
++static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
  {
--	jz4740_timer_set_ctrl(pwm->hwpwm, 0);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-+	struct clk *clk = jz->clks[pwm->hwpwm];
+ 	struct clk **ptr, *clk;
  
--	jz4740_timer_stop(pwm->hwpwm);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
+@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk = clk_get(dev, id);
++	if (!optional)
++		clk = clk_get(dev, id);
++	else
++		clk = clk_get_optional(dev, id);
+ 	if (!IS_ERR(clk)) {
+ 		*ptr = clk;
+ 		devres_add(dev, ptr);
+@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 
+ 	return clk;
  }
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, false);
++}
+ EXPORT_SYMBOL(devm_clk_get);
  
- static int jz4740_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
--	ctrl |= JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
--	jz4740_timer_enable(pwm->hwpwm);
-+	/* Enable PWM output */
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, TCU_TCSR_PWM_EN);
- 
-+	/* Start counter */
-+	regmap_write(jz->map, TCU_REG_TESR, BIT(pwm->hwpwm));
- 	return 0;
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, true);
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index c1b7262..484a444 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -217,21 +217,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
  }
+ EXPORT_SYMBOL(clk_get_sys);
  
- static void jz4740_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+-struct clk *clk_get(struct device *dev, const char *con_id)
++static struct clk *internal_clk_get(struct device *dev, const char *con_id,
++				    bool optional)
  {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->hwpwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+ 	struct clk *clk;
  
- 	/* Disable PWM output.
- 	 * In TCU2 mode (channel 1/2 on JZ4750+), this must be done before the
- 	 * counter is stopped, while in TCU1 mode the order does not matter.
- 	 */
--	ctrl &= ~JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, 0);
- 
- 	/* Stop counter */
--	jz4740_timer_disable(pwm->hwpwm);
-+	regmap_write(jz->map, TCU_REG_TECR, BIT(pwm->hwpwm));
- }
- 
- static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			     int duty_ns, int period_ns)
- {
- 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
-+	struct clk *clk = jz4740->clks[pwm->hwpwm];
-+	unsigned long rate, new_rate, period, duty;
- 	unsigned long long tmp;
--	unsigned long period, duty;
--	unsigned int prescaler = 0;
--	uint16_t ctrl;
-+	unsigned int tcsr;
- 	bool is_enabled;
- 
--	tmp = (unsigned long long)clk_get_rate(jz4740->clk) * period_ns;
--	do_div(tmp, 1000000000);
--	period = tmp;
-+	rate = clk_get_rate(clk);
- 
--	while (period > 0xffff && prescaler < 6) {
--		period >>= 2;
--		++prescaler;
-+	for (;;) {
-+		tmp = (unsigned long long) rate * period_ns;
-+		do_div(tmp, 1000000000);
-+
-+		if (tmp <= 0xffff)
-+			break;
-+
-+		new_rate = clk_round_rate(clk, rate / 2);
-+
-+		if (new_rate < rate)
-+			rate = new_rate;
-+		else
-+			return -EINVAL;
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
++					   optional);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
  	}
  
--	if (prescaler == 6)
--		return -EINVAL;
-+	clk_set_rate(clk, rate);
+ 	return clk_get_sys(dev_id, con_id);
+ }
 +
-+	period = tmp;
++struct clk *clk_get(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, false);
++}
+ EXPORT_SYMBOL(clk_get);
  
- 	tmp = (unsigned long long)period * duty_ns;
- 	do_div(tmp, period_ns);
-@@ -112,18 +142,23 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (duty >= period)
- 		duty = period - 1;
- 
--	is_enabled = jz4740_timer_is_enabled(pwm->hwpwm);
-+	regmap_read(jz4740->map, TCU_REG_TER, &tcsr);
-+	is_enabled = tcsr & BIT(pwm->hwpwm);
- 	if (is_enabled)
- 		jz4740_pwm_disable(chip, pwm);
- 
--	jz4740_timer_set_count(pwm->hwpwm, 0);
--	jz4740_timer_set_duty(pwm->hwpwm, duty);
--	jz4740_timer_set_period(pwm->hwpwm, period);
-+	/* Set abrupt shutdown */
-+	regmap_update_bits(jz4740->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_SD, TCU_TCSR_PWM_SD);
++struct clk *clk_get_optional(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, true);
++}
++EXPORT_SYMBOL(clk_get_optional);
 +
-+	/* Reset counter to 0 */
-+	regmap_write(jz4740->map, TCU_REG_TCNTc(pwm->hwpwm), 0);
- 
--	ctrl = JZ_TIMER_CTRL_PRESCALER(prescaler) | JZ_TIMER_CTRL_SRC_EXT |
--		JZ_TIMER_CTRL_PWM_ABBRUPT_SHUTDOWN;
-+	/* Set duty */
-+	regmap_write(jz4740->map, TCU_REG_TDHRc(pwm->hwpwm), duty);
- 
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	/* Set period */
-+	regmap_write(jz4740->map, TCU_REG_TDFRc(pwm->hwpwm), period);
- 
- 	if (is_enabled)
- 		jz4740_pwm_enable(chip, pwm);
-@@ -134,18 +169,19 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- static int jz4740_pwm_set_polarity(struct pwm_chip *chip,
- 		struct pwm_device *pwm, enum pwm_polarity polarity)
+ void clk_put(struct clk *clk)
  {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
+ 	__clk_put(clk);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 8cb5455..22040ea 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+ struct clk *clk_get(struct device *dev, const char *id);
  
- 	switch (polarity) {
- 	case PWM_POLARITY_NORMAL:
--		ctrl &= ~JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_INITL_HIGH, 0);
- 		break;
- 	case PWM_POLARITY_INVERSED:
--		ctrl |= JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+			TCU_TCSR_PWM_INITL_HIGH, TCU_TCSR_PWM_INITL_HIGH);
- 		break;
- 	}
+ /**
++ * clk_get_optional - lookup and obtain a reference to optional clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as clk_get except where there is no clock producer. In this
++ * case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * clk_bulk_get - lookup and obtain a number of references to clock producer.
+  * @dev: device for clock "consumer"
+  * @num_clks: the number of clk_bulk_data
+@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ struct clk *devm_clk_get(struct device *dev, const char *id);
  
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
- 	return 0;
+ /**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+  * @dev: device for clock "consumer"
+@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
  }
  
-@@ -162,16 +198,22 @@ static const struct pwm_ops jz4740_pwm_ops = {
- static int jz4740_pwm_probe(struct platform_device *pdev)
- {
- 	struct jz4740_pwm_chip *jz4740;
-+	struct device *dev = &pdev->dev;
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	return NULL;
++}
 +
-+	if (!dev->of_node) {
-+		dev_err(dev, "jz4740-pwm must be probed via devicetree\n");
-+		return -ENODEV;
-+	}
+ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 					    struct clk_bulk_data *clks)
+ {
+@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
  
--	jz4740 = devm_kzalloc(&pdev->dev, sizeof(*jz4740), GFP_KERNEL);
-+	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
- 	if (!jz4740)
- 		return -ENOMEM;
- 
--	jz4740->clk = devm_clk_get(&pdev->dev, "ext");
--	if (IS_ERR(jz4740->clk))
--		return PTR_ERR(jz4740->clk);
-+	jz4740->map = dev_get_regmap(dev->parent, NULL);
-+	if (IS_ERR(jz4740->map))
-+		return PTR_ERR(jz4740->map);
- 
--	jz4740->chip.dev = &pdev->dev;
-+	jz4740->chip.dev = dev;
- 	jz4740->chip.ops = &jz4740_pwm_ops;
- 	jz4740->chip.npwm = NUM_PWM;
- 	jz4740->chip.base = -1;
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
 -- 
-2.11.0
+2.7.4
