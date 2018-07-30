@@ -1,1159 +1,1817 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39507 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730982AbeGRP3L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Jul 2018 11:29:11 -0400
-Subject: Re: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
-To: Mars Cheng <mars.cheng@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Cc: CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
- <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <261612ef-cc32-3eaf-442c-5d61dc279a08@gmail.com>
-Date: Wed, 18 Jul 2018 16:50:47 +0200
-MIME-Version: 1.0
-In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v2] clk: qcom: Add camera clock controller driver for SDM845
+Date: Mon, 30 Jul 2018 14:52:20 +0530
+Message-Id: <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
+References: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add support for the camera clock controller found on SDM845
+based devices. This would allow camera drivers to probe and
+control their clocks.
 
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig        |    8 +
+ drivers/clk/qcom/Makefile       |    1 +
+ drivers/clk/qcom/camcc-sdm845.c | 1744 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 1753 insertions(+)
+ create mode 100644 drivers/clk/qcom/camcc-sdm845.c
 
-On 17/07/18 10:52, Mars Cheng wrote:
-> From: Owen Chen <owen.chen@mediatek.com>
-> 
-> MT6765 need multiple register and actions to setup bus
-> protect.
-> 1. turn on subsys CG before release bus protect to receive
->    ack.
-> 2. turn off subsys CG after set bus protect and receive
->    ack.
-> 3. bus protect need not only infracfg but other domain
->    register to setup. Therefore we add a set/clr APIs
->    with more customize arguments.
-> 
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> ---
->  drivers/soc/mediatek/Makefile           |    2 +-
->  drivers/soc/mediatek/mtk-infracfg.c     |  178 +++++++++++---
->  drivers/soc/mediatek/mtk-scpsys-ext.c   |  405 +++++++++++++++++++++++++++++++
->  drivers/soc/mediatek/mtk-scpsys.c       |  147 +++++++++--
->  include/linux/soc/mediatek/infracfg.h   |    9 +-
->  include/linux/soc/mediatek/scpsys-ext.h |   66 +++++
->  6 files changed, 745 insertions(+), 62 deletions(-)
->  create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
->  create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
-> 
-> diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-> index 12998b0..9dc6670 100644
-> --- a/drivers/soc/mediatek/Makefile
-> +++ b/drivers/soc/mediatek/Makefile
-> @@ -1,3 +1,3 @@
-> -obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
-> +obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o mtk-scpsys-ext.o
->  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
->  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-> index 958861c..11eadf8 100644
-> --- a/drivers/soc/mediatek/mtk-infracfg.c
-> +++ b/drivers/soc/mediatek/mtk-infracfg.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
->   *
-> @@ -15,6 +16,7 @@
->  #include <linux/jiffies.h>
->  #include <linux/regmap.h>
->  #include <linux/soc/mediatek/infracfg.h>
-> +#include <linux/soc/mediatek/scpsys-ext.h>
->  #include <asm/processor.h>
->  
->  #define MTK_POLL_DELAY_US   10
-> @@ -26,62 +28,176 @@
->  #define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
->  
->  /**
-> - * mtk_infracfg_set_bus_protection - enable bus protection
-> - * @regmap: The infracfg regmap
-> - * @mask: The mask containing the protection bits to be enabled.
-> - * @reg_update: The boolean flag determines to set the protection bits
-> - *              by regmap_update_bits with enable register(PROTECTEN) or
-> - *              by regmap_write with set register(PROTECTEN_SET).
-> + * mtk_generic_set_cmd - enable bus protection with set register
-> + * @regmap: The bus protect regmap
-> + * @set_ofs: The set register offset to set corresponding bit to 1.
-> + * @sta_ofs: The status register offset to show bus protect enable/disable.
-> + * @mask: The mask containing the protection bits to be disabled.
->   *
->   * This function enables the bus protection bits for disabled power
->   * domains so that the system does not hang when some unit accesses the
->   * bus while in power down.
->   */
-> -int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-> -		bool reg_update)
-> +int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
-> +			u32 sta_ofs, u32 mask)
->  {
->  	u32 val;
->  	int ret;
->  
-> -	if (reg_update)
-> -		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask,
-> -				mask);
-> -	else
-> -		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
-> +	regmap_write(regmap, set_ofs, mask);
->  
-> -	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
-> -				       val, (val & mask) == mask,
-> -				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-> +				       (val & mask) == mask,
-> +				       MTK_POLL_DELAY_US,
-> +				       MTK_POLL_TIMEOUT);
->  
->  	return ret;
->  }
->  
->  /**
-> - * mtk_infracfg_clear_bus_protection - disable bus protection
-> - * @regmap: The infracfg regmap
-> + * mtk_generic_clr_cmd - disable bus protection  with clr register
-> + * @regmap: The bus protect regmap
-> + * @clr_ofs: The clr register offset to clear corresponding bit to 0.
-> + * @sta_ofs: The status register offset to show bus protect enable/disable.
->   * @mask: The mask containing the protection bits to be disabled.
-> - * @reg_update: The boolean flag determines to clear the protection bits
-> - *              by regmap_update_bits with enable register(PROTECTEN) or
-> - *              by regmap_write with clear register(PROTECTEN_CLR).
->   *
->   * This function disables the bus protection bits previously enabled with
-> - * mtk_infracfg_set_bus_protection.
-> + * mtk_set_bus_protection.
->   */
->  
-> -int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-> -		bool reg_update)
-> +int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
-> +			u32 sta_ofs, u32 mask)
->  {
->  	int ret;
->  	u32 val;
->  
-> -	if (reg_update)
-> -		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
-> -	else
-> -		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
-> +	regmap_write(regmap, clr_ofs, mask);
->  
-> -	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
-> -				       val, !(val & mask),
-> -				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-> +				       !(val & mask),
-> +				       MTK_POLL_DELAY_US,
-> +				       MTK_POLL_TIMEOUT);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * mtk_generic_enable_cmd - enable bus protection with upd register
-> + * @regmap: The bus protect regmap
-> + * @upd_ofs: The update register offset to directly rewrite value to
-> + *              corresponding bit.
-> + * @sta_ofs: The status register offset to show bus protect enable/disable.
-> + * @mask: The mask containing the protection bits to be disabled.
-> + *
-> + * This function enables the bus protection bits for disabled power
-> + * domains so that the system does not hang when some unit accesses the
-> + * bus while in power down.
-> + */
-> +int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
-> +			   u32 sta_ofs, u32 mask)
-> +{
-> +	u32 val;
-> +	int ret;
-> +
-> +	regmap_update_bits(regmap, upd_ofs, mask, mask);
->  
-> +	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-> +				       (val & mask) == mask,
-> +				       MTK_POLL_DELAY_US,
-> +				       MTK_POLL_TIMEOUT);
->  	return ret;
->  }
-> +
-> +/**
-> + * mtk_generic_disable_cmd - disable bus protection with updd register
-> + * @regmap: The bus protect regmap
-> + * @upd_ofs: The update register offset to directly rewrite value to
-> + *              corresponding bit.
-> + * @sta_ofs: The status register offset to show bus protect enable/disable.
-> + * @mask: The mask containing the protection bits to be disabled.
-> + *
-> + * This function disables the bus protection bits previously enabled with
-> + * mtk_set_bus_protection.
-> + */
-> +
-> +int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
-> +			    u32 sta_ofs, u32 mask)
-> +{
-> +	int ret;
-> +	u32 val;
-> +
-> +	regmap_update_bits(regmap, upd_ofs, mask, 0);
-> +
-> +	ret = regmap_read_poll_timeout(regmap, sta_ofs,
-> +				       val, !(val & mask),
-> +				       MTK_POLL_DELAY_US,
-> +				       MTK_POLL_TIMEOUT);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * mtk_set_bus_protection - enable bus protection
-> + * @infracfg: The bus protect regmap, default use infracfg
-> + * @mask: The mask containing the protection bits to be enabled.
-> + *
-> + * This function enables the bus protection bits for disabled power
-> + * domains so that the system does not hang when some unit accesses the
-> + * bus while in power down.
-> + */
-> +int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-> +{
-> +	return mtk_generic_set_cmd(infracfg,
-> +				   INFRA_TOPAXI_PROTECTEN_SET,
-> +				   INFRA_TOPAXI_PROTECTSTA1,
-> +				   mask);
-> +}
-> +
-> +/**
-> + * mtk_clear_bus_protection - disable bus protection
-> + * @infracfg: The bus protect regmap, default use infracfg
-> + * @mask: The mask containing the protection bits to be disabled.
-> + *
-> + * This function disables the bus protection bits previously enabled with
-> + * mtk_set_bus_protection.
-> + */
-> +
-> +int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
-> +{
-> +	return mtk_generic_clr_cmd(infracfg,
-> +				   INFRA_TOPAXI_PROTECTEN_CLR,
-> +				   INFRA_TOPAXI_PROTECTSTA1,
-> +				   mask);
-> +}
-> +
-> +/**
-> + * mtk_infracfg_enable_bus_protection - enable bus protection
-> + * @infracfg: The bus protect regmap, default use infracfg
-> + * @mask: The mask containing the protection bits to be disabled.
-> + *
-> + * This function enables the bus protection bits for disabled power
-> + * domains so that the system does not hang when some unit accesses the
-> + * bus while in power down.
-> + */
-> +int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask)
-> +{
-> +	return mtk_generic_enable_cmd(infracfg,
-> +				      INFRA_TOPAXI_PROTECTEN,
-> +				      INFRA_TOPAXI_PROTECTSTA1,
-> +				      mask);
-> +}
-> +
-> +/**
-> + * mtk_infracfg_disable_bus_protection - disable bus protection
-> + * @infracfg: The bus protect regmap, default use infracfg
-> + * @mask: The mask containing the protection bits to be disabled.
-> + *
-> + * This function disables the bus protection bits previously enabled with
-> + * mtk_infracfg_set_bus_protection.
-> + */
-> +
-> +int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask)
-> +{
-> +	return mtk_generic_disable_cmd(infracfg,
-> +				       INFRA_TOPAXI_PROTECTEN,
-> +				       INFRA_TOPAXI_PROTECTSTA1,
-> +				       mask);
-> +}
-> diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
-> new file mode 100644
-> index 0000000..965e64d
-> --- /dev/null
-> +++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
-> @@ -0,0 +1,405 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +#include <linux/export.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/soc/mediatek/infracfg.h>
-> +#include <linux/soc/mediatek/scpsys-ext.h>
-> +
-> +
-> +#define MAX_CLKS		10
-> +#define INFRA			"infracfg"
-> +#define SMIC			"smi_comm"
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 7b32a33..85babc5 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -235,6 +235,14 @@ config MSM_GCC_8998
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
+ 	  i2c, USB, UFS, SD/eMMC, PCIe, etc.
 
-Don't use defines for this. While at it I suppose it should be "smi_common"
-
-> +
-> +static LIST_HEAD(ext_clk_map_list);
-> +static LIST_HEAD(ext_attr_map_list);
-> +
-> +static struct regmap *infracfg;
-> +static struct regmap *smi_comm;
-> +
-> +enum regmap_type {
-> +	IFR_TYPE,
-> +	SMI_TYPE,
-> +	MAX_REGMAP_TYPE,
-> +};
-> +
-> +/**
-> + * struct ext_reg_ctrl - set multiple register for bus protect
-> + * @regmap: The bus protect regmap, 1: infracfg, 2: other master regmap
-> + *                  such as SMI.
-> + * @set_ofs: The set register offset to set corresponding bit to 1.
-> + * @clr_ofs: The clr register offset to clear corresponding bit to 0.
-> + * @sta_ofs: The status register offset to show bus protect enable/disable.
-> + */
-> +struct ext_reg_ctrl {
-> +	enum regmap_type type;
-> +	u32 set_ofs;
-> +	u32 clr_ofs;
-> +	u32 sta_ofs;
-> +};
-> +
-> +/**
-> + * struct ext_clk_ctrl - enable multiple clks for bus protect
-> + * @clk: The clk need to enable before pwr on/bus protect.
-> + * @scpd_n: The name present the scpsys domain where the clks belongs to.
-> + * @clk_list: The list node linked to ext_clk_map_list.
-> + */
-> +struct ext_clk_ctrl {
-> +	struct clk *clk;
-> +	const char *scpd_n;
-> +	struct list_head clk_list;
-> +};
-> +
-> +struct bus_mask_ops {
-> +	int	(*set)(struct regmap *regmap, u32 set_ofs,
-> +		       u32 sta_ofs, u32 mask);
-> +	int	(*release)(struct regmap *regmap, u32 clr_ofs,
-> +			   u32 sta_ofs, u32 mask);
-> +};
-> +
-> +static struct scpsys_ext_attr *__get_attr_parent(const char *parent_n)
-> +{
-> +	struct scpsys_ext_attr *attr;
-> +
-> +	if (!parent_n)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	list_for_each_entry(attr, &ext_attr_map_list, attr_list) {
-> +		if (attr->scpd_n && !strcmp(parent_n, attr->scpd_n))
-> +			return attr;
-> +	}
-> +
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
-> +int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
-> +{
-> +	int i;
-> +	int ret = 0;
-> +
-> +	for (i = 0; i < MAX_STEP_NUM && attr->mask[i].mask; i++) {
-> +		struct ext_reg_ctrl *rc = attr->mask[i].regs;
-> +		struct regmap *regmap;
-> +
-> +		if (rc->type == IFR_TYPE)
-> +			regmap = infracfg;
-> +		else if (rc->type == SMI_TYPE)
-> +			regmap = smi_comm;
-> +		else
-> +			return -EINVAL;
-> +
-> +		if (set)
-> +			ret = attr->mask[i].ops->set(regmap,
-> +						rc->set_ofs,
-> +						rc->sta_ofs,
-> +						attr->mask[i].mask);
-> +		else
-> +			ret = attr->mask[i].ops->release(regmap,
-> +						rc->clr_ofs,
-> +						rc->sta_ofs,
-> +						attr->mask[i].mask);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +int bus_ctrl_set(struct scpsys_ext_attr *attr)
-> +{
-> +	return bus_ctrl_set_release(attr, CMD_ENABLE);
-> +}
-> +
-> +int bus_ctrl_release(struct scpsys_ext_attr *attr)
-> +{
-> +	return bus_ctrl_set_release(attr, CMD_DISABLE);
-> +}
-> +
-> +int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
-> +{
-> +	int i = 0;
-> +	int ret = 0;
-> +	struct ext_clk_ctrl *cc;
-> +	struct clk *clk[MAX_CLKS];
-> +
-> +	list_for_each_entry(cc, &ext_clk_map_list, clk_list) {
-
-Why can't we handle this in the same way as we do in mtk-scpsys.c ?
-
-> +		if (!strcmp(cc->scpd_n, attr->scpd_n)) {
-> +			if (enable)
-> +				ret = clk_prepare_enable(cc->clk);
-> +			else
-> +				clk_disable_unprepare(cc->clk);
-> +
-> +			if (ret) {
-> +				pr_err("Failed to  %s %s\n",
-> +				       enable ? "enable" : "disable",
-> +				       __clk_get_name(cc->clk));
-> +				goto err;
-> +			} else {
-> +				clk[i] = cc->clk;
-> +				i++;
-> +			}
-> +		}
-> +	}
-> +
-> +	return ret;
-> +
-> +err:
-> +	for (--i; i >= 0; i--)
-> +		if (enable)
-> +			clk_disable_unprepare(clk[i]);
-> +		else
-> +			clk_prepare_enable(clk[i]);
-> +	return ret;
-> +}
-> +
-> +int bus_clk_enable(struct scpsys_ext_attr *attr)
-> +{
-> +	struct scpsys_ext_attr *attr_p;
-> +	int ret = 0;
-> +
-> +	attr_p = __get_attr_parent(attr->parent_n);
-
-Why can't we implement this using the pg_genpd_add_subdomain approach?
-
-> +	if (!IS_ERR(attr_p)) {
-> +		ret = bus_clk_enable_disable(attr_p, CMD_ENABLE);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return bus_clk_enable_disable(attr, CMD_ENABLE);
-> +}
-> +
-> +int bus_clk_disable(struct scpsys_ext_attr *attr)
-> +{
-> +	struct scpsys_ext_attr *attr_p;
-> +	int ret = 0;
-> +
-> +	ret = bus_clk_enable_disable(attr, CMD_DISABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	attr_p = __get_attr_parent(attr->parent_n);
-> +	if (!IS_ERR(attr_p))
-> +		ret = bus_clk_enable_disable(attr_p, CMD_DISABLE);
-
-Same here.
-
-> +
-> +	return ret;
-> +}
-> +
-> +const struct bus_mask_ops bus_mask_set_clr_ctrl = {
-> +	.set = &mtk_generic_set_cmd,
-> +	.release = &mtk_generic_clr_cmd,
-> +};
-> +
-> +const struct bus_ext_ops ext_bus_ctrl = {
-> +	.enable = &bus_ctrl_set,
-> +	.disable = &bus_ctrl_release,
-> +};
-> +
-> +const struct bus_ext_ops ext_cg_ctrl = {
-> +	.enable = &bus_clk_enable,
-> +	.disable = &bus_clk_disable,
-> +};
-> +
-> +/*
-> + * scpsys bus driver init
-> + */
-> +struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
-> +						   const char *property,
-> +						   int index)
-> +{
-> +	struct device_node *syscon_np;
-> +	struct regmap *regmap;
-> +
-> +	if (property)
-> +		syscon_np = of_parse_phandle(np, property, index);
-> +	else
-> +		syscon_np = np;
-> +
-> +	if (!syscon_np)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	regmap = syscon_node_to_regmap(syscon_np);
-> +	of_node_put(syscon_np);
-> +
-> +	return regmap;
-> +}
-
-Why do we need this? It is never called...
-
-> +
-> +int scpsys_ext_regmap_init(struct platform_device *pdev)
-> +{
-> +	infracfg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-> +						   INFRA);
-> +	if (IS_ERR(infracfg)) {
-> +		dev_err(&pdev->dev,
-> +			"Cannot find bus infracfg controller: %ld\n",
-> +			PTR_ERR(infracfg));
-> +		return PTR_ERR(infracfg);
-> +	}
-> +
-> +	smi_comm = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-> +						   SMIC);
-> +	if (IS_ERR(smi_comm)) {
-> +		dev_err(&pdev->dev,
-> +			"Cannot find bus smi_comm controller: %ld\n",
-> +			PTR_ERR(smi_comm));
-> +		return PTR_ERR(smi_comm);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int add_clk_to_list(struct platform_device *pdev,
-> +			   const char *name,
-> +			   const char *scpd_n)
-> +{
-> +	struct clk *clk;
-> +	struct ext_clk_ctrl *cc;
-> +
-> +	clk = devm_clk_get(&pdev->dev, name);
-> +	if (IS_ERR(clk)) {
-> +		dev_err(&pdev->dev, "Failed add clk %ld\n", PTR_ERR(clk));
-> +		return PTR_ERR(clk);
-> +	}
-> +
-> +	cc = kzalloc(sizeof(*cc), GFP_KERNEL);
-> +	cc->clk = clk;
-> +	cc->scpd_n = kstrdup(scpd_n, GFP_KERNEL);
-> +
-> +	list_add(&cc->clk_list, &ext_clk_map_list);
-> +
-> +	return 0;
-> +}
-> +
-> +static int add_cg_to_list(struct platform_device *pdev)
-> +{
-> +	int i = 0;
-> +
-> +	struct device_node *node = pdev->dev.of_node;
-> +
-> +	if (!node) {
-> +		dev_err(&pdev->dev, "Cannot find topcksys node: %ld\n",
-
-Why topcksys? Shouldn't that be the node of scpsys?
-
-> +			PTR_ERR(node));
-> +		return PTR_ERR(node);
-> +	}
-> +
-> +	do {
-> +		const char *ck_name;
-> +		char *temp_str;
-> +		char *tok[2] = {NULL};
-> +		int cg_idx = 0;
-> +		int idx = 0;
-> +		int ret = 0;
-> +
-> +		ret = of_property_read_string_index(node, "clock-names", i,
-> +						    &ck_name);
-> +		if (ret < 0)
-> +			break;
-> +
-> +		temp_str = kmalloc_array(strlen(ck_name), sizeof(char),
-> +					 GFP_KERNEL | __GFP_ZERO);
-> +		memcpy(temp_str, ck_name, strlen(ck_name));
-> +		temp_str[strlen(ck_name)] = '\0';
-
-why don't you use kstrdup or similar?
-
-> +		do {
-> +			tok[idx] = strsep(&temp_str, "-");
-> +			idx++;
-> +		} while (temp_str);
-
-You want to split the clock name like "mm-2" in
-char **tok = {"mm", "2"};
-correct? That can be done easier AFAIK:
-tok[0] = strsep(&temp_str, "-");
-tok[1] = &temp_str;
-
-> +
-> +		if (idx == 2) {
-
-You don't add clocks like "mfg" and "mm". Why?
-
-> +			if (kstrtouint(tok[1], 10, &cg_idx))
-
-And then? You don't do anything with cg_idx...
-
-> +				return -EINVAL;
-> +
-> +			if (add_clk_to_list(pdev, ck_name, tok[0]))
-
-add_clk_to_list third parameter is the name of the scp domain, but you pass the
-clock name here. I'm puzzled.
-
-> +				return -EINVAL;
-> +		}
-> +		kfree(temp_str);
-> +		i++;
-> +	} while (1);
-> +
-> +	return 0;
-> +}
-> +
-> +int scpsys_ext_clk_init(struct platform_device *pdev)
-> +{
-> +	int ret = 0;
-> +
-> +	ret = add_cg_to_list(pdev);
-> +	if (ret)
-> +		goto err;
-> +
-> +err:
-> +	return ret;
-> +}
-
-Why do we need add_cg_to_list, it can be implemented directly here. Why is here
-a goto to a return statement that will be executed anyway? Please go through the
-code and check that it is clean before submitting.
-
-> +
-> +int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
-> +{
-> +	int i, count = 0;
-> +
-> +	for (i = 0; i < data->num_attr; i++) {
-> +		struct scpsys_ext_attr *node = data->attr + i;
-> +
-> +		if (!node)
-> +			continue;
-> +
-> +		list_add(&node->attr_list, &ext_attr_map_list);
-> +		count++;
-> +	}
-> +
-> +	if (!count)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id of_scpsys_ext_match_tbl[] = {
-> +	{
-> +		/* sentinel */
-> +	}
-> +};
-> +
-> +struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *match;
-> +	struct scpsys_ext_data *data;
-> +	int ret;
-> +
-> +	match = of_match_device(of_scpsys_ext_match_tbl, &pdev->dev);
-> +
-> +	if (!match) {
-> +		dev_err(&pdev->dev, "no match\n");
-> +		return ERR_CAST(match);
-> +	}
-> +
-> +	data = (struct scpsys_ext_data *)match->data;
-> +	if (IS_ERR(data)) {
-> +		dev_err(&pdev->dev, "no match scpext data\n");
-> +		return ERR_CAST(data);
-> +	}
-> +
-> +	ret = scpsys_ext_attr_init(data);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to init bus attr: %d\n",
-> +			ret);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	ret = scpsys_ext_regmap_init(pdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to init bus register: %d\n",
-> +			ret);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	ret = scpsys_ext_clk_init(pdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to init bus clks: %d\n",
-> +			ret);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return data;
-> +}
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 4bb6c7a..03df2d6 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
->   *
-> @@ -20,6 +21,7 @@
->  #include <linux/pm_domain.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/soc/mediatek/infracfg.h>
-> +#include <linux/soc/mediatek/scpsys-ext.h>
->  
->  #include <dt-bindings/power/mt2701-power.h>
->  #include <dt-bindings/power/mt2712-power.h>
-> @@ -117,6 +119,15 @@ enum clk_id {
->  
->  #define MAX_CLKS	3
->  
-> +/**
-> + * struct scp_domain_data - scp domain data for power on/off flow
-> + * @name: The domain name.
-> + * @sta_mask: The mask for power on/off status bit.
-> + * @ctl_offs: The offset for main power control register.
-> + * @sram_pdn_bits: The mask for sram power control bits.
-> + * @sram_pdn_ack_bits The mask for sram power control acked bits.
-> + * @caps: The flag for active wake-up action.
-> + */
->  struct scp_domain_data {
->  	const char *name;
->  	u32 sta_mask;
-> @@ -150,7 +161,7 @@ struct scp {
->  	void __iomem *base;
->  	struct regmap *infracfg;
->  	struct scp_ctrl_reg ctrl_reg;
-> -	bool bus_prot_reg_update;
-> +	struct scpsys_ext_data *ext_data;
->  };
->  
->  struct scp_subdomain {
-> @@ -164,7 +175,6 @@ struct scp_soc_data {
->  	const struct scp_subdomain *subdomains;
->  	int num_subdomains;
->  	const struct scp_ctrl_reg regs;
-> -	bool bus_prot_reg_update;
->  };
->  
->  static int scpsys_domain_is_on(struct scp_domain *scpd)
-> @@ -236,6 +246,31 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
->  	val |= PWR_RST_B_BIT;
->  	writel(val, ctl_addr);
->  
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->cg_ops) {
-> +			ret = attr->cg_ops->enable(attr);
-> +			if (ret)
-> +				goto err_ext_clk;
-> +		}
-> +	}
-> +
-> +	val &= ~scpd->data->sram_pdn_bits;
-> +	writel(val, ctl_addr);
-> +
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->cg_ops) {
-> +			ret = attr->cg_ops->enable(attr);
-> +			if (ret)
-> +				goto err_ext_clk;
-> +		}
-> +	}
-> +
->  	val &= ~scpd->data->sram_pdn_bits;
->  	writel(val, ctl_addr);
->  
-> @@ -247,25 +282,65 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
->  		 * applied here.
->  		 */
->  		usleep_range(12000, 12100);
-> -
->  	} else {
->  		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
->  					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
->  		if (ret < 0)
-> -			goto err_pwr_ack;
-> +			goto err_sram;
->  	}
->  
->  	if (scpd->data->bus_prot_mask) {
->  		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-> -				scpd->data->bus_prot_mask,
-> -				scp->bus_prot_reg_update);
-> +				scpd->data->bus_prot_mask);
->  		if (ret)
-> -			goto err_pwr_ack;
-> +			goto err_sram;
-> +	}
-> +
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->bus_ops) {
-> +			ret = attr->bus_ops->disable(attr);
-> +			if (ret)
-> +				goto err_sram;
-> +		}
-> +	}
-> +
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->cg_ops) {
-> +			ret = attr->cg_ops->disable(attr);
-> +			if (ret)
-> +				goto err_sram;
-> +		}
->  	}
->  
->  	return 0;
->  
-> +err_sram:
-> +	val = readl(ctl_addr);
-> +	val |= scpd->data->sram_pdn_bits;
-> +	writel(val, ctl_addr);
-> +err_ext_clk:
-> +	val = readl(ctl_addr);
-> +	val |= PWR_ISO_BIT;
-> +	writel(val, ctl_addr);
-> +
-> +	val &= ~PWR_RST_B_BIT;
-> +	writel(val, ctl_addr);
-> +
-> +	val |= PWR_CLK_DIS_BIT;
-> +	writel(val, ctl_addr);
->  err_pwr_ack:
-> +	val &= ~PWR_ON_BIT;
-> +	writel(val, ctl_addr);
-> +
-> +	val &= ~PWR_ON_2ND_BIT;
-> +	writel(val, ctl_addr);
-> +
->  	for (i = MAX_CLKS - 1; i >= 0; i--) {
->  		if (scpd->clk[i])
->  			clk_disable_unprepare(scpd->clk[i]);
-> @@ -274,8 +349,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
->  	if (scpd->supply)
->  		regulator_disable(scpd->supply);
->  
-> -	dev_err(scp->dev, "Failed to power on domain %s\n", genpd->name);
-> -
->  	return ret;
->  }
->  
-> @@ -289,14 +362,35 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
->  	int ret, tmp;
->  	int i;
->  
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->cg_ops) {
-> +			ret = attr->cg_ops->enable(attr);
-> +			if (ret)
-> +				goto out;
-> +		}
-> +	}
-> +
->  	if (scpd->data->bus_prot_mask) {
->  		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
-> -				scpd->data->bus_prot_mask,
-> -				scp->bus_prot_reg_update);
-> +				scpd->data->bus_prot_mask);
->  		if (ret)
->  			goto out;
->  	}
->  
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->bus_ops) {
-> +			ret = attr->bus_ops->enable(attr);
-> +			if (ret)
-> +				goto out;
-> +		}
-> +	}
-> +
->  	val = readl(ctl_addr);
->  	val |= scpd->data->sram_pdn_bits;
->  	writel(val, ctl_addr);
-> @@ -307,6 +401,17 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
->  	if (ret < 0)
->  		goto out;
->  
-> +	if (!IS_ERR(scp->ext_data)) {
-> +		struct scpsys_ext_attr *attr;
-> +
-> +		attr = scp->ext_data->get_attr(scpd->data->name);
-> +		if (!IS_ERR(attr) && attr->cg_ops) {
-> +			ret = attr->cg_ops->disable(attr);
-> +			if (ret)
-> +				goto out;
-> +		}
-> +	}
-> +
->  	val |= PWR_ISO_BIT;
->  	writel(val, ctl_addr);
->  
-> @@ -337,8 +442,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
->  	return 0;
->  
->  out:
-> -	dev_err(scp->dev, "Failed to power off domain %s\n", genpd->name);
-> -
->  	return ret;
->  }
->  
-> @@ -352,8 +455,7 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
->  
->  static struct scp *init_scp(struct platform_device *pdev,
->  			const struct scp_domain_data *scp_domain_data, int num,
-> -			const struct scp_ctrl_reg *scp_ctrl_reg,
-> -			bool bus_prot_reg_update)
-> +			const struct scp_ctrl_reg *scp_ctrl_reg)
->  {
->  	struct genpd_onecell_data *pd_data;
->  	struct resource *res;
-> @@ -367,11 +469,10 @@ static struct scp *init_scp(struct platform_device *pdev,
->  
->  	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
->  	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
-> -
-> -	scp->bus_prot_reg_update = bus_prot_reg_update;
-> -
->  	scp->dev = &pdev->dev;
->  
-> +	scp->ext_data = scpsys_ext_init(pdev);
-> +
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	scp->base = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(scp->base))
-> @@ -1021,7 +1122,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
->  	},
-> -	.bus_prot_reg_update = true,
->  };
->  
->  static const struct scp_soc_data mt2712_data = {
-> @@ -1033,7 +1133,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
->  	},
-> -	.bus_prot_reg_update = false,
->  };
->  
->  static const struct scp_soc_data mt6765_data = {
-> @@ -1056,7 +1155,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
->  	},
-> -	.bus_prot_reg_update = true,
-
-I don't understand why you can delete this flag if you don't change anything
-else in the data structure. For me this looks like you will break other chips.
-Please explain.
-
-I have the gut feeling that this can be implemented in the existing mtk-scpsys
-driver. Can you please explain what are the points that this is not possible.
-I want to understand the design decisions you made here, because they seem
-really odd to me.
-
-Best regards,
-Matthias
-
->  };
->  
->  static const struct scp_soc_data mt7622_data = {
-> @@ -1066,7 +1164,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
->  	},
-> -	.bus_prot_reg_update = true,
->  };
->  
->  static const struct scp_soc_data mt7623a_data = {
-> @@ -1076,7 +1173,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
->  	},
-> -	.bus_prot_reg_update = true,
->  };
->  
->  static const struct scp_soc_data mt8173_data = {
-> @@ -1088,7 +1184,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.pwr_sta_offs = SPM_PWR_STATUS,
->  		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
->  	},
-> -	.bus_prot_reg_update = true,
->  };
->  
->  /*
-> @@ -1132,8 +1227,8 @@ static int scpsys_probe(struct platform_device *pdev)
->  
->  	soc = of_device_get_match_data(&pdev->dev);
->  
-> -	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
-> -			soc->bus_prot_reg_update);
-> +	scp = init_scp(pdev, soc->domains, soc->num_domains,
-> +		       &soc->regs);
->  	if (IS_ERR(scp))
->  		return PTR_ERR(scp);
->  
-> diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-> index fd25f01..bfad082 100644
-> --- a/include/linux/soc/mediatek/infracfg.h
-> +++ b/include/linux/soc/mediatek/infracfg.h
-> @@ -32,8 +32,9 @@
->  #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
->  						 BIT(7) | BIT(8))
->  
-> -int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
-> -		bool reg_update);
-> -int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
-> -		bool reg_update);
-> +int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
-> +int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
-> +int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask);
-> +int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask);
-> +
->  #endif /* __SOC_MEDIATEK_INFRACFG_H */
-> diff --git a/include/linux/soc/mediatek/scpsys-ext.h b/include/linux/soc/mediatek/scpsys-ext.h
-> new file mode 100644
-> index 0000000..99b5ff1
-> --- /dev/null
-> +++ b/include/linux/soc/mediatek/scpsys-ext.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_MEDIATEK_SCPSYS_EXT_H
-> +#define __SOC_MEDIATEK_SCPSYS_EXT_H
-> +
-> +#include <linux/platform_device.h>
-> +
-> +#define CMD_ENABLE	1
-> +#define CMD_DISABLE	0
-> +
-> +#define MAX_STEP_NUM	4
-> +
-> +/**
-> + * struct bus_mask - set mask and corresponding operation for bus protect
-> + * @regs: The register set of bus register control, including set/clr/sta.
-> + * @mask: The mask set for bus protect.
-> + * @flag: The flag to idetify which operation we take for bus protect.
-> + */
-> +struct bus_mask {
-> +	struct ext_reg_ctrl *regs;
-> +	u32 mask;
-> +	const struct bus_mask_ops *ops;
-> +};
-> +
-> +/**
-> + * struct scpsys_ext_attr - extended attribute for bus protect and further
-> + *                                           operand.
-> + *
-> + * @scpd_n: The name present the scpsys domain where the clks belongs to.
-> + * @mask: The mask set for bus protect.
-> + * @bus_ops: The operation we take for bus protect.
-> + * @cg_ops: The operation we take for cg on/off.
-> + * @attr_list: The list node linked to ext_attr_map_list.
-> + */
-> +struct scpsys_ext_attr {
-> +	const char *scpd_n;
-> +	struct bus_mask mask[MAX_STEP_NUM];
-> +	const char *parent_n;
-> +	const struct bus_ext_ops *bus_ops;
-> +	const struct bus_ext_ops *cg_ops;
-> +
-> +	struct list_head attr_list;
-> +};
-> +
-> +struct scpsys_ext_data {
-> +	struct scpsys_ext_attr *attr;
-> +	u8 num_attr;
-> +	struct scpsys_ext_attr * (*get_attr)(const char *scpd_n);
-> +};
-> +
-> +struct bus_ext_ops {
-> +	int	(*enable)(struct scpsys_ext_attr *attr);
-> +	int	(*disable)(struct scpsys_ext_attr *attr);
-> +};
-> +
-> +int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
-> +			u32 sta_ofs, u32 mask);
-> +int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
-> +			u32 sta_ofs, u32 mask);
-> +int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
-> +			   u32 sta_ofs, u32 mask);
-> +int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
-> +			    u32 sta_ofs, u32 mask);
-> +
-> +struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev);
-> +
-> +#endif /* __SOC_MEDIATEK_SCPSYS_EXT_H */
-> 
++config SDM_CAMCC_845
++	tristate "SDM845 Camera Clock Controller"
++	depends on COMMON_CLK_QCOM
++	select SDM_GCC_845
++	help
++	  Support for the camera clock controller on SDM845 devices.
++	  Say Y if you want to support camera devices and camera functionality.
++
+ config SDM_GCC_845
+ 	tristate "SDM845 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 1818d9f..fab1a47 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
++obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+ obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
+new file mode 100644
+index 0000000..702ca66
+--- /dev/null
++++ b/drivers/clk/qcom/camcc-sdm845.c
+@@ -0,0 +1,1744 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,camcc-sdm845.h>
++
++#include "common.h"
++#include "clk-alpha-pll.h"
++#include "clk-branch.h"
++#include "clk-rcg.h"
++#include "clk-regmap.h"
++#include "gdsc.h"
++
++enum {
++	P_BI_TCXO,
++	P_CAM_CC_PLL0_OUT_EVEN,
++	P_CAM_CC_PLL1_OUT_EVEN,
++	P_CAM_CC_PLL2_OUT_EVEN,
++	P_CAM_CC_PLL3_OUT_EVEN,
++	P_CORE_BI_PLL_TEST_SE,
++};
++
++static const struct parent_map cam_cc_parent_map_0[] = {
++	{ P_BI_TCXO, 0 },
++	{ P_CAM_CC_PLL2_OUT_EVEN, 1 },
++	{ P_CAM_CC_PLL1_OUT_EVEN, 2 },
++	{ P_CAM_CC_PLL3_OUT_EVEN, 5 },
++	{ P_CAM_CC_PLL0_OUT_EVEN, 6 },
++	{ P_CORE_BI_PLL_TEST_SE, 7 },
++};
++
++static const char * const cam_cc_parent_names_0[] = {
++	"bi_tcxo",
++	"cam_cc_pll2_out_even",
++	"cam_cc_pll1_out_even",
++	"cam_cc_pll3_out_even",
++	"cam_cc_pll0_out_even",
++	"core_bi_pll_test_se",
++};
++
++static struct clk_alpha_pll cam_cc_pll0 = {
++	.offset = 0x0,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_pll0",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fabia_ops,
++		},
++	},
++};
++
++static const struct clk_div_table post_div_table_fabia_even[] = {
++	{ 0x0, 1 },
++	{ 0x1, 2 },
++	{ }
++};
++
++static struct clk_alpha_pll_postdiv cam_cc_pll0_out_even = {
++	.offset = 0x0,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_pll0_out_even",
++		.parent_names = (const char *[]){ "cam_cc_pll0" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
++
++static struct clk_alpha_pll cam_cc_pll1 = {
++	.offset = 0x1000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_pll1",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fabia_ops,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv cam_cc_pll1_out_even = {
++	.offset = 0x1000,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_pll1_out_even",
++		.parent_names = (const char *[]){ "cam_cc_pll1" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
++
++static struct clk_alpha_pll cam_cc_pll2 = {
++	.offset = 0x2000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_pll2",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fabia_ops,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv cam_cc_pll2_out_even = {
++	.offset = 0x2000,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_pll2_out_even",
++		.parent_names = (const char *[]){ "cam_cc_pll2" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
++
++static struct clk_alpha_pll cam_cc_pll3 = {
++	.offset = 0x3000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_pll3",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fabia_ops,
++		},
++	},
++};
++
++static struct clk_alpha_pll_postdiv cam_cc_pll3_out_even = {
++	.offset = 0x3000,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_pll3_out_even",
++		.parent_names = (const char *[]){ "cam_cc_pll3" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
++	F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
++	F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
++	F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++/*
++ * As per HW design, some of the CAMCC RCGs needs to
++ * move to XO clock during their clock disable so using
++ * clk_rcg2_shared_ops for such RCGs.
++ * Also, use CLK_SET_RATE_PARENT flag for the RCGs which
++ * have non-fixed PLL as parent source and requires
++ * reconfiguration of the PLL frequency.
++ */
++static struct clk_rcg2 cam_cc_bps_clk_src = {
++	.cmd_rcgr = 0x600c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_bps_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_bps_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_cci_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(37500000, P_CAM_CC_PLL0_OUT_EVEN, 16, 0, 0),
++	F(50000000, P_CAM_CC_PLL0_OUT_EVEN, 12, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_cci_clk_src = {
++	.cmd_rcgr = 0xb0d8,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_cci_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_cci_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_cphy_rx_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(384000000, P_CAM_CC_PLL3_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
++	.cmd_rcgr = 0x9060,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_cphy_rx_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_cphy_rx_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_csi0phytimer_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(240000000, P_CAM_CC_PLL2_OUT_EVEN, 2, 0, 0),
++	F(269333333, P_CAM_CC_PLL1_OUT_EVEN, 3, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
++	.cmd_rcgr = 0x5004,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_csi0phytimer_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_csi0phytimer_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
++	.cmd_rcgr = 0x5028,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_csi0phytimer_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_csi1phytimer_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_csi2phytimer_clk_src = {
++	.cmd_rcgr = 0x504c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_csi0phytimer_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_csi2phytimer_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
++	.cmd_rcgr = 0x5070,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_csi0phytimer_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_csi3phytimer_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_fast_ahb_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(50000000, P_CAM_CC_PLL0_OUT_EVEN, 12, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
++	F(300000000, P_CAM_CC_PLL0_OUT_EVEN, 2, 0, 0),
++	F(400000000, P_CAM_CC_PLL0_OUT_EVEN, 1.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
++	.cmd_rcgr = 0x6038,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_fast_ahb_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_fast_ahb_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_fd_core_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(384000000, P_CAM_CC_PLL3_OUT_EVEN, 1, 0, 0),
++	F(400000000, P_CAM_CC_PLL0_OUT_EVEN, 1.5, 0, 0),
++	F(538666667, P_CAM_CC_PLL1_OUT_EVEN, 1.5, 0, 0),
++	F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_fd_core_clk_src = {
++	.cmd_rcgr = 0xb0b0,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_fd_core_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_fd_core_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_icp_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(384000000, P_CAM_CC_PLL3_OUT_EVEN, 1, 0, 0),
++	F(400000000, P_CAM_CC_PLL0_OUT_EVEN, 1.5, 0, 0),
++	F(538666667, P_CAM_CC_PLL1_OUT_EVEN, 1.5, 0, 0),
++	F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_icp_clk_src = {
++	.cmd_rcgr = 0xb088,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_icp_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_icp_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_ife_0_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	F(320000000, P_CAM_CC_PLL2_OUT_EVEN, 1.5, 0, 0),
++	F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
++	F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
++	F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_ife_0_clk_src = {
++	.cmd_rcgr = 0x900c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_0_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_ife_0_csid_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
++	F(384000000, P_CAM_CC_PLL3_OUT_EVEN, 1, 0, 0),
++	F(538666667, P_CAM_CC_PLL1_OUT_EVEN, 1.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_ife_0_csid_clk_src = {
++	.cmd_rcgr = 0x9038,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_csid_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_0_csid_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_ife_1_clk_src = {
++	.cmd_rcgr = 0xa00c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_1_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_ife_1_csid_clk_src = {
++	.cmd_rcgr = 0xa030,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_csid_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_1_csid_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
++	.cmd_rcgr = 0xb004,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_lite_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
++	.cmd_rcgr = 0xb024,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ife_0_csid_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ife_lite_csid_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_ipe_0_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	F(240000000, P_CAM_CC_PLL0_OUT_EVEN, 2.5, 0, 0),
++	F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
++	F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
++	F(538666667, P_CAM_CC_PLL1_OUT_EVEN, 1.5, 0, 0),
++	F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_ipe_0_clk_src = {
++	.cmd_rcgr = 0x700c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ipe_0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ipe_0_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_ipe_1_clk_src = {
++	.cmd_rcgr = 0x800c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_ipe_0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_ipe_1_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_jpeg_clk_src = {
++	.cmd_rcgr = 0xb04c,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_bps_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_jpeg_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_lrme_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
++	F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
++	F(269333333, P_CAM_CC_PLL1_OUT_EVEN, 3, 0, 0),
++	F(320000000, P_CAM_CC_PLL2_OUT_EVEN, 1.5, 0, 0),
++	F(400000000, P_CAM_CC_PLL0_OUT_EVEN, 1.5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_lrme_clk_src = {
++	.cmd_rcgr = 0xb0f8,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_lrme_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_lrme_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_mclk0_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(24000000, P_CAM_CC_PLL2_OUT_EVEN, 10, 1, 2),
++	F(33333333, P_CAM_CC_PLL0_OUT_EVEN, 2, 1, 9),
++	F(34285714, P_CAM_CC_PLL2_OUT_EVEN, 14, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_mclk0_clk_src = {
++	.cmd_rcgr = 0x4004,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_mclk0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_mclk0_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_mclk1_clk_src = {
++	.cmd_rcgr = 0x4024,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_mclk0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_mclk1_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_mclk2_clk_src = {
++	.cmd_rcgr = 0x4044,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_mclk0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_mclk2_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_rcg2 cam_cc_mclk3_clk_src = {
++	.cmd_rcgr = 0x4064,
++	.mnd_width = 8,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_mclk0_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_mclk3_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(60000000, P_CAM_CC_PLL0_OUT_EVEN, 10, 0, 0),
++	F(66666667, P_CAM_CC_PLL0_OUT_EVEN, 9, 0, 0),
++	F(73846154, P_CAM_CC_PLL2_OUT_EVEN, 6.5, 0, 0),
++	F(80000000, P_CAM_CC_PLL2_OUT_EVEN, 6, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
++	.cmd_rcgr = 0x6054,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_slow_ahb_clk_src,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "cam_cc_slow_ahb_clk_src",
++		.parent_names = cam_cc_parent_names_0,
++		.num_parents = 6,
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch cam_cc_bps_ahb_clk = {
++	.halt_reg = 0x606c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x606c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_bps_ahb_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_slow_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_bps_areg_clk = {
++	.halt_reg = 0x6050,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x6050,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_bps_areg_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_fast_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_bps_axi_clk = {
++	.halt_reg = 0x6034,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x6034,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_bps_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_bps_clk = {
++	.halt_reg = 0x6024,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x6024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_bps_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_bps_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_camnoc_atb_clk = {
++	.halt_reg = 0xb12c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb12c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_camnoc_atb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_camnoc_axi_clk = {
++	.halt_reg = 0xb124,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb124,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_camnoc_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_cci_clk = {
++	.halt_reg = 0xb0f0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb0f0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_cci_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cci_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_cpas_ahb_clk = {
++	.halt_reg = 0xb11c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb11c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_cpas_ahb_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_slow_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csi0phytimer_clk = {
++	.halt_reg = 0x501c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x501c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csi0phytimer_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_csi0phytimer_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csi1phytimer_clk = {
++	.halt_reg = 0x5040,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5040,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csi1phytimer_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_csi1phytimer_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csi2phytimer_clk = {
++	.halt_reg = 0x5064,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5064,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csi2phytimer_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_csi2phytimer_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csi3phytimer_clk = {
++	.halt_reg = 0x5088,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5088,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csi3phytimer_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_csi3phytimer_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csiphy0_clk = {
++	.halt_reg = 0x5020,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5020,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csiphy0_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csiphy1_clk = {
++	.halt_reg = 0x5044,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5044,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csiphy1_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csiphy2_clk = {
++	.halt_reg = 0x5068,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x5068,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csiphy2_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_csiphy3_clk = {
++	.halt_reg = 0x508c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x508c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_csiphy3_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_fd_core_clk = {
++	.halt_reg = 0xb0c8,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb0c8,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_fd_core_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_fd_core_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_fd_core_uar_clk = {
++	.halt_reg = 0xb0d0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb0d0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_fd_core_uar_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_fd_core_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_icp_apb_clk = {
++	.halt_reg = 0xb084,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb084,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_icp_apb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_icp_atb_clk = {
++	.halt_reg = 0xb078,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb078,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_icp_atb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_icp_clk = {
++	.halt_reg = 0xb0a0,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb0a0,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_icp_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_icp_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_icp_cti_clk = {
++	.halt_reg = 0xb07c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb07c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_icp_cti_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_icp_ts_clk = {
++	.halt_reg = 0xb080,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb080,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_icp_ts_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_0_axi_clk = {
++	.halt_reg = 0x907c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x907c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_0_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_0_clk = {
++	.halt_reg = 0x9024,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_0_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_0_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_0_cphy_rx_clk = {
++	.halt_reg = 0x9078,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9078,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_0_cphy_rx_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_0_csid_clk = {
++	.halt_reg = 0x9050,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9050,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_0_csid_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_0_csid_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_0_dsp_clk = {
++	.halt_reg = 0x9034,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x9034,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_0_dsp_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_0_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_1_axi_clk = {
++	.halt_reg = 0xa054,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xa054,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_1_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_1_clk = {
++	.halt_reg = 0xa024,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xa024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_1_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_1_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_1_cphy_rx_clk = {
++	.halt_reg = 0xa050,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xa050,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_1_cphy_rx_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_1_csid_clk = {
++	.halt_reg = 0xa048,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xa048,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_1_csid_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_1_csid_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_1_dsp_clk = {
++	.halt_reg = 0xa02c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xa02c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_1_dsp_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_1_clk_src",
++			},
++			.num_parents = 1,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_lite_clk = {
++	.halt_reg = 0xb01c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb01c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_lite_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_lite_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_lite_cphy_rx_clk = {
++	.halt_reg = 0xb044,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb044,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_lite_cphy_rx_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_cphy_rx_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ife_lite_csid_clk = {
++	.halt_reg = 0xb03c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb03c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ife_lite_csid_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ife_lite_csid_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_0_ahb_clk = {
++	.halt_reg = 0x703c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x703c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_0_ahb_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_slow_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_0_areg_clk = {
++	.halt_reg = 0x7038,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x7038,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_0_areg_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_fast_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_0_axi_clk = {
++	.halt_reg = 0x7034,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x7034,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_0_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_0_clk = {
++	.halt_reg = 0x7024,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x7024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_0_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ipe_0_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_1_ahb_clk = {
++	.halt_reg = 0x803c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x803c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_1_ahb_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_slow_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_1_areg_clk = {
++	.halt_reg = 0x8038,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8038,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_1_areg_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_fast_ahb_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_1_axi_clk = {
++	.halt_reg = 0x8034,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8034,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_1_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_ipe_1_clk = {
++	.halt_reg = 0x8024,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8024,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_ipe_1_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_ipe_1_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_jpeg_clk = {
++	.halt_reg = 0xb064,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb064,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_jpeg_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_jpeg_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_lrme_clk = {
++	.halt_reg = 0xb110,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb110,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_lrme_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_lrme_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_mclk0_clk = {
++	.halt_reg = 0x401c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x401c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_mclk0_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_mclk0_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_mclk1_clk = {
++	.halt_reg = 0x403c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x403c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_mclk1_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_mclk1_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_mclk2_clk = {
++	.halt_reg = 0x405c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x405c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_mclk2_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_mclk2_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_mclk3_clk = {
++	.halt_reg = 0x407c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x407c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_mclk3_clk",
++			.parent_names = (const char *[]){
++				"cam_cc_mclk3_clk_src",
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_soc_ahb_clk = {
++	.halt_reg = 0xb13c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb13c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_soc_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_sys_tmr_clk = {
++	.halt_reg = 0xb0a8,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0xb0a8,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "cam_cc_sys_tmr_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct gdsc bps_gdsc = {
++	.gdscr = 0x6004,
++	.pd = {
++		.name = "bps_gdsc",
++	},
++	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ipe_0_gdsc = {
++	.gdscr = 0x7004,
++	.pd = {
++		.name = "ipe_0_gdsc",
++	},
++	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ipe_1_gdsc = {
++	.gdscr = 0x8004,
++	.pd = {
++		.name = "ipe_1_gdsc",
++	},
++	.flags = HW_CTRL | POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ife_0_gdsc = {
++	.gdscr = 0x9004,
++	.pd = {
++		.name = "ife_0_gdsc",
++	},
++	.flags = POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc ife_1_gdsc = {
++	.gdscr = 0xa004,
++	.pd = {
++		.name = "ife_1_gdsc",
++	},
++	.flags = POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct gdsc titan_top_gdsc = {
++	.gdscr = 0xb134,
++	.pd = {
++		.name = "titan_top_gdsc",
++	},
++	.flags = POLL_CFG_GDSCR,
++	.pwrsts = PWRSTS_OFF_ON,
++};
++
++static struct clk_regmap *cam_cc_sdm845_clocks[] = {
++	[CAM_CC_BPS_AHB_CLK] = &cam_cc_bps_ahb_clk.clkr,
++	[CAM_CC_BPS_AREG_CLK] = &cam_cc_bps_areg_clk.clkr,
++	[CAM_CC_BPS_AXI_CLK] = &cam_cc_bps_axi_clk.clkr,
++	[CAM_CC_BPS_CLK] = &cam_cc_bps_clk.clkr,
++	[CAM_CC_BPS_CLK_SRC] = &cam_cc_bps_clk_src.clkr,
++	[CAM_CC_CAMNOC_ATB_CLK] = &cam_cc_camnoc_atb_clk.clkr,
++	[CAM_CC_CAMNOC_AXI_CLK] = &cam_cc_camnoc_axi_clk.clkr,
++	[CAM_CC_CCI_CLK] = &cam_cc_cci_clk.clkr,
++	[CAM_CC_CCI_CLK_SRC] = &cam_cc_cci_clk_src.clkr,
++	[CAM_CC_CPAS_AHB_CLK] = &cam_cc_cpas_ahb_clk.clkr,
++	[CAM_CC_CPHY_RX_CLK_SRC] = &cam_cc_cphy_rx_clk_src.clkr,
++	[CAM_CC_CSI0PHYTIMER_CLK] = &cam_cc_csi0phytimer_clk.clkr,
++	[CAM_CC_CSI0PHYTIMER_CLK_SRC] = &cam_cc_csi0phytimer_clk_src.clkr,
++	[CAM_CC_CSI1PHYTIMER_CLK] = &cam_cc_csi1phytimer_clk.clkr,
++	[CAM_CC_CSI1PHYTIMER_CLK_SRC] = &cam_cc_csi1phytimer_clk_src.clkr,
++	[CAM_CC_CSI2PHYTIMER_CLK] = &cam_cc_csi2phytimer_clk.clkr,
++	[CAM_CC_CSI2PHYTIMER_CLK_SRC] = &cam_cc_csi2phytimer_clk_src.clkr,
++	[CAM_CC_CSI3PHYTIMER_CLK] = &cam_cc_csi3phytimer_clk.clkr,
++	[CAM_CC_CSI3PHYTIMER_CLK_SRC] = &cam_cc_csi3phytimer_clk_src.clkr,
++	[CAM_CC_CSIPHY0_CLK] = &cam_cc_csiphy0_clk.clkr,
++	[CAM_CC_CSIPHY1_CLK] = &cam_cc_csiphy1_clk.clkr,
++	[CAM_CC_CSIPHY2_CLK] = &cam_cc_csiphy2_clk.clkr,
++	[CAM_CC_CSIPHY3_CLK] = &cam_cc_csiphy3_clk.clkr,
++	[CAM_CC_FAST_AHB_CLK_SRC] = &cam_cc_fast_ahb_clk_src.clkr,
++	[CAM_CC_FD_CORE_CLK] = &cam_cc_fd_core_clk.clkr,
++	[CAM_CC_FD_CORE_CLK_SRC] = &cam_cc_fd_core_clk_src.clkr,
++	[CAM_CC_FD_CORE_UAR_CLK] = &cam_cc_fd_core_uar_clk.clkr,
++	[CAM_CC_ICP_APB_CLK] = &cam_cc_icp_apb_clk.clkr,
++	[CAM_CC_ICP_ATB_CLK] = &cam_cc_icp_atb_clk.clkr,
++	[CAM_CC_ICP_CLK] = &cam_cc_icp_clk.clkr,
++	[CAM_CC_ICP_CLK_SRC] = &cam_cc_icp_clk_src.clkr,
++	[CAM_CC_ICP_CTI_CLK] = &cam_cc_icp_cti_clk.clkr,
++	[CAM_CC_ICP_TS_CLK] = &cam_cc_icp_ts_clk.clkr,
++	[CAM_CC_IFE_0_AXI_CLK] = &cam_cc_ife_0_axi_clk.clkr,
++	[CAM_CC_IFE_0_CLK] = &cam_cc_ife_0_clk.clkr,
++	[CAM_CC_IFE_0_CLK_SRC] = &cam_cc_ife_0_clk_src.clkr,
++	[CAM_CC_IFE_0_CPHY_RX_CLK] = &cam_cc_ife_0_cphy_rx_clk.clkr,
++	[CAM_CC_IFE_0_CSID_CLK] = &cam_cc_ife_0_csid_clk.clkr,
++	[CAM_CC_IFE_0_CSID_CLK_SRC] = &cam_cc_ife_0_csid_clk_src.clkr,
++	[CAM_CC_IFE_0_DSP_CLK] = &cam_cc_ife_0_dsp_clk.clkr,
++	[CAM_CC_IFE_1_AXI_CLK] = &cam_cc_ife_1_axi_clk.clkr,
++	[CAM_CC_IFE_1_CLK] = &cam_cc_ife_1_clk.clkr,
++	[CAM_CC_IFE_1_CLK_SRC] = &cam_cc_ife_1_clk_src.clkr,
++	[CAM_CC_IFE_1_CPHY_RX_CLK] = &cam_cc_ife_1_cphy_rx_clk.clkr,
++	[CAM_CC_IFE_1_CSID_CLK] = &cam_cc_ife_1_csid_clk.clkr,
++	[CAM_CC_IFE_1_CSID_CLK_SRC] = &cam_cc_ife_1_csid_clk_src.clkr,
++	[CAM_CC_IFE_1_DSP_CLK] = &cam_cc_ife_1_dsp_clk.clkr,
++	[CAM_CC_IFE_LITE_CLK] = &cam_cc_ife_lite_clk.clkr,
++	[CAM_CC_IFE_LITE_CLK_SRC] = &cam_cc_ife_lite_clk_src.clkr,
++	[CAM_CC_IFE_LITE_CPHY_RX_CLK] = &cam_cc_ife_lite_cphy_rx_clk.clkr,
++	[CAM_CC_IFE_LITE_CSID_CLK] = &cam_cc_ife_lite_csid_clk.clkr,
++	[CAM_CC_IFE_LITE_CSID_CLK_SRC] = &cam_cc_ife_lite_csid_clk_src.clkr,
++	[CAM_CC_IPE_0_AHB_CLK] = &cam_cc_ipe_0_ahb_clk.clkr,
++	[CAM_CC_IPE_0_AREG_CLK] = &cam_cc_ipe_0_areg_clk.clkr,
++	[CAM_CC_IPE_0_AXI_CLK] = &cam_cc_ipe_0_axi_clk.clkr,
++	[CAM_CC_IPE_0_CLK] = &cam_cc_ipe_0_clk.clkr,
++	[CAM_CC_IPE_0_CLK_SRC] = &cam_cc_ipe_0_clk_src.clkr,
++	[CAM_CC_IPE_1_AHB_CLK] = &cam_cc_ipe_1_ahb_clk.clkr,
++	[CAM_CC_IPE_1_AREG_CLK] = &cam_cc_ipe_1_areg_clk.clkr,
++	[CAM_CC_IPE_1_AXI_CLK] = &cam_cc_ipe_1_axi_clk.clkr,
++	[CAM_CC_IPE_1_CLK] = &cam_cc_ipe_1_clk.clkr,
++	[CAM_CC_IPE_1_CLK_SRC] = &cam_cc_ipe_1_clk_src.clkr,
++	[CAM_CC_JPEG_CLK] = &cam_cc_jpeg_clk.clkr,
++	[CAM_CC_JPEG_CLK_SRC] = &cam_cc_jpeg_clk_src.clkr,
++	[CAM_CC_LRME_CLK] = &cam_cc_lrme_clk.clkr,
++	[CAM_CC_LRME_CLK_SRC] = &cam_cc_lrme_clk_src.clkr,
++	[CAM_CC_MCLK0_CLK] = &cam_cc_mclk0_clk.clkr,
++	[CAM_CC_MCLK0_CLK_SRC] = &cam_cc_mclk0_clk_src.clkr,
++	[CAM_CC_MCLK1_CLK] = &cam_cc_mclk1_clk.clkr,
++	[CAM_CC_MCLK1_CLK_SRC] = &cam_cc_mclk1_clk_src.clkr,
++	[CAM_CC_MCLK2_CLK] = &cam_cc_mclk2_clk.clkr,
++	[CAM_CC_MCLK2_CLK_SRC] = &cam_cc_mclk2_clk_src.clkr,
++	[CAM_CC_MCLK3_CLK] = &cam_cc_mclk3_clk.clkr,
++	[CAM_CC_MCLK3_CLK_SRC] = &cam_cc_mclk3_clk_src.clkr,
++	[CAM_CC_PLL0] = &cam_cc_pll0.clkr,
++	[CAM_CC_PLL0_OUT_EVEN] = &cam_cc_pll0_out_even.clkr,
++	[CAM_CC_PLL1] = &cam_cc_pll1.clkr,
++	[CAM_CC_PLL1_OUT_EVEN] = &cam_cc_pll1_out_even.clkr,
++	[CAM_CC_PLL2] = &cam_cc_pll2.clkr,
++	[CAM_CC_PLL2_OUT_EVEN] = &cam_cc_pll2_out_even.clkr,
++	[CAM_CC_PLL3] = &cam_cc_pll3.clkr,
++	[CAM_CC_PLL3_OUT_EVEN] = &cam_cc_pll3_out_even.clkr,
++	[CAM_CC_SLOW_AHB_CLK_SRC] = &cam_cc_slow_ahb_clk_src.clkr,
++	[CAM_CC_SOC_AHB_CLK] = &cam_cc_soc_ahb_clk.clkr,
++	[CAM_CC_SYS_TMR_CLK] = &cam_cc_sys_tmr_clk.clkr,
++};
++
++static struct gdsc *cam_cc_sdm845_gdscs[] = {
++	[BPS_GDSC] = &bps_gdsc,
++	[IPE_0_GDSC] = &ipe_0_gdsc,
++	[IPE_1_GDSC] = &ipe_1_gdsc,
++	[IFE_0_GDSC] = &ife_0_gdsc,
++	[IFE_1_GDSC] = &ife_1_gdsc,
++	[TITAN_TOP_GDSC] = &titan_top_gdsc,
++};
++
++static const struct regmap_config cam_cc_sdm845_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0xd004,
++	.fast_io	= true,
++};
++
++static const struct qcom_cc_desc cam_cc_sdm845_desc = {
++	.config = &cam_cc_sdm845_regmap_config,
++	.clks = cam_cc_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(cam_cc_sdm845_clocks),
++	.gdscs = cam_cc_sdm845_gdscs,
++	.num_gdscs = ARRAY_SIZE(cam_cc_sdm845_gdscs),
++};
++
++static const struct of_device_id cam_cc_sdm845_match_table[] = {
++	{ .compatible = "qcom,sdm845-camcc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, cam_cc_sdm845_match_table);
++
++static int cam_cc_sdm845_probe(struct platform_device *pdev)
++{
++	struct regmap *regmap;
++	struct alpha_pll_config cam_cc_pll_config = { };
++
++	regmap = qcom_cc_map(pdev, &cam_cc_sdm845_desc);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	cam_cc_pll_config.l = 0x1f;
++	cam_cc_pll_config.alpha = 0x4000;
++	clk_fabia_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll_config);
++
++	cam_cc_pll_config.l = 0x2a;
++	cam_cc_pll_config.alpha = 0x1556;
++	clk_fabia_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll_config);
++
++	cam_cc_pll_config.l = 0x32;
++	cam_cc_pll_config.alpha = 0x0;
++	clk_fabia_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll_config);
++
++	cam_cc_pll_config.l = 0x14;
++	clk_fabia_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll_config);
++
++	return qcom_cc_really_probe(pdev, &cam_cc_sdm845_desc, regmap);
++}
++
++static struct platform_driver cam_cc_sdm845_driver = {
++	.probe	= cam_cc_sdm845_probe,
++	.driver	= {
++		.name = "sdm845-camcc",
++		.of_match_table = cam_cc_sdm845_match_table,
++	},
++};
++
++static int __init cam_cc_sdm845_init(void)
++{
++	return platform_driver_register(&cam_cc_sdm845_driver);
++}
++subsys_initcall(cam_cc_sdm845_init);
++
++static void __exit cam_cc_sdm845_exit(void)
++{
++	platform_driver_unregister(&cam_cc_sdm845_driver);
++}
++module_exit(cam_cc_sdm845_exit);
++
++MODULE_DESCRIPTION("QTI CAM_CC SDM845 Driver");
++MODULE_LICENSE("GPL v2");
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
