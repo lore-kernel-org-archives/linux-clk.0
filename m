@@ -1,31 +1,28 @@
-Return-Path: <robert.jarzmik@free.fr>
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>,  Rob Herring <robh+dt@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  linux-arm-kernel@lists.infradead.org,  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] clk: pxa: export 32kHz PLL
-References: <20180627194124.26366-1-robert.jarzmik@free.fr>
-Date: Thu, 05 Jul 2018 07:34:10 +0200
-In-Reply-To: <20180627194124.26366-1-robert.jarzmik@free.fr> (Robert Jarzmik's
-	message of "Wed, 27 Jun 2018 21:41:23 +0200")
-Message-ID: <87d0w2gsa5.fsf@belgarion.home>
+Return-Path: <sudeep.holla@arm.com>
+Date: Mon, 30 Jul 2018 12:36:52 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
+Message-ID: <20180730113652.GA16266@e107155-lin>
+References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Robert Jarzmik <robert.jarzmik@free.fr> writes:
-
-> This clock is especially used by the RTC driver, so export it so that
-> devicetree users can use it.
+On Fri, Jul 27, 2018 at 07:31:52PM +0530, Amit Daniel Kachhap wrote:
+> This fix rounds the clock rate properly by using quotient and not
+> remainder in the calculation. This issue was found while testing HDMI
+> in the Juno platform.
 >
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> ---
-> Since v2: fix missing parenthesis in clk-pxa25x.c and clk-pxa3xx.c
+Good find, thanks.
 
-Hi Michael and Stephen,
-
-Could you have a look please ?
-
-Cheers.
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
 --
-Robert
+Regards,
+Sudeep
