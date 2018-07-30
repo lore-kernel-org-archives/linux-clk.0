@@ -1,113 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:17539 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729639AbeGaHSD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:03 -0400
-From: Erin Lo <erin.lo@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC: <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
-        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 06/10] clk: mediatek: Add flags support for mtk_gate data
-Date: Tue, 31 Jul 2018 13:38:03 +0800
-Message-ID: <1533015487-60189-7-git-send-email-erin.lo@mediatek.com>
-In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
-References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Mon, 30 Jul 2018 20:41:31 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	robh+dt@kernel.org, linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com, mp-cs@actions-semi.com,
+	96boards@ucrobotics.com, devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com, bdong@ucrobotics.com,
+	manivannanece23@gmail.com, thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com
+Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
+ SoCs
+Message-ID: <20180730151131.GA28633@mani>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Weiyi Lu <weiyi.lu@mediatek.com>
+Hi Andreas,
 
-On some Mediatek platforms, there are critical clocks of
-clock gate type.
-To register clock gate with flags CLK_IS_CRITICAL,
-we need to add the flags field in mtk_gate data and register APIs.
+On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
+> Hi Mani,
+> 
+> Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
+> > This patchset adds Reset Controller (RMU) support for Actions Semi
+> > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+> > the clock subsystem in hardware. Hence, in software we integrate RMU
+> > support into common clock driver inorder to maintain compatibility.
+> 
+> Can this not be placed into drivers/reset/ by using mfd-simple with a
+> sub-node in DT?
+> 
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- drivers/clk/mediatek/clk-gate.c | 5 +++--
- drivers/clk/mediatek/clk-gate.h | 3 ++-
- drivers/clk/mediatek/clk-mtk.c  | 3 ++-
- drivers/clk/mediatek/clk-mtk.h  | 1 +
- 4 files changed, 8 insertions(+), 4 deletions(-)
+Actually I was not sure where to place this reset controller driver. When I
+looked into other similar ones such as sunxi, they just integrated into the
+clk subsystem. So I just chose that path. But yeah, this is hacky!
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 934bf0e..25d25c3 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops)
-+		const struct clk_ops *ops,
-+		unsigned int flags)
- {
- 	struct mtk_clk_gate *cg;
- 	struct clk *clk;
-@@ -168,7 +169,7 @@ struct clk *mtk_clk_register_gate(
- 		return ERR_PTR(-ENOMEM);
- 
- 	init.name = name;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = flags | CLK_SET_RATE_PARENT;
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 	init.ops = ops;
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 72ef89b..631cd3a 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops);
-+		const struct clk_ops *ops,
-+		unsigned int flags);
- 
- #endif /* __DRV_CLK_GATE_H */
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 50becd0..15310f8 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -131,7 +131,8 @@ int mtk_clk_register_gates(struct device_node *node,
- 				gate->regs->set_ofs,
- 				gate->regs->clr_ofs,
- 				gate->regs->sta_ofs,
--				gate->shift, gate->ops);
-+				gate->shift, gate->ops,
-+				gate->flags);
- 
- 		if (IS_ERR(clk)) {
- 			pr_err("Failed to register clk %s: %ld\n",
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 61693f6..c3285ff 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -217,6 +217,7 @@ struct mtk_gate {
- 	const struct mtk_gate_regs *regs;
- 	int shift;
- 	const struct clk_ops *ops;
-+	unsigned int flags;
- };
- 
- int mtk_clk_register_gates(struct device_node *node,
--- 
-1.9.1
+But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
+are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
+RMU has only 2 registers, the HW designers decided to use up the CMU memory
+map. So, maybe syscon would be best option I think. What is your opinion?
 
+Even if we go for syscon, we should place the reset driver within clk
+framework as I can see other SoCs like Mediatek are doing the same. But again
+I'm not sure!
+
+Thanks,
+Mani
+
+> Regards,
+> Andreas
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
