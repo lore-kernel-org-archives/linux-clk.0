@@ -1,54 +1,184 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
-	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH 2/3] clk: meson: add sub EMMC clock dt-bindings IDs
-Date: Tue, 3 Jul 2018 14:57:15 +0000
-Message-ID: <20180703145716.31860-3-yixun.lan@amlogic.com>
-In-Reply-To: <20180703145716.31860-1-yixun.lan@amlogic.com>
-References: <20180703145716.31860-1-yixun.lan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v3 2/2] clk: Add functions to get optional clocks
+Date: Mon, 30 Jul 2018 14:31:49 +0100
+Message-Id: <1532957509-14541-3-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
+References: <1532957509-14541-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add two clock bindings IDs which provided by the EMMC clock controller,
-These two clocks will be used by EMMC or NAND driver.
+Behaves the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- include/dt-bindings/clock/emmc-clkc.h | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
- create mode 100644 include/dt-bindings/clock/emmc-clkc.h
+v3:
+ - No changes.
+---
+ drivers/clk/clk-devres.c | 18 ++++++++++++++++--
+ drivers/clk/clkdev.c     | 17 +++++++++++++++--
+ include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/clock/emmc-clkc.h b/include/dt-bindings/clock/emmc-clkc.h
-new file mode 100644
-index 000000000000..d9972c400e58
---- /dev/null
-+++ b/include/dt-bindings/clock/emmc-clkc.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson EMMC sub clock tree IDs
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..a2bb01a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
+ 	clk_put(*(struct clk **)res);
+ }
+ 
+-struct clk *devm_clk_get(struct device *dev, const char *id)
++static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
+ {
+ 	struct clk **ptr, *clk;
+ 
+@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk = clk_get(dev, id);
++	if (!optional)
++		clk = clk_get(dev, id);
++	else
++		clk = clk_get_optional(dev, id);
+ 	if (!IS_ERR(clk)) {
+ 		*ptr = clk;
+ 		devres_add(dev, ptr);
+@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 
+ 	return clk;
+ }
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, false);
++}
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, true);
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index a710333..2245ba6 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -219,21 +219,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ }
+ EXPORT_SYMBOL(clk_get_sys);
+ 
+-struct clk *clk_get(struct device *dev, const char *con_id)
++static struct clk *internal_clk_get(struct device *dev, const char *con_id,
++				    bool optional)
+ {
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+ 	struct clk *clk;
+ 
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
++					   optional);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
+ 	}
+ 
+ 	return clk_get_sys(dev_id, con_id);
+ }
++
++struct clk *clk_get(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, false);
++}
+ EXPORT_SYMBOL(clk_get);
+ 
++struct clk *clk_get_optional(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, true);
++}
++EXPORT_SYMBOL(clk_get_optional);
++
+ void clk_put(struct clk *clk)
+ {
+ 	__clk_put(clk);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index de0e5e0..58ec7bc 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+ struct clk *clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * clk_get_optional - lookup and obtain a reference to optional clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
 + *
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ * Behaves the same as clk_get except where there is no clock producer. In this
++ * case, instead of returning -ENOENT, the function returns NULL.
 + */
++struct clk *clk_get_optional(struct device *dev, const char *id);
 +
-+#ifndef __EMMC_CLKC_H
-+#define __EMMC_CLKC_H
++/**
+  * clk_bulk_get - lookup and obtain a number of references to clock producer.
+  * @dev: device for clock "consumer"
+  * @num_clks: the number of clk_bulk_data
+@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
 +
-+#define CLKID_EMMC_C_MUX				0
-+#define CLKID_EMMC_C_DIV				1
++/**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+  * @dev: device for clock "consumer"
+@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	return NULL;
++}
 +
-+#endif
+ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 					    struct clk_bulk_data *clks)
+ {
+@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
 -- 
-2.18.0
+2.7.4
