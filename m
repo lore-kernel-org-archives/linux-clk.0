@@ -1,95 +1,89 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org,
-	lee.jones@linaro.org,
-	arnd@arndb.de
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 00/10] Add Reset Controller support for Actions Semi Owl SoCs
-Date: Wed,  1 Aug 2018 09:09:05 +0530
-Message-Id: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <e89f28253070abae5dc755800feee500cc3396ce.camel@baylibre.com>
+Subject: Re: [PATCH v3 2/2] clk: meson: add sub MMC clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
+ <narmstrong@baylibre.com>,  Yixun Lan <yixun.lan@amlogic.com>
+Cc: Rob Herring <robh@kernel.org>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Kevin Hilman <khilman@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Boris Brezillon <boris.brezillon@bootlin.com>,  Liang Yang
+ <liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Miquel
+ Raynal <miquel.raynal@bootlin.com>, Carlo Caione <carlo@caione.org>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
+Date: Mon, 30 Jul 2018 10:57:26 +0200
+In-Reply-To: <153270995155.48062.4302847978258086624@swboyd.mtv.corp.google.com>
+References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+	 <20180712211244.11428-3-yixun.lan@amlogic.com>
+	 <153261840298.48062.2497103873681297587@swboyd.mtv.corp.google.com>
+	 <f52d2511-bab7-2c39-cea7-8702e27d2ef8@amlogic.com>
+	 <153270970080.48062.18399022907046343950@swboyd.mtv.corp.google.com>
+	 <153270995155.48062.4302847978258086624@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds Reset Controller (RMU) support for Actions Semi
-Owl SoCs, S900 and S700. For the Owl SoCs, RMU's registers has been
-integrated into the CMU memory map in hardware. Hence, in this patchset
-the CMU driver has been converted to syscon so that the same memory map
-can be resued by both CMU and RMU drivers. Finally, the support for RMU
-in S700 and S900 SoCs are added.
+On Fri, 2018-07-27 at 09:45 -0700, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2018-07-27 09:41:40)
+> > Quoting Yixun Lan (2018-07-27 07:52:23)
+> > > HI Stephen:
+> > > 
+> > > On 07/26/2018 11:20 PM, Stephen Boyd wrote:
+> > > > Quoting Yixun Lan (2018-07-12 14:12:44)
+> > > > > diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..36c4c7cd69a6
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/clk/meson/mmc-clkc.c
+> > > > > @@ -0,0 +1,367 @@
+> > > > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > > > > +/*
+> > > > > + * Amlogic Meson MMC Sub Clock Controller Driver
+> > > > > + *
+> > > > > + * Copyright (c) 2017 Baylibre SAS.
+> > > > > + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> > > > > + *
+> > > > > + * Copyright (c) 2018 Amlogic, inc.
+> > > > > + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/clk.h>
+> > > > 
+> > > > Is this include used?
+> > > > 
+> > > 
+> > > this is needed by clk_get_rate()
+> > > see drivers/clk/meson/mmc-clkc.c:204
+> > 
+> > Hmm ok. That's unfortunate.
+> 
+> You should be able to read the hardware to figure out the clk frequency?
+> This may be a sign that the phase clk_ops are bad and should be passing
+> in the frequency of the parent clk to the op so that phase can be
+> calculated. Jerome?
+> 
 
-This patch series depends on the recently posted S700 clk series:
-"[PATCH v7 0/5] Add clock driver for Actions S700 SoC". For the S700 clk
-series, driver and bindings patches are applied through the clk tree.
-But the DTS patches are not yet picked up by the platform maintainer,
-Andreas.
+It could be a away to do it but:
+a) if we modify the API, we would need to update every clock driver using it.
+   There is not that many users of the phase API but still, it is annoying
+b) This particular driver need the parent rate, other might need something else
+I guess. (parent phase ??, duty cycle ??) 
 
-Hence, Andreas is expected to pick the DTS patches in this series once
-reviewed by the maintainers along with S700 clk DTS patches.
+I think the real problem here it that you are using the consumer API. You should
+be using the provider API like clk_hw_get_rate. Look at the clk-divider.c which
+use clk_hw_round_rate() on the parent clock. 
 
-Note: I have only tested the S900 part, S700 is only compile tested. But
-there is no reason for it to fail.
+Clock drivers should deal with 'struct clk_hw', not 'struct clk'. I think it was
+mentioned in the past that the 'clk' within 'struct clk_hw' might be removed
+someday.
 
-Thanks,
-Mani
+Yixun, please don't put your clock driver within the controller driver. Please
+implement your 'phase-delay' clock in its own file and export the ops, like
+every other clock in the amlogic directory. Also, please review your list of
+'#define', some of them are unnecessary copy/paste from the MMC driver.
 
-Changes in v2:
+Regards
 
-* Converted the CMU and RMU drivers to syscon for a more cleaner
-  approach
-* Declared the owl_reset_map structs to const
-* Used regmap_update_bits instead of a combined regmap_read and write
-* Removed unused headers in RMU drivers
-* Added MAINTAINERS entry for the RMU driver and bindings
-
-Manivannan Sadhasivam (10):
-  dt-bindings: clock: Add syscon support to Actions Semi Owl SoCs
-  arm64: dts: actions: Convert Owl SoCs clock-controller nodes to syscon
-  clk: actions: Add syscon support for Actions Semi Owl SoCs
-  dt-bindings: reset: Add Actions Semi S900 SoC RMU support
-  dt-bindings: reset: Add Actions Semi S700 SoC RMU support
-  arm64: dts: actions: Add RMU node for Actions Semi S900 SoC
-  arm64: dts: actions: Add RMU node for Actions Semi S700 SoC
-  reset: Add Actions Semi S900 SoC Reset Management Unit support
-  reset: Add Actions Semi S700 SoC Reset Management Unit support
-  MAINTAINERS: Add entry for Actions Semi Owl SoCs Reset Management Unit
-
- .../bindings/clock/actions,owl-cmu.txt        |  21 +-
- .../bindings/reset/actions,owl-reset.txt      |  35 +++
- MAINTAINERS                                   |   4 +
- arch/arm64/boot/dts/actions/s700.dtsi         |  18 +-
- arch/arm64/boot/dts/actions/s900.dtsi         |  18 +-
- drivers/clk/actions/owl-common.c              |  20 +-
- drivers/reset/Kconfig                         |   6 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-owl.c                     | 225 ++++++++++++++++++
- include/dt-bindings/reset/actions,s700-rmu.h  |  34 +++
- include/dt-bindings/reset/actions,s900-rmu.h  |  65 +++++
- 11 files changed, 416 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/actions,owl-reset.txt
- create mode 100644 drivers/reset/reset-owl.c
- create mode 100644 include/dt-bindings/reset/actions,s700-rmu.h
- create mode 100644 include/dt-bindings/reset/actions,s900-rmu.h
-
--- 
-2.17.1
+Jerome
