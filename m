@@ -1,250 +1,57 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 1/2] clk: qcom: Add support for RCG to register for DFS
-Date: Mon, 16 Jul 2018 11:07:47 +0530
-Message-Id: <1531719468-8458-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
-References: <1531719468-8458-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+ <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com> <c82487a125591c14e66ba56dc3202aa0093f0aba.camel@linux.intel.com>
+In-Reply-To: <c82487a125591c14e66ba56dc3202aa0093f0aba.camel@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Jul 2018 13:29:49 +0200
+Message-ID: <CAMuHMdWXfS9gFxOq5nvJWx2KMOae5_c8Lb0omeE3P9yjyYZ7gA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@verge.net.au>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Dynamic Frequency switch is a feature of clock controller by which request
-from peripherals allows automatic switching frequency of input clock
-without SW intervention. There are various performance levels associated
-with a root clock. When the input performance state changes, the source
-clocks and division ratios of the new performance state are loaded on to
-RCG via HW and the RCG switches to new clock frequency when the RCG is in
-DFS HW enabled mode.
+Hi Andy,
 
-Register the root clock generators(RCG) to switch to use the dfs clock ops
-in the cases where DFS is enabled. The clk_round_rate() called by the clock
-consumer would invoke the dfs determine clock ops and would read the DFS
-performance level registers to identify all the frequencies supported and
-update the frequency table. The DFS clock consumers would maintain these
-frequency mapping and request the desired performance levels.
+On Mon, Jul 30, 2018 at 12:57 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Mon, 2018-07-30 at 10:55 +0200, Geert Uytterhoeven wrote:
+> > On Mon, Jul 30, 2018 at 10:36 AM Phil Edworthy
+> > <phil.edworthy@renesas.com> wrote:
+>
+> > > +struct clk *of_clk_get_by_name_optional(struct device_node *np,
+> > > +                                       const char *name)
+> > > +{
+> > > +       if (!np)
+> > > +               return ERR_PTR(-ENOENT);
+> >
+> > Shouldn't this return NULL?
+> > Or let __of_clk_get_by_name() handle that (cfr. above)?
+> >
+> > Hmm, of_clk_get_by_name() has a similar check, while the current
+> > __of_clk_get_by_name() already handle np == NULL, too.
+>
+> This check is needed to prevent NULL pointer dereference below.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h  |   2 +
- drivers/clk/qcom/clk-rcg2.c | 173 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 175 insertions(+)
+Thank, I had missed that unexpected detail.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index b209a2f..bffb625 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -161,4 +161,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
+> > > +
+> > > +       return __of_clk_get_by_name(np, np->full_name, name, true);
+> > > +}
 
-+extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-+			     struct clk_rcg2 **rcgs, int num_clks);
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4..f8f1417 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/regmap.h>
- #include <linux/math64.h>
-+#include <linux/slab.h>
+Gr{oetje,eeting}s,
 
- #include <asm/div64.h>
+                        Geert
 
-@@ -40,6 +41,14 @@
- #define N_REG			0xc
- #define D_REG			0x10
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-+/* Dynamic Frequency Scaling */
-+#define MAX_PERF_LEVEL		8
-+#define SE_CMD_DFSR_OFFSET	0x14
-+#define SE_CMD_DFS_EN		BIT(0)
-+#define SE_PERF_DFSR(level)	(0x1c + 0x4 * (level))
-+#define SE_PERF_M_DFSR(level)	(0x5c + 0x4 * (level))
-+#define SE_PERF_N_DFSR(level)	(0x9c + 0x4 * (level))
-+
- enum freq_policy {
- 	FLOOR,
- 	CEIL,
-@@ -929,3 +938,167 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-+
-+/* Common APIs to be used for DFS based RCGR */
-+static unsigned long clk_rcg2_calculate_freq(struct clk_hw *hw,
-+		int level, struct freq_tbl *f)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct clk_hw *p;
-+	unsigned long prate = 0;
-+	u32 val, mask, cfg, m_off, n_off, offset, mode;
-+	int i, ret, num_parents;
-+
-+	offset = SE_PERF_DFSR(level);
-+	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
-+	if (ret)
-+		return ret;
-+
-+	mask = BIT(rcg->hid_width) - 1;
-+	f->pre_div = cfg & mask ? (cfg & mask) : 1;
-+
-+	mode = cfg & CFG_MODE_MASK;
-+	mode >>= CFG_MODE_SHIFT;
-+
-+	cfg &= CFG_SRC_SEL_MASK;
-+	cfg >>= CFG_SRC_SEL_SHIFT;
-+
-+	num_parents = clk_hw_get_num_parents(hw);
-+	for (i = 0; i < num_parents; i++) {
-+		if (cfg == rcg->parent_map[i].cfg) {
-+			f->src = rcg->parent_map[i].src;
-+			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
-+			prate = clk_hw_get_rate(p);
-+		}
-+	}
-+
-+	if (!mode)
-+		goto done;
-+
-+	/* Calculate M & N values */
-+	m_off = SE_PERF_M_DFSR(level);
-+	n_off = SE_PERF_N_DFSR(level);
-+
-+	mask = BIT(rcg->mnd_width) - 1;
-+	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off, &val);
-+	if (ret) {
-+		pr_err("Failed to read M offset register\n");
-+		return ret;
-+	}
-+	val &= mask;
-+	f->m = val;
-+
-+	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off, &val);
-+	if (ret) {
-+		pr_err("Failed to read N offset register\n");
-+		return ret;
-+	}
-+	/* val ~(N-M) */
-+	val = ~val;
-+	val &= mask;
-+	val += f->m;
-+	f->n = val;
-+done:
-+	return calc_rate(prate, f->m, f->n, mode, f->pre_div);
-+}
-+
-+static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
-+{
-+	struct freq_tbl *freq_tbl;
-+	unsigned long calc_freq;
-+	int i;
-+
-+	freq_tbl = kcalloc(MAX_PERF_LEVEL, sizeof(*freq_tbl),
-+				GFP_KERNEL);
-+	if (!freq_tbl)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < MAX_PERF_LEVEL; i++) {
-+		calc_freq = clk_rcg2_calculate_freq(&rcg->clkr.hw,
-+							i, &freq_tbl[i]);
-+		if (calc_freq < 0) {
-+			kfree(freq_tbl);
-+			return calc_freq;
-+		}
-+
-+		freq_tbl[i].freq = calc_freq;
-+	}
-+	rcg->freq_tbl = freq_tbl;
-+
-+	return 0;
-+}
-+
-+static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	if (!rcg->freq_tbl) {
-+		ret = clk_rcg2_dfs_populate_freq_table(rcg);
-+		if (ret) {
-+			pr_err("Failed to update DFS tables for %s\n",
-+					clk_hw_get_name(hw));
-+			return ret;
-+		}
-+	}
-+
-+	return clk_rcg2_shared_ops.determine_rate(hw, req);
-+}
-+
-+static const struct clk_ops clk_rcg2_dfs_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.determine_rate = clk_rcg2_dfs_determine_rate,
-+};
-+
-+static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
-+{
-+	struct clk_init_data *init;
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
-+			  &val);
-+	if (ret)
-+		return -EINVAL;
-+
-+	if (!(val & SE_CMD_DFS_EN))
-+		return 0;
-+
-+	init = kzalloc(sizeof(*init), GFP_KERNEL);
-+	if (!init)
-+		return -ENOMEM;
-+
-+	init->name = rcg->clkr.hw.init->name;
-+	init->flags = rcg->clkr.hw.init->flags;
-+	init->parent_names = rcg->clkr.hw.init->parent_names;
-+	init->num_parents = rcg->clkr.hw.init->num_parents;
-+	init->ops = &clk_rcg2_dfs_ops;
-+
-+	rcg->clkr.hw.init = init;
-+	rcg->freq_tbl = NULL;
-+
-+	pr_debug("DFS registered for clk %s\n", init->name);
-+
-+	return 0;
-+}
-+
-+int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-+			    struct clk_rcg2 **rcgs, int num_clks)
-+{
-+	int i, ret = 0;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		ret = clk_rcg2_enable_dfs(rcgs[i], regmap);
-+		if (ret) {
-+			const char *name = rcgs[i]->clkr.hw.init->name;
-+
-+			pr_err("DFS register failed for clk %s\n", name);
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
