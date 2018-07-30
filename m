@@ -1,117 +1,55 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 13/18] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
-Date: Wed, 18 Jul 2018 16:24:53 +0530
-Message-Id: <20180718105458.22304-14-jagan@amarulasolutions.com>
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f67.google.com ([209.85.214.67]:50508 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731961AbeGaAuC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Jul 2018 20:50:02 -0400
+Date: Mon, 30 Jul 2018 17:12:44 -0600
+From: Rob Herring <robh@kernel.org>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3.1 08/10] dt-bindings: sun4i-drm: add HDMI VCC supply
+ property for sun8i-dw-hdmi
+Message-ID: <20180730231244.GA3966@rob-hp-laptop>
+References: <20180726171257.6688-1-icenowy@aosc.io>
+ <20180726171257.6688-9-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180726171257.6688-9-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable all necessary HDMI pipeline nodes with HDMI out
-connector on Bananpi-m64 board.
+On Fri, Jul 27, 2018 at 01:12:55AM +0800, Icenowy Zheng wrote:
+> Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
+> pin, which is the VCC of HDMI part.
+> 
+> Add a supply property to specify HVCC's regulator in the device tree.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes in v3.1:
+> - New patch.
+> 
+>  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index fdb8fb29033f..cb4769913e89 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -97,6 +97,9 @@ Required properties:
+>      first port should be the input endpoint. The second should be the
+>      output, usually to an HDMI connector.
+>  
+> +Optional properties:
+> +  - hdmi-supply: the VCC power supply of the controller
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
+"hdmi" doesn't sound like the name of the supply. "hvcc" or just "vcc" 
+would be more appropriate.
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 094cfed13df9..7adba2c8f6e5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -120,6 +146,10 @@
- 	};
- };
- 
-+&mixer1 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
-@@ -300,6 +330,10 @@
- 	vcc-hdmi-supply = <&reg_dldo1>;
- };
- 
-+&tcon1 {
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_pins_a>;
--- 
-2.17.1
+Rob
