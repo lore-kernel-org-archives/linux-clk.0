@@ -1,565 +1,127 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36995 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeGBHfv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Jul 2018 03:35:51 -0400
-Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-To: "A.s. Dong" <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <66bc8ac0-913a-f444-e554-ade4df1306b6@pengutronix.de>
- <AM0PR04MB4211ED5BDFC0105477AD4F8B80490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <b67fc42f-5cf8-70ac-e291-eb62ca2e7cb7@pengutronix.de>
-Date: Mon, 2 Jul 2018 09:35:45 +0200
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, Simon Horman
+	<horms@verge.net.au>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk <linux-clk@vger.kernel.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux ARM
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 1/2] clk: Add of_clk_get_by_name_optional() function
+Date: Mon, 30 Jul 2018 09:25:13 +0000
+Message-ID: 
+ <TY1PR01MB17696DB07249128850A58572F52F0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1532939768-7018-1-git-send-email-phil.edworthy@renesas.com>
+ <1532939768-7018-2-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdUWWb7uyiG6NdRaJxM0X4JfioWx=o9J7jD18rgiTz1m4w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <AM0PR04MB4211ED5BDFC0105477AD4F8B80490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="drlh8MmxVokNOr1lLdJJTYnxaE9HF0NuL"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---drlh8MmxVokNOr1lLdJJTYnxaE9HF0NuL
-Content-Type: multipart/mixed; boundary="jY1FdNTaQidq5TUD8QlGn8mChncVUIXHe";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "A.s. Dong" <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Message-ID: <b67fc42f-5cf8-70ac-e291-eb62ca2e7cb7@pengutronix.de>
-Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging unit
-References: <20180615095107.24610-1-o.rempel@pengutronix.de>
- <20180615095107.24610-5-o.rempel@pengutronix.de>
- <AM0PR04MB4211BBB72255BDA36C5AFF9880490@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <66bc8ac0-913a-f444-e554-ade4df1306b6@pengutronix.de>
- <AM0PR04MB4211ED5BDFC0105477AD4F8B80490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211ED5BDFC0105477AD4F8B80490@AM0PR04MB4211.eurprd04.prod.outlook.com>
-
---jY1FdNTaQidq5TUD8QlGn8mChncVUIXHe
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-
-
-On 26.06.2018 14:07, A.s. Dong wrote:
->> -----Original Message-----
->> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->> Sent: Tuesday, June 26, 2018 6:56 PM
->> To: A.s. Dong <aisheng.dong@nxp.com>; Shawn Guo
->> <shawnguo@kernel.org>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
->> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>
->> Cc: devicetree@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linu=
-x-
->> arm-kernel@lists.infradead.org; kernel@pengutronix.de; linux-
->> clk@vger.kernel.org
->> Subject: Re: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging =
-unit
->>
->>
->>
->> On 26.06.2018 12:09, A.s. Dong wrote:
->>>> -----Original Message-----
->>>> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->>>> Sent: Friday, June 15, 2018 5:51 PM
->>>> To: Shawn Guo <shawnguo@kernel.org>; Fabio Estevam
->>>> <fabio.estevam@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark
->>>> Rutland <mark.rutland@arm.com>; A.s. Dong <aisheng.dong@nxp.com>
->>>> Cc: Oleksij Rempel <o.rempel@pengutronix.de>; kernel@pengutronix.de;=
-
->>>> linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
->>>> linux- clk@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
->>>> Subject: [PATCH v2 4/4] mailbox: Add support for i.MX7D messaging
->>>> unit
->>>>
->>>> The Mailbox controller is able to send messages (up to 4 32 bit
->>>> words) between the endpoints.
->>>>
->>>> This driver was tested using the mailbox-test driver sending message=
-s
->>>> between the Cortex-A7 and the Cortex-M4.
->>>>
->>>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->>>> ---
->>>>  drivers/mailbox/Kconfig       |   6 +
->>>>  drivers/mailbox/Makefile      |   2 +
->>>>  drivers/mailbox/imx-mailbox.c | 288
->>>> ++++++++++++++++++++++++++++++++++
->>>>  3 files changed, 296 insertions(+)
->>>>  create mode 100644 drivers/mailbox/imx-mailbox.c
->>>>
->>>> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig index=
-
->>>> a2bb27446dce..e1d2738a2e4c 100644
->>>> --- a/drivers/mailbox/Kconfig
->>>> +++ b/drivers/mailbox/Kconfig
->>>> @@ -15,6 +15,12 @@ config ARM_MHU
->>>>  	  The controller has 3 mailbox channels, the last of which can be
->>>>  	  used in Secure mode only.
->>>>
->>>> +config IMX_MBOX
->>>> +	tristate "iMX Mailbox"
->>>> +	depends on SOC_IMX7D || COMPILE_TEST
->>>> +	help
->>>> +	  Mailbox implementation for iMX7D Messaging Unit (MU).
->>>> +
->>>>  config PLATFORM_MHU
->>>>  	tristate "Platform MHU Mailbox"
->>>>  	depends on OF
->>>> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
->>>> index
->>>> cc23c3a43fcd..ba2fe1b6dd62 100644
->>>> --- a/drivers/mailbox/Makefile
->>>> +++ b/drivers/mailbox/Makefile
->>>> @@ -7,6 +7,8 @@ obj-$(CONFIG_MAILBOX_TEST)	+=3D mailbox-test.o
->>>>
->>>>  obj-$(CONFIG_ARM_MHU)	+=3D arm_mhu.o
->>>>
->>>> +obj-$(CONFIG_IMX_MBOX)	+=3D imx-mailbox.o
->>>> +
->>>>  obj-$(CONFIG_PLATFORM_MHU)	+=3D platform_mhu.o
->>>>
->>>>  obj-$(CONFIG_PL320_MBOX)	+=3D pl320-ipc.o
->>>> diff --git a/drivers/mailbox/imx-mailbox.c
->>>> b/drivers/mailbox/imx-mailbox.c new file mode 100644 index
->>>> 000000000000..e3f621cb1d30
->>>> --- /dev/null
->>>> +++ b/drivers/mailbox/imx-mailbox.c
->>>> @@ -0,0 +1,288 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Copyright (c) 2018 Pengutronix, Oleksij Rempel
->>>> +<o.rempel@pengutronix.de>  */
->>>> +
->>>> +#include <linux/clk.h>
->>>> +#include <linux/interrupt.h>
->>>> +#include <linux/io.h>
->>>> +#include <linux/kernel.h>
->>>> +#include <linux/mailbox_controller.h> #include <linux/module.h>
->>>> +#include <linux/of_device.h>
->>>> +
->>>> +/* Transmit Register */
->>>> +#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
->>>> +/* Receive Register */
->>>> +#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
->>>> +/* Status Register */
->>>> +#define IMX_MU_xSR		0x20
->>>> +#define IMX_MU_xSR_TEn(x)	BIT(20 + (x))
->>>> +#define IMX_MU_xSR_RFn(x)	BIT(24 + (x))
->>>> +#define IMX_MU_xSR_BRDIP	BIT(9)
->>>> +
->>>> +/* Control Register */
->>>> +#define IMX_MU_xCR		0x24
->>>> +/* Transmit Interrupt Enable */
->>>> +#define IMX_MU_xCR_TIEn(x)	BIT(20 + (x))
->>>> +/* Receive Interrupt Enable */
->>>> +#define IMX_MU_xCR_RIEn(x)	BIT(24 + (x))
->>>> +
->>>> +#define IMX_MU_MAX_CHANS	4u
->>>> +
->>>> +struct imx_mu_priv;
->>>> +
->>>> +struct imx_mu_cfg {
->>>> +	unsigned int		chans;
->>>> +	void (*init_hw)(struct imx_mu_priv *priv); };
->>>> +
->>>> +struct imx_mu_con_priv {
->>>> +	int			irq;
->>>> +	unsigned int		bidx;
->>>> +	unsigned int		idx;
->>>> +};
->>>> +
->>>> +struct imx_mu_priv {
->>>> +	struct device		*dev;
->>>> +	const struct imx_mu_cfg	*dcfg;
->>>> +	void __iomem		*base;
->>>> +
->>>> +	struct mbox_controller	mbox;
->>>> +	struct mbox_chan	mbox_chans[IMX_MU_MAX_CHANS];
->>>> +
->>>> +	struct imx_mu_con_priv  con_priv[IMX_MU_MAX_CHANS];
->>>> +	struct clk		*clk;
->>>> +};
->>>> +
->>>> +static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller
->>>> +*mbox) {
->>>> +	return container_of(mbox, struct imx_mu_priv, mbox); }
->>>> +
->>>> +static void imx_mu_write(struct imx_mu_priv *priv, u32 val, u32 off=
-s) {
->>>> +	iowrite32(val, priv->base + offs);
->>>> +}
->>>> +
->>>> +static u32 imx_mu_read(struct imx_mu_priv *priv, u32 offs) {
->>>> +	return ioread32(priv->base + offs); }
->>>> +
->>>> +static u32 imx_mu_rmw(struct imx_mu_priv *priv, u32 offs, u32 set,
->>>> +u32
->>>> +clr) {
->>>> +	u32 val;
->>>> +
->>>> +	val =3D imx_mu_read(priv, offs);
->>>> +	val &=3D ~clr;
->>>> +	val |=3D set;
->>>> +	imx_mu_write(priv, val, offs);
->>>> +
->>>> +	return val;
->>>> +}
->>>> +
->>>> +static irqreturn_t imx_mu_isr(int irq, void *p) {
->>>> +	struct mbox_chan *chan =3D p;
->>>> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->>>> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->>>> +
->>>> +	u32 val, dat;
->>>> +
->>>> +	val =3D imx_mu_read(priv, IMX_MU_xSR);
->>>> +	val &=3D IMX_MU_xSR_TEn(cp->bidx) | IMX_MU_xSR_RFn(cp->bidx);
->>>> +	if (!val)
->>>> +		return IRQ_NONE;
->>>> +
->>>> +	if (val & IMX_MU_xSR_TEn(cp->bidx)) {
->>>
->>> I'm wondering whether this can work properly for multi consumers at
->>> the same time.
->>> Because xSR_TEn is 1 by default and four virtual channels actually ar=
-e
->>> using the same interrupt. That means channel 1 interrupt may cause
->>> channel 2 believe it's txdone.
->>> Have we tested such using?
->>
->> see imx_mu_send_data()
->> ..... imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
->>
->>>
->>>> +		imx_mu_rmw(priv, IMX_MU_xCR, 0, IMX_MU_xCR_TIEn(cp-
->>>>> bidx));
->>
->> and here ^^^
->> TX status is enabled only for send and disabled as soon at transfer is=
- done.
->>
->=20
-> That controls the interrupt enable signal, I'm not sure if the status b=
-it
-> Won't be set if not enable interrupt. I've not tested it.
->=20
-> Have you double checked it?
->=20
-> For n =3D {0, 1, 2, 3} Processor A Transmit Register n Empty. (Read-onl=
-y)
-> =E2=80=A2 The TEn bit is set to =E2=80=9C1=E2=80=9D after the BRRn regi=
-ster is read on the Processor B-side.
-> =E2=80=A2 After the TEn bit is set to =E2=80=9C1=E2=80=9D, the TEn bit =
-signals the Processor A-side that the ATRn register is
-> ready to be written on the Processor A-side, and a Transmit n interrupt=
- is issued on the Processor
-> A-side (if the TEn bit in the ACR register is set to =E2=80=9C1=E2=80=9D=
-).
-
-You are right.
-> mdw phys 0x30aa0024 # read control register
-0x30aa0024: 08000000  # onyl RIE for channel 0 is enabled
-> mdw phys 0x30aa0020 # read status register
-0x30aa0020: 00f00200  # all TE are 1
-
-So i need to compare Control with Status regs to see if we expect an
-Interrupt on for the TX.
-
->=20
->>>> +		mbox_chan_txdone(chan, 0);
->>>> +	}
->>>> +
->>>> +	if (val & IMX_MU_xSR_RFn(cp->bidx)) {
->>>> +		dat =3D imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
->>>> +		mbox_chan_received_data(chan, (void *)&dat);
->>>> +	}
->>>> +
->>>> +	return IRQ_HANDLED;
->>>> +}
->>>> +
->>>> +static bool imx_mu_last_tx_done(struct mbox_chan *chan) {
->>>> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->>>> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->>>> +	u32 val;
->>>> +
->>>> +	val =3D imx_mu_read(priv, IMX_MU_xSR);
->>>> +	/* test if transmit register is empty */
->>>> +	return (!!(val & IMX_MU_xSR_TEn(cp->bidx))); }
->>>> +
->>>> +static int imx_mu_send_data(struct mbox_chan *chan, void *data) {
->>>> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->>>> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->>>> +	u32 *arg =3D data;
->>>> +
->>>> +	if (!imx_mu_last_tx_done(chan))
->>>> +		return -EBUSY;
->>>> +
->>>> +	imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
->>>> +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xSR_TEn(cp->bidx), 0);
->>>> +
->>>> +	return 0;
->>>> +}
->>>
->>> Since Sascha is requesting to write a generic MU mailbox driver for
->>> both SCU MU and M4 case, the current way using virtual channels in
->>> this patch only send one word a time obviously can't fit for SCU MU c=
-lients
->> well.
->>> Do you think if we can refer to TI case to design a generic data
->>> transfer protocol to allow send multi words which is more close to SC=
-U?
->>
->> According to your code, you are able to send 1 word message. It means,=
- your
->> SCU is configured to trigger an interrupt or status update if REG0 was=
- written.
->> The same is true for 2, 3, 4 and 5 word messages.
->>
->=20
-> SCU is interrupt driven already for the first word.
-> We do can send word one by one but the performance would be terrible
-> comparing to write 4 a time.
->=20
->> If the MU configuration would look like you it described, you would be=
- forced
->> to write always 4 words, even for 1 word message.
->>
->>> include/linux/soc/ti/ti-msgmgr.h
->>> struct ti_msgmgr_message {
->>>         size_t len;
->>>         u8 *buf;
->>> };
->>>
->>> Or we try to support both type transfer protocols in this driver?
->>
->> Sure. ti-msgmgr.c is a good example. You will probably need reduced va=
-riant
->> of it. It is generic enough to make it useful not only for SCU.
->>
->=20
-> Sascha needs a common design for both M4 and SCU.If decide to do that,
-> you probably need update this patch as well.
->=20
-> But even doing like TI style, it still need hack for SCU as the data si=
-ze offset
-> Is different. However, that would be a much smaller hack than doing bas=
-ed
-> On this driver.
->=20
->>> That may introduce much complexities, personally I'm not quite like
->>> that.
->>
->> I expect 50-150 lines of extra code.
->>
->=20
-> Hope that could be true.
-> Do you have suggestion on how to keep two type protocol co-exist
-> If you thought that would work without two much extra complexity?
-> Have you tried it already based this driver?
->=20
-> Regards
-> Dong Aisheng
->=20
->>> Regards
->>> Dong Aisheng
->>>
->>>> +
->>>> +static int imx_mu_startup(struct mbox_chan *chan) {
->>>> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->>>> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->>>> +	int ret;
->>>> +
->>>> +	ret =3D request_irq(cp->irq, imx_mu_isr,
->>>> +			  IRQF_SHARED, "imx_mu_chan", chan);
->>>> +	if (ret) {
->>>> +		dev_err(chan->mbox->dev,
->>>> +			"Unable to acquire IRQ %d\n", cp->irq);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	imx_mu_rmw(priv, IMX_MU_xCR, IMX_MU_xCR_RIEn(cp->bidx), 0);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static void imx_mu_shutdown(struct mbox_chan *chan) {
->>>> +	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
->>>> +	struct imx_mu_con_priv *cp =3D chan->con_priv;
->>>> +
->>>> +	imx_mu_rmw(priv, IMX_MU_xCR, 0,
->>>> +		   IMX_MU_xCR_TIEn(cp->bidx) | IMX_MU_xCR_RIEn(cp-
->>>>> bidx));
->>>> +
->>>> +	free_irq(cp->irq, chan);
->>>> +}
->>>> +
->>>> +static const struct mbox_chan_ops imx_mu_ops =3D {
->>>> +	.send_data =3D imx_mu_send_data,
->>>> +	.startup =3D imx_mu_startup,
->>>> +	.shutdown =3D imx_mu_shutdown,
->>>> +};
->>>> +
->>>> +static int imx_mu_probe(struct platform_device *pdev) {
->>>> +	struct device *dev =3D &pdev->dev;
->>>> +	struct resource *iomem;
->>>> +	struct imx_mu_priv *priv;
->>>> +	const struct imx_mu_cfg *dcfg;
->>>> +	unsigned int i, chans;
->>>> +	int irq, ret;
->>>> +
->>>> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->>>> +	if (!priv)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	dcfg =3D of_device_get_match_data(dev);
->>>> +	if (!dcfg)
->>>> +		return -EINVAL;
->>>> +
->>>> +	priv->dcfg =3D dcfg;
->>>> +	priv->dev =3D dev;
->>>> +
->>>> +	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>> +	priv->base =3D devm_ioremap_resource(&pdev->dev, iomem);
->>>> +	if (IS_ERR(priv->base))
->>>> +		return PTR_ERR(priv->base);
->>>> +
->>>> +	irq =3D platform_get_irq(pdev, 0);
->>>> +	if (irq <=3D 0)
->>>> +		return irq < 0 ? irq : -EINVAL;
->>>> +
->>>> +	priv->clk =3D devm_clk_get(dev, NULL);
->>>> +	if (IS_ERR(priv->clk)) {
->>>> +		if (PTR_ERR(priv->clk) =3D=3D -ENOENT) {
->>>> +			priv->clk =3D NULL;
->>>> +		} else {
->>>> +			dev_err(dev, "Failed to get clock\n");
->>>> +			return PTR_ERR(priv->clk);
->>>> +		}
->>>> +	}
->>>> +
->>>> +	ret =3D clk_prepare_enable(priv->clk);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "Failed to enable clock\n");
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	chans =3D min(dcfg->chans, IMX_MU_MAX_CHANS);
->>>> +	/* Initialize channel identifiers */
->>>> +	for (i =3D 0; i < chans; i++) {
->>>> +		struct imx_mu_con_priv *cp =3D &priv->con_priv[i];
->>>> +
->>>> +		cp->bidx =3D 3 - i;
->>>> +		cp->idx =3D i;
->>>> +		cp->irq =3D irq;
->>>> +		priv->mbox_chans[i].con_priv =3D cp;
->>>> +	}
->>>> +
->>>> +	priv->mbox.dev =3D dev;
->>>> +	priv->mbox.ops =3D &imx_mu_ops;
->>>> +	priv->mbox.chans =3D priv->mbox_chans;
->>>> +	priv->mbox.num_chans =3D chans;
->>>> +	priv->mbox.txdone_irq =3D true;
->>>> +
->>>> +	platform_set_drvdata(pdev, priv);
->>>> +
->>>> +	if (priv->dcfg->init_hw)
->>>> +		priv->dcfg->init_hw(priv);
->>>> +
->>>> +	return mbox_controller_register(&priv->mbox);
->>>> +}
->>>> +
->>>> +static int imx_mu_remove(struct platform_device *pdev) {
->>>> +	struct imx_mu_priv *priv =3D platform_get_drvdata(pdev);
->>>> +
->>>> +	mbox_controller_unregister(&priv->mbox);
->>>> +	clk_disable_unprepare(priv->clk);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +
->>>> +static void imx_mu_init_imx7d_a(struct imx_mu_priv *priv) {
->>>> +	/* Set default config */
->>>> +	imx_mu_write(priv, 0, IMX_MU_xCR);
->>>> +}
->>>> +
->>>> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_a =3D {
->>>> +	.chans =3D IMX_MU_MAX_CHANS,
->>>> +	.init_hw =3D imx_mu_init_imx7d_a,
->>>> +};
->>>> +
->>>> +static const struct imx_mu_cfg imx_mu_cfg_imx7d_b =3D {
->>>> +	.chans =3D IMX_MU_MAX_CHANS,
->>>> +};
->>>> +
->>>> +static const struct of_device_id imx_mu_dt_ids[] =3D {
->>>> +	{ .compatible =3D "fsl,imx7s-mu-a", .data =3D &imx_mu_cfg_imx7d_a =
-},
->>>> +	{ .compatible =3D "fsl,imx7s-mu-b", .data =3D &imx_mu_cfg_imx7d_b =
-},
->>>> +	{ },
->>>> +};
->>>> +MODULE_DEVICE_TABLE(of, imx_mu_dt_ids);
->>>> +
->>>> +static struct platform_driver imx_mu_driver =3D {
->>>> +	.probe		=3D imx_mu_probe,
->>>> +	.remove		=3D imx_mu_remove,
->>>> +	.driver =3D {
->>>> +		.name	=3D "imx_mu",
->>>> +		.of_match_table =3D imx_mu_dt_ids,
->>>> +	},
->>>> +};
->>>> +module_platform_driver(imx_mu_driver);
->>>> +
->>>> +MODULE_AUTHOR("Oleksij Rempel <o.rempel@pengutronix.de>");
->>>> +MODULE_DESCRIPTION("Message Unit driver for i.MX");
->>>> MODULE_LICENSE("GPL
->>>> +v2");
->>>> --
->>>> 2.17.1
->>>
->>>
->>>
->=20
-
-
---jY1FdNTaQidq5TUD8QlGn8mChncVUIXHe--
-
---drlh8MmxVokNOr1lLdJJTYnxaE9HF0NuL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAls51dEACgkQdQOiSHVI
-77QR2QgAtbmkrPh/aYGYwcdqMi55sEKAHsx0YQPDYJ4n+3/bosNmYlLh6Ly99ms4
-FBVni/WTQACdRFia9p7lT1H6Lgdce0nV1jK7p3AyW8vLYpW0e8kvXja5xzcrmtX2
-ju04a5HM81toqMp7Z8ISEv88gsE9NAz02HVxvRstAXWG9hZPk0wxBVi62D8c9B0w
-IKtzUwm8L4Ki71/qO679wODF31YM+WKDxZZHrtK9UaM/wigVSH21CQ6k1cSeyAKv
-intqvvDGYABDYIbYDHDJxvaWlcHpoq64lK4X7LAk2Ay+8ubCOGh07P7ZAQVmeFEg
-JaJv5POqfhPQSmKRHQVUbjW6b6qViw==
-=1miI
------END PGP SIGNATURE-----
-
---drlh8MmxVokNOr1lLdJJTYnxaE9HF0NuL--
+SGkgR2VlcnQsDQoNCk9uIDMwIEp1bHkgMjAxOCAwOTo1NiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
+b3RlOg0KPiBPbiBNb24sIEp1bCAzMCwgMjAxOCBhdCAxMDozNiBBTSBQaGlsIEVkd29ydGh5IHdy
+b3RlOg0KPiA+IFF1aXRlIGEgZmV3IGRyaXZlcnMgZ2V0IGFuIG9wdGlvbmFsIGNsb2NrLCBlLmcu
+IGEgY2xvY2sgcmVxdWlyZWQgdG8NCj4gPiBhY2Nlc3MgcGVyaXBoZXJhbCdzIHJlZ2lzdGVycyB0
+aGF0IGlzIGFsd2F5cyBlbmFibGVkIG9uIHNvbWUgZGV2aWNlcy4NCj4gPg0KPiA+IFRoaXMgZnVu
+Y3Rpb24gYmVoYXZlcyB0aGUgc2FtZSBhcyBvZl9jbGtfZ2V0X2J5X25hbWUoKSBleGNlcHQgdGhh
+dCBpdA0KPiA+IHdpbGwgcmV0dXJuIE5VTEwgaW5zdGVhZCBvZiAtRU5PRU5ULiBUaGlzIG1ha2Vz
+IGVycm9yIGNoZWNraW5nIGZvcg0KPiA+IHVzZXJzIGVhc2llciBhbmQgYWxsb3dzIGNsa19wcmVw
+YXJlX2VuYWJsZSwgZXRjIHRvIGJlIGNhbGxlZCBvbiB0aGUNCj4gPiByZXR1cm5lZCByZWZlcmVu
+Y2Ugd2l0aG91dCBhZGRpdGlvbmFsIGNoZWNrcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBo
+aWwgRWR3b3J0aHkgPHBoaWwuZWR3b3J0aHlAcmVuZXNhcy5jb20+DQo+IA0KPiBUaGFua3MgZm9y
+IHlvdXIgcGF0Y2ghDQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsa2Rldi5jDQo+ID4gKysr
+IGIvZHJpdmVycy9jbGsvY2xrZGV2LmMNCj4gPiBAQCAtNTQsNyArNTQsOCBAQCBFWFBPUlRfU1lN
+Qk9MKG9mX2Nsa19nZXQpOw0KPiA+DQo+ID4gIHN0YXRpYyBzdHJ1Y3QgY2xrICpfX29mX2Nsa19n
+ZXRfYnlfbmFtZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0KPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpkZXZfaWQsDQo+ID4gLSAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm5hbWUpDQo+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm5hbWUsDQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJvb2wgb3B0aW9uYWwp
+DQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBjbGsgKmNsayA9IEVSUl9QVFIoLUVOT0VOVCk7
+DQo+ID4NCj4gPiBAQCAtNzMsNiArNzQsOCBAQCBzdGF0aWMgc3RydWN0IGNsayAqX19vZl9jbGtf
+Z2V0X2J5X25hbWUoc3RydWN0DQo+IGRldmljZV9ub2RlICpucCwNCj4gPiAgICAgICAgICAgICAg
+ICAgaWYgKCFJU19FUlIoY2xrKSkgew0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGJyZWFr
+Ow0KPiA+ICAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKG5hbWUgJiYgaW5kZXggPj0gMCkgew0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlmIChvcHRpb25hbCAmJiBQVFJfRVJSKGNsaykg
+PT0gLUVOT0VOVCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNsayA9IE5V
+TEw7DQo+IA0KPiBUaGlzIG9ubHkgaGFuZGxlcyB0aGUgIm5hbWUgJiYgaW5kZXggPj0gMCIgY2Fz
+ZS4NCj4gSWYgdGhhdCBjb25kaXRpb24gaXMgbmV2ZXIgdHJ1ZSwgdGhlIGxvb3Agd2lsbCBlbmQs
+IGV2ZW50dWFsbHksIGFuZCB0aGUgbGFzdCB2YWx1ZQ0KPiBvZiBjbGsgd2lsbCBiZSByZXR1cm5l
+ZC4gSGVuY2UgdGhlcmUgc2hvdWxkIGJlIGEgc2ltaWxhciBjaGVjayBhdCB0aGUgZW5kIG9mDQo+
+IHRoZSBmdW5jdGlvbi4NCk9vcHMsIEkgd2FzIG9ubHkgY29uc2lkZXJpbmcgbmFtZWQgb3B0aW9u
+YWwgY2xvY2tzLCBJJ2xsIGZpeCB0aGlzLg0KDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAg
+aWYgKFBUUl9FUlIoY2xrKSAhPSAtRVBST0JFX0RFRkVSKQ0KPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgcHJfZXJyKCJFUlJPUjogY291bGQgbm90IGdldCBjbG9jayAlcE9GOiVz
+KCVpKVxuIiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbnAs
+IG5hbWUgPyBuYW1lIDogIiIsIGluZGV4KTsNCj4gDQo+IEhlbmNlIGlmIG5vdCBmb3VuZCwgdGhp
+cyB3aWxsIGFsd2F5cyBwcmludCBhbiBlcnJvciwgZXZlbiBpZiB0aGUgY2xvY2sgaXMNCj4gb3B0
+aW9uYWw/DQpSaWdodC4NCg0KPiA+IEBAIC0xMDYsMTUgKzEwOSwzOCBAQCBzdHJ1Y3QgY2xrICpv
+Zl9jbGtfZ2V0X2J5X25hbWUoc3RydWN0DQo+IGRldmljZV9ub2RlICpucCwgY29uc3QgY2hhciAq
+bmFtZSkNCj4gPiAgICAgICAgIGlmICghbnApDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiBF
+UlJfUFRSKC1FTk9FTlQpOw0KPiA+DQo+ID4gLSAgICAgICByZXR1cm4gX19vZl9jbGtfZ2V0X2J5
+X25hbWUobnAsIG5wLT5mdWxsX25hbWUsIG5hbWUpOw0KPiA+ICsgICAgICAgcmV0dXJuIF9fb2Zf
+Y2xrX2dldF9ieV9uYW1lKG5wLCBucC0+ZnVsbF9uYW1lLCBuYW1lLCBmYWxzZSk7DQo+ID4gIH0N
+Cj4gPiAgRVhQT1JUX1NZTUJPTChvZl9jbGtfZ2V0X2J5X25hbWUpOw0KPiA+DQo+ID4gKy8qKg0K
+PiA+ICsgKiBvZl9jbGtfZ2V0X2J5X25hbWVfb3B0aW9uYWwoKSAtIFBhcnNlIGFuZCBsb29rdXAg
+YW4gb3B0aW9uYWwgY2xvY2sNCj4gPiArcmVmZXJlbmNlZA0KPiA+ICsgKiBieSBhIGRldmljZSBu
+b2RlDQo+ID4gKyAqIEBucDogcG9pbnRlciB0byBjbG9jayBjb25zdW1lciBub2RlDQo+ID4gKyAq
+IEBuYW1lOiBuYW1lIG9mIGNvbnN1bWVyJ3MgY2xvY2sgaW5wdXQsIG9yIE5VTEwgZm9yIHRoZSBm
+aXJzdCBjbG9jaw0KPiA+ICtyZWZlcmVuY2UNCj4gPiArICoNCj4gPiArICogVGhpcyBmdW5jdGlv
+biBwYXJzZXMgdGhlIGNsb2NrcyBhbmQgY2xvY2stbmFtZXMgcHJvcGVydGllcywNCj4gPiArICog
+YW5kIHVzZXMgdGhlbSB0byBsb29rIHVwIHRoZSBzdHJ1Y3QgY2xrIGZyb20gdGhlIHJlZ2lzdGVy
+ZWQgbGlzdA0KPiA+ICtvZiBjbG9jaw0KPiA+ICsgKiBwcm92aWRlcnMuDQo+ID4gKyAqIEl0IGJl
+aGF2ZXMgdGhlIHNhbWUgYXMgb2ZfY2xrX2dldF9ieV9uYW1lKCksIGV4Y2VwdCB3aGVuIG5vIGNs
+b2NrIGlzDQo+IGZvdW5kLg0KPiA+ICsgKiBJbiB0aGlzIGNhc2UsIGluc3RlYWQgb2YgcmV0dXJu
+aW5nIC1FTk9FTlQsIGl0IHJldHVybnMgTlVMTC4NCj4gPiArICovDQo+ID4gK3N0cnVjdCBjbGsg
+Km9mX2Nsa19nZXRfYnlfbmFtZV9vcHRpb25hbChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpuYW1l
+KSB7DQo+ID4gKyAgICAgICBpZiAoIW5wKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJS
+X1BUUigtRU5PRU5UKTsNCj4gDQo+IFNob3VsZG4ndCB0aGlzIHJldHVybiBOVUxMPw0KSSB3YXNu
+4oCZdCBzdXJlIG9uIHRoaXMsIEkgdGhvdWdodCB0aGUgbm9kZSBzaG91bGQgYmUgdmFsaWQsIGJ1
+dCBJIGd1ZXNzIHRoZSBub2RlDQppcyBhbHNvIG9wdGlvbmFsLiBJJ2xsIGZpeC4NCg0KPiBPciBs
+ZXQgX19vZl9jbGtfZ2V0X2J5X25hbWUoKSBoYW5kbGUgdGhhdCAoY2ZyLiBhYm92ZSk/DQoNCj4g
+SG1tLCBvZl9jbGtfZ2V0X2J5X25hbWUoKSBoYXMgYSBzaW1pbGFyIGNoZWNrLCB3aGlsZSB0aGUg
+Y3VycmVudA0KPiBfX29mX2Nsa19nZXRfYnlfbmFtZSgpIGFscmVhZHkgaGFuZGxlIG5wID09IE5V
+TEwsIHRvby4NClllcyBJIHNlZSwgSSdsbCBjbGVhbiB0aGF0IHVwLg0KDQogDQo+ID4gKw0KPiA+
+ICsgICAgICAgcmV0dXJuIF9fb2ZfY2xrX2dldF9ieV9uYW1lKG5wLCBucC0+ZnVsbF9uYW1lLCBu
+YW1lLCB0cnVlKTsgfQ0KPiA+ICtFWFBPUlRfU1lNQk9MKG9mX2Nsa19nZXRfYnlfbmFtZV9vcHRp
+b25hbCk7DQo+ID4gKw0KPiA+ICAjZWxzZSAvKiBkZWZpbmVkKENPTkZJR19PRikgJiYgZGVmaW5l
+ZChDT05GSUdfQ09NTU9OX0NMSykgKi8NCj4gPg0KPiA+ICBzdGF0aWMgc3RydWN0IGNsayAqX19v
+Zl9jbGtfZ2V0X2J5X25hbWUoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gPiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2hhciAqZGV2X2lkLA0KPiA+IC0g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpuYW1lKQ0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpu
+YW1lLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBib29sIG9w
+dGlvbmFsKQ0KPiA+ICB7DQo+ID4gICAgICAgICByZXR1cm4gRVJSX1BUUigtRU5PRU5UKTsNCj4g
+PiAgfQ0KPiA+IEBAIC0xOTcsNyArMjIzLDcgQEAgc3RydWN0IGNsayAqY2xrX2dldChzdHJ1Y3Qg
+ZGV2aWNlICpkZXYsIGNvbnN0IGNoYXINCj4gKmNvbl9pZCkNCj4gPiAgICAgICAgIHN0cnVjdCBj
+bGsgKmNsazsNCj4gPg0KPiA+ICAgICAgICAgaWYgKGRldiAmJiBkZXYtPm9mX25vZGUpIHsNCj4g
+PiAtICAgICAgICAgICAgICAgY2xrID0gX19vZl9jbGtfZ2V0X2J5X25hbWUoZGV2LT5vZl9ub2Rl
+LCBkZXZfaWQsIGNvbl9pZCk7DQo+ID4gKyAgICAgICAgICAgICAgIGNsayA9IF9fb2ZfY2xrX2dl
+dF9ieV9uYW1lKGRldi0+b2Zfbm9kZSwgZGV2X2lkLA0KPiA+ICsgY29uX2lkLCBmYWxzZSk7DQo+
+ID4gICAgICAgICAgICAgICAgIGlmICghSVNfRVJSKGNsaykgfHwgUFRSX0VSUihjbGspID09IC1F
+UFJPQkVfREVGRVIpDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGNsazsNCj4g
+PiAgICAgICAgIH0NCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9jbGsuaCBiL2luY2x1
+ZGUvbGludXgvY2xrLmggaW5kZXgNCj4gPiA0Zjc1MGM0Li44Y2I1NDU1IDEwMDY0NA0KPiA+IC0t
+LSBhL2luY2x1ZGUvbGludXgvY2xrLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2Nsay5oDQo+
+ID4gQEAgLTc3Nyw2ICs3NzcsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgY2xrX2J1bGtfZGlzYWJs
+ZV91bnByZXBhcmUoaW50DQo+ID4gbnVtX2Nsa3MsICAjaWYgZGVmaW5lZChDT05GSUdfT0YpICYm
+IGRlZmluZWQoQ09ORklHX0NPTU1PTl9DTEspDQo+ID4gc3RydWN0IGNsayAqb2ZfY2xrX2dldChz
+dHJ1Y3QgZGV2aWNlX25vZGUgKm5wLCBpbnQgaW5kZXgpOyAgc3RydWN0IGNsaw0KPiA+ICpvZl9j
+bGtfZ2V0X2J5X25hbWUoc3RydWN0IGRldmljZV9ub2RlICpucCwgY29uc3QgY2hhciAqbmFtZSk7
+DQo+ID4gK3N0cnVjdCBjbGsgKm9mX2Nsa19nZXRfYnlfbmFtZV9vcHRpb25hbChzdHJ1Y3QgZGV2
+aWNlX25vZGUgKm5wLCBjb25zdA0KPiA+ICtjaGFyICpuYW1lKTsNCj4gPiAgc3RydWN0IGNsayAq
+b2ZfY2xrX2dldF9mcm9tX3Byb3ZpZGVyKHN0cnVjdCBvZl9waGFuZGxlX2FyZ3MNCj4gPiAqY2xr
+c3BlYyk7ICAjZWxzZSAgc3RhdGljIGlubGluZSBzdHJ1Y3QgY2xrICpvZl9jbGtfZ2V0KHN0cnVj
+dA0KPiA+IGRldmljZV9ub2RlICpucCwgaW50IGluZGV4KQ0KPiANCj4gTm8gZHVtbXkgdmVyc2lv
+biBvZiBvZl9jbGtfZ2V0X2J5X25hbWVfb3B0aW9uYWwoKSBmb3IgdGhlICFDTEsgfHwNCj4gIUNP
+TU1PTl9DTEsgY2FzZT8NCj4gDQo+IEl0IHNlZW1zIG9mX2Nsa19nZXRfYnlfbmFtZSgpIGFuZCBv
+Zl9jbGtfZ2V0X2J5X25hbWVfb3B0aW9uYWwoKSBjYW4NCj4ganVzdCBiZSBzaW1wbGUgd3JhcHBl
+cnMgYXJvdW5kIF9fb2ZfY2xrX2dldF9ieV9uYW1lKCksIGRpZmZlcmluZyBvbmx5IGluDQo+IHRo
+ZSB2YWx1ZSBvZiB0aGUgIm9wdGlvbmFsIiBwYXJhbWV0ZXIuIEhlbmNlIEkgdGhpbmsgaXQgbWFr
+ZXMgc2Vuc2UgdG8gbW92ZQ0KPiB0aGVtIHRvIHRoZSBoZWFkZXIgZmlsZSwgYW5kIG1ha2UgdGhl
+bSBzdGF0aWMgaW5saW5lLg0KPiBUaGVuIG9ubHkgX19vZl9jbGtfZ2V0X2J5X25hbWUoKSBuZWVk
+cyBhIChzdGF0aWMgaW5saW5lKSBkdW1teSBmb3IgdGhlDQo+ICFPRiB8fCAhQ09NTU9OX0NMSyBj
+YXNlLg0KTWFrZXMgc2Vuc2UuDQoNClRoYW5rcyENClBoaWwNCg0K
