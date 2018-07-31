@@ -1,126 +1,73 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:56164 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbeGaIev (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 04:34:51 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH 3/5] dt-bindings: mfd: rk808: Add binding informations for RK809 and RK817.
-Date: Tue, 31 Jul 2018 14:56:32 +0800
-Message-Id: <1533020197-754-5-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1533020197-754-1-git-send-email-tony.xie@rock-chips.com>
-References: <1533020197-754-1-git-send-email-tony.xie@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson
+	<bjorn.andersson@linaro.org>
+CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark
+ Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David
+ Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Linux ARM
+	<linux-arm-kernel@lists.infradead.org>,
+        devicetree
+	<devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bgolaszewski@baylibre.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <20180621073706.22812-2-brgl@bgdev.pl> <20180731042539.GE5090@builder>
+ <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c3484965-1efe-2425-86e0-ecb78ea189dd@ti.com>
+Date: Tue, 31 Jul 2018 15:34:33 +0530
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+Bjorn,
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 55 +++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+On Tuesday 31 July 2018 01:25 PM, Bartosz Golaszewski wrote:
+> 2018-07-31 6:25 GMT+02:00 Bjorn Andersson <bjorn.andersson@linaro.org>:
+>> On Thu 21 Jun 00:37 PDT 2018, Bartosz Golaszewski wrote:
+>>
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> Switch to using the reset framework instead of handcoded reset routines
+>>> we used so far.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+>>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>>
+>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>
+> 
+> Sekhar,
+> 
+> can you take this through your tree or is it already too late?
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 91b6522..31c9f3d 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
- 
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
-@@ -46,6 +50,28 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
-+Optional RK809 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK809 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK808 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2.
-+
-+Following regulators of the RK817 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- BOOST
-+	- OTG_SWITCH
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -99,6 +147,13 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
- 
-+There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
--- 
-1.9.1
+The last -rc is already tagged and I am not sure ARM-SoC will be open to
+new stuff now (there is also a bit of lag after I send my pull request).
 
+Is this something you can take in your tree along with Suman's patch?
 
+There are no build dependencies with my tree, so it will be safe to
+queue from your tree. It will be great if this can be merged late in the
+cycle though to avoid breaking remoteproc even for short while during
+the merge window.
+
+Or if you okay with it, it will be safest to send it soon after
+v4.19-rc1 is tagged.
+
+Let me know.
+
+Thanks,
+Sekhar
