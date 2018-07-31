@@ -1,67 +1,80 @@
-Return-Path: <stefan.wahren@i2se.com>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>,
- Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>
-Cc: linux-clk@vger.kernel.org, kernel@pengutronix.de
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
-From: Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <10f5e651-caf4-3fe0-87c0-fe42ccdc6349@i2se.com>
-Date: Thu, 26 Jul 2018 16:50:07 +0200
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 31 Jul 2018 15:21:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
+	Paul Burton <paul.burton@mips.com>, James Hogan <jhogan@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Govindraj Raja <Govindraj.Raja@imgtec.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 15/15] clk: pistachio: Fix wrong SDHost card speed
+Message-ID: <20180731212154.GA17395@rob-hp-laptop>
+References: <20180722212010.3979-1-afaerber@suse.de>
+ <20180722212010.3979-16-afaerber@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180722212010.3979-16-afaerber@suse.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Uwe,
+On Sun, Jul 22, 2018 at 11:20:10PM +0200, Andreas Färber wrote:
+> From: Govindraj Raja <Govindraj.Raja@imgtec.com>
+> 
+> The SDHost currently clocks the card 4x slower than it
+> should do, because there is a fixed divide by 4 in the
+> sdhost wrapper that is not present in the clock tree.
+> To model this, add a fixed divide by 4 clock node in
+> the SDHost clock path.
+> 
+> This will ensure the right clock frequency is selected when
+> the mmc driver tries to configure frequency on card insert.
+> 
+> Signed-off-by: Govindraj Raja <Govindraj.Raja@imgtec.com>
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> ---
+>  drivers/clk/pistachio/clk-pistachio.c     | 3 ++-
+>  include/dt-bindings/clock/pistachio-clk.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/pistachio/clk-pistachio.c b/drivers/clk/pistachio/clk-pistachio.c
+> index c4ceb5eaf46c..1c968d9a6e17 100644
+> --- a/drivers/clk/pistachio/clk-pistachio.c
+> +++ b/drivers/clk/pistachio/clk-pistachio.c
+> @@ -44,7 +44,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
+>  	GATE(CLK_AUX_ADC_INTERNAL, "aux_adc_internal", "sys_internal_div",
+>  	     0x104, 22),
+>  	GATE(CLK_AUX_ADC, "aux_adc", "aux_adc_div", 0x104, 23),
+> -	GATE(CLK_SD_HOST, "sd_host", "sd_host_div", 0x104, 24),
+> +	GATE(CLK_SD_HOST, "sd_host", "sd_host_div4", 0x104, 24),
+>  	GATE(CLK_BT, "bt", "bt_div", 0x104, 25),
+>  	GATE(CLK_BT_DIV4, "bt_div4", "bt_div4_div", 0x104, 26),
+>  	GATE(CLK_BT_DIV8, "bt_div8", "bt_div8_div", 0x104, 27),
+> @@ -54,6 +54,7 @@ static struct pistachio_gate pistachio_gates[] __initdata = {
+>  static struct pistachio_fixed_factor pistachio_ffs[] __initdata = {
+>  	FIXED_FACTOR(CLK_WIFI_DIV4, "wifi_div4", "wifi_pll", 4),
+>  	FIXED_FACTOR(CLK_WIFI_DIV8, "wifi_div8", "wifi_pll", 8),
+> +	FIXED_FACTOR(CLK_SDHOST_DIV4, "sd_host_div4", "sd_host_div", 4),
+>  };
+>  
+>  static struct pistachio_div pistachio_divs[] __initdata = {
+> diff --git a/include/dt-bindings/clock/pistachio-clk.h b/include/dt-bindings/clock/pistachio-clk.h
+> index 039f83facb68..77b92aed241d 100644
+> --- a/include/dt-bindings/clock/pistachio-clk.h
+> +++ b/include/dt-bindings/clock/pistachio-clk.h
+> @@ -21,6 +21,7 @@
+>  /* Fixed-factor clocks */
+>  #define CLK_WIFI_DIV4			16
+>  #define CLK_WIFI_DIV8			17
+> +#define CLK_SDHOST_DIV4			18
 
-no new insights from my side.
+Does this clock really need to be exposed in DT?
 
-Am 26.07.2018 um 16:32 schrieb Uwe Kleine-KÃ¶nig:
-> On Wed, May 03, 2017 at 08:56:25PM +0200, Uwe Kleine-KÃ¶nig wrote:
->> Since commits 7d81397cd93d ("clk: mxs: add clock support for imx28") and
->> 64e2bc413047 ("clk: mxs: imx28: decrease the frequency of ref_io1 for
->> SSP2 and SSP3") the frequencies for ref_io0 and ref_io1 are initialized
->> to 288 MHz because the initial frequency "seems too high to be ssp clock
->> source directly". However this isn't enough to ensure that the frequency
->> isn't increased later again. In fact this happens on my machine as the
->> mxs-spi driver calls clk_set_rate(ssp->clk, 160000000) with ssp being
->> ssp2 which is resolved to
->>
->> 	ref_io1.rate = 320 MHz
->> 	ssp2_sel.parent = ref_io1
->> 	ssp2_div.divider = 2
->>
->> . The observed effect is that reading MISO reliably fails: Instead of
->> the least significant bit the second least significant bit is reported
->> twice. This is probably related to the reports
->>
->> 	https://community.nxp.com/thread/290209
->> 	https://community.nxp.com/thread/310434
->> 	https://community.nxp.com/thread/385546
->>
->> So additionally to initializing ref_io0 and ref_io1 to 288 MHz ensure
->> that their frequency is never set to something bigger later on. This is
->> done by adding a parameter min_frac to clk-ref and use that instead of
->> the hard coded 18 to limit the valid values for FRAC. For all ref clocks
->> but ref_io0 and ref_io1 18 is used and so there is no functional change
->> for those.
->>
->> Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
-> Back in 2017 this patch made the issue disappear on a customer's machine
-> (using TQ's TQMa28). Now the problem is back on a variant of the machine
-> (using TQMa28L). Back then Stefan had the problem with my patch on a
-> Duckbill, too.
->
-
-I only want to note that we are using this ugly hack for Duckbill to 
-avoid this issue:
-
-https://github.com/I2SE/linux/commit/e457d5e0309c07e30e8dd8b17c32f7b3cbdd9547
-
-Best regards
-Stefan
+>  
+>  /* Gate clocks */
+>  #define CLK_MIPS			32
+> -- 
+> 2.16.4
+> 
