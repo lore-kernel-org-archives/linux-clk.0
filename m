@@ -1,43 +1,51 @@
-Return-Path: <sudeep.holla@arm.com>
-Date: Mon, 30 Jul 2018 12:40:56 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	LAK <linux-arm-kernel@lists.infradead.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] clk: scmi: Fix the rounding of clock rate
-Message-ID: <20180730114056.GA17362@e107155-lin>
-References: <1532700112-11852-1-git-send-email-amit.kachhap@arm.com>
- <153270946725.48062.11195853363758024681@swboyd.mtv.corp.google.com>
- <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 09/10] dt-bindings: serial: Add compatible for Mediatek MT8183
+Date: Tue, 31 Jul 2018 13:38:06 +0800
+Message-ID: <1533015487-60189-10-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CADGdYn5T2-B2UE9DX3wFHdvqfF85n0NAbKDBf2KHOQreRi=H+g@mail.gmail.com>
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Jul 30, 2018 at 11:03:51AM +0530, Amit Daniel Kachhap wrote:
-> Hi,
-> 
-> On Fri, Jul 27, 2018 at 10:07 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> > Quoting Amit Daniel Kachhap (2018-07-27 07:01:52)
-> >> This fix rounds the clock rate properly by using quotient and not
-> >> remainder in the calculation. This issue was found while testing HDMI
-> >> in the Juno platform.
-> >>
-> >> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-> >
-> > Any Fixes: tag here?
-> Yes, This patch is tested with Linux v4.18-rc6 tag.
->
+This adds dt-binding documentation of uart for Mediatek MT8183 SoC
+Platform.
 
-No Stephen meant the commit that this fixes, something like below:
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/serial/mtk-uart.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Fixes: 6d6a1d82eaef ("clk: add support for clocks provided by SCMI")
-
-so that it can get backported if required.
-
---
-Regards,
-Sudeep
+diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+index f73abff..4783336 100644
+--- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
++++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+@@ -15,6 +15,7 @@ Required properties:
+   * "mediatek,mt8127-uart" for MT8127 compatible UARTS
+   * "mediatek,mt8135-uart" for MT8135 compatible UARTS
+   * "mediatek,mt8173-uart" for MT8173 compatible UARTS
++  * "mediatek,mt8183-uart", "mediatek,mt6577-uart" for MT8183 compatible UARTS
+   * "mediatek,mt6577-uart" for MT6577 and all of the above
+ 
+ - reg: The base address of the UART register bank.
+-- 
+1.9.1
