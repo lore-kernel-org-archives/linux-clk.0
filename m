@@ -1,27 +1,161 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:28301 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729723AbeGaHSG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:06 -0400
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 08/10] arm64: dts: mt8183: Add clock controller device nodes
+Date: Tue, 31 Jul 2018 13:38:05 +0800
+Message-ID: <1533015487-60189-9-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180726152524.9393-1-geert+renesas@glider.be>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20180726152524.9393-1-geert+renesas@glider.be>
-Message-ID: <153262126901.48062.3465085338628890690@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Rename rint to .r
-Date: Thu, 26 Jul 2018 09:07:49 -0700
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-07-26 08:25:24)
-> All other internal clock names have a period prepended.
-> =
+From: Weiyi Lu <weiyi.lu@mediatek.com>
 
-> Hence rename the internal RCLK from "rint" to ".r", and move it to the
-> section where all other internal clocks are defined.
-> =
+Add clock controller nodes for MT8183, include topckgen, infracfg,
+apmixedsys and subsystem.
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 92 ++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 1553265..6b87a24 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -5,6 +5,7 @@
+  *	   Erin Lo <erin.lo@mediatek.com>
+  */
+ 
++#include <dt-bindings/clock/mt8183-clk.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+@@ -112,6 +113,13 @@
+ 		method          = "smc";
+ 	};
+ 
++	clk26m: oscillator@0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++		clock-output-names = "clk26m";
++	};
++
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupt-parent = <&gic>;
+@@ -143,4 +151,88 @@
+ 		interrupt-parent = <&gic>;
+ 		reg = <0 0x0c530a80 0 0x50>;
+ 	};
++
++	topckgen: syscon@10000000 {
++		compatible = "mediatek,mt8183-topckgen", "syscon";
++		reg = <0 0x10000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	infracfg: syscon@10001000 {
++		compatible = "mediatek,mt8183-infracfg", "syscon";
++		reg = <0 0x10001000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	apmixedsys: syscon@1000c000 {
++		compatible = "mediatek,mt8183-apmixedsys", "syscon";
++		reg = <0 0x1000c000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	audiosys: syscon@11220000 {
++		compatible = "mediatek,mt8183-audiosys", "syscon";
++		reg = <0 0x11220000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mfgcfg: syscon@13000000 {
++		compatible = "mediatek,mt8183-mfgcfg", "syscon";
++		reg = <0 0x13000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	mmsys: syscon@14000000 {
++		compatible = "mediatek,mt8183-mmsys", "syscon";
++		reg = <0 0x14000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	imgsys: syscon@15020000 {
++		compatible = "mediatek,mt8183-imgsys", "syscon";
++		reg = <0 0x15020000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vdecsys: syscon@16000000 {
++		compatible = "mediatek,mt8183-vdecsys", "syscon";
++		reg = <0 0x16000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	vencsys: syscon@17000000 {
++		compatible = "mediatek,mt8183-vencsys", "syscon";
++		reg = <0 0x17000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	ipu_conn: syscon@19000000 {
++		compatible = "mediatek,mt8183-ipu_conn", "syscon";
++		reg = <0 0x19000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	ipu_adl: syscon@19010000 {
++		compatible = "mediatek,mt8183-ipu_adl", "syscon";
++		reg = <0 0x19010000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	ipu_core0: syscon@19180000 {
++		compatible = "mediatek,mt8183-ipu_core0", "syscon";
++		reg = <0 0x19180000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	ipu_core1: syscon@19280000 {
++		compatible = "mediatek,mt8183-ipu_core1", "syscon";
++		reg = <0 0x19280000 0 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	camsys: syscon@1a000000 {
++		compatible = "mediatek,mt8183-camsys", "syscon";
++		reg = <0 0x1a000000 0 0x1000>;
++		#clock-cells = <1>;
++	};
+ };
+-- 
+1.9.1
+
