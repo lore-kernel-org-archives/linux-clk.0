@@ -1,71 +1,136 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	sboyd@kernel.org,
-	manivannan.sadhasivam@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	devicetree@vger.kernel.org,
-	support@cubietech.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	linux@cubietech.com,
-	darren@cubietech.com,
-	mp-cs@actions-semi.com,
-	pn@denx.de,
-	sravanhome@gmail.com
-Subject: [PATCH v3 0/5] Add clock driver for Actions S700 SoC
-Date: Tue,  3 Jul 2018 11:25:19 +0200
-Message-Id: <20180703092524.1697111-1-sravanhome@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:33740 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbeGaJis (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 05:38:48 -0400
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v2 5/5] clk: RK808: add RK809 and RK817 support.
+Date: Tue, 31 Jul 2018 16:00:29 +0800
+Message-Id: <1533024029-30273-1-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Changelog v3:
-- Splitted uart clock DTS changes into separate patch
-- Splitted REGMAP Kconfig selection into separate patch
-- General naming convention as "Actions Semi" in dt-binding documentation
-- Patch re-oredering
-- Cleanup and fixed review findings
+RK809 and RK817 are power management IC chips for multimedia products.
+most of their functions and registers are same, including the clkout
+funciton.
 
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+---
+ drivers/clk/Kconfig     |  6 ++---
+ drivers/clk/clk-rk808.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 64 insertions(+), 4 deletions(-)
 
-This patchset adds clock support for Actions Semi OWL series S700 SoC
-with relevant clock bindings and device tree info. 
-
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
-
-Thanks and regards,
-Saravanan,
-Parthiban
-
-Saravanan Sekar (5):
-  dt-bindings: clock: Rename document generic to Actions Semi Soc's
-  clk: actions: Add S700 SoC clock support
-  clk: actions: Add REGMAP as dependency
-  arm64: dts: actions: Enable clock controller for S700
-  arm64: dts: actions: Set UART clock reference from CMU
-
- .../{actions,s900-cmu.txt => actions,owl-cmu.txt}  |  20 +-
- arch/arm64/boot/dts/actions/s700-cubieboard7.dts   |   8 +-
- arch/arm64/boot/dts/actions/s700.dtsi              |  14 +
- drivers/clk/actions/Kconfig                        |  14 +
- drivers/clk/actions/Makefile                       |   1 +
- drivers/clk/actions/owl-s700.c                     | 610 +++++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h       | 128 +++++
- 7 files changed, 779 insertions(+), 16 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (67%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 721572a..fc1427c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -46,11 +46,11 @@ config COMMON_CLK_MAX77686
+ 	  clock.
+ 
+ config COMMON_CLK_RK808
+-	tristate "Clock driver for RK805/RK808/RK818"
++	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
+ 	depends on MFD_RK808
+ 	---help---
+-	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
+-	  multi-function devices have two fixed-rate oscillators,
++	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
++          These multi-function devices have two fixed-rate oscillators,
+ 	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
+ 	  by control register.
+ 
+diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
+index 6461f28..c5d3492 100644
+--- a/drivers/clk/clk-rk808.c
++++ b/drivers/clk/clk-rk808.c
+@@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
+ 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
+ }
+ 
++static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++
++	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
++				  RK817_CLK32KOUT2_EN,
++				  enable ? RK817_CLK32KOUT2_EN : 0);
++}
++
++static int rk817_clkout2_prepare(struct clk_hw *hw)
++{
++	return rk817_clkout2_enable(hw, true);
++}
++
++static void rk817_clkout2_unprepare(struct clk_hw *hw)
++{
++	rk817_clkout2_enable(hw, false);
++}
++
++static int rk817_clkout2_is_prepared(struct clk_hw *hw)
++{
++	struct rk808_clkout *rk808_clkout = container_of(hw,
++							 struct rk808_clkout,
++							 clkout2_hw);
++	struct rk808 *rk808 = rk808_clkout->rk808;
++	unsigned int val;
++
++	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
++
++	if (ret < 0)
++		return ret;
++
++	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
++}
++
++static const struct clk_ops rk817_clkout2_ops = {
++	.prepare = rk817_clkout2_prepare,
++	.unprepare = rk817_clkout2_unprepare,
++	.is_prepared = rk817_clkout2_is_prepared,
++	.recalc_rate = rk808_clkout_recalc_rate,
++};
++
++static const struct clk_ops *rkpmic_get_ops(long variant)
++{
++	switch (variant) {
++	case RK809_ID:
++	case RK817_ID:
++		return &rk817_clkout2_ops;
++	case RK805_ID:
++	case RK808_ID:
++	case RK818_ID:
++		return &rk808_clkout2_ops;
++	}
++
++	return &rk808_clkout2_ops;
++}
++
+ static int rk808_clkout_probe(struct platform_device *pdev)
+ {
+ 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+@@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	init.name = "rk808-clkout2";
+-	init.ops = &rk808_clkout2_ops;
++	init.ops = rkpmic_get_ops(rk808->variant);
+ 	rk808_clkout->clkout2_hw.init = &init;
+ 
+ 	/* optional override of the clockname */
 -- 
-2.14.4
+1.9.1
+
+
