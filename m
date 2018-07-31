@@ -1,131 +1,56 @@
-Return-Path: <hofrat@osadl.org>
-From: Nicholas Mc Guire <hofrat@osadl.org>
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Kees Cook <keescook@chromium.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH 2/2] drivers: clk: st: address sparse warnings
-Date: Sun, 15 Jul 2018 12:18:24 +0200
-Message-Id: <1531649904-6072-2-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1531649904-6072-1-git-send-email-hofrat@osadl.org>
-References: <1531649904-6072-1-git-send-email-hofrat@osadl.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:59100 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725912AbeGaHSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:00 -0400
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 02/10] dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+Date: Tue, 31 Jul 2018 13:37:59 +0800
+Message-ID: <1533015487-60189-3-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
- Refactoring of code to make it more readable and at the same time make
-sparse happy again.
+This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+Platform.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
+ .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+ 1 file changed, 1 insertion(+)
 
-sparse complained about:
-drivers/clk/st/clkgen-pll.c:225:12: warning: context imbalance in 'clkgen_pll_enable' - different lock contexts for basic block
-drivers/clk/st/clkgen-pll.c:267:9: warning: context imbalance in 'clkgen_pll_disable' - different lock contexts for basic block
-drivers/clk/st/clkgen-pll.c:413:9: warning: context imbalance in 'set_rate_stm_pll3200c32' - different lock contexts for basic block
-drivers/clk/st/clkgen-pll.c:570:9: warning: context imbalance in 'set_rate_stm_pll4600c28' - different lock contexts for basic block
-
-Which are technically false positives as the pll->lock which is being
-checked is determined at configuration time, thus the locks are balanced.
-Never the less the refactored code seems more readable and was 
-commented to make it clear.
-
-Patch was compile tested with: multi_v7_defconfig (implies
-CONFIG_ARCH_STI=y)
-
-Patch is against 4.18-rc4 (localversion-next is next-20180713)
-
- drivers/clk/st/clkgen-pll.c | 51 +++++++++++++++++++++++++--------------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 7a7106dc..cbb5184 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -228,13 +228,13 @@ static int clkgen_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret = 0;
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 07bf0b9..5ff48a8 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -5,6 +5,7 @@ interrupt.
  
--	if (pll->lock)
-+	if (pll->lock) {
-+		/* stih418 and stih407 */
- 		spin_lock_irqsave(pll->lock, flags);
--
--	ret = __clkgen_pll_enable(hw);
--
--	if (pll->lock)
-+		ret = __clkgen_pll_enable(hw);
- 		spin_unlock_irqrestore(pll->lock, flags);
-+	} else
-+		ret = __clkgen_pll_enable(hw);
- 
- 	return ret;
- }
-@@ -259,13 +259,13 @@ static void clkgen_pll_disable(struct clk_hw *hw)
- 	struct clkgen_pll *pll = to_clkgen_pll(hw);
- 	unsigned long flags = 0;
- 
--	if (pll->lock)
-+	if (pll->lock) {
-+		/* stih418 and stih407 */
- 		spin_lock_irqsave(pll->lock, flags);
--
--	__clkgen_pll_disable(hw);
--
--	if (pll->lock)
-+		__clkgen_pll_disable(hw);
- 		spin_unlock_irqrestore(pll->lock, flags);
-+	} else
-+		__clkgen_pll_disable(hw);
- }
- 
- static int clk_pll3200c32_get_params(unsigned long input, unsigned long output,
-@@ -400,15 +400,18 @@ static int set_rate_stm_pll3200c32(struct clk_hw *hw, unsigned long rate,
- 
- 	__clkgen_pll_disable(hw);
- 
--	if (pll->lock)
-+	if (pll->lock) {
-+		/* stih407 and stih418 */
- 		spin_lock_irqsave(pll->lock, flags);
--
--	CLKGEN_WRITE(pll, ndiv, pll->ndiv);
--	CLKGEN_WRITE(pll, idf, pll->idf);
--	CLKGEN_WRITE(pll, cp, pll->cp);
--
--	if (pll->lock)
-+		CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-+		CLKGEN_WRITE(pll, idf, pll->idf);
-+		CLKGEN_WRITE(pll, cp, pll->cp);
- 		spin_unlock_irqrestore(pll->lock, flags);
-+	} else {
-+		CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-+		CLKGEN_WRITE(pll, idf, pll->idf);
-+		CLKGEN_WRITE(pll, cp, pll->cp);
-+	}
- 
- 	__clkgen_pll_enable(hw);
- 
-@@ -558,14 +561,16 @@ static int set_rate_stm_pll4600c28(struct clk_hw *hw, unsigned long rate,
- 
- 	__clkgen_pll_disable(hw);
- 
--	if (pll->lock)
-+	if (pll->lock) {
-+		/* stih407 and stih418 */
- 		spin_lock_irqsave(pll->lock, flags);
--
--	CLKGEN_WRITE(pll, ndiv, pll->ndiv);
--	CLKGEN_WRITE(pll, idf, pll->idf);
--
--	if (pll->lock)
-+		CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-+		CLKGEN_WRITE(pll, idf, pll->idf);
- 		spin_unlock_irqrestore(pll->lock, flags);
-+	} else {
-+		CLKGEN_WRITE(pll, ndiv, pll->ndiv);
-+		CLKGEN_WRITE(pll, idf, pll->idf);
-+	}
- 
- 	__clkgen_pll_enable(hw);
- 
+ Required properties:
+ - compatible: should be
++	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+ 	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+ 	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+ 	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
 -- 
-2.1.4
+1.9.1
+
