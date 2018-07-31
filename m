@@ -1,64 +1,106 @@
-Return-Path: <p.zabel@pengutronix.de>
-Message-ID: <1532965111.3471.14.camel@pengutronix.de>
-Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
- SoCs
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Andreas
-	=?ISO-8859-1?Q?F=E4rber?=
-	 <afaerber@suse.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- linux-clk@vger.kernel.org, liuwei@actions-semi.com, mp-cs@actions-semi.com,
-  96boards@ucrobotics.com, devicetree@vger.kernel.org,
- daniel.thompson@linaro.org,  amit.kucheria@linaro.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
- hzhang@ucrobotics.com, bdong@ucrobotics.com,  manivannanece23@gmail.com,
- thomas.liau@actions-semi.com,  jeff.chen@actions-semi.com, pn@denx.de,
- edgar.righi@lsitec.org.br,  sravanhome@gmail.com
-Date: Mon, 30 Jul 2018 17:38:31 +0200
-In-Reply-To: <20180730151131.GA28633@mani>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
-	 <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
-	 <20180730151131.GA28633@mani>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Tue, 31 Jul 2018 11:28:58 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180731073023.GA2956@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+ <20180612082354.GG20078@localhost.localdomain>
+ <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
+ <20180626081319.GA2118@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180626081319.GA2118@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-07-30 at 20:41 +0530, Manivannan Sadhasivam wrote:
-> Hi Andreas,
-> 
-> On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
-> > Hi Mani,
+On Tue, Jun 26, 2018 at 11:13:19AM +0300, Matti Vaittinen wrote:
+> On Mon, Jun 25, 2018 at 04:44:57PM -0700, Stephen Boyd wrote:
+> > Quoting Matti Vaittinen (2018-06-12 01:23:54)
+> > > On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
+> > > > Quoting Matti Vaittinen (2018-06-04 06:19:13)
+
+[snip]
+
+> > > > > +       if (rval) {
+> > > > > +               dev_err(&pdev->dev, "failed to register clkdev for bd71837");
+> > > > > +               goto err_clean_provider;
+> > > > > +       }
+> > > > > +
+> > > > > +       platform_set_drvdata(pdev, c);
+> > > > > +
+> > > > > +       return 0;
+> > > > > +
+> > > > > +err_clean_provider:
+> > > > > +       of_clk_del_provider(pdev->dev.parent->of_node);
+> > > > > +err_out:
+> > > > > +       return rval;
+> > > > > +}
+> > > > > +
+> > > > > +static int bd71837_clk_remove(struct platform_device *pdev)
+> > > > > +{
+> > > > > +       if (pdev->dev.parent->of_node)
+> > > > > +               of_clk_del_provider(pdev->dev.parent->of_node);
+> > > > 
+> > > > Use devm so this can go away. Or is devm not used because the parent
+> > > > of_node is the provider? That's annoying.
+> > > 
+> > > What would be the correct workaround for this?
 > > 
-> > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
-> > > This patchset adds Reset Controller (RMU) support for Actions Semi
-> > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-> > > the clock subsystem in hardware. Hence, in software we integrate RMU
-> > > support into common clock driver inorder to maintain compatibility.
-> > 
-> > Can this not be placed into drivers/reset/ by using mfd-simple with a
-> > sub-node in DT?
-> > 
+> > Smash the clk driver into the overall PMIC node. That should work. Or
+> > possibly assign the same of_node to the child device when creating it?
+> > I'm not sure if that causes some sort of problem with DT code though, so
+> > it would be good to check with Rob H if that's a bad idea or not.
 > 
-> Actually I was not sure where to place this reset controller driver. When I
-> looked into other similar ones such as sunxi, they just integrated into the
-> clk subsystem. So I just chose that path. But yeah, this is hacky!
+> 1. Assign MFD node to subdevice node in MFD when creating the cells.
+> 2. Assign parent->of_node to dev.of_node in clk subdevice.
+> 3. Create devm_of_clk_add_hw_provider_w_node() which does something
+> like (not compiled pseudo) code below
 > 
-> But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
-> are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
-> RMU has only 2 registers, the HW designers decided to use up the CMU memory
-> map. So, maybe syscon would be best option I think. What is your opinion?
+> int devm_of_clk_add_hw_provider_w_node(struct device *dev,
+> 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> 					      void *data),
+> 			struct device_node *of_node,
+> 			void *data)
+> {
+> 	struct device_node **ptr;
+> 	int ret;
+> 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+> 			   GFP_KERNEL);
+> 	if (!ptr)
+> 		return -ENOMEM;
+> 
+> 	*ptr = of_node;
+> 	ret = of_clk_add_hw_provider(of_node, get, data);
+> 	if (!ret)
+> 		devres_add(dev, ptr);
+> 	else
+> 		devres_free(ptr);
+> 
+> 	return ret;
+> }
+> EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider_w_node);
+> 
+> int devm_of_clk_add_hw_provider(struct device *dev,
+> 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> 					      void *data),
+> 			void *data)
+> {
+> 	return devm_of_clk_add_hw_provider_w_node(dev, get, dev->of_node,
+> 						  data);
+> }
+> EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
 
-Using syscon seems cleaner than stuffing the regmap into owl_clk_desc.
+just a friendly reminder, what's your opinion on adding this kind of
+function (devm_of_clk_add_hw_provider_w_node)? or solutions 1/2? And are these options safe what comes to
+reference counting of of_nodes?
 
-> Even if we go for syscon, we should place the reset driver within clk
-> framework as I can see other SoCs like Mediatek are doing the same. But again
-> I'm not sure!
-
-Me neither. If the CMU and RMU are really separate and only share the
-memory map, a syscon driver could live in drivers/reset without
-problems.
-It's only when there are interactions between clocks and resets that you
-really want to have the reset driver integrated with clk.
-
-regards
-Philipp
+Best regards
+	Matti Vaittinen
