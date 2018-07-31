@@ -1,62 +1,239 @@
-Return-Path: <enric.balletbo@collabora.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Derek Basehore <dbasehore@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	Lin Huang <hl@rock-chips.com>,
-	kernel@collabora.com,
-	robin.murphy@arm.com,
-	Sean Paul <seanpaul@chromium.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 2/8] dt-bindings: devfreq: rk3399_dmc: Add rockchip,pmu phandle.
-Date: Mon, 30 Jul 2018 10:11:18 +0200
-Message-Id: <20180730081124.30698-3-enric.balletbo@collabora.com>
-In-Reply-To: <20180730081124.30698-1-enric.balletbo@collabora.com>
-References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:27669 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728226AbeGaHSA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:00 -0400
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>, Ben Ho <Ben.Ho@mediatek.com>
+Subject: [PATCH v4 03/10] arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and Makefile
+Date: Tue, 31 Jul 2018 13:38:00 +0800
+Message-ID: <1533015487-60189-4-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The Rockchip DMC (Dynamic Memory Interface) needs to access to the PMU
-general register files to know the DRAM type, so add a phandle to the
-syscon that manages these registers.
+From: Ben Ho <Ben.Ho@mediatek.com>
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Add basic chip support for Mediatek 8183
+
+Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
+ arch/arm64/boot/dts/mediatek/Makefile       |   1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts |  23 +++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 146 ++++++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
 
-Changes in v1:
-- [RFC 2/10] Add reviewed and acked tags from Chanwoo Choi and Rob Herring
-
- Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-index 0ec68141f85a..951789c0cdd6 100644
---- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-+++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-@@ -12,6 +12,8 @@ Required properties:
- 			 for details.
- - center-supply:	 DMC supply node.
- - status:		 Marks the node enabled/disabled.
-+- rockchip,pmu:		 Phandle to the syscon managing the "PMU general register
-+			 files".
- 
- Optional properties:
- - interrupts:		 The CPU interrupt number. The interrupt specifier
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 7506b0d..a91d462 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-evb.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+new file mode 100644
+index 0000000..2a3dd5a
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Ben Ho <ben.ho@mediatek.com>
++ *	   Erin Lo <erin.lo@mediatek.com>
++ */
++
++/dts-v1/;
++#include "mt8183.dtsi"
++
++/ {
++	model = "MediaTek MT8183 evaluation board";
++	compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x80000000>;
++	};
++
++	chosen {
++		stdout-path = "serial0:921600n8";
++	};
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+new file mode 100644
+index 0000000..1553265
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Ben Ho <ben.ho@mediatek.com>
++ *	   Erin Lo <erin.lo@mediatek.com>
++ */
++
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++	compatible = "mediatek,mt8183";
++	interrupt-parent = <&sysirq>;
++	#address-cells = <2>;
++	#size-cells = <2>;
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&cpu0>;
++				};
++				core1 {
++					cpu = <&cpu1>;
++				};
++				core2 {
++					cpu = <&cpu2>;
++				};
++				core3 {
++					cpu = <&cpu3>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&cpu4>;
++				};
++				core1 {
++					cpu = <&cpu5>;
++				};
++				core2 {
++					cpu = <&cpu6>;
++				};
++				core3 {
++					cpu = <&cpu7>;
++				};
++			};
++		};
++
++		cpu0: cpu@000 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x000>;
++			enable-method = "psci";
++		};
++
++		cpu1: cpu@001 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x001>;
++			enable-method = "psci";
++		};
++
++		cpu2: cpu@002 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x002>;
++			enable-method = "psci";
++		};
++
++		cpu3: cpu@003 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x003>;
++			enable-method = "psci";
++		};
++
++		cpu4: cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x100>;
++			enable-method = "psci";
++		};
++
++		cpu5: cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x101>;
++			enable-method = "psci";
++		};
++
++		cpu6: cpu@102 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x102>;
++			enable-method = "psci";
++		};
++
++		cpu7: cpu@103 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a73";
++			reg = <0x103>;
++			enable-method = "psci";
++		};
++	};
++
++	psci {
++		compatible      = "arm,psci-1.0";
++		method          = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++	};
++
++	gic: interrupt-controller@0c000000 {
++		compatible = "arm,gic-v3";
++		#interrupt-cells = <3>;
++		interrupt-parent = <&gic>;
++		interrupt-controller;
++		reg = <0 0x0c000000 0 0x40000>,  /* GICD */
++		      <0 0x0c100000 0 0x200000>, /* GICR */
++		      <0 0x0c400000 0 0x2000>,   /* GICC */
++		      <0 0x0c410000 0 0x1000>,   /* GICH */
++		      <0 0x0c420000 0 0x2000>;   /* GICV */
++
++		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
++	sysirq: intpol-controller@0c530a80 {
++		compatible = "mediatek,mt8183-sysirq",
++			     "mediatek,mt6577-sysirq";
++		interrupt-controller;
++		#interrupt-cells = <3>;
++		interrupt-parent = <&gic>;
++		reg = <0 0x0c530a80 0 0x50>;
++	};
++};
 -- 
-2.18.0
+1.9.1
+
