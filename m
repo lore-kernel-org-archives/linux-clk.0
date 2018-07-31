@@ -1,57 +1,113 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
-	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
-	robh+dt@kernel.org,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v7 1/5] clk: actions: Add missing REGMAP_MMIO dependency
-Date: Thu, 19 Jul 2018 11:06:45 +0200
-Message-Id: <20180719090649.12460-2-sravanhome@gmail.com>
-In-Reply-To: <20180719090649.12460-1-sravanhome@gmail.com>
-References: <20180719090649.12460-1-sravanhome@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17539 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729639AbeGaHSD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:18:03 -0400
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 06/10] clk: mediatek: Add flags support for mtk_gate data
+Date: Tue, 31 Jul 2018 13:38:03 +0800
+Message-ID: <1533015487-60189-7-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add REGMAP_MMIO as dependency to avoid undefined
-reference to regmap symbols.
+From: Weiyi Lu <weiyi.lu@mediatek.com>
 
-Fixes: d85d20053e19 ("clk: actions: Add S900 SoC clock support")
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-Reviewed-by: Andreas Färber <afaerber@suse.de>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On some Mediatek platforms, there are critical clocks of
+clock gate type.
+To register clock gate with flags CLK_IS_CRITICAL,
+we need to add the flags field in mtk_gate data and register APIs.
+
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- drivers/clk/actions/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mediatek/clk-gate.c | 5 +++--
+ drivers/clk/mediatek/clk-gate.h | 3 ++-
+ drivers/clk/mediatek/clk-mtk.c  | 3 ++-
+ drivers/clk/mediatek/clk-mtk.h  | 1 +
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-index 8854adb37847..39491154abbf 100644
---- a/drivers/clk/actions/Kconfig
-+++ b/drivers/clk/actions/Kconfig
-@@ -1,6 +1,7 @@
- config CLK_ACTIONS
- 	bool "Clock driver for Actions Semi SoCs"
- 	depends on ARCH_ACTIONS || COMPILE_TEST
-+	select REGMAP_MMIO
- 	default ARCH_ACTIONS
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index 934bf0e..25d25c3 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
+ 		int clr_ofs,
+ 		int sta_ofs,
+ 		u8 bit,
+-		const struct clk_ops *ops)
++		const struct clk_ops *ops,
++		unsigned int flags)
+ {
+ 	struct mtk_clk_gate *cg;
+ 	struct clk *clk;
+@@ -168,7 +169,7 @@ struct clk *mtk_clk_register_gate(
+ 		return ERR_PTR(-ENOMEM);
  
- if CLK_ACTIONS
+ 	init.name = name;
+-	init.flags = CLK_SET_RATE_PARENT;
++	init.flags = flags | CLK_SET_RATE_PARENT;
+ 	init.parent_names = parent_name ? &parent_name : NULL;
+ 	init.num_parents = parent_name ? 1 : 0;
+ 	init.ops = ops;
+diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
+index 72ef89b..631cd3a 100644
+--- a/drivers/clk/mediatek/clk-gate.h
++++ b/drivers/clk/mediatek/clk-gate.h
+@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
+ 		int clr_ofs,
+ 		int sta_ofs,
+ 		u8 bit,
+-		const struct clk_ops *ops);
++		const struct clk_ops *ops,
++		unsigned int flags);
+ 
+ #endif /* __DRV_CLK_GATE_H */
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 50becd0..15310f8 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -131,7 +131,8 @@ int mtk_clk_register_gates(struct device_node *node,
+ 				gate->regs->set_ofs,
+ 				gate->regs->clr_ofs,
+ 				gate->regs->sta_ofs,
+-				gate->shift, gate->ops);
++				gate->shift, gate->ops,
++				gate->flags);
+ 
+ 		if (IS_ERR(clk)) {
+ 			pr_err("Failed to register clk %s: %ld\n",
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 61693f6..c3285ff 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -217,6 +217,7 @@ struct mtk_gate {
+ 	const struct mtk_gate_regs *regs;
+ 	int shift;
+ 	const struct clk_ops *ops;
++	unsigned int flags;
+ };
+ 
+ int mtk_clk_register_gates(struct device_node *node,
 -- 
-2.14.4
+1.9.1
+
