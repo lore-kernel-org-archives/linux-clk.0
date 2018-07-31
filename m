@@ -1,127 +1,126 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:36415 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbeG0OSQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Jul 2018 10:18:16 -0400
-Date: Fri, 27 Jul 2018 14:56:15 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3.1 10/10] arm64: dts: allwinner: a64: Enable HDMI
- output on A64 boards w/ HDMI
-Message-ID: <20180727125615.ju23ecgm6y4rz7p5@flea>
-References: <20180726171257.6688-1-icenowy@aosc.io>
- <20180726171257.6688-11-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3xvit7syelf6yr45"
-In-Reply-To: <20180726171257.6688-11-icenowy@aosc.io>
+Received: from lucky1.263xmail.com ([211.157.147.130]:59744 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728227AbeGaJfy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 05:35:54 -0400
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v2 3/5] dt-bindings: mfd: rk808: Add binding informations for RK809 and RK817.
+Date: Tue, 31 Jul 2018 15:57:28 +0800
+Message-Id: <1533023850-29004-4-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
---3xvit7syelf6yr45
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+---
+ Documentation/devicetree/bindings/mfd/rk808.txt | 55 +++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-On Fri, Jul 27, 2018 at 01:12:57AM +0800, Icenowy Zheng wrote:
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/a=
-rm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> index 1b9b92e541d2..1b972bade9f6 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-> @@ -62,6 +62,21 @@
->  	chosen {
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> +
-> +	connector {
-> +		compatible =3D "hdmi-connector";
-> +		type =3D "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint =3D <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&de {
-> +	status =3D "okay";
->  };
-> =20
->  &ehci0 {
-> @@ -82,6 +97,17 @@
-> =20
->  };
-> =20
-> +&hdmi {
-> +	hdmi-supply =3D <&reg_dldo1>;
-> +	status =3D "okay";
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint =3D <&hdmi_con_in>;
-> +	};
-> +};
-> +
->  &i2c1 {
->  	pinctrl-names =3D "default";
->  	pinctrl-0 =3D <&i2c1_pins>;
-> @@ -99,6 +125,10 @@
->  	};
->  };
-> =20
-> +&mixer1 {
-> +	status =3D "okay";
-> +};
-> +
->  &mmc0 {
->  	pinctrl-names =3D "default";
->  	pinctrl-0 =3D <&mmc0_pins>;
-> @@ -238,6 +268,10 @@
->  	status =3D "disabled";
->  };
-> =20
-> +&tcon1 {
-> +	status =3D "okay";
-> +};
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..31c9f3d 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
+ 
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,28 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
++Optional RK809 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK809 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK808 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2.
++
++Following regulators of the RK817 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- BOOST
++	- OTG_SWITCH
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +147,13 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
+ 
++There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
+-- 
+1.9.1
 
-Is it working or not on the pine64?
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---3xvit7syelf6yr45
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltbFm4ACgkQ0rTAlCFN
-r3T7LhAAkfFcBA6X1XtL00YHltRxggxIhKJOsMNhjI+FlX+s0zu3VPW3DSmrepgK
-ts4cEebJxlaobaHrEvE/fdvscPQgXKQsGvegeboi+jZtRwHF5uHKLxvdlc6dv/rT
-d/QpHUGAgTYMsHeS40mHMWkndPM3IAFWW4PNUDazXepHGzc4Y4/joK+Ik0U2uhEK
-Wr8U1ArDzkZTL7kEi7bW6WsHUaCWrTK/TjGOMJ/9cstL4i3bzeS19FvMs0Q2/v9/
-RLgL9OJDyEz6vxdRXkZTrOI1QyzZr3yEj4/1P8UZihsaysFqje7s14GFaqOXSvVp
-I9RJuses8/7MZApuhmnpSmUtui1Zctt/V1TZ6e3u6sCH8GNT5tpsOlSnfox4XiEV
-ofx0oTC/xB8CBPogpFObrTy8NSPUut5mkTGc1QpAVwk5/Dw3xbIJzxF0g10uEgxv
-mdQVHEpcjA/+c0gBWsg9fjhYJqshyWImiLw6F7VfeyF/tB3j1HJNMYLVZdfrcxkc
-5g3bgtLiTcSISv37D8zvkd6Zp7esTmLZVS0jQpm1LxpgF1EoIdZXScmEdRPkFU0D
-owbjIyZooZqtC7CID3Z7b0tONNgBrgbOAiqIgB3ZT34vCRtSxv4E9FQfrBf1Dk/6
-DBpXKF8w96zcCqdte9AAKr7W3PlwjkpJPNBEGR/gp/i3K1W5Y1g=
-=UoNb
------END PGP SIGNATURE-----
-
---3xvit7syelf6yr45--
