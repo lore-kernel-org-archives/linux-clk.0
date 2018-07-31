@@ -1,149 +1,77 @@
 Return-Path: <mazziesaccount@gmail.com>
 Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 5 Jul 2018 17:31:49 +0300
+Date: Tue, 31 Jul 2018 12:05:36 +0300
 From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-	mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-	dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
-	andrew.smirnov@gmail.com, linus.walleij@linaro.org,
-	kstewart@linuxfoundation.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org, eballetbo@gmail.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v10 0/2] mfd/regulator/clk/input: bd71837: ROHM BD71837 PMIC
- driver
-Message-ID: <cover.1530800707.git.matti.vaittinen@fi.rohmeurope.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
+	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+	mturquette@baylibre.com, robh+dt@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+	heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
+Message-ID: <20180731090536.GB2956@localhost.localdomain>
+References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
+ <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
+ <20180612082354.GG20078@localhost.localdomain>
+ <20180613130338.GH20078@localhost.localdomain>
+ <152997038474.143105.3390705878521933864@swboyd.mtv.corp.google.com>
+ <20180627084000.GE2118@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180627084000.GE2118@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71837 PMIC.
+Hello Again,
 
-BD71837 is a programmable Power Management IC for powering single-core,
-dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
-low BOM cost and compact solution footprint. It integrates 8 buck
-regulators and 7 LDOs to provide all the power rails required by the
-SoC and the commonly used peripherals.
+On Wed, Jun 27, 2018 at 11:40:00AM +0300, Matti Vaittinen wrote:
+> Hello Stephen,
+> 
+> On Mon, Jun 25, 2018 at 04:46:24PM -0700, Stephen Boyd wrote:
+> > Quoting Matti Vaittinen (2018-06-13 06:03:38)
+> > > On Tue, Jun 12, 2018 at 11:23:54AM +0300, Matti Vaittinen wrote:
+> > > > 
+> > > > I see. This makes sense. I need to verify from HW colleagues whether
+> > > > this chip has internal oscillator or not. I originally thought we have
+> > > > on-chip oscillator - but as you say, we do have XIN pin in documentation.
+> > > > So now I am not sure if the test board I have contains oscillator driving
+> > > > the clk on PMIC - or if the PMIC has internal oscillator. I'll clarify this.
+> > > 
+> > > It really turned out that the PMIC just acts as a clock buffer. So I do
+> > > as you suggested and add lookup for parent clock to the driver. I
+> > > planned to do it so that if no parent is found from DT - then we assume
+> > > the 32.768KHz clock (as described in documentation). Eg, something along
+> > > the lines:
+> > > 
+> > >         init.parent_names = of_clk_get_parent_name(pdev->dev.parent->of_node, 0);
+> > >         if (init.parent_names) {
+> > >                 init.num_parents = 1;
+> > >         } else {
+> > >                 /* If parent is not given from DT we assume the typical use-case with
+> > >                  * 32.768 KHz oscillator for RTC (Maybe we could just error out here?)
+> > >                  */
+> > >                 c->rate = BD71837_CLK_RATE;
+> > >                 bd71837_clk_ops.recalc_rate = &bd71837_clk_recalc_rate;
+> > >         }
+> > 
+> > You can also add a clk directly in this driver in that case there isn't
+> > one in DT with the rate and name of your choosing. Then the logic is the
+> > same and we don't need a c->rate variable.
+> 
+> So you mean that I should use clk_hw_register_fixed_rate and create new
+> clk if parent is not found? Isn't this a bit of an overkill? Downside is
+> that then we do need remove/cleanup functionality for deleting this
+> parent clock - and I didn't find devm support for fixed clock. Furthermore
+> I guess that since it is parent, it can't be removed before child is removed.
+> 
+> Or did you mean something else but creating a fixed rate clock as parent
+> here?
 
-This is reduced set of patches containing only the MFD and devicetree
-bindings. This enables alrady applied regulator part and power button
-support using gpio-keys. Clock and reset support will be sent as separate
-set of patches - possibly only after my vacations. Sorry for longish delay
-which will follow.
+I would be grateful for any tips on how to proceed. Should I
 
-Changelog v10
-Fixes based on comments from Lee Jones
-- Drop the platform data.
-- Drop the regmap wrapper functions and use regmap directly.
-- Rename files with rohm-prefix.
-- Replace goto from probe by in-place returns.
-- Drop unnecessary i2c_id table.
-- Change gpio_keys_button array to simple struct.
-- Fix return value checks for regmap functions.
-- Various styling/spelling fixes.
-- Replace foo-bar with something more meaningfull in DT example
+1. Really create a fixed rate clock - and build cleanup sequence myself
+2. Keep this simple and fail if no parent is found using of_clk_get_parent_name
 
-Changelog v9
-Fixes initiated by feedback from Enric Balletbo Serra, Lee and Dmitry.
-- Simplified control flow for probe
-- Removed accidentally left squash commit message
-- Some comma presence toggling after last member in an array =)
-- Styling of multi line comments.
-
-Changelog v8
-- Dropped clk-bd71837 from series (will send later)
-- Dropped bd718xx-pwrkey driver and used gpio_keys instead.
-- Added power-button short/long press duration configuratio to MFD
-- Cleaned MFD driver according to comments from Enric Balletbo Serra.
-  (used devm, removed unnecessary header inclusions, removed redundant
-  assignment, styling issues, allow building MFD part as module, fixed
-  license mismatch).
-
-Changelog v7
-- patch 1: Cleaned MFD probe since MFD no longer directly reads DT
-  properties.
-- patch 1/4: Moved power-key related definitions from powerkey patch (4)
-  to MFD patch (1) so that powerkey can be applied independently
-- Patch 2 is unchanged.
-- patch 3: Added missing allocation check back to clk probe
-
-Changelog v6
-- Added power-key input driver
-Based on feedback from Rob Herring and Stephen Boyd
-- Added link to datasheet
-- Removed interrupt-controller from DT and fixed binding document
-- clk styling fixes
-- remove clkdev usage
-- add clk bindings to MFD documentation
-- removed clk binding document
-
-Changelog v5
-- dropped regulator patches which are already applied to Mark's tree
-Based on feedback from Rob Herring and Stephen Boyd
-- mfd bindings: explain why this can be interrupt-controller
-- mfd bindings: describe interrupts better
-- mfd bindings: require one cell interrupt specifier
-- mfd bindings: use generic node names in example
-- mfd driver:   ack masked interrupt once at init
-- clk bindings: use generic node names in example
-- clk driver:   use devm
-- clk driver:   use of_clk_add_hw_provider
-- clk driver:   change severity of print and how prints are emitted at
-                probe error path.
-- clk driver:   dropped forward declared functions
-- clk configs:  drop unnecessary dependencies
-- clk driver:   other styling issues
-- mfd/clk DT:   drop clk node.
-
-Changelog v4
-- remove mutex from regulator state check as core prevents simultaneous
-  accesses
-- allow voltage change for bucks 1 to 4 when regulator is enabled
-- fix indentiation problems
-- properly correct SPDX comments
-
-Changelog v3
-- kill unused variable
-- kill unused definitions
-- use REGMAP_IRQ_REG
-
-Changelog v2
-Based on feedback from Mark Brown
-- Squashed code and buildfile changes to same patch
-- Fixed some styling issues
-- Changed SPDX comments to CPP style
-- Error out if voltage is changed when regulator is enabled instead of
-  Disabling the regulator for duration of change
-- Use devm_regulator_register
-- Remove compatible usage from regulators - use parent dev for config
-- Add a note about using regulator-boot-on for BUCK6 and 7
-- fixed warnings from kbuild test robot
-
-patch 1:
-        MFD driver and definitions bringing interrupt support and
-        enabling clk, regulator and input subsystems.
-patch 2:
-        MFD driver DT bindings
-
-This patch series is based on for-mfd-next
-
----
-
-Matti Vaittinen (2):
-  mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-  mfd: bd71837: Devicetree bindings for ROHM BD71837 PMIC
-
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  62 ++++
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/rohm-bd718x7.c                         | 198 ++++++++++++
- include/linux/mfd/rohm-bd718x7.h                   | 333 +++++++++++++++++++++
- 5 files changed, 607 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
- create mode 100644 drivers/mfd/rohm-bd718x7.c
- create mode 100644 include/linux/mfd/rohm-bd718x7.h
-
--- 
-2.14.3
+Best regards
+    Matti Vaittinen
