@@ -1,95 +1,166 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	linux-tegra@vger.kernel.org,
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date: Tue, 24 Jul 2018 19:42:19 +0300
-Message-Id: <20180724164221.3307-7-digetx@gmail.com>
-In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
-References: <20180724164221.3307-1-digetx@gmail.com>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
+Date: Tue, 31 Jul 2018 13:10:59 +0100
+Message-Id: <1533039060-18779-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
+References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Kernel should never gate the EMC clock as it causes immediate lockup, so
-removing clk-gate functionality doesn't affect anything. Turning EMC clk
-gate into divider allows to implement glitch-less EMC scaling, avoiding
-reparenting to a backup clock.
+Quite a few drivers get an optional clock, e.g. a clock required
+to access peripheral's registers that is always enabled on some
+devices.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+This function behaves the same as of_clk_get_by_name() except that
+it will return NULL instead of -ENOENT.
+
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+v4:
+ - For optional named clocks of_property_match_string() will return
+   -EINVAL if the "clock-names" property is missing, or -ENODATA if
+   the specified clock name in the "clock-names" property is missing.
+   If we then call __of_clk_get() with these errors as the index, we
+   get clk = -EINVAL. This is then filtered later on so users don't
+   see it. However, if the clock is not named, __of_clk_get() will
+   return -ENOENT is the clock provide is not there.
+   So for optional named clocks, use index to determine if the clock
+   provider is there or not, and for unnamed clocks, simply check if
+   __of_clk_get() returns -ENOENT.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..68551effb5ca 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
- 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
- };
+v3:
+ - Fix check for clock not present. __of_clk_get() returns -EINVAL
+   if it's not there. Cover case of when there is no clock name.
+ - of_clk_get_by_name_optional() should return NULL if !np.
+ - Add dummy version of of_clk_get_by_name_optional() for the
+   !OF || !COMMON_CLK case.
+---
+ drivers/clk/clkdev.c | 43 +++++++++++++++++++++++++++++++++++++++----
+ include/linux/clk.h  |  6 ++++++
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 9ab3db8..f8f6ba9 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -54,7 +54,8 @@ EXPORT_SYMBOL(of_clk_get);
  
- static unsigned long tegra20_clk_measure_input_freq(void)
-@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
- };
- 
-+static void __init tegra20_emc_clk_init(void)
-+{
-+	struct clk *clk;
-+
-+	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-+			       ARRAY_SIZE(mux_pllmcp_clkm),
-+			       CLK_SET_RATE_NO_REPARENT,
-+			       clk_base + CLK_SOURCE_EMC,
-+			       30, 2, 0, &emc_lock);
-+
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA20_CLK_MC] = clk;
-+
-+	/*
-+	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
-+	 * the same time due to a HW bug, this won't happen because we're
-+	 * defining 'emc_mux' and 'emc' as distinct clocks.
-+	 */
-+	clk = tegra_clk_register_divider("emc", "emc_mux",
-+				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
-+				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
-+	clks[TEGRA20_CLK_EMC] = clk;
-+}
-+
- static void __init tegra20_periph_clk_init(void)
+ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 					const char *dev_id,
+-					const char *name)
++					const char *name,
++					bool optional)
  {
- 	struct tegra_periph_init_data *data;
-@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
- 	clks[TEGRA20_CLK_AC97] = clk;
+ 	struct clk *clk = ERR_PTR(-ENOENT);
  
- 	/* emc */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
--			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA20_CLK_MC] = clk;
-+	tegra20_emc_clk_init();
+@@ -70,6 +71,12 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 		if (name)
+ 			index = of_property_match_string(np, "clock-names", name);
+ 		clk = __of_clk_get(np, index, dev_id, name);
++		if (optional && (index == -EINVAL || index == -ENODATA ||
++		    PTR_ERR(clk) == -ENOENT)) {
++			clk = NULL;
++			pr_info("optional clock is not present %pOF:%s\n", np,
++				name ? name : "");
++		}
+ 		if (!IS_ERR(clk)) {
+ 			break;
+ 		} else if (name && index >= 0) {
+@@ -89,6 +96,12 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 			break;
+ 	}
  
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
++	if (optional && PTR_ERR(clk) == -ENOENT) {
++		clk = NULL;
++		pr_info("optional clock is not present %pOF:%s\n", np,
++			name ? name : "");
++	}
++
+ 	return clk;
+ }
+ 
+@@ -106,15 +119,37 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
+ 	if (!np)
+ 		return ERR_PTR(-ENOENT);
+ 
+-	return __of_clk_get_by_name(np, np->full_name, name);
++	return __of_clk_get_by_name(np, np->full_name, name, false);
+ }
+ EXPORT_SYMBOL(of_clk_get_by_name);
+ 
++/**
++ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
++ * by a device node
++ * @np: pointer to clock consumer node
++ * @name: name of consumer's clock input, or NULL for the first clock reference
++ *
++ * This function parses the clocks and clock-names properties, and uses them to
++ * look up the struct clk from the registered list of clock providers.
++ * It behaves the same as of_clk_get_by_name(), except when np is NULL or no
++ * clock provider is found, when it then returns NULL.
++ */
++struct clk *of_clk_get_by_name_optional(struct device_node *np,
++					const char *name)
++{
++	if (!np)
++		return NULL;
++
++	return __of_clk_get_by_name(np, np->full_name, name, true);
++}
++EXPORT_SYMBOL(of_clk_get_by_name_optional);
++
+ #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
+ 
+ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 					const char *dev_id,
+-					const char *name)
++					const char *name,
++					bool optional)
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
+@@ -197,7 +232,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+ 	struct clk *clk;
+ 
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
+ 	}
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4f750c4..de0e5e0 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
++struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+ #else
+ static inline struct clk *of_clk_get(struct device_node *np, int index)
+@@ -788,6 +789,11 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline struct clk *of_clk_get_by_name_optional(struct device_node *np,
++						      const char *name)
++{
++	return NULL;
++}
+ static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+ {
+ 	return ERR_PTR(-ENOENT);
 -- 
-2.18.0
+2.7.4
