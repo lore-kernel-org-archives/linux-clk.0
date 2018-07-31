@@ -1,354 +1,259 @@
-Return-Path: <jonathanh@nvidia.com>
-Subject: Re: [PATCH v6 3/4] clk: tegra: Add sdmmc mux divider clock
-To: Aapo Vienamo <avienamo@nvidia.com>, Peter De Schrijver
-	<pdeschrijver@nvidia.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
- <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <e518a8f6-23b2-5cd9-545f-29407c3be636@nvidia.com>
-Date: Thu, 12 Jul 2018 13:56:52 +0100
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:57019 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727279AbeGaJub (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 31 Jul 2018 05:50:31 -0400
+Date: Tue, 31 Jul 2018 10:10:13 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
+        a.zummo@towertech.it, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v2 4/5] RTC: RK808: add RK809 and RK817 support.
+Message-ID: <20180731081013.GS28585@piout.net>
+References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+ <1533023850-29004-5-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <1531396382-5579-4-git-send-email-avienamo@nvidia.com>
-Return-Path: jonathanh@nvidia.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1533023850-29004-5-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi,
 
-On 12/07/18 12:53, Aapo Vienamo wrote:
-> From: Peter De-Schrijver <pdeschrijver@nvidia.com>
+I insist this must be a lowercase "rtc: rk808:". There has not been a
+single upper case RTC in a subject since 2011.
+
+
+On 31/07/2018 15:57:29+0800, Tony Xie wrote:
+> RK809 and RK817 are power management IC chips for multimedia products.
+> Most of their functions and registers are same, including the rtc.
 > 
-> Add a clock type to model the sdmmc switch divider clocks which have paths
-> to source clocks bypassing the divider (Low Jitter paths). These
-> are handled by selecting the lj path when the divider is 1 (ie the
-> rate is the parent rate), otherwise the normal path with divider
-> will be selected. Otherwise this clock behaves as a normal peripheral
-> clock.
-> 
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 > ---
->  drivers/clk/tegra/Makefile        |   1 +
->  drivers/clk/tegra/clk-sdmmc-mux.c | 251 ++++++++++++++++++++++++++++++++++++++
->  drivers/clk/tegra/clk.h           |  26 ++++
->  3 files changed, 278 insertions(+)
->  create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
+>  drivers/rtc/Kconfig     |  4 +--
+>  drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
+>  2 files changed, 56 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index c77d072..6507acc 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -8,6 +8,7 @@ obj-y					+= clk-periph-fixed.o
->  obj-y					+= clk-periph-gate.o
->  obj-y					+= clk-pll.o
->  obj-y					+= clk-pll-out.o
-> +obj-y					+= clk-sdmmc-mux.o
->  obj-y					+= clk-super.o
->  obj-y					+= clk-tegra-audio.o
->  obj-y					+= clk-tegra-periph.o
-> diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-> new file mode 100644
-> index 0000000..473d418
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-> @@ -0,0 +1,251 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * based on clk-mux.c
-> + *
-> + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-> + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
-> + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
-> + *
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/types.h>
-> +
-> +#include "clk.h"
-> +
-> +#define DIV_MASK GENMASK(7, 0)
-> +#define MUX_SHIFT 29
-> +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
-> +#define SDMMC_MUL 2
-> +
-> +#define get_max_div(d) DIV_MASK
-> +#define get_div_field(val) ((val) & DIV_MASK)
-> +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
-> +
-> +static const char * const mux_sdmmc_parents[] = {
-> +	"pll_p", "pll_c4_out2", "pll_c4_out0", "pll_c4_out1", "clk_m"
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index a2ba5db..1aaf935 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
+>  	  will be called rtc-max77686.
+>  
+>  config RTC_DRV_RK808
+> -	tristate "Rockchip RK805/RK808/RK818 RTC"
+> +	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+>  	depends on MFD_RK808
+>  	help
+>  	  If you say yes here you will get support for the
+> -	  RTC of RK805, RK808 and RK818 PMIC.
+> +	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
+>  
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rk808-rtc.
+> diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+> index 739c0d4..5bacdaf 100644
+> --- a/drivers/rtc/rtc-rk808.c
+> +++ b/drivers/rtc/rtc-rk808.c
+> @@ -50,9 +50,18 @@
+>  #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
+>  #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+>  
+> +struct rk_rtc_compat_reg {
+> +	unsigned int ctrl_reg;
+> +	unsigned int status_reg;
+> +	unsigned int alarm_seconds_reg;
+> +	unsigned int int_reg;
+> +	unsigned int seconds_reg;
 > +};
 > +
-> +static const u8 mux_lj_idx[] = {
-> +	[0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6
-> +};
-> +
-> +static const u8 mux_non_lj_idx[] = {
-> +	[0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6
-> +};
-> +
-> +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	int num_parents, i;
-> +	u32 src, val;
-> +	const u8 *mux_idx;
-> +
-> +	num_parents = clk_hw_get_num_parents(hw);
-> +
-> +	val = readl_relaxed(sdmmc_mux->reg);
-> +	src = get_mux_field(val);
-> +	if (get_div_field(val))
-> +		mux_idx = mux_non_lj_idx;
-> +	else
-> +		mux_idx = mux_lj_idx;
-> +
-> +	for (i = 0; i < num_parents; i++) {
-> +		if (mux_idx[i] == src)
-> +			return i;
+>  struct rk808_rtc {
+>  	struct rk808 *rk808;
+>  	struct rtc_device *rtc;
+> +	struct rk_rtc_compat_reg *creg;
+>  	int irq;
+>  };
+>  
+> @@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	int ret;
+>  
+>  	/* Force an update of the shadowed registers right now */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+>  	if (ret) {
+> @@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+>  	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+>  	 */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 0);
+>  	if (ret) {
+> @@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  			       rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+> @@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	rtc_data[6] = bin2bcd(tm->tm_wday);
+>  
+>  	/* Stop RTC while updating the RTC registers */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+>  	if (ret) {
+> @@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  				rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+>  		return ret;
+>  	}
+>  	/* Start RTC again */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+> @@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	uint32_t int_reg;
+>  	int ret;
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap,
+> +			       rk808_rtc->creg->alarm_seconds_reg,
+>  			       alrm_data, NUM_ALARM_REGS);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
+> +		return ret;
 > +	}
-> +
-> +	WARN(1, "Unknown parent selector %d\n", src);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_sdmmc_mux_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	u32 val;
-> +
-> +
-> +	val = readl_relaxed(sdmmc_mux->reg);
-> +	if (get_div_field(val))
-> +		index = mux_non_lj_idx[index];
-> +	else
-> +		index = mux_lj_idx[index];
-> +
-> +	val &= ~MUX_MASK;
-> +	val |= index << MUX_SHIFT;
-> +
-> +	writel(val, sdmmc_mux->reg);
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned long clk_sdmmc_mux_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	u32 val;
-> +	int div;
-> +	u64 rate = parent_rate;
-> +
-> +	val = readl_relaxed(sdmmc_mux->reg);
-> +	div = get_div_field(val);
-> +
-> +	div += SDMMC_MUL;
-> +
-> +	rate *= SDMMC_MUL;
-> +	rate += div - 1;
-> +	do_div(rate, div);
-> +
-> +	return rate;
-> +}
-> +
-> +static int clk_sdmmc_mux_determine_rate(struct clk_hw *hw,
-> +					struct clk_rate_request *req)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	int div;
-> +	unsigned long output_rate = req->best_parent_rate;
-> +
-> +	req->rate = max(req->rate, req->min_rate);
-> +	req->rate = min(req->rate, req->max_rate);
-> +
-> +	if (!req->rate)
-> +		return output_rate;
-> +
-> +	div = div_frac_get(req->rate, output_rate, 8, 1, sdmmc_mux->div_flags);
-> +	if (div < 0)
-> +		div = 0;
-> +
-> +	if (sdmmc_mux->div_flags & TEGRA_DIVIDER_ROUND_UP)
-> +		req->rate =  DIV_ROUND_UP(output_rate * SDMMC_MUL,
-> +					  div + SDMMC_MUL);
-> +	else
-> +		req->rate =  output_rate * SDMMC_MUL / (div + SDMMC_MUL);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long parent_rate)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	int div;
-> +	unsigned long flags = 0;
-> +	u32 val;
-> +	u8 src;
-> +
-> +	div = div_frac_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
-> +	if (div < 0)
-> +		return div;
-> +
-> +	if (sdmmc_mux->lock)
-> +		spin_lock_irqsave(sdmmc_mux->lock, flags);
-> +
-> +	src = clk_sdmmc_mux_get_parent(hw);
-> +	if (div)
-> +		src = mux_non_lj_idx[src];
-> +	else
-> +		src = mux_lj_idx[src];
-> +
-> +	val = src << MUX_SHIFT;
-> +	val |= div;
-> +	writel(val, sdmmc_mux->reg);
-> +	fence_udelay(2, sdmmc_mux->reg);
-> +
-> +	if (sdmmc_mux->lock)
-> +		spin_unlock_irqrestore(sdmmc_mux->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> +
-> +	__clk_hw_set_clk(gate_hw, hw);
-> +
-> +	return gate_ops->is_enabled(gate_hw);
-> +}
-> +
-> +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> +
-> +	__clk_hw_set_clk(gate_hw, hw);
-> +
-> +	return gate_ops->enable(gate_hw);
-> +}
-> +
-> +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
-> +{
-> +	struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> +	const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> +	struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> +
-> +	gate_ops->disable(gate_hw);
-> +}
-> +
-> +static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
-> +	.get_parent = clk_sdmmc_mux_get_parent,
-> +	.set_parent = clk_sdmmc_mux_set_parent,
-> +	.determine_rate = clk_sdmmc_mux_determine_rate,
-> +	.recalc_rate = clk_sdmmc_mux_recalc_rate,
-> +	.set_rate = clk_sdmmc_mux_set_rate,
-> +	.is_enabled = clk_sdmmc_mux_is_enabled,
-> +	.enable = clk_sdmmc_mux_enable,
-> +	.disable = clk_sdmmc_mux_disable,
+>  
+>  	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+>  	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
+> @@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+>  	rockchip_to_gregorian(&alrm->time);
+>  
+> -	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
+> +	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+>  		return ret;
+> @@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+>  
+>  	return ret;
+> @@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+>  
+> @@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+>  	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap,
+> +				rk808_rtc->creg->alarm_seconds_reg,
+>  				alrm_data, NUM_ALARM_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk write: %d\n", ret);
+> @@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+>  	struct i2c_client *client = rk808->i2c;
+>  	int ret;
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&client->dev,
+> @@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+>  	rk808_rtc_suspend, rk808_rtc_resume);
+>  
+> +static struct rk_rtc_compat_reg rk808_creg = {
+> +	.ctrl_reg = RK808_RTC_CTRL_REG,
+> +	.status_reg = RK808_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
+> +	.int_reg = RK808_RTC_INT_REG,
+> +	.seconds_reg = RK808_SECONDS_REG,
 > +};
 > +
-> +struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
-> +	void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
-> +	unsigned long flags, void *lock)
-> +{
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +	const struct tegra_clk_periph_regs *bank;
-> +	struct tegra_sdmmc_mux *sdmmc_mux;
+> +static struct rk_rtc_compat_reg rk817_creg = {
+> +	.ctrl_reg = RK817_RTC_CTRL_REG,
+> +	.status_reg = RK817_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
+> +	.int_reg = RK817_RTC_INT_REG,
+> +	.seconds_reg = RK817_SECONDS_REG,
+> +};
 > +
-> +	init.ops = &tegra_clk_sdmmc_mux_ops;
-> +	init.name = name;
-> +	init.flags = flags;
-> +	init.parent_names = mux_sdmmc_parents;
-> +	init.num_parents = ARRAY_SIZE(mux_sdmmc_parents);
-> +
-> +	bank = get_reg_bank(clk_num);
-> +	if (!bank)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	sdmmc_mux = kzalloc(sizeof(*sdmmc_mux), GFP_KERNEL);
-> +	if (!sdmmc_mux)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	/* Data in .init is copied by clk_register(), so stack variable OK */
-> +	sdmmc_mux->hw.init = &init;
-> +	sdmmc_mux->reg = clk_base + offset;
-> +	sdmmc_mux->lock = lock;
-> +	sdmmc_mux->gate.clk_base = clk_base;
-> +	sdmmc_mux->gate.regs = bank;
-> +	sdmmc_mux->gate.enable_refcnt = periph_clk_enb_refcnt;
-> +	sdmmc_mux->gate.clk_num = clk_num;
-> +	sdmmc_mux->gate.flags = TEGRA_PERIPH_ON_APB;
-> +	sdmmc_mux->div_flags = div_flags;
-> +	sdmmc_mux->gate_ops = &tegra_clk_periph_gate_ops;
-> +
-> +	clk = clk_register(NULL, &sdmmc_mux->hw);
-> +	if (IS_ERR(clk)) {
-> +		kfree(sdmmc_mux);
-> +		return clk;
+>  static int rk808_rtc_probe(struct platform_device *pdev)
+>  {
+>  	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+> @@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  	if (rk808_rtc == NULL)
+>  		return -ENOMEM;
+>  
+> +	switch (rk808->variant) {
+> +	case RK809_ID:
+> +	case RK817_ID:
+> +		rk808_rtc->creg = &rk817_creg;
+> +		break;
+> +	default:
+> +		rk808_rtc->creg = &rk808_creg;
+> +		break;
 > +	}
-> +
-> +	sdmmc_mux->gate.hw.clk = clk;
-> +
-> +	return clk;
-> +}
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index c733841..d2c3a01 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -706,6 +706,32 @@ struct clk *tegra_clk_register_super_clk(const char *name,
->  		const char * const *parent_names, u8 num_parents,
->  		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
->  		spinlock_t *lock);
-> +
-> +/**
-> + * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
-> + *
-> + * @hw:		handle between common and hardware-specific interfaces
-> + * @reg:	register controlling mux and divider
-> + * @flags:	hardware-specific flags
-> + * @lock:	optional register lock
-> + * @gate:	gate clock
-> + * @gate_ops:	gate clock ops
-> + */
-> +struct tegra_sdmmc_mux {
-> +	struct clk_hw		hw;
-> +	void __iomem		*reg;
-> +	spinlock_t		*lock;
-> +	const struct clk_ops	*gate_ops;
-> +	struct tegra_clk_periph_gate	gate;
-> +	u8			div_flags;
-> +};
-> +
-> +#define to_clk_sdmmc_mux(_hw) container_of(_hw, struct tegra_sdmmc_mux, hw)
-> +
-> +struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
-> +		void __iomem *clk_base, u32 offset, u32 clk_num, u8 div_flags,
-> +		unsigned long flags, void *lock);
-> +
->  /**
->   * struct clk_init_table - clock initialization table
->   * @clk_id:	clock id as mentioned in device tree bindings
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers!
-Jon
+>  	platform_set_drvdata(pdev, rk808_rtc);
+>  	rk808_rtc->rk808 = rk808;
+>  
+>  	/* start rtc running by default, and use shadowed timer. */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+> @@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&pdev->dev,
+> -- 
+> 1.9.1
+> 
+> 
 
 -- 
-nvpublic
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
