@@ -1,166 +1,90 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:42373 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728123AbeGPUjr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Jul 2018 16:39:47 -0400
-Date: Mon, 16 Jul 2018 16:10:45 -0400
-From: David Rivshin <drivshin@awxrd.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Adam Ford <aford173@gmail.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        j-keerthy@ti.com
-Subject: Re: dmtimer fclk regression in 4.16?
-Message-ID: <20180716161045.71cc268b.drivshin@awxrd.com>
-In-Reply-To: <bef9a6ca-75ba-4548-e3bd-1775dccd5296@baylibre.com>
-References: <20180619145339.08322293.drivshin@awxrd.com>
-        <1b9995a0-0a44-2896-4492-0d16e3fa2b53@ti.com>
-        <b37ee1e6-1b06-b82f-9948-ac66a06544ca@baylibre.com>
-        <20180620115321.5496761a.drivshin@awxrd.com>
-        <20180712183836.62e88588.drivshin@awxrd.com>
-        <CAHCN7xLv_RqrPyxesOYe+O2Mo5rPLwf6iE9bHbZ1sMfZNOppJQ@mail.gmail.com>
-        <bef9a6ca-75ba-4548-e3bd-1775dccd5296@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>,
+	kernel@pengutronix.de,
+	linux-imx@nxp.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	patchwork-lst@pengutronix.de
+Subject: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard clock handles
+Date: Tue, 31 Jul 2018 12:20:08 +0200
+Message-Id: <20180731102009.6710-2-l.stach@pengutronix.de>
+In-Reply-To: <20180731102009.6710-1-l.stach@pengutronix.de>
+References: <20180731102009.6710-1-l.stach@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 16 Jul 2018 19:03:29 +0200
-Neil Armstrong <narmstrong@baylibre.com> wrote:
+When specifying external clock inputs to the CCM the current code
+requires the clocks to be in a "clocks" child node of the DT root.
+This is not really conformant with DT best practices.
 
-> On 16/07/2018 13:58, Adam Ford wrote:
-> > On Thu, Jul 12, 2018 at 5:39 PM David Rivshin <drivshin@awxrd.com> wrote:  
-> >>
-> >> On Wed, 20 Jun 2018 11:53:21 -0400
-> >> David Rivshin <drivshin@awxrd.com> wrote:
-> >>  
-> >>> On Wed, 20 Jun 2018 09:11:19 +0200
-> >>> Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>>  
-> >>>> Hi,
-> >>>>
-> >>>> On 20/06/2018 08:30, Tero Kristo wrote:  
-> >>>>> On 19/06/18 21:53, David Rivshin wrote:  
-> >>>>>> I think I've run across a regression in 4.16 that resulted from the TI clock
-> >>>>>> infrastructure changes. A bisect pointed to [1] as the first breaking commit.
-> >>>>>>
-> >>>>>> Our use-case is a pwm-dmtimer-omap using timer7, with timer7_fck parented
-> >>>>>> by clkdiv32k_ick (aka timer_32k_ck aka l4_per_cm:clk:0138:0). Starting with
-> >>>>>> 4.16 that parenting fails in omap_dm_timer_set_source(), called from
-> >>>>>> pwm_omap_dmtimer_probe, at this check:
-> >>>>>>     if (clk_hw_get_num_parents(__clk_get_hw(timer->fclk)) < 2)
-> >>>>>>         return 0;
-> >>>>>> because timer->fclk is "l4_per_cm:clk:0068:0", whose only possible parent
-> >>>>>> is "timer7_fck".
-> >>>>>>
-> >>>>>> It seemed to me that timer->fclk should instead be "timer7_fck" (which has
-> >>>>>> the desired set of possible parents). I tried following the lead set in [2]
-> >>>>>> and added "clocks" and "clock-names" properties on timer7. However, that
-> >>>>>> resulted in omap_dm_timer_of_set_source(), called by omap_dm_timer_prepare(),
-> >>>>>> failing when it tries to parent "timer7_fck" to itself.
-> >>>>>>
-> >>>>>> The following change in omap_dm_timer_prepare() does seem to work:
-> >>>>>> -        timer->fclk = clk_get(&timer->pdev->dev, "fck");
-> >>>>>> +        timer->fclk = clk_get_parent(clk_get(&timer->pdev->dev, "fck"));  
-> >>>>>
-> >>>>> It seems omap_dm_timer_of_set_source() is actually completely broken and isn't doing anything useful. Neil, what was this function supposed to be doing, seeing you invented the initial patch for that (commit 31a7448f4fa8a528040e3df593e9781f55218183)?  
-> >>>>
-> >>>> The original change was supposed to set the timer source clock by using the clock defined in the DT, but
-> >>>> it was made to work when the code was in arch/arm and the fck was not found from DT.
-> >>>>
-> >>>>
-> >>>> The omap_dm_timer_of_set_source() should be changed to get a specified clock name like "src":
-> >>>> parent = clk_get(&timer->pdev->dev, "src");
-> >>>> if (IS_ERR(parent))
-> >>>>     return -ENODEV;
-> >>>>
-> >>>> And the fck clock should be added to all timer nodes.
-> >>>>
-> >>>> For example ed839c3664cb308144fe70a3a95813ab59a03dfb or 521f9e5e3f871cdac3ecd2a583d14d0472278053 only adds fck to timer1/2, the 7 timers should have the fck clock.
-> >>>>
-> >>>> @David: chan you test the omap_dm_timer_of_set_source() change and in DT update the timer7 node with :
-> >>>> clocks = <&timer7_fck>, <&clkdiv32k_ck>;
-> >>>> clock-names = "fck", "src";  
-> >>>
-> >>> That didn't work as-is because clkdiv32k_ck isn't a direct parent of
-> >>> timer7_fck anymore. However, if I change it to
-> >>>       <&l4_per_clkctrl AM3_CLKDIV32K_CLKCTRL 0>
-> >>> then all seems well.
-> >>>
-> >>> Since pwm-dmtimer-omap sets the source clock explicitly anyways
-> >>> (based on the DT), using any of the parents of timer7_fck as
-> >>> the timer7 "src" clock works in my case.
-> >>>
-> >>> Also, if I leave off the "src" clock entirely, then omap_dm_timer_prepare()
-> >>> defaults it to using that same clock:
-> >>>       rc = omap_dm_timer_of_set_source(timer);
-> >>>       if (rc == -ENODEV)
-> >>>               return omap_dm_timer_set_source(timer, OMAP_TIMER_SRC_32_KHZ);
-> >>> and that also works for me.
-> >>>
-> >>> Thanks,
-> >>> David Rivshin
-> >>>  
-> >>
-> >> Hi Neil,
-> >>
-> >> Are you planning on submitting a patch with this fix? Or would you prefer
-> >> I spun one up? One concern I have is that while I use an am335x and feel
-> >> fairly confident on those DT changes, I'm not so confident about what
-> >> changes would be needed for other SoC's devicetrees.  
-> > 
-> > I use the dmtimer to run a PWM on the backlight of a device I have on
-> > both an OMAP35xx and OMAP36/37.  If someone wants to CC me on the
-> > patch, I can test it my boards.  
-> 
-> Hi,
-> 
-> I can send a patch, but I'll need you test to make sure it still works.
+To avoid the need to deviate from those best practices, allow the
+clock inputs to be specifies via standard clock handles. This is
+in line with how drivers of the later CCM driver revisions on
+newer i.MX SoCs handle this.
 
-No problem, I can definitely test on my board. Please CC me as well so 
-I don't miss it.
+As we can't retroactively change the DT binding, allow this as an
+option with a fallback to the old way of how this has been handled.
 
-Thanks,
-David Rivshin
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+---
+ .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
+ drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
-> 
-> Neil
-> 
-> > 
-> > adam  
-> >>
-> >>  
-> >>>>
-> >>>> Thanks,
-> >>>> Neil
-> >>>>  
-> >>>>>
-> >>>>> -Tero
-> >>>>>  
-> >>>>>> but I'm very uncertain whether that's the right path.
-> >>>>>> Should omap_dm_timer know that the clock returned is actually a child of the
-> >>>>>> clock it's interested in? Or should clk_get(<timerN>,"fck") be returning the
-> >>>>>> timerN_fck in the first place? Or is the problem something else entirely?
-> >>>>>>
-> >>>>>> As I'm not sure how these pieces are all intended to fit together, any
-> >>>>>> pointers would be appreciated.
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>> David Rivshin
-> >>>>>>
-> >>>>>> [1] df54bfc5502a ("clk: ti: am33xx: add clkctrl clock data")
-> >>>>>> https://www.spinics.net/lists/linux-omap/msg139798.html
-> >>>>>> [2] 521f9e5e3f87 ("ARM: dts: am33xx: add fck under timers1/2")
-> >>>>>> https://www.spinics.net/lists/linux-omap/msg140605.html
-> >>>>>>  
-> >>>>>
-> >>>>> --
-> >>>>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki  
-> >>>>  
-> >>>  
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html  
-> 
-
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index a45ca67a9d5f..ce6aa9920c05 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,11 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- clocks: list of clock specifiers, must contain an entry for each entry
++          in clock-names
++- clock-names: valid names are "osc", "ckil", "ckil", "anaclk1" and "anaclk2"
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 9059a369ae95..f64f0fe76658 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -421,12 +421,24 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	int ret;
+ 
+ 	clk[IMX6QDL_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+-	clk[IMX6QDL_CLK_CKIL] = imx_obtain_fixed_clock("ckil", 0);
+-	clk[IMX6QDL_CLK_CKIH] = imx_obtain_fixed_clock("ckih1", 0);
+-	clk[IMX6QDL_CLK_OSC] = imx_obtain_fixed_clock("osc", 0);
++	clk[IMX6QDL_CLK_CKIL] = of_clk_get_by_name(ccm_node, "ckil");
++	if (IS_ERR(clk[IMX6QDL_CLK_CKIL]))
++		clk[IMX6QDL_CLK_CKIL] = imx_obtain_fixed_clock("ckil", 0);
++	clk[IMX6QDL_CLK_CKIH] = of_clk_get_by_name(ccm_node, "ckih1");
++	if (IS_ERR(clk[IMX6QDL_CLK_CKIH]))
++		clk[IMX6QDL_CLK_CKIH] = imx_obtain_fixed_clock("ckih1", 0);
++	clk[IMX6QDL_CLK_OSC] = of_clk_get_by_name(ccm_node, "osc");
++	if (IS_ERR(clk[IMX6QDL_CLK_OSC]))
++		clk[IMX6QDL_CLK_OSC] = imx_obtain_fixed_clock("osc", 0);
++
+ 	/* Clock source from external clock via CLK1/2 PADs */
+-	clk[IMX6QDL_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
+-	clk[IMX6QDL_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
++	clk[IMX6QDL_CLK_ANACLK1] = of_clk_get_by_name(ccm_node, "anaclk1");
++	if (IS_ERR(clk[IMX6QDL_CLK_ANACLK1]))
++		clk[IMX6QDL_CLK_ANACLK1] = imx_obtain_fixed_clock("anaclk1", 0);
++
++	clk[IMX6QDL_CLK_ANACLK2] = of_clk_get_by_name(ccm_node, "anaclk2");
++	if (IS_ERR(clk[IMX6QDL_CLK_ANACLK2]))
++		clk[IMX6QDL_CLK_ANACLK2] = imx_obtain_fixed_clock("anaclk2", 0);
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
+ 	anatop_base = base = of_iomap(np, 0);
+-- 
+2.18.0
