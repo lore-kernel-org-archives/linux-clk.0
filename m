@@ -1,66 +1,61 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
-From: Douglas Anderson <dianders@chromium.org>
-To: sboyd@kernel.org,
-	andy.gross@linaro.org
-Cc: tdas@codeaurora.org,
-	grahamr@codeaurora.org,
-	girishm@codeaurora.org,
-	anischal@codeaurora.org,
-	bjorn.andersson@linaro.org,
-	Douglas Anderson <dianders@chromium.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Brown <david.brown@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH v2 0/2] clk: qcom: Quad SPI (qspi) clock support for sdm845
-Date: Mon, 23 Jul 2018 14:54:02 -0700
-Message-Id: <20180723215404.74296-1-dianders@chromium.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44538 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728800AbeGaVGO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 17:06:14 -0400
+Date: Tue, 31 Jul 2018 13:24:26 -0600
+From: Rob Herring <robh@kernel.org>
+To: Erin Lo <erin.lo@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
+        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
+        linux-clk@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v4 05/10] clk: mediatek: Add dt-bindings for MT8183 clocks
+Message-ID: <20180731192426.GA8792@rob-hp-laptop>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+ <1533015487-60189-6-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1533015487-60189-6-git-send-email-erin.lo@mediatek.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Jul 31, 2018 at 01:38:02PM +0800, Erin Lo wrote:
+> From: Weiyi Lu <weiyi.lu@mediatek.com>
+> 
+> Add MT8183 clock dt-bindings, include topckgen, apmixedsys,
+> infracfg and subsystem clocks.
+> 
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> ---
+>  include/dt-bindings/clock/mt8183-clk.h | 413 +++++++++++++++++++++++++++++++++
+>  1 file changed, 413 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/mt8183-clk.h
+> 
+> diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
+> new file mode 100644
+> index 0000000..bacad53
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mt8183-clk.h
+> @@ -0,0 +1,413 @@
+> +/* SPDX-License-Identifier: GPL-2.0
 
-This two-series patch adds the needed clock bits to use the Quad SPI
-(qspi) part on sdm845.  It's expected that the bindings part of this
-patch could land in the clock tree with an immutable git hash and then
-be pulled into the Qualcomm tree so it could be used by dts files.
+This should be a separate comment from the copyright. Otherwise,
 
->From the reply to my v1, the clock plan for this clock is:
-- MinSVS@19.2
-- LowSVS@75
-- SVS@150
-- Nominal@300
-...and intermediate frequencies can be used at frequences less than
-300.  I didn't see a need for 75 MHz and it was unclear from previous
-replies if this should come from MAIN or EVEN so I left it out.  I
-have added 100 MHz here since it is useful (/ 4 = 25 MHz is a useful
-clock for SPI flash)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-OTHER NOTES:
-- From probing lines, it appears that the Quad SPI block has a divide
-  by 4 somewhere inside it (probably so it can oversample the lines,
-  or possibly so it can generate phase-offset clocks).  Thus we need
-  the core to go 4 times faster than we'd expect to run the SPI bus.
-- SPI devices usually specify the MAX frequency they should be clocked
-  at, so it's important that we use the clk_rcg2_floor_ops here rather
-  than the clk_rcg2_ops
-
-Changes in v2:
-- Only 19.2, 100, 150, and 300 MHz now.
-- All clocks come from MAIN rather than EVEN.
-- Use parent map 0 instead of new parent map 9.
-
-Douglas Anderson (2):
-  clk: qcom: Add qspi (Quad SPI) clock defines for sdm845 to header
-  clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-
- drivers/clk/qcom/gcc-sdm845.c               | 63 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h |  3 +
- 2 files changed, 66 insertions(+)
-
--- 
-2.18.0.233.g985f88cf7e-goog
+> + *
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Weiyi Lu <weiyi.lu@mediatek.com>
+> + */
