@@ -1,153 +1,126 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
-Date: Thu, 12 Jul 2018 22:39:38 +0530
-Message-Id: <1531415381-16885-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
-References: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw02.mediatek.com ([210.61.82.184]:24639 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725912AbeGaHRz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Jul 2018 03:17:55 -0400
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 00/10] Add basic and clock support for Mediatek MT8183 SoC
+Date: Tue, 31 Jul 2018 13:37:57 +0800
+Message-ID: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For some of the GDSCs, there is a requirement to enable/disable the
-few clocks before turning on/off the gdsc power domain. Add support
-for the same by specifying a list of clk_hw pointers per gdsc and
-enable/disable them along with power domain on/off callbacks.
+MT8183 is a SoC based on 64bit ARMv8 architecture.
+It contains 4 CA53 and 4 CA73 cores.
+MT8183 share many HW IP with MT65xx series.
+This patchset was tested on MT8183 evaluation board and use correct clock to shell.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h |  5 +++++
- 2 files changed, 49 insertions(+)
+This series contains document bindings, device tree including interrupt, uart, clock.
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a077133..b6adca1 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -12,6 +12,8 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
-@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
- 			   GMEM_RESET_MASK, 0);
- }
-+
-+static int gdsc_clk_prepare_enable(struct gdsc *sc)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < sc->clk_count; i++) {
-+		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
-+		if (ret) {
-+			for (i--; i >= 0; i--)
-+				clk_disable_unprepare(sc->clk_hws[i]->clk);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static void gdsc_clk_disable_unprepare(struct gdsc *sc)
-+{
-+	int i;
-+
-+	for (i = 0; i < sc->clk_count; i++)
-+		clk_disable_unprepare(sc->clk_hws[i]->clk);
-+}
-+
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
- 
-@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		udelay(1);
- 	}
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
- 
-@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
-@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	if (sc->flags & CLAMP_IO)
- 		gdsc_assert_clamp_io(sc);
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index bd1f2c7..59957d7 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/pm_domain.h>
- 
-+struct clk_hw;
- struct regmap;
- struct reset_controller_dev;
- 
-@@ -32,6 +33,8 @@
-  * @resets: ids of resets associated with this gdsc
-  * @reset_count: number of @resets
-  * @rcdev: reset controller
-+ * @clk_count: number of associated clocks
-+ * @clk_hws: clk_hw pointers for associated clocks with gdsc
-  */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-@@ -60,6 +63,8 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+	unsigned int			clk_count;
-+	struct clk_hw			*clk_hws[];
- };
- 
- struct gdsc_desc {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Based on v4.18-rc1 and https://patchwork.kernel.org/patch/10528515/
+Composed of clock control (PATCH 5-8) and device tree (PATCH 9-10)
+
+Change in v4:
+1. Correct syntax error in dtsi
+2. Add MT8183 clock support
+
+Change in v3:
+1. Fill out GICC, GICH, GICV regions
+2. Update Copyright to 2018
+
+Change in v2:
+1. Split dt-bindings into different patches
+2. Correct bindings for supported SoCs (mtk-uart.txt)
+
+Ben Ho (1):
+  arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+    Makefile
+
+Erin Lo (3):
+  dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+  dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+  dt-bindings: serial: Add compatible for Mediatek MT8183
+
+Weiyi Lu (6):
+  dt-bindings: ARM: Mediatek: Document bindings for MT8183
+  clk: mediatek: Add dt-bindings for MT8183 clocks
+  clk: mediatek: Add flags support for mtk_gate data
+  clk: mediatek: Add MT8183 clock support
+  arm64: dts: mt8183: Add clock controller device nodes
+  dts: arm64: mt8183: add uart node
+
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,ipu.txt         |   43 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |   31 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  268 +++++
+ drivers/clk/mediatek/Kconfig                       |   74 ++
+ drivers/clk/mediatek/Makefile                      |   12 +
+ drivers/clk/mediatek/clk-gate.c                    |    5 +-
+ drivers/clk/mediatek/clk-gate.h                    |    3 +-
+ drivers/clk/mediatek/clk-mt8183-audio.c            |  112 ++
+ drivers/clk/mediatek/clk-mt8183-cam.c              |   75 ++
+ drivers/clk/mediatek/clk-mt8183-img.c              |   75 ++
+ drivers/clk/mediatek/clk-mt8183-ipu0.c             |   68 ++
+ drivers/clk/mediatek/clk-mt8183-ipu1.c             |   68 ++
+ drivers/clk/mediatek/clk-mt8183-ipu_adl.c          |   66 ++
+ drivers/clk/mediatek/clk-mt8183-ipu_conn.c         |  155 +++
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c           |   66 ++
+ drivers/clk/mediatek/clk-mt8183-mm.c               |  128 ++
+ drivers/clk/mediatek/clk-mt8183-vdec.c             |   84 ++
+ drivers/clk/mediatek/clk-mt8183-venc.c             |   71 ++
+ drivers/clk/mediatek/clk-mt8183.c                  | 1230 ++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |    3 +-
+ drivers/clk/mediatek/clk-mtk.h                     |    1 +
+ include/dt-bindings/clock/mt8183-clk.h             |  413 +++++++
+ 36 files changed, 3064 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-audio.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu0.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu1.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu_adl.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-ipu_conn.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-mfgcfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8183.c
+ create mode 100644 include/dt-bindings/clock/mt8183-clk.h
+
+--
+1.9.1
+
