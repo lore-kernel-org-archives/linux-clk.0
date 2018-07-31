@@ -1,96 +1,105 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Boris Brezillon <boris.brezillon@bootlin.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
-	<liang.yang@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu
-	<jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v3 1/2] clk: meson: add DT documentation for emmc clock controller
-Date: Thu, 12 Jul 2018 21:12:43 +0000
-Message-ID: <20180712211244.11428-2-yixun.lan@amlogic.com>
-In-Reply-To: <20180712211244.11428-1-yixun.lan@amlogic.com>
-References: <20180712211244.11428-1-yixun.lan@amlogic.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC: <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 10/10] dts: arm64: mt8183: add uart node
+Date: Tue, 31 Jul 2018 13:38:07 +0800
+Message-ID: <1533015487-60189-11-git-send-email-erin.lo@mediatek.com>
+In-Reply-To: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
+References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Document the MMC sub clock controller driver, the potential consumer
-of this driver is MMC or NAND. Also add three clock bindings IDs which
-provided by this driver.
+From: Weiyi Lu <weiyi.lu@mediatek.com>
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Add uart node with correct uart clocks.
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
- .../clock/amlogic,meson-mmc-clkc.h            | 16 ++++++++++
- 2 files changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
- create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts |  8 ++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 30 +++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-new file mode 100644
-index 000000000000..91018221df1a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-@@ -0,0 +1,31 @@
-+* Amlogic MMC Sub Clock Controller Driver
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+index 2a3dd5a..9b52559 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+@@ -12,6 +12,10 @@
+ 	model = "MediaTek MT8183 evaluation board";
+ 	compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
+ 
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+The Amlogic MMC clock controller generates and supplies clock to support
-+MMC and NAND controller
+ 	memory@40000000 {
+ 		device_type = "memory";
+ 		reg = <0 0x40000000 0 0x80000000>;
+@@ -21,3 +25,7 @@
+ 		stdout-path = "serial0:921600n8";
+ 	};
+ };
 +
-+Required Properties:
-+
-+- compatible: should be:
-+		"amlogic,meson-gx-mmc-clkc"
-+		"amlogic,meson-axg-mmc-clkc"
-+
-+- #clock-cells: should be 1.
-+- clocks: phandles to clocks corresponding to the clock-names property
-+- clock-names: list of parent clock names
-+	- "clkin0", "clkin1"
-+
-+Parent node should have the following properties :
-+- compatible: "amlogic,meson-axg-mmc-clkc", "syscon".
-+- reg: base address and size of the MMC control register space.
-+
-+Example: Clock controller node:
-+
-+sd_mmc_c_clkc: clock-controller@7000 {
-+	compatible = "amlogic,meson-axg-mmc-clkc", "syscon";
-+	reg = <0x0 0x7000 0x0 0x4>;
-+	#clock-cells = <1>;
-+
-+	clock-names = "clkin0", "clkin1";
-+	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
-+		 <&clkc CLKID_FCLK_DIV2>;
++&uart0 {
++	status = "okay";
 +};
-diff --git a/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-new file mode 100644
-index 000000000000..2ae988ebc3ae
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson MMC sub clock tree IDs
-+ *
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ * Author: Yixun Lan <yixun.lan@amlogic.com>
-+ */
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 6b87a24..c22a2dc 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -170,6 +170,36 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	uart0: serial@11002000 {
++		compatible = "mediatek,mt8183-uart",
++			     "mediatek,mt6577-uart";
++		reg = <0 0x11002000 0 0x1000>;
++		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&clk26m>, <&infracfg CLK_INFRA_UART0>;
++		clock-names = "baud", "bus";
++		status = "disabled";
++	};
 +
-+#ifndef __MMC_CLKC_H
-+#define __MMC_CLKC_H
++	uart1: serial@11003000 {
++		compatible = "mediatek,mt8183-uart",
++			     "mediatek,mt6577-uart";
++		reg = <0 0x11003000 0 0x1000>;
++		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&clk26m>, <&infracfg CLK_INFRA_UART1>;
++		clock-names = "baud", "bus";
++		status = "disabled";
++	};
 +
-+#define CLKID_MMC_DIV				1
-+#define CLKID_MMC_PHASE_TX			3
-+#define CLKID_MMC_PHASE_RX			4
++	uart2: serial@11004000 {
++		compatible = "mediatek,mt8183-uart",
++			     "mediatek,mt6577-uart";
++		reg = <0 0x11004000 0 0x1000>;
++		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
++		clocks = <&clk26m>, <&infracfg CLK_INFRA_UART2>;
++		clock-names = "baud", "bus";
++		status = "disabled";
++	};
 +
-+#endif
+ 	audiosys: syscon@11220000 {
+ 		compatible = "mediatek,mt8183-audiosys", "syscon";
+ 		reg = <0 0x11220000 0 0x1000>;
 -- 
-2.18.0
+1.9.1
