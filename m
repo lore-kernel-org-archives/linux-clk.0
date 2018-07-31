@@ -1,31 +1,57 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 03/13] clk: davinci: psc-dm644x: use two lookup entries
- for the aemif clock
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
- Kevin Hilman <khilman@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <20180628095748.4462-4-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <dcebca67-3057-cf4a-937b-6a79bc4bb682@lechnology.com>
-Date: Fri, 6 Jul 2018 12:40:57 -0500
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Subject: [PATCH v2 0/5] support a new type of PMIC，including two chips(rk817 and rk809)
+Date: Tue, 31 Jul 2018 15:57:25 +0800
+Message-Id: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20180628095748.4462-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: linux-rtc@vger.kernel.org, a.zummo@towertech.it,
+ alexandre.belloni@bootlin.com, tony.xie@rock-chips.com,
+ huangtao@rock-chips.com, devicetree@vger.kernel.org, sboyd@kernel.org,
+ zhangqing@rock-chips.com, linux-kernel@vger.kernel.org, xsf@rock-chips.com,
+ linux-rockchip@lists.infradead.org, broonie@kernel.org, lee.jones@linaro.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ chenjh@rock-chips.com
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 06/28/2018 04:57 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We want to be able to get the clock both from the board file by its
-> con_id and from the aemif driver by dev_id.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
-
-Applied to clk-davinci-4.19.
-
-Thanks.
+TW9zdCBvZiBmdW5jdGlvbnMgYW5kIHJlZ2lzdGVycyBvZiB0aGUgcms4MTcgYW5kIHJrODA4IGFy
+ZSB0aGUgc2FtZSwKc28gdGhleSBjYW4gc2hhcmUgYWxsbW9zdCBhbGwgY29kZXMuCgpUaGVpciBz
+cGVjaWZpY2F0aW9ucyBhcmUgYXMgZm9sbG93c++8mgogIDEpIFRoZSBSSzgwOSBhbmQgUks4MDkg
+Y29uc2lzdCBvZiA1IERDRENzLCA5IExET3MgYW5kIGhhdmUgdGhlIHNhbWUgcmVnaXN0ZXJzCiAg
+ICAgZm9yIHRoZXNlIGNvbXBvbmVudHMgZXhjZXB0IGRjZGM1LgogIDIpIFRoZSBkY2RjNSBpcyBh
+IGJvb3N0IGRjZGMgZm9yIFJLODE3IGFuZCBpcyBhIGJ1Y2sgZm9yIFJLODA5LgogIDMpIFRoZSBS
+SzgxNyBoYXMgb25lIHN3aXRjaCBidXQgVGhlIFJrODA5IGhhcyB0d28uCgpDaGFuZ2VzIGluIFYy
+OgoxLiBpbml0aWFsaXplIHRoZSBwbV9wd3JvZmZfZm4gdG8gTlVMTC4gCjIuIHVzZSBFWFBPUlRf
+U1lNQk9MX0dQTCB0byBleHBvcnQgcG1fcG93ZXJfb2ZmX3ByZXBhcmUuCjMuIGNoYW5nZSBwYXRj
+aCAyLzMvNC81IHN1YmplY3RzLiAKClRvbnkgWGllICg1KToKICBtZmQ6IHJrODA4OiBBZGQgUks4
+MTcgYW5kIFJLODA5IHN1cHBvcnQKICByZWd1bGF0b3I6IHJrODA4OiBhZGQgUks4MDkgYW5kIFJL
+ODE3IHN1cHBvcnQuCiAgZHQtYmluZGluZ3M6IG1mZDogcms4MDg6IEFkZCBiaW5kaW5nIGluZm9y
+bWF0aW9ucyBmb3IgUks4MDkgYW5kIFJLODE3LgogIFJUQzogUks4MDg6IGFkZCBSSzgwOSBhbmQg
+Uks4MTcgc3VwcG9ydC4KICBjbGs6IFJLODA4OiBhZGQgUks4MDkgYW5kIFJLODE3IHN1cHBvcnQu
+CgogRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9yazgwOC50eHQgfCAgNTUg
+KysKIGRyaXZlcnMvY2xrL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA2
+ICstCiBkcml2ZXJzL2Nsay9jbGstcms4MDguYyAgICAgICAgICAgICAgICAgICAgICAgICB8ICA2
+MiArKy0KIGRyaXZlcnMvbWZkL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
+ICA2ICstCiBkcml2ZXJzL21mZC9yazgwOC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8
+IDIxOCArKysrKysrLQogZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZyAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvcmVndWxhdG9yL3JrODA4LXJlZ3VsYXRvci5jICAgICAg
+ICAgICAgIHwgNjMzICsrKysrKysrKysrKysrKysrKysrKysrLQogZHJpdmVycy9ydGMvS2NvbmZp
+ZyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0KIGRyaXZlcnMvcnRjL3J0Yy1y
+azgwOC5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDY4ICsrLQogaW5jbHVkZS9saW51eC9t
+ZmQvcms4MDguaCAgICAgICAgICAgICAgICAgICAgICAgfCAxNzUgKysrKysrKwoga2VybmVsL3Jl
+Ym9vdC5jICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwogMTEgZmlsZXMg
+Y2hhbmdlZCwgMTIwMyBpbnNlcnRpb25zKCspLCAyOSBkZWxldGlvbnMoLSkKCi0tIAoxLjkuMQoK
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
