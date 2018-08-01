@@ -1,183 +1,96 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] clk: tegra: Poll PLLX lock-status on resume from suspend on Tegra20/30
-Date: Thu, 30 Aug 2018 22:20:45 +0300
-Message-Id: <20180830192045.11017-4-digetx@gmail.com>
-In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
-References: <20180830192045.11017-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54809 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389418AbeHAPxf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Aug 2018 11:53:35 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so7145508wmb.4
+        for <linux-clk@vger.kernel.org>; Wed, 01 Aug 2018 07:07:38 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH] clk: meson: axg: round audio system master clocks down
+Date: Wed,  1 Aug 2018 16:07:32 +0200
+Message-Id: <20180801140732.27671-1-jbrunet@baylibre.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Poll PLLX lock-status instead of delaying for a constant time. This speeds
-up resume from suspend a tad and is less error-prone since lock failure
-will be reported.
+Some of the master clocks provided by the axg audio clock controller are
+system clock (spdifin and pdm sysclk). They are used to clock an internal
+DSP of the related devices. Having them constantly rounded down instead
+of closest is preferable.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 51 +++++++++++++++++++++++++++------
- drivers/clk/tegra/clk-tegra30.c | 51 +++++++++++++++++++++++++++------
- 2 files changed, 86 insertions(+), 16 deletions(-)
+ drivers/clk/meson/axg-audio.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index f987ed361df6..c8146e65e7ad 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -15,6 +15,7 @@
-  */
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index a0ed41e73bde..5f6c860aa122 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -101,10 +101,16 @@ static const char * const mst_mux_parent_names[] = {
+ 	"axg_mst_in4", "axg_mst_in5", "axg_mst_in6", "axg_mst_in7",
+ };
  
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/of.h>
-@@ -1001,6 +1002,47 @@ static void tegra20_cpu_clock_suspend(void)
- 				readl(clk_base + SUPER_CCLK_DIVIDER);
- }
+-#define AXG_MST_MCLK_MUX(_name, _reg)					\
+-	AXG_AUD_MUX(_name##_sel, _reg, 0x7, 24, CLK_MUX_ROUND_CLOSEST, \
++#define AXG_MST_MUX(_name, _reg, _flag)				\
++	AXG_AUD_MUX(_name##_sel, _reg, 0x7, 24, _flag,		\
+ 		    mst_mux_parent_names, CLK_SET_RATE_PARENT)
  
-+static void tegra20_cpu_clock_restore_pllx(void)
-+{
-+	u32 misc = readl_relaxed(clk_base + PLLX_MISC);
-+	u32 base = readl_relaxed(clk_base + PLLX_BASE);
-+	u32 misc_restore = tegra20_cpu_clk_sctx.pllx_misc;
-+	u32 base_restore = tegra20_cpu_clk_sctx.pllx_base;
-+	int err;
++#define AXG_MST_MCLK_MUX(_name, _reg)				\
++	AXG_MST_MUX(_name, _reg, CLK_MUX_ROUND_CLOSEST)
 +
-+	/* nothing to do if PLL configuration is unchanged */
-+	if (misc == misc_restore && base == base_restore)
-+		return;
++#define AXG_MST_SYS_MUX(_name, _reg)				\
++	AXG_MST_MUX(_name, _reg, 0)
 +
-+	/* otherwise restore configuration */
-+	if (base_restore & BIT(30)) {
-+		/* PLL shall be locked if we are going to (re)enable it */
-+		misc_restore |= BIT(18);
-+	}
+ static AXG_MST_MCLK_MUX(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
+ static AXG_MST_MCLK_MUX(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
+ static AXG_MST_MCLK_MUX(mst_c_mclk,   AUDIO_MCLK_C_CTRL);
+@@ -112,13 +118,19 @@ static AXG_MST_MCLK_MUX(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
+ static AXG_MST_MCLK_MUX(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
+ static AXG_MST_MCLK_MUX(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
+ static AXG_MST_MCLK_MUX(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+-static AXG_MST_MCLK_MUX(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
+ static AXG_MST_MCLK_MUX(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+-static AXG_MST_MCLK_MUX(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++static AXG_MST_SYS_MUX(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_SYS_MUX(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
 +
-+	/* disable PLL if it is enabled to re-apply configuration safely */
-+	if (base & BIT(30)) {
-+		writel_relaxed(base & ~BIT(30), clk_base + PLLX_BASE);
-+		udelay(1);
-+	}
++#define AXG_MST_DIV(_name, _reg, _flag)				\
++	AXG_AUD_DIV(_name##_div, _reg, 0, 16, _flag,		\
++		    "axg_"#_name"_sel", CLK_SET_RATE_PARENT)	\
 +
-+	/* restore the configuration */
-+	writel_relaxed(misc_restore, clk_base + PLLX_MISC);
-+	writel_relaxed(base_restore, clk_base + PLLX_BASE);
-+
-+	/* PLL is disabled now, nothing left to do */
-+	if (!(base_restore & BIT(30)))
-+		return;
-+
-+	/* otherwise start polling the PLL lock-status */
-+	err = readl_relaxed_poll_timeout_atomic(clk_base + PLLX_BASE, base,
-+						base & BIT(27), 1, 2000);
-+	/* should not happen */
-+	WARN_ONCE(err, "PLLX failed to lock: %d\n", err);
-+	/* post-enable delay */
-+	udelay(50);
-+}
-+
- static void tegra20_cpu_clock_resume(void)
- {
- 	unsigned int reg, policy;
-@@ -1018,14 +1060,7 @@ static void tegra20_cpu_clock_resume(void)
++#define AXG_MST_MCLK_DIV(_name, _reg)				\
++	AXG_MST_DIV(_name, _reg, CLK_DIVIDER_ROUND_CLOSEST)
  
- 	if (reg != CCLK_BURST_POLICY_PLLX) {
- 		/* restore PLLX settings if CPU is on different PLL */
--		writel(tegra20_cpu_clk_sctx.pllx_misc,
--					clk_base + PLLX_MISC);
--		writel(tegra20_cpu_clk_sctx.pllx_base,
--					clk_base + PLLX_BASE);
--
--		/* wait for PLL stabilization if PLLX was enabled */
--		if (tegra20_cpu_clk_sctx.pllx_base & (1 << 30))
--			udelay(300);
-+		tegra20_cpu_clock_restore_pllx();
- 	}
+-#define AXG_MST_MCLK_DIV(_name, _reg)					\
+-	AXG_AUD_DIV(_name##_div, _reg, 0, 16, CLK_DIVIDER_ROUND_CLOSEST, \
+-		    "axg_"#_name"_sel", CLK_SET_RATE_PARENT)		\
++#define AXG_MST_SYS_DIV(_name, _reg)				\
++	AXG_MST_DIV(_name, _reg, 0)
  
- 	/*
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 0f8797ca39e2..0059fdf79169 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -15,6 +15,7 @@
-  */
+ static AXG_MST_MCLK_DIV(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
+ static AXG_MST_MCLK_DIV(mst_b_mclk,   AUDIO_MCLK_B_CTRL);
+@@ -127,12 +139,12 @@ static AXG_MST_MCLK_DIV(mst_d_mclk,   AUDIO_MCLK_D_CTRL);
+ static AXG_MST_MCLK_DIV(mst_e_mclk,   AUDIO_MCLK_E_CTRL);
+ static AXG_MST_MCLK_DIV(mst_f_mclk,   AUDIO_MCLK_F_CTRL);
+ static AXG_MST_MCLK_DIV(spdifout_clk, AUDIO_CLK_SPDIFOUT_CTRL);
+-static AXG_MST_MCLK_DIV(spdifin_clk,  AUDIO_CLK_SPDIFIN_CTRL);
+ static AXG_MST_MCLK_DIV(pdm_dclk,     AUDIO_CLK_PDMIN_CTRL0);
+-static AXG_MST_MCLK_DIV(pdm_sysclk,   AUDIO_CLK_PDMIN_CTRL1);
++static AXG_MST_SYS_DIV(spdifin_clk,   AUDIO_CLK_SPDIFIN_CTRL);
++static AXG_MST_SYS_DIV(pdm_sysclk,    AUDIO_CLK_PDMIN_CTRL1);
  
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/delay.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
-@@ -1189,6 +1190,47 @@ static void tegra30_cpu_clock_suspend(void)
- 				readl(clk_base + CLK_RESET_CCLK_DIVIDER);
- }
+-#define AXG_MST_MCLK_GATE(_name, _reg)					\
+-	AXG_AUD_GATE(_name, _reg, 31,  "axg_"#_name"_div",		\
++#define AXG_MST_MCLK_GATE(_name, _reg)				\
++	AXG_AUD_GATE(_name, _reg, 31,  "axg_"#_name"_div",	\
+ 		     CLK_SET_RATE_PARENT)
  
-+static void tegra30_cpu_clock_restore_pllx(void)
-+{
-+	u32 misc = readl_relaxed(clk_base + CLK_RESET_PLLX_MISC);
-+	u32 base = readl_relaxed(clk_base + CLK_RESET_PLLX_BASE);
-+	u32 misc_restore = tegra30_cpu_clk_sctx.pllx_misc;
-+	u32 base_restore = tegra30_cpu_clk_sctx.pllx_base;
-+	int err;
-+
-+	/* nothing to do if PLL configuration is unchanged */
-+	if (misc == misc_restore && base == base_restore)
-+		return;
-+
-+	/* otherwise restore configuration */
-+	if (base_restore & BIT(30)) {
-+		/* PLL shall be locked if we are going to (re)enable it */
-+		misc_restore |= BIT(18);
-+	}
-+
-+	/* disable PLL if it is enabled to re-apply configuration safely */
-+	if (base & BIT(30)) {
-+		writel_relaxed(base & ~BIT(30), clk_base + CLK_RESET_PLLX_BASE);
-+		udelay(1);
-+	}
-+
-+	/* restore the configuration */
-+	writel_relaxed(misc_restore, clk_base + CLK_RESET_PLLX_MISC);
-+	writel_relaxed(base_restore, clk_base + CLK_RESET_PLLX_BASE);
-+
-+	/* PLL is disabled now, nothing left to do */
-+	if (!(base_restore & BIT(30)))
-+		return;
-+
-+	/* otherwise start polling the PLL lock-status */
-+	err = readl_relaxed_poll_timeout_atomic(clk_base + CLK_RESET_PLLX_BASE,
-+						base, base & BIT(27), 1, 2000);
-+	/* should not happen */
-+	WARN_ONCE(err, "PLLX failed to lock: %d\n", err);
-+	/* post-enable delay */
-+	udelay(50);
-+}
-+
- static void tegra30_cpu_clock_resume(void)
- {
- 	unsigned int reg, policy;
-@@ -1206,14 +1248,7 @@ static void tegra30_cpu_clock_resume(void)
- 
- 	if (reg != CLK_RESET_CCLK_BURST_POLICY_PLLX) {
- 		/* restore PLLX settings if CPU is on different PLL */
--		writel(tegra30_cpu_clk_sctx.pllx_misc,
--					clk_base + CLK_RESET_PLLX_MISC);
--		writel(tegra30_cpu_clk_sctx.pllx_base,
--					clk_base + CLK_RESET_PLLX_BASE);
--
--		/* wait for PLL stabilization if PLLX was enabled */
--		if (tegra30_cpu_clk_sctx.pllx_base & (1 << 30))
--			udelay(300);
-+		tegra30_cpu_clock_restore_pllx();
- 	}
- 
- 	/*
+ static AXG_MST_MCLK_GATE(mst_a_mclk,   AUDIO_MCLK_A_CTRL);
 -- 
-2.18.0
+2.17.1
+
