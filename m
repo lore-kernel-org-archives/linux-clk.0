@@ -1,29 +1,68 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1532343275-7027-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-References: <1532343275-7027-1-git-send-email-tdas@codeaurora.org>
- <1532343275-7027-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153264274182.48062.5474788613503562604@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v5] clk: qcom: Add display clock controller driver for SDM845
-Date: Thu, 26 Jul 2018 15:05:41 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	lee.jones@linaro.org,
+	arnd@arndb.de
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 10/10] MAINTAINERS: Add entry for Actions Semi Owl SoCs Reset Management Unit
+Date: Wed,  1 Aug 2018 09:09:15 +0530
+Message-Id: <20180801033915.15880-11-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-07-23 03:54:35)
-> Add support for the display clock controller found on SDM845
-> based devices. This would allow display drivers to probe and
-> control their clocks.
-> =
+Add entry for Actions Semi Reset Management Unit driver and its
+bindings under ARCH_ACTIONS. Currently only S700 and S900 SoCs
+of the Owl family are supported.
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ MAINTAINERS | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This is fine to merge as long as you're ok with removing the no rate
-cache flag. I can do that myself so you don't have to resend.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9c292ef3c210..25934ae77ba6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1146,13 +1146,17 @@ F:	arch/arm64/boot/dts/actions/
+ F:	drivers/clk/actions/
+ F:	drivers/clocksource/owl-*
+ F:	drivers/pinctrl/actions/*
++F:	drivers/reset/reset-owl.c
+ F:	drivers/soc/actions/
+ F:	include/dt-bindings/power/owl-*
++F:	include/dt-bindings/reset/actions,s700-rmu.h
++F:	include/dt-bindings/reset/actions,s900-rmu.h
+ F:	include/linux/soc/actions/
+ F:	Documentation/devicetree/bindings/arm/actions.txt
+ F:	Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
+ F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
+ F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
++F:	Documentation/devicetree/bindings/reset/actions,owl-reset.txt
+ F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+ 
+ ARM/ADS SPHERE MACHINE SUPPORT
+-- 
+2.17.1
