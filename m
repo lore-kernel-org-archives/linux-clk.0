@@ -1,62 +1,70 @@
-Return-Path: <sravanhome@gmail.com>
-Return-Path: <sravanhome@gmail.com>
-From: Saravanan Sekar <sravanhome@gmail.com>
-To: afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org,
-	sboyd@kernel.org
-Cc: mark.rutland@arm.com,
-	devicetree@vger.kernel.org,
-	linux@cubietech.com,
-	sravanhome@gmail.com,
-	support@cubietech.com,
-	catalin.marinas@arm.com,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
 	mturquette@baylibre.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	thomas.liau@actions-semi.com,
-	darren@cubietech.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
 	robh+dt@kernel.org,
+	lee.jones@linaro.org,
+	arnd@arndb.de
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
 	jeff.chen@actions-semi.com,
 	pn@denx.de,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mp-cs@actions-semi.com
-Subject: [PATCH v5 5/5] arm64: dts: actions: Set UART clock reference from CMU
-Date: Sun, 15 Jul 2018 22:01:51 +0200
-Message-Id: <20180715200151.10416-6-sravanhome@gmail.com>
-In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
-References: <20180715200151.10416-1-sravanhome@gmail.com>
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 06/10] arm64: dts: actions: Add RMU node for Actions Semi S900 SoC
+Date: Wed,  1 Aug 2018 09:09:11 +0530
+Message-Id: <20180801033915.15880-7-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Add Reset Controller Unit (RMU) node under the system-controller node
+for Actions Semi S900 SoC. Also add the bindings constant header to
+be used by clients.
 
-diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-index ef79d7905f44..c08808ca3346 100644
---- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-+++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-@@ -28,12 +28,6 @@
- 		device_type = "memory";
- 		reg = <0x1 0xe0000000 0x0 0x0>;
- 	};
--
--	uart3_clk: uart3-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s900.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index d239033f9599..a242d3193a6a 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -6,6 +6,7 @@
  
- &timer {
-@@ -42,5 +36,5 @@
+ #include <dt-bindings/clock/actions,s900-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/reset/actions,s900-rmu.h>
  
- &uart3 {
- 	status = "okay";
--	clocks = <&uart3_clk>;
-+	clocks = <&cmu CLK_UART3>;
- };
+ / {
+ 	compatible = "actions,s900";
+@@ -176,6 +177,11 @@
+ 				clocks = <&hosc>, <&losc>;
+ 				#clock-cells = <1>;
+ 			};
++
++			rmu: reset-controller {
++				compatible = "actions,s900-rmu";
++				#reset-cells = <1>;
++			};
+ 		};
+ 
+ 		pinctrl: pinctrl@e01b0000 {
 -- 
-2.18.0
+2.17.1
