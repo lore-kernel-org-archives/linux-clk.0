@@ -1,104 +1,53 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-	Tang Yuantian <andy.tang@nxp.com>,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-Date: Mon, 20 Aug 2018 12:17:14 +0530
-Message-Id: <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/4] clk: meson: clk-pll driver update
+Date: Wed,  1 Aug 2018 16:00:49 +0200
+Message-Id: <20180801140053.25899-1-jbrunet@baylibre.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+This patchset is yet another round of update to the amlogic pll driver.
 
-Add clockgen support for lx2160a.
-Added entry for compat 'fsl,lx2160a-clockgen'.
-As LX2160A is 16 core, so modified value for NUM_CMUX
+ 1) Enable bit is added so we don't rely on the bootloader or the init
+    value to enable to pll device.
+ 2) Remove unnecessary CLK_GET_RATE_NOCACHE flags.
+ 3) OD post dividers are removed from the pll driver. This simplify the
+    driver and let us provide the clocks which exist between those
+    dividers. Some device are actually using these clocks.
+ 4) The rates hard coded in parameter tables are remove. Instead, we
+    only rely on the parent rate and the parameters to calculate the
+    output rate, which is a lot better.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
----
- drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
- drivers/cpufreq/qoriq-cpufreq.c |  1 +
- 2 files changed, 14 insertions(+), 1 deletion(-)
+This series has been tested on the gxl libretech cc and axg s400.
+I did not test it on meson8b yet.
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f..fc6e308 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -60,7 +60,7 @@ struct clockgen_muxinfo {
- };
- 
- #define NUM_HWACCEL	5
--#define NUM_CMUX	8
-+#define NUM_CMUX	16
- 
- struct clockgen;
- 
-@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
- 	},
- 	{
-+		.compat = "fsl,lx2160a-clockgen",
-+		.cmux_groups = {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group = {
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
-+		},
-+		.pll_mask = 0x37,
-+		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat = "fsl,p2041-clockgen",
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p2041_init_periph,
-@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 3d773f6..83921b7 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
- 	{ .compatible = "fsl,ls1046a-clockgen", },
- 	{ .compatible = "fsl,ls1088a-clockgen", },
- 	{ .compatible = "fsl,ls2080a-clockgen", },
-+	{ .compatible = "fsl,lx2160a-clockgen", },
- 	{ .compatible = "fsl,p4080-clockgen", },
- 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
+Changes since v1: [0]
+ - improve commit description of patch 1
+ - remove unnecessary CLK_GET_RATE_NOCACHE flags.
+ - add missing CLK_SET_RATE_PARENT.
+
+[0]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+
+Jerome Brunet (4):
+  clk: meson: clk-pll: add enable bit
+  clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
+  clk: meson: clk-pll: remove od parameters
+  clk: meson: clk-pll: drop hard-coded rates from pll tables
+
+ drivers/clk/meson/axg.c     | 326 +++++++++++++----------
+ drivers/clk/meson/axg.h     |   8 +-
+ drivers/clk/meson/clk-pll.c | 156 +++++++----
+ drivers/clk/meson/clkc.h    |  16 +-
+ drivers/clk/meson/gxbb.c    | 518 ++++++++++++++++++------------------
+ drivers/clk/meson/gxbb.h    |  10 +-
+ drivers/clk/meson/meson8b.c | 173 ++++++------
+ drivers/clk/meson/meson8b.h |   5 +-
+ 8 files changed, 665 insertions(+), 547 deletions(-)
+
 -- 
-2.7.4
+2.17.1
