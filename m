@@ -1,87 +1,94 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- grahamr@codeaurora.org, linux-clk <linux-clk@vger.kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>,
- Mike Turquette <mturquette@baylibre.com>,
- Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Amit Kucheria <amit.kucheria@linaro.org>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
- <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
- <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
- <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com>
-Message-ID: <153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-Date: Tue, 24 Jul 2018 16:04:37 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	lee.jones@linaro.org,
+	arnd@arndb.de
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 03/10] clk: actions: Add syscon support for Actions Semi Owl SoCs
+Date: Wed,  1 Aug 2018 09:09:08 +0530
+Message-Id: <20180801033915.15880-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Peter De Schrijver (2018-07-23 01:26:41)
-> On Fri, Jul 20, 2018 at 10:12:29AM -0700, Stephen Boyd wrote:
-> > =
+Since the clock and reset management units are sharing the same memory
+map, convert the Owl common clock driver to support System Controller so
+that the reset driver can reuse the same memory region.
 
-> > For one thing, a driver should be able to figure out what the
-> > performance state requirement is for a particular frequency. I'd like to
-> > see an API that a driver can pass something like a (device, genpd, clk,
-> > frequency) tuple and get back the performance state required for that
-> > device's clk frequency within that genpd by querying OPP tables. If we
-> > had this API, then SoC vendors could design OPP tables for their on-SoC
-> > devices that describe the set of max frequencies a device can operate at
-> > for a specific performance state and driver authors would be able to
-> > query that information and manually set genpd performance states when
-> > they change clk frequencies. In Qualcomm designs this would be their
-> > "fmax" tables that map a max frequency to a voltage corner. If someone
-> > wanted to fine tune that table and make it into a full frequency plan
-> > OPP table for use by devfreq, then they could add more entries for all
-> > the validated frequencies and voltage corners that are acceptable and
-> > tested and this API would still work. We'll need this sort of table
-> > regardless because we can't expect devices to search for an exact
-> > frequency in an OPP table when they can support hundreds of different
-> > frequencies, like in display or audio situations.
-> > =
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-common.c | 20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
 
-> =
-
-> Various reasons why I think the driver is not the right place to handle
-> the V/f relationship:
-> =
-
-> 1) The V/f relationship is temperature dependent. So the voltage may have
->    to be adjusted when the temperature changes. I don't think we should
->    make every driver handle this on its own.
-
-This is AVS? Should be fine to plumb that into some sort of voltage
-domain that gets temperature feedback and then adjusts the voltage based
-on that? This is basically the same as Qualcomm's "voltage corners" by
-the way, just that the voltage is adjusted outside of the Linux kernel
-by another processor when the temperature changes.
-
-> =
-
-> 2) Not every device with V/f requirements has its own powerdomain. On Teg=
-ra
->    for example we have 2 voltage rails: core and CPU. (and a 3rd one for =
-GPU
->    since Tegra124). So all peripherals (except GPU) share the same voltage
->    rail and they are grouped in several domains, one of which cannot be
->    powergated. So genpd domains do not align with the V/f curves of the
->    peripherals themselves.
-> =
-
-
-I'm fairly certain this is true on most SoCs today. There is a main
-powerdomain for non-CPU things, and then some sort of CPU powerdomain or
-domains for CPU things. Each device in those domains needs to request a
-certain performance state on the voltage domain they're in (the "core"
-powerdomain in your example) and then that genpd will aggregate those
-requests with a max operation to pick the highest state required from
-all devices attached to the genpd for the voltage domain.
-
-How does power gating or not power gating the domain matter for this?
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 61c1071b5180..080f980b2ec4 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -8,6 +8,7 @@
+ // Copyright (c) 2018 Linaro Ltd.
+ // Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+ 
++#include <linux/mfd/syscon.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+@@ -15,14 +16,6 @@
+ 
+ #include "owl-common.h"
+ 
+-static const struct regmap_config owl_regmap_config = {
+-	.reg_bits	= 32,
+-	.reg_stride	= 4,
+-	.val_bits	= 32,
+-	.max_register	= 0x00cc,
+-	.fast_io	= true,
+-};
+-
+ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
+ 			 struct regmap *regmap)
+ {
+@@ -41,18 +34,11 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
+ int owl_clk_regmap_init(struct platform_device *pdev,
+ 			 const struct owl_clk_desc *desc)
+ {
+-	void __iomem *base;
+ 	struct regmap *regmap;
+-	struct resource *res;
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(base))
+-		return PTR_ERR(base);
+ 
+-	regmap = devm_regmap_init_mmio(&pdev->dev, base, &owl_regmap_config);
++	regmap = syscon_node_to_regmap(of_get_parent(pdev->dev.of_node));
+ 	if (IS_ERR(regmap)) {
+-		pr_err("failed to init regmap\n");
++		dev_err(&pdev->dev, "failed to get regmap\n");
+ 		return PTR_ERR(regmap);
+ 	}
+ 
+-- 
+2.17.1
