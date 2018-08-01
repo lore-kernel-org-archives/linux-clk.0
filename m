@@ -1,144 +1,95 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 04/11] clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-Date: Thu, 26 Jul 2018 17:35:10 +0200
-Message-Id: <20180726153517.10020-5-geert+renesas@glider.be>
-In-Reply-To: <20180726153517.10020-1-geert+renesas@glider.be>
-References: <20180726153517.10020-1-geert+renesas@glider.be>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org,
+	lee.jones@linaro.org,
+	arnd@arndb.de
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 02/10] arm64: dts: actions: Convert Owl SoCs clock-controller nodes to syscon
+Date: Wed,  1 Aug 2018 09:09:07 +0530
+Message-Id: <20180801033915.15880-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
+References: <20180801033915.15880-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-R-Car Gen3 Hardware Manual Rev.0.52 documents the relation between the
-MD13 and MD14 mode pins, and the OSC EXTAL predivider, as used by the
-OSC and RINT RCLK clocks.  Hence augment the configuration structure
-with all documented predivider values.
+Since clock and reset management units are sharing the same memory map,
+Owl SoCs clock-controller nodes needs to be converted to syscon so that
+the corresponding reset drivers can also reuse the same memory region.
 
-According to R-Car Gen3 Hardware Manual Rev.1.00, R-Car M3-N does not
-have the CPG_RCKCR register.  Change the OSC and RINT clock definitions
-to use the OSC EXTAL predivider instead, which is supported on all R-Car
-M3-N SoC revisions.
-
-Inspired by a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-v2:
-  - Add Reviewed-by,
-  - Rebase.
----
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 66 ++++++++++++-------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
+ arch/arm64/boot/dts/actions/s700.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/actions/s900.dtsi | 12 ++++++++----
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index 7a7eb9658058a09e..c596e2afaeeb3ea2 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -68,7 +68,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
- 	DEF_FIXED(".s3",	CLK_S3,			CLK_PLL1_DIV2,	6, 1),
- 	DEF_FIXED(".sdsrc",	CLK_SDSRC,		CLK_PLL1_DIV2,	2, 1),
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 59d29e4ca404..a57f54587164 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -160,11 +160,15 @@
+ 			status = "disabled";
+ 		};
  
--	DEF_DIV6_RO(".r",	CLK_RINT, CLK_EXTAL, CPG_RCKCR, 32),
-+	DEF_GEN3_OSC(".r",	CLK_RINT,		CLK_EXTAL,	32),
+-		cmu: clock-controller@e0168000 {
+-			compatible = "actions,s700-cmu";
++		sysctrl: system-controller@e0168000 {
++			compatible = "syscon", "simple-mfd";
+ 			reg = <0x0 0xe0168000 0x0 0x1000>;
+-			clocks = <&hosc>, <&losc>;
+-			#clock-cells = <1>;
++
++			cmu: clock-controller {
++				compatible = "actions,s700-cmu";
++				clocks = <&hosc>, <&losc>;
++				#clock-cells = <1>;
++			};
+ 		};
  
- 	/* Core Clock Outputs */
- 	DEF_BASE("z",		R8A77965_CLK_Z,		CLK_TYPE_GEN3_Z, CLK_PLL0),
-@@ -106,7 +106,7 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
- 	DEF_DIV6P1("mso",	R8A77965_CLK_MSO,	CLK_PLL1_DIV4,	0x014),
- 	DEF_DIV6P1("hdmi",	R8A77965_CLK_HDMI,	CLK_PLL1_DIV4,	0x250),
+ 		sps: power-controller@e01b0100 {
+diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+index aa3a49b0d646..d239033f9599 100644
+--- a/arch/arm64/boot/dts/actions/s900.dtsi
++++ b/arch/arm64/boot/dts/actions/s900.dtsi
+@@ -167,11 +167,15 @@
+ 			status = "disabled";
+ 		};
  
--	DEF_DIV6_RO("osc",	R8A77965_CLK_OSC, CLK_EXTAL, CPG_RCKCR, 8),
-+	DEF_GEN3_OSC("osc",	R8A77965_CLK_OSC,	CLK_EXTAL,	8),
+-		cmu: clock-controller@e0160000 {
+-			compatible = "actions,s900-cmu";
++		sysctrl: system-controller@e0160000 {
++			compatible = "syscon", "simple-mfd";
+ 			reg = <0x0 0xe0160000 0x0 0x1000>;
+-			clocks = <&hosc>, <&losc>;
+-			#clock-cells = <1>;
++
++			cmu: clock-controller {
++				compatible = "actions,s900-cmu";
++				clocks = <&hosc>, <&losc>;
++				#clock-cells = <1>;
++			};
+ 		};
  
- 	DEF_BASE("r",		R8A77965_CLK_R,	CLK_TYPE_GEN3_R, CLK_RINT),
- };
-@@ -253,25 +253,25 @@ static const unsigned int r8a77965_crit_mod_clks[] __initconst = {
-  */
- 
- /*
-- *   MD		EXTAL		PLL0	PLL1	PLL3	PLL4
-+ *   MD		EXTAL		PLL0	PLL1	PLL3	PLL4	OSC
-  * 14 13 19 17	(MHz)
-- *-----------------------------------------------------------
-- * 0  0  0  0	16.66 x 1	x180	x192	x192	x144
-- * 0  0  0  1	16.66 x 1	x180	x192	x128	x144
-+ *-----------------------------------------------------------------
-+ * 0  0  0  0	16.66 x 1	x180	x192	x192	x144	/16
-+ * 0  0  0  1	16.66 x 1	x180	x192	x128	x144	/16
-  * 0  0  1  0	Prohibited setting
-- * 0  0  1  1	16.66 x 1	x180	x192	x192	x144
-- * 0  1  0  0	20    x 1	x150	x160	x160	x120
-- * 0  1  0  1	20    x 1	x150	x160	x106	x120
-+ * 0  0  1  1	16.66 x 1	x180	x192	x192	x144	/16
-+ * 0  1  0  0	20    x 1	x150	x160	x160	x120	/19
-+ * 0  1  0  1	20    x 1	x150	x160	x106	x120	/19
-  * 0  1  1  0	Prohibited setting
-- * 0  1  1  1	20    x 1	x150	x160	x160	x120
-- * 1  0  0  0	25    x 1	x120	x128	x128	x96
-- * 1  0  0  1	25    x 1	x120	x128	x84	x96
-+ * 0  1  1  1	20    x 1	x150	x160	x160	x120	/19
-+ * 1  0  0  0	25    x 1	x120	x128	x128	x96	/24
-+ * 1  0  0  1	25    x 1	x120	x128	x84	x96	/24
-  * 1  0  1  0	Prohibited setting
-- * 1  0  1  1	25    x 1	x120	x128	x128	x96
-- * 1  1  0  0	33.33 / 2	x180	x192	x192	x144
-- * 1  1  0  1	33.33 / 2	x180	x192	x128	x144
-+ * 1  0  1  1	25    x 1	x120	x128	x128	x96	/24
-+ * 1  1  0  0	33.33 / 2	x180	x192	x192	x144	/32
-+ * 1  1  0  1	33.33 / 2	x180	x192	x128	x144	/32
-  * 1  1  1  0	Prohibited setting
-- * 1  1  1  1	33.33 / 2	x180	x192	x192	x144
-+ * 1  1  1  1	33.33 / 2	x180	x192	x192	x144	/32
-  */
- #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 11) | \
- 					 (((md) & BIT(13)) >> 11) | \
-@@ -279,23 +279,23 @@ static const unsigned int r8a77965_crit_mod_clks[] __initconst = {
- 					 (((md) & BIT(17)) >> 17))
- 
- static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
--	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		192,	1,	192,	1,	},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		160,	1,	106,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		160,	1,	160,	1,	},
--	{ 1,		128,	1,	128,	1,	},
--	{ 1,		128,	1,	84,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 1,		128,	1,	128,	1,	},
--	{ 2,		192,	1,	192,	1,	},
--	{ 2,		192,	1,	128,	1,	},
--	{ 0, /* Prohibited setting */			},
--	{ 2,		192,	1,	192,	1,	},
-+	/* EXTAL div	PLL1 mult/div	PLL3 mult/div	OSC prediv */
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		192,	1,	128,	1,	16,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		192,	1,	192,	1,	16,	},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		160,	1,	106,	1,	19,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		160,	1,	160,	1,	19,	},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 1,		128,	1,	84,	1,	24,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 1,		128,	1,	128,	1,	24,	},
-+	{ 2,		192,	1,	192,	1,	32,	},
-+	{ 2,		192,	1,	128,	1,	32,	},
-+	{ 0, /* Prohibited setting */				},
-+	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
- static int __init r8a77965_cpg_mssr_init(struct device *dev)
+ 		pinctrl: pinctrl@e01b0000 {
 -- 
 2.17.1
