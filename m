@@ -1,32 +1,105 @@
-Return-Path: <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
-To: Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        t-kristo@ti.com, tony@atomide.com, linux-clk@vger.kernel.org
-References: <20180828005056.27326-1-nm@ti.com>
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Message-ID: <d2027284-5265-388e-f793-cd048ac8a587@oracle.com>
-Date: Mon, 27 Aug 2018 17:55:21 -0700
+Return-Path: <michals@xilinx.com>
+Return-Path: michal.simek@xilinx.com
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
+ Wizard IP
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Michal Simek
+	<michal.simek@xilinx.com>, <zhengxunli@mxic.com.tw>
+CC: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
+	<mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
+ Gala <galak@codeaurora.org>, <devicetree@vger.kernel.org>, Julien Su
+	<juliensu@mxic.com.tw>, Mason Yang <masonccyang@mxic.com.tw>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
+ <20180801081950.10497-2-boris.brezillon@bootlin.com>
+ <a8620c93-cf99-719d-d2bb-7d0f0b567130@xilinx.com>
+ <20180801103404.4b9135dc@bbrezillon> <20180801103750.4f06150c@bbrezillon>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <3a46704b-9cd8-021d-e527-7866ceb04e2f@xilinx.com>
+Date: Wed, 1 Aug 2018 10:40:51 +0200
 MIME-Version: 1.0
-In-Reply-To: <20180828005056.27326-1-nm@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180801103750.4f06150c@bbrezillon>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On 8/27/2018 5:50 PM, Nishanth Menon wrote:
-> K3_ARCH uses TISCI for clocks as well. Enable the same
-> for the driver support.
+On 1.8.2018 10:37, Boris Brezillon wrote:
+> On Wed, 1 Aug 2018 10:34:04 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 > 
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> ---
+>> Hi Michal,
+>>
+>> On Wed, 1 Aug 2018 10:26:11 +0200
+>> Michal Simek <michal.simek@xilinx.com> wrote:
+>>
+>>> Hi Boris,
+>>>
+>>> On 1.8.2018 10:19, Boris Brezillon wrote:  
+>>>> Document Xilinx Clocking Wizard bindings.
+>>>>
+>>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>>>> ---
+>>>>  .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
+>>>>  1 file changed, 28 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+>>>> new file mode 100644
+>>>> index 000000000000..1bf7a764f4a9
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+>>>> @@ -0,0 +1,28 @@
+>>>> +Device Tree Clock bindings for the "Clocking Wizard" IP provided by Xilinx
+>>>> +
+>>>> +This block can be used to generate up to 4 clock signals out of a single input
+>>>> +clock. It embeds a PLL to generate an intermediate clock which then feeds 4
+>>>> +clock dividers whose divider value can be adjusted based on the user needs.
+>>>> +
+>>>> +Required properties:
+>>>> + - #clock-cells: must be 1. The cell is encoding the id of the output clk
+>>>> +		 (from 0 to xlnx,clk-wizard-num-outputs - 1)
+>>>> + - compatible: must be "xlnx,clk-wizard-5.1"
+>>>> + - clocks: 2 clocks are required
+>>>> + - clock-names: should contain 2 clock names: "aclk" and "clkin".
+>>>> +		"aclk" is driving the register interface and "clk_in" is the
+>>>> +		input clock signal that is used by the PLL block
+>>>> + - xlnx,clk-wizard-num-outputs: this describe the number of output clocks
+>>>> +				(chosen at synthesization time)
+>>>> + - reg: registers used to configure the Clocking wizard block
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +	clkwizard: clkwizard@43c20000 {
+>>>> +		compatible = "xlnx,clk-wizard-5.1";
+>>>> +		reg = <0x43c20000 0x10000>;
+>>>> +		clocks = <&clkc 18>, <&clkc 18>;
+>>>> +		clock-names = "aclk", "clk_in1";
+>>>> +		#clock-cells = <1>;
+>>>> +		xlnx,clk-wizard-num-outputs = <2>;
+>>>> +	};
+>>>>     
+>>>
+>>> First of all this should be 1/2.  
+>>
+>> Hm, okay. Didn't know the order was important.
+>>
+>>>
+>>> The second is that this driver is already in staging area
+>>> (drivers/staging/clocking-wizard) for a while. That's why please use
+>>> this driver or send patches on the top of this.  
+>>
+>> Crap! I didn't look in staging. BTW, any reason this driver is in
+>> staging?
 > 
-> Ref: https://patchwork.kernel.org/patch/10447677/
-> 
-> Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
-> 
->   drivers/clk/Makefile         | 1 +
->   drivers/clk/keystone/Kconfig | 2 +-
->   2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+> Nevermind, it's described in the TODO file. Looks like I'll need to add
+> clk-phase ops for my use case.
+
+Please check https://github.com/Xilinx/linux-xlnx
+and IIRC the use case which is not supported and should be is that
+clocking-wizard itself can be configured to fixed configuration without
+register access. But it is questionable if this can be done by current
+fixed-factor-clock or not.
+But maybe there was something else too.
+
+Thanks,
+Michal
