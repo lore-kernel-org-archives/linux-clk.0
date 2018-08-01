@@ -1,89 +1,110 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <614e462b0294a1ece78b654ad3e4553f@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk-owner@vger.kernel.org
-References: <1532345193-18108-1-git-send-email-anischal@codeaurora.org>
- <1532345193-18108-3-git-send-email-anischal@codeaurora.org>
- <153262575082.48062.16264904338225269915@swboyd.mtv.corp.google.com>
- <614e462b0294a1ece78b654ad3e4553f@codeaurora.org>
-Message-ID: <153322907852.10763.2149017059137432779@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/2] clk: qcom: Add camera clock controller driver for SDM845
-Date: Thu, 02 Aug 2018 09:57:58 -0700
+References: <1532936891-25034-1-git-send-email-biju.das@bp.renesas.com> <1532936891-25034-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1532936891-25034-6-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Aug 2018 11:26:50 +0200
+Message-ID: <CAMuHMdV1vQkBg+d8HmNDVPZOBiH-tmRbmE+ZcWcnqMaP1zgWhg@mail.gmail.com>
+Subject: Re: [PATCH 5/5] clk: renesas: cpg-mssr: Add r8a774a1 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-07-30 00:20:52)
-> On 2018-07-26 22:52, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-07-23 04:26:33)
-> >> diff --git a/drivers/clk/qcom/camcc-sdm845.c =
+Hi Biju,
 
-> >> b/drivers/clk/qcom/camcc-sdm845.c
-> >> new file mode 100644
-> >> index 0000000..61e5ec2
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/camcc-sdm845.c
-> >> +static struct clk_rcg2 cam_cc_bps_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x600c,
-> >> +       .mnd_width =3D 0,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D cam_cc_parent_map_0,
-> >> +       .freq_tbl =3D ftbl_cam_cc_bps_clk_src,
-> >> +       .clkr.hw.init =3D &(struct clk_init_data){
-> >> +               .name =3D "cam_cc_bps_clk_src",
-> >> +               .parent_names =3D cam_cc_parent_names_0,
-> >> +               .num_parents =3D 6,
-> >> +               .flags =3D CLK_SET_RATE_PARENT,
-> >> +               .ops =3D &clk_rcg2_shared_ops,
-> > =
+On Mon, Jul 30, 2018 at 9:54 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add RZ/G2M (R8A774A1) Clock Pulse Generator / Module Standby and Software
+> Reset support.
+>
+> Based on the Table 8.2b of "RZ/G Series, 2nd Generation User's Manual:
+> Hardware ((Rev. 0.61, June 12, 2018)".
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-> > Why are shared ops used in this driver?
-> > =
+Thanks for your patch!
 
-> =
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
 
-> As per HW design, most of the CAMCC RCGs needs to move to
-> XO during clock disable so because of this we have used the
-> shared ops.
+> +static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
 
-Please add a comment to this effect in this driver and also mention this
-in the commit text. I guess the camera firmware is also doing clk
-control and so it wants the clk to be on at some basic rate in case
-that's happening?
- =
+> +       DEF_DIV6_RO("osc",      R8A774A1_CLK_OSC,   CLK_EXTAL, CPG_RCKCR,  8),
+> +       DEF_DIV6_RO("r_int",    CLK_RINT,          CLK_EXTAL, CPG_RCKCR, 32),
 
-> >> +
-> >> +static struct clk_rcg2 cam_cc_slow_ahb_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x6054,
-> >> +       .mnd_width =3D 0,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D cam_cc_parent_map_0,
-> >> +       .freq_tbl =3D ftbl_cam_cc_slow_ahb_clk_src,
-> >> +       .clkr.hw.init =3D &(struct clk_init_data){
-> >> +               .name =3D "cam_cc_slow_ahb_clk_src",
-> >> +               .parent_names =3D cam_cc_parent_names_0,
-> >> +               .num_parents =3D 6,
-> >> +               .flags =3D CLK_SET_RATE_PARENT,
-> > =
+RZ/G2M does not have the CPG_RCKCR register.
+The internal R CLK is an internal clock, hence please name it ".r".
 
-> > Is CLK_SET_RATE_PARENT intentionally set on these RCGs so that they can
-> > reconfigure the PLL frequency? Wouldn't that be a fixed rate PLL
-> > frequency?
-> > =
+Please have a look at "clk: renesas: rcar-gen3: OSC and RCLK improvements"
+(https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=2063)
 
-> =
+> +/*
+> + * CPG Clock Data
+> + */
+> +
+> +/*
+> + *   MD                EXTAL           PLL0    PLL1    PLL2    PLL3    PLL4
+> + * 14 13 19 17 (MHz)
+> + *-------------------------------------------------------------------
+> + * 0  0  0  0  16.66 x 1       x180    x192    x144    x192    x144
+> + * 0  0  0  1  16.66 x 1       x180    x192    x144    x128    x144
+> + * 0  0  1  0  Prohibited setting
+> + * 0  0  1  1  16.66 x 1       x180    x192    x144    x192    x144
+> + * 0  1  0  0  20    x 1       x150    x160    x120    x160    x120
+> + * 0  1  0  1  20    x 1       x150    x160    x120    x106    x120
+> + * 0  1  1  0  Prohibited setting
+> + * 0  1  1  1  20    x 1       x150    x160    x120    x160    x120
+> + * 1  0  0  0  25    x 1       x120    x128    x96     x128    x96
+> + * 1  0  0  1  25    x 1       x120    x128    x96     x84     x96
+> + * 1  0  1  0  Prohibited setting
+> + * 1  0  1  1  25    x 1       x120    x128    x96     x128    x96
+> + * 1  1  0  0  33.33 / 2       x180    x192    x144    x192    x144
+> + * 1  1  0  1  33.33 / 2       x180    x192    x144    x128    x144
+> + * 1  1  1  0  Prohibited setting
+> + * 1  1  1  1  33.33 / 2       x180    x192    x144    x192    x144
+> + */
+> +#define CPG_PLL_CONFIG_INDEX(md)       ((((md) & BIT(14)) >> 11) | \
+> +                                        (((md) & BIT(13)) >> 11) | \
+> +                                        (((md) & BIT(19)) >> 18) | \
+> +                                        (((md) & BIT(17)) >> 17))
+> +
+> +static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
+> +       /* EXTAL div    PLL1 mult/div   PLL3 mult/div */
+> +       { 1,            192,    1,      192,    1,      },
+> +       { 1,            192,    1,      128,    1,      },
+> +       { 0, /* Prohibited setting */                   },
+> +       { 1,            192,    1,      192,    1,      },
+> +       { 1,            160,    1,      160,    1,      },
+> +       { 1,            160,    1,      106,    1,      },
+> +       { 0, /* Prohibited setting */                   },
+> +       { 1,            160,    1,      160,    1,      },
+> +       { 1,            128,    1,      128,    1,      },
+> +       { 1,            128,    1,      84,     1,      },
+> +       { 0, /* Prohibited setting */                   },
+> +       { 1,            128,    1,      128,    1,      },
+> +       { 2,            192,    1,      192,    1,      },
+> +       { 2,            192,    1,      128,    1,      },
+> +       { 0, /* Prohibited setting */                   },
+> +       { 2,            192,    1,      192,    1,      },
+> +};
 
-> PLL2_OUT_EVEN requires to be reconfigure to 480MHz so clock sources =
+Please add the new OSC predividers. You're gonna need them for the
+corrected OSC clock.
 
-> which
-> are using PLL2 in their frequency table requires 'CLK_SET_RATE_PARENT'
-> flag to be set.
+Gr{oetje,eeting}s,
 
-Ok.
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
