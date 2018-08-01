@@ -1,165 +1,59 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60256 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387643AbeHALKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Aug 2018 07:10:21 -0400
+Date: Wed, 1 Aug 2018 10:25:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, lee.jones@linaro.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v2 2/5] regulator: rk808: add RK809 and RK817 support.
+Message-ID: <20180801092512.GA5509@sirena.org.uk>
+References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com>
+ <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
- <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
- <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
-Message-ID: <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-Date: Tue, 21 Aug 2018 08:30:57 -0700
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+In-Reply-To: <1533023850-29004-3-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-08-21 04:36:20)
-> On 8/18/2018 11:31 PM, Taniya Das wrote:
-> > Hello Stephen,
-> > =
 
-> > I will test these changes and get back.
-> > =
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > On 8/18/2018 7:42 AM, Stephen Boyd wrote:
-> >> Quoting Taniya Das (2018-08-10 18:53:54)
-> >>> =C2=A0 [v4]
-> >>> =C2=A0=C2=A0 * Add recalc_clk_ops to calculate the clock frequency re=
-ading the =
+On Tue, Jul 31, 2018 at 03:57:27PM +0800, Tony Xie wrote:
 
-> >>> current
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0 perf state, also add CLK_GET_RATE_NOCACHE fl=
-ag.
-> >>> =C2=A0=C2=A0 * Cleanup 'goto' during mode check in 'clk_rcg2_calculat=
-e_freq'.
-> >>> =C2=A0=C2=A0 * cleanup return from function 'com_cc_register_rcg_dfs'.
-> >>
-> >> I want to squash this in. I have only compile tested it. Let me know
-> >> what you think.
-> >>
-> >> ----8<---
-> >> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> >> index e6300e05d5df..e5eca8a1abe4 100644
-> >> --- a/drivers/clk/qcom/clk-rcg.h
-> >> +++ b/drivers/clk/qcom/clk-rcg.h
-> >> @@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
-> >> =C2=A0 extern const struct clk_ops clk_gfx3d_ops;
-> >> =C2=A0 extern const struct clk_ops clk_rcg2_shared_ops;
-> >> +struct clk_rcg_dfs_data {
-> >> +=C2=A0=C2=A0=C2=A0 struct clk_rcg2 *rcg;
-> >> +=C2=A0=C2=A0=C2=A0 struct clk_init_data *init;
-> >> +};
-> >> +
-> >> +#define DEFINE_RCG_DFS(r) \
-> >> +=C2=A0=C2=A0=C2=A0 { .rcg =3D &r##_src, .init =3D &r##_init }
-> >> +
-> >> =C2=A0 extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_rcg2 **rcgs, int num_clks);
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct clk_rcg_dfs_data=
- *rcgs,
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t len);
-> >> =C2=A0 #endif
-> >> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> >> index 55a5b58cbb15..bbe2a1916296 100644
-> >> --- a/drivers/clk/qcom/clk-rcg2.c
-> >> +++ b/drivers/clk/qcom/clk-rcg2.c
-> >> @@ -1051,48 +1051,24 @@ static unsigned long
-> >> =C2=A0 clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long paren=
-t_rate)
-> >> =C2=A0 {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_rcg2 *rcg =3D to_clk_rcg2(hw=
-);
-> >> -=C2=A0=C2=A0=C2=A0 u32 cfg, hid_div, m =3D 0, n =3D 0, mode =3D 0, ma=
-sk, level;
-> >> -=C2=A0=C2=A0=C2=A0 int num_parents, i;
-> >> -=C2=A0=C2=A0=C2=A0 unsigned long prate;
-> >> -
-> >> -=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 SE_CMD_DFSR_OFFSET, &cfg);
-> >> -=C2=A0=C2=A0=C2=A0 level =3D (GENMASK(4, 1) & cfg) >> 1;
-> >> -
-> >> -=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 SE_PERF_DFSR(level), &cfg);
-> >> -=C2=A0=C2=A0=C2=A0 if (rcg->mnd_width) {
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mask =3D BIT(rcg->mnd_widt=
-h) - 1;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regm=
-ap, rcg->cmd_rcgr +
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 SE_PERF_M_DFSR(level), &m);
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 m &=3D mask;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regm=
-ap, rcg->cmd_rcgr +
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 SE_PERF_N_DFSR(level), &n);
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n =3D=C2=A0 ~n;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n &=3D mask;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n +=3D m;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mode =3D cfg & CFG_MODE_MA=
-SK;
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mode >>=3D CFG_MODE_SHIFT;
-> >> -=C2=A0=C2=A0=C2=A0 }
-> >> +=C2=A0=C2=A0=C2=A0 int ret;
-> >> +=C2=A0=C2=A0=C2=A0 u32 level;
-> >> -=C2=A0=C2=A0=C2=A0 mask =3D BIT(rcg->hid_width) - 1;
-> >> -=C2=A0=C2=A0=C2=A0 hid_div =3D cfg >> CFG_SRC_DIV_SHIFT;
-> >> -=C2=A0=C2=A0=C2=A0 hid_div &=3D mask;
-> >> -=C2=A0=C2=A0=C2=A0 cfg &=3D CFG_SRC_SEL_MASK;
-> >> -=C2=A0=C2=A0=C2=A0 cfg >>=3D CFG_SRC_SEL_SHIFT;
-> >> +=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap,
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc=
-g->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
-> >> +=C2=A0=C2=A0=C2=A0 level &=3D GENMASK(4, 1);
-> >> +=C2=A0=C2=A0=C2=A0 level >>=3D 1;
-> >> -=C2=A0=C2=A0=C2=A0 num_parents =3D clk_hw_get_num_parents(hw);
-> >> -=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < num_parents; i++) {
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cfg =3D=3D rcg->parent=
-_map[i].cfg) {
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr=
-ate =3D clk_hw_get_rate(
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if=
- (parent_rate !=3D prate)
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 parent_rate =3D prate;
-> >> +=C2=A0=C2=A0=C2=A0 if (!rcg->freq_tbl) {
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_rcg2_dfs_popul=
-ate_freq_table(rcg);
-> =
+> +	default:
+> +		pr_warn("%s ramp_delay: %d not supported, setting 10000\n",
+> +			rdev->desc->name, ramp_delay);
+> +	}
 
-> This function would retrieve the parent_rate and if the parent_rate is =
+This looks mostly good but I notice that most of the prints in the
+driver are pr_ rather than dev_ ones - using dev_ is better as it allows
+people to see which device was affected.
 
-> not ready then it would fail to boot up.
-> =
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> So we have to make sure the parents are registered before these RCGs. =
+-----BEGIN PGP SIGNATURE-----
 
-> That also was one reason for me to not populate the frequency table at =
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlthfHcACgkQJNaLcl1U
+h9C8Igf/dgHh7kVnRuWvWyT7b/+8mMS+HNtVuTBMtiUf5textB9vCDqH+oOZoZE/
+2PEPQccsJdhF2tkxfuArUQtY8lxO7BQFu3HFxD70ROweX9CfuvfnJBVDAw094Wx6
+Z4G8HLLp0WqLiqSdGvASehN8jspMmWRkV4ucf6ED/yUjGKZMUf3ow7cwgfg2e6S/
+It4Yp/5Z4QrXpQchKhRWYvJZ6xAbtGevKaEvjBWegj7L9vFJTZn1uSJJeDrrnste
+b0I0q4MUN6cfgQwYFK8JeBLvJWkmAC4bBQYv0ulDzboDtRB5VcP6WnjnDiWHBCnj
+G39mcKBy/R9YlALxB1kxGxp2Aj3Y9g==
+=3sW2
+-----END PGP SIGNATURE-----
 
-> recalc.
-> =
-
-> We would need this patch to make this work.
-
-Hmmmm. Ok. That won't work then. recalc_rate() better not try to
-populate the frequency table then or it will not work. So I suppose it
-needs to fallback to reading the registers and assuming the parent_rate
-coming in is the actual frequency of it's parent until the frequency
-table pointer is non-NULL. Would that work?
-
-BTW, does DFS switch parents without software knowing about it? What
-happens in that case? Does the QUP driver make sure that the new parent
-of this RCG is properly enabled so that it can switch to it when needed?
-I'm still trying to understand this whole design. Who takes care of the
-voltage requirements in this case? The QUP driver as well?
+--MGYHOYXEY6WxJCY8--
