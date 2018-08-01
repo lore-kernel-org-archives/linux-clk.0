@@ -1,57 +1,81 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:41146 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeHUUlL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:41:11 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 23/24] MIPS: CI20: defconfig: enable OST driver
-Date: Tue, 21 Aug 2018 19:20:04 +0200
-Message-Id: <20180821172004.23300-1-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <michals@xilinx.com>
+Return-Path: michal.simek@xilinx.com
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
+ Wizard IP
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	<linux-clk@vger.kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark
+ Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>, <devicetree@vger.kernel.org>, Julien Su
+	<juliensu@mxic.com.tw>, Mason Yang <masonccyang@mxic.com.tw>,
+	<zhengxunli@mxic.com.tw>, <linux-arm-kernel@lists.infradead.org>, Michal
+ Simek <michal.simek@xilinx.com>
+References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
+ <20180801081950.10497-2-boris.brezillon@bootlin.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <a8620c93-cf99-719d-d2bb-7d0f0b567130@xilinx.com>
+Date: Wed, 1 Aug 2018 10:26:11 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180801081950.10497-2-boris.brezillon@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The OST driver provides a clocksource and sched_clock that are much more
-accurate than the default ones.
+Hi Boris,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+On 1.8.2018 10:19, Boris Brezillon wrote:
+> Document Xilinx Clocking Wizard bindings.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> ---
+>  .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+> new file mode 100644
+> index 000000000000..1bf7a764f4a9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+> @@ -0,0 +1,28 @@
+> +Device Tree Clock bindings for the "Clocking Wizard" IP provided by Xilinx
+> +
+> +This block can be used to generate up to 4 clock signals out of a single input
+> +clock. It embeds a PLL to generate an intermediate clock which then feeds 4
+> +clock dividers whose divider value can be adjusted based on the user needs.
+> +
+> +Required properties:
+> + - #clock-cells: must be 1. The cell is encoding the id of the output clk
+> +		 (from 0 to xlnx,clk-wizard-num-outputs - 1)
+> + - compatible: must be "xlnx,clk-wizard-5.1"
+> + - clocks: 2 clocks are required
+> + - clock-names: should contain 2 clock names: "aclk" and "clkin".
+> +		"aclk" is driving the register interface and "clk_in" is the
+> +		input clock signal that is used by the PLL block
+> + - xlnx,clk-wizard-num-outputs: this describe the number of output clocks
+> +				(chosen at synthesization time)
+> + - reg: registers used to configure the Clocking wizard block
+> +
+> +Example:
+> +
+> +	clkwizard: clkwizard@43c20000 {
+> +		compatible = "xlnx,clk-wizard-5.1";
+> +		reg = <0x43c20000 0x10000>;
+> +		clocks = <&clkc 18>, <&clkc 18>;
+> +		clock-names = "aclk", "clk_in1";
+> +		#clock-cells = <1>;
+> +		xlnx,clk-wizard-num-outputs = <2>;
+> +	};
+> 
 
-Notes:
-     v5: New patch
-    
-     v6: No change
-    
-     v7: No change
+First of all this should be 1/2.
 
- arch/mips/configs/ci20_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+The second is that this driver is already in staging area
+(drivers/staging/clocking-wizard) for a while. That's why please use
+this driver or send patches on the top of this.
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be23fd25eeaa..e56dc5c024b9 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -109,6 +109,7 @@ CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_JZ4740=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_JZ4780=y
-+CONFIG_INGENIC_OST=y
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_MEMORY=y
- CONFIG_EXT4_FS=y
--- 
-2.11.0
+I know we have been doing some changes in this driver recently but not
+sure if they reach our tree or mainline.
+
+Thanks,
+Michal
