@@ -1,96 +1,45 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sangbeom Kim <sbkim73@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+Return-Path: <ukl@pengutronix.de>
+Date: Wed, 1 Aug 2018 11:31:13 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v2] clk: s2mps11: Fix matching when built as module and DT node contains compatible
-Date: Wed, 29 Aug 2018 21:20:10 +0200
-Message-Id: <20180829192010.14182-1-krzk@kernel.org>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Sascha Hauer <kernel@pengutronix.de>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+Message-ID: <20180801093113.wnjeg5a3rjbh7yc4@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
+ <10f5e651-caf4-3fe0-87c0-fe42ccdc6349@i2se.com>
+ <CAOMZO5Cgf6aeNKWn5CnV8X-+bo20M00efoAxv51GPDE45Pg4yg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <CAOMZO5Cgf6aeNKWn5CnV8X-+bo20M00efoAxv51GPDE45Pg4yg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-When driver is built as module and DT node contains clocks compatible
-(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
-module aliases won't match.
+Hello Fabio,
 
-The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
-The modalias from driver: platform:s2mps11-clk
+On Thu, Jul 26, 2018 at 12:02:42PM -0300, Fabio Estevam wrote:
+> On Thu, Jul 26, 2018 at 11:50 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> 
+> > I only want to note that we are using this ugly hack for Duckbill to avoid
+> > this issue:
+> >
+> > https://github.com/I2SE/linux/commit/e457d5e0309c07e30e8dd8b17c32f7b3cbdd9547
+> 
+> Do you see the problem on TQMa28L with Stefan's hack applied?
 
-The devices are instantiated by parent's MFD.  However both Device Tree
-bindings and parent define the compatible for clocks devices.  In case
-of module matching this DT compatible will be used.
+With this change by Stefan the bug is not reproducible. Your change to
+set the bypass bits only later doesn't help though.
 
-The issue will not happen if this is a built-in (no need for module
-matching) or when clocks DT node does not contain compatible (not
-correct from bindings perspective but working for driver).
+Best regards
+Uwe
 
-Note when backporting to stable kernels: adjust the list of device ID
-entries.
-
-Cc: <stable@vger.kernel.org>
-Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
----
-
-Changes since v1:
-1. Add Stephen's ack.
-2. Minor language changes to comment.
-
-
-Stephen, can you apply it to clk tree? I think you acked it so I could take
-it... but anyway I cannot combine it with DT changes.
-
----
- drivers/clk/clk-s2mps11.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index d44e0eea31ec..0934d3724495 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -245,6 +245,36 @@ static const struct platform_device_id s2mps11_clk_id[] = {
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
- 
-+#ifdef CONFIG_OF
-+/*
-+ * Device is instantiated through parent MFD device and device matching is done
-+ * through platform_device_id.
-+ *
-+ * However if device's DT node contains proper clock compatible and driver is
-+ * built as a module, then the *module* matching will be done trough DT aliases.
-+ * This requires of_device_id table.  In the same time this will not change the
-+ * actual *device* matching so do not add .of_match_table.
-+ */
-+static const struct of_device_id s2mps11_dt_match[] = {
-+	{
-+		.compatible = "samsung,s2mps11-clk",
-+		.data = (void *)S2MPS11X,
-+	}, {
-+		.compatible = "samsung,s2mps13-clk",
-+		.data = (void *)S2MPS13X,
-+	}, {
-+		.compatible = "samsung,s2mps14-clk",
-+		.data = (void *)S2MPS14X,
-+	}, {
-+		.compatible = "samsung,s5m8767-clk",
-+		.data = (void *)S5M8767X,
-+	}, {
-+		/* Sentinel */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
-+#endif
-+
- static struct platform_driver s2mps11_clk_driver = {
- 	.driver = {
- 		.name  = "s2mps11-clk",
 -- 
-2.14.1
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
