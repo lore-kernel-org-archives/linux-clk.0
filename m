@@ -1,57 +1,24 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 0/2]  Add support for LPASS clock controller for SDM845
-Date: Fri,  3 Aug 2018 17:51:12 +0530
-Message-Id: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87pnz5kw1j.wl-kuninori.morimoto.gx@renesas.com>
+Cc: linux-clk@vger.kernel.org
+References: <87pnz5kw1j.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <153324331958.10763.13798633952891647048@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: cs2000-cp: convert to SPDX identifiers
+Date: Thu, 02 Aug 2018 13:55:19 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
- [v3]
-  * Add a device tree property to identify lpass protected GCC clocks.
-  * Update the GCC driver code to register the lpass clocks when the flag is
-   defined.
-  * Add comment for clocks using the BRANCH_HALT_SKIP flag.
-  * Use platform APIs instead of of_address_to_resource.
-  * Replace devm_ioremap with devm_ioremap_resource.
-  * Use fixed index for 'lpass_cc' & 'lpass_qdsp6ss' in probe.
+Quoting Kuninori Morimoto (2018-07-30 00:49:55)
+> =
 
- [v2]
-  * Make gcc_lpass_sway_clk static.
-  * Remove using child nodes and use reg-names to differentiate various
-    domains of LPASS CC.
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> =
 
-Add support for the lpass clock controller found on SDM845 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
 
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM LPASS clock bindings
-  clk: qcom: Add lpass clock controller driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gcc.txt         |   2 +
- .../devicetree/bindings/clock/qcom,lpasscc.txt     |  33 ++++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/gcc-sdm845.c                      |  35 ++++
- drivers/clk/qcom/lpasscc-sdm845.c                  | 189 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
- include/dt-bindings/clock/qcom,lpass-sdm845.h      |  16 ++
- 8 files changed, 287 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Applied to clk-next
