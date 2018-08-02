@@ -1,68 +1,58 @@
-Return-Path: <boris.brezillon@bootlin.com>
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>,
-	devicetree@vger.kernel.org,
-	Julien Su <juliensu@mxic.com.tw>,
-	Mason Yang <masonccyang@mxic.com.tw>,
-	<zhengxunli@mxic.com.tw>,
-	linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@xilinx.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking Wizard IP
-Date: Wed,  1 Aug 2018 10:19:50 +0200
-Message-Id: <20180801081950.10497-2-boris.brezillon@bootlin.com>
-In-Reply-To: <20180801081950.10497-1-boris.brezillon@bootlin.com>
-References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Amit Nischal <anischal@codeaurora.org>
+References: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
+ <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: qcom: Add camera clock controller driver for SDM845
+Date: Thu, 02 Aug 2018 10:00:50 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Document Xilinx Clocking Wizard bindings.
+Quoting Amit Nischal (2018-07-30 02:22:20)
+> diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm=
+845.c
+> new file mode 100644
+> index 0000000..702ca66
+> --- /dev/null
+> +++ b/drivers/clk/qcom/camcc-sdm845.c
+> @@ -0,0 +1,1744 @@
+> +       },
+> +};
+> +
+> +static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] =3D {
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
+> +       F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
+> +       F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
+> +       F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
+> +       F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +/*
+> + * As per HW design, some of the CAMCC RCGs needs to
+> + * move to XO clock during their clock disable so using
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
- .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+Per hw design sure, but what about hw design is causing this?
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
-new file mode 100644
-index 000000000000..1bf7a764f4a9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
-@@ -0,0 +1,28 @@
-+Device Tree Clock bindings for the "Clocking Wizard" IP provided by Xilinx
-+
-+This block can be used to generate up to 4 clock signals out of a single input
-+clock. It embeds a PLL to generate an intermediate clock which then feeds 4
-+clock dividers whose divider value can be adjusted based on the user needs.
-+
-+Required properties:
-+ - #clock-cells: must be 1. The cell is encoding the id of the output clk
-+		 (from 0 to xlnx,clk-wizard-num-outputs - 1)
-+ - compatible: must be "xlnx,clk-wizard-5.1"
-+ - clocks: 2 clocks are required
-+ - clock-names: should contain 2 clock names: "aclk" and "clkin".
-+		"aclk" is driving the register interface and "clk_in" is the
-+		input clock signal that is used by the PLL block
-+ - xlnx,clk-wizard-num-outputs: this describe the number of output clocks
-+				(chosen at synthesization time)
-+ - reg: registers used to configure the Clocking wizard block
-+
-+Example:
-+
-+	clkwizard: clkwizard@43c20000 {
-+		compatible = "xlnx,clk-wizard-5.1";
-+		reg = <0x43c20000 0x10000>;
-+		clocks = <&clkc 18>, <&clkc 18>;
-+		clock-names = "aclk", "clk_in1";
-+		#clock-cells = <1>;
-+		xlnx,clk-wizard-num-outputs = <2>;
-+	};
--- 
-2.14.1
+> + * clk_rcg2_shared_ops for such RCGs.
+> + * Also, use CLK_SET_RATE_PARENT flag for the RCGs which
+> + * have non-fixed PLL as parent source and requires
+
+Mention the PLL that isn't fixed?
+
+> + * reconfiguration of the PLL frequency.
+> + */
+> +static struct clk_rcg2 cam_cc_bps_clk_src =3D {
+> +       .cmd_rcgr =3D 0x600c,
+> +       .mnd_width =3D 0,
