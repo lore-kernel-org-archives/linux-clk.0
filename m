@@ -1,59 +1,31 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:38980 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbeHUUjm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:39:42 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 21/24] MIPS: qi_lb60: Reduce system timer and clocksource to 750 kHz
-Date: Tue, 21 Aug 2018 19:18:34 +0200
-Message-Id: <20180821171834.22995-1-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180724164221.3307-8-digetx@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20180724164221.3307-1-digetx@gmail.com>
+ <20180724164221.3307-8-digetx@gmail.com>
+Message-ID: <153324339043.10763.5630011710766819511@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 7/8] clk: tegra20: Check whether direct PLLM sourcing is
+ turned off for EMC
+Date: Thu, 02 Aug 2018 13:56:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-The default clock (12 MHz) is too fast for the system timer, which fails
-to report time accurately.
+Quoting Dmitry Osipenko (2018-07-24 09:42:20)
+> Ensure that direct PLLM sourcing is turned off for EMC as we don't support
+> that configuration in the clk driver.
+> =
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
 
-Notes:
-     v5: New patch
-    
-     v6: Remove ingenic,clocksource-channel property
-    
-     v7: No change
-
- arch/mips/boot/dts/ingenic/qi_lb60.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-index 85529a142409..de9d45e2c24a 100644
---- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
-+++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-@@ -45,3 +45,9 @@
- 		bias-disable;
- 	};
- };
-+
-+&tcu {
-+	/* 750 kHz for the system timer and clocksource */
-+	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
-+	assigned-clock-rates = <750000>, <750000>;
-+};
--- 
-2.11.0
+Acked-by: Stephen Boyd <sboyd@kernel.org>
