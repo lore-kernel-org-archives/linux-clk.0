@@ -1,109 +1,135 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33274 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbeH2NGo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 09:06:44 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v90-v6so4081067wrc.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Aug 2018 02:10:47 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To: Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-6-paul@crapouillou.net>
- <20180828172305.bohg6cggnzm3wsuj@pburton-laptop>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <62569807-7be8-51df-4683-82392224432d@linaro.org>
-Date: Wed, 29 Aug 2018 11:10:42 +0200
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35354 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729899AbeHBShV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 14:37:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id o18-v6so3351185wmc.0
+        for <linux-clk@vger.kernel.org>; Thu, 02 Aug 2018 09:45:24 -0700 (PDT)
+References: <20180522145245.3143-1-rui.silva@linaro.org> <267173c9-7235-6008-7248-ee06c0db3780@xs4all.nl>
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 00/13] media: staging/imx7: add i.MX7 media driver
+In-reply-to: <267173c9-7235-6008-7248-ee06c0db3780@xs4all.nl>
+Date: Thu, 02 Aug 2018 17:45:20 +0100
+Message-ID: <m3a7q4u38f.fsf@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180828172305.bohg6cggnzm3wsuj@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 28/08/2018 19:23, Paul Burton wrote:
-> Hi Daniel & Thomas,
-> 
-> On Tue, Aug 21, 2018 at 07:16:16PM +0200, Paul Cercueil wrote:
->> This driver handles the TCU (Timer Counter Unit) present on the Ingenic
->> JZ47xx SoCs, and provides the kernel with a system timer, and optionally
->> with a clocksource and a sched_clock.
->>
->> It also provides clocks and interrupt handling to client drivers.
->>
->> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->> ---
->>
->> Notes:
->>      v2: Use SPDX identifier for the license
->>     
->>      v3: - Move documentation to its own patch
->>          - Search the devicetree for PWM clients, and use all the TCU
->>     	   channels that won't be used for PWM
->>     
->>      v4: - Add documentation about why we search for PWM clients
->>          - Verify that the PWM clients are for the TCU PWM driver
->>     
->>      v5: Major overhaul. Too many changes to list. Consider it's a new
->>          patch.
->>     
->>      v6: - Add two API functions ingenic_tcu_request_channel and
->>            ingenic_tcu_release_channel. To be used by the PWM driver to
->>            request the use of a TCU channel. The driver will now dynamically
->>            move away the system timer or clocksource to a new TCU channel.
->>          - The system timer now defaults to channel 0, the clocksource now
->>            defaults to channel 1 and is no more optional. The
->>            ingenic,timer-channel and ingenic,clocksource-channel devicetree
->>            properties are now gone.
->>          - Fix round_rate / set_rate not calculating the prescale divider
->>            the same way. This caused problems when (parent_rate / div) would
->>            give a non-integer result. The behaviour is correct now.
->>          - The clocksource clock is turned off on suspend now.
->>     
->>      v7: Fix section mismatch by using builtin_platform_driver_probe()
->>
->>  drivers/clocksource/Kconfig         |   10 +
->>  drivers/clocksource/Makefile        |    1 +
->>  drivers/clocksource/ingenic-timer.c | 1124 +++++++++++++++++++++++++++++++++++
->>  drivers/clocksource/ingenic-timer.h |   15 +
->>  include/linux/mfd/ingenic-tcu.h     |    3 +
->>  5 files changed, 1153 insertions(+)
->>  create mode 100644 drivers/clocksource/ingenic-timer.c
->>  create mode 100644 drivers/clocksource/ingenic-timer.h
->> %
-> 
-> How is this & patch 6 of the series looking to you from a
-> drivers/clocksource perspective?
+Hi Hans,
+On Thu 02 Aug 2018 at 13:37, Hans Verkuil wrote:
+> Hi Rui,
+>
+> On 05/22/18 16:52, Rui Miguel Silva wrote:
+>> Hi,
+>> This series introduces the Media driver to work with the i.MX7 
+>> SoC. it uses the
+>> already existing imx media core drivers but since the i.MX7, 
+>> contrary to
+>> i.MX5/6, do not have an IPU and because of that some changes in 
+>> the imx media
+>> core are made along this series to make it support that case.
+>> 
+>> This patches adds CSI and MIPI-CSI2 drivers for i.MX7, along 
+>> with several
+>> configurations changes for this to work as a capture subsystem. 
+>> Some bugs are
+>> also fixed along the line. And necessary documentation.
+>> 
+>> For a more detailed view of the capture paths, pads links in 
+>> the i.MX7 please
+>> take a look at the documentation in PATCH 14.
+>> 
+>> The system used to test and develop this was the Warp7 board 
+>> with an OV2680
+>> sensor, which output format is 10-bit bayer. So, only MIPI 
+>> interface was
+>> tested, a scenario with an parallel input would nice to have.
+>> 
+>> *Important note*, this code depends on Steve Longerbeam series 
+>> [0]:
+>> [PATCH v4 00/13] media: imx: Switch to subdev notifiers
+>> which the merging status is not clear to me, but the changes in 
+>> there make
+>> senses to this series
+>> 
+>> Bellow goes an example of the output of the pads and links and 
+>> the output of
+>> v4l2-compliance testing.
+>> 
+>> The v4l-utils version used is:
+>> v4l2-compliance SHA   : 
+>> 47d43b130dc6e9e0edc900759fb37649208371e4 from Apr 4th.
+>> 
+>> The Media Driver fail some tests but this failures are coming 
+>> from code out of
+>> scope of this series (video-mux, imx-capture), and some from 
+>> the sensor OV2680
+>> but that I think not related with the sensor driver but with 
+>> the testing and
+>> core.
+>> 
+>> The csi and mipi-csi entities pass all compliance tests.
+>> 
+>> Cheers,
+>>     Rui
+>> 
+>> [0]: 
+>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg131186.html
+>
+> This patch series was delayed quite a bit since the patch series 
+> above
+> it depends on is still not merged.
+>
+> But the v6 version of that series will be merged once the 4.20 
+> cycle opens:
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg133391.html
 
-The presence of completion, mutexes, etc ... makes me think the driver
-is not going to the right direction.
+Good news.
 
-I have to review the drivers again but it will take some time because
-I'm returning from vacations and there are a trillion emails to sort out :/
+>
+> Sakari has a branch with that series on top of the latest 
+> media_tree master:
+> https://git.linuxtv.org/sailus/media_tree.git/log/?h=v4l2-fwnode
+>
+> Can you rebase this imx7 series on top of that? And test it 
+> again with the
+> *latest* v4l2-compliance? (I've added new checks recently, so 
+> you need to
+> update this utility)
+>
+> Please post the output of the v4l2-compliance test (after fixing 
+> any issues
+> it raises of course), either as a reply to this post or in the 
+> cover letter
+> of a v7 version of this series if you had to make changes.
 
-> If you're happy with them it'd be great to get an ack so I can take this
-> through the MIPS tree with the rest of the series. The alternative would
-> be to get the drivers in first then the MIPS bits in the next release
-> cycle.
-> 
-> Thanks,
->     Paul
-> 
+Sure, I will rebase on top of Sakari tree and will update the 
+compliance
+tests and run them again.
+
+>
+> This should expedite merging this series for 4.20.
+>
+> Thanks!
+>
+> 	Hans
+
+Ok, thanks for this. I will try to do it soon.
+
+---
+Cheers,
+	Rui
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
