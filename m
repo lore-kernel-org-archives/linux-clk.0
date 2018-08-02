@@ -1,51 +1,54 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 10 Aug 2018 08:03:34 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/4] Add i.MX8MQ clock driver
-Message-ID: <20180810060334.ookq3dm3vylp623o@pengutronix.de>
-References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
+To: Amit Nischal <anischal@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <07e0321116993d27d6585bd1a186328d@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk-owner@vger.kernel.org
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
+ <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
+ <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
+ <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
+ <07e0321116993d27d6585bd1a186328d@codeaurora.org>
+Message-ID: <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+Date: Thu, 02 Aug 2018 15:44:29 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Abel,
+Quoting Amit Nischal (2018-07-30 04:28:56)
+> On 2018-07-25 12:28, Stephen Boyd wrote:
+> > =
 
-On Thu, Aug 09, 2018 at 05:45:37PM +0300, Abel Vesa wrote:
-> This is basically just a resend of the following patchset:
-> 
-> https://www.spinics.net/lists/linux-clk/msg23141.html
-> 
-> I've just updated the patchset and implemented Shawn's
-> and Aisheng's comments.
-> 
-> I hope I haven't missed any of their comments.
+> > Ok. Sounds good! Is the rate range call really needed? It can't be
+> > determined in the PLL code with some table or avoided by making sure =
 
-I think what I said to v2 back in march still stays valid:
+> > GPU
+> > uses OPP table with only approved frequencies?
+> > =
 
-> A general thought: The i.MX8M finally has a consistent clock tree. We
-> have for example 70 Peripheral clock slices consisting of a mux, a gate
-> and two dividers, all 70 looking the same.
-> For these it might make sense to create a more complex clock type
-> providing mux, gate and set rate functionality in one clock. This would
-> drastically reduce the number of clocks we have to handle.
+> =
 
-Sascha
+> Currently fabia PLL code does not have any table to check this and =
+
+> intention
+> was to avoid relying on the client to call set_rate with only approved
+> frequencies so we have added the set_rate_range() call in the GPUCC =
+
+> driver
+> in order to set the rate range.
+> =
 
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+But GPU will use OPP so it doesn't seem like it really buys us anything
+here. And it really doesn't matter when the clk driver implementation
+doesn't use the min/max to clamp the values of the round_rate() call. Is
+that being done here? I need to double check. I would be more convinced
+if the implementation was looking at min/max to constrain the rate
+requested.
