@@ -1,65 +1,58 @@
-Return-Path: <joe@perches.com>
-Message-ID: <4a576f65b8fb3a0e6f0ca662e89070eb982be298.camel@perches.com>
-Subject: Re: [PATCH 1/2] devres: provide devm_kstrdup_const()
-From: Joe Perches <joe@perches.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki"
- <rafael.j.wysocki@intel.com>,  Arend van Spriel <aspriel@gmail.com>, Ulf
- Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Vivek Gautam <vivek.gautam@codeaurora.org>, Robin Murphy
- <robin.murphy@arm.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport
- <rppt@linux.vnet.ibm.com>, Michal Hocko <mhocko@suse.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Roman Gushchin
- <guro@fb.com>, Huang Ying <ying.huang@intel.com>,  Kees Cook
- <keescook@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Date: Mon, 27 Aug 2018 01:42:46 -0700
-In-Reply-To: <20180827082101.5036-1-brgl@bgdev.pl>
-References: <20180827082101.5036-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="ISO-8859-1"
-Mime-Version: 1.0
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 2 Aug 2018 11:44:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180802104443.GH9117@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
+In-Reply-To: <20180802103425.3053-4-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-08-27 at 10:21 +0200, Bartosz Golaszewski wrote:
-> Provide a resource managed version of kstrdup_const(). This variant
-> internally calls devm_kstrdup() on pointers that are outside of
-> .rodata section. Also provide a corresponding version of devm_kfree().
-[]
-> diff --git a/mm/util.c b/mm/util.c
-[]
->  /**
->   * kstrdup - allocate space for and copy an existing string
->   * @s: the string to duplicate
-> @@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
->  }
->  EXPORT_SYMBOL(kstrdup_const);
->  
-> +/**
-> + * devm_kstrdup_const - resource managed conditional string duplication
-> + * @dev: device for which to duplicate the string
-> + * @s: the string to duplicate
-> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> + *
-> + * Function returns source string if it is in .rodata section otherwise it
-> + * fallbacks to devm_kstrdup.
-> + *
-> + * Strings allocated by devm_kstrdup_const will be automatically freed when
-> + * the associated device is detached.
-> + */
-> +char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-> +{
-> +	if (is_kernel_rodata((unsigned long)s))
-> +		return s;
-> +
-> +	return devm_kstrdup(dev, s, gfp);
-> +}
-> +EXPORT_SYMBOL(devm_kstrdup_const);
 
-Doesn't this lose constness and don't you get
-a compiler warning here?
+--2oox5VnwalALFvA7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The kstrdup_const function returns a const char *,
-why shouldn't this?
+On Thu, Aug 02, 2018 at 12:34:22PM +0200, Oleksij Rempel wrote:
+> Export pm_power_off_prepare. It is needed to implement power off on
+> Freescale/NXP iMX6 based boards with external power management
+> integrated circuit (PMIC).
+
+I thought we'd got an ack for this from Raphael on a previous version or
+am I mistaken?
+
+--2oox5VnwalALFvA7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti4JoACgkQJNaLcl1U
+h9DRVggAgz0AKW33j9seRp5nJB5gGs1Gi5SjZMd7GKJLj7Fk6GOZEj4vBxZV+AWc
+9F3COPoOWo7sFq2OVhmDw2UgfGWLqI3atHUkkqmk31mrAsHcts6+6AIlGK0z2sii
+QrxzJoVm+7vn7ft6OcXu8Z73I5pWvzAHxOA16GNDoJDMxYgXFNjaetpntWq/z0XG
+AlgagvG+Tn3ibAP5UxWR2hbfNP9gVxOMz+W784ssF02puTjU/4oY+ZQkDJYuE+Km
+gbvLWq6E77+S6cF0CxuKYcqUVv4xcmMsHz0jRJWBSgJBuRG6jQiVCFxzGFy0TFx5
+BgMtR9r3+Fze77Wb4fjJURqe0dykNQ==
+=YEMF
+-----END PGP SIGNATURE-----
+
+--2oox5VnwalALFvA7--
