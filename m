@@ -1,203 +1,77 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	thor.thayer@linux.intel.com,
-	linux-imx@nxp.com,
-	hdegoede@redhat.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH V6 2/4] clk: add new APIs to operate on all available clocks
-Date: Fri, 31 Aug 2018 12:45:54 +0800
-Message-Id: <1535690756-22234-3-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+To: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+ "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "keescook@chromium.org" <keescook@chromium.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>,
+ "matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+ "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+ Jolly Shah <JOLLYS@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <e5448935-770a-5c14-438c-23a652b17822@xilinx.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Rajan Vaja <RAJANV@xilinx.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+ <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
+ <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
+ <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
+ <e5448935-770a-5c14-438c-23a652b17822@xilinx.com>
+Message-ID: <153324358299.10763.8724416723915219268@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for ZynqMP
+ core
+Date: Thu, 02 Aug 2018 13:59:43 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
-to users who just want to handle all available clocks from device tree
-without need to know the detailed clock information likes clock numbers
-and names. This is useful in writing some generic drivers to handle clock
-part.
+Quoting Michal Simek (2018-07-30 05:50:42)
+> On 26.7.2018 18:36, Stephen Boyd wrote:
+> > Quoting Michal Simek (2018-07-25 02:51:14)
+> >> On 24.7.2018 20:14, Jolly Shah wrote:
+> >>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+> >>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp.c  create mode
+> >>>>> 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+> >>>>>  create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+> >>>>>
+> >>>>
+> >>>> It looks pretty calm over the last several series that's why when I =
+get an answer
+> >>>> from Stephen or Mike I will take this series via my tree and arm-soc=
+ tree.
+> >>>>
+> >>>> I have applied 01-08 here
+> >>>>  https://github.com/Xilinx/linux-xlnx/commits/zynqmp/soc
+> >>>>
+> >>>> Thanks,
+> >>>> Michal
+> >>>
+> >>>
+> >>> Thanks for merging the patches. =
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v3->v4:
- * no changes
-v2->v3:
- * remove #if define condition
- * use kmalloc_array
-v1->v2:
- * make of_clk_bulk_get_all private
- * add clk_bulk_get/put_all
----
- drivers/clk/clk-bulk.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 92 insertions(+), 1 deletion(-)
+> >>> By mistake I added =E2=80=9CReviewed-by: Stephen Boyd sboyd@kernel.or=
+g=E2=80=9D for firmware bindings (Patch01).  Stephen had reviewed clock bin=
+dings only.  Please suggest if I should send a new version with that fix.
+> >>
+> >> I have fixed that in my branch and I have asked Shephen to look at clk
+> >> over chat.
+> >>
+> > =
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 4460ac5..6a7118d 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -17,9 +17,11 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/export.h>
- #include <linux/of.h>
-+#include <linux/slab.h>
- 
- static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 					struct clk_bulk_data *clks)
-@@ -49,6 +51,32 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	return ret;
- }
- 
-+static int __must_check of_clk_bulk_get_all(struct device_node *np,
-+					    struct clk_bulk_data **clks)
-+{
-+	struct clk_bulk_data *clk_bulk;
-+	int num_clks;
-+	int ret;
-+
-+	num_clks = of_clk_get_parent_count(np);
-+	if (!num_clks)
-+		return 0;
-+
-+	clk_bulk = kmalloc_array(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
-+	if (!clk_bulk)
-+		return -ENOMEM;
-+
-+	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
-+	if (ret) {
-+		kfree(clk_bulk);
-+		return ret;
-+	}
-+
-+	*clks = clk_bulk;
-+
-+	return num_clks;
-+}
-+
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
- {
- 	while (--num_clks >= 0) {
-@@ -88,6 +116,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
- }
- EXPORT_SYMBOL(clk_bulk_get);
- 
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
-+{
-+	if (IS_ERR_OR_NULL(clks))
-+		return;
-+
-+	clk_bulk_put(num_clks, clks);
-+
-+	kfree(clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_put_all);
-+
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks)
-+{
-+	struct device_node *np = dev_of_node(dev);
-+
-+	if (!np)
-+		return 0;
-+
-+	return of_clk_bulk_get_all(np, clks);
-+}
-+EXPORT_SYMBOL(clk_bulk_get_all);
-+
- #ifdef CONFIG_HAVE_CLK_PREPARE
- 
- /**
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..e9433c7 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -312,7 +312,26 @@ struct clk *clk_get(struct device *dev, const char *id);
-  */
- int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 			      struct clk_bulk_data *clks);
--
-+/**
-+ * clk_bulk_get_all - lookup and obtain all available references to clock
-+ *		      producer.
-+ * @dev: device for clock "consumer"
-+ * @clks: pointer to the clk_bulk_data table of consumer
-+ *
-+ * This helper function allows drivers to get all clk consumers in one
-+ * operation. If any of the clk cannot be acquired then any clks
-+ * that were obtained will be freed before returning to the caller.
-+ *
-+ * Returns a positive value for the number of clocks obtained while the
-+ * clock references are stored in the clk_bulk_data table in @clks field.
-+ * Returns 0 if there're none and a negative value if something failed.
-+ *
-+ * Drivers must assume that the clock source is not enabled.
-+ *
-+ * clk_bulk_get should not be called from within interrupt context.
-+ */
-+int __must_check clk_bulk_get_all(struct device *dev,
-+				  struct clk_bulk_data **clks);
- /**
-  * devm_clk_bulk_get - managed get multiple clk consumers
-  * @dev: device for clock "consumer"
-@@ -488,6 +507,19 @@ void clk_put(struct clk *clk);
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
- 
- /**
-+ * clk_bulk_put_all - "free" all the clock source
-+ * @num_clks: the number of clk_bulk_data
-+ * @clks: the clk_bulk_data table of consumer
-+ *
-+ * Note: drivers must ensure that all clk_bulk_enable calls made on this
-+ * clock source are balanced by clk_bulk_disable calls prior to calling
-+ * this function.
-+ *
-+ * clk_bulk_put_all should not be called from within interrupt context.
-+ */
-+void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
-+
-+/**
-  * devm_clk_put	- "free" a managed clock source
-  * @dev: device used to acquire the clock
-  * @clk: clock source acquired with devm_clk_get()
-@@ -642,6 +674,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 	return 0;
- }
- 
-+static inline int __must_check clk_bulk_get_all(struct device *dev,
-+					 struct clk_bulk_data **clks)
-+{
-+	return 0;
-+}
-+
- static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- {
- 	return NULL;
-@@ -663,6 +701,8 @@ static inline void clk_put(struct clk *clk) {}
- 
- static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
- 
-+static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
-+
- static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
- 
- 
--- 
-2.7.4
+> > I have some unresolved review comments on v9. I'll give reviewed-by when
+> > that discussion is resolved.
+> =
+
+> ok. Do you want to take them via clk tree or via arm-soc tree?
+> =
+
+
+I'm fine for the clk patch to go via arm-soc if that makes it easier.
