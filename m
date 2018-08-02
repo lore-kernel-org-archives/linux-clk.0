@@ -1,127 +1,96 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 8/9] clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
-Date: Fri, 10 Aug 2018 15:21:12 +0530
-Message-Id: <20180810095113.25292-9-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <o.rempel@pengutronix.de>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+To: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com, yibin.gong@nxp.com,
+ "A.s. Dong" <aisheng.dong@nxp.com>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+Date: Thu, 2 Aug 2018 12:47:27 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180802104443.GH9117@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="5AJLEBPFi8zhQJWYRI3WJOFLDJr5ahJGy"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Reset Management Unit (RMU) support for Actions Semi S700 SoC.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--5AJLEBPFi8zhQJWYRI3WJOFLDJr5ahJGy
+Content-Type: multipart/mixed; boundary="AXOb8o839w5QurrTYeEqtVxfDzvKm5doU";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com, yibin.gong@nxp.com,
+ "A.s. Dong" <aisheng.dong@nxp.com>
+Message-ID: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+In-Reply-To: <20180802104443.GH9117@sirena.org.uk>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/owl-s700.c | 51 ++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+--AXOb8o839w5QurrTYeEqtVxfDzvKm5doU
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-index e7cacd677275..a2f34d13fb54 100644
---- a/drivers/clk/actions/owl-s700.c
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -20,8 +20,10 @@
- #include "owl-gate.h"
- #include "owl-mux.h"
- #include "owl-pll.h"
-+#include "owl-reset.h"
- 
- #include <dt-bindings/clock/actions,s700-cmu.h>
-+#include <dt-bindings/reset/actions,s700-reset.h>
- 
- #define CMU_COREPLL		(0x0000)
- #define CMU_DEVPLL		(0x0004)
-@@ -569,20 +571,69 @@ static struct clk_hw_onecell_data s700_hw_clks = {
- 		.num    = CLK_NR_CLKS,
- };
- 
-+static const struct owl_reset_map s700_resets[] = {
-+	[RESET_DE]	= { CMU_DEVRST0, BIT(0) },
-+	[RESET_LCD0]	= { CMU_DEVRST0, BIT(1) },
-+	[RESET_DSI]	= { CMU_DEVRST0, BIT(2) },
-+	[RESET_CSI]	= { CMU_DEVRST0, BIT(13) },
-+	[RESET_SI]	= { CMU_DEVRST0, BIT(14) },
-+	[RESET_I2C0]	= { CMU_DEVRST1, BIT(0) },
-+	[RESET_I2C1]	= { CMU_DEVRST1, BIT(1) },
-+	[RESET_I2C2]	= { CMU_DEVRST1, BIT(2) },
-+	[RESET_I2C3]	= { CMU_DEVRST1, BIT(3) },
-+	[RESET_SPI0]	= { CMU_DEVRST1, BIT(4) },
-+	[RESET_SPI1]	= { CMU_DEVRST1, BIT(5) },
-+	[RESET_SPI2]	= { CMU_DEVRST1, BIT(6) },
-+	[RESET_SPI3]	= { CMU_DEVRST1, BIT(7) },
-+	[RESET_UART0]	= { CMU_DEVRST1, BIT(8) },
-+	[RESET_UART1]	= { CMU_DEVRST1, BIT(9) },
-+	[RESET_UART2]	= { CMU_DEVRST1, BIT(10) },
-+	[RESET_UART3]	= { CMU_DEVRST1, BIT(11) },
-+	[RESET_UART4]	= { CMU_DEVRST1, BIT(12) },
-+	[RESET_UART5]	= { CMU_DEVRST1, BIT(13) },
-+	[RESET_UART6]	= { CMU_DEVRST1, BIT(14) },
-+	[RESET_KEY]	= { CMU_DEVRST1, BIT(24) },
-+	[RESET_GPIO]	= { CMU_DEVRST1, BIT(25) },
-+	[RESET_AUDIO]	= { CMU_DEVRST1, BIT(29) },
-+};
-+
- static struct owl_clk_desc s700_clk_desc = {
- 	.clks       = s700_clks,
- 	.num_clks   = ARRAY_SIZE(s700_clks),
- 
- 	.hw_clks    = &s700_hw_clks,
-+
-+	.resets     = s700_resets,
-+	.num_resets = ARRAY_SIZE(s700_resets),
- };
- 
- static int s700_clk_probe(struct platform_device *pdev)
- {
- 	struct owl_clk_desc *desc;
-+	struct owl_reset *reset;
-+	int ret;
- 
- 	desc = &s700_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
- 
-+	/*
-+	 * FIXME: Reset controller registration should be moved to
-+	 * common code, once all SoCs of Owl family supports it.
-+	 */
-+	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	reset->rcdev.of_node = pdev->dev.of_node;
-+	reset->rcdev.ops = &owl_reset_ops;
-+	reset->rcdev.nr_resets = desc->num_resets;
-+	reset->reset_map = desc->resets;
-+	reset->regmap = desc->regmap;
-+
-+	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to register reset controller\n");
-+
- 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
- }
- 
--- 
-2.17.1
+On 02.08.2018 12:44, Mark Brown wrote:
+> On Thu, Aug 02, 2018 at 12:34:22PM +0200, Oleksij Rempel wrote:
+>> Export pm_power_off_prepare. It is needed to implement power off on
+>> Freescale/NXP iMX6 based boards with external power management
+>> integrated circuit (PMIC).
+>=20
+> I thought we'd got an ack for this from Raphael on a previous version o=
+r
+> am I mistaken?
+>=20
+
+No, we got an:
+"Anyway, I have no particular problems with exporting
+pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+
+Should i see it as ACK?
+
+
+--AXOb8o839w5QurrTYeEqtVxfDzvKm5doU--
+
+--5AJLEBPFi8zhQJWYRI3WJOFLDJr5ahJGy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlti4T8ACgkQdQOiSHVI
+77SA7Qf+PEBdxj2UynzNMWWjoQrpHpM98iIoXeKecu2cWw70ew2hGM6x07P+RcGH
+R3JNhb7OioigTyxAEKf99TB4sRnoQwZKnaf2sBIUaT4w58rCIPNQV3zZJAmGef/U
+o2n21ct8+G3DNgQ0HaK32XWVvtq0s0D0Jog60AH9gqTmBpC+jR+v1kVZ1CqI4Djm
+urDDQjN4TusrUVlMCCWoVMhb1F8pddCrb6NAgBQQmK90wJJ+2eZzutvvEQMJMsUz
+GFdQolaj/lOeuKzK1hZT6wRMh4OGRTln3jBuHYCdWJ5jLsuu+CMXww7mCZcfo8U3
+v9w4e25L8O1m88nWMH5SA1ZwvHLGPw==
+=YY42
+-----END PGP SIGNATURE-----
+
+--5AJLEBPFi8zhQJWYRI3WJOFLDJr5ahJGy--
