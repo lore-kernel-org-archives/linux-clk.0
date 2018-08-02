@@ -1,59 +1,67 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 24 Aug 2018 09:58:27 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <broonie@sirena.org.uk>
+Date: Thu, 2 Aug 2018 12:35:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
-	linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 5/5] clk: imx: add clock driver for i.MX8MQ CCM
-Message-ID: <20180824075827.l54jghjbetulzntg@pengutronix.de>
-References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
- <1534945703-4730-6-git-send-email-abel.vesa@nxp.com>
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180802113552.GJ9117@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1534945703-4730-6-git-send-email-abel.vesa@nxp.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
+In-Reply-To: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 22, 2018 at 04:48:23PM +0300, Abel Vesa wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
-> 
-> Add driver for the Clock Control Module found on i.MX8MQ.
-> 
-> This is largely based on the downstream driver from Anson Huang and
-> Bai Ping at NXP, with only some small adaptions to mainline from me.
 
-It's time to rephrase the commit message. With the new composite clock
-the adaptions are no longer that small.
+--72k7VsmfIboquFwl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +static int const clks_init_on[] __initconst = {
-> +	IMX8MQ_CLK_DRAM_CORE, IMX8MQ_CLK_AHB_CG,
-> +	IMX8MQ_CLK_NOC, IMX8MQ_CLK_NOC_APB,
-> +	IMX8MQ_CLK_USB_BUS, IMX8MQ_CLK_NAND_USDHC_BUS,
-> +	IMX8MQ_CLK_MAIN_AXI, IMX8MQ_CLK_A53_CG,
-> +	IMX8MQ_CLK_AUDIO_AHB_DIV, IMX8MQ_CLK_TMU_ROOT,
-> +	IMX8MQ_CLK_DRAM_APB,
-> +};
+On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
+> On 02.08.2018 12:44, Mark Brown wrote:
 
-This is unused and you seem to have converted all these clocks to add
-the CLK_IS_CRITICAL flag.
+> > I thought we'd got an ack for this from Raphael on a previous version or
+> > am I mistaken?
 
-Are all these really needed? some clocks like IMX8MQ_CLK_AUDIO_AHB_DIV,
-IMX8MQ_CLK_USB_BUS and IMX8MQ_CLK_NAND_USDHC_BUS look suspicious.
+> No, we got an:
+> "Anyway, I have no particular problems with exporting
+> pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
 
-Sascha
+> Should i see it as ACK?
 
+It's probably good enough. =20
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--72k7VsmfIboquFwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti7JgACgkQJNaLcl1U
+h9AhdAf/TbZVRZ28YFMBoAatxLryUYP178QUB6AlI/U68p5IlMOnGK/xFGaPJ7G7
+bSyJWiVfHFTB2nKwoltQy219TQuUwr0c3RJ3t2kpFm06L5a/f9YyEZCndUxFOrgy
+dMSAeU5QaiOmQvGcWNrCmoIJ3K38xDm03FOLnzjUZ2Mk0WIyCuZkuacRDqHPRkgX
+t4WI4xTsEHJWybjs8fcfjmnyp8GAwAilOTGT0AeyuXJvTp4s629YzI7njDbcSqxS
+GLaE1Lrat9D/H6exC9UqfOSvP4OCjWCXYeSUPUUCgoMlWjYNtT0QVyM60tfizgtE
+4vMkCluS9U/eszAJV2Vchh0RIFiw/Q==
+=2d1o
+-----END PGP SIGNATURE-----
+
+--72k7VsmfIboquFwl--
