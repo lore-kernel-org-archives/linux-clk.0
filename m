@@ -1,47 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Thu, 2 Aug 2018 09:35:06 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, eballetbo@gmail.com,
-        linus.walleij@linaro.org, mazziesaccount@gmail.com,
-        dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, broonie@kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v11 1/2] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <20180802083506.GO4662@dell>
-References: <cover.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
- <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <77184f651e5cefb112f1061bc682b759f88144c6.1532946848.git.matti.vaittinen@fi.rohmeurope.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46591 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730028AbeHBMZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 08:25:07 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v9 1/6] ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff property
+Date: Thu,  2 Aug 2018 12:34:20 +0200
+Message-Id: <20180802103425.3053-2-o.rempel@pengutronix.de>
+In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 30 Jul 2018, Matti Vaittinen wrote:
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/imx6q-clock.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-> ROHM BD71837 PMIC MFD driver providing interrupts and support
-> for three subsystems:
-> - clk
-> - Regulators
-> - input/power-key
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->  drivers/mfd/Kconfig              |  13 ++
->  drivers/mfd/Makefile             |   1 +
->  drivers/mfd/rohm-bd718x7.c       | 208 ++++++++++++++++++++++++
->  include/linux/mfd/rohm-bd718x7.h | 332 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 554 insertions(+)
->  create mode 100644 drivers/mfd/rohm-bd718x7.c
->  create mode 100644 include/linux/mfd/rohm-bd718x7.h
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+index a45ca67a9d5f..e1308346e00d 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+@@ -6,6 +6,14 @@ Required properties:
+ - interrupts: Should contain CCM interrupt
+ - #clock-cells: Should be <1>
+ 
++Optional properties:
++- fsl,pmic-stby-poweroff: Configure CCM to assert PMIC_STBY_REQ signal
++  on power off.
++  Use this property if the SoC should be powered off by external power
++  management IC (PMIC) triggered via PMIC_STBY_REQ signal.
++  Boards that are designed to initiate poweroff on PMIC_ON_REQ signal should
++  be using "syscon-poweroff" driver instead.
++
+ The clock consumer should specify the desired clock by having the clock
+ ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6qdl-clock.h
+ for the full list of i.MX6 Quad and DualLite clock IDs.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.18.0
+
