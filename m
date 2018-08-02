@@ -1,90 +1,53 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43798 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeHHKwT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Aug 2018 06:52:19 -0400
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-9-songjun.wu@linux.intel.com> <CAMuHMdXkGchPN337dXbBVOFsb1o-Tkh8S_z=uCm3Z0sDjPVMKA@mail.gmail.com>
- <734bddbc-a5aa-d50d-0e7b-d8adc4d1afb2@linux.intel.com>
-In-Reply-To: <734bddbc-a5aa-d50d-0e7b-d8adc4d1afb2@linux.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 Aug 2018 10:33:25 +0200
-Message-ID: <CAMuHMdVgC__AJHCEKT9UhdK4Jh4bm-s0ihH8mvx7KQ7+vzh6Ag@mail.gmail.com>
-Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
-To: songjun.wu@linux.intel.com
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54411 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731070AbeHBMZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 08:25:07 -0400
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Thu,  2 Aug 2018 12:34:22 +0200
+Message-Id: <20180802103425.3053-4-o.rempel@pengutronix.de>
+In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Songjun,
+Export pm_power_off_prepare. It is needed to implement power off on
+Freescale/NXP iMX6 based boards with external power management
+integrated circuit (PMIC).
 
-On Wed, Aug 8, 2018 at 6:05 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
-> On 8/7/2018 3:33 PM, Geert Uytterhoeven wrote:
-> > On Fri, Aug 3, 2018 at 5:04 AM Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> >> Get serial id from dts.
-> >>
-> >> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
-> >> macro is defined in lantiq_soc.h.
-> >> lantiq_soc.h is in arch path for legacy product support.
-> >>
-> >> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
-> >>
-> >> If "#ifdef preprocessor" is changed to
-> >> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
-> >> code using LTQ_EARLY_ASC is compiled.
-> >> Compilation will fail for no LTQ_EARLY_ASC defined.
-> >>
-> >> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> > Thanks for your patch!
-> >
-> >> @@ -699,9 +700,19 @@ lqasc_probe(struct platform_device *pdev)
-> >>                  return -ENODEV;
-> >>          }
-> >>
-> >> -       /* check if this is the console port */
-> >> -       if (mmres->start != CPHYSADDR(LTQ_EARLY_ASC))
-> >> -               line = 1;
-> >> +       /* get serial id */
-> >> +       line = of_alias_get_id(node, "serial");
-> >> +       if (line < 0) {
-> >> +#ifdef CONFIG_LANTIQ
-> >> +               if (mmres->start == CPHYSADDR(LTQ_EARLY_ASC))
-> >> +                       line = 0;
-> >> +               else
-> >> +                       line = 1;
-> >> +#else
-> >> +               dev_err(&pdev->dev, "failed to get alias id, errno %d\n", line);
-> >> +               return line;
-> > Please note that not providing a fallback here makes life harder when using
-> > DT overlays.
-> > See the description of commit 7678f4c20fa7670f ("serial: sh-sci: Add support
-> > for dynamic instances") for background info.
-> Thanks for your comment.
-> The logic in commit 7678f4c20fa7670f is not suitable here.
-> We need to know which serial instance is used for console.
-> We cannot use dynamic serial instance here.
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ kernel/reboot.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Why does the driver need to use which serial instance is used for the console?
-Hardcoding that is not an option, as the board DTS may specify the console using
-chosen/stdout-path.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index e4ced883d8de..83810d726f3e 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -49,6 +49,7 @@ int reboot_force;
+  */
+ 
+ void (*pm_power_off_prepare)(void);
++EXPORT_SYMBOL_GPL(pm_power_off_prepare);
+ 
+ /**
+  *	emergency_restart - reboot the system
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.18.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
