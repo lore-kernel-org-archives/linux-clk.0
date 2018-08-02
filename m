@@ -1,40 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33377 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeHQLNx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Aug 2018 07:13:53 -0400
-Received: by mail-pl0-f67.google.com with SMTP id b90-v6so3386081plb.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Aug 2018 01:11:28 -0700 (PDT)
-Received: from localhost.localdomain ([2402:f000:1:1501:200:5efe:a66f:53fa])
-        by smtp.gmail.com with ESMTPSA id v140-v6sm1814844pgb.45.2018.08.17.01.11.26
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 17 Aug 2018 01:11:27 -0700 (PDT)
-From: Jiecheng Wu <jasonwood2031@gmail.com>
-To: linux-clk@vger.kernel.org
-Subject: [PATCH] clk-wm831x.c: fix wrong return value when wm831x_reg_read() fails
-Date: Fri, 17 Aug 2018 16:11:17 +0800
-Message-Id: <20180817081117.15256-1-jasonwood2031@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Marek Vasut <marek.vasut@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Steve Longerbeam <slongerbeam@gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9b8f68f6-dd88-cc1a-6f13-b4d2fedadead@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steve Longerbeam <steve_longerbeam@mentor.com>
+References: <1527818357-8154-1-git-send-email-steve_longerbeam@mentor.com>
+ <153090140728.143105.7720351459587498082@swboyd.mtv.corp.google.com>
+ <9b8f68f6-dd88-cc1a-6f13-b4d2fedadead@gmail.com>
+Message-ID: <153324317799.10763.16530922080427544645@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: vc5: Avoid divide by zero when rounding or setting rates
+Date: Thu, 02 Aug 2018 13:52:57 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Function wm831x_fll_is_prepared() defined in drivers/clk/clk-wm831x.c returns true when function wm831x_reg_read() fails (should return false).
----
- drivers/clk/clk-wm831x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Quoting Steve Longerbeam (2018-07-18 10:56:51)
+> =
 
-diff --git a/drivers/clk/clk-wm831x.c b/drivers/clk/clk-wm831x.c
-index 1467695..11c2d19 100644
---- a/drivers/clk/clk-wm831x.c
-+++ b/drivers/clk/clk-wm831x.c
-@@ -79,7 +79,7 @@ static int wm831x_fll_is_prepared(struct clk_hw *hw)
- 	if (ret < 0) {
- 		dev_err(wm831x->dev, "Unable to read FLL_CONTROL_1: %d\n",
- 			ret);
--		return true;
-+		return false;
- 	}
- 
- 	return (ret & WM831X_FLL_ENA) != 0;
--- 
-2.6.4
+> =
+
+> On 07/06/2018 11:23 AM, Stephen Boyd wrote:
+> > Quoting Steve Longerbeam (2018-05-31 18:59:17)
+> >> Add checks in the .round_rate and .set_rate ops for zero requested
+> >> rate or zero parent rate. If either are zero in .round_rate, just
+> >> return zero. If either are zero in .set_rate, return -EINVAL.
+> > Are you seeing problems when the clk is unparented and we're trying to
+> > recalculate the rate or change rates, and thus the parent frequency
+> > looks like 0?
+> =
+
+> The problem appeared when suspending the rcar-du driver.
+> The kernel tested is a Renesas BSP release (3.6.2), and in the
+> version of the rcar-du driver from that release, the driver calls
+> clk_set_rate() with a rate of zero in its suspend PM op. This is
+> fixed in mainline kernel. So the divide-by-zero in vc5 clock driver
+> probably will not show up in mainline.
+
+Ok so then this patch shouldn't be applied on mainline?
+
+> =
+
+> >   Should this get a Fixes: tag so that it goes back to
+> > stable kernels?
+> >
+> =
+
+> Zero rates are not checked beginning with the initial commit
+> 3e1aec4e2c ("clk: vc5: Add support for IDT VersaClock 5P49V5923 and =
+
+> 5P49V5933").
+> so that would have to be the Fixes: tag.
+
+Thanks!
