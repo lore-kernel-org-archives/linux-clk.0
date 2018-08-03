@@ -1,58 +1,137 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:43048 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbeHJAOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:14:52 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 23/24] MIPS: CI20: defconfig: enable OST driver
-Date: Thu,  9 Aug 2018 23:47:57 +0200
-Message-Id: <20180809214757.21453-1-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v11 00/11] drivers: Introduce firmware dnd clock river for ZynqMP core
+Date: Fri, 3 Aug 2018 10:53:17 -0700
+Message-ID: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-The OST driver provides a clocksource and sched_clock that are much more
-accurate than the default ones.
+This patchset is adding communication layer with firmware and clock driver who uses 
+those APIs to communicate with PMU.
+Firmware driver provides an interface to firmware APIs.Interface APIs can be used by any driver to communicate to
+PMUFW(Platform Management Unit). All requests go through ATF.
+This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries supported clock information from 
+firmware and regiters pll and output clocks with CCF.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/configs/ci20_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+v11:
+ - Removed "Reveiwed-by:Stephen Boyd" tag from firmware binding
+ - Updated clock and firmware driver to use probe method instead of init
+ - Marked PMU payload arguments with __le32 for proper endienness code
+ 
+v10:
+ - Incorporated code review comments from v9 patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10478575/
+	https://patchwork.kernel.org/patch/10478457/
+	https://patchwork.kernel.org/patch/10478461/
+	https://patchwork.kernel.org/patch/10478463/
+	
+v9:
+ - Fixed minor typo comments
 
- v5: New patch
+v8:
+ - Corrected typo in clk Kconfig
+ 
+v7:
+ - Removed xilinx specific clock debugfs API support
+ - Added reviewed-by tags for FW and clock bindings
+ - Updated clock node name to clock-controller
 
- v6: No change
+v6:
+ - Broke patch series to have base FW driver and Clock driver user
+ - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
+	https://patchwork.kernel.org/patch/10230759/
+	https://patchwork.kernel.org/patch/10250047/
 
-diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
-index be23fd25eeaa..e56dc5c024b9 100644
---- a/arch/mips/configs/ci20_defconfig
-+++ b/arch/mips/configs/ci20_defconfig
-@@ -109,6 +109,7 @@ CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_JZ4740=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_JZ4780=y
-+CONFIG_INGENIC_OST=y
- # CONFIG_IOMMU_SUPPORT is not set
- CONFIG_MEMORY=y
- CONFIG_EXT4_FS=y
+v5:
+ - Added ATF version check support
+ - Updated some functions to be static 
+ - Minor function name corrections
+
+v4:
+ - Changed clock setrate/getrate API prototype to support 64 bit rate
+ - Defined macros for get_node_status return values
+ - Moved DT node as a child of firmware
+ - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
+ - Minor changes to incorporate other review comments from v3 patch series
+
+v3:
+ - added some fixes to firmware-ggs.c
+ - updated pinmux get/set function argument names to specify function id instead of node id
+ - added new pinctrl query macros
+ - incorporated review comments from v2 patch series
+
+v2:
+ - change SPDX-License-Identifier license text style
+ - split patch into multiple patches
+ - Updated copyrights
+ - Added ABI documentation
+ - incorporated logical review comments from previuos patch. Discussed below:
+	https://patchwork.kernel.org/patch/10150665/
+
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (10):
+  dt-bindings: firmware: Add bindings for ZynqMP firmware
+  firmware: xilinx: Add Zynqmp firmware driver
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  firmware: xilinx: Add query data API
+  firmware: xilinx: Add clock APIs
+  firmware: xilinx: Add debugfs interface
+  firmware: xilinx: Add debugfs for IOCTL API
+  firmware: xilinx: Add debugfs for query data API
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+  firmware: xilinx: Replace init call with probe method
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
+ arch/arm64/Kconfig.platforms                       |   1 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  10 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
+ drivers/clk/zynqmp/clkc.c                          | 716 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 217 +++++++
+ drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
+ drivers/firmware/Kconfig                           |   1 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/xilinx/Kconfig                    |  23 +
+ drivers/firmware/xilinx/Makefile                   |   5 +
+ drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
+ drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
+ drivers/firmware/xilinx/zynqmp.c                   | 535 +++++++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               | 116 ++++
+ 21 files changed, 2788 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 drivers/firmware/xilinx/Kconfig
+ create mode 100644 drivers/firmware/xilinx/Makefile
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
+ create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+ create mode 100644 drivers/firmware/xilinx/zynqmp.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+ create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+
 -- 
-2.11.0
+2.7.4
