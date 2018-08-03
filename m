@@ -1,94 +1,63 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 04/18] MIPS: dts: Add initial support for Intel MIPS
- SoCs
-To: Hauke Mehrtens <hauke@hauke-m.de>,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga17.intel.com ([192.55.52.151]:48975 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbeHCE6u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:50 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
 Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
         linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 18/18] dt-bindings: serial: lantiq: Add optional properties for CCF
+Date: Fri,  3 Aug 2018 11:02:37 +0800
+Message-Id: <20180803030237.3366-19-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
 References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-5-songjun.wu@linux.intel.com>
- <4f58b5ee-1e3c-7d39-258e-e4525d78db0b@hauke-m.de>
-From: Hua Ma <hua.ma@linux.intel.com>
-Message-ID: <7946b18b-8c95-125a-259d-7047d0300105@linux.intel.com>
-Date: Mon, 6 Aug 2018 17:20:37 +0800
-MIME-Version: 1.0
-In-Reply-To: <4f58b5ee-1e3c-7d39-258e-e4525d78db0b@hauke-m.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Clocks and clock-names are updated in device tree binding.
 
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-On 8/4/2018 7:11 PM, Hauke Mehrtens wrote:
-> On 08/03/2018 05:02 AM, Songjun Wu wrote:
->> From: Hua Ma <hua.ma@linux.intel.com>
->>
->> Add dts files to support Intel MIPS SoCs:
->> - xrx500.dtsi is the chip dts
->> - easy350_anywan.dts is the board dts
->>
->> Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->> Changes in v2:
->> - New patch split from previous patch
->> - The memory address is changed to @20000000
->> - Update to obj-$(CONFIG_BUILTIN_DTB) as per commit fca3aa166422
->>
->>   arch/mips/boot/dts/Makefile                      |  1 +
->>   arch/mips/boot/dts/intel-mips/Makefile           |  4 ++
->>   arch/mips/boot/dts/intel-mips/easy350_anywan.dts | 26 ++++++++++
->>   arch/mips/boot/dts/intel-mips/xrx500.dtsi        | 66 ++++++++++++++++++++++++
->>   4 files changed, 97 insertions(+)
->>   create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
->>   create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->>   create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
->>
->> diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> new file mode 100644
->> index 000000000000..e5e95f90c5e7
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> @@ -0,0 +1,26 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/interrupt-controller/mips-gic.h>
->> +#include <dt-bindings/clock/intel,grx500-clk.h>
->> +
->> +#include "xrx500.dtsi"
->> +
->> +/ {
->> +	model = "EASY350 ANYWAN (GRX350) Main model";
-> Main model can be removed, it does not identify the board.
-Thanks, will remove.
+Changes in v2: None
 
->> +	compatible = "intel,easy350-anywan";
-> I think this should be
-> 	compatible = "intel,easy350-anywan", "intel,xrx500";
->
-> Are there different revisions of the EASY350 Anywan board or only of the
-> EASY550 board?There are at least some differences in the power supply on
-> the EASY550 V1 and EASY550 V2 board. I would suggest to be here very
-> specific to make it easier when adding more boards.
-OK, thanks.
+ Documentation/devicetree/bindings/serial/lantiq_asc.txt | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
->> +
->> +	aliases {
->> +		serial0 = &asc0;
->> +	};
->> +
->> +	chosen {
->> +		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
-> What happens when you remove clk_ignore_unused?
-> If it crashes we should probably define some of the clock to be always
-> active.
-OK, will check and improve if possible.
+diff --git a/Documentation/devicetree/bindings/serial/lantiq_asc.txt b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
+index 3acbd309ab9d..40e81a5818f6 100644
+--- a/Documentation/devicetree/bindings/serial/lantiq_asc.txt
++++ b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
+@@ -6,8 +6,23 @@ Required properties:
+ - interrupts: the 3 (tx rx err) interrupt numbers. The interrupt specifier
+   depends on the interrupt-parent interrupt controller.
+ 
++Optional properties:
++- clocks: Should contain frequency clock and gate clock
++- clock-names: Should be "freq" and "asc"
++
+ Example:
+ 
++asc0: serial@16600000 {
++	compatible = "lantiq,asc";
++	reg = <0x16600000 0x100000>;
++	interrupt-parent = <&gic>;
++	interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
++		<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
++		<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
++	clock-names = "freq", "asc";
++};
++
+ asc1: serial@e100c00 {
+ 	compatible = "lantiq,asc";
+ 	reg = <0xE100C00 0x400>;
+-- 
+2.11.0
+
