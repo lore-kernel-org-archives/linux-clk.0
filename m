@@ -1,133 +1,57 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 20/24] MIPS: qi_lb60: Move PWM devices to devicetree
-Date: Thu,  9 Aug 2018 23:44:10 +0200
-Message-Id: <20180809214414.20905-21-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Amit Nischal <anischal@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/2]  Add support for LPASS clock controller for SDM845
+Date: Fri,  3 Aug 2018 17:51:12 +0530
+Message-Id: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Probe the few drivers using PWMs from devicetree, now that we have a
-devicetree node for the PWM driver.
+ [v3]
+  * Add a device tree property to identify lpass protected GCC clocks.
+  * Update the GCC driver code to register the lpass clocks when the flag is
+   defined.
+  * Add comment for clocks using the BRANCH_HALT_SKIP flag.
+  * Use platform APIs instead of of_address_to_resource.
+  * Replace devm_ioremap with devm_ioremap_resource.
+  * Use fixed index for 'lpass_cc' & 'lpass_qdsp6ss' in probe.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/qi_lb60.dts | 14 ++++++++++++++
- arch/mips/jz4740/board-qi_lb60.c       | 19 -------------------
- 2 files changed, 14 insertions(+), 19 deletions(-)
+ [v2]
+  * Make gcc_lpass_sway_clk static.
+  * Remove using child nodes and use reg-names to differentiate various
+    domains of LPASS CC.
 
- v5: New patch
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
 
- v6: No change
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
 
-diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-index 76aaf8982554..85529a142409 100644
---- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
-+++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-@@ -9,6 +9,14 @@
- 	chosen {
- 		stdout-path = &uart0;
- 	};
-+
-+	beeper {
-+		compatible = "pwm-beeper";
-+		pwms = <&pwm 4 0 0>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pins_pwm4>;
-+	};
- };
- 
- &ext {
-@@ -30,4 +38,10 @@
- 		groups = "uart0-data";
- 		bias-disable;
- 	};
-+
-+	pins_pwm4: pwm4 {
-+		function = "pwm4";
-+		groups = "pwm4";
-+		bias-disable;
-+	};
- };
-diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
-index 60f0767507c6..2db32cb9ed47 100644
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -27,7 +27,6 @@
- #include <linux/power_supply.h>
- #include <linux/power/jz4740-battery.h>
- #include <linux/power/gpio-charger.h>
--#include <linux/pwm.h>
- 
- #include <asm/mach-jz4740/gpio.h>
- #include <asm/mach-jz4740/jz4740_fb.h>
-@@ -391,17 +390,6 @@ static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
- 	.power_active_low	= 1,
- };
- 
--/* beeper */
--static struct pwm_lookup qi_lb60_pwm_lookup[] = {
--	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
--		   PWM_POLARITY_NORMAL),
--};
--
--static struct platform_device qi_lb60_pwm_beeper = {
--	.name = "pwm-beeper",
--	.id = -1,
--};
--
- /* charger */
- static char *qi_lb60_batteries[] = {
- 	"battery",
-@@ -450,10 +438,8 @@ static struct platform_device *jz_platform_devices[] __initdata = {
- 	&jz4740_i2s_device,
- 	&jz4740_codec_device,
- 	&jz4740_adc_device,
--	&jz4740_pwm_device,
- 	&jz4740_dma_device,
- 	&qi_lb60_gpio_keys,
--	&qi_lb60_pwm_beeper,
- 	&qi_lb60_charger_device,
- 	&qi_lb60_audio_device,
- };
-@@ -482,10 +468,6 @@ static struct pinctrl_map pin_map[] __initdata = {
- 			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
- 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
- 			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
--
--	/* PWM pin configuration */
--	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
--			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
- };
- 
- 
-@@ -503,7 +485,6 @@ static int __init qi_lb60_init_platform_devices(void)
- 	spi_register_board_info(qi_lb60_spi_board_info,
- 				ARRAY_SIZE(qi_lb60_spi_board_info));
- 
--	pwm_add_table(qi_lb60_pwm_lookup, ARRAY_SIZE(qi_lb60_pwm_lookup));
- 	pinctrl_register_mappings(pin_map, ARRAY_SIZE(pin_map));
- 
- 	return platform_add_devices(jz_platform_devices,
--- 
-2.11.0
+ .../devicetree/bindings/clock/qcom,gcc.txt         |   2 +
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  33 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sdm845.c                      |  35 ++++
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 189 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  16 ++
+ 8 files changed, 287 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
