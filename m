@@ -1,43 +1,104 @@
-Return-Path: <heiko@sntech.de>
-From: Heiko Stuebner <heiko@sntech.de>
-To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 4.19
-Date: Mon, 06 Aug 2018 10:50:24 +0200
-Message-ID: <29493561.nOART3tDXq@phil>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v11 04/11] firmware: xilinx: Add query data API
+Date: Fri, 3 Aug 2018 10:53:21 -0700
+Message-ID: <1533318808-10781-5-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike, Stephen,
+From: Rajan Vaja <rajanv@xilinx.com>
 
-This one change on top of the previous changes that adds a critical clock
-on rk3399 to prevent random hangs due to it supplying the vdd_log
-cpu core supply.
+Add ZynqMP firmware query data API to query platform
+specific information(clocks, pins) from firmware.
 
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-Please pull
-Heiko
-
-
-The following changes since commit a64ad008980c65d38e6cf6858429c78e6b740c41:
-
-  clk: rockchip: fix clk_i2sout parent selection bits on rk3399 (2018-07-08 00:19:19 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.19-rockchip-clk2
-
-for you to fetch changes up to 508fc689cfe514228cb0b91f94d5542ec11881b1:
-
-  clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399 (2018-08-06 10:03:13 +0200)
-
-----------------------------------------------------------------
-pclk_rkpwm_pmu as critical clock, due to it supplying the pwm
-used to drive the logic supply of the rk3399 core.
-
-----------------------------------------------------------------
-Levin Du (1):
-      clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399
-
- drivers/clk/rockchip/clk-rk3399.c | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 24cfd9e..8ec5682 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
+ 
++/**
++ * zynqmp_pm_query_data() - Get query data from firmware
++ * @qdata:	Variable to the zynqmp_pm_query_data structure
++ * @out:	Returned output value
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
++				   qdata.arg2, qdata.arg3, out);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
++	.query_data = zynqmp_pm_query_data,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 2eec6e7..55ed2ba 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -35,6 +35,7 @@
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
+ 	PM_IOCTL = 34,
++	PM_QUERY_DATA,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -48,9 +49,28 @@ enum pm_ret_status {
+ 	XST_PM_ABORT_SUSPEND,
+ };
+ 
++enum pm_query_id {
++	PM_QID_INVALID,
++};
++
++/**
++ * struct zynqmp_pm_query_data - PM query data
++ * @qid:	query ID
++ * @arg1:	Argument 1 of query data
++ * @arg2:	Argument 2 of query data
++ * @arg3:	Argument 3 of query data
++ */
++struct zynqmp_pm_query_data {
++	u32 qid;
++	u32 arg1;
++	u32 arg2;
++	u32 arg3;
++};
++
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+-- 
+2.7.4
