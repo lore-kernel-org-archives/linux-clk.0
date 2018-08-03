@@ -1,167 +1,148 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
-        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, thierry.escande@linaro.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v12 03/14] clk: qcom: Add HFPLL driver
-Date: Tue, 14 Aug 2018 17:42:22 +0530
-Message-Id: <1534248753-2440-4-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-pm-owner@vger.kernel.org
+Return-Path: <songjun.wu@linux.intel.com>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com,
+	yixin.zhu@linux.intel.com,
+	chuanhua.lei@linux.intel.com,
+	qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org,
+	linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Songjun Wu <songjun.wu@linux.intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	James Hogan <jhogan@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Burton <paul.burton@mips.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 00/18] MIPS: intel: add initial support for Intel MIPS SoCs
+Date: Fri,  3 Aug 2018 11:02:19 +0800
+Message-Id: <20180803030237.3366-1-songjun.wu@linux.intel.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+This patch series is for adding the support for Intel MIPS
+interAptiv SoC GRX500 family. It includes CCF support, serial
+driver optimization and DTS modification.
 
-On some devices (MSM8974 for example), the HFPLLs are
-instantiated within the Krait processor subsystem as separate
-register regions. Add a driver for these PLLs so that we can
-provide HFPLL clocks for use by the system.
+This patch series is applied on top of linux v4.18-rc7.
+Basic verification is performed on GRX500 board.
 
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/clk/qcom/Kconfig  |  8 ++++
- drivers/clk/qcom/Makefile |  1 +
- drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 105 insertions(+)
- create mode 100644 drivers/clk/qcom/hfpll.c
+We propose merging this patch series into MIPS Linux tree.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 0647686..21aec10 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -272,3 +272,11 @@ config SPMI_PMIC_CLKDIV
- 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
- 	  clkdiv outputs of the PMIC. These clocks are typically wired
- 	  through alternate functions on GPIO pins.
-+
-+config QCOM_HFPLL
-+	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	help
-+	  Support for the high-frequency PLLs present on Qualcomm devices.
-+	  Say Y if you want to support CPU frequency scaling on devices
-+	  such as MSM8974, APQ8084, etc.
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 7818e6c..f82eeac 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -44,3 +44,4 @@ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-+obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-new file mode 100644
-index 0000000..a6de7101
---- /dev/null
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
-+
-+static const struct hfpll_data hdata = {
-+	.mode_reg = 0x00,
-+	.l_reg = 0x04,
-+	.m_reg = 0x08,
-+	.n_reg = 0x0c,
-+	.user_reg = 0x10,
-+	.config_reg = 0x14,
-+	.config_val = 0x430405d,
-+	.status_reg = 0x1c,
-+	.lock_bit = 16,
-+
-+	.user_val = 0x8,
-+	.user_vco_mask = 0x100000,
-+	.low_vco_max_rate = 1248000000,
-+	.min_rate = 537600000UL,
-+	.max_rate = 2900000000UL,
-+};
-+
-+static const struct of_device_id qcom_hfpll_match_table[] = {
-+	{ .compatible = "qcom,hfpll" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
-+
-+static const struct regmap_config hfpll_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x30,
-+	.fast_io	= true,
-+};
-+
-+static int qcom_hfpll_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *regmap;
-+	struct clk_hfpll *h;
-+	struct clk_init_data init = {
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_ops_hfpll,
-+	};
-+
-+	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	if (of_property_read_string_index(dev->of_node, "clock-output-names",
-+					  0, &init.name))
-+		return -ENODEV;
-+
-+	h->d = &hdata;
-+	h->clkr.hw.init = &init;
-+	spin_lock_init(&h->lock);
-+
-+	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-+}
-+
-+static struct platform_driver qcom_hfpll_driver = {
-+	.probe		= qcom_hfpll_probe,
-+	.driver		= {
-+		.name	= "qcom-hfpll",
-+		.of_match_table = qcom_hfpll_match_table,
-+	},
-+};
-+module_platform_driver(qcom_hfpll_driver);
-+
-+MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:qcom-hfpll");
+Changes in v2:
+- Remove unused _END macros
+- Remove the redundant check and not accurate comments
+- Replace the get_counter_resolution function with fixed value 2
+- Use obj-y and split into per line per .o
+- Add EVA mapping description in code comments
+- Remove unused include header file
+- Do a clean-up for grx500_defconfig
+- Rewrite clock driver, add platform clock description details in
+  clock driver.
+- Rewrite clock driver's dt-binding document according to Rob Herring's
+  comments.
+- Simplify device tree docoment, remove some clock description.
+- New patch split from previous patch
+- The memory address is changed to @20000000
+- Update to obj-$(CONFIG_BUILTIN_DTB) as per commit fca3aa166422
+- New patch split from previous patch
+- Add the board and chip compatible in dt document
+- New patch to reorder the head files according to the coding style.
+
+Hua Ma (3):
+  MIPS: intel: Add initial support for Intel MIPS SoCs
+  MIPS: dts: Add initial support for Intel MIPS SoCs
+  dt-binding: MIPS: Add documentation of Intel MIPS SoCs
+
+Songjun Wu (13):
+  MIPS: dts: Change upper case to lower case
+  MIPS: dts: Add aliases node for lantiq danube serial
+  serial: intel: Get serial id from dts
+  serial: intel: Change ltq_w32_mask to asc_update_bits
+  MIPS: lantiq: Unselect SWAP_IO_SPACE when LANTIQ is selected
+  serial: intel: Use readl/writel instead of ltq_r32/ltq_w32
+  serial: intel: Rename fpiclk to freqclk
+  serial: intel: Replace clk_enable/clk_disable with clk generic API
+  serial: intel: Add CCF support
+  serial: intel: Support more platform
+  serial: intel: Reorder the head files
+  serial: intel: Change init_lqasc to static declaration
+  dt-bindings: serial: lantiq: Add optional properties for CCF
+
+Yixin Zhu (2):
+  clk: intel: Add clock driver for Intel MIPS SoCs
+  dt-bindings: clk: Add documentation of grx500 clock controller
+
+ .../devicetree/bindings/clock/intel,grx500-clk.txt |  39 ++
+ Documentation/devicetree/bindings/mips/intel.txt   |  17 +
+ .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +
+ arch/mips/Kbuild.platforms                         |   1 +
+ arch/mips/Kconfig                                  |  30 +-
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/intel-mips/Makefile             |   4 +
+ arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  26 ++
+ arch/mips/boot/dts/intel-mips/xrx500.dtsi          |  66 +++
+ arch/mips/boot/dts/lantiq/danube.dtsi              |  42 +-
+ arch/mips/boot/dts/lantiq/easy50712.dts            |  18 +-
+ arch/mips/configs/grx500_defconfig                 | 138 ++++++
+ .../asm/mach-intel-mips/cpu-feature-overrides.h    |  61 +++
+ arch/mips/include/asm/mach-intel-mips/ioremap.h    |  39 ++
+ arch/mips/include/asm/mach-intel-mips/irq.h        |  17 +
+ .../asm/mach-intel-mips/kernel-entry-init.h        | 104 +++++
+ arch/mips/include/asm/mach-intel-mips/spaces.h     |  27 ++
+ arch/mips/include/asm/mach-intel-mips/war.h        |  18 +
+ arch/mips/intel-mips/Kconfig                       |  22 +
+ arch/mips/intel-mips/Makefile                      |   5 +
+ arch/mips/intel-mips/Platform                      |  12 +
+ arch/mips/intel-mips/irq.c                         |  35 ++
+ arch/mips/intel-mips/prom.c                        | 172 ++++++++
+ arch/mips/intel-mips/time.c                        |  42 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   3 +
+ drivers/clk/intel/Kconfig                          |  20 +
+ drivers/clk/intel/Makefile                         |   7 +
+ drivers/clk/intel/clk-cgu-pll.c                    | 166 ++++++++
+ drivers/clk/intel/clk-cgu-pll.h                    |  34 ++
+ drivers/clk/intel/clk-cgu.c                        | 470 +++++++++++++++++++++
+ drivers/clk/intel/clk-cgu.h                        | 259 ++++++++++++
+ drivers/clk/intel/clk-grx500.c                     | 168 ++++++++
+ drivers/tty/serial/Kconfig                         |   2 +-
+ drivers/tty/serial/lantiq.c                        | 143 ++++---
+ include/dt-bindings/clock/intel,grx500-clk.h       |  69 +++
+ 36 files changed, 2206 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/mips/intel.txt
+ create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+ create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+ create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+ create mode 100644 arch/mips/configs/grx500_defconfig
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/ioremap.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/irq.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/spaces.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/war.h
+ create mode 100644 arch/mips/intel-mips/Kconfig
+ create mode 100644 arch/mips/intel-mips/Makefile
+ create mode 100644 arch/mips/intel-mips/Platform
+ create mode 100644 arch/mips/intel-mips/irq.c
+ create mode 100644 arch/mips/intel-mips/prom.c
+ create mode 100644 arch/mips/intel-mips/time.c
+ create mode 100644 drivers/clk/intel/Kconfig
+ create mode 100644 drivers/clk/intel/Makefile
+ create mode 100644 drivers/clk/intel/clk-cgu-pll.c
+ create mode 100644 drivers/clk/intel/clk-cgu-pll.h
+ create mode 100644 drivers/clk/intel/clk-cgu.c
+ create mode 100644 drivers/clk/intel/clk-cgu.h
+ create mode 100644 drivers/clk/intel/clk-grx500.c
+ create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
