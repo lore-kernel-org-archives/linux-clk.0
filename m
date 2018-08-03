@@ -1,102 +1,195 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d40960df-c7c4-630b-5f53-1a65b550ce8b@cogentembedded.com>
-In-Reply-To: <d40960df-c7c4-630b-5f53-1a65b550ce8b@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 10:58:02 +0200
-Message-ID: <CAMuHMdXiD28FaE+nDUZ2Vp2=aZzmPR1aA+KXhH2QWtO0=FfVQA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add SD0H/SD0 clocks for SDHI
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga18.intel.com ([134.134.136.126]:35568 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbeHCE6F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:05 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH v2 06/18] MIPS: dts: Change upper case to lower case
+Date: Fri,  3 Aug 2018 11:02:25 +0800
+Message-Id: <20180803030237.3366-7-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
+All the upper case in unit-address and hex constants are
+changed to lower case according to the Linux conventions.
 
-On Tue, Aug 21, 2018 at 6:41 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On R-Car V3M (AKA R8A77970), the SD0CKCR is laid out differently than on
-> the other R-Car gen3 SoCs. In fact, the layout is the same as on R-Car gen2
-> SoCs, so we'll need to copy the divisor tables from the R-Car gen2 driver.
-> We'll also need to support the SoC specific clock types, thus we're adding
-> CLK_TYPE_GEN3_SOC_BASE at the end of 'enum rcar_gen3_clk_types', declare
-> SD0H/SDH clocks in 'enum r8a77970_clk_types', and handle those clocks in
-> the overridden cpg_clk_register() method; then, finally, add the SD-IF
-> module clock (derived from the SD0 clock).
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-Thanks for your patch!
+Changes in v2: None
 
-Looks good to me, but two minor nits below.
+ arch/mips/boot/dts/lantiq/danube.dtsi   | 42 ++++++++++++++++-----------------
+ arch/mips/boot/dts/lantiq/easy50712.dts | 14 +++++------
+ 2 files changed, 28 insertions(+), 28 deletions(-)
 
-> --- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> +++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
-
-> @@ -173,11 +198,46 @@ static int __init r8a77970_cpg_mssr_init
->         if (error)
->                 return error;
->
-> +       spin_lock_init(&cpg_lock);
-> +
->         cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
->
->         return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
->  }
->
-> +struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
-> +       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> +       struct clk **clks, void __iomem *base,
-> +       struct raw_notifier_head *notifiers)
-
-static
-
-> +{
-> +       const struct clk_div_table *table;
-> +       const struct clk *parent;
-> +       unsigned int shift;
-> +
-> +       switch (core->type) {
-> +       case CLK_TYPE_R8A77970_SD0H:
-> +               table = cpg_sd0h_div_table;
-> +               shift = 8;
-> +               break;
-> +       case CLK_TYPE_R8A77970_SD0:
-> +               table = cpg_sd0_div_table;
-> +               shift = 4;
-> +               break;
-> +       default:
-> +               return rcar_gen3_cpg_clk_register(dev, core, info, clks, base,
-> +                                                 notifiers);
-> +       }
-> +
-> +       parent = clks[core->parent];
-> +       if (IS_ERR(parent))
-> +               return ERR_CAST(parent);
-> +
-> +       return clk_register_divider_table(NULL, core->name,
-> +                                         __clk_get_name(parent), 0,
-> +                                         base + 0x74, shift, 4, 0, table,
-
-CPG_SD0CKCR instead of hardcoded 0x74?
-
-
-> +                                         &cpg_lock);
-> +}
-> +
->  const struct cpg_mssr_info r8a77970_cpg_mssr_info __initconst = {
->         /* Core Clocks */
->         .core_clks = r8a77970_core_clks,
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 2dd950181f8a..510be63c8bdf 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -10,12 +10,12 @@
+ 		};
+ 	};
+ 
+-	biu@1F800000 {
++	biu@1f800000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,biu", "simple-bus";
+-		reg = <0x1F800000 0x800000>;
+-		ranges = <0x0 0x1F800000 0x7FFFFF>;
++		reg = <0x1f800000 0x800000>;
++		ranges = <0x0 0x1f800000 0x7fffff>;
+ 
+ 		icu0: icu@80200 {
+ 			#interrupt-cells = <1>;
+@@ -24,18 +24,18 @@
+ 			reg = <0x80200 0x120>;
+ 		};
+ 
+-		watchdog@803F0 {
++		watchdog@803f0 {
+ 			compatible = "lantiq,wdt";
+-			reg = <0x803F0 0x10>;
++			reg = <0x803f0 0x10>;
+ 		};
+ 	};
+ 
+-	sram@1F000000 {
++	sram@1f000000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,sram";
+-		reg = <0x1F000000 0x800000>;
+-		ranges = <0x0 0x1F000000 0x7FFFFF>;
++		reg = <0x1f000000 0x800000>;
++		ranges = <0x0 0x1f000000 0x7fffff>;
+ 
+ 		eiu0: eiu@101000 {
+ 			#interrupt-cells = <1>;
+@@ -66,41 +66,41 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		compatible = "lantiq,fpi", "simple-bus";
+-		ranges = <0x0 0x10000000 0xEEFFFFF>;
+-		reg = <0x10000000 0xEF00000>;
++		ranges = <0x0 0x10000000 0xeefffff>;
++		reg = <0x10000000 0xef00000>;
+ 
+-		gptu@E100A00 {
++		gptu@e100a00 {
+ 			compatible = "lantiq,gptu-xway";
+-			reg = <0xE100A00 0x100>;
++			reg = <0xe100a00 0x100>;
+ 		};
+ 
+-		serial@E100C00 {
++		serial@e100c00 {
+ 			compatible = "lantiq,asc";
+-			reg = <0xE100C00 0x400>;
++			reg = <0xe100c00 0x400>;
+ 			interrupt-parent = <&icu0>;
+ 			interrupts = <112 113 114>;
+ 		};
+ 
+-		dma0: dma@E104100 {
++		dma0: dma@e104100 {
+ 			compatible = "lantiq,dma-xway";
+-			reg = <0xE104100 0x800>;
++			reg = <0xe104100 0x800>;
+ 		};
+ 
+-		ebu0: ebu@E105300 {
++		ebu0: ebu@e105300 {
+ 			compatible = "lantiq,ebu-xway";
+-			reg = <0xE105300 0x100>;
++			reg = <0xe105300 0x100>;
+ 		};
+ 
+-		pci0: pci@E105400 {
++		pci0: pci@e105400 {
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			#interrupt-cells = <1>;
+ 			compatible = "lantiq,pci-xway";
+ 			bus-range = <0x0 0x0>;
+ 			ranges = <0x2000000 0 0x8000000 0x8000000 0 0x2000000	/* pci memory */
+-				  0x1000000 0 0x00000000 0xAE00000 0 0x200000>; /* io space */
++				  0x1000000 0 0x00000000 0xae00000 0 0x200000>; /* io space */
+ 			reg = <0x7000000 0x8000		/* config space */
+-				0xE105400 0x400>;	/* pci bridge */
++				0xe105400 0x400>;	/* pci bridge */
+ 		};
+ 	};
+ };
+diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
+index c37a33962f28..1ce20b7d05cb 100644
+--- a/arch/mips/boot/dts/lantiq/easy50712.dts
++++ b/arch/mips/boot/dts/lantiq/easy50712.dts
+@@ -52,14 +52,14 @@
+ 			};
+ 		};
+ 
+-		gpio: pinmux@E100B10 {
++		gpio: pinmux@e100b10 {
+ 			compatible = "lantiq,danube-pinctrl";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&state_default>;
+ 
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+-			reg = <0xE100B10 0xA0>;
++			reg = <0xe100b10 0xa0>;
+ 
+ 			state_default: pinmux {
+ 				stp {
+@@ -82,26 +82,26 @@
+ 			};
+ 		};
+ 
+-		etop@E180000 {
++		etop@e180000 {
+ 			compatible = "lantiq,etop-xway";
+-			reg = <0xE180000 0x40000>;
++			reg = <0xe180000 0x40000>;
+ 			interrupt-parent = <&icu0>;
+ 			interrupts = <73 78>;
+ 			phy-mode = "rmii";
+ 			mac-address = [ 00 11 22 33 44 55 ];
+ 		};
+ 
+-		stp0: stp@E100BB0 {
++		stp0: stp@e100bb0 {
+ 			#gpio-cells = <2>;
+ 			compatible = "lantiq,gpio-stp-xway";
+ 			gpio-controller;
+-			reg = <0xE100BB0 0x40>;
++			reg = <0xe100bb0 0x40>;
+ 
+ 			lantiq,shadow = <0xfff>;
+ 			lantiq,groups = <0x3>;
+ 		};
+ 
+-		pci@E105400 {
++		pci@e105400 {
+ 			lantiq,bus-clock = <33333333>;
+ 			interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
+ 			interrupt-map = <
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.11.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
