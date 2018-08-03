@@ -1,360 +1,172 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v12 02/14] clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
-Date: Tue, 14 Aug 2018 17:42:21 +0530
-Message-Id: <1534248753-2440-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH v2 04/18] MIPS: dts: Add initial support for Intel MIPS SoCs
+Date: Fri,  3 Aug 2018 11:02:23 +0800
+Message-Id: <20180803030237.3366-5-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Hua Ma <hua.ma@linux.intel.com>
 
-HFPLLs are the main frequency source for Krait CPU clocks. Add
-support for changing the rate of these PLLs.
+Add dts files to support Intel MIPS SoCs:
+- xrx500.dtsi is the chip dts
+- easy350_anywan.dts is the board dts
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
- drivers/clk/qcom/Makefile    |   1 +
- drivers/clk/qcom/clk-hfpll.c | 244 +++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-hfpll.h |  44 ++++++++
- 3 files changed, 289 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-hfpll.c
- create mode 100644 drivers/clk/qcom/clk-hfpll.h
 
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 21a4503..7818e6c 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
- clk-qcom-y += clk-regmap-divider.o
- clk-qcom-y += clk-regmap-mux.o
- clk-qcom-y += clk-regmap-mux-div.o
-+clk-qcom-y += clk-hfpll.o
- clk-qcom-y += reset.o
- clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
- 
-diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
+Changes in v2:
+- New patch split from previous patch
+- The memory address is changed to @20000000
+- Update to obj-$(CONFIG_BUILTIN_DTB) as per commit fca3aa166422
+
+ arch/mips/boot/dts/Makefile                      |  1 +
+ arch/mips/boot/dts/intel-mips/Makefile           |  4 ++
+ arch/mips/boot/dts/intel-mips/easy350_anywan.dts | 26 ++++++++++
+ arch/mips/boot/dts/intel-mips/xrx500.dtsi        | 66 ++++++++++++++++++++++++
+ 4 files changed, 97 insertions(+)
+ create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+ create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+ create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+
+diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
+index 1e79cab8e269..05f52f279047 100644
+--- a/arch/mips/boot/dts/Makefile
++++ b/arch/mips/boot/dts/Makefile
+@@ -3,6 +3,7 @@ subdir-y	+= brcm
+ subdir-y	+= cavium-octeon
+ subdir-y	+= img
+ subdir-y	+= ingenic
++subdir-y	+= intel-mips
+ subdir-y	+= lantiq
+ subdir-y	+= mscc
+ subdir-y	+= mti
+diff --git a/arch/mips/boot/dts/intel-mips/Makefile b/arch/mips/boot/dts/intel-mips/Makefile
 new file mode 100644
-index 0000000..3c04805
+index 000000000000..adfaabbbb07c
 --- /dev/null
-+++ b/drivers/clk/qcom/clk-hfpll.c
-@@ -0,0 +1,244 @@
++++ b/arch/mips/boot/dts/intel-mips/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_DTB_INTEL_MIPS_GRX500)	+= easy350_anywan.dtb
++
++obj-$(CONFIG_BUILTIN_DTB)		+= $(addsuffix .o, $(dtb-y))
+diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+new file mode 100644
+index 000000000000..e5e95f90c5e7
+--- /dev/null
++++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+@@ -0,0 +1,26 @@
 +// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++/dts-v1/;
 +
-+#include <linux/kernel.h>
-+#include <linux/export.h>
-+#include <linux/regmap.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
++#include <dt-bindings/interrupt-controller/mips-gic.h>
++#include <dt-bindings/clock/intel,grx500-clk.h>
 +
-+#include "clk-regmap.h"
-+#include "clk-hfpll.h"
++#include "xrx500.dtsi"
 +
-+#define PLL_OUTCTRL	BIT(0)
-+#define PLL_BYPASSNL	BIT(1)
-+#define PLL_RESET_N	BIT(2)
++/ {
++	model = "EASY350 ANYWAN (GRX350) Main model";
++	compatible = "intel,easy350-anywan";
 +
-+/* Initialize a HFPLL at a given rate and enable it. */
-+static void __clk_hfpll_init_once(struct clk_hw *hw)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
++	aliases {
++		serial0 = &asc0;
++	};
 +
-+	if (likely(h->init_done))
-+		return;
++	chosen {
++		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
++		stdout-path = "serial0";
++	};
 +
-+	/* Configure PLL parameters for integer mode. */
-+	if (hd->config_val)
-+		regmap_write(regmap, hd->config_reg, hd->config_val);
-+	regmap_write(regmap, hd->m_reg, 0);
-+	regmap_write(regmap, hd->n_reg, 1);
-+
-+	if (hd->user_reg) {
-+		u32 regval = hd->user_val;
-+		unsigned long rate;
-+
-+		rate = clk_hw_get_rate(hw);
-+
-+		/* Pick the right VCO. */
-+		if (hd->user_vco_mask && rate > hd->low_vco_max_rate)
-+			regval |= hd->user_vco_mask;
-+		regmap_write(regmap, hd->user_reg, regval);
-+	}
-+
-+	if (hd->droop_reg)
-+		regmap_write(regmap, hd->droop_reg, hd->droop_val);
-+
-+	h->init_done = true;
-+}
-+
-+static void __clk_hfpll_enable(struct clk_hw *hw)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	u32 val;
-+
-+	__clk_hfpll_init_once(hw);
-+
-+	/* Disable PLL bypass mode. */
-+	regmap_update_bits(regmap, hd->mode_reg, PLL_BYPASSNL, PLL_BYPASSNL);
-+
-+	/*
-+	 * H/W requires a 5us delay between disabling the bypass and
-+	 * de-asserting the reset. Delay 10us just to be safe.
-+	 */
-+	udelay(10);
-+
-+	/* De-assert active-low PLL reset. */
-+	regmap_update_bits(regmap, hd->mode_reg, PLL_RESET_N, PLL_RESET_N);
-+
-+	/* Wait for PLL to lock. */
-+	if (hd->status_reg) {
-+		do {
-+			regmap_read(regmap, hd->status_reg, &val);
-+		} while (!(val & BIT(hd->lock_bit)));
-+	} else {
-+		udelay(60);
-+	}
-+
-+	/* Enable PLL output. */
-+	regmap_update_bits(regmap, hd->mode_reg, PLL_OUTCTRL, PLL_OUTCTRL);
-+}
-+
-+/* Enable an already-configured HFPLL. */
-+static int clk_hfpll_enable(struct clk_hw *hw)
-+{
-+	unsigned long flags;
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	u32 mode;
-+
-+	spin_lock_irqsave(&h->lock, flags);
-+	regmap_read(regmap, hd->mode_reg, &mode);
-+	if (!(mode & (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)))
-+		__clk_hfpll_enable(hw);
-+	spin_unlock_irqrestore(&h->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void __clk_hfpll_disable(struct clk_hfpll *h)
-+{
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+
-+	/*
-+	 * Disable the PLL output, disable test mode, enable the bypass mode,
-+	 * and assert the reset.
-+	 */
-+	regmap_update_bits(regmap, hd->mode_reg,
-+			   PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL, 0);
-+}
-+
-+static void clk_hfpll_disable(struct clk_hw *hw)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&h->lock, flags);
-+	__clk_hfpll_disable(h);
-+	spin_unlock_irqrestore(&h->lock, flags);
-+}
-+
-+static long clk_hfpll_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	unsigned long rrate;
-+
-+	rate = clamp(rate, hd->min_rate, hd->max_rate);
-+
-+	rrate = DIV_ROUND_UP(rate, *parent_rate) * *parent_rate;
-+	if (rrate > hd->max_rate)
-+		rrate -= *parent_rate;
-+
-+	return rrate;
-+}
-+
-+/*
-+ * For optimization reasons, assumes no downstream clocks are actively using
-+ * it.
-+ */
-+static int clk_hfpll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	unsigned long flags;
-+	u32 l_val, val;
-+	bool enabled;
-+
-+	l_val = rate / parent_rate;
-+
-+	spin_lock_irqsave(&h->lock, flags);
-+
-+	enabled = __clk_is_enabled(hw->clk);
-+	if (enabled)
-+		__clk_hfpll_disable(h);
-+
-+	/* Pick the right VCO. */
-+	if (hd->user_reg && hd->user_vco_mask) {
-+		regmap_read(regmap, hd->user_reg, &val);
-+		if (rate <= hd->low_vco_max_rate)
-+			val &= ~hd->user_vco_mask;
-+		else
-+			val |= hd->user_vco_mask;
-+		regmap_write(regmap, hd->user_reg, val);
-+	}
-+
-+	regmap_write(regmap, hd->l_reg, l_val);
-+
-+	if (enabled)
-+		__clk_hfpll_enable(hw);
-+
-+	spin_unlock_irqrestore(&h->lock, flags);
-+
-+	return 0;
-+}
-+
-+static unsigned long clk_hfpll_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	u32 l_val;
-+
-+	regmap_read(regmap, hd->l_reg, &l_val);
-+
-+	return l_val * parent_rate;
-+}
-+
-+static void clk_hfpll_init(struct clk_hw *hw)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	u32 mode, status;
-+
-+	regmap_read(regmap, hd->mode_reg, &mode);
-+	if (mode != (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)) {
-+		__clk_hfpll_init_once(hw);
-+		return;
-+	}
-+
-+	if (hd->status_reg) {
-+		regmap_read(regmap, hd->status_reg, &status);
-+		if (!(status & BIT(hd->lock_bit))) {
-+			WARN(1, "HFPLL %s is ON, but not locked!\n",
-+			     __clk_get_name(hw->clk));
-+			clk_hfpll_disable(hw);
-+			__clk_hfpll_init_once(hw);
-+		}
-+	}
-+}
-+
-+static int hfpll_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_hfpll *h = to_clk_hfpll(hw);
-+	struct hfpll_data const *hd = h->d;
-+	struct regmap *regmap = h->clkr.regmap;
-+	u32 mode;
-+
-+	regmap_read(regmap, hd->mode_reg, &mode);
-+	mode &= 0x7;
-+	return mode == (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL);
-+}
-+
-+const struct clk_ops clk_ops_hfpll = {
-+	.enable = clk_hfpll_enable,
-+	.disable = clk_hfpll_disable,
-+	.is_enabled = hfpll_is_enabled,
-+	.round_rate = clk_hfpll_round_rate,
-+	.set_rate = clk_hfpll_set_rate,
-+	.recalc_rate = clk_hfpll_recalc_rate,
-+	.init = clk_hfpll_init,
++	memory@20000000 {
++		device_type = "memory";
++		reg = <0x20000000 0x0e000000>;
++	};
 +};
-+EXPORT_SYMBOL_GPL(clk_ops_hfpll);
-diff --git a/drivers/clk/qcom/clk-hfpll.h b/drivers/clk/qcom/clk-hfpll.h
+diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
 new file mode 100644
-index 0000000..2a57b2f
+index 000000000000..54c5f8f8b604
 --- /dev/null
-+++ b/drivers/clk/qcom/clk-hfpll.h
-@@ -0,0 +1,44 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+#ifndef __QCOM_CLK_HFPLL_H__
-+#define __QCOM_CLK_HFPLL_H__
++/ {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "intel,xrx500";
 +
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+#include "clk-regmap.h"
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+struct hfpll_data {
-+	u32 mode_reg;
-+	u32 l_reg;
-+	u32 m_reg;
-+	u32 n_reg;
-+	u32 user_reg;
-+	u32 droop_reg;
-+	u32 config_reg;
-+	u32 status_reg;
-+	u8  lock_bit;
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "mti,interaptiv";
++			clocks = <&cgu CLK_CPU>;
++			reg = <0>;
++		};
 +
-+	u32 droop_val;
-+	u32 config_val;
-+	u32 user_val;
-+	u32 user_vco_mask;
-+	unsigned long low_vco_max_rate;
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "mti,interaptiv";
++			reg = <1>;
++		};
++	};
 +
-+	unsigned long min_rate;
-+	unsigned long max_rate;
++	cpu_intc: interrupt-controller {
++		compatible = "mti,cpu-interrupt-controller";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++	};
++
++	gic: gic@12320000 {
++		compatible = "mti,gic";
++		reg = <0x12320000 0x20000>;
++
++		interrupt-controller;
++		#interrupt-cells = <3>;
++		/*
++		 * Declare the interrupt-parent even though the mti,gic
++		 * binding doesn't require it, such that the kernel can
++		 * figure out that cpu_intc is the root interrupt
++		 * controller & should be probed first.
++		 */
++		interrupt-parent = <&cpu_intc>;
++		mti,reserved-ipi-vectors = <56 8>;
++	};
++
++	cgu: cgu@16200000 {
++		compatible = "intel,grx500-cgu", "syscon";
++		reg = <0x16200000 0x200>;
++		#clock-cells = <1>;
++	};
++
++	asc0: serial@16600000 {
++		compatible = "lantiq,asc";
++		reg = <0x16600000 0x100000>;
++
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
++			<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
++		clock-names = "freq", "asc";
++	};
 +};
-+
-+struct clk_hfpll {
-+	struct hfpll_data const *d;
-+	int init_done;
-+
-+	struct clk_regmap clkr;
-+	spinlock_t lock;
-+};
-+
-+#define to_clk_hfpll(_hw) \
-+	container_of(to_clk_regmap(_hw), struct clk_hfpll, clkr)
-+
-+extern const struct clk_ops clk_ops_hfpll;
-+
-+#endif
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
