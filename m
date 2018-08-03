@@ -1,90 +1,89 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:42173 "EHLO hermes.aosc.io"
+Received: from mga09.intel.com ([134.134.136.24]:36429 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbeHTQ7k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:59:40 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
-Date: Mon, 20 Aug 2018 21:40:13 +0800
-Message-Id: <20180820134013.16527-1-icenowy@aosc.io>
+        id S1726841AbeHCE6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:13 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 08/18] serial: intel: Get serial id from dts
+Date: Fri,  3 Aug 2018 11:02:27 +0800
+Message-Id: <20180803030237.3366-9-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On the H6, the MMC module clocks are fixed in the new timing mode,
-i.e. they do not have a bit to select the mode. These clocks have
-a 2x divider somewhere between the clock and the MMC module.
+Get serial id from dts.
 
-To be consistent with other SoCs supporting the new timing mode,
-we model the 2x divider as a fixed post-divider on the MMC module
-clocks.
+"#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
+macro is defined in lantiq_soc.h.
+lantiq_soc.h is in arch path for legacy product support.
 
-This patch adds the post-dividers to the MMC clocks, following the
-approach on A64.
+arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
 
-Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+If "#ifdef preprocessor" is changed to
+"if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
+code using LTQ_EARLY_ASC is compiled.
+Compilation will fail for no LTQ_EARLY_ASC defined.
+
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index bdbfe78fe133..3d60f7978506 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
+Changes in v2: None
+
+ drivers/tty/serial/lantiq.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 044128277248..836ca51460f2 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -6,6 +6,7 @@
+  * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
+  * Copyright (C) 2007 John Crispin <john@phrozen.org>
+  * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
++ * Copyright (C) 2018 Intel Corporation.
+  */
  
- static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
- 					    "pll-periph1-2x" };
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
+ #include <linux/slab.h>
+@@ -688,7 +689,7 @@ lqasc_probe(struct platform_device *pdev)
+ 	struct ltq_uart_port *ltq_port;
+ 	struct uart_port *port;
+ 	struct resource *mmres, irqres[3];
+-	int line = 0;
++	int line;
+ 	int ret;
  
- static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
- static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
+ 	mmres = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -699,9 +700,19 @@ lqasc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	/* check if this is the console port */
+-	if (mmres->start != CPHYSADDR(LTQ_EARLY_ASC))
+-		line = 1;
++	/* get serial id */
++	line = of_alias_get_id(node, "serial");
++	if (line < 0) {
++#ifdef CONFIG_LANTIQ
++		if (mmres->start == CPHYSADDR(LTQ_EARLY_ASC))
++			line = 0;
++		else
++			line = 1;
++#else
++		dev_err(&pdev->dev, "failed to get alias id, errno %d\n", line);
++		return line;
++#endif
++	}
+ 
+ 	if (lqasc_port[line]) {
+ 		dev_err(&pdev->dev, "port %d already allocated\n", line);
 -- 
-2.18.0
+2.11.0
+
