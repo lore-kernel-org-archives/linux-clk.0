@@ -1,105 +1,76 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1533298874-22863-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org,
- Taniya Das <tdas@codeaurora.org>
-References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
- <1533298874-22863-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <153540448713.129321.8622050618939041593@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
-Date: Mon, 27 Aug 2018 14:14:47 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:56304 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbeHCFA2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 01:00:28 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 12/18] serial: intel: Rename fpiclk to freqclk
+Date: Fri,  3 Aug 2018 11:02:31 +0800
+Message-Id: <20180803030237.3366-13-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Taniya Das (2018-08-03 05:21:13)
-> Add device tree bindings for Low Power Audio subsystem clock controller f=
-or
-> Qualcomm Technology Inc's SDM845 SoCs.
-> =
+Rename fpiclk to freqclk.
 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
->  .../devicetree/bindings/clock/qcom,lpasscc.txt     | 33 ++++++++++++++++=
-++++++
->  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
->  include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
->  4 files changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.=
-txt
->  create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
-> =
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Docum=
-entation/devicetree/bindings/clock/qcom,gcc.txt
-> index 664ea1f..e452abc 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also =
-be
->  part of the GCC/clock-controller node.
->  For more details on the TSENS properties please refer
->  Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> +- qcom,lpass-protected : Indicate GCC to be able to access the
-> +                       lpass gcc clock branches.
+Changes in v2: None
 
-This doesn't parse well for me. Maybe something like:
+ drivers/tty/serial/lantiq.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-'Indicate that the LPASS clock branches within GCC are unusable due to
-firmware access control restrictions'?
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 2e1b35b1cf4d..28086d52e980 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -106,7 +106,7 @@ static DEFINE_SPINLOCK(ltq_asc_lock);
+ struct ltq_uart_port {
+ 	struct uart_port	port;
+ 	/* clock used to derive divider */
+-	struct clk		*fpiclk;
++	struct clk		*freqclk;
+ 	/* clock gating of the ASC core */
+ 	struct clk		*clk;
+ 	unsigned int		tx_irq;
+@@ -310,7 +310,7 @@ lqasc_startup(struct uart_port *port)
+ 
+ 	if (!IS_ERR(ltq_port->clk))
+ 		clk_enable(ltq_port->clk);
+-	port->uartclk = clk_get_rate(ltq_port->fpiclk);
++	port->uartclk = clk_get_rate(ltq_port->freqclk);
+ 
+ 	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
+ 		port->membase + LTQ_ASC_CLC);
+@@ -633,7 +633,7 @@ lqasc_console_setup(struct console *co, char *options)
+ 	if (!IS_ERR(ltq_port->clk))
+ 		clk_enable(ltq_port->clk);
+ 
+-	port->uartclk = clk_get_rate(ltq_port->fpiclk);
++	port->uartclk = clk_get_rate(ltq_port->freqclk);
+ 
+ 	if (options)
+ 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+@@ -744,8 +744,8 @@ lqasc_probe(struct platform_device *pdev)
+ 	port->irq	= irqres[0].start;
+ 	port->mapbase	= mmres->start;
+ 
+-	ltq_port->fpiclk = clk_get_fpi();
+-	if (IS_ERR(ltq_port->fpiclk)) {
++	ltq_port->freqclk = clk_get_fpi();
++	if (IS_ERR(ltq_port->freqclk)) {
+ 		pr_err("failed to get fpi clk\n");
+ 		return -ENOENT;
+ 	}
+-- 
+2.11.0
 
-> =
-
->  Example:
->         clock-controller@900000 {
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/D=
-ocumentation/devicetree/bindings/clock/qcom,lpasscc.txt
-> new file mode 100644
-> index 0000000..062e413
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-> @@ -0,0 +1,33 @@
-> +Qualcomm LPASS Clock Controller Binding
-> +-----------------------------------------------
-> +
-> +Required properties :
-> +- compatible           : shall contain "qcom,sdm845-lpasscc"
-> +- #clock-cells         : from common clock binding, shall contain 1.
-> +- reg                  : shall contain base register address and size,
-> +                         in the order
-> +                       Index-0 maps to LPASS_CC register region
-> +                       Index-1 maps to LPASS_QDSP6SS register region
-> +- qcom,lpass-protected : Boolean property to indicate to GCC clock contr=
-oller
-> +                        for the lpass GCC clocks.
-
-Why is this here?
-
-> +
-> +Optional properties :
-> +- reg-names    : register names of LPASS domain
-> +                "lpass_cc", "lpass_qdsp6ss".
-> +
-> +Example:
-> +
-> +The below node has to be defined in the cases where the LPASS peripheral=
- loader
-> +would bring the subsystem out of reset.
-> +
-> +       lpasscc: clock-controller {
-> +               compatible =3D "qcom,sdm845-lpasscc";
-> +               reg =3D <0x17014000 0x1f004>, <0x17300000 0x200>;
-> +               reg-names =3D "lpass_cc", "lpass_qdsp6ss";
-> +               #clock-cells =3D <1>;
-> +       };
-> +
-> +       gcc: clock-controller@100000 {
-> +               compatible =3D "qcom,gcc-sdm845";
-> +               qcom,lpass-protected;
-> +       };
