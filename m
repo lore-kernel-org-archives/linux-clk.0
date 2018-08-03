@@ -1,76 +1,173 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:32804 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeHJALw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:11:52 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 10/24] watchdog: jz4740: Avoid starting watchdog in set_timeout
-Date: Thu,  9 Aug 2018 23:44:00 +0200
-Message-Id: <20180809214414.20905-11-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 11/18] serial: intel: Use readl/writel instead of ltq_r32/ltq_w32
+Date: Fri,  3 Aug 2018 11:02:30 +0800
+Message-Id: <20180803030237.3366-12-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously the jz4740_wdt_set_timeout() function was starting the timer
-unconditionally, even if it was stopped when that function was entered.
+Previous implementation uses platform-dependent functions
+ltq_w32()/ltq_r32() to access registers. Those functions are not
+available for other SoC which uses the same IP.
+Change to OS provided readl()/writel() and readb()/writeb(), so
+that different SoCs can use the same driver.
 
-Now, the timer will be restarted only if it was already running before
-this function is called.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 ---
- drivers/watchdog/jz4740_wdt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
- v6: New patch
+Changes in v2: None
 
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 0f54306aee25..45d9495170e5 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+ drivers/tty/serial/lantiq.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index e36e6a267e7a..2e1b35b1cf4d 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -146,7 +146,7 @@ lqasc_start_tx(struct uart_port *port)
+ static void
+ lqasc_stop_rx(struct uart_port *port)
  {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
-+	u32 tcer;
- 
-+	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 
- 	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
- 		return ret;
- 
- 	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	return 0;
+-	ltq_w32(ASCWHBSTATE_CLRREN, port->membase + LTQ_ASC_WHBSTATE);
++	writel(ASCWHBSTATE_CLRREN, port->membase + LTQ_ASC_WHBSTATE);
  }
+ 
+ static int
+@@ -155,11 +155,11 @@ lqasc_rx_chars(struct uart_port *port)
+ 	struct tty_port *tport = &port->state->port;
+ 	unsigned int ch = 0, rsr = 0, fifocnt;
+ 
+-	fifocnt = ltq_r32(port->membase + LTQ_ASC_FSTAT) & ASCFSTAT_RXFFLMASK;
++	fifocnt = readl(port->membase + LTQ_ASC_FSTAT) & ASCFSTAT_RXFFLMASK;
+ 	while (fifocnt--) {
+ 		u8 flag = TTY_NORMAL;
+-		ch = ltq_r8(port->membase + LTQ_ASC_RBUF);
+-		rsr = (ltq_r32(port->membase + LTQ_ASC_STATE)
++		ch = readb(port->membase + LTQ_ASC_RBUF);
++		rsr = (readl(port->membase + LTQ_ASC_STATE)
+ 			& ASCSTATE_ANY) | UART_DUMMY_UER_RX;
+ 		tty_flip_buffer_push(tport);
+ 		port->icount.rx++;
+@@ -219,10 +219,10 @@ lqasc_tx_chars(struct uart_port *port)
+ 		return;
+ 	}
+ 
+-	while (((ltq_r32(port->membase + LTQ_ASC_FSTAT) &
++	while (((readl(port->membase + LTQ_ASC_FSTAT) &
+ 		ASCFSTAT_TXFREEMASK) >> ASCFSTAT_TXFREEOFF) != 0) {
+ 		if (port->x_char) {
+-			ltq_w8(port->x_char, port->membase + LTQ_ASC_TBUF);
++			writeb(port->x_char, port->membase + LTQ_ASC_TBUF);
+ 			port->icount.tx++;
+ 			port->x_char = 0;
+ 			continue;
+@@ -231,7 +231,7 @@ lqasc_tx_chars(struct uart_port *port)
+ 		if (uart_circ_empty(xmit))
+ 			break;
+ 
+-		ltq_w8(port->state->xmit.buf[port->state->xmit.tail],
++		writeb(port->state->xmit.buf[port->state->xmit.tail],
+ 			port->membase + LTQ_ASC_TBUF);
+ 		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
+ 		port->icount.tx++;
+@@ -247,7 +247,7 @@ lqasc_tx_int(int irq, void *_port)
+ 	unsigned long flags;
+ 	struct uart_port *port = (struct uart_port *)_port;
+ 	spin_lock_irqsave(&ltq_asc_lock, flags);
+-	ltq_w32(ASC_IRNCR_TIR, port->membase + LTQ_ASC_IRNCR);
++	writel(ASC_IRNCR_TIR, port->membase + LTQ_ASC_IRNCR);
+ 	spin_unlock_irqrestore(&ltq_asc_lock, flags);
+ 	lqasc_start_tx(port);
+ 	return IRQ_HANDLED;
+@@ -272,7 +272,7 @@ lqasc_rx_int(int irq, void *_port)
+ 	unsigned long flags;
+ 	struct uart_port *port = (struct uart_port *)_port;
+ 	spin_lock_irqsave(&ltq_asc_lock, flags);
+-	ltq_w32(ASC_IRNCR_RIR, port->membase + LTQ_ASC_IRNCR);
++	writel(ASC_IRNCR_RIR, port->membase + LTQ_ASC_IRNCR);
+ 	lqasc_rx_chars(port);
+ 	spin_unlock_irqrestore(&ltq_asc_lock, flags);
+ 	return IRQ_HANDLED;
+@@ -282,7 +282,7 @@ static unsigned int
+ lqasc_tx_empty(struct uart_port *port)
+ {
+ 	int status;
+-	status = ltq_r32(port->membase + LTQ_ASC_FSTAT) & ASCFSTAT_TXFFLMASK;
++	status = readl(port->membase + LTQ_ASC_FSTAT) & ASCFSTAT_TXFFLMASK;
+ 	return status ? 0 : TIOCSER_TEMT;
+ }
+ 
+@@ -315,12 +315,12 @@ lqasc_startup(struct uart_port *port)
+ 	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
+ 		port->membase + LTQ_ASC_CLC);
+ 
+-	ltq_w32(0, port->membase + LTQ_ASC_PISEL);
+-	ltq_w32(
++	writel(0, port->membase + LTQ_ASC_PISEL);
++	writel(
+ 		((TXFIFO_FL << ASCTXFCON_TXFITLOFF) & ASCTXFCON_TXFITLMASK) |
+ 		ASCTXFCON_TXFEN | ASCTXFCON_TXFFLU,
+ 		port->membase + LTQ_ASC_TXFCON);
+-	ltq_w32(
++	writel(
+ 		((RXFIFO_FL << ASCRXFCON_RXFITLOFF) & ASCRXFCON_RXFITLMASK)
+ 		| ASCRXFCON_RXFEN | ASCRXFCON_RXFFLU,
+ 		port->membase + LTQ_ASC_RXFCON);
+@@ -352,7 +352,7 @@ lqasc_startup(struct uart_port *port)
+ 		goto err2;
+ 	}
+ 
+-	ltq_w32(ASC_IRNREN_RX | ASC_IRNREN_ERR | ASC_IRNREN_TX,
++	writel(ASC_IRNREN_RX | ASC_IRNREN_ERR | ASC_IRNREN_TX,
+ 		port->membase + LTQ_ASC_IRNREN);
+ 	return 0;
+ 
+@@ -371,7 +371,7 @@ lqasc_shutdown(struct uart_port *port)
+ 	free_irq(ltq_port->rx_irq, port);
+ 	free_irq(ltq_port->err_irq, port);
+ 
+-	ltq_w32(0, port->membase + LTQ_ASC_CON);
++	writel(0, port->membase + LTQ_ASC_CON);
+ 	asc_update_bits(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
+ 		port->membase + LTQ_ASC_RXFCON);
+ 	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
+@@ -463,13 +463,13 @@ lqasc_set_termios(struct uart_port *port,
+ 	asc_update_bits(ASCCON_BRS, 0, port->membase + LTQ_ASC_CON);
+ 
+ 	/* now we can write the new baudrate into the register */
+-	ltq_w32(divisor, port->membase + LTQ_ASC_BG);
++	writel(divisor, port->membase + LTQ_ASC_BG);
+ 
+ 	/* turn the baudrate generator back on */
+ 	asc_update_bits(0, ASCCON_R, port->membase + LTQ_ASC_CON);
+ 
+ 	/* enable rx */
+-	ltq_w32(ASCWHBSTATE_SETREN, port->membase + LTQ_ASC_WHBSTATE);
++	writel(ASCWHBSTATE_SETREN, port->membase + LTQ_ASC_WHBSTATE);
+ 
+ 	spin_unlock_irqrestore(&ltq_asc_lock, flags);
+ 
+@@ -580,10 +580,10 @@ lqasc_console_putchar(struct uart_port *port, int ch)
+ 		return;
+ 
+ 	do {
+-		fifofree = (ltq_r32(port->membase + LTQ_ASC_FSTAT)
++		fifofree = (readl(port->membase + LTQ_ASC_FSTAT)
+ 			& ASCFSTAT_TXFREEMASK) >> ASCFSTAT_TXFREEOFF;
+ 	} while (fifofree == 0);
+-	ltq_w8(ch, port->membase + LTQ_ASC_TBUF);
++	writeb(ch, port->membase + LTQ_ASC_TBUF);
+ }
+ 
+ static void lqasc_serial_port_write(struct uart_port *port, const char *s,
 -- 
 2.11.0
