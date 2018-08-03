@@ -1,40 +1,68 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-References: <20180828154433.5693-1-robh@kernel.org> <20180828154433.5693-3-robh@kernel.org>
- <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
-In-Reply-To: <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 29 Aug 2018 06:13:44 -0500
-Message-ID: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Michael Turquette <mturquette@baylibre.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:MEDIA DRIVERS FOR RENESAS - FCP" <linux-renesas-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:19289 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbeHCE6b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:31 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 13/18] serial: intel: Replace clk_enable/clk_disable with clk generic API
+Date: Fri,  3 Aug 2018 11:02:32 +0800
+Message-Id: <20180803030237.3366-14-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 28, 2018 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Rob Herring (2018-08-28 08:44:29)
-> > In preparation to remove the node name pointer from struct device_node,
-> > convert printf users to use the %pOFn format specifier.
-> >
-> > Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Cc: linux-omap@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
->
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+The clk driver has introduced new clock APIs that replace
+the existing clk_enable and clk_disable.
+ -clk_enable() APIs is replaced with clk_prepare_enable().
+ -clk_disable() API is replaced with clk_disable_unprepare().
 
-Please apply to the clock tree. There's no dependencies and removing
-name will take some time.
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-Rob
+Changes in v2: None
+
+ drivers/tty/serial/lantiq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 28086d52e980..36479d66fb7c 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -309,7 +309,7 @@ lqasc_startup(struct uart_port *port)
+ 	int retval;
+ 
+ 	if (!IS_ERR(ltq_port->clk))
+-		clk_enable(ltq_port->clk);
++		clk_prepare_enable(ltq_port->clk);
+ 	port->uartclk = clk_get_rate(ltq_port->freqclk);
+ 
+ 	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
+@@ -377,7 +377,7 @@ lqasc_shutdown(struct uart_port *port)
+ 	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
+ 		port->membase + LTQ_ASC_TXFCON);
+ 	if (!IS_ERR(ltq_port->clk))
+-		clk_disable(ltq_port->clk);
++		clk_disable_unprepare(ltq_port->clk);
+ }
+ 
+ static void
+@@ -631,7 +631,7 @@ lqasc_console_setup(struct console *co, char *options)
+ 	port = &ltq_port->port;
+ 
+ 	if (!IS_ERR(ltq_port->clk))
+-		clk_enable(ltq_port->clk);
++		clk_prepare_enable(ltq_port->clk);
+ 
+ 	port->uartclk = clk_get_rate(ltq_port->freqclk);
+ 
+-- 
+2.11.0
+
