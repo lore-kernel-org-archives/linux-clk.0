@@ -1,75 +1,47 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Wed, 08 Aug 2018 15:57:48 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
- Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
- Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: Add camera clock controller driver for
- SDM845
-In-Reply-To: <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
-References: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
- <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
- <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
-Message-ID: <bdc2e5b95a403f9b28b87c53d5478520@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:33452 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbeHCE6i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:38 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 15/18] serial: intel: Support more platform
+Date: Fri,  3 Aug 2018 11:02:34 +0800
+Message-Id: <20180803030237.3366-16-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-08-02 22:30, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-07-30 02:22:20)
->> diff --git a/drivers/clk/qcom/camcc-sdm845.c 
->> b/drivers/clk/qcom/camcc-sdm845.c
->> new file mode 100644
->> index 0000000..702ca66
->> --- /dev/null
->> +++ b/drivers/clk/qcom/camcc-sdm845.c
->> @@ -0,0 +1,1744 @@
->> +       },
->> +};
->> +
->> +static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
->> +       F(19200000, P_BI_TCXO, 1, 0, 0),
->> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
->> +       F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
->> +       F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
->> +       F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
->> +       F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
->> +       { }
->> +};
->> +
->> +/*
->> + * As per HW design, some of the CAMCC RCGs needs to
->> + * move to XO clock during their clock disable so using
-> 
-> Per hw design sure, but what about hw design is causing this?
+Support more platform.
 
-The RCGs which sources to the CBCRs further connected to the
-camera memory blocks needs to be moved to XO clock during
-clock disable. This is required to power down the camera memories
-gracefully as these memories cannot be powered down instantly.
-And after memory power down, HW will gate the clock.
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-> 
->> + * clk_rcg2_shared_ops for such RCGs.
->> + * Also, use CLK_SET_RATE_PARENT flag for the RCGs which
->> + * have non-fixed PLL as parent source and requires
-> 
-> Mention the PLL that isn't fixed?
-> 
+Changes in v2: None
 
-Yes sure. I will mention the PLL's name in the next patch.
+ drivers/tty/serial/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> + * reconfiguration of the PLL frequency.
->> + */
->> +static struct clk_rcg2 cam_cc_bps_clk_src = {
->> +       .cmd_rcgr = 0x600c,
->> +       .mnd_width = 0,
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index df8bd0c7b97d..564c71fc24bb 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1062,7 +1062,7 @@ config SERIAL_OMAP_CONSOLE
+ 
+ config SERIAL_LANTIQ
+ 	bool "Lantiq serial driver"
+-	depends on LANTIQ
++	depends on LANTIQ || INTEL_MIPS || COMPILE_TEST
+ 	select SERIAL_CORE
+ 	select SERIAL_CORE_CONSOLE
+ 	select SERIAL_EARLYCON
+-- 
+2.11.0
+
