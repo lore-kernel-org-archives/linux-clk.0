@@ -1,36 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbeH2Cwh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:52:37 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Douglas Anderson <dianders@chromium.org>, andy.gross@linaro.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180724174513.174018-2-dianders@chromium.org>
-Cc: tdas@codeaurora.org, girishm@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
-        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180724174513.174018-1-dianders@chromium.org>
- <20180724174513.174018-2-dianders@chromium.org>
-Message-ID: <153549712610.129321.16004641950033414292@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for sdm845
- to header
-Date: Tue, 28 Aug 2018 15:58:46 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 17/18] serial: intel: Change init_lqasc to static declaration
+Date: Fri,  3 Aug 2018 11:02:36 +0800
+Message-Id: <20180803030237.3366-18-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Douglas Anderson (2018-07-24 10:45:12)
-> These clocks will need to be defined in the clock driver and
-> referenced in device tree files.
-> =
+init_lqasc() is only used internally, change to static declaration.
 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-Applied to clk-next
+Changes in v2: None
+
+ drivers/tty/serial/lantiq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 804aad60ed80..2bb8e37e6886 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -788,7 +788,7 @@ static struct platform_driver lqasc_driver = {
+ 	},
+ };
+ 
+-int __init
++static int __init
+ init_lqasc(void)
+ {
+ 	int ret;
+-- 
+2.11.0
