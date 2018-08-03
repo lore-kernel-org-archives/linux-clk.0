@@ -1,49 +1,198 @@
-Return-Path: <lkp@intel.com>
-Date: Sun, 12 Aug 2018 05:30:02 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: kbuild-all@01.org, ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM660
-Message-ID: <201808120507.D1Aw6GcB%fengguang.wu@intel.com>
-References: <20180810202123.29238-1-ctatlor97@gmail.com>
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180810202123.29238-1-ctatlor97@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAPDyKFr7xxUV0pmQCoM1T_fZdBifWqJF6QJgHQe2JGUU0a6MJg@mail.gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
+ linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Amit Kucheria <amit.kucheria@linaro.org>
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+ <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
+ <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+ <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
+ <CAPDyKFr7xxUV0pmQCoM1T_fZdBifWqJF6QJgHQe2JGUU0a6MJg@mail.gmail.com>
+Message-ID: <20180803211132.71539.18482@harbor.lan>
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+Date: Fri, 03 Aug 2018 14:11:32 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Craig,
+Quoting Ulf Hansson (2018-07-31 03:35:50)
+> [...]
+> =
 
-Thank you for the patch! Perhaps something to improve:
+> >>
+> >> Another option is to use the ->runtime_suspend|resume() callbacks at
+> >> the genpd level. In principle when the device enters runtime suspend,
+> >> genpd can decide to drop the votes for the device (if some exist). At
+> >> runtime resume, genpd then should re-store the votes for the device it
+> >> had before it became runtime suspended (or if the vote became updated
+> >> in-between).
+> >
+> > I'd prefer to see the genpd layer do it instead of OPP layer controlling
+> > the on/off state. Calling dev_pm_opp_set_rate(dev, 0) just looks very
+> > weird and conflates clk frequency with power domain state which isn't
+> > exactly what we want. We want it to be related to the frequency _and_
+> > the enabled state. Plus it's like saying clk_set_rate(clk, 0) should
+> > turn the clk off, which we've never done before.
+> =
 
-[auto build test WARNING on agross/for-next]
-[also build test WARNING on v4.18-rc8]
-[cannot apply to next-20180810]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> Perhaps you misunderstood my suggestion!?
+> =
 
-url:    https://github.com/0day-ci/linux/commits/Craig-Tatlor/clk-qcom-Add-Global-Clock-controller-GCC-driver-for-SDM660/20180811-150111
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+> Instead of having the driver to call dev_pm_opp_set_rate(dev, 0) from
+> their ->runtime_suspend() callbacks, my suggestion is to let genpd,
+> from its ->runtime_suspend() callback, temporarily drop the requested
+> performance level for the device. Hence genpd also needs to re-compute
+> and set a new aggregated performance value for the PM domain.
+> =
 
+> The purpose was to make it transparent for drivers, as all they need
+> do is whatever they did before.
+> =
 
-sparse warnings: (new ones prefixed by >>)
+> >
+> > It would also be good to handle the on/off state in genpd because the
+> > genpd could have a governor attached to it that blocks on/off requests
+> > from drivers if the governor decides that the device is clk gating on
+> > and off quickly but it's not beneficial to change the voltage during the
+> > quick gating scenario because we spend more time changing voltage than
+> > clk gating. Connecting this all to genpd allows us to use the device
+> > power state as a signal to adjust the voltage, but leaves us flexibility
+> > to override it if it makes sense policy wise.
+> =
 
->> drivers/clk/qcom/gcc-sdm660.c:2255:15: sparse: symbol 'gcc_sdm660_hws' was not declared. Should it be static?
-   drivers/clk/qcom/gcc-sdm660.c:2304:10: sparse: Initializer entry defined twice
-   drivers/clk/qcom/gcc-sdm660.c:2306:10:   also defined here
+> Well, genpd already manages the on/off state!?
+> =
 
-Please review and possibly fold the followup patch.
+> Of course, I fully agree to the above, which seems also to be a good
+> reason to why my suggestion makes sense. Or am I missing something
+> here?
+> =
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> >
+> > And please remember the other point here that many devices may all be
+> > sharing the same power domain and therefore the voltage that the domain
+> > runs at depends on many different clk frequencies for different devices
+> > and if those clks are enabled or not, aggregated into a single voltage
+> > requirement for the power domain.
+> =
+
+> Right, the aggregation in genpd is done per device - not per clock. I
+> don't understand your concern, but again I may be missing something!?
+
+I believe that this is an argument against using OPP as the performance
+selection mechanism for all SoCs. It's data structures, along with the
+fact that is seems to have no awareness of device idleness, means that
+it's not really sufficient for more complex SoCs.
+
+> =
+
+> > The runtime suspend state might be
+> > part of that aggregation equation, so that if a device's clk is off and
+> > it's been suspended for some time the voltage requirement for that clk
+> > frequency could be dropped, but if the device is resumed and the clk is
+> > still off then the voltage requirement can be ignored. We only need to
+> > make sure the power domain is at a high enough voltage when the clk is
+> > actually enabled though, so tying the voltage requirement drop to
+> > runtime PM of the device is not exactly correct.
+> =
+
+> I see.
+> =
+
+> For my understanding; you are saying that there may be use-cases when
+> one want to keep the device runtime resumed, but without having its
+> clock ungated, right?
+> =
+
+> My guess is that this is a rather unusual case, no?
+
+This is a common case if I understand Stephen's example: Imagine a power
+island that scales voltage and may power clamp to zero. Now imagine that
+within that power island are a dozen separate functional devices, each
+consuming a dedicated functional clock input signal.
+
+It's possible to have the power island turned on so that one device can
+function, but the other 11 devices will remain clock gated.
+
+I assume the right way to handle this is to nest a dozen device-level
+genpd's within the power island-level genpd? That mirrors the topology I
+described above, and allows the lowest level genpds (functional
+device-level) to gate and ungate clocks, and the parent genpd (power
+island-level) will only be concerned with voltage control.
+
+> =
+
+> The point is, I think we can simply have the driver to call
+> dev_pm_opp_set_rate() to cover optimizations for these scenarios.
+> =
+
+> >
+> > It may be that a device is composed of multiple power domains and those
+> > power domains each have their own clks with voltage requirements too.
+> > In this scenario, connecting the voltage requirement of the genpd to the
+> > runtime PM state of the device doesn't make sense at all. We'll get into
+> > a situation where half the device is "off" because a power domain and
+> > the clk for that power domain are off but we can't drop the voltage
+> > requirement because the overall device isn't runtime suspended. It's
+> > like the single genpd per device problem all over again. Let's not do
+> > that.
+> =
+
+> I am *not* suggesting to remove the APIs in genpd for setting a
+> performance level. We can still do that and that should be sufficient
+> to cover any corner cases, don't you think?
+> =
+
+> My suggestion was only to allow genpd to drop the votes (temporarily)
+> for a device that becomes runtime suspended.
+> =
+
+> >
+> > So I'd rather see drivers calling some genpd API directly to indicate
+> > that the clk should turn off and the voltage domain constraint has gone
+> > away. We might want to transform OPP into a genpd of its own and then
+> > connect that OPP genpd to a clk domain genpd for some clk
+> > on/off/frequency part and a power domain for the voltage/corner scaling
+> > part. If we did that, then everything is a genpd that gets all
+> > aggregated in the genpd layer and drivers that only use OPP would be OK
+> > with their runtime PM state of their device affecting the OPP genpd's
+> > on/off state of clks and voltage requirements. Drivers that want finer
+> > control would be able to use some new genpd API to turn on and off the
+> > genpd when they want to.
+> =
+
+> Sound like we need a white-board. :-)
+
+We really do. Maybe I'll make the trip to Vancouver in September :-)
+
+I don't like the idea to "transform OPP into a genpd of its own", as
+suggested by Stephen above. But I think all he needs to solve this issue
+is nesting some functional clock-level genpds inside of a parent power
+island-level genpd. This is a repeat of the three paragraphs I've
+written above.
+
+This approach achieves the same effect as turning opp into a genpd, but
+I'm not inclined to try and change the OPP library to solve this
+problem.
+
+I think OPP is fine as-is: it makes it easy to handle the very simplest
+DVFS cases.  Stephen's requirements (and that of most mobile SoCs) goes
+beyond what the OPP library can and should offer.
+
+Regards,
+Mike
+
+> =
+
+> Anyway, I am reading the following replies in the thread to hopefully
+> understand your suggestions a bit better.
+> =
+
+> Kind regards
+> Uffe
