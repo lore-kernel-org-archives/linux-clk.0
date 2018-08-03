@@ -1,62 +1,230 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v11 09/11] dt-bindings: clock: Add bindings for ZynqMP clock driver
+Date: Fri, 3 Aug 2018 10:53:26 -0700
+Message-ID: <1533318808-10781-10-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
-References: <20180821032020.81254-1-chris.brandt@renesas.com>
- <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com> <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 09:10:37 +0200
-Message-ID: <CAMuHMdVd7wT5vPrHFAgHYqNWtJNjbSG7GaaPaMVD12cfkg8E2A@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
-To: Chris Brandt <Chris.Brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+From: Rajan Vaja <rajanv@xilinx.com>
 
-On Tue, Aug 28, 2018 at 12:13 AM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Monday, August 27, 2018 1, Geert Uytterhoeven wrote:
-> > Given the differences, and the limited amount of RAM on RZ/A2, I think you
-> > would be better off with a separate renesas-cpg-stbcr driver, and an
-> > r7s9210-cpg-stbcr counterpart.
->
-> I went and measured the amount of RAM being used by the driver
-> (allocated during boot when the driver is loaded and probed), and it's only 8KB.
-> That's not really much compared to other drivers and subsystems being
-> loaded in the system. Of course RZ/A tries to be RAM sensitive...but 8KB
-> for a clock driver is not my biggest concern.
->
-> So with that said, I could add in a driver option to not register the
-> reset controller. And, also make a macro so users can specify "36" instead
-> of "306" in the DT.
-> And then, I no longer have to worry about duplicate code (2 drivers do
-> almost the same thing).
->
-> What do you think?
+Add documentation to describe Xilinx ZynqMP clock driver
+bindings.
 
-OK for me.
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+---
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 +++++++++++++++++++++
+ 2 files changed, 169 insertions(+)
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
 
-Changing the print format in the debug prints is probably too much work,
-but those matter less than the clock numbers in the DTS.
-
-> Were you expecting the driver to allocate more than 8K of RAM on boot?
-
-I was thinking mainly about code size. But you're right, (a) you use XIP
-(with plenty of FLASH?), and (b) RAM size should be similar for a combined
-and a separate driver.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+index 1b431d9..d215d15 100644
+--- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -17,6 +17,53 @@ Required properties:
+ 		  - "smc" : SMC #0, following the SMCCC
+ 		  - "hvc" : HVC #0, following the SMCCC
+ 
++--------------------------------------------------------------------------
++Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
++Zynq MPSoC firmware interface
++--------------------------------------------------------------------------
++The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
++tree. It reads required input clock frequencies from the devicetree and acts
++as clock provider for all clock consumers of PS clocks.
++
++See clock_bindings.txt for more information on the generic clock bindings.
++
++Required properties:
++ - #clock-cells:	Must be 1
++ - compatible:		Must contain:	"xlnx,zynqmp-clk"
++ - clocks:		List of clock specifiers which are external input
++			clocks to the given clock controller. Please refer
++			the next section to find the input clocks for a
++			given controller.
++ - clock-names:		List of clock names which are exteral input clocks
++			to the given clock controller. Please refer to the
++			clock bindings for more details.
++
++Input clocks for zynqmp Ultrascale+ clock controller:
++
++The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
++inputs. These required clock inputs are:
++ - pss_ref_clk (PS reference clock)
++ - video_clk (reference clock for video system )
++ - pss_alt_ref_clk (alternative PS reference clock)
++ - aux_ref_clk
++ - gt_crx_ref_clk (transceiver reference clock)
++
++The following strings are optional parameters to the 'clock-names' property in
++order to provide an optional (E)MIO clock source:
++ - swdt0_ext_clk
++ - swdt1_ext_clk
++ - gem0_emio_clk
++ - gem1_emio_clk
++ - gem2_emio_clk
++ - gem3_emio_clk
++ - mio_clk_XX		# with XX = 00..77
++ - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
++
++
++Output clocks are registered based on clock information received
++from firmware. Output clocks indexes are mentioned in
++include/dt-bindings/clock/xlnx,zynqmp-clk.h.
++
+ -------
+ Example
+ -------
+@@ -25,5 +72,11 @@ firmware {
+ 	zynqmp_firmware: zynqmp-firmware {
+ 		compatible = "xlnx,zynqmp-firmware";
+ 		method = "smc";
++		zynqmp_clk : clock-controller {
++			#clock-cells = <1>;
++			compatible = "xlnx,zynqmp-clk";
++			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
++			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
++		};
+ 	};
+ };
+diff --git a/include/dt-bindings/clock/xlnx,zynqmp-clk.h b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+new file mode 100644
+index 0000000..4aebe6e
+--- /dev/null
++++ b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Xilinx Zynq MPSoC Firmware layer
++ *
++ *  Copyright (C) 2014-2018 Xilinx, Inc.
++ *
++ */
++
++#ifndef _DT_BINDINGS_CLK_ZYNQMP_H
++#define _DT_BINDINGS_CLK_ZYNQMP_H
++
++#define IOPLL			0
++#define RPLL			1
++#define APLL			2
++#define DPLL			3
++#define VPLL			4
++#define IOPLL_TO_FPD		5
++#define RPLL_TO_FPD		6
++#define APLL_TO_LPD		7
++#define DPLL_TO_LPD		8
++#define VPLL_TO_LPD		9
++#define ACPU			10
++#define ACPU_HALF		11
++#define DBF_FPD			12
++#define DBF_LPD			13
++#define DBG_TRACE		14
++#define DBG_TSTMP		15
++#define DP_VIDEO_REF		16
++#define DP_AUDIO_REF		17
++#define DP_STC_REF		18
++#define GDMA_REF		19
++#define DPDMA_REF		20
++#define DDR_REF			21
++#define SATA_REF		22
++#define PCIE_REF		23
++#define GPU_REF			24
++#define GPU_PP0_REF		25
++#define GPU_PP1_REF		26
++#define TOPSW_MAIN		27
++#define TOPSW_LSBUS		28
++#define GTGREF0_REF		29
++#define LPD_SWITCH		30
++#define LPD_LSBUS		31
++#define USB0_BUS_REF		32
++#define USB1_BUS_REF		33
++#define USB3_DUAL_REF		34
++#define USB0			35
++#define USB1			36
++#define CPU_R5			37
++#define CPU_R5_CORE		38
++#define CSU_SPB			39
++#define CSU_PLL			40
++#define PCAP			41
++#define IOU_SWITCH		42
++#define GEM_TSU_REF		43
++#define GEM_TSU			44
++#define GEM0_REF		45
++#define GEM1_REF		46
++#define GEM2_REF		47
++#define GEM3_REF		48
++#define GEM0_TX			49
++#define GEM1_TX			50
++#define GEM2_TX			51
++#define GEM3_TX			52
++#define QSPI_REF		53
++#define SDIO0_REF		54
++#define SDIO1_REF		55
++#define UART0_REF		56
++#define UART1_REF		57
++#define SPI0_REF		58
++#define SPI1_REF		59
++#define NAND_REF		60
++#define I2C0_REF		61
++#define I2C1_REF		62
++#define CAN0_REF		63
++#define CAN1_REF		64
++#define CAN0			65
++#define CAN1			66
++#define DLL_REF			67
++#define ADMA_REF		68
++#define TIMESTAMP_REF		69
++#define AMS_REF			70
++#define PL0_REF			71
++#define PL1_REF			72
++#define PL2_REF			73
++#define PL3_REF			74
++#define WDT			75
++#define IOPLL_INT		76
++#define IOPLL_PRE_SRC		77
++#define IOPLL_HALF		78
++#define IOPLL_INT_MUX		79
++#define IOPLL_POST_SRC		80
++#define RPLL_INT		81
++#define RPLL_PRE_SRC		82
++#define RPLL_HALF		83
++#define RPLL_INT_MUX		84
++#define RPLL_POST_SRC		85
++#define APLL_INT		86
++#define APLL_PRE_SRC		87
++#define APLL_HALF		88
++#define APLL_INT_MUX		89
++#define APLL_POST_SRC		90
++#define DPLL_INT		91
++#define DPLL_PRE_SRC		92
++#define DPLL_HALF		93
++#define DPLL_INT_MUX		94
++#define DPLL_POST_SRC		95
++#define VPLL_INT		96
++#define VPLL_PRE_SRC		97
++#define VPLL_HALF		98
++#define VPLL_INT_MUX		99
++#define VPLL_POST_SRC		100
++#define CAN0_MIO		101
++#define CAN1_MIO		102
++
++#endif
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
