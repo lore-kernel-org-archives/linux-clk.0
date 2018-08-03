@@ -1,162 +1,73 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	thor.thayer@linux.intel.com,
-	linux-imx@nxp.com,
-	hdegoede@redhat.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	linux-fbdev@vger.kernel.org,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V6 4/4] video: simplefb: switch to use clk_bulk API to simplify clock operations
-Date: Fri, 31 Aug 2018 12:45:56 +0800
-Message-Id: <1535690756-22234-5-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
+	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
+	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
+	<jollys@xilinx.com>
+Subject: [PATCH v11 01/11] dt-bindings: firmware: Add bindings for ZynqMP firmware
+Date: Fri, 3 Aug 2018 10:53:18 -0700
+Message-ID: <1533318808-10781-2-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Switching to use clk_bulk API to simplify clock operations.
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-fbdev@vger.kernel.org
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v5->v6:
- * address Hans's comments
-v4->v5:
- * fix wrong setting of par->clks_enabled
-v3->v4:
- * no changes
-v2->v3:
- * fix a build warning on x86 platform due to a wrong
-   of the prototype of simplefb_clocks_enable
-v1->v2:
- * switch to clk_bulk_get_all from of_clk_bulk_get_all
----
- drivers/video/fbdev/simplefb.c | 72 +++++++++++-------------------------------
- 1 file changed, 18 insertions(+), 54 deletions(-)
+Add documentation to describe Xilinx ZynqMP firmware driver
+bindings. Firmware driver provides an interface to firmware
+APIs. Interface APIs can be used by any driver to communicate
+to PMUFW (Platform Management Unit).
 
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index 9a9d748..89fb1e7 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -181,8 +181,8 @@ struct simplefb_par {
- 	u32 palette[PSEUDO_PALETTE_SIZE];
- #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
- 	bool clks_enabled;
--	unsigned int clk_count;
--	struct clk **clks;
-+	int clk_count;
-+	struct clk_bulk_data *clks;
- #endif
- #if defined CONFIG_OF && defined CONFIG_REGULATOR
- 	bool regulators_enabled;
-@@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
- 			       struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct clk *clock;
--	int i;
- 
- 	if (dev_get_platdata(&pdev->dev) || !np)
- 		return 0;
- 
--	par->clk_count = of_clk_get_parent_count(np);
--	if (!par->clk_count)
--		return 0;
--
--	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
--	if (!par->clks)
--		return -ENOMEM;
--
--	for (i = 0; i < par->clk_count; i++) {
--		clock = of_clk_get(np, i);
--		if (IS_ERR(clock)) {
--			if (PTR_ERR(clock) == -EPROBE_DEFER) {
--				while (--i >= 0) {
--					if (par->clks[i])
--						clk_put(par->clks[i]);
--				}
--				kfree(par->clks);
--				return -EPROBE_DEFER;
--			}
--			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
--				__func__, i, PTR_ERR(clock));
--			continue;
--		}
--		par->clks[i] = clock;
--	}
-+	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
-+	if (par->clk_count == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
- 
- 	return 0;
- }
-@@ -252,39 +228,27 @@ static int simplefb_clocks_get(struct simplefb_par *par,
- static void simplefb_clocks_enable(struct simplefb_par *par,
- 				   struct platform_device *pdev)
- {
--	int i, ret;
-+	int ret;
- 
--	for (i = 0; i < par->clk_count; i++) {
--		if (par->clks[i]) {
--			ret = clk_prepare_enable(par->clks[i]);
--			if (ret) {
--				dev_err(&pdev->dev,
--					"%s: failed to enable clock %d: %d\n",
--					__func__, i, ret);
--				clk_put(par->clks[i]);
--				par->clks[i] = NULL;
--			}
--		}
--	}
--	par->clks_enabled = true;
-+	if (par->clk_count <= 0)
-+		return;
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+new file mode 100644
+index 0000000..1b431d9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -0,0 +1,29 @@
++-----------------------------------------------------------------
++Device Tree Bindings for the Xilinx Zynq MPSoC Firmware Interface
++-----------------------------------------------------------------
 +
-+	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
-+	if (ret)
-+		dev_warn(&pdev->dev, "failed to enable clocks\n");
-+	else
-+		par->clks_enabled = true;
- }
- 
- static void simplefb_clocks_destroy(struct simplefb_par *par)
- {
--	int i;
--
--	if (!par->clks)
-+	if (par->clk_count <= 0)
- 		return;
- 
--	for (i = 0; i < par->clk_count; i++) {
--		if (par->clks[i]) {
--			if (par->clks_enabled)
--				clk_disable_unprepare(par->clks[i]);
--			clk_put(par->clks[i]);
--		}
--	}
-+	if (par->clks_enabled)
-+		clk_bulk_disable_unprepare(par->clk_count, par->clks);
- 
--	kfree(par->clks);
-+	clk_bulk_put_all(par->clk_count, par->clks);
- }
- #else
- static int simplefb_clocks_get(struct simplefb_par *par,
++The zynqmp-firmware node describes the interface to platform firmware.
++ZynqMP has an interface to communicate with secure firmware. Firmware
++driver provides an interface to firmware APIs. Interface APIs can be
++used by any driver to communicate to PMUFW(Platform Management Unit).
++These requests include clock management, pin control, device control,
++power management service, FPGA service and other platform management
++services.
++
++Required properties:
++ - compatible:	Must contain:	"xlnx,zynqmp-firmware"
++ - method:	The method of calling the PM-API firmware layer.
++		Permitted values are:
++		  - "smc" : SMC #0, following the SMCCC
++		  - "hvc" : HVC #0, following the SMCCC
++
++-------
++Example
++-------
++
++firmware {
++	zynqmp_firmware: zynqmp-firmware {
++		compatible = "xlnx,zynqmp-firmware";
++		method = "smc";
++	};
++};
 -- 
 2.7.4
