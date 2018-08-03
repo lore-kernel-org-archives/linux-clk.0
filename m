@@ -1,73 +1,74 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-imx@nxp.com,
-	Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abelvesa@linux.com>,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v6 0/5] Add i.MX8MQ clock driver
-Date: Wed, 22 Aug 2018 16:48:18 +0300
-Message-Id: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:27336 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbeHCE6J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:09 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH v2 07/18] MIPS: dts: Add aliases node for lantiq danube serial
+Date: Fri,  3 Aug 2018 11:02:26 +0800
+Message-Id: <20180803030237.3366-8-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Fifth version can be found here:
+Previous implementation uses a hard-coded register value to check
+if the current serial entity is the console entity.
+Now the lantiq serial driver uses the aliases for the index of the
+serial port.
+The lantiq danube serial dts are updated with aliases to support this.
 
-https://lkml.org/lkml/2018/8/20/83
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-Changes since v5:
- * Fixed the predivider and divider register values as
-   reported by Sascha.
- * Changed the commit message of the 4th patch to match
-   with what the commit is adding
+Changes in v2: None
 
-Changes since v4:
- * Implemented divider ops and used clk-composite as suggested
-   by Sascha Hauer.
+ arch/mips/boot/dts/lantiq/danube.dtsi   | 2 +-
+ arch/mips/boot/dts/lantiq/easy50712.dts | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Changes since v3:
- * Added a composite clock type to get rid of some complexity
-   from clk-imx8mq. This new composite clock type will also be
-   used by all the imx8 socs that will follow.
- * Added back the reviewed-by tag.
-
-Abel Vesa (1):
-  clk: imx: add imx composite clock
-
-Lucas Stach (4):
-  dt-bindings: add binding for i.MX8MQ CCM
-  clk: imx: add fractional PLL output clock
-  clk: imx: add SCCG PLL type
-  clk: imx: add clock driver for i.MX8MQ CCM
-
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-composite.c                    | 157 +++++
- drivers/clk/imx/clk-frac-pll.c                     | 230 ++++++++
- drivers/clk/imx/clk-imx8mq.c                       | 631 +++++++++++++++++++++
- drivers/clk/imx/clk-sccg-pll.c                     | 231 ++++++++
- drivers/clk/imx/clk.h                              |  57 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 410 +++++++++++++
- 8 files changed, 1741 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
- create mode 100644 drivers/clk/imx/clk-imx8mq.c
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
-
+diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
+index 510be63c8bdf..73746d7577d7 100644
+--- a/arch/mips/boot/dts/lantiq/danube.dtsi
++++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+@@ -74,7 +74,7 @@
+ 			reg = <0xe100a00 0x100>;
+ 		};
+ 
+-		serial@e100c00 {
++		asc1: serial@e100c00 {
+ 			compatible = "lantiq,asc";
+ 			reg = <0xe100c00 0x400>;
+ 			interrupt-parent = <&icu0>;
+diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
+index 1ce20b7d05cb..452860ca1868 100644
+--- a/arch/mips/boot/dts/lantiq/easy50712.dts
++++ b/arch/mips/boot/dts/lantiq/easy50712.dts
+@@ -4,6 +4,10 @@
+ /include/ "danube.dtsi"
+ 
+ / {
++	aliases {
++		serial0 = &asc1;
++	};
++
+ 	chosen {
+ 		bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";
+ 	};
 -- 
-2.7.4
+2.11.0
+
