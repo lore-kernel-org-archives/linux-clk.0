@@ -1,50 +1,76 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 2/4] dt-bindings: clock: ingenic: Explicitly list compatible strings
-Date: Thu, 23 Aug 2018 15:17:42 +0200
-Message-Id: <20180823131744.744-2-paul@crapouillou.net>
-In-Reply-To: <20180823131744.744-1-paul@crapouillou.net>
-References: <20180823131744.744-1-paul@crapouillou.net>
+Return-Path: <michals@xilinx.com>
+Return-Path: michal.simek@xilinx.com
+Subject: Re: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for
+ ZynqMP core
+To: Stephen Boyd <sboyd@kernel.org>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, "dmitry.torokhov@gmail.com"
+	<dmitry.torokhov@gmail.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"keescook@chromium.org" <keescook@chromium.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "mingo@kernel.org"
+	<mingo@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "sboyd@codeaurora.org"
+	<sboyd@codeaurora.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Jolly
+ Shah <JOLLYS@xilinx.com>, Michal Simek <michal.simek@xilinx.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rajan Vaja
+	<RAJANV@xilinx.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+ <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
+ <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
+ <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
+ <e5448935-770a-5c14-438c-23a652b17822@xilinx.com>
+ <153324358299.10763.8724416723915219268@swboyd.mtv.corp.google.com>
+From: Michal Simek <michal.simek@xilinx.com>
+Message-ID: <d153598d-8d09-fb32-f68e-6fc4975eb9ce@xilinx.com>
+Date: Fri, 3 Aug 2018 08:14:27 +0200
+MIME-Version: 1.0
+In-Reply-To: <153324358299.10763.8724416723915219268@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This is better than letting the other developers wondering what are the
-supported strings.
+On 2.8.2018 22:59, Stephen Boyd wrote:
+> Quoting Michal Simek (2018-07-30 05:50:42)
+>> On 26.7.2018 18:36, Stephen Boyd wrote:
+>>> Quoting Michal Simek (2018-07-25 02:51:14)
+>>>> On 24.7.2018 20:14, Jolly Shah wrote:
+>>>>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
+>>>>>>>  create mode 100644 drivers/firmware/xilinx/zynqmp.c  create mode
+>>>>>>> 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+>>>>>>>  create mode 100644 include/linux/firmware/xlnx-zynqmp.h
+>>>>>>>
+>>>>>>
+>>>>>> It looks pretty calm over the last several series that's why when I get an answer
+>>>>>> from Stephen or Mike I will take this series via my tree and arm-soc tree.
+>>>>>>
+>>>>>> I have applied 01-08 here
+>>>>>>  https://github.com/Xilinx/linux-xlnx/commits/zynqmp/soc
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Michal
+>>>>>
+>>>>>
+>>>>> Thanks for merging the patches. 
+>>>>> By mistake I added “Reviewed-by: Stephen Boyd sboyd@kernel.org” for firmware bindings (Patch01).  Stephen had reviewed clock bindings only.  Please suggest if I should send a new version with that fix.
+>>>>
+>>>> I have fixed that in my branch and I have asked Shephen to look at clk
+>>>> over chat.
+>>>>
+>>>
+>>> I have some unresolved review comments on v9. I'll give reviewed-by when
+>>> that discussion is resolved.
+>>
+>> ok. Do you want to take them via clk tree or via arm-soc tree?
+>>
+> 
+> I'm fine for the clk patch to go via arm-soc if that makes it easier.
+> 
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+ok. Great.
+Jolly: Please address all Stephen's comments that we can move.
 
-Notes:
-    New patch
-
- Documentation/devicetree/bindings/clock/ingenic,cgu.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-index f8d4134ae409..ba5a442026b7 100644
---- a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-+++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-@@ -6,8 +6,11 @@ to provide many different clock signals derived from only 2 external source
- clocks.
- 
- Required properties:
--- compatible : Should be "ingenic,<soctype>-cgu".
--  For example "ingenic,jz4740-cgu" or "ingenic,jz4780-cgu".
-+- compatible : Should be one of:
-+  * ingenic,jz4740-cgu
-+  * ingenic,jz4725b-cgu
-+  * ingenic,jz4770-cgu
-+  * ingenic,jz4780-cgu
- - reg : The address & length of the CGU registers.
- - clocks : List of phandle & clock specifiers for clocks external to the CGU.
-   Two such external clocks should be specified - first the external crystal
--- 
-2.11.0
+Thanks,
+Michal
