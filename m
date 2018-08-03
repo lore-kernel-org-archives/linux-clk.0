@@ -1,86 +1,255 @@
-Return-Path: <jerome.forissier@linaro.org>
-Return-Path: <jerome.forissier@linaro.org>
-Subject: Re: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-To: Stephen Boyd <sboyd@kernel.org>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
-Cc: dl-linux-imx <linux-imx@nxp.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-From: Jerome Forissier <jerome.forissier@linaro.org>
-Message-ID: <a6489bda-703f-207c-0b24-60f4044fe89f@linaro.org>
-Date: Fri, 31 Aug 2018 10:01:44 +0200
+Return-Path: <mturquette@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+From: Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
+ linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Amit Kucheria <amit.kucheria@linaro.org>
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+ <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
+ <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+ <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
+ <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com>
+ <153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
+ <20180725054400.96956.13278@harbor.lan>
+ <20180725112702.GN1636@tbergstrom-lnx.Nvidia.com>
+ <CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com>
+Message-ID: <20180803230533.71539.26618@harbor.lan>
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+Date: Fri, 03 Aug 2018 16:05:36 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Ulf Hansson (2018-07-31 04:56:46)
+> On 25 July 2018 at 13:27, Peter De Schrijver <pdeschrijver@nvidia.com> wr=
+ote:
+> > On Tue, Jul 24, 2018 at 10:44:00PM -0700, Michael Turquette wrote:
+> >> Quoting Stephen Boyd (2018-07-24 16:04:37)
+> >> > Quoting Peter De Schrijver (2018-07-23 01:26:41)
+> >> > > On Fri, Jul 20, 2018 at 10:12:29AM -0700, Stephen Boyd wrote:
+> >> > > >
+> >> > > > For one thing, a driver should be able to figure out what the
+> >> > > > performance state requirement is for a particular frequency. I'd=
+ like to
+> >> > > > see an API that a driver can pass something like a (device, genp=
+d, clk,
+> >> > > > frequency) tuple and get back the performance state required for=
+ that
+> >> > > > device's clk frequency within that genpd by querying OPP tables.=
+ If we
+> >> > > > had this API, then SoC vendors could design OPP tables for their=
+ on-SoC
+> >> > > > devices that describe the set of max frequencies a device can op=
+erate at
+> >> > > > for a specific performance state and driver authors would be abl=
+e to
+> >> > > > query that information and manually set genpd performance states=
+ when
+> >> > > > they change clk frequencies. In Qualcomm designs this would be t=
+heir
+> >> > > > "fmax" tables that map a max frequency to a voltage corner. If s=
+omeone
+> >> > > > wanted to fine tune that table and make it into a full frequency=
+ plan
+> >> > > > OPP table for use by devfreq, then they could add more entries f=
+or all
+> >> > > > the validated frequencies and voltage corners that are acceptabl=
+e and
+> >> > > > tested and this API would still work. We'll need this sort of ta=
+ble
+> >> > > > regardless because we can't expect devices to search for an exact
+> >> > > > frequency in an OPP table when they can support hundreds of diff=
+erent
+> >> > > > frequencies, like in display or audio situations.
+> >> > > >
+> >> > >
+> >> > > Various reasons why I think the driver is not the right place to h=
+andle
+> >> > > the V/f relationship:
+> >> > >
+> >> > > 1) The V/f relationship is temperature dependent. So the voltage m=
+ay have
+> >> > >    to be adjusted when the temperature changes. I don't think we s=
+hould
+> >> > >    make every driver handle this on its own.
+> >> >
+> >> > This is AVS? Should be fine to plumb that into some sort of voltage
+> >> > domain that gets temperature feedback and then adjusts the voltage b=
+ased
+> >
+> > For the core rail, it seems the voltage is indeed just adjusted based on
+> > temperature. For the GPU rail, we have equations which calculate the re=
+quired
+> > voltage as a function of frequency and temperature. In some cases I thi=
+nk
+> > we just cap the frequency if the temperature would be too high to find
+> > a suitable voltage. Fortunately the GPU has its own rail, so it doesn't
+> > necessarily need to be handled the same way.
+> >
+> >> > on that? This is basically the same as Qualcomm's "voltage corners" =
+by
+> >> > the way, just that the voltage is adjusted outside of the Linux kern=
+el
+> >> > by another processor when the temperature changes.
+> >>
+> >> Ack to what Stephen said above. Adaptive voltage scaling, corners, body
+> >> bias, SMPS modes/efficiency, etc are all just implementation details.
+> >>
+> >> I don't think anyone is suggesting for drivers to take all of the above
+> >> into account when setting voltage. I would imagine either a "nominal"
+> >> voltage, a voltage "index" or a performance state to be passed from the
+> >> driver into the genpd layer.
+> >>
+> >> Peter would that work for you?
+> >>
+> >
+> > A voltage index should do I think. The reason for a voltage index is th=
+at
+> > we have at least one case, where the voltage depends on the mode of the
+> > device. This is the case for the HDMI/DP output serializers (SORx). The
+> > required voltage doesn't only depend on the pixel rate, but also on the
+> > mode (DP or HDMI). One danger is that we must make sure all
+> > drivers of devices sharing a rail, use this API to set their voltage
+> > requirement. If not, weird failures will show up.
+> =
+
+> I am trying to understand the proposal, but it seems like I am failing. S=
+orry.
+> =
+
+> Genpd already have an API for requesting a performance state for a
+> device, dev_pm_genpd_set_performance_state() - and genpd aggregates
+> the votes per PM domain.
+> =
+
+> The idea so far, is that most votes should come via the OPP layer,
+> dev_pm_opp_set_rate(), but for special cases users may decide to call
+> dev_pm_genpd_set_performance_state() directly.
+> =
+
+> So far so good?
+
+This almost matches what I had in mind.
+
+> =
+
+> Following the conversation, it seems like the suggestion is to *not*
+> go through the OPP layer, but instead always let drivers call
+> dev_pm_genpd_set_performance_state(). Why is that a benefit and why is
+> that preferred?
+
+I think that consumer drivers should not directly invoke the genpd apis
+for performance power management, but instead access them through a
+pm_runtime interface, just as they do when managing idle power
+management.
+
+This pm_runtime performance interface does not exist yet. There is an
+argument that the opp library is this interface, but I'll address that
+at the very end of this message.
+
+> =
+
+> If I understood the main concern raised by Graham/Stephen, was that we
+> didn't want to make the driver call yet another API to manage OPPs. So
+> then calling dev_pm_genpd_set_performance_state() is fine, but not
+> dev_pm_opp_set_rate()?
+
+Speaking only for myself, I want a single performance interface that
+encapsulates clocks, regulators, pm microcontrollers, firmware
+interfaces or whatever are required on the SoC to achieve the
+performance level desired.
+
+There will likely be a need for some consumer drivers to mix calls to
+low-level primitives (clks, regulators) with this new pm_runtime
+performance api, but that is the exception to the rule.
+
+> =
+
+> Moreover, how would the driver know which performance state it shall
+> request? Sounds like a OPP translation is needed anyways, so even more
+> things falls into the responsibility of the driver, in case it shall
+> call dev_pm_genpd_set_performance_state(). It doesn't sound right to
+> me.
+
+Translation implies that consumer drivers are making requests in Hertz
+to begin with. I think we should challenge this assumption.  Devicetree
+gives us the tools we need to link SoC-specific performance states to
+Driver-specific use cases and configurations. Clock rates will be the
+right way to model this for many devices, but arbitrary perf indexes
+will also make sense for others. Translation should happen in DT.
+
+> Finally, trying to make use of the ->stop|start() callbacks in genpd,
+> can be useful for SoC specific operations that we want to make
+> transparent for generic drivers. However, I wonder if dealing with
+> OPPs from there really makes sense, need to think more about that.
+
+To start with, I suggest we follow the principle of simplicity and
+separate active and idle power management operations as much as
+possible. We can always make it into a tangled mess later ;-)
+
+I mentioned several times that I do not want to require OPP to be used
+for controlling performance. I'll try to explain that now:
+
+My main issue with OPP is that it is really *just a library* for dealing
+with voltage/frequency tuples. Over time it has added in some generic
+logic for setting clock rate and regulator voltage, but this is not a
+solution for everyone. It's fine to cover the simple cases, but complex
+SoCs will not find this approach useful.
+
+In fact, having dev_pm_opp_set_rate make a call to
+dev_pm_genpd_set_performance_state is completely backwards. Some genpd
+implementations may make use of the OPP library as a data store for
+supported frequency and voltage tuples, but not all of them will. Having
+the tuple library tell the genpd layer what to do is an upside down
+design.
+
+The changes to add performance awareness to genpd allows us to write
+"performance provider" drivers, which is good. But forcing the consumer
+api to be the OPP library is severely limiting.
+
+What is missing is a generic, less opinionated consumer api that gives
+performance provider drivers (aka genpd callbacks) the flexibility to
+support complex hardware and use cases. For example, how does the OPP
+library work for a firmware interface that controls performance? Or a
+message passing mechanism to a power management microcontroller? In
+either case, it might not make sense to model everything in terms of
+hertz or volts.
+
+No doubt genpd, the performance provider, can handle the firmware and pm
+microcontroller cases mentioned above. But the OPP library, the half of
+the interface used by the performance consumer, does not fit well.
+
+Put another way, there exists a set of performance scalable devices.
+Within that set is a subset of devices for which it makes sense to model
+their performance via clock rates. And within _that_ subset there exists
+a subset of devices for whom dev_pm_opp_set_rate will be sufficient for
+performance management. That leaves a lot of devices unaccounted for.
+
+Finally, when it comes time to consider chip-wide current limits,
+adaptive voltage scaling, thermal considerations, body bias, etc, I
+think that the tables provided by the OPP library just won't cut it.
+We'll need SoC vendors to write real performance provider drivers and
+glue all of this together in that backend. The only way to make that
+work is to provide a less opinionated consumer-facing API that does not
+assume that everything fits neatly into a table comprised of frequency &
+voltage pairs.
+
+Regards,
+Mike
+
+> =
 
 
-On 08/31/2018 03:29 AM, Stephen Boyd wrote:
-> Quoting Peng Fan (2018-08-12 18:15:41)
->> Hi Anson,
->>
->>>>> -----Original Message-----
->>>>> From: Anson Huang
->>>>> Sent: 2018年8月8日 12:39
->>>>> To: shawnguo@kernel.org; s.hauer@pengutronix.de;
->>>>> kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
->>>>> mturquette@baylibre.com; sboyd@kernel.org;
->>>>> linux-arm-kernel@lists.infradead.org;
->>>>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
->>>>> Cc: dl-linux-imx <linux-imx@nxp.com>
->>>>> Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
->>>>>
->>>>> Clock framework will enable those clocks registered with
->>>>> CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
->>>>> clock
->>>> initialization now.
->>>>
->>>> Will it be more flexible to parse dts saying "critical-clocks = <xxx>"
->>>> or "init-on-arrary=<xxx>"
->>>> and enable those clocks?
->>>
->>> Parsing the clocks arrays from dtb is another way of enabling critical clocks, but
->>> for current i.MX6/7 platforms, we implement it in same way as most of other
->>> SoCs, currently I did NOT see any necessity of putting them in dtb, just adding
->>> flag during clock registering is more simple, if there is any special requirement
->>> for different clocks set to be enabled, then we can add support to enable the
->>> method of parsing critical-clocks from dtb. Just my two cents.
->>
->> Thinking about OP-TEE want to use one device, but it's clocks are registered
->> by Linux, because there is no module in Linux side use it, it will shutdown the clock,
->> which cause OP-TEE could not access the device.
->>
->> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make sure
->> the clocks are not shutdown by Linux.
->>
->> However adding a new property in clk node and let driver code parse the dts,
->> there is no need to modify clk driver code when OP-TEE needs another device clock.
->>
-> 
-> If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
-> in Linux probe, acquire clocks, and keep the clks enabled forever?
+> =
 
-Sounds reasonable, but how could this be done without introducing
-platform-specific stuff in the OP-TEE driver?
+> [...]
+> =
 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+> Kind regards
+> Uffe
