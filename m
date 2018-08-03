@@ -1,125 +1,62 @@
-Return-Path: <eajames@linux.vnet.ibm.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
-        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH 2/4] clock: aspeed: Setup video engine clocking
-Date: Wed, 29 Aug 2018 16:09:31 -0500
-In-Reply-To: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-Message-Id: <1535576973-8067-3-git-send-email-eajames@linux.vnet.ibm.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbeHCHho (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Aug 2018 03:37:44 -0400
+Date: Fri, 3 Aug 2018 07:43:04 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
+Message-ID: <20180803054304.GA2214@kroah.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-9-songjun.wu@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180803030237.3366-9-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the video engine reset bit. Add eclk mux and clock divider table.
+On Fri, Aug 03, 2018 at 11:02:27AM +0800, Songjun Wu wrote:
+> Get serial id from dts.
+> 
+> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
+> macro is defined in lantiq_soc.h.
+> lantiq_soc.h is in arch path for legacy product support.
+> 
+> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
+> 
+> If "#ifdef preprocessor" is changed to
+> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
+> code using LTQ_EARLY_ASC is compiled.
+> Compilation will fail for no LTQ_EARLY_ASC defined.
+> 
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
+> 
+> Changes in v2: None
+> 
+>  drivers/tty/serial/lantiq.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+> index 044128277248..836ca51460f2 100644
+> --- a/drivers/tty/serial/lantiq.c
+> +++ b/drivers/tty/serial/lantiq.c
+> @@ -6,6 +6,7 @@
+>   * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
+>   * Copyright (C) 2007 John Crispin <john@phrozen.org>
+>   * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
+> + * Copyright (C) 2018 Intel Corporation.
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/clk/clk-aspeed.c | 41 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
+Your changes here do not warrent the addition of a copyright line, don't
+you agree?  If not, please get a signed-off-by from your corporate
+lawyer who does this this is warrented when you resend this patch.
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 5961367..f16ce7d 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -87,7 +87,7 @@ struct aspeed_clk_gate {
- /* TODO: ask Aspeed about the actual parent data */
- static const struct aspeed_gate_data aspeed_gates[] = {
- 	/*				 clk rst   name			parent	flags */
--	[ASPEED_CLK_GATE_ECLK] =	{  0, -1, "eclk-gate",		"eclk",	0 }, /* Video Engine */
-+	[ASPEED_CLK_GATE_ECLK] =	{  0,  6, "eclk-gate",		"eclk",	0 }, /* Video Engine */
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
-@@ -113,6 +113,24 @@ struct aspeed_clk_gate {
- 	[ASPEED_CLK_GATE_LHCCLK] =	{ 28, -1, "lhclk-gate",		"lhclk", 0 }, /* LPC master/LPC+ */
- };
- 
-+static const char * const eclk_parent_names[] = {
-+	"mpll",
-+	"hpll",
-+	"dpll",
-+};
-+
-+static const struct clk_div_table ast2500_eclk_div_table[] = {
-+	{ 0x0, 2 },
-+	{ 0x1, 2 },
-+	{ 0x2, 3 },
-+	{ 0x3, 4 },
-+	{ 0x4, 5 },
-+	{ 0x5, 6 },
-+	{ 0x6, 7 },
-+	{ 0x7, 8 },
-+	{ 0 }
-+};
-+
- static const struct clk_div_table ast2500_mac_div_table[] = {
- 	{ 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
- 	{ 0x1, 4 },
-@@ -192,18 +210,21 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
- 
- struct aspeed_clk_soc_data {
- 	const struct clk_div_table *div_table;
-+	const struct clk_div_table *eclk_div_table;
- 	const struct clk_div_table *mac_div_table;
- 	struct clk_hw *(*calc_pll)(const char *name, u32 val);
- };
- 
- static const struct aspeed_clk_soc_data ast2500_data = {
- 	.div_table = ast2500_div_table,
-+	.eclk_div_table = ast2500_eclk_div_table,
- 	.mac_div_table = ast2500_mac_div_table,
- 	.calc_pll = aspeed_ast2500_calc_pll,
- };
- 
- static const struct aspeed_clk_soc_data ast2400_data = {
- 	.div_table = ast2400_div_table,
-+	.eclk_div_table = ast2400_div_table,
- 	.mac_div_table = ast2400_div_table,
- 	.calc_pll = aspeed_ast2400_calc_pll,
- };
-@@ -317,6 +338,7 @@ struct aspeed_reset {
- 	[ASPEED_RESET_PECI]	= 10,
- 	[ASPEED_RESET_I2C]	=  2,
- 	[ASPEED_RESET_AHB]	=  1,
-+	[ASPEED_RESET_VIDEO]	=  6,
- 
- 	/*
- 	 * SCUD4 resets start at an offset to separate them from
-@@ -522,6 +544,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
- 
-+	hw = clk_hw_register_mux(dev, "eclk-mux", eclk_parent_names,
-+				 ARRAY_SIZE(eclk_parent_names), 0,
-+				 scu_base + ASPEED_CLK_SELECTION, 2, 0x3, 0,
-+				 &aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-+
-+	hw = clk_hw_register_divider_table(dev, "eclk", "eclk-mux", 0,
-+					   scu_base + ASPEED_CLK_SELECTION, 28,
-+					   3, 0, soc_data->eclk_div_table,
-+					   &aspeed_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-+
- 	/*
- 	 * TODO: There are a number of clocks that not included in this driver
- 	 * as more information is required:
-@@ -531,7 +569,6 @@ static int aspeed_clk_probe(struct platform_device *pdev)
- 	 *   RGMII
- 	 *   RMII
- 	 *   UART[1..5] clock source mux
--	 *   Video Engine (ECLK) mux and clock divider
- 	 */
- 
- 	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
--- 
-1.8.3.1
+thanks,
+
+greg k-h
