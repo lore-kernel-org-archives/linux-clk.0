@@ -1,68 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55498 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725752AbeH3EAH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 00:00:07 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B8733A4.60103@samsung.com>
-Date: Thu, 30 Aug 2018 09:00:36 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 01/10] clk: samsung: Remove excessive include
-In-reply-to: <20180829155046.29359-2-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155059eucas1p28a20924521edaa4c9bd3d9683d0f2d0d@eucas1p2.samsung.com>
-        <20180829155046.29359-2-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
+ bindings
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rohitkr@codeaurora.org
+References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
+ <1530773721-14668-2-git-send-email-tdas@codeaurora.org>
+ <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <408b3b59-d171-175c-f6da-b5d6f42a954d@codeaurora.org>
+Date: Fri, 3 Aug 2018 17:49:31 +0530
+MIME-Version: 1.0
+In-Reply-To: <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
-> Exynos Audio SubSystem and Exynos3250 clock drivers don't use any syscore
-> function, so don't include linux/syscore_ops.h in their code.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos-audss.c | 1 -
->  drivers/clk/samsung/clk-exynos3250.c   | 1 -
->  2 files changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-> index f659c5cbf1d5..8f8a0f9fc842 100644
-> --- a/drivers/clk/samsung/clk-exynos-audss.c
-> +++ b/drivers/clk/samsung/clk-exynos-audss.c
-> @@ -15,7 +15,6 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
-> -#include <linux/syscore_ops.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-> index 27c9d23657b3..0e9a41a4cac8 100644
-> --- a/drivers/clk/samsung/clk-exynos3250.c
-> +++ b/drivers/clk/samsung/clk-exynos3250.c
-> @@ -12,7 +12,6 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  #include <linux/platform_device.h>
-> -#include <linux/syscore_ops.h>
->  
->  #include <dt-bindings/clock/exynos3250.h>
->  
-> 
 
-I tested kernel build. There are no warning and break.
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+On 7/7/2018 5:12 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-04 23:55:20)
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>> new file mode 100644
+>> index 0000000..fe7378b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>> @@ -0,0 +1,22 @@
+>> +Qualcomm LPASS Clock Controller Binding
+>> +-----------------------------------------------
+>> +
+>> +Required properties :
+>> +- compatible   : shall contain "qcom,sdm845-lpasscc"
+>> +- #clock-cells : from common clock binding, shall contain 1.
+>> +- reg          : shall contain base register address and size.
+>> +- reg-names    : shall contain the register names of LPASS domain
+>> +                       "lpass_gcc", "lpass_cc", "lpass_qdsp6ss".
+>> +
+>> +Example:
+>> +
+>> +The below node has to be defined in the cases where the LPASS peripheral loader
+>> +would bring the subsystem out of reset.
+>> +
+>> +       lpasscc: clock-controller {
+>> +               compatible = "qcom,sdm845-lpasscc";
+>> +               reg = <0x00147000 0x20>, <0x17014000 0x1f004>,
+> 
+> This first reg is inside GCC though? Why isn't it added to the gcc
+> sdm845 driver? And then the next two might make sense as a different
+> region, but the reg property ending in 20 looks really weird.
+>
+I have moved the GCC registers in the GCC driver with a device tree 
+property flag. And also have mapped the lpass_qdsp6ss CC region.
+
+>> +                       <0x17300020 0x20>;
+>> +               reg-names = "lpass_gcc", "lpass_cc", "lpass_qdsp6ss";
+>> +               #clock-cells = <1>;
+>> +       };
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
