@@ -1,51 +1,61 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, Geert Uytterhoeven
-	<geert@linux-m68k.org>, Simon Horman <horms@verge.net.au>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Thu, 30 Aug 2018 08:30:59 +0000
-Message-ID: 
- <TY1PR01MB176960BEDC23EA64095EF6F2F5080@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
- <1533039060-18779-2-git-send-email-phil.edworthy@renesas.com>
- <20180829171039.GD11447@smile.fi.intel.com>
-In-Reply-To: <20180829171039.GD11447@smile.fi.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:33400 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726413AbeHCE6U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Aug 2018 00:58:20 -0400
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 10/18] MIPS: lantiq: Unselect SWAP_IO_SPACE when LANTIQ is selected
+Date: Fri,  3 Aug 2018 11:02:29 +0800
+Message-Id: <20180803030237.3366-11-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Andy,
+SWAP_IO_SPACE macro prevents serial driver /drivers/tty/serial/lantiq.c
+to use readl/writel to replace ltq_r32/w32 which are SoC or platform
+specific APIs.
 
-On 29 August 2018 18:11 Andy Shevchenko wrote:
-> On Tue, Jul 31, 2018 at 01:10:59PM +0100, Phil Edworthy wrote:
-> > Quite a few drivers get an optional clock, e.g. a clock required
-> > to access peripheral's registers that is always enabled on some
-> > devices.
-> >
-> > This function behaves the same as of_clk_get_by_name() except that
-> > it will return NULL instead of -ENOENT.
->=20
-> > +		if (optional && (index =3D=3D -EINVAL || index =3D=3D -ENODATA ||
-> > +		    PTR_ERR(clk) =3D=3D -ENOENT)) {
->=20
-> A nit: I would rather rearrange this to be
->=20
-> if (optional &&
->     (... || ... || ...)) {
->=20
-> (disregard 80 characters limit for second line)
+readl/writel are used for this serial driver to support multiple
+platforms and multiple architectures. The legacy lantiq platform(Danube)
+enables SWAP_IO_SPACE for supporting PCI due to some hardware bugs.
 
-Thanks for the review. I'm not particularly happy with the patch as is, it'=
-s
-pretty messy. I was in rush trying to get things done before holidays - alw=
-ays
-a mistake.
-Would you mind if I sent a v5 that I feel is somewhat clearer?
+It's a little-endian bus plus PCI TX/RX swap enable impacted both data
+and control path for MIPS based platforms. But it is better to let PCI
+device driver to do endian swap since SWAP_IO_SPACE is a global wide macro
+which potentially impacts other peripheral like USB.
+ltq_r32/ltq_w32 is not impacted in other device drivers based on MIPS when
+SWAP_IO_SPACE is not selected as they use non-byte swapping OS API
+(__raw_read/__raw_writel).
 
-Thanks
-Phil
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
+
+Changes in v2: None
+
+ arch/mips/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 2d34f17f3e24..2e7e0b538e52 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -400,7 +400,6 @@ config LANTIQ
+ 	select SYS_SUPPORTS_VPE_LOADER
+ 	select SYS_HAS_EARLY_PRINTK
+ 	select GPIOLIB
+-	select SWAP_IO_SPACE
+ 	select BOOT_RAW
+ 	select CLKDEV_LOOKUP
+ 	select USE_OF
+-- 
+2.11.0
+
