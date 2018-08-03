@@ -1,36 +1,62 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180830152813.20883-1-geert+renesas@glider.be>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
- Takeshi Kihara <takeshi.kihara.df@renesas.com>,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20180830152813.20883-1-geert+renesas@glider.be>
-Message-ID: <153566618042.93865.13252788689594331562@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: renesas: r8a77990: Add missing I2C7 clock
-Date: Thu, 30 Aug 2018 14:56:20 -0700
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Paul Burton <paul.burton@mips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 05/18] dt-binding: MIPS: Add documentation of Intel MIPS SoCs
+Date: Fri,  3 Aug 2018 11:02:24 +0800
+Message-Id: <20180803030237.3366-6-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Geert Uytterhoeven (2018-08-30 08:28:13)
-> When trying to use I2C7 on R-Car E3:
-> =
+From: Hua Ma <hua.ma@linux.intel.com>
 
->     renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 1=
-003: -2
->     i2c-rcar e6690000.i2c: failed to add to PM domain always-on: -2
->     i2c-rcar: probe of e6690000.i2c failed with error -2
-> =
+This patch adds binding documentation for the
+compatible values of the Intel MIPS SoCs.
 
-> Unlike other R-Car Gen3 SoCs, R-Car E3 has more than 7 I2C bus
-> interfaces.  Add the forgotten module clock for the 8th instance to fix
-> this.
-> =
+Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+Changes in v2:
+- New patch split from previous patch
+- Add the board and chip compatible in dt document
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+ Documentation/devicetree/bindings/mips/intel.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mips/intel.txt
+
+diff --git a/Documentation/devicetree/bindings/mips/intel.txt b/Documentation/devicetree/bindings/mips/intel.txt
+new file mode 100644
+index 000000000000..ac594ef303b7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mips/intel.txt
+@@ -0,0 +1,17 @@
++Intel MIPS SoC device tree bindings
++
++1, SoCs
++
++Each device tree must specify a compatible value for the Intel SoC
++it uses in the compatible property of the root node. The compatible
++value must be one of the following values:
++
++  intel,xrx500
++
++2, Boards
++
++Each device tree must specify a compatible value for the Intel Board
++it uses in the compatible property of the root node. The compatible
++value must be one of the following values:
++
++  intel,easy350-anywan
+-- 
+2.11.0
