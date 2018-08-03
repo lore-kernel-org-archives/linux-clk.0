@@ -1,366 +1,387 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <bc425f1926ddc1b426be5902bf3595ff556670d3.camel@baylibre.com>
-Subject: Re: [PATCH v4 3/3] clk: meson: add sub MMC clock controller driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
- Jianxin Pan <jianxin.pan@amlogic.com>, Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Fri, 10 Aug 2018 14:47:59 +0200
-In-Reply-To: <20180809070724.11935-4-yixun.lan@amlogic.com>
-References: <20180809070724.11935-1-yixun.lan@amlogic.com>
-	 <20180809070724.11935-4-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 3 Aug 2018 10:49:24 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v2 01/18] MIPS: intel: Add initial support for Intel MIPS
+ SoCs
+Message-ID: <20180803174924.iqzmbtz5hrf5dlzu@pburton-laptop>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-2-songjun.wu@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180803030237.3366-2-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-08-09 at 15:07 +0800, Yixun Lan wrote:
-> The patch will add a MMC clock controller driver which used by MMC or NAND,
-> It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+Hi Songjun / Hua,
+
+On Fri, Aug 03, 2018 at 11:02:20AM +0800, Songjun Wu wrote:
+> From: Hua Ma <hua.ma@linux.intel.com>
 > 
-> Two clocks are provided as the parent of MMC clock controller from
-> upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
+> Add initial support for Intel MIPS interAptiv SoCs made by Intel.
+> This series will add support for the grx500 family.
 > 
-> To specify which clock the MMC or NAND driver may consume,
-> the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-> can be used in the device tree sources.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  drivers/clk/meson/Kconfig    |  10 ++
->  drivers/clk/meson/Makefile   |   1 +
->  drivers/clk/meson/mmc-clkc.c | 275 +++++++++++++++++++++++++++++++++++
->  3 files changed, 286 insertions(+)
->  create mode 100644 drivers/clk/meson/mmc-clkc.c
-> 
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index efaa70f682b4..8b8ccbcfed1d 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -15,6 +15,16 @@ config COMMON_CLK_MESON_AO
->  	select COMMON_CLK_REGMAP_MESON
+> The series allows booting a minimal system using a initramfs.
+
+Thanks for submitting this - I have some comments below.
+
+> diff --git a/arch/mips/Kbuild.platforms b/arch/mips/Kbuild.platforms
+> index ac7ad54f984f..bcd647060f3e 100644
+> --- a/arch/mips/Kbuild.platforms
+> +++ b/arch/mips/Kbuild.platforms
+> @@ -12,6 +12,7 @@ platforms += cobalt
+>  platforms += dec
+>  platforms += emma
+>  platforms += generic
+> +platforms += intel-mips
+>  platforms += jazz
+>  platforms += jz4740
+>  platforms += lantiq
+
+Oh EVA, why must you ruin nice things... Ideally I'd be suggesting that
+we use the generic platform but it doesn't yet have a nice way to deal
+with non-standard EVA setups.
+
+It would be good if we could make sure that's the only reason for your
+custom platform though, so that once generic does support EVA we can
+migrate your system over. Most notably, it would be good to make use of
+the UHI-specified boot protocol if possible (ie. $r4==-2, $r5==&dtb).
+
+It looks like your prom_init_cmdline() supports multiple boot protocols
+- could you clarify which is actually used?
+
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 08c10c518f83..2d34f17f3e24 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -409,6 +409,34 @@ config LANTIQ
+>  	select ARCH_HAS_RESET_CONTROLLER
 >  	select RESET_CONTROLLER
 >  
-> +config COMMON_CLK_MMC_MESON
-> +	tristate "Meson MMC Sub Clock Controller Driver"
-> +	depends on COMMON_CLK_AMLOGIC
+> +config INTEL_MIPS
+> +	bool "Intel MIPS interAptiv SoC based platforms"
+> +	select BOOT_RAW
+> +	select CEVT_R4K
+> +	select COMMON_CLK
+> +	select CPU_MIPS32_3_5_EVA
+> +	select CPU_MIPS32_3_5_FEATURES
+> +	select CPU_MIPSR2_IRQ_EI
+> +	select CPU_MIPSR2_IRQ_VI
+> +	select CSRC_R4K
+> +	select DMA_NONCOHERENT
+> +	select GENERIC_ISA_DMA
+> +	select IRQ_MIPS_CPU
+> +	select MFD_CORE
 > +	select MFD_SYSCON
-> +	select REGMAP
-> +	help
-> +	  Support for the MMC sub clock controller on Amlogic Meson Platform,
-> +	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
-> +	  Say Y if you want this clock enabled.
-> +
->  config COMMON_CLK_REGMAP_MESON
->  	bool
->  	select REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 39ce5661b654..31c16d524a4b 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
-> +obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
->  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
-> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+> +	select MIPS_CPU_SCACHE
+> +	select MIPS_GIC
+> +	select SYS_HAS_CPU_MIPS32_R1
+
+For a system based on interAptiv you should never need to build a
+MIPS32r1 kernel, so you should remove the above select.
+
+> diff --git a/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h b/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
 > new file mode 100644
-> index 000000000000..6aa055f7e62c
+> index 000000000000..ac5f3b943d2a
 > --- /dev/null
-> +++ b/drivers/clk/meson/mmc-clkc.c
-> @@ -0,0 +1,275 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +++ b/arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+> @@ -0,0 +1,61 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 > +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + * This file was derived from: include/asm-mips/cpu-features.h
+> + *	Copyright (C) 2003, 2004 Ralf Baechle
+> + *	Copyright (C) 2004 Maciej W. Rozycki
+> + *	Copyright (C) 2018 Intel Corporation.
 > + */
 > +
-> +#include <linux/clk.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/amlogic,mmc-clkc.h>
+> +#ifndef __ASM_MACH_INTEL_MIPS_CPU_FEATURE_OVERRIDES_H
+> +#define __ASM_MACH_INTEL_MIPS_CPU_FEATURE_OVERRIDES_H
 > +
-> +#include "clkc.h"
+> +#define cpu_has_tlb		1
+> +#define cpu_has_4kex		1
+> +#define cpu_has_3k_cache	0
+> +#define cpu_has_4k_cache	1
+> +#define cpu_has_tx39_cache	0
+> +#define cpu_has_sb1_cache	0
+> +#define cpu_has_fpu		0
+> +#define cpu_has_32fpr		0
+> +#define cpu_has_counter		1
+> +#define cpu_has_watch		1
+> +#define cpu_has_divec		1
 > +
-> +/* clock ID used by internal driver */
-> +#define CLKID_MMC_MUX			0
+> +#define cpu_has_prefetch	1
+> +#define cpu_has_ejtag		1
+> +#define cpu_has_llsc		1
 > +
-> +#define SD_EMMC_CLOCK			0
-> +#define   CLK_DIV_MASK			GENMASK(5, 0)
-> +#define   CLK_SRC_MASK			GENMASK(7, 6)
-> +#define   CLK_CORE_PHASE_MASK		GENMASK(9, 8)
-> +#define   CLK_TX_PHASE_MASK		GENMASK(11, 10)
-> +#define   CLK_RX_PHASE_MASK		GENMASK(13, 12)
-> +#define   CLK_V2_TX_DELAY_MASK		GENMASK(19, 16)
-> +#define   CLK_V2_RX_DELAY_MASK		GENMASK(23, 20)
-> +#define   CLK_V2_ALWAYS_ON		BIT(24)
+> +#define cpu_has_mips16		0
+> +#define cpu_has_mdmx		0
+> +#define cpu_has_mips3d		0
+> +#define cpu_has_smartmips	0
+> +#define cpu_has_mmips		0
+> +#define cpu_has_vz		0
 > +
-> +#define   CLK_V3_TX_DELAY_MASK		GENMASK(21, 16)
-> +#define   CLK_V3_RX_DELAY_MASK		GENMASK(27, 22)
-> +#define   CLK_V3_ALWAYS_ON		BIT(28)
+> +#define cpu_has_mips32r1	1
+> +#define cpu_has_mips32r2	1
+> +#define cpu_has_mips64r1	0
+> +#define cpu_has_mips64r2	0
 > +
-> +#define   CLK_DELAY_STEP_PS		200
-> +#define   CLK_PHASE_STEP		30
-> +#define   CLK_PHASE_POINT_NUM		(360 / CLK_PHASE_STEP)
+> +#define cpu_has_dsp		1
+> +#define cpu_has_dsp2		0
+> +#define cpu_has_mipsmt		1
 > +
-> +#define MUX_CLK_NUM_PARENTS		2
-> +#define MMC_MAX_CLKS			5
+> +#define cpu_has_vint		1
+> +#define cpu_has_veic		0
 > +
-> +struct mmc_clkc_data {
-> +	struct meson_clk_phase_delay_data	tx;
-> +	struct meson_clk_phase_delay_data	rx;
-> +};
+> +#define cpu_has_64bits		0
+> +#define cpu_has_64bit_zero_reg	0
+> +#define cpu_has_64bit_gp_regs	0
+> +#define cpu_has_64bit_addresses	0
 > +
-> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-> +	.offset		= SD_EMMC_CLOCK,
-> +	.mask		= 0x3,
-> +	.shift		= 6,
-> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST,
-> +};
+> +#define cpu_has_cm2		1
+> +#define cpu_has_cm2_l2sync	1
+> +#define cpu_has_eva		1
+> +#define cpu_has_tlbinv		1
 > +
-> +static struct clk_regmap_div_data mmc_clkc_div_data = {
-> +	.offset		= SD_EMMC_CLOCK,
-> +	.shift		= 0,
-> +	.width		= 6,
-> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
-> +};
+> +#define cpu_dcache_line_size()	32
+> +#define cpu_icache_line_size()	32
+> +#define cpu_scache_line_size()	32
+
+If you rebase atop linux-next or mips-next then you should find that
+many of these defines are now redundant, especially after removing the
+SYS_HAS_CPU_MIPS32_R1 select which means your kernel build will always
+target MIPS32r2.
+
+Due to architectural restrictions on where various options can be
+present, you should be able to remove:
+
+  - cpu_has_4kex
+  - cpu_has_3k_cache
+  - cpu_has_4k_cache
+  - cpu_has_32fpr
+  - cpu_has_divec
+  - cpu_has_prefetch
+  - cpu_has_llsc
+
+cpu_has_mmips defaults to a compile-time zero unless you select
+CONFIG_SYS_SUPPORTS_MICROMIPS, so please remove that one.
+
+cpu_has_64bit_gp_regs & cpu_has_64bit_addresses both default to zero
+already for 32bit kernel builds, so please remove those.
+
+cpu_has_cm2 & cpu_has_cm2_l2sync don't exist anywhere in-tree, so please
+remove those.
+
+Additionally cpu_has_sb1_cache is not used anywhere, or defined by
+asm/cpu-features.h & seems to just be left over in some platform
+override files including presumably one you based yours on. Please
+remove it too.
+
+Also you select CPU_MIPSR2_IRQ_EI but define cpu_has_veic as 0, could
+you check that mismatch?
+
+> diff --git a/arch/mips/include/asm/mach-intel-mips/irq.h b/arch/mips/include/asm/mach-intel-mips/irq.h
+> new file mode 100644
+> index 000000000000..12a949084856
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-intel-mips/irq.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  Copyright (C) 2014 Lei Chuanhua <Chuanhua.lei@lantiq.com>
+> + *  Copyright (C) 2018 Intel Corporation.
+> + */
 > +
-> +static struct meson_clk_phase_delay_data mmc_clkc_core_phase_delay = {
-> +	.phase_mask	= CLK_CORE_PHASE_MASK,
-> +};
+> +#ifndef __INTEL_MIPS_IRQ_H
+> +#define __INTEL_MIPS_IRQ_H
 > +
-> +static const struct mmc_clkc_data mmc_clkc_gx_data = {
-> +	{
-> +		.phase_mask	= CLK_TX_PHASE_MASK,
-> +		.delay_mask	= CLK_V2_TX_DELAY_MASK,
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +	{
-> +		.phase_mask	= CLK_RX_PHASE_MASK,
-> +		.delay_mask	= CLK_V2_RX_DELAY_MASK,
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +};
+> +#define MIPS_CPU_IRQ_BASE	0
+> +#define MIPS_GIC_IRQ_BASE	(MIPS_CPU_IRQ_BASE + 8)
+
+These 2 defines are the defaults anyway, so please remove them.
+
+> +#define NR_IRQS 256
+
+And if you don't actually need this then you could remove irq.h entirely
+- do you actually use more than 128 IRQs?
+
+> diff --git a/arch/mips/include/asm/mach-intel-mips/spaces.h b/arch/mips/include/asm/mach-intel-mips/spaces.h
+> new file mode 100644
+> index 000000000000..80e7b09f712c
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-intel-mips/spaces.h
+>% >% >%
+> +#define IO_SIZE			_AC(0x10000000, UL)
+> +#define IO_SHIFT		_AC(0x10000000, UL)
+
+These IO_ defines don't appear to be used anywhere?
+
+> +/* IO space one */
+> +#define __pa_symbol(x)		__pa(x)
+
+Can you explain why you need this, rather than the default definition of
+__pa_symbol()? The comment doesn't seem to describe much of anything.
+
+> diff --git a/arch/mips/include/asm/mach-intel-mips/war.h b/arch/mips/include/asm/mach-intel-mips/war.h
+> new file mode 100644
+> index 000000000000..1c95553151e1
+> --- /dev/null
+> +++ b/arch/mips/include/asm/mach-intel-mips/war.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_MIPS_MACH_INTEL_MIPS_WAR_H
+> +#define __ASM_MIPS_MACH_INTEL_MIPS_WAR_H
 > +
-> +static const struct mmc_clkc_data mmc_clkc_axg_data = {
-> +	{
-> +		.phase_mask	= CLK_TX_PHASE_MASK,
-> +		.delay_mask	= CLK_V3_TX_DELAY_MASK,
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +	{
-> +		.phase_mask	= CLK_RX_PHASE_MASK,
-> +		.delay_mask	= CLK_V3_RX_DELAY_MASK,
-> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
-> +	},
-> +};
+> +#define R4600_V1_INDEX_ICACHEOP_WAR	0
+> +#define R4600_V1_HIT_CACHEOP_WAR	0
+> +#define R4600_V2_HIT_CACHEOP_WAR	0
+> +#define R5432_CP0_INTERRUPT_WAR		0
+> +#define BCM1250_M3_WAR			0
+> +#define SIBYTE_1956_WAR			0
+> +#define MIPS4K_ICACHE_REFILL_WAR	0
+> +#define MIPS_CACHE_SYNC_WAR		0
+> +#define TX49XX_ICACHE_INDEX_INV_WAR	0
+> +#define ICACHE_REFILLS_WORKAROUND_WAR	0
+> +#define R10000_LLSC_WAR			0
+> +#define MIPS34K_MISSED_ITLB_WAR		0
 > +
-> +static const struct of_device_id mmc_clkc_match_table[] = {
-> +	{
-> +		.compatible	= "amlogic,gx-mmc-clkc",
-> +		.data		= &mmc_clkc_gx_data
-> +	},
-> +	{
-> +		.compatible	= "amlogic,axg-mmc-clkc",
-> +		.data		= &mmc_clkc_axg_data
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
+> +#endif /* __ASM_MIPS_MACH_INTEL_MIPS_WAR_H */
+
+Since you need none of these workarounds, you shouldn't need war.h at
+all.
+
+> diff --git a/arch/mips/intel-mips/Kconfig b/arch/mips/intel-mips/Kconfig
+> new file mode 100644
+> index 000000000000..35d2ae2b5408
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/Kconfig
+> @@ -0,0 +1,22 @@
+> +if INTEL_MIPS
 > +
-> +static struct clk_regmap *
-> +mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-> +		      struct clk_init_data *init,
-> +		      const char *suffix, void *data)
+> +choice
+> +	prompt "Built-in device tree"
+> +	help
+> +	  Legacy bootloaders do not pass a DTB pointer to the kernel, so
+> +	  if a "wrapper" is not being used, the kernel will need to include
+> +	  a device tree that matches the target board.
+> +
+> +	  The builtin DTB will only be used if the firmware does not supply
+> +	  a valid DTB.
+> +
+> +config DTB_INTEL_MIPS_NONE
+> +	bool "None"
+> +
+> +config DTB_INTEL_MIPS_GRX500
+> +	bool "Intel MIPS GRX500 Board"
+> +	select BUILTIN_DTB
+> +
+> +endchoice
+> +
+> +endif
+
+So do you actually have both styles of bootloader?
+
+> diff --git a/arch/mips/intel-mips/prom.c b/arch/mips/intel-mips/prom.c
+> new file mode 100644
+> index 000000000000..a1b1393c13bc
+> --- /dev/null
+> +++ b/arch/mips/intel-mips/prom.c
+>% >% >%
+> +static void __init prom_init_cmdline(void)
 > +{
-> +	struct clk_regmap *clk;
-> +	char *name;
-> +	int ret;
-> +
-> +	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-> +	if (!clk)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-> +	if (!name)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init->name = name;
-> +
-> +	clk->map = map;
-> +	clk->data = data;
-> +	clk->hw.init = init;
-> +
-> +	ret = devm_clk_hw_register(dev, &clk->hw);
-> +	if (ret)
-> +		clk = ERR_PTR(ret);
-> +
-> +	kfree(name);
-> +	return clk;
-> +}
-> +
-> +static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-> +						struct regmap *map)
-> +{
-> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
-> +	struct clk_init_data init;
-> +	struct clk_regmap *mux;
-> +	struct clk *clk;
 > +	int i;
+> +	int argc;
+> +	char **argv;
 > +
-> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> +		char name[8];
+> +	/*
+> +	 * If u-boot pass parameters, it is ok, however, if without u-boot
+> +	 * JTAG or other tool has to reset all register value before it goes
+> +	 * emulation most likely belongs to this category
+> +	 */
+> +	if (fw_arg0 == 0 || fw_arg1 == 0)
+> +		return;
+
+I don't understand what you're trying to say here, or why this check
+exists. If you boot with fw_arg0 == fw_arg1 == 0 then you'd just hit the
+loop below right, and execute zero iterations of it? That seems like it
+would be fine without this special case.
+
+> +	/*
+> +	 * a0: fw_arg0 - the number of string in init cmdline
+> +	 * a1: fw_arg1 - the address of string in init cmdline
+> +	 *
+> +	 * In accordance with the MIPS UHI specification,
+> +	 * the bootloader can pass the following arguments to the kernel:
+> +	 * - $a0: -2.
+> +	 * - $a1: KSEG0 address of the flattened device-tree blob.
+> +	 */
+> +	if (fw_arg0 == -2)
+> +		return;
 > +
-> +		snprintf(name, sizeof(name), "clkin%d", i);
-> +		clk = devm_clk_get(dev, name);
-> +		if (IS_ERR(clk)) {
-> +			if (clk != ERR_PTR(-EPROBE_DEFER))
-> +				dev_err(dev, "Missing clock %s\n", name);
-> +			return ERR_PTR((long)clk);
+> +	argc = fw_arg0;
+> +	argv = (char **)KSEG1ADDR(fw_arg1);
+> +
+> +	arcs_cmdline[0] = '\0';
+> +
+> +	for (i = 0; i < argc; i++) {
+> +		char *p = (char *)KSEG1ADDR(argv[i]);
+> +
+> +		if (argv[i] && *p) {
+> +			strlcat(arcs_cmdline, p, sizeof(arcs_cmdline));
+> +			strlcat(arcs_cmdline, " ", sizeof(arcs_cmdline));
 > +		}
-> +
-> +		parent_names[i] = __clk_get_name(clk);
 > +	}
+
+Why do you need to use kseg1? Why can't the arguments be accessed
+cached?
+
+Are the arguments passed as virtual or physical addresses? If virtual &
+we can access them cached then you could replace all of this with a call
+to fw_init_cmdline().
+
+> +static int __init plat_enable_iocoherency(void)
+> +{
+> +	if (!mips_cps_numiocu(0))
+> +		return 0;
 > +
-> +	init.ops = &clk_regmap_mux_ops;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +	init.parent_names = parent_names;
-> +	init.num_parents = MUX_CLK_NUM_PARENTS;
-> +
-> +	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
-> +	if (IS_ERR(mux))
-> +		dev_err(dev, "Mux clock registration failed\n");
-> +
-> +	return mux;
+> +	/* Nothing special needs to be done to enable coherency */
+> +	pr_info("Coherence Manager IOCU detected\n");
+> +	/* Second IOCU for MPE or other master access register */
+> +	write_gcr_reg0_base(0xa0000000);
+> +	write_gcr_reg0_mask(0xf8000000 | CM_GCR_REGn_MASK_CMTGT_IOCU1);
+> +	return 1;
 > +}
 > +
-> +static struct clk_regmap *
-> +mmc_clkc_register_other_clk(struct device *dev, struct regmap *map,
-
-This is a poor name. It does not help understand what the function does.
-mmc_clkc_register_clk_with_parent or whatever helps understand what's going on
-
-> +			    char *suffix, char *parent_suffix,
-
-You should not have to rebuild the parent name once again.
-Pass the clk_hw* of the parent and get the name from it.
-
-> +			    unsigned long flags,
-> +			    const struct clk_ops *ops, void *data)
+> +static void __init plat_setup_iocoherency(void)
 > +{
-> +	struct clk_init_data init;
-> +	struct clk_regmap *clk;
-> +	char *parent;
-> +
-> +	parent = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), parent_suffix);
-> +	if (!parent)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.ops = ops;
-> +	init.flags = flags;
-> +	init.parent_names = (const char* const []){ parent, };
-> +	init.num_parents = 1;
-> +
-> +	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-> +	if (IS_ERR(clk))
-> +		dev_err(dev, "Core %s clock registration failed\n", suffix);
-> +
-> +	kfree(parent);
-> +	return clk;
-> +}
-> +
-> +static int mmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *onecell_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct mmc_clkc_data *data;
-> +	struct regmap *map;
-> +	struct clk_regmap *mux, *div, *core, *rx, *tx;
-
-Do you really need all this ? or could store them in your onecell_data->hws
-table as you go ?
-
-> +
-> +	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-> +	if (!data)
-> +		return -ENODEV;
-> +
-> +	map = syscon_node_to_regmap(dev->of_node);
-> +	if (IS_ERR(map)) {
-> +		dev_err(dev, "could not find mmc clock controller\n");
-> +		return PTR_ERR(map);
+> +	if (plat_enable_iocoherency() &&
+> +	    coherentio == IO_COHERENCE_DISABLED) {
+> +		pr_info("Hardware DMA cache coherency disabled\n");
+> +		return;
 > +	}
-> +
-> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
-> +				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
-> +				    GFP_KERNEL);
-> +	if (!onecell_data)
-> +		return -ENOMEM;
-> +
-> +	mux = mmc_clkc_register_mux(dev, map);
-> +	if (IS_ERR(mux))
-> +		return PTR_ERR(mux);
-> +
-> +	div = mmc_clkc_register_other_clk(dev, map, "div", "mux",
-> +					  CLK_SET_RATE_PARENT,
-> +					  &clk_regmap_divider_ops,
-> +					  &mmc_clkc_div_data);
-> +	if (IS_ERR(div))
-> +		return PTR_ERR(div);
-> +
-> +	core = mmc_clkc_register_other_clk(dev, map, "core", "div",
-> +					   CLK_SET_RATE_PARENT,
-> +					   &meson_clk_phase_delay_ops,
-> +					   &mmc_clkc_core_phase_delay);
-> +	if (IS_ERR(core))
-> +		return PTR_ERR(core);
-> +
-> +	rx = mmc_clkc_register_other_clk(dev, map, "rx", "core", 0,
-> +					 &meson_clk_phase_delay_ops,
-> +					 &data->rx);
-> +	if (IS_ERR(rx))
-> +		return PTR_ERR(rx);
-> +
-> +	tx = mmc_clkc_register_other_clk(dev, map, "tx", "core", 0,
-> +					 &meson_clk_phase_delay_ops,
-> +					 &data->tx);
-> +	if (IS_ERR(tx))
-> +		return PTR_ERR(tx);
-> +
-> +	onecell_data->hws[CLKID_MMC_MUX]		= &mux->hw,
-> +	onecell_data->hws[CLKID_MMC_DIV]		= &div->hw,
-> +	onecell_data->hws[CLKID_MMC_PHASE_CORE]		= &core->hw,
-> +	onecell_data->hws[CLKID_MMC_PHASE_RX]		= &rx->hw,
-> +	onecell_data->hws[CLKID_MMC_PHASE_TX]		= &tx->hw,
-> +	onecell_data->num				= MMC_MAX_CLKS;
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					   onecell_data);
+> +	panic("This kind of IO coherency is not supported!");
 > +}
-> +
-> +static struct platform_driver mmc_clkc_driver = {
-> +	.probe		= mmc_clkc_probe,
-> +	.driver		= {
-> +		.name	= "meson-mmc-clkc",
-> +		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-> +	},
-> +};
-> +
-> +module_platform_driver(mmc_clkc_driver);
+
+Since you select CONFIG_DMA_NONCOHERENT in Kconfig, coherentio will
+always equal IO_COHERENCE_DISABLED. That suggests to me that the above 2
+functions are probably useless, or at least needlessly convoluted.
+
+> +static int __init plat_publish_devices(void)
+> +{
+> +	if (!of_have_populated_dt())
+> +		return 0;
+> +	return of_platform_populate(NULL, of_default_bus_match_table, NULL,
+> +				    NULL);
+> +}
+> +arch_initcall(plat_publish_devices);
+
+The core DT code calls of_platform_populate() already (see
+of_platform_default_populate_init()), so you can remove this function.
+
+Thanks,
+    Paul
