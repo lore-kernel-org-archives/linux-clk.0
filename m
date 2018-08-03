@@ -1,149 +1,105 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] clk: tegra: Don't enable already enabled PLLs
-Date: Thu, 30 Aug 2018 21:42:09 +0300
-Message-Id: <20180830184210.5369-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40657 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeHCNFQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Aug 2018 09:05:16 -0400
+Date: Fri, 3 Aug 2018 14:09:12 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        eballetbo@gmail.com, linus.walleij@linaro.org,
+        mazziesaccount@gmail.com, dmitry.torokhov@gmail.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, broonie@kernel.org,
+        linux-input@vger.kernel.org, mikko.mutanen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com
+Subject: [PATCH v12 2/2] mfd: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-Changelog:
-
-v2:	No change.
-
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 830d1c87fa7c..ddb431247f08 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+new file mode 100644
+index 000000000000..3ca56fdb5ffe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,62 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
 +
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDOs to provide all the power rails required by the SoC and
++the commonly used peripherals.
 +
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++Datasheet for PMIC is available at:
++https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
 +
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
- 
-@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - clocks		: The parent clock connected to PMIC. If this is missing
++			  32768 KHz clock is assumed.
++ - #clock-cells		: Should be 0.
++ - regulators:		: List of child nodes that specify the regulators.
++			  Please see ../regulator/rohm,bd71837-regulator.txt
 +
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
 +
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
++Example:
 +
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
++	/* external oscillator node */
++	osc: oscillator {
++		compatible = "fixed-clock";
++		#clock-cells = <1>;
++		clock-frequency  = <32768>;
++		clock-output-names = "osc";
++	};
 +
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
- }
- 
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
++	pmic: pmic@4b {
++		compatible = "rohm,bd71837";
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#clock-cells = <0>;
++		clocks = <&osc 0>;
++		clock-output-names = "bd71837-32k-out";
 +
-+	val = pll_readl_base(pll);
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++		};
++	};
 +
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
--
--	val = pll_readl_base(pll);
--
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
--}
--
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
++	/* Clock consumer node */
++	rtc@0 {
++		compatible = "company,my-rtc";
++		clock-names = "my-clock";
++		clocks = <&pmic>;
++	};
 -- 
-2.18.0
+2.14.3
+
