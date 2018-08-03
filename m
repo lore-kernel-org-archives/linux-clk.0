@@ -1,573 +1,140 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
-Date: Sat, 18 Aug 2018 23:31:02 +0530
-MIME-Version: 1.0
-In-Reply-To: <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Songjun Wu <songjun.wu@linux.intel.com>
+To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v2 09/18] serial: intel: Change ltq_w32_mask to asc_update_bits
+Date: Fri,  3 Aug 2018 11:02:28 +0800
+Message-Id: <20180803030237.3366-10-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+ltq prefix is platform specific function, asc prefix
+is more generic.
 
-I will test these changes and get back.
+Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+---
 
-On 8/18/2018 7:42 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-08-10 18:53:54)
->>   [v4]
->>    * Add recalc_clk_ops to calculate the clock frequency reading the current
->>      perf state, also add CLK_GET_RATE_NOCACHE flag.
->>    * Cleanup 'goto' during mode check in 'clk_rcg2_calculate_freq'.
->>    * cleanup return from function 'com_cc_register_rcg_dfs'.
-> 
-> I want to squash this in. I have only compile tested it. Let me know
-> what you think.
-> 
-> ----8<---
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index e6300e05d5df..e5eca8a1abe4 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
->   extern const struct clk_ops clk_gfx3d_ops;
->   extern const struct clk_ops clk_rcg2_shared_ops;
->   
-> +struct clk_rcg_dfs_data {
-> +	struct clk_rcg2 *rcg;
-> +	struct clk_init_data *init;
-> +};
-> +
-> +#define DEFINE_RCG_DFS(r) \
-> +	{ .rcg = &r##_src, .init = &r##_init }
-> +
->   extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> -			     struct clk_rcg2 **rcgs, int num_clks);
-> +				    const struct clk_rcg_dfs_data *rcgs,
-> +				    size_t len);
->   #endif
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 55a5b58cbb15..bbe2a1916296 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -1051,48 +1051,24 @@ static unsigned long
->   clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> -	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask, level;
-> -	int num_parents, i;
-> -	unsigned long prate;
-> -
-> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_CMD_DFSR_OFFSET, &cfg);
-> -	level = (GENMASK(4, 1) & cfg) >> 1;
-> -
-> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_DFSR(level), &cfg);
-> -	if (rcg->mnd_width) {
-> -		mask = BIT(rcg->mnd_width) - 1;
-> -		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_M_DFSR(level), &m);
-> -		m &= mask;
-> -		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-> -				SE_PERF_N_DFSR(level), &n);
-> -		n =  ~n;
-> -		n &= mask;
-> -		n += m;
-> -		mode = cfg & CFG_MODE_MASK;
-> -		mode >>= CFG_MODE_SHIFT;
-> -	}
-> +	int ret;
-> +	u32 level;
->   
-> -	mask = BIT(rcg->hid_width) - 1;
-> -	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-> -	hid_div &= mask;
-> -	cfg &= CFG_SRC_SEL_MASK;
-> -	cfg >>= CFG_SRC_SEL_SHIFT;
-> +	regmap_read(rcg->clkr.regmap,
-> +		    rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
-> +	level &= GENMASK(4, 1);
-> +	level >>= 1;
->   
-> -	num_parents = clk_hw_get_num_parents(hw);
-> -	for (i = 0; i < num_parents; i++) {
-> -		if (cfg == rcg->parent_map[i].cfg) {
-> -			prate = clk_hw_get_rate(
-> -				clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
-> -			if (parent_rate != prate)
-> -				parent_rate = prate;
-> +	if (!rcg->freq_tbl) {
-> +		ret = clk_rcg2_dfs_populate_freq_table(rcg);
-> +		if (ret) {
-> +			pr_err("Failed to update DFS tables for %s\n",
-> +					clk_hw_get_name(hw));
-> +			return ret;
->   		}
->   	}
->   
-> -
-> -	return calc_rate(parent_rate, m, n, mode, hid_div);
-> +	return rcg->freq_tbl[level].freq;
->   }
->   
->   static const struct clk_ops clk_rcg2_dfs_ops = {
-> @@ -1102,9 +1078,11 @@ static const struct clk_ops clk_rcg2_dfs_ops = {
->   	.recalc_rate = clk_rcg2_dfs_recalc_rate,
->   };
->   
-> -static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
-> +static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
-> +			       struct regmap *regmap)
->   {
-> -	struct clk_init_data *init;
-> +	struct clk_rcg2 *rcg = data->rcg;
-> +	struct clk_init_data *init = data->init;
->   	u32 val;
->   	int ret;
->   
-> @@ -1116,18 +1094,13 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
->   	if (!(val & SE_CMD_DFS_EN))
->   		return 0;
->   
-> -	init = kzalloc(sizeof(*init), GFP_KERNEL);
-> -	if (!init)
-> -		return -ENOMEM;
-> -
-> -	init->name = rcg->clkr.hw.init->name;
-> -	init->flags = rcg->clkr.hw.init->flags;
-> -	init->parent_names = rcg->clkr.hw.init->parent_names;
-> -	init->num_parents = rcg->clkr.hw.init->num_parents;
-> -	init->flags = CLK_GET_RATE_NOCACHE;
-> +	/*
-> +	 * Rate changes with consumer writing a register in
-> +	 * their own I/O region
-> +	 */
-> +	init->flags |= CLK_GET_RATE_NOCACHE;
->   	init->ops = &clk_rcg2_dfs_ops;
->   
-> -	rcg->clkr.hw.init = init;
->   	rcg->freq_tbl = NULL;
->   
->   	pr_debug("DFS registered for clk %s\n", init->name);
-> @@ -1136,14 +1109,14 @@ static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
->   }
->   
->   int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-> -			    struct clk_rcg2 **rcgs, int num_clks)
-> +			     const struct clk_rcg_dfs_data *rcgs, size_t len)
->   {
->   	int i, ret;
->   
-> -	for (i = 0; i < num_clks; i++) {
-> -		ret = clk_rcg2_enable_dfs(rcgs[i], regmap);
-> +	for (i = 0; i < len; i++) {
-> +		ret = clk_rcg2_enable_dfs(&rcgs[i], regmap);
->   		if (ret) {
-> -			const char *name = rcgs[i]->clkr.hw.init->name;
-> +			const char *name = rcgs[i].init->name;
->   
->   			pr_err("DFS register failed for clk %s\n", name);
->   			return ret;
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index fef6732bd7d8..42ab01d33b52 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -396,18 +396,27 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_clk_src[] = {
->   	{ }
->   };
->   
-> +static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s0_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
-> +};
-> +
->   static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
->   	.cmd_rcgr = 0x17034,
->   	.mnd_width = 16,
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s0_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s0_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s1_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s1_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
-> @@ -416,12 +425,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s1_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s1_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s2_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s2_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
-> @@ -430,12 +441,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s2_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s2_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s3_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s3_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
-> @@ -444,12 +457,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s3_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s3_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s4_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s4_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
-> @@ -458,12 +473,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s4_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s4_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s5_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s5_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
-> @@ -472,12 +489,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s5_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s5_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s6_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s6_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
-> @@ -486,12 +505,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s6_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s6_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap0_s7_clk_init = {
-> +	.name = "gcc_qupv3_wrap0_s7_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
-> @@ -500,12 +521,14 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap0_s7_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap0_s7_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s0_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s0_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-> @@ -514,12 +537,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s0_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s0_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s1_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s1_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-> @@ -528,12 +553,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s1_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s1_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s2_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s2_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-> @@ -542,12 +569,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s2_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s2_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s3_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s3_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-> @@ -556,12 +585,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s3_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s3_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s4_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s4_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-> @@ -570,12 +601,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s4_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s4_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s5_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s5_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-> @@ -584,12 +617,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s5_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s5_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s6_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s6_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-> @@ -598,12 +633,14 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s6_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s6_clk_init,
-> +};
-> +
-> +static struct clk_init_data gcc_qupv3_wrap1_s7_clk_init = {
-> +	.name = "gcc_qupv3_wrap1_s7_clk_src",
-> +	.parent_names = gcc_parent_names_0,
-> +	.num_parents = 4,
-> +	.ops = &clk_rcg2_shared_ops,
->   };
->   
->   static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-> @@ -612,12 +649,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
->   	.hid_width = 5,
->   	.parent_map = gcc_parent_map_0,
->   	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
-> -	.clkr.hw.init = &(struct clk_init_data){
-> -		.name = "gcc_qupv3_wrap1_s7_clk_src",
-> -		.parent_names = gcc_parent_names_0,
-> -		.num_parents = 4,
-> -		.ops = &clk_rcg2_shared_ops,
-> -	},
-> +	.clkr.hw.init = &gcc_qupv3_wrap1_s7_clk_init,
->   };
->   
->   static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
-> @@ -3458,23 +3490,23 @@ static const struct of_device_id gcc_sdm845_match_table[] = {
->   };
->   MODULE_DEVICE_TABLE(of, gcc_sdm845_match_table);
->   
-> -static struct clk_rcg2 *gcc_dfs_clocks[] = {
-> -	&gcc_qupv3_wrap0_s0_clk_src,
-> -	&gcc_qupv3_wrap0_s1_clk_src,
-> -	&gcc_qupv3_wrap0_s2_clk_src,
-> -	&gcc_qupv3_wrap0_s3_clk_src,
-> -	&gcc_qupv3_wrap0_s4_clk_src,
-> -	&gcc_qupv3_wrap0_s5_clk_src,
-> -	&gcc_qupv3_wrap0_s6_clk_src,
-> -	&gcc_qupv3_wrap0_s7_clk_src,
-> -	&gcc_qupv3_wrap1_s0_clk_src,
-> -	&gcc_qupv3_wrap1_s1_clk_src,
-> -	&gcc_qupv3_wrap1_s2_clk_src,
-> -	&gcc_qupv3_wrap1_s3_clk_src,
-> -	&gcc_qupv3_wrap1_s4_clk_src,
-> -	&gcc_qupv3_wrap1_s5_clk_src,
-> -	&gcc_qupv3_wrap1_s6_clk_src,
-> -	&gcc_qupv3_wrap1_s7_clk_src,
-> +static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s6_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s7_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s6_clk),
-> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s7_clk),
->   };
->   
->   static int gcc_sdm845_probe(struct platform_device *pdev)
-> 
+Changes in v2: None
 
+ drivers/tty/serial/lantiq.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+index 836ca51460f2..e36e6a267e7a 100644
+--- a/drivers/tty/serial/lantiq.c
++++ b/drivers/tty/serial/lantiq.c
+@@ -114,6 +114,13 @@ struct ltq_uart_port {
+ 	unsigned int		err_irq;
+ };
+ 
++static inline void asc_update_bits(u32 clear, u32 set, void __iomem *reg)
++{
++	u32 tmp = readl(reg);
++
++	writel((tmp & ~clear) | set, reg);
++}
++
+ static inline struct
+ ltq_uart_port *to_ltq_uart_port(struct uart_port *port)
+ {
+@@ -164,16 +171,16 @@ lqasc_rx_chars(struct uart_port *port)
+ 		if (rsr & ASCSTATE_ANY) {
+ 			if (rsr & ASCSTATE_PE) {
+ 				port->icount.parity++;
+-				ltq_w32_mask(0, ASCWHBSTATE_CLRPE,
++				asc_update_bits(0, ASCWHBSTATE_CLRPE,
+ 					port->membase + LTQ_ASC_WHBSTATE);
+ 			} else if (rsr & ASCSTATE_FE) {
+ 				port->icount.frame++;
+-				ltq_w32_mask(0, ASCWHBSTATE_CLRFE,
++				asc_update_bits(0, ASCWHBSTATE_CLRFE,
+ 					port->membase + LTQ_ASC_WHBSTATE);
+ 			}
+ 			if (rsr & ASCSTATE_ROE) {
+ 				port->icount.overrun++;
+-				ltq_w32_mask(0, ASCWHBSTATE_CLRROE,
++				asc_update_bits(0, ASCWHBSTATE_CLRROE,
+ 					port->membase + LTQ_ASC_WHBSTATE);
+ 			}
+ 
+@@ -253,7 +260,7 @@ lqasc_err_int(int irq, void *_port)
+ 	struct uart_port *port = (struct uart_port *)_port;
+ 	spin_lock_irqsave(&ltq_asc_lock, flags);
+ 	/* clear any pending interrupts */
+-	ltq_w32_mask(0, ASCWHBSTATE_CLRPE | ASCWHBSTATE_CLRFE |
++	asc_update_bits(0, ASCWHBSTATE_CLRPE | ASCWHBSTATE_CLRFE |
+ 		ASCWHBSTATE_CLRROE, port->membase + LTQ_ASC_WHBSTATE);
+ 	spin_unlock_irqrestore(&ltq_asc_lock, flags);
+ 	return IRQ_HANDLED;
+@@ -305,7 +312,7 @@ lqasc_startup(struct uart_port *port)
+ 		clk_enable(ltq_port->clk);
+ 	port->uartclk = clk_get_rate(ltq_port->fpiclk);
+ 
+-	ltq_w32_mask(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
++	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
+ 		port->membase + LTQ_ASC_CLC);
+ 
+ 	ltq_w32(0, port->membase + LTQ_ASC_PISEL);
+@@ -321,7 +328,7 @@ lqasc_startup(struct uart_port *port)
+ 	 * setting enable bits
+ 	 */
+ 	wmb();
+-	ltq_w32_mask(0, ASCCON_M_8ASYNC | ASCCON_FEN | ASCCON_TOEN |
++	asc_update_bits(0, ASCCON_M_8ASYNC | ASCCON_FEN | ASCCON_TOEN |
+ 		ASCCON_ROEN, port->membase + LTQ_ASC_CON);
+ 
+ 	retval = request_irq(ltq_port->tx_irq, lqasc_tx_int,
+@@ -365,9 +372,9 @@ lqasc_shutdown(struct uart_port *port)
+ 	free_irq(ltq_port->err_irq, port);
+ 
+ 	ltq_w32(0, port->membase + LTQ_ASC_CON);
+-	ltq_w32_mask(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
++	asc_update_bits(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
+ 		port->membase + LTQ_ASC_RXFCON);
+-	ltq_w32_mask(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
++	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
+ 		port->membase + LTQ_ASC_TXFCON);
+ 	if (!IS_ERR(ltq_port->clk))
+ 		clk_disable(ltq_port->clk);
+@@ -439,7 +446,7 @@ lqasc_set_termios(struct uart_port *port,
+ 	spin_lock_irqsave(&ltq_asc_lock, flags);
+ 
+ 	/* set up CON */
+-	ltq_w32_mask(0, con, port->membase + LTQ_ASC_CON);
++	asc_update_bits(0, con, port->membase + LTQ_ASC_CON);
+ 
+ 	/* Set baud rate - take a divider of 2 into account */
+ 	baud = uart_get_baud_rate(port, new, old, 0, port->uartclk / 16);
+@@ -447,19 +454,19 @@ lqasc_set_termios(struct uart_port *port,
+ 	divisor = divisor / 2 - 1;
+ 
+ 	/* disable the baudrate generator */
+-	ltq_w32_mask(ASCCON_R, 0, port->membase + LTQ_ASC_CON);
++	asc_update_bits(ASCCON_R, 0, port->membase + LTQ_ASC_CON);
+ 
+ 	/* make sure the fractional divider is off */
+-	ltq_w32_mask(ASCCON_FDE, 0, port->membase + LTQ_ASC_CON);
++	asc_update_bits(ASCCON_FDE, 0, port->membase + LTQ_ASC_CON);
+ 
+ 	/* set up to use divisor of 2 */
+-	ltq_w32_mask(ASCCON_BRS, 0, port->membase + LTQ_ASC_CON);
++	asc_update_bits(ASCCON_BRS, 0, port->membase + LTQ_ASC_CON);
+ 
+ 	/* now we can write the new baudrate into the register */
+ 	ltq_w32(divisor, port->membase + LTQ_ASC_BG);
+ 
+ 	/* turn the baudrate generator back on */
+-	ltq_w32_mask(0, ASCCON_R, port->membase + LTQ_ASC_CON);
++	asc_update_bits(0, ASCCON_R, port->membase + LTQ_ASC_CON);
+ 
+ 	/* enable rx */
+ 	ltq_w32(ASCWHBSTATE_SETREN, port->membase + LTQ_ASC_WHBSTATE);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.11.0
