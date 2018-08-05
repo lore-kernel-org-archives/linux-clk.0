@@ -1,35 +1,41 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Aug 2018 10:16:50 -0600
-From: Rob Herring <robh@kernel.org>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-	Pawel Moll <pawel.moll@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>,
-	Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-	Julien Su <juliensu@mxic.com.tw>,
-	Mason Yang <masonccyang@mxic.com.tw>, zhengxunli@mxic.com.tw,
-	linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
- Wizard IP
-Message-ID: <20180814161650.GA22207@rob-hp-laptop>
-References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
- <20180801081950.10497-2-boris.brezillon@bootlin.com>
+Return-Path: <gustavo@embeddedor.com>
+Date: Sat, 4 Aug 2018 19:22:22 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] clk: qcom: clk-branch: Use true and false for boolean values
+Message-ID: <20180805002222.GA24789@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180801081950.10497-2-boris.brezillon@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 01, 2018 at 10:19:50AM +0200, Boris Brezillon wrote:
-> Document Xilinx Clocking Wizard bindings.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
->  .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
+Return statements in functions returning bool should use true or false
+instead of an integer value.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/clk/qcom/clk-branch.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+index bc2205c..99446bf 100644
+--- a/drivers/clk/qcom/clk-branch.c
++++ b/drivers/clk/qcom/clk-branch.c
+@@ -18,7 +18,7 @@ static bool clk_branch_in_hwcg_mode(const struct clk_branch *br)
+ 	u32 val;
+ 
+ 	if (!br->hwcg_reg)
+-		return 0;
++		return false;
+ 
+ 	regmap_read(br->clkr.regmap, br->hwcg_reg, &val);
+ 
+-- 
+2.7.4
