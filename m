@@ -1,72 +1,61 @@
-Return-Path: <brgl@bgdev.pl>
+Return-Path: <anischal@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <4a576f65b8fb3a0e6f0ca662e89070eb982be298.camel@perches.com>
-References: <20180827082101.5036-1-brgl@bgdev.pl> <4a576f65b8fb3a0e6f0ca662e89070eb982be298.camel@perches.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 Aug 2018 11:01:57 +0200
-Message-ID: <CAMRc=McVQ6co1KispVNotLOj4t6Pok0F+j4X9eYnrpDTm-CYaQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] devres: provide devm_kstrdup_const()
-To: Joe Perches <joe@perches.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>, Robin Murphy <robin.murphy@arm.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>, Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Mon, 06 Aug 2018 14:37:18 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
+ <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
+ Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
+ Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+In-Reply-To: <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
+ <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
+ <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
+ <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
+ <07e0321116993d27d6585bd1a186328d@codeaurora.org>
+ <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
+Message-ID: <ee2113c9dd6a44e9669e60f760c76409@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-08-27 10:42 GMT+02:00 Joe Perches <joe@perches.com>:
-> On Mon, 2018-08-27 at 10:21 +0200, Bartosz Golaszewski wrote:
->> Provide a resource managed version of kstrdup_const(). This variant
->> internally calls devm_kstrdup() on pointers that are outside of
->> .rodata section. Also provide a corresponding version of devm_kfree().
-> []
->> diff --git a/mm/util.c b/mm/util.c
-> []
->>  /**
->>   * kstrdup - allocate space for and copy an existing string
->>   * @s: the string to duplicate
->> @@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
->>  }
->>  EXPORT_SYMBOL(kstrdup_const);
->>
->> +/**
->> + * devm_kstrdup_const - resource managed conditional string duplication
->> + * @dev: device for which to duplicate the string
->> + * @s: the string to duplicate
->> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
->> + *
->> + * Function returns source string if it is in .rodata section otherwise it
->> + * fallbacks to devm_kstrdup.
->> + *
->> + * Strings allocated by devm_kstrdup_const will be automatically freed when
->> + * the associated device is detached.
->> + */
->> +char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
->> +{
->> +     if (is_kernel_rodata((unsigned long)s))
->> +             return s;
->> +
->> +     return devm_kstrdup(dev, s, gfp);
->> +}
->> +EXPORT_SYMBOL(devm_kstrdup_const);
->
-> Doesn't this lose constness and don't you get
-> a compiler warning here?
->
+On 2018-08-03 04:14, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-07-30 04:28:56)
+>> On 2018-07-25 12:28, Stephen Boyd wrote:
+>> >
+>> > Ok. Sounds good! Is the rate range call really needed? It can't be
+>> > determined in the PLL code with some table or avoided by making sure
+>> > GPU
+>> > uses OPP table with only approved frequencies?
+>> >
+>> 
+>> Currently fabia PLL code does not have any table to check this and
+>> intention
+>> was to avoid relying on the client to call set_rate with only approved
+>> frequencies so we have added the set_rate_range() call in the GPUCC
+>> driver
+>> in order to set the rate range.
+>> 
+> 
+> But GPU will use OPP so it doesn't seem like it really buys us anything
+> here. And it really doesn't matter when the clk driver implementation
+> doesn't use the min/max to clamp the values of the round_rate() call. 
+> Is
+> that being done here? I need to double check. I would be more convinced
+> if the implementation was looking at min/max to constrain the rate
+> requested.
+> 
 
-Yes it does but for some reason gcc 6.3 didn't complain...
+So our understanding is that GPU(client) driver will always call the
+set_rate with approved frequencies only and we can completely rely on 
+the
+client. Is our understanding is correct?
 
-> The kstrdup_const function returns a const char *,
-> why shouldn't this?
->
-
-It probably should, I'll fix it for v2.
-
-Bart
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
