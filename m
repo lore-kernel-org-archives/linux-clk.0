@@ -1,59 +1,44 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>, "thor.thayer@linux.intel.com"
-	<thor.thayer@linux.intel.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
-Date: Wed, 29 Aug 2018 12:26:04 +0000
-Message-ID: 
- <AM0PR04MB421119CF9432C8D87DFC226080090@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-6-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-6-songjun.wu@linux.intel.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 6 Aug 2018 09:16:06 -0600
+Message-ID: <CAL_JsqLMZbDuUsqbg63P-pO4D_L6PHqhJqj2NXfu9xwmu3Rabw@mail.gmail.com>
+Subject: Re: [PATCH v2 05/18] dt-binding: MIPS: Add documentation of Intel
+ MIPS SoCs
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIEF1Z3VzdCAyOSwgMjAxOCAx
-MTowOSBBTQ0KPiBUbzogQS5zLiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gQ2M6IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7
-IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyB0aG9yLnRoYXllckBsaW51eC5p
-bnRlbC5jb207IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUkU6IFtQQVRD
-SCBWMyAwLzRdIGNsazogbmV3IEFQSXMgdG8gaGFuZGxlIGFsbCBhdmFpbGFibGUgY2xvY2tzDQo+
-IA0KPiBRdW90aW5nIEEucy4gRG9uZyAoMjAxOC0wOC0xNiAxOTozMzo1MikNCj4gPiBIaSBTdGVw
-aGVuLA0KPiA+DQo+ID4gRG8geW91IHdhbnQgbWUgdG8gcmVzZW5kIHRoaXMgc2VyaWVzIGZvciBy
-ZXZpZXc/DQo+ID4gSXQgc2VlbXMgaGF2ZSBiZWVuIHBlbmRpbmcgZm9yIHF1aXRlIGEgbG9uZyB0
-aW1lLg0KPiA+DQo+ID4gVGhvciBqdXN0IHBpbmdlZCBtZSBmb3IgaXRzIHN0YXR1cyBhcyBoZSB3
-YW50cyB0byB1c2UgaXQuDQo+ID4NCj4gDQo+IEkgd2FzIHdhaXRpbmcgZm9yIHNvbWVvbmUgdG8g
-dHJ5IHRoZW0gb3V0IG9yIHJldmlldyB0aGVtLiBHb29kIHRoYXQgaXQNCj4gaGFwcGVuZWQhDQo+
-IA0KPiBJJ3ZlIHRha2VuIGEgbG9vayBhdCB0aGUgcGF0Y2hlcyBhbmQgSSdtIHNsaWdodGx5IGFu
-bm95ZWQgd2l0aCB0aGUgQVBJIHRoYXQNCj4gcGFzc2VzIGluIGEgZG91YmxlIHBvaW50ZXIgdG8g
-Y2xrX2J1bGtfZGF0YSBhbmQgcmV0dXJucyBhIGNvdW50IG9mIHRoZSBudW1iZXINCj4gb2YgY2xr
-cyBmb3VuZC4gSSBndWVzcyBpdCdzIG9rIHRob3VnaC4gSXQncyByZWFsbHkganVzdCB0aGlzDQo+
-IGxpbmU6DQo+IA0KPiAJZGV2cmVzLT5jbGtzID0gKmNsa3M7DQo+IA0KPiB3aGljaCBtYWtlcyBt
-eSBicmFpbiBhbGwgY29uZnVzZWQgYW5kIGdvIHRoaW5rIGFib3V0IHdoYXQncyBiZWluZyBhc3Np
-Z25lZA0KPiBhbmQgaWYgaXQncyBhIHN0cnVjdCBjb3B5IG9yIG5vdC4NCj4gDQo+IE1heWJlIHRo
-aXMgb24gdG9wIHdvdWxkIG1ha2UgaXQgZWFzaWVyIHRvIHRha2U/IEknbGwgdGhpbmsgYWJvdXQg
-aXQgdG9uaWdodC4NCj4gDQoNCkxvb2tzIGxpa2UgYSBnb29kIGlkZWEgdG8gbWUuDQpXaWxsIHVw
-ZGF0ZSBhbmQgcmVzZW5kLg0KVGhhbmtzIGZvciB0aGUgc3VnZ2VzdGlvbi4NCg0KUmVnYXJkcw0K
-RG9uZyBBaXNoZW5nDQoNCj4gLS0tODwtLS0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Ns
-ay1kZXZyZXMuYyBiL2RyaXZlcnMvY2xrL2Nsay1kZXZyZXMuYyBpbmRleA0KPiA2ZDNjYTVlYzVk
-ZTguLjEyYzg3NDU3ZWNhMSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLWRldnJlcy5j
-DQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1kZXZyZXMuYw0KPiBAQCAtODEsOSArODEsOSBAQCBp
-bnQgX19tdXN0X2NoZWNrIGRldm1fY2xrX2J1bGtfZ2V0X2FsbChzdHJ1Y3QgZGV2aWNlDQo+ICpk
-ZXYsDQo+ICAJaWYgKCFkZXZyZXMpDQo+ICAJCXJldHVybiAtRU5PTUVNOw0KPiANCj4gLQlyZXQg
-PSBjbGtfYnVsa19nZXRfYWxsKGRldiwgY2xrcyk7DQo+ICsJcmV0ID0gY2xrX2J1bGtfZ2V0X2Fs
-bChkZXYsICZkZXZyZXMtPmNsa3MpOw0KPiAgCWlmIChyZXQgPiAwKSB7DQo+IC0JCWRldnJlcy0+
-Y2xrcyA9ICpjbGtzOw0KPiArCQkqY2xrcyA9IGRldnJlcy0+Y2xrczsNCj4gIAkJZGV2cmVzLT5u
-dW1fY2xrcyA9IHJldDsNCj4gIAkJZGV2cmVzX2FkZChkZXYsIGRldnJlcyk7DQo+ICAJfSBlbHNl
-IHsNCg==
+On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>
+> From: Hua Ma <hua.ma@linux.intel.com>
+>
+> This patch adds binding documentation for the
+> compatible values of the Intel MIPS SoCs.
+>
+> Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
+>
+> Changes in v2:
+> - New patch split from previous patch
+> - Add the board and chip compatible in dt document
+>
+>  Documentation/devicetree/bindings/mips/intel.txt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mips/intel.txt
+
+Reviewed-by: Rob Herring <robh@kernel.org>
