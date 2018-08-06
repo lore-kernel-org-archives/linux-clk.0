@@ -1,47 +1,43 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH 1/2] clk: imx: imx7d: remove unnecessary clocks from clks_init_on array
-Date: Wed,  8 Aug 2018 12:39:26 +0800
-Message-Id: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <heiko@sntech.de>
+From: Heiko Stuebner <heiko@sntech.de>
+To: Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com, linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock updates for 4.19
+Date: Mon, 06 Aug 2018 10:50:24 +0200
+Message-ID: <29493561.nOART3tDXq@phil>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-On i.MX7D, IMX7D_NAND_USDHC_BUS_ROOT_CLK is NOT necessary
-for system, and IMX7D_AHB_CHANNEL_ROOT_CLK is NOT existing
-at all, remove them from clks_init_on array.
+Hi Mike, Stephen,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This one change on top of the previous changes that adds a critical clock
+on rk3399 to prevent random hangs due to it supplying the vdd_log
+cpu core supply.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 881b772..c4518d7 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -381,10 +381,9 @@ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_
- 
- static int const clks_init_on[] __initconst = {
- 	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
--	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_NAND_USDHC_BUS_ROOT_CLK,
-+	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_IPG_ROOT_CLK,
- 	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
- 	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
--	IMX7D_AHB_CHANNEL_ROOT_CLK, IMX7D_IPG_ROOT_CLK,
- };
- 
- static struct clk_onecell_data clk_data;
--- 
-2.7.4
+
+Please pull
+Heiko
+
+
+The following changes since commit a64ad008980c65d38e6cf6858429c78e6b740c41:
+
+  clk: rockchip: fix clk_i2sout parent selection bits on rk3399 (2018-07-08 00:19:19 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.19-rockchip-clk2
+
+for you to fetch changes up to 508fc689cfe514228cb0b91f94d5542ec11881b1:
+
+  clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399 (2018-08-06 10:03:13 +0200)
+
+----------------------------------------------------------------
+pclk_rkpwm_pmu as critical clock, due to it supplying the pwm
+used to drive the logic supply of the rk3399 core.
+
+----------------------------------------------------------------
+Levin Du (1):
+      clk: rockchip: Add pclk_rkpwm_pmu to PMU critical clocks in rk3399
+
+ drivers/clk/rockchip/clk-rk3399.c | 1 +
+ 1 file changed, 1 insertion(+)
