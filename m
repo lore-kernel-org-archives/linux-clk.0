@@ -1,50 +1,49 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: mediatek: remove unused array audio_parents
+Date: Mon,  6 Aug 2018 14:44:02 +0100
+Message-Id: <20180806134402.1055-1-colin.king@canonical.com>
 MIME-Version: 1.0
-To: Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-clk <linux-clk@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:MEDIA DRIVERS FOR RENESAS - FCP"
- <linux-renesas-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>
-References: <20180828154433.5693-1-robh@kernel.org>
- <20180828154433.5693-3-robh@kernel.org>
- <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
- <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Message-ID: <153564783492.129321.1020703197103191812@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
-Date: Thu, 30 Aug 2018 09:50:34 -0700
+Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Rob Herring (2018-08-29 04:13:44)
-> On Tue, Aug 28, 2018 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Rob Herring (2018-08-28 08:44:29)
-> > > In preparation to remove the node name pointer from struct device_nod=
-e,
-> > > convert printf users to use the %pOFn format specifier.
-> > >
-> > > Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: linux-clk@vger.kernel.org
-> > > Cc: linux-arm-kernel@lists.infradead.org
-> > > Cc: linux-renesas-soc@vger.kernel.org
-> > > Cc: linux-omap@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> >
-> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> =
+From: Colin Ian King <colin.king@canonical.com>
 
-> Please apply to the clock tree. There's no dependencies and removing
-> name will take some time.
-> =
+Array audio_parents is declared but never used, hence it is redundant
+and can be removed.
 
+Cleans up clang warning:
+warning: 'audio_parents' defined but not used [-Wunused-const-variable=]
 
-Alright. Applied to clk-next. Thanks!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/mediatek/clk-mt2701.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index 4dda8988b2f0..ab6ab07f53e6 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -249,11 +249,6 @@ static const char * const msdc30_parents[] = {
+ 	"univpll2_d4"
+ };
+ 
+-static const char * const audio_parents[] = {
+-	"clk26m",
+-	"syspll1_d16"
+-};
+-
+ static const char * const aud_intbus_parents[] = {
+ 	"clk26m",
+ 	"syspll1_d4",
+-- 
+2.17.1
