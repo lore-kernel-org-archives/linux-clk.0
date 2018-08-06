@@ -1,85 +1,103 @@
-Return-Path: <hdegoede@redhat.com>
-From: Hans de Goede <hdegoede@redhat.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	netdev@vger.kernel.org,
-	Johannes Stezenbach <js@sig21.net>,
-	Carlo Caione <carlo@endlessm.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 1/4] clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
-Date: Mon, 27 Aug 2018 16:31:57 +0200
-Message-Id: <20180827143200.8597-2-hdegoede@redhat.com>
-In-Reply-To: <20180827143200.8597-1-hdegoede@redhat.com>
-References: <20180827143200.8597-1-hdegoede@redhat.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga04.intel.com ([192.55.52.120]:60163 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbeHFJXC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Aug 2018 05:23:02 -0400
+Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
+To: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, hua.ma@linux.intel.com,
+        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-15-songjun.wu@linux.intel.com>
+ <20180803055640.GA32226@kroah.com>
+ <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com>
+ <20180803103023.GA6557@kroah.com>
+ <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de>
+ <20180804124309.GB4920@kroah.com>
+ <CAK8P3a3qs34LuhPeaef2wPHYEWbYO5N-4n7763BcaDyppiJ6DA@mail.gmail.com>
+From: "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <acd28f40-4342-7f67-8468-7d4578f614a1@linux.intel.com>
+Date: Mon, 6 Aug 2018 15:05:27 +0800
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a3qs34LuhPeaef2wPHYEWbYO5N-4n7763BcaDyppiJ6DA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
-firmware") causes all unclaimed PMC clocks on Cherry Trail devices to be on
-all the time, resulting on the device not being able to reach S0i2 or S0i3
-when suspended.
 
-The reason for this commit is that on some Bay Trail / Cherry Trail devices
-the ethernet controller uses pmc_plt_clk_4. This commit adds an "ether_clk"
-alias, so that the relevant ethernet drivers can try to (optionally) use
-this, without needing X86 specific code / hacks, thus fixing ethernet on
-these devices without breaking S0i3 support.
 
-This commit uses clkdev_hw_create() to create the alias, mirroring the code
-for the already existing "mclk" alias for pmc_plt_clk_3.
+On 8/5/2018 5:03 AM, Arnd Bergmann wrote:
+> On Sat, Aug 4, 2018 at 2:43 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+>> On Sat, Aug 04, 2018 at 12:54:22PM +0200, Hauke Mehrtens wrote:
+>>> On 08/03/2018 12:30 PM, Greg Kroah-Hartman wrote:
+>>>> On Fri, Aug 03, 2018 at 03:33:38PM +0800, Wu, Songjun wrote:
+>>> This patch makes it possible to use it with the legacy lantiq code and
+>>> also with the common clock framework. I see multiple options to fix this
+>>> problem.
+>>>
+>>> 1. The current approach to have it as a compile variant for a) legacy
+>>> lantiq arch code without common clock framework and b) support for SoCs
+>>> using the common clock framework.
+>>> 2. Convert the lantiq arch code to the common clock framework. This
+>>> would be a good approach, but it need some efforts.
+>>> 3. Remove the arch/mips/lantiq code. There are still users of this code.
+>>> 4. Use the old APIs also for the new xRX500 SoC, I do not like this
+>>> approach.
+>>> 5. Move lantiq_soc.h to somewhere in include/linux/ so it is globally
+>>> available and provide some better wrapper code.
+>> I don't really care what you do at this point in time, but you all
+>> should know better than the crazy #ifdef is not allowed to try to
+>> prevent/allow the inclusion of a .h file.  Checkpatch might have even
+>> warned you about it, right?
+>>
+>> So do it correctly, odds are #5 is correct, as that makes it work like
+>> any other device in the kernel.  You are not unique here.
+> The best approach here would clearly be 2. We don't want platform
+> specific header files for doing things that should be completely generic.
+>
+> Converting lantiq to the common-clk framework obviously requires
+> some work, but then again the whole arch/mips/lantiq/clk.c file
+> is fairly short and maybe not that hard to convert.
+>
+> >From looking at arch/mips/lantiq/xway/sysctrl.c, it appears that you
+> already use the clkdev lookup mechanism for some devices without
+> using COMMON_CLK, so I would assume that you can also use those
+> for the remaining clks, which would be much simpler. It registers
+> one anonymous clk there as
+>
+>          clkdev_add_pmu("1e100c00.serial", NULL, 0, 0, PMU_ASC1);
+>
+> so why not add replace that with two named clocks and just use
+> the same names in the DT for the newer chip?
+>
+>        Arnd
+We discussed internally and have another solution for this issue.
+Add one lantiq.h in the serial folder, and use "#ifdef preprocessor" in 
+lantiq.h,
+also providing no-op stub functions in the #else case, then call those 
+functions
+unconditionally from lantiq.c to avoid #ifdef in C file.
 
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
-Cc: Johannes Stezenbach <js@sig21.net>
-Cc: Carlo Caione <carlo@endlessm.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/clk/x86/clk-pmc-atom.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+To support CCF in legacy product is another topic, is not included in 
+this patch.
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 08ef69945ffb..75151901ff7d 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -55,6 +55,7 @@ struct clk_plt_data {
- 	u8 nparents;
- 	struct clk_plt *clks[PMC_CLK_NUM];
- 	struct clk_lookup *mclk_lookup;
-+	struct clk_lookup *ether_clk_lookup;
- };
- 
- /* Return an index in parent table */
-@@ -351,11 +352,20 @@ static int plt_clk_probe(struct platform_device *pdev)
- 		goto err_unreg_clk_plt;
- 	}
- 
-+	data->ether_clk_lookup = clkdev_hw_create(&data->clks[4]->hw,
-+						  "ether_clk", NULL);
-+	if (!data->ether_clk_lookup) {
-+		err = -ENOMEM;
-+		goto err_drop_mclk;
-+	}
-+
- 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
- 
- 	platform_set_drvdata(pdev, data);
- 	return 0;
- 
-+err_drop_mclk:
-+	clkdev_drop(data->mclk_lookup);
- err_unreg_clk_plt:
- 	plt_clk_unregister_loop(data, i);
- 	plt_clk_unregister_parents(data);
-@@ -369,6 +379,7 @@ static int plt_clk_remove(struct platform_device *pdev)
- 
- 	data = platform_get_drvdata(pdev);
- 
-+	clkdev_drop(data->ether_clk_lookup);
- 	clkdev_drop(data->mclk_lookup);
- 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
- 	plt_clk_unregister_parents(data);
--- 
-2.18.0
+The implementation is as following：
+#ifdef CONFIG_LANTIQ
+#include <lantiq_soc.h>
+#else
+#define LTQ_EARLY_ASC 0
+#define CPHYSADDR(_val) 0
+
+static inline struct clk *clk_get_fpi(void)
+{
+     return NULL;
+}
+#endif
