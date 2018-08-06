@@ -1,77 +1,68 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr50053.outbound.protection.outlook.com ([40.107.5.53]:4672
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728057AbeHVQmk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Aug 2018 12:42:40 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abelvesa@linux.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RESEND v5 4/5] clk: imx: add imx composite clock
-Date: Wed, 22 Aug 2018 13:17:40 +0000
-Message-ID: <20180822131739.a2qoweu5vnakhjg6@fsr-ub1664-175>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
- <1534749367-31085-5-git-send-email-abel.vesa@nxp.com>
- <20180821065830.x5illrgyqct6h3nf@pengutronix.de>
-In-Reply-To: <20180821065830.x5illrgyqct6h3nf@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-3-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-3-songjun.wu@linux.intel.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 6 Aug 2018 09:19:59 -0600
+Message-ID: <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
+	chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 08:58:30AM +0200, Sascha Hauer wrote:
-> On Mon, Aug 20, 2018 at 10:16:06AM +0300, Abel Vesa wrote:
-> > +
-> > +	val |=3D (u32)value << divider->shift;
-> > +	val |=3D (u32)value << PCG_DIV_SHIFT;
-> > +	clk_writel(val, divider->reg);
-> > +
-> > +	spin_unlock_irqrestore(divider->lock, flags);
-> > +
-> > +	return 0;
-> > +}
->=20
-> Have you tested this works? I thought those are two cascaded dividers
-> and you program both to the same value. Normally you would have to
-> calculate individual values for each divider which together give you the
-> desired output rate.
+On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
 >
+> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>
+> This driver provides PLL clock registration as well as various clock
+> branches, e.g. MUX clock, gate clock, divider clock and so on.
+>
+> PLLs that provide clock to DDR, CPU and peripherals are shown below:
+>
+>                  +---------+
+>             |--->| LCPLL3 0|--PCIe clk-->
+>    XO       |    +---------+
+> +-----------|
+>             |    +---------+
+>             |    |        3|--PAE clk-->
+>             |--->| PLL0B  2|--GSWIP clk-->
+>             |    |        1|--DDR clk-->DDR PHY clk-->
+>             |    |        0|--CPU1 clk--+   +-----+
+>             |    +---------+            |--->0    |
+>             |                               | MUX |--CPU clk-->
+>             |    +---------+            |--->1    |
+>             |    |        0|--CPU0 clk--+   +-----+
+>             |--->| PLLOA  1|--SSX4 clk-->
+>                  |        2|--NGI clk-->
+>                  |        3|--CBM clk-->
+>                  +---------+
+>
+> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
+>
+> Changes in v2:
+> - Rewrite clock driver, add platform clock description details in
+>   clock driver.
+>
+>  drivers/clk/Kconfig                          |   1 +
+>  drivers/clk/Makefile                         |   3 +
+>  drivers/clk/intel/Kconfig                    |  20 ++
+>  drivers/clk/intel/Makefile                   |   7 +
+>  drivers/clk/intel/clk-cgu-pll.c              | 166 ++++++++++
+>  drivers/clk/intel/clk-cgu-pll.h              |  34 ++
+>  drivers/clk/intel/clk-cgu.c                  | 470 +++++++++++++++++++++++++++
+>  drivers/clk/intel/clk-cgu.h                  | 259 +++++++++++++++
+>  drivers/clk/intel/clk-grx500.c               | 168 ++++++++++
 
-My bad. Haven't properly tested it since there is no actual driver that cal=
-ls
-set_rate on any of those clocks at this point. Sorry about that. I'll send
-another version today, where I've implemented it as I should've done from t=
-he
-start and I've tested it by explicitly calling the set_rate and read the va=
-lue
-with clk_get_rate to make sure it's fine.
-=20
-> Sascha
->=20
-> --=20
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 | https://emea01.safelinks.pro=
-tection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=3D02=
-%7C01%7Cabel.vesa%40nxp.com%7C722eb3cdb15849a9d19608d6073382e4%7C686ea1d3bc=
-2b4c6fa92cd99c5c301635%7C0%7C0%7C636704315167487036&amp;sdata=3DQ29pmTcLbqN=
-PjotCFjZ%2BldD%2FBlbYpm6fN%2BzguHixwfA%3D&amp;reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+>  include/dt-bindings/clock/intel,grx500-clk.h |  69 ++++
 
--- =
+This belongs with the clk binding patch.
+
+Rob
