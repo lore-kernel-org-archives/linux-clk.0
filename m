@@ -1,87 +1,67 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 5/6] crypto - Group Freescale/NXP ARM architecture Kconfig entires together
-Date: Thu, 30 Aug 2018 19:15:38 +0200
-Message-Id: <20180830171539.20008-6-krzk@kernel.org>
-In-Reply-To: <20180830171539.20008-1-krzk@kernel.org>
-References: <20180830171539.20008-1-krzk@kernel.org>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+ <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+ <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+ <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+ <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
+ <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <4154b955-4f89-035a-8a02-a3e8bd8d9ede@lechnology.com>
+Date: Mon, 6 Aug 2018 11:35:16 -0500
+MIME-Version: 1.0
+In-Reply-To: <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Group Freescale/NXP Kconfig entires for ARM architecture CPUs/SoCs
-together to make it more consistent and easy to read.
+On 07/10/2018 05:19 AM, Sekhar Nori wrote:
+> On Friday 06 July 2018 11:09 PM, David Lechner wrote:
+>> On 07/04/2018 01:35 AM, Sekhar Nori wrote:
+>>> Hi David,
+>>>
+>>> On Monday 02 July 2018 09:02 PM, David Lechner wrote:
+>>>> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
+>>>>> Hi David, Stephen,
+>>>>>
+>>>>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+>>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>>
+>>>>>> This series moves all aemif/nand users to using the ti-aemif platform
+>>>>>> driver located in drivers/memory instead of the older API located in
+>>>>>> mach-davinci.
+>>>>>>
+>>>>>> First five patches add necessary changes to the clock driver. Next
+>>>>>> seven convert the board files to using the ti-aemif driver. Last patch
+>>>>>> removes now dead code.
+>>>>>
+>>>>> How do you want to handle this series? I can apply the series and
+>>>>> provide you an immutable branch on v4.18-rc1 with the clock patches
+>>>>> applied if that can work.
+>>>>
+>>>> Sounds good to me. But I'm new to this maintainer thing, so maybe
+>>>> there is something to consider that I haven't thought of?
+>>>
+>>> I don't think there is more to it. Ultimately there should not be two
+>>> commits for the same patch. Either you can apply and share the commit to
+>>> use or I can do that as well. I am equally fine either way.
+>>>
+>>> Regards,
+>>> Sekhar
+>>>
+>>
+>> I've created a branch for-sekhar at https://github.com/dlech/linux.git
+>> with the clk commits.
+> 
+> Thanks. I merged commit f917ff75ac55b6d829c9d1142e83913064565d5b (top of
+> that branch) to my v4.19/soc branch. Please do let Stephen and Mike know
+> about this then when you send your stuff for v4.19.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/crypto/Kconfig | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index a8c4ce07fc9d..20314d7a7b58 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -402,6 +402,22 @@ config CRYPTO_DEV_MXC_SCC
- 	  This option enables support for the Security Controller (SCC)
- 	  found in Freescale i.MX25 chips.
- 
-+config CRYPTO_DEV_MXS_DCP
-+	tristate "Support for Freescale MXS DCP"
-+	depends on (ARCH_MXS || ARCH_MXC)
-+	select STMP_DEVICE
-+	select CRYPTO_CBC
-+	select CRYPTO_ECB
-+	select CRYPTO_AES
-+	select CRYPTO_BLKCIPHER
-+	select CRYPTO_HASH
-+	help
-+	  The Freescale i.MX23/i.MX28 has SHA1/SHA256 and AES128 CBC/ECB
-+	  co-processor on the die.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called mxs-dcp.
-+
- config CRYPTO_DEV_EXYNOS_RNG
- 	tristate "EXYNOS HW pseudo random number generator support"
- 	depends on ARCH_EXYNOS || COMPILE_TEST
-@@ -542,22 +558,6 @@ if CRYPTO_DEV_CCP
- 	source "drivers/crypto/ccp/Kconfig"
- endif
- 
--config CRYPTO_DEV_MXS_DCP
--	tristate "Support for Freescale MXS DCP"
--	depends on (ARCH_MXS || ARCH_MXC)
--	select STMP_DEVICE
--	select CRYPTO_CBC
--	select CRYPTO_ECB
--	select CRYPTO_AES
--	select CRYPTO_BLKCIPHER
--	select CRYPTO_HASH
--	help
--	  The Freescale i.MX23/i.MX28 has SHA1/SHA256 and AES128 CBC/ECB
--	  co-processor on the die.
--
--	  To compile this driver as a module, choose M here: the module
--	  will be called mxs-dcp.
--
- source "drivers/crypto/qat/Kconfig"
- source "drivers/crypto/cavium/cpt/Kconfig"
- source "drivers/crypto/cavium/nitrox/Kconfig"
--- 
-2.14.1
+Since there have been no more clk-davinci patches for v4.19, I assume that
+it is OK to just let this go through the ARM tree via Sekhar?
