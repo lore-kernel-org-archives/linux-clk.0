@@ -1,41 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28442 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FSz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:18:55 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B87460C.5000005@samsung.com>
-Date: Thu, 30 Aug 2018 10:19:08 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 07/10] clk: samsung: exynos5250: Use generic helper for
- handling suspend/resume
-In-reply-to: <20180829155046.29359-8-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155101eucas1p22b694bf6395d8efcb33ba3802e287c88@eucas1p2.samsung.com>
-        <20180829155046.29359-8-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1533574172.2809.11.camel@pengutronix.de>
+Subject: Re: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
+ fsl,pmic-stby-poweroff property
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Robin Gong <yibin.gong@nxp.com>, Oleksij Rempel
+ <o.rempel@pengutronix.de>,  Shawn Guo <shawnguo@kernel.org>, Mark Brown
+ <broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob
+ Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>, "A.s. Dong"
+ <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King
+ <linux@armlinux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Leonard
+ Crestez <leonard.crestez@nxp.com>,  "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 06 Aug 2018 18:49:32 +0200
+In-Reply-To: <DB6PR04MB3223362445234D81383F0D1689200@DB6PR04MB3223.eurprd04.prod.outlook.com>
+References: <20180726092220.17250-1-o.rempel@pengutronix.de>
+	 <20180726092220.17250-2-o.rempel@pengutronix.de>
+	 <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+	 <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
+	 <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+	 <1532680211.32306.36.camel@pengutronix.de>
+	 <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
+	 <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
+	 <DB6PR04MB3223362445234D81383F0D1689200@DB6PR04MB3223.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
-> Replace common suspend/resume handling code by generic helper.
-> No functional change.
+Am Montag, den 06.08.2018, 02:34 +0000 schrieb Robin Gong:
+> > > > Not all boards follow the reference design, that's a fact of
+> > > > life.
+> > > > 
+> > > > Please look at the i.MX6Q reference manual. The sequence
+> > > > implemented
+> > > > in this patchset can be found as a valid way to power off the
+> > > > system
+> > > > in
+> > > > "60.4.3 Power mode transitions" "Normal ON to OFF with external
+> > > > PMIC", so there is hardly any way to argue that this is a board
+> > > > specific quirk. This is one of the Freescale/NXP recommended
+> > > > sequences to
+> > 
+> > turn off the system.
+> > 
+> > > Okay, but could you add one more comment for this solution? RTC
+> > > alarm
+> > > and ONOFF Button wakeup feature can't be support in this case.
+> > 
+> > Enough to add it in to changelog? or should it go to the binding
+> > documentation?
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5250.c | 42 ++--------------------------
->  1 file changed, 2 insertions(+), 40 deletions(-)
+> The binding doc is better.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Sorry, I disagree.
 
-(snip)
+A binding is a way to describe a specific hardware layout, it isn't the
+right place to advice a hardware designer on the implications of a
+specific hardware implementation. The NXP hardware design guide is a
+more suitable place for this information.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+We also don't mention in random bindings that the system won't be able
+to brew a fresh cup of coffee.
+
+Regards,
+Lucas
