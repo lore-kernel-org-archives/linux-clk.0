@@ -1,36 +1,68 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 29 Aug 2018 22:30:38 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <anson.huang@nxp.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"A.s. Dong" <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
-Message-ID: <20180829143032.GO3850@dragon>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
- <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
- <20180712025203.GQ6959@dragon>
- <DB3PR0402MB39163FACD5AE40052010B390F5090@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:40159 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727510AbeHFLk4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Aug 2018 07:40:56 -0400
+Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-9-songjun.wu@linux.intel.com>
+ <20180803054304.GA2214@kroah.com>
+From: "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <198e6e8a-cb42-f6b5-b1c0-e3f0bfd3124a@linux.intel.com>
+Date: Mon, 6 Aug 2018 17:32:39 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <DB3PR0402MB39163FACD5AE40052010B390F5090@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <20180803054304.GA2214@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Aug 29, 2018 at 01:12:04AM +0000, Anson Huang wrote:
-> Hi, Shawn
-> 	I saw v4.19-rc1 is created, can you please apply this patch?
-> 
 
-Applied.  Thanks for reminding.
 
-Shawn
+On 8/3/2018 1:43 PM, Greg Kroah-Hartman wrote:
+> On Fri, Aug 03, 2018 at 11:02:27AM +0800, Songjun Wu wrote:
+>> Get serial id from dts.
+>>
+>> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
+>> macro is defined in lantiq_soc.h.
+>> lantiq_soc.h is in arch path for legacy product support.
+>>
+>> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
+>>
+>> If "#ifdef preprocessor" is changed to
+>> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
+>> code using LTQ_EARLY_ASC is compiled.
+>> Compilation will fail for no LTQ_EARLY_ASC defined.
+>>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> ---
+>>
+>> Changes in v2: None
+>>
+>>   drivers/tty/serial/lantiq.c | 19 +++++++++++++++----
+>>   1 file changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
+>> index 044128277248..836ca51460f2 100644
+>> --- a/drivers/tty/serial/lantiq.c
+>> +++ b/drivers/tty/serial/lantiq.c
+>> @@ -6,6 +6,7 @@
+>>    * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
+>>    * Copyright (C) 2007 John Crispin <john@phrozen.org>
+>>    * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
+>> + * Copyright (C) 2018 Intel Corporation.
+> Your changes here do not warrent the addition of a copyright line, don't
+> you agree?  If not, please get a signed-off-by from your corporate
+> lawyer who does this this is warrented when you resend this patch.
+>
+> thanks,
+>
+> greg k-h
+>
+Thanks.
+The copyright line will be removed when we resend this patch.
