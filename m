@@ -1,104 +1,92 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v11 04/11] firmware: xilinx: Add query data API
-Date: Fri, 3 Aug 2018 10:53:21 -0700
-Message-ID: <1533318808-10781-5-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-4-songjun.wu@linux.intel.com>
+In-Reply-To: <20180803030237.3366-4-songjun.wu@linux.intel.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 6 Aug 2018 09:18:49 -0600
+Message-ID: <CAL_JsqKLa1e3X+ddAoVdEwBQFd6tsL=RjOLcTLdfoc6mpKuefQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/18] dt-bindings: clk: Add documentation of grx500
+ clock controller
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
+	chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>
+> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>
+> This patch adds binding documentation for grx500 clock controller.
+>
+> Signed-off-by: YiXin Zhu <yixin.zhu@linux.intel.com>
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> ---
+>
+> Changes in v2:
+> - Rewrite clock driver's dt-binding document according to Rob Herring's
+>   comments.
+> - Simplify device tree docoment, remove some clock description.
+>
+>  .../devicetree/bindings/clock/intel,grx500-clk.txt | 39 ++++++++++++++++++++++
 
-Add ZynqMP firmware query data API to query platform
-specific information(clocks, pins) from firmware.
+Please match the compatible string: intel,grx500-cgu.txt
 
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 14 ++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 20 ++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+> new file mode 100644
+> index 000000000000..e54e1dad9196
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+> @@ -0,0 +1,39 @@
+> +Device Tree Clock bindings for grx500 PLL controller.
+> +
+> +This binding uses the common clock binding:
+> +       Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +
+> +The grx500 clock controller supplies clock to various controllers within the
+> +SoC.
+> +
+> +Required properties for clock node
+> +- compatible: Should be "intel,grx500-cgu".
+> +- reg: physical base address of the controller and length of memory range.
+> +- #clock-cells: should be 1.
+> +
+> +Optional Propteries:
+> +- intel,osc-frequency: frequency of the osc clock.
+> +if missing, driver will use clock rate defined in the driver.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 24cfd9e..8ec5682 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -260,9 +260,23 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
- 				   arg1, arg2, out);
- }
- 
-+/**
-+ * zynqmp_pm_query_data() - Get query data from firmware
-+ * @qdata:	Variable to the zynqmp_pm_query_data structure
-+ * @out:	Returned output value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
-+{
-+	return zynqmp_pm_invoke_fn(PM_QUERY_DATA, qdata.qid, qdata.arg1,
-+				   qdata.arg2, qdata.arg3, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-+	.query_data = zynqmp_pm_query_data,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 2eec6e7..55ed2ba 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -35,6 +35,7 @@
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
-+	PM_QUERY_DATA,
- };
- 
- /* PMU-FW return status codes */
-@@ -48,9 +49,28 @@ enum pm_ret_status {
- 	XST_PM_ABORT_SUSPEND,
- };
- 
-+enum pm_query_id {
-+	PM_QID_INVALID,
-+};
-+
-+/**
-+ * struct zynqmp_pm_query_data - PM query data
-+ * @qid:	query ID
-+ * @arg1:	Argument 1 of query data
-+ * @arg2:	Argument 2 of query data
-+ * @arg3:	Argument 3 of query data
-+ */
-+struct zynqmp_pm_query_data {
-+	u32 qid;
-+	u32 arg1;
-+	u32 arg2;
-+	u32 arg3;
-+};
-+
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
-+	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+This should use a fixed-clock node instead.
+
+> +
+> +Example: Clock controller node:
+> +
+> +       cgu: cgu@16200000 {
+> +                compatible = "intel,grx500-cgu", "syscon";
+> +               reg = <0x16200000 0x200>;
+> +               #clock-cells = <1>;
+> +       };
+> +
+> +
+> +Example: UART controller node that consumes the clock generated by clock
+> +       controller.
+> +
+> +       asc0: serial@16600000 {
+> +               compatible = "lantiq,asc";
+> +               reg = <0x16600000 0x100000>;
+> +               interrupt-parent = <&gic>;
+> +               interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
+> +                       <GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
+> +                       <GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
+> +               clock-names = "freq", "asc";
+> +       };
+> --
+> 2.11.0
+>
