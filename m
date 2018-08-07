@@ -1,68 +1,58 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 7 Aug 2018 12:47:10 -0600
+From: Rob Herring <robh@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+	devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+	bdong@ucrobotics.com, manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+	pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
+Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
+ SoCs
+Message-ID: <20180807184710.GA26423@rob-hp-laptop>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
+ <20180730151131.GA28633@mani>
 MIME-Version: 1.0
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
-Date: Tue, 28 Aug 2018 20:08:38 -0700
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180730151131.GA28633@mani>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting A.s. Dong (2018-08-16 19:33:52)
-> Hi Stephen,
-> =
+On Mon, Jul 30, 2018 at 08:41:31PM +0530, Manivannan Sadhasivam wrote:
+> Hi Andreas,
+> 
+> On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
+> > Hi Mani,
+> > 
+> > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
+> > > This patchset adds Reset Controller (RMU) support for Actions Semi
+> > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+> > > the clock subsystem in hardware. Hence, in software we integrate RMU
+> > > support into common clock driver inorder to maintain compatibility.
+> > 
+> > Can this not be placed into drivers/reset/ by using mfd-simple with a
+> > sub-node in DT?
 
-> Do you want me to resend this series for review?
-> It seems have been pending for quite a long time.
-> =
+That is exactly what I tell folks not to do. Design the DT based on h/w 
+blocks, not current desired driver split for some OS.
 
-> Thor just pinged me for its status as he wants to use it.
-> =
+> Actually I was not sure where to place this reset controller driver. When I
+> looked into other similar ones such as sunxi, they just integrated into the
+> clk subsystem. So I just chose that path. But yeah, this is hacky!
+> 
+> But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
+> are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
+> RMU has only 2 registers, the HW designers decided to use up the CMU memory
+> map. So, maybe syscon would be best option I think. What is your opinion?
 
+If there's nothing shared then it is not a syscon. If you can create 
+separate address ranges, then 2 nodes is probably okay. If the registers 
+are all mixed up, then 1 node.
 
-I was waiting for someone to try them out or review them. Good that it
-happened!
-
-I've taken a look at the patches and I'm slightly annoyed with the API
-that passes in a double pointer to clk_bulk_data and returns a count of
-the number of clks found. I guess it's ok though. It's really just this
-line:
-
-	devres->clks =3D *clks;
-
-which makes my brain all confused and go think about what's being
-assigned and if it's a struct copy or not.
-
-Maybe this on top would make it easier to take? I'll think about it
-tonight.
-
----8<---
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 6d3ca5ec5de8..12c87457eca1 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -81,9 +81,9 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
- 	if (!devres)
- 		return -ENOMEM;
- =
-
--	ret =3D clk_bulk_get_all(dev, clks);
-+	ret =3D clk_bulk_get_all(dev, &devres->clks);
- 	if (ret > 0) {
--		devres->clks =3D *clks;
-+		*clks =3D devres->clks;
- 		devres->num_clks =3D ret;
- 		devres_add(dev, devres);
- 	} else {
+Rob
