@@ -1,43 +1,99 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20620 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FRk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:17:40 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B8745C6.5030706@samsung.com>
-Date: Thu, 30 Aug 2018 10:17:58 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 03/10] clk: samsung: s3c2412: Use generic helper for
- handling suspend/resume
-In-reply-to: <20180829155046.29359-4-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155059eucas1p16fecde00348e0a2e6707aaf2a76320be@eucas1p1.samsung.com>
-        <20180829155046.29359-4-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/3] clk: max77686: Add SPDX license identifiers
+Date: Tue,  7 Aug 2018 18:17:11 +0200
+Message-Id: <20180807161713.28073-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+Replace GPL v2.0 and v2.0+ license statements with SPDX license
+identifiers.
 
-On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
-> Replace common suspend/resume handling code by generic helper.
-> No functional change.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s3c2412.c | 43 ++-----------------------------
->  1 file changed, 2 insertions(+), 41 deletions(-)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk-max77686.c                 | 27 ++++++---------------------
+ include/dt-bindings/clock/maxim,max77686.h |  5 +----
+ include/dt-bindings/clock/maxim,max77802.h |  5 +----
+ 3 files changed, 8 insertions(+), 29 deletions(-)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-(snip)
-
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index eb953d3b0b69..02551fe4b87c 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -1,24 +1,9 @@
+-/*
+- * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
+- *
+- * Copyright (C) 2012 Samsung Electornics
+- * Jonghwa Lee <jonghwa3.lee@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// clk-max77686.c - Clock driver for Maxim 77686/MAX77802
++//
++// Copyright (C) 2012 Samsung Electornics
++// Jonghwa Lee <jonghwa3.lee@samsung.com>
+ 
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+diff --git a/include/dt-bindings/clock/maxim,max77686.h b/include/dt-bindings/clock/maxim,max77686.h
+index 7b28b0905869..af8261dcace1 100644
+--- a/include/dt-bindings/clock/maxim,max77686.h
++++ b/include/dt-bindings/clock/maxim,max77686.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2014 Google, Inc
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clocks for the Maxim 77686 PMIC.
+  */
+ 
+diff --git a/include/dt-bindings/clock/maxim,max77802.h b/include/dt-bindings/clock/maxim,max77802.h
+index 997312edcbb5..51adcbaed697 100644
+--- a/include/dt-bindings/clock/maxim,max77802.h
++++ b/include/dt-bindings/clock/maxim,max77802.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2014 Google, Inc
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clocks for the Maxim 77802 PMIC.
+  */
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.14.1
