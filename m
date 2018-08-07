@@ -1,68 +1,98 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-3-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-3-songjun.wu@linux.intel.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 6 Aug 2018 09:19:59 -0600
-Message-ID: <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
-Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
-	chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sangbeom Kim <sbkim73@samsung.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/3] clk: s2mps11,s3c64xx: Add SPDX license identifiers
+Date: Tue,  7 Aug 2018 18:17:12 +0200
+Message-Id: <20180807161713.28073-2-krzk@kernel.org>
+In-Reply-To: <20180807161713.28073-1-krzk@kernel.org>
+References: <20180807161713.28073-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
->
-> From: Yixin Zhu <yixin.zhu@linux.intel.com>
->
-> This driver provides PLL clock registration as well as various clock
-> branches, e.g. MUX clock, gate clock, divider clock and so on.
->
-> PLLs that provide clock to DDR, CPU and peripherals are shown below:
->
->                  +---------+
->             |--->| LCPLL3 0|--PCIe clk-->
->    XO       |    +---------+
-> +-----------|
->             |    +---------+
->             |    |        3|--PAE clk-->
->             |--->| PLL0B  2|--GSWIP clk-->
->             |    |        1|--DDR clk-->DDR PHY clk-->
->             |    |        0|--CPU1 clk--+   +-----+
->             |    +---------+            |--->0    |
->             |                               | MUX |--CPU clk-->
->             |    +---------+            |--->1    |
->             |    |        0|--CPU0 clk--+   +-----+
->             |--->| PLLOA  1|--SSX4 clk-->
->                  |        2|--NGI clk-->
->                  |        3|--CBM clk-->
->                  +---------+
->
-> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
->
-> Changes in v2:
-> - Rewrite clock driver, add platform clock description details in
->   clock driver.
->
->  drivers/clk/Kconfig                          |   1 +
->  drivers/clk/Makefile                         |   3 +
->  drivers/clk/intel/Kconfig                    |  20 ++
->  drivers/clk/intel/Makefile                   |   7 +
->  drivers/clk/intel/clk-cgu-pll.c              | 166 ++++++++++
->  drivers/clk/intel/clk-cgu-pll.h              |  34 ++
->  drivers/clk/intel/clk-cgu.c                  | 470 +++++++++++++++++++++++++++
->  drivers/clk/intel/clk-cgu.h                  | 259 +++++++++++++++
->  drivers/clk/intel/clk-grx500.c               | 168 ++++++++++
+Replace GPL v2.0 and v2.0+ license statements with SPDX license
+identifiers.
 
->  include/dt-bindings/clock/intel,grx500-clk.h |  69 ++++
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/clk-s2mps11.c                         | 21 +++++----------------
+ include/dt-bindings/clock/samsung,s2mps11.h       |  5 +----
+ include/dt-bindings/clock/samsung,s3c64xx-clock.h |  7 ++-----
+ 3 files changed, 8 insertions(+), 25 deletions(-)
 
-This belongs with the clk binding patch.
-
-Rob
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index d44e0eea31ec..ebf9115dad1d 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -1,19 +1,8 @@
+-/*
+- * clk-s2mps11.c - Clock driver for S2MPS11.
+- *
+- * Copyright (C) 2013,2014 Samsung Electornics
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// clk-s2mps11.c - Clock driver for S2MPS11.
++//
++// Copyright (C) 2013,2014 Samsung Electornics
+ 
+ #include <linux/module.h>
+ #include <linux/err.h>
+diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
+index b903d7de27c9..5ece35d429ff 100644
+--- a/include/dt-bindings/clock/samsung,s2mps11.h
++++ b/include/dt-bindings/clock/samsung,s2mps11.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2015 Markus Reichl
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
+  */
+ 
+diff --git a/include/dt-bindings/clock/samsung,s3c64xx-clock.h b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+index ad95c7f50090..19d233f37e2f 100644
+--- a/include/dt-bindings/clock/samsung,s3c64xx-clock.h
++++ b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+@@ -1,12 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Tomasz Figa <tomasz.figa at gmail.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Samsung S3C64xx clock controller.
+-*/
++ */
+ 
+ #ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
+ #define _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
+-- 
+2.14.1
