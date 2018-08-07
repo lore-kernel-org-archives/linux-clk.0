@@ -1,83 +1,68 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Michal Simek <michals@xilinx.com>, Stephen Boyd <sboyd@kernel.org>,
-	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-	"dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, "keescook@chromium.org"
-	<keescook@chromium.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "mingo@kernel.org"
-	<mingo@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Michal
- Simek <michals@xilinx.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rajan Vaja
-	<RAJANV@xilinx.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for
- ZynqMP core
-Date: Fri, 3 Aug 2018 17:59:35 +0000
-Message-ID: 
- <CY1PR02MB2138A6BBE829400CEABA5AAFB8230@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
- <2c3aad45-37ce-2446-4b90-bddb477286ed@xilinx.com>
- <CY1PR02MB2138E21A3FFBD5FEEAA7D6D4B8550@CY1PR02MB2138.namprd02.prod.outlook.com>
- <19376df2-fdd4-12e3-da4c-37106fffed19@xilinx.com>
- <153262301567.48062.15432354725863055071@swboyd.mtv.corp.google.com>
- <e5448935-770a-5c14-438c-23a652b17822@xilinx.com>
- <153324358299.10763.8724416723915219268@swboyd.mtv.corp.google.com>
- <d153598d-8d09-fb32-f68e-6fc4975eb9ce@xilinx.com>
-In-Reply-To: <d153598d-8d09-fb32-f68e-6fc4975eb9ce@xilinx.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:35579 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732805AbeHGJq4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Aug 2018 05:46:56 -0400
 MIME-Version: 1.0
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-15-songjun.wu@linux.intel.com> <20180803055640.GA32226@kroah.com>
+ <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com> <20180803103023.GA6557@kroah.com>
+ <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de> <20180804124309.GB4920@kroah.com>
+ <CAK8P3a3qs34LuhPeaef2wPHYEWbYO5N-4n7763BcaDyppiJ6DA@mail.gmail.com>
+ <acd28f40-4342-7f67-8468-7d4578f614a1@linux.intel.com> <CAMuHMdWY9NuYOXq8sD9wmH48=vhMcSBomRY9ZbC+tGE3PGiTGg@mail.gmail.com>
+ <0ab8e6e7-3cc2-8e50-b1f3-99616437f527@linux.intel.com> <CAMuHMdUJ8-bveoHWOetjrHtq2HNPnf00PidQwJ-kZD2o86KLMw@mail.gmail.com>
+ <d6d0be20-aea9-cecf-1e39-3d65c0dbad5f@linux.intel.com>
+In-Reply-To: <d6d0be20-aea9-cecf-1e39-3d65c0dbad5f@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 7 Aug 2018 09:33:39 +0200
+Message-ID: <CAMuHMdXADda8fuc9_oTGQFPUnYs8gX-Bp6md5fJgu=wHvM-duw@mail.gmail.com>
+Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
+To: songjun.wu@linux.intel.com
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hauke Mehrtens <hauke@hauke-m.de>, hua.ma@linux.intel.com,
+        yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgTWljaGFsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGxpbnV4
-LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1rZXJuZWwtDQo+IG93
-bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIE1pY2hhbCBTaW1law0KPiBTZW50OiBU
-aHVyc2RheSwgQXVndXN0IDAyLCAyMDE4IDExOjE0IFBNDQo+IFRvOiBTdGVwaGVuIEJveWQgPHNi
-b3lkQGtlcm5lbC5vcmc+OyBhcmQuYmllc2hldXZlbEBsaW5hcm8ub3JnOw0KPiBkbWl0cnkudG9y
-b2tob3ZAZ21haWwuY29tOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsNCj4gaGthbGx3ZWl0
-MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVs
-Lm9yZzsNCj4gbWFyay5ydXRsYW5kQGFybS5jb207IG1hdHRAY29kZWJsdWVwcmludC5jby51azsg
-bWluZ29Aa2VybmVsLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHJvYmgrZHRAa2Vy
-bmVsLm9yZzsgc2JveWRAY29kZWF1cm9yYS5vcmc7DQo+IHN1ZGVlcC5ob2xsYUBhcm0uY29tOyBK
-b2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT47IE1pY2hhbCBTaW1law0KPiA8bWljaGFsc0B4
-aWxpbnguY29tPg0KPiBDYzogZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IFJhamFuIFZhamEg
-PFJBSkFOVkB4aWxpbnguY29tPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENI
-IHYxMCAwMC8xMF0gZHJpdmVyczogSW50cm9kdWNlIGZpcm13YXJlIGRuZCBjbG9jayByaXZlciBm
-b3INCj4gWnlucU1QIGNvcmUNCj4gDQo+IE9uIDIuOC4yMDE4IDIyOjU5LCBTdGVwaGVuIEJveWQg
-d3JvdGU6DQo+ID4gUXVvdGluZyBNaWNoYWwgU2ltZWsgKDIwMTgtMDctMzAgMDU6NTA6NDIpDQo+
-ID4+IE9uIDI2LjcuMjAxOCAxODozNiwgU3RlcGhlbiBCb3lkIHdyb3RlOg0KPiA+Pj4gUXVvdGlu
-ZyBNaWNoYWwgU2ltZWsgKDIwMTgtMDctMjUgMDI6NTE6MTQpDQo+ID4+Pj4gT24gMjQuNy4yMDE4
-IDIwOjE0LCBKb2xseSBTaGFoIHdyb3RlOg0KPiA+Pj4+Pj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy9maXJtd2FyZS94aWxpbngvenlucW1wLWRlYnVnLmgNCj4gPj4+Pj4+PiAgY3JlYXRl
-IG1vZGUgMTAwNjQ0IGRyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFtcC5jICBjcmVhdGUNCj4g
-Pj4+Pj4+PiBtb2RlDQo+ID4+Pj4+Pj4gMTAwNjQ0IGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2sv
-eGxueCx6eW5xbXAtY2xrLmgNCj4gPj4+Pj4+PiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUv
-bGludXgvZmlybXdhcmUveGxueC16eW5xbXAuaA0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+
-Pj4gSXQgbG9va3MgcHJldHR5IGNhbG0gb3ZlciB0aGUgbGFzdCBzZXZlcmFsIHNlcmllcyB0aGF0
-J3Mgd2h5IHdoZW4NCj4gPj4+Pj4+IEkgZ2V0IGFuIGFuc3dlciBmcm9tIFN0ZXBoZW4gb3IgTWlr
-ZSBJIHdpbGwgdGFrZSB0aGlzIHNlcmllcyB2aWEgbXkgdHJlZQ0KPiBhbmQgYXJtLXNvYyB0cmVl
-Lg0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IEkgaGF2ZSBhcHBsaWVkIDAxLTA4IGhlcmUNCj4gPj4+Pj4+
-ICBodHRwczovL2dpdGh1Yi5jb20vWGlsaW54L2xpbnV4LXhsbngvY29tbWl0cy96eW5xbXAvc29j
-DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gVGhhbmtzLA0KPiA+Pj4+Pj4gTWljaGFsDQo+ID4+Pj4+DQo+
-ID4+Pj4+DQo+ID4+Pj4+IFRoYW5rcyBmb3IgbWVyZ2luZyB0aGUgcGF0Y2hlcy4NCj4gPj4+Pj4g
-QnkgbWlzdGFrZSBJIGFkZGVkIOKAnFJldmlld2VkLWJ5OiBTdGVwaGVuIEJveWQgc2JveWRAa2Vy
-bmVsLm9yZ+KAnSBmb3INCj4gZmlybXdhcmUgYmluZGluZ3MgKFBhdGNoMDEpLiAgU3RlcGhlbiBo
-YWQgcmV2aWV3ZWQgY2xvY2sgYmluZGluZ3Mgb25seS4gIFBsZWFzZQ0KPiBzdWdnZXN0IGlmIEkg
-c2hvdWxkIHNlbmQgYSBuZXcgdmVyc2lvbiB3aXRoIHRoYXQgZml4Lg0KPiA+Pj4+DQo+ID4+Pj4g
-SSBoYXZlIGZpeGVkIHRoYXQgaW4gbXkgYnJhbmNoIGFuZCBJIGhhdmUgYXNrZWQgU2hlcGhlbiB0
-byBsb29rIGF0DQo+ID4+Pj4gY2xrIG92ZXIgY2hhdC4NCj4gPj4+Pg0KPiA+Pj4NCj4gPj4+IEkg
-aGF2ZSBzb21lIHVucmVzb2x2ZWQgcmV2aWV3IGNvbW1lbnRzIG9uIHY5LiBJJ2xsIGdpdmUgcmV2
-aWV3ZWQtYnkNCj4gPj4+IHdoZW4gdGhhdCBkaXNjdXNzaW9uIGlzIHJlc29sdmVkLg0KPiA+Pg0K
-PiA+PiBvay4gRG8geW91IHdhbnQgdG8gdGFrZSB0aGVtIHZpYSBjbGsgdHJlZSBvciB2aWEgYXJt
-LXNvYyB0cmVlPw0KPiA+Pg0KPiA+DQo+ID4gSSdtIGZpbmUgZm9yIHRoZSBjbGsgcGF0Y2ggdG8g
-Z28gdmlhIGFybS1zb2MgaWYgdGhhdCBtYWtlcyBpdCBlYXNpZXIuDQo+ID4NCj4gDQo+IG9rLiBH
-cmVhdC4NCj4gSm9sbHk6IFBsZWFzZSBhZGRyZXNzIGFsbCBTdGVwaGVuJ3MgY29tbWVudHMgdGhh
-dCB3ZSBjYW4gbW92ZS4NCj4gDQo+IFRoYW5rcywNCj4gTWljaGFsDQoNClBvc3RlZCBWMTEgcGF0
-Y2ggc2V0IHdpdGggYWxsIGhpcyBjb21tZW50cyBhZGRyZXNzZWQuIA0KDQpUaGFua3MsDQpKb2xs
-eSBTaGFoDQo=
+Hi Songjun,
+
+On Tue, Aug 7, 2018 at 9:18 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
+> On 8/6/2018 5:29 PM, Geert Uytterhoeven wrote:
+> > On Mon, Aug 6, 2018 at 10:58 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
+> >> The reason we add a new head file is also for two macros(LTQ_EARLY_ASC
+> >> and CPHYSADDR)
+> >> used by legacy product. We need to provide the no-op stub for these two
+> >> macro for new product.
+> > No you don't. The line number should not be obtained by comparing the
+> > resource address with a hardcoded base address.
+> This is the previous code. Now the line number is obtained from dts.
+
+Note that obtaining line numbers from DTS has its own share of problems, when
+considering DT overlays. I've replied to the patch adding the call to
+of_alias_get_id().
+
+> We keep this code for the compatibility.
+>
+> Referring to the conditional-compilation part in coding-style,
+> We add a header file to avoid using “#ifdef” in C file.
+> > Perhaps the override of port->line should just be removed, as IIRC, the serial
+> > core has already filled in that field with the (next available) line number?
+
+Gr{oetje,eeting}s,
+
+                        Geert--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
