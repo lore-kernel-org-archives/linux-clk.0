@@ -1,30 +1,76 @@
-Return-Path: <shubhrajyoti.datta@gmail.com>
+Return-Path: <yixin.zhu@linux.intel.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Rob Herring <robh+dt@kernel.org>, Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, chuanhua.lei@linux.intel.com,
+ qi-ming.wu@intel.com, Linux-MIPS <linux-mips@linux-mips.org>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+ devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
+From: yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <57bea045-628b-2dad-2492-dadd9947cbe9@linux.intel.com>
+Date: Wed, 8 Aug 2018 10:51:50 +0800
 MIME-Version: 1.0
-In-Reply-To: <20180801081950.10497-2-boris.brezillon@bootlin.com>
-References: <20180801081950.10497-1-boris.brezillon@bootlin.com> <20180801081950.10497-2-boris.brezillon@bootlin.com>
-From: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Date: Sat, 11 Aug 2018 16:18:54 +0530
-Message-ID: <CAKfKVtGHwafCtPo2MR-dw-61UYH3A4H3bRZ9ipGuGx5bLBNp3Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
- Wizard IP
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Julien Su <juliensu@mxic.com.tw>,
-	Mason Yang <masonccyang@mxic.com.tw>, zhengxunli@mxic.com.tw,
-	linux-arm-kernel@lists.infradead.org, Michal Simek <michal.simek@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqK5pFNKyAhTTmNpaSnKa_beY3kS8FGtYim8oTgw6oO9Rw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi  Boris,
 
 
-On Wed, Aug 1, 2018 at 1:49 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> Document Xilinx Clocking Wizard bindings.
+On 8/6/2018 11:19 PM, Rob Herring wrote:
+> On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>
+>> This driver provides PLL clock registration as well as various clock
+>> branches, e.g. MUX clock, gate clock, divider clock and so on.
+>>
+>> PLLs that provide clock to DDR, CPU and peripherals are shown below:
+>>
+>>                   +---------+
+>>              |--->| LCPLL3 0|--PCIe clk-->
+>>     XO       |    +---------+
+>> +-----------|
+>>              |    +---------+
+>>              |    |        3|--PAE clk-->
+>>              |--->| PLL0B  2|--GSWIP clk-->
+>>              |    |        1|--DDR clk-->DDR PHY clk-->
+>>              |    |        0|--CPU1 clk--+   +-----+
+>>              |    +---------+            |--->0    |
+>>              |                               | MUX |--CPU clk-->
+>>              |    +---------+            |--->1    |
+>>              |    |        0|--CPU0 clk--+   +-----+
+>>              |--->| PLLOA  1|--SSX4 clk-->
+>>                   |        2|--NGI clk-->
+>>                   |        3|--CBM clk-->
+>>                   +---------+
+>>
+>> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> ---
+>>
+>> Changes in v2:
+>> - Rewrite clock driver, add platform clock description details in
+>>    clock driver.
+>>
+>>   drivers/clk/Kconfig                          |   1 +
+>>   drivers/clk/Makefile                         |   3 +
+>>   drivers/clk/intel/Kconfig                    |  20 ++
+>>   drivers/clk/intel/Makefile                   |   7 +
+>>   drivers/clk/intel/clk-cgu-pll.c              | 166 ++++++++++
+>>   drivers/clk/intel/clk-cgu-pll.h              |  34 ++
+>>   drivers/clk/intel/clk-cgu.c                  | 470 +++++++++++++++++++++++++++
+>>   drivers/clk/intel/clk-cgu.h                  | 259 +++++++++++++++
+>>   drivers/clk/intel/clk-grx500.c               | 168 ++++++++++
+>>   include/dt-bindings/clock/intel,grx500-clk.h |  69 ++++
+> This belongs with the clk binding patch.
 >
+> Rob
+Thanks for review.
+Will move it to clock binding patch.
 
-Thanks for the patches.
-Are you planning to post another version patching the staging?
+>
