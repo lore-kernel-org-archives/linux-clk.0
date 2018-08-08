@@ -1,57 +1,130 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 2/5] soc/fsl/guts: Add compatible string for LX2160A
-Date: Mon, 20 Aug 2018 12:17:13 +0530
-Message-Id: <1534747636-20064-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <abailon@baylibre.com>
+Return-Path: <abailon@baylibre.com>
+Subject: Re: [PATCH V4 0/9] clk: add imx7ulp clk support
+To: "A.s. Dong" <aisheng.dong@nxp.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "sboyd@kernel.org" <sboyd@kernel.org>
+Cc: Jacky Bai <ping.bai@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>, "shawnguo@kernel.org"
+ <shawnguo@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: Alexandre Bailon <abailon@baylibre.com>
+Message-ID: <5a5950a4-e164-a604-ccb4-ae6d5bbe1708@baylibre.com>
+Date: Wed, 8 Aug 2018 12:01:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+In-Reply-To: <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding compatible string "lx2160a-dcfg" to
-initialize guts driver for lx2160
+Hi Dong Aisheng,
 
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
----
- drivers/soc/fsl/guts.c | 1 +
- 1 file changed, 1 insertion(+)
+On 07/26/2018 03:50 AM, A.s. Dong wrote:
+> Hi Stephen,
+> 
+> Do you have a chance to look at it?
+> This patch series has been pending for quite a long time without much comments.
+I'm not a kernel maintainer but I would not review a series that has
+checkpatch errors.
+Please run checkpatch, fix the errors and the warnings, and then
+resubmit a series.
 
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index 302e0c8..5e1e633 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -222,6 +222,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
- 	{ .compatible = "fsl,ls1088a-dcfg", },
- 	{ .compatible = "fsl,ls1012a-dcfg", },
- 	{ .compatible = "fsl,ls1046a-dcfg", },
-+	{ .compatible = "fsl,lx2160a-dcfg", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
--- 
-2.7.4
+Best Regards,
+Alexandre
+> 
+> Regards
+> Dong Aisheng
+> 
+>> -----Original Message-----
+>> From: A.s. Dong
+>> Sent: Wednesday, July 18, 2018 9:37 PM
+>> To: linux-clk@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+>> Anson Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
+>> linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+>> Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
+>>
+>> This is a rebased version of below patch series against latest clk tree.
+>> [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
+>> https://lkml.org/lkml/2018/3/16/310
+>>
+>> This patch series intends to add imx7ulp clk support.
+>>
+>> i.MX7ULP Clock functions are under joint control of the System Clock
+>> Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
+>> Core Mode Controller (CMC)1 blocks
+>>
+>> The clocking scheme provides clear separation between M4 domain and A7
+>> domain. Except for a few clock sources shared between two domains, such
+>> as the System Oscillator clock, the Slow IRC (SIRC), and and the Fast IRC clock
+>> (FIRCLK), clock sources and clock management are separated and contained
+>> within each domain.
+>>
+>> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+>> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+>>
+>> Note: this series only adds A7 clock domain support as M4 clock domain will
+>> be handled by M4 seperately.
+>>
+>> Change Log:
+>> v3->v4:
+>>  * rebased to latest kernel
+>>  * make scg and pcc separate nodes according to Rob's suggestion
+>>
+>> v2->v3:
+>>  * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible racy
+>>    Others no changes.
+>>
+>> v1->v2:
+>>  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+>>  * use clk_hw apis to register clocks
+>>  * use of_clk_add_hw_provider
+>>  * split the clocks register process into two parts: early part for possible
+>>    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+>>    the left normal peripheral clocks registered by a platform driver.
+>>
+>> Dong Aisheng (9):
+>>   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+>>   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+>>   clk: imx: add pllv4 support
+>>   clk: imx: add pfdv2 support
+>>   clk: imx: add composite clk support
+>>   dt-bindings: clock: add imx7ulp clock binding doc
+>>   clk: imx: make mux parent strings const
+>>   clk: imx: implement new clk_hw based APIs
+>>   clk: imx: add imx7ulp clk driver
+>>
+>>  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
+>>  drivers/clk/clk-divider.c                          | 152 +++++++++++++++
+>>  drivers/clk/clk-fractional-divider.c               |  10 +
+>>  drivers/clk/imx/Makefile                           |   6 +-
+>>  drivers/clk/imx/clk-busy.c                         |   2 +-
+>>  drivers/clk/imx/clk-composite.c                    |  85 +++++++++
+>>  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+>>  drivers/clk/imx/clk-imx7ulp.c                      | 209 +++++++++++++++++++++
+>>  drivers/clk/imx/clk-pfdv2.c                        | 201 ++++++++++++++++++++
+>>  drivers/clk/imx/clk-pllv4.c                        | 182 ++++++++++++++++++
+>>  drivers/clk/imx/clk.c                              |  22 +++
+>>  drivers/clk/imx/clk.h                              |  92 ++++++++-
+>>  include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++
+>>  include/linux/clk-provider.h                       |  17 ++
+>>  14 files changed, 1166 insertions(+), 10 deletions(-)  create mode 100644
+>> Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+>>  create mode 100644 drivers/clk/imx/clk-composite.c  create mode 100644
+>> drivers/clk/imx/clk-imx7ulp.c  create mode 100644 drivers/clk/imx/clk-
+>> pfdv2.c  create mode 100644 drivers/clk/imx/clk-pllv4.c  create mode 100644
+>> include/dt-bindings/clock/imx7ulp-clock.h
+>>
+>> --
+>> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
