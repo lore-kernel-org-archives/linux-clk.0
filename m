@@ -4,104 +4,127 @@ To: shawnguo@kernel.org,
 	s.hauer@pengutronix.de,
 	kernel@pengutronix.de,
 	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	colin.didier@devialet.com,
-	clement.peron@devialet.com,
-	ping.bai@nxp.com,
-	aisheng.dong@nxp.com,
-	shengjiu.wang@nxp.com,
-	matteo.lisi@engicam.com,
-	michael@amarulasolutions.com,
 	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Cc: Linux-imx@nxp.com
-Subject: [PATCH 7/7] ARM: dts: imx6: add mmdc ipg clock
-Date: Fri, 31 Aug 2018 15:53:18 +0800
-Message-Id: <1535701998-20443-8-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
-References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date: Wed,  8 Aug 2018 12:39:27 +0800
+Message-Id: <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6 SoCs has MMDC clock gates in CCM CCGR, add
-clock property for MMDC driver's clock operation.
+Clock framework will enable those clocks registered
+with CLK_IS_CRITICAL flag, so no need to have
+clks_init_on array during clock initialization now.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 1 +
- arch/arm/boot/dts/imx6sl.dtsi  | 1 +
- arch/arm/boot/dts/imx6sll.dtsi | 1 +
- arch/arm/boot/dts/imx6sx.dtsi  | 1 +
- arch/arm/boot/dts/imx6ul.dtsi  | 1 +
- 5 files changed, 5 insertions(+)
+ drivers/clk/imx/clk-imx7d.c | 27 ++++++++-------------------
+ drivers/clk/imx/clk.h       |  7 +++++++
+ 2 files changed, 15 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index 61d2d26..5d33729 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -1115,6 +1115,7 @@
- 			mmdc0: mmdc@21b0000 { /* MMDC0 */
- 				compatible = "fsl,imx6q-mmdc";
- 				reg = <0x021b0000 0x4000>;
-+				clocks = <&clks IMX6QDL_CLK_MMDC_P0_IPG>;
- 			};
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index c4518d7..076460b 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -379,13 +379,6 @@ static const char *pll_enet_bypass_sel[] = { "pll_enet_main", "pll_enet_main_src
+ static const char *pll_audio_bypass_sel[] = { "pll_audio_main", "pll_audio_main_src", };
+ static const char *pll_video_bypass_sel[] = { "pll_video_main", "pll_video_main_src", };
  
- 			mmdc1: mmdc@21b4000 { /* MMDC1 */
-diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-index 7a4f5da..63a18e1 100644
---- a/arch/arm/boot/dts/imx6sl.dtsi
-+++ b/arch/arm/boot/dts/imx6sl.dtsi
-@@ -921,6 +921,7 @@
- 			mmdc: mmdc@21b0000 {
- 				compatible = "fsl,imx6sl-mmdc", "fsl,imx6q-mmdc";
- 				reg = <0x021b0000 0x4000>;
-+				clocks = <&clks IMX6SL_CLK_MMDC_P0_IPG>;
- 			};
+-static int const clks_init_on[] __initconst = {
+-	IMX7D_ARM_A7_ROOT_CLK, IMX7D_MAIN_AXI_ROOT_CLK,
+-	IMX7D_PLL_SYS_MAIN_480M_CLK, IMX7D_IPG_ROOT_CLK,
+-	IMX7D_DRAM_PHYM_ROOT_CLK, IMX7D_DRAM_ROOT_CLK,
+-	IMX7D_DRAM_PHYM_ALT_ROOT_CLK, IMX7D_DRAM_ALT_ROOT_CLK,
+-};
+-
+ static struct clk_onecell_data clk_data;
  
- 			rngb: rngb@21b4000 {
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index ed9a980..e462f76 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -770,6 +770,7 @@
- 			mmdc: memory-controller@21b0000 {
- 				compatible = "fsl,imx6sll-mmdc", "fsl,imx6q-mmdc";
- 				reg = <0x021b0000 0x4000>;
-+				clocks = <&clks IMX6SLL_CLK_MMDC_P0_IPG>;
- 			};
+ static struct clk ** const uart_clks[] __initconst = {
+@@ -403,7 +396,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ {
+ 	struct device_node *np;
+ 	void __iomem *base;
+-	int i;
  
- 			ocotp: ocotp-ctrl@21bc000 {
-diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-index 844caa3..ba4ab79 100644
---- a/arch/arm/boot/dts/imx6sx.dtsi
-+++ b/arch/arm/boot/dts/imx6sx.dtsi
-@@ -1002,6 +1002,7 @@
- 			mmdc: mmdc@21b0000 {
- 				compatible = "fsl,imx6sx-mmdc", "fsl,imx6q-mmdc";
- 				reg = <0x021b0000 0x4000>;
-+				clocks = <&clks IMX6SX_CLK_MMDC_P0_IPG>;
- 			};
+ 	clks[IMX7D_CLK_DUMMY] = imx_clk_fixed("dummy", 0);
+ 	clks[IMX7D_OSC_24M_CLK] = of_clk_get_by_name(ccm_node, "osc");
+@@ -466,7 +458,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_PLL_SYS_MAIN_120M] = imx_clk_fixed_factor("pll_sys_main_120m", "pll_sys_main_clk", 1, 4);
+ 	clks[IMX7D_PLL_DRAM_MAIN_533M] = imx_clk_fixed_factor("pll_dram_533m", "pll_dram_main_clk", 1, 2);
  
- 			fec2: ethernet@21b4000 {
-diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
-index 448d765..2019ad5 100644
---- a/arch/arm/boot/dts/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/imx6ul.dtsi
-@@ -916,6 +916,7 @@
- 			mmdc: mmdc@21b0000 {
- 				compatible = "fsl,imx6ul-mmdc", "fsl,imx6q-mmdc";
- 				reg = <0x021b0000 0x4000>;
-+				clocks = <&clks IMX6UL_CLK_MMDC_P0_IPG>;
- 			};
+-	clks[IMX7D_PLL_SYS_MAIN_480M_CLK] = imx_clk_gate_dis("pll_sys_main_480m_clk", "pll_sys_main_480m", base + 0xb0, 4);
++	clks[IMX7D_PLL_SYS_MAIN_480M_CLK] = imx_clk_gate_dis_flags("pll_sys_main_480m_clk", "pll_sys_main_480m", base + 0xb0, 4, CLK_IS_CRITICAL);
+ 	clks[IMX7D_PLL_SYS_MAIN_240M_CLK] = imx_clk_gate_dis("pll_sys_main_240m_clk", "pll_sys_main_240m", base + 0xb0, 5);
+ 	clks[IMX7D_PLL_SYS_MAIN_120M_CLK] = imx_clk_gate_dis("pll_sys_main_120m_clk", "pll_sys_main_120m", base + 0xb0, 6);
+ 	clks[IMX7D_PLL_DRAM_MAIN_533M_CLK] = imx_clk_gate("pll_dram_533m_clk", "pll_dram_533m", base + 0x70, 12);
+@@ -719,7 +711,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_ENET_AXI_ROOT_DIV] = imx_clk_divider2("enet_axi_post_div", "enet_axi_pre_div", base + 0x8900, 0, 6);
+ 	clks[IMX7D_NAND_USDHC_BUS_ROOT_CLK] = imx_clk_divider2("nand_usdhc_root_clk", "nand_usdhc_pre_div", base + 0x8980, 0, 6);
+ 	clks[IMX7D_AHB_CHANNEL_ROOT_DIV] = imx_clk_divider2("ahb_root_clk", "ahb_pre_div", base + 0x9000, 0, 6);
+-	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider2("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2);
++	clks[IMX7D_IPG_ROOT_CLK] = imx_clk_divider_flags("ipg_root_clk", "ahb_root_clk", base + 0x9080, 0, 2, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_PARENT);
+ 	clks[IMX7D_DRAM_ROOT_DIV] = imx_clk_divider2("dram_post_div", "dram_cg", base + 0x9880, 0, 3);
+ 	clks[IMX7D_DRAM_PHYM_ALT_ROOT_DIV] = imx_clk_divider2("dram_phym_alt_post_div", "dram_phym_alt_pre_div", base + 0xa000, 0, 3);
+ 	clks[IMX7D_DRAM_ALT_ROOT_DIV] = imx_clk_divider2("dram_alt_post_div", "dram_alt_pre_div", base + 0xa080, 0, 3);
+@@ -783,17 +775,17 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX7D_CLKO1_ROOT_DIV] = imx_clk_divider2("clko1_post_div", "clko1_pre_div", base + 0xbd80, 0, 6);
+ 	clks[IMX7D_CLKO2_ROOT_DIV] = imx_clk_divider2("clko2_post_div", "clko2_pre_div", base + 0xbe00, 0, 6);
  
- 			weim: weim@21b8000 {
+-	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate4("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0);
++	clks[IMX7D_ARM_A7_ROOT_CLK] = imx_clk_gate2_flags("arm_a7_root_clk", "arm_a7_div", base + 0x4000, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
+ 	clks[IMX7D_ARM_M4_ROOT_CLK] = imx_clk_gate4("arm_m4_root_clk", "arm_m4_div", base + 0x4010, 0);
+-	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate4("main_axi_root_clk", "axi_post_div", base + 0x4040, 0);
++	clks[IMX7D_MAIN_AXI_ROOT_CLK] = imx_clk_gate2_flags("main_axi_root_clk", "axi_post_div", base + 0x4040, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
+ 	clks[IMX7D_DISP_AXI_ROOT_CLK] = imx_clk_gate4("disp_axi_root_clk", "disp_axi_post_div", base + 0x4050, 0);
+ 	clks[IMX7D_ENET_AXI_ROOT_CLK] = imx_clk_gate4("enet_axi_root_clk", "enet_axi_post_div", base + 0x4060, 0);
+ 	clks[IMX7D_OCRAM_CLK] = imx_clk_gate4("ocram_clk", "main_axi_root_clk", base + 0x4110, 0);
+ 	clks[IMX7D_OCRAM_S_CLK] = imx_clk_gate4("ocram_s_clk", "ahb_root_clk", base + 0x4120, 0);
+-	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate4("dram_root_clk", "dram_post_div", base + 0x4130, 0);
+-	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate4("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0);
+-	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate4("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0);
+-	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate4("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0);
++	clks[IMX7D_DRAM_ROOT_CLK] = imx_clk_gate2_flags("dram_root_clk", "dram_post_div", base + 0x4130, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
++	clks[IMX7D_DRAM_PHYM_ROOT_CLK] = imx_clk_gate2_flags("dram_phym_root_clk", "dram_phym_cg", base + 0x4130, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
++	clks[IMX7D_DRAM_PHYM_ALT_ROOT_CLK] = imx_clk_gate2_flags("dram_phym_alt_root_clk", "dram_phym_alt_post_div", base + 0x4130, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
++	clks[IMX7D_DRAM_ALT_ROOT_CLK] = imx_clk_gate2_flags("dram_alt_root_clk", "dram_alt_post_div", base + 0x4130, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
+ 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
+ 	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
+ 	clks[IMX7D_MU_ROOT_CLK] = imx_clk_gate4("mu_root_clk", "ipg_root_clk", base + 0x4270, 0);
+@@ -882,9 +874,6 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_data.clk_num = ARRAY_SIZE(clks);
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
+-		clk_prepare_enable(clks[clks_init_on[i]]);
+-
+ 	clk_set_parent(clks[IMX7D_PLL_ARM_MAIN_BYPASS], clks[IMX7D_PLL_ARM_MAIN]);
+ 	clk_set_parent(clks[IMX7D_PLL_DRAM_MAIN_BYPASS], clks[IMX7D_PLL_DRAM_MAIN]);
+ 	clk_set_parent(clks[IMX7D_PLL_SYS_MAIN_BYPASS], clks[IMX7D_PLL_SYS_MAIN]);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec0..5895e223 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -137,6 +137,13 @@ static inline struct clk *imx_clk_gate_dis(const char *name, const char *parent,
+ 			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
+ }
+ 
++static inline struct clk *imx_clk_gate_dis_flags(const char *name, const char *parent,
++		void __iomem *reg, u8 shift, unsigned long flags)
++{
++	return clk_register_gate(NULL, name, parent, flags | CLK_SET_RATE_PARENT, reg,
++			shift, CLK_GATE_SET_TO_DISABLE, &imx_ccm_lock);
++}
++
+ static inline struct clk *imx_clk_gate2(const char *name, const char *parent,
+ 		void __iomem *reg, u8 shift)
+ {
 -- 
 2.7.4
