@@ -1,53 +1,89 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] clk: renesas: r9a06g032: Fix UART34567 clock rate
-Date: Fri, 31 Aug 2018 12:26:36 +0100
-Message-Id: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
+Return-Path: <robh+dt@kernel.org>
+MIME-Version: 1.0
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-4-songjun.wu@linux.intel.com> <CAL_JsqKLa1e3X+ddAoVdEwBQFd6tsL=RjOLcTLdfoc6mpKuefQ@mail.gmail.com>
+ <9c0cbdfa-8109-be0d-8e14-7d303c764f5c@linux.intel.com>
+In-Reply-To: <9c0cbdfa-8109-be0d-8e14-7d303c764f5c@linux.intel.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Wed, 8 Aug 2018 08:54:12 -0600
+Message-ID: <CAL_JsqL5=a9nhvaZOsuDZ7YFhvZs23QT-jbDd4m7wPFviGU1CQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/18] dt-bindings: clk: Add documentation of grx500
+ clock controller
+To: yixin zhu <yixin.zhu@linux.intel.com>
+Cc: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+	chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock for UARTs 0 through 2 is UART012, the clock for UARTs 3 through
-7 is UART34567.
-For UART012, we stop the clock driver from changing the clock rate. This
-is because the Synopsys UART driver simply sets the reference clock to 16x
-the baud rate, but doesn't check if the actual rate is within the required
-tolerance. The RZ/N1 clock divider can't provide this (we have to rely on
-the UART's internal divider to set the correct clock rate), so you end up
-with a clock rate that is way off what you wanted.
+On Tue, Aug 7, 2018 at 9:08 PM yixin zhu <yixin.zhu@linux.intel.com> wrote:
+>
+>
+>
+> On 8/6/2018 11:18 PM, Rob Herring wrote:
+> > On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+> >> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+> >>
+> >> This patch adds binding documentation for grx500 clock controller.
+> >>
+> >> Signed-off-by: YiXin Zhu <yixin.zhu@linux.intel.com>
+> >> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+> >> ---
+> >>
+> >> Changes in v2:
+> >> - Rewrite clock driver's dt-binding document according to Rob Herring's
+> >>    comments.
+> >> - Simplify device tree docoment, remove some clock description.
+> >>
+> >>   .../devicetree/bindings/clock/intel,grx500-clk.txt | 39 ++++++++++++++++++++++
+> > Please match the compatible string: intel,grx500-cgu.txt
+> Will update to use same name.
+>
+> >
+> >>   1 file changed, 39 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+> >> new file mode 100644
+> >> index 000000000000..e54e1dad9196
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+> >> @@ -0,0 +1,39 @@
+> >> +Device Tree Clock bindings for grx500 PLL controller.
+> >> +
+> >> +This binding uses the common clock binding:
+> >> +       Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >> +
+> >> +The grx500 clock controller supplies clock to various controllers within the
+> >> +SoC.
+> >> +
+> >> +Required properties for clock node
+> >> +- compatible: Should be "intel,grx500-cgu".
+> >> +- reg: physical base address of the controller and length of memory range.
+> >> +- #clock-cells: should be 1.
+> >> +
+> >> +Optional Propteries:
+> >> +- intel,osc-frequency: frequency of the osc clock.
+> >> +if missing, driver will use clock rate defined in the driver.
+> > This should use a fixed-clock node instead.
+> Yes, This is a fixed clock node registered in driver code.
+> The frequency of the fixed clock is designed to be overwritten by device
+> tree in case some one verify
+> clock driver in the emulation platform or in some cases frequency other
+> than driver defined one is preferred.
 
-In addition, since the clock is shared between multiple UARTs, you don't
-want the driver trying to change the clock rate as it may affect the other
-UARTs (which may not have been configured yet, so you don't know what baud
-rate they will use). Normally, the clock rate is set early on before Linux
-to some very high rate that supports all of the clock rates you want.
+Emulation platforms often need several hacks that shouldn't be upstream...
 
-This change stops the UART34567 clock rate from changing for the same
-reasons.
+> These kinds of cases are very rare. But I feel it would be better to
+> have a way to use customized frequency.
+> The frequency defined in device tree will overwritten driver defined
+> frequency before registering fixed-clock node.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I don't think you understand what I meant. Add a DT node with
+"fixed-clock" compatible and have this node refer to it with "clocks"
+property. The frequency is still in DT, but uses the clock binding.
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index a0b6ecd..6d2b568 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -539,7 +539,8 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
- 	 * several uarts attached to this divider, and changing this impacts
- 	 * everyone.
- 	 */
--	if (clk->index == R9A06G032_DIV_UART) {
-+	if (clk->index == R9A06G032_DIV_UART ||
-+	    clk->index == R9A06G032_DIV_P2_PG) {
- 		pr_devel("%s div uart hack!\n", __func__);
- 		return clk_get_rate(hw->clk);
- 	}
--- 
-2.7.4
+Rob
