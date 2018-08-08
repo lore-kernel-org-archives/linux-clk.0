@@ -1,97 +1,169 @@
-Return-Path: <hdegoede@redhat.com>
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix
- suspend issues
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Irina Tirdea <irina.tirdea@intel.com>,
- netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
- Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
-References: <20180827143200.8597-1-hdegoede@redhat.com>
- <20180829163141.GB8462@smile.fi.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e3be83dc-67c7-fdaa-1dd9-0a4aa3d10584@redhat.com>
-Date: Wed, 29 Aug 2018 19:06:09 +0200
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
+To: Anson Huang <anson.huang@nxp.com>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, Fabio Estevam
+	<fabio.estevam@nxp.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>
+CC: dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date: Wed, 8 Aug 2018 08:48:57 +0000
+Message-ID: 
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-In-Reply-To: <20180829163141.GB8462@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 29-08-18 18:31, Andy Shevchenko wrote:
-> On Mon, Aug 27, 2018 at 04:31:56PM +0200, Hans de Goede wrote:
->> Hi All,
->>
->> This series has as goal to revert commit d31fd43c0f9a ("clk: x86: Do not gate
->> clocks enabled by the firmware"), because that commit causes almost all
->> Cherry Trail devices to not use the S0i3 powerstate when suspending, leading
->> to them quickly draining their battery when suspended.
->>
->> This commit was added to fix issues with the r8169 NIC on some Bay Trail
->> devices, where the pmc_plt_clk_4 was used as clk for the r8169 chip.
->>
->> This series fixes this properly, so that we can undo the trouble some
->> commit.
->>
->> The first patch adds an "ether_clk" alias to the clk-pmc-atom driver so
->> that the r8169 can pass "ether_clk" as generic id to clk_get instead of
->> having to add x86 specific code to the r8169 driver.
->>
->> The second patch makes the r8169 driver do a clk_get for "ether_clk"
->> (ignoring -ENOENT errors so this is optional) and if that succeeds then
->> it enables the clock.
->>
->> The third patch effectively revert the troublesome commit.
->>
->> This series has been tested on a HP Stream x360 - 11-p000nd, which uses
->> a Bay Trail SoC with a r8169 ethernet chip and I can confirm that the
->> pmc_plt_clk_4 gets properly enabled, so this series should not cause any
->> regressions wrt devices needing pmc_plt_clk_4 enabled (which is not the
->> case on the Stream x360).
->>
->> To avoid regressions we need to have patches 1 and 2 merged before 3,
->> so it is probably best if this entire series gets merged through a single
->> tree. Given that clk-pmc-atom.c has not seen any changes for over a
->> year I suggest that all 3 patches are merged through the netdev tree,
->> with an ack from the clk maintainers. Assuming that is ok with the clk
->> maintainers of course.
->>
->> Note there is a fourth patch in this series, this patch is necessary to
->> reach S0i3 state on Bay Trail devices wich have a r8169 ethernet chip,
->> since I do not have access to hardware where the r8169 actually needs
->> the pmc_plt_clk_4 I have not been able to test this, hence it is marked
->> as RFC for now.
->>
-> 
-> What a nice stuff, thanks!
-> 
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Thank you (and also thank you for the other reviews)
-
-> Btw, you probably better to refer to
-> https://bugzilla.kernel.org/show_bug.cgi?id=196861 which is dedicated for S0ix
-> issue.
-
-Ok, I've added a link to that. I've also added:
-
-Reported-by: Johannes Stezenbach <js@sig21.net>
-
-To honor Johannes for figuring out that leaving the clocks enabled
-was a problem in the first place.
-
-This will all be included in v2 of the series when I send it out.
-
-> Another thing, clk_prepare_enable() can fail, I dunno what you can do at
-> ->resume() stage with it failed.
-
-Right, I know that it can fail, but in practice it never fails unless
-things are seriously foo-barred already and there is not much we can
-do when it fails, so I decided to just ignore the return code.
-
-Regards,
-
-Hans
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5zb24gSHVhbmcNCj4g
+U2VudDogMjAxOMTqONTCOMjVIDEyOjM5DQo+IFRvOiBzaGF3bmd1b0BrZXJuZWwub3JnOyBzLmhh
+dWVyQHBlbmd1dHJvbml4LmRlOyBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7DQo+IEZhYmlvIEVzdGV2
+YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBz
+Ym95ZEBrZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+
+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcN
+Cj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFtQQVRD
+SCAyLzJdIGNsazogaW14OiBpbXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiANCj4g
+Q2xvY2sgZnJhbWV3b3JrIHdpbGwgZW5hYmxlIHRob3NlIGNsb2NrcyByZWdpc3RlcmVkIHdpdGgg
+Q0xLX0lTX0NSSVRJQ0FMIGZsYWcsDQo+IHNvIG5vIG5lZWQgdG8gaGF2ZSBjbGtzX2luaXRfb24g
+YXJyYXkgZHVyaW5nIGNsb2NrIGluaXRpYWxpemF0aW9uIG5vdy4NCg0KV2lsbCBpdCBiZSBtb3Jl
+IGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNyaXRpY2FsLWNsb2NrcyA9IDx4eHg+IiBv
+ciAiaW5pdC1vbi1hcnJhcnk9PHh4eD4iDQphbmQgZW5hYmxlIHRob3NlIGNsb2Nrcz8NCg0KUmVn
+YXJkcywNClBlbmcuDQoNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1YW5nIDxBbnNvbi5I
+dWFuZ0BueHAuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYyB8IDI3
+ICsrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgZHJpdmVycy9jbGsvaW14L2Nsay5oICAg
+ICAgIHwgIDcgKysrKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAx
+OSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWlt
+eDdkLmMgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDdkLmMgaW5kZXgNCj4gYzQ1MThkNy4uMDc2
+NDYwYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg3ZC5jDQo+ICsrKyBi
+L2RyaXZlcnMvY2xrL2lteC9jbGstaW14N2QuYw0KPiBAQCAtMzc5LDEzICszNzksNiBAQCBzdGF0
+aWMgY29uc3QgY2hhciAqcGxsX2VuZXRfYnlwYXNzX3NlbFtdID0NCj4geyAicGxsX2VuZXRfbWFp
+biIsICJwbGxfZW5ldF9tYWluX3NyYyAgc3RhdGljIGNvbnN0IGNoYXINCj4gKnBsbF9hdWRpb19i
+eXBhc3Nfc2VsW10gPSB7ICJwbGxfYXVkaW9fbWFpbiIsICJwbGxfYXVkaW9fbWFpbl9zcmMiLCB9
+OyAgc3RhdGljDQo+IGNvbnN0IGNoYXIgKnBsbF92aWRlb19ieXBhc3Nfc2VsW10gPSB7ICJwbGxf
+dmlkZW9fbWFpbiIsICJwbGxfdmlkZW9fbWFpbl9zcmMiLCB9Ow0KPiANCj4gLXN0YXRpYyBpbnQg
+Y29uc3QgY2xrc19pbml0X29uW10gX19pbml0Y29uc3QgPSB7DQo+IC0JSU1YN0RfQVJNX0E3X1JP
+T1RfQ0xLLCBJTVg3RF9NQUlOX0FYSV9ST09UX0NMSywNCj4gLQlJTVg3RF9QTExfU1lTX01BSU5f
+NDgwTV9DTEssIElNWDdEX0lQR19ST09UX0NMSywNCj4gLQlJTVg3RF9EUkFNX1BIWU1fUk9PVF9D
+TEssIElNWDdEX0RSQU1fUk9PVF9DTEssDQo+IC0JSU1YN0RfRFJBTV9QSFlNX0FMVF9ST09UX0NM
+SywgSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEssDQo+IC19Ow0KPiAtDQo+ICBzdGF0aWMgc3RydWN0
+IGNsa19vbmVjZWxsX2RhdGEgY2xrX2RhdGE7DQo+IA0KPiAgc3RhdGljIHN0cnVjdCBjbGsgKiog
+Y29uc3QgdWFydF9jbGtzW10gX19pbml0Y29uc3QgPSB7IEBAIC00MDMsNyArMzk2LDYgQEANCj4g
+c3RhdGljIHZvaWQgX19pbml0IGlteDdkX2Nsb2Nrc19pbml0KHN0cnVjdCBkZXZpY2Vfbm9kZSAq
+Y2NtX25vZGUpICB7DQo+ICAJc3RydWN0IGRldmljZV9ub2RlICpucDsNCj4gIAl2b2lkIF9faW9t
+ZW0gKmJhc2U7DQo+IC0JaW50IGk7DQo+IA0KPiAgCWNsa3NbSU1YN0RfQ0xLX0RVTU1ZXSA9IGlt
+eF9jbGtfZml4ZWQoImR1bW15IiwgMCk7DQo+ICAJY2xrc1tJTVg3RF9PU0NfMjRNX0NMS10gPSBv
+Zl9jbGtfZ2V0X2J5X25hbWUoY2NtX25vZGUsICJvc2MiKTsgQEANCj4gLTQ2Niw3ICs0NTgsNyBA
+QCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2Rl
+DQo+ICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX1BMTF9TWVNfTUFJTl8xMjBNXSA9DQo+IGlt
+eF9jbGtfZml4ZWRfZmFjdG9yKCJwbGxfc3lzX21haW5fMTIwbSIsICJwbGxfc3lzX21haW5fY2xr
+IiwgMSwgNCk7DQo+ICAJY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOXzUzM01dID0NCj4gaW14X2Ns
+a19maXhlZF9mYWN0b3IoInBsbF9kcmFtXzUzM20iLCAicGxsX2RyYW1fbWFpbl9jbGsiLCAxLCAy
+KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fNDgwTV9DTEtdID0NCj4gaW14X2Ns
+a19nYXRlX2RpcygicGxsX3N5c19tYWluXzQ4MG1fY2xrIiwgInBsbF9zeXNfbWFpbl80ODBtIiwg
+YmFzZSArIDB4YjAsDQo+IDQpOw0KPiArCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzQ4ME1fQ0xL
+XSA9DQo+ICtpbXhfY2xrX2dhdGVfZGlzX2ZsYWdzKCJwbGxfc3lzX21haW5fNDgwbV9jbGsiLCAi
+cGxsX3N5c19tYWluXzQ4MG0iLA0KPiArYmFzZSArIDB4YjAsIDQsIENMS19JU19DUklUSUNBTCk7
+DQo+ICAJY2xrc1tJTVg3RF9QTExfU1lTX01BSU5fMjQwTV9DTEtdID0NCj4gaW14X2Nsa19nYXRl
+X2RpcygicGxsX3N5c19tYWluXzI0MG1fY2xrIiwgInBsbF9zeXNfbWFpbl8yNDBtIiwgYmFzZSAr
+IDB4YjAsDQo+IDUpOw0KPiAgCWNsa3NbSU1YN0RfUExMX1NZU19NQUlOXzEyME1fQ0xLXSA9DQo+
+IGlteF9jbGtfZ2F0ZV9kaXMoInBsbF9zeXNfbWFpbl8xMjBtX2NsayIsICJwbGxfc3lzX21haW5f
+MTIwbSIsIGJhc2UgKyAweGIwLA0KPiA2KTsNCj4gIAljbGtzW0lNWDdEX1BMTF9EUkFNX01BSU5f
+NTMzTV9DTEtdID0NCj4gaW14X2Nsa19nYXRlKCJwbGxfZHJhbV81MzNtX2NsayIsICJwbGxfZHJh
+bV81MzNtIiwgYmFzZSArIDB4NzAsIDEyKTsgQEANCj4gLTcxOSw3ICs3MTEsNyBAQCBzdGF0aWMg
+dm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3RydWN0IGRldmljZV9ub2RlDQo+ICpjY21f
+bm9kZSkNCj4gIAljbGtzW0lNWDdEX0VORVRfQVhJX1JPT1RfRElWXSA9DQo+IGlteF9jbGtfZGl2
+aWRlcjIoImVuZXRfYXhpX3Bvc3RfZGl2IiwgImVuZXRfYXhpX3ByZV9kaXYiLCBiYXNlICsgMHg4
+OTAwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX05BTkRfVVNESENfQlVTX1JPT1RfQ0xLXSA9DQo+
+IGlteF9jbGtfZGl2aWRlcjIoIm5hbmRfdXNkaGNfcm9vdF9jbGsiLCAibmFuZF91c2RoY19wcmVf
+ZGl2IiwgYmFzZSArDQo+IDB4ODk4MCwgMCwgNik7DQo+ICAJY2xrc1tJTVg3RF9BSEJfQ0hBTk5F
+TF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJhaGJfcm9vdF9jbGsiLCAiYWhiX3By
+ZV9kaXYiLCBiYXNlICsgMHg5MDAwLCAwLCA2KTsNCj4gLQljbGtzW0lNWDdEX0lQR19ST09UX0NM
+S10gPSBpbXhfY2xrX2RpdmlkZXIyKCJpcGdfcm9vdF9jbGsiLA0KPiAiYWhiX3Jvb3RfY2xrIiwg
+YmFzZSArIDB4OTA4MCwgMCwgMik7DQo+ICsJY2xrc1tJTVg3RF9JUEdfUk9PVF9DTEtdID0gaW14
+X2Nsa19kaXZpZGVyX2ZsYWdzKCJpcGdfcm9vdF9jbGsiLA0KPiArImFoYl9yb290X2NsayIsIGJh
+c2UgKyAweDkwODAsIDAsIDIsIENMS19JU19DUklUSUNBTCB8DQo+ICtDTEtfT1BTX1BBUkVOVF9F
+TkFCTEUgfCBDTEtfU0VUX1JBVEVfUEFSRU5UKTsNCj4gIAljbGtzW0lNWDdEX0RSQU1fUk9PVF9E
+SVZdID0gaW14X2Nsa19kaXZpZGVyMigiZHJhbV9wb3N0X2RpdiIsDQo+ICJkcmFtX2NnIiwgYmFz
+ZSArIDB4OTg4MCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfRElW
+XSA9DQo+IGlteF9jbGtfZGl2aWRlcjIoImRyYW1fcGh5bV9hbHRfcG9zdF9kaXYiLCAiZHJhbV9w
+aHltX2FsdF9wcmVfZGl2IiwgYmFzZQ0KPiArIDB4YTAwMCwgMCwgMyk7DQo+ICAJY2xrc1tJTVg3
+RF9EUkFNX0FMVF9ST09UX0RJVl0gPQ0KPiBpbXhfY2xrX2RpdmlkZXIyKCJkcmFtX2FsdF9wb3N0
+X2RpdiIsICJkcmFtX2FsdF9wcmVfZGl2IiwgYmFzZSArIDB4YTA4MCwgMCwNCj4gMyk7IEBAIC03
+ODMsMTcgKzc3NSwxNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgaW14N2RfY2xvY2tzX2luaXQoc3Ry
+dWN0DQo+IGRldmljZV9ub2RlICpjY21fbm9kZSkNCj4gIAljbGtzW0lNWDdEX0NMS08xX1JPT1Rf
+RElWXSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28xX3Bvc3RfZGl2IiwNCj4gImNsa28xX3ByZV9k
+aXYiLCBiYXNlICsgMHhiZDgwLCAwLCA2KTsNCj4gIAljbGtzW0lNWDdEX0NMS08yX1JPT1RfRElW
+XSA9IGlteF9jbGtfZGl2aWRlcjIoImNsa28yX3Bvc3RfZGl2IiwNCj4gImNsa28yX3ByZV9kaXYi
+LCBiYXNlICsgMHhiZTAwLCAwLCA2KTsNCj4gDQo+IC0JY2xrc1tJTVg3RF9BUk1fQTdfUk9PVF9D
+TEtdID0gaW14X2Nsa19nYXRlNCgiYXJtX2E3X3Jvb3RfY2xrIiwNCj4gImFybV9hN19kaXYiLCBi
+YXNlICsgMHg0MDAwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0FSTV9BN19ST09UX0NMS10gPQ0KPiBp
+bXhfY2xrX2dhdGUyX2ZsYWdzKCJhcm1fYTdfcm9vdF9jbGsiLA0KPiArImFybV9hN19kaXYiLCBi
+YXNlICsgMHg0MDAwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfA0KPiArQ0xLX09QU19QQVJFTlRfRU5B
+QkxFKTsNCj4gIAljbGtzW0lNWDdEX0FSTV9NNF9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJh
+cm1fbTRfcm9vdF9jbGsiLA0KPiAiYXJtX200X2RpdiIsIGJhc2UgKyAweDQwMTAsIDApOw0KPiAt
+CWNsa3NbSU1YN0RfTUFJTl9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgibWFpbl9heGlf
+cm9vdF9jbGsiLA0KPiAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwgMCk7DQo+ICsJY2xr
+c1tJTVg3RF9NQUlOX0FYSV9ST09UX0NMS10gPQ0KPiAraW14X2Nsa19nYXRlMl9mbGFncygibWFp
+bl9heGlfcm9vdF9jbGsiLCAiYXhpX3Bvc3RfZGl2IiwgYmFzZSArIDB4NDA0MCwNCj4gKzAsIENM
+S19JU19DUklUSUNBTCB8IENMS19PUFNfUEFSRU5UX0VOQUJMRSk7DQo+ICAJY2xrc1tJTVg3RF9E
+SVNQX0FYSV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJkaXNwX2F4aV9yb290X2NsayIsDQo+
+ICJkaXNwX2F4aV9wb3N0X2RpdiIsIGJhc2UgKyAweDQwNTAsIDApOw0KPiAgCWNsa3NbSU1YN0Rf
+RU5FVF9BWElfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgiZW5ldF9heGlfcm9vdF9jbGsiLA0K
+PiAiZW5ldF9heGlfcG9zdF9kaXYiLCBiYXNlICsgMHg0MDYwLCAwKTsNCj4gIAljbGtzW0lNWDdE
+X09DUkFNX0NMS10gPSBpbXhfY2xrX2dhdGU0KCJvY3JhbV9jbGsiLA0KPiAibWFpbl9heGlfcm9v
+dF9jbGsiLCBiYXNlICsgMHg0MTEwLCAwKTsNCj4gIAljbGtzW0lNWDdEX09DUkFNX1NfQ0xLXSA9
+IGlteF9jbGtfZ2F0ZTQoIm9jcmFtX3NfY2xrIiwNCj4gImFoYl9yb290X2NsayIsIGJhc2UgKyAw
+eDQxMjAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9ST09UX0NMS10gPSBpbXhfY2xrX2dhdGU0
+KCJkcmFtX3Jvb3RfY2xrIiwNCj4gImRyYW1fcG9zdF9kaXYiLCBiYXNlICsgMHg0MTMwLCAwKTsN
+Cj4gLQljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGU0KCJk
+cmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwgMCk7DQo+
+IC0JY2xrc1tJTVg3RF9EUkFNX1BIWU1fQUxUX1JPT1RfQ0xLXSA9DQo+IGlteF9jbGtfZ2F0ZTQo
+ImRyYW1fcGh5bV9hbHRfcm9vdF9jbGsiLCAiZHJhbV9waHltX2FsdF9wb3N0X2RpdiIsIGJhc2Ug
+Kw0KPiAweDQxMzAsIDApOw0KPiAtCWNsa3NbSU1YN0RfRFJBTV9BTFRfUk9PVF9DTEtdID0gaW14
+X2Nsa19nYXRlNCgiZHJhbV9hbHRfcm9vdF9jbGsiLA0KPiAiZHJhbV9hbHRfcG9zdF9kaXYiLCBi
+YXNlICsgMHg0MTMwLCAwKTsNCj4gKwljbGtzW0lNWDdEX0RSQU1fUk9PVF9DTEtdID0gaW14X2Ns
+a19nYXRlMl9mbGFncygiZHJhbV9yb290X2NsayIsDQo+ICJkcmFtX3Bvc3RfZGl2IiwgYmFzZSAr
+IDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwNCj4gQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
+Cj4gKwljbGtzW0lNWDdEX0RSQU1fUEhZTV9ST09UX0NMS10gPQ0KPiBpbXhfY2xrX2dhdGUyX2Zs
+YWdzKCJkcmFtX3BoeW1fcm9vdF9jbGsiLCAiZHJhbV9waHltX2NnIiwgYmFzZSArIDB4NDEzMCwN
+Cj4gMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsNCj4gKwljbGtz
+W0lNWDdEX0RSQU1fUEhZTV9BTFRfUk9PVF9DTEtdID0NCj4gaW14X2Nsa19nYXRlMl9mbGFncygi
+ZHJhbV9waHltX2FsdF9yb290X2NsayIsICJkcmFtX3BoeW1fYWx0X3Bvc3RfZGl2IiwNCj4gYmFz
+ZSArIDB4NDEzMCwgMCwgQ0xLX0lTX0NSSVRJQ0FMIHwgQ0xLX09QU19QQVJFTlRfRU5BQkxFKTsN
+Cj4gKwljbGtzW0lNWDdEX0RSQU1fQUxUX1JPT1RfQ0xLXSA9DQo+ICtpbXhfY2xrX2dhdGUyX2Zs
+YWdzKCJkcmFtX2FsdF9yb290X2NsayIsICJkcmFtX2FsdF9wb3N0X2RpdiIsIGJhc2UgKw0KPiAr
+MHg0MTMwLCAwLCBDTEtfSVNfQ1JJVElDQUwgfCBDTEtfT1BTX1BBUkVOVF9FTkFCTEUpOw0KPiAg
+CWNsa3NbSU1YN0RfT0NPVFBfQ0xLXSA9IGlteF9jbGtfZ2F0ZTQoIm9jb3RwX2NsayIsICJpcGdf
+cm9vdF9jbGsiLA0KPiBiYXNlICsgMHg0MjMwLCAwKTsNCj4gIAljbGtzW0lNWDdEX1NOVlNfQ0xL
+XSA9IGlteF9jbGtfZ2F0ZTQoInNudnNfY2xrIiwgImlwZ19yb290X2NsayIsIGJhc2UgKw0KPiAw
+eDQyNTAsIDApOw0KPiAgCWNsa3NbSU1YN0RfTVVfUk9PVF9DTEtdID0gaW14X2Nsa19nYXRlNCgi
+bXVfcm9vdF9jbGsiLA0KPiAiaXBnX3Jvb3RfY2xrIiwgYmFzZSArIDB4NDI3MCwgMCk7IEBAIC04
+ODIsOSArODc0LDYgQEAgc3RhdGljIHZvaWQgX19pbml0DQo+IGlteDdkX2Nsb2Nrc19pbml0KHN0
+cnVjdCBkZXZpY2Vfbm9kZSAqY2NtX25vZGUpDQo+ICAJY2xrX2RhdGEuY2xrX251bSA9IEFSUkFZ
+X1NJWkUoY2xrcyk7DQo+ICAJb2ZfY2xrX2FkZF9wcm92aWRlcihucCwgb2ZfY2xrX3NyY19vbmVj
+ZWxsX2dldCwgJmNsa19kYXRhKTsNCj4gDQo+IC0JZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUo
+Y2xrc19pbml0X29uKTsgaSsrKQ0KPiAtCQljbGtfcHJlcGFyZV9lbmFibGUoY2xrc1tjbGtzX2lu
+aXRfb25baV1dKTsNCj4gLQ0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX0FSTV9N
+QUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX0FSTV9NQUlOXSk7DQo+ICAJY2xrX3NldF9w
+YXJlbnQoY2xrc1tJTVg3RF9QTExfRFJBTV9NQUlOX0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExM
+X0RSQU1fTUFJTl0pOw0KPiAgCWNsa19zZXRfcGFyZW50KGNsa3NbSU1YN0RfUExMX1NZU19NQUlO
+X0JZUEFTU10sDQo+IGNsa3NbSU1YN0RfUExMX1NZU19NQUlOXSk7IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2Nsay9pbXgvY2xrLmgNCj4gYi9kcml2ZXJzL2Nsay9pbXgvY2xrLmggaW5kZXggODA3NmVj
+MC4uNTg5NWUyMjMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9jbGsuaA0KPiArKysg
+Yi9kcml2ZXJzL2Nsay9pbXgvY2xrLmgNCj4gQEAgLTEzNyw2ICsxMzcsMTMgQEAgc3RhdGljIGlu
+bGluZSBzdHJ1Y3QgY2xrICppbXhfY2xrX2dhdGVfZGlzKGNvbnN0IGNoYXINCj4gKm5hbWUsIGNv
+bnN0IGNoYXIgKnBhcmVudCwNCj4gIAkJCXNoaWZ0LCBDTEtfR0FURV9TRVRfVE9fRElTQUJMRSwg
+JmlteF9jY21fbG9jayk7ICB9DQo+IA0KPiArc3RhdGljIGlubGluZSBzdHJ1Y3QgY2xrICppbXhf
+Y2xrX2dhdGVfZGlzX2ZsYWdzKGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IGNoYXINCj4gKnBhcmVu
+dCwNCj4gKwkJdm9pZCBfX2lvbWVtICpyZWcsIHU4IHNoaWZ0LCB1bnNpZ25lZCBsb25nIGZsYWdz
+KSB7DQo+ICsJcmV0dXJuIGNsa19yZWdpc3Rlcl9nYXRlKE5VTEwsIG5hbWUsIHBhcmVudCwgZmxh
+Z3MgfA0KPiBDTEtfU0VUX1JBVEVfUEFSRU5ULCByZWcsDQo+ICsJCQlzaGlmdCwgQ0xLX0dBVEVf
+U0VUX1RPX0RJU0FCTEUsICZpbXhfY2NtX2xvY2spOyB9DQo+ICsNCj4gIHN0YXRpYyBpbmxpbmUg
+c3RydWN0IGNsayAqaW14X2Nsa19nYXRlMihjb25zdCBjaGFyICpuYW1lLCBjb25zdCBjaGFyICpw
+YXJlbnQsDQo+ICAJCXZvaWQgX19pb21lbSAqcmVnLCB1OCBzaGlmdCkNCj4gIHsNCj4gLS0NCj4g
+Mi43LjQNCg0K
