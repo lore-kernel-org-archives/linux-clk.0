@@ -1,121 +1,68 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23636 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbeH3D3e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 23:29:34 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B872C7E.5090702@samsung.com>
-Date: Thu, 30 Aug 2018 08:30:06 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] clk: samsung: exynos5433: Add suspend state for
- TOP, CPIF & PERIC CMUs
-In-reply-to: <20180829160013.9447-3-m.szyprowski@samsung.com>
-References: <20180829160013.9447-1-m.szyprowski@samsung.com>
-        <CGME20180829160024eucas1p19b9912baece05c529f6bcf64b986bba9@eucas1p1.samsung.com>
-        <20180829160013.9447-3-m.szyprowski@samsung.com>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55477 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727174AbeHHL22 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Aug 2018 07:28:28 -0400
+Date: Wed, 8 Aug 2018 11:09:36 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Fabio Estevam <festevam@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
+ operated too fast
+Message-ID: <20180808090936.mx6c23qkwo2xtd3a@pengutronix.de>
+References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
+ <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
+ <10f5e651-caf4-3fe0-87c0-fe42ccdc6349@i2se.com>
+ <CAOMZO5Cgf6aeNKWn5CnV8X-+bo20M00efoAxv51GPDE45Pg4yg@mail.gmail.com>
+ <20180801093113.wnjeg5a3rjbh7yc4@pengutronix.de>
+ <758892002.155298.1533716617448@email.1und1.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <758892002.155298.1533716617448@email.1und1.de>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
-
-On 2018년 08월 30일 01:00, Marek Szyprowski wrote:
-> Before entering system suspend, one has to ensure that all TOP ACLK clocks
-> are enabled, so do this by storing 0x67ECFFED value to ENABLE_ACLK_TOP
-> register. In case of PERIC CMU, keep all UART PCLK and SCLK clocks as well
-> as all GPIO PCLK clocks enabled.
+On Wed, Aug 08, 2018 at 10:23:37AM +0200, Stefan Wahren wrote:
+> Hi,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+> > > On Thu, Jul 26, 2018 at 11:50 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> > > 
+> > > > I only want to note that we are using this ugly hack for Duckbill to avoid
+> > > > this issue:
+> > > >
+> > > > https://github.com/I2SE/linux/commit/e457d5e0309c07e30e8dd8b17c32f7b3cbdd9547
+> > > 
+> > > Do you see the problem on TQMa28L with Stefan's hack applied?
+> > 
+> > With this change by Stefan the bug is not reproducible. Your change to
+> > set the bypass bits only later doesn't help though.
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 426980514e67..d34e645aba49 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -177,6 +177,12 @@ static const unsigned long top_clk_regs[] __initconst = {
->  	ENABLE_CMU_TOP_DIV_STAT,
->  };
->  
-> +static const struct samsung_clk_reg_dump top_suspend_regs[] = {
-> +	{ ENABLE_ACLK_TOP, 0x67ECFFED }, /* all clocks enabled */
-> +	{ ISP_PLL_CON0, 0x85CC0502 },	/* reset value + ENABLE bit */
-> +	{ AUD_PLL_CON0, 0x84830202 },	/* reset value + ENABLE bit */
+> i can confirm that Fabio's patch doesn't fix the clock issue on
+> Duckbill. But the idea seems to be right. If i remove all write access
+> to CLKSEQ and FRAC0 in clk_misc_init() instead of swap them, i don't
+> need the ref_xtal hack anymore. I think Fabio's patch doesn't work
+> because the bootloader (U-Boot in my case) is already feeding SSP from
+> ref_io.
 
-When you sent the patch[1], you used the 'small letter'
-instead of capital letter. Even if it's trivial, you better to keep one style
-either small or capital letter.
-[1] commit 523d3de41f02 ("clk: samsung: exynos5433: Add support for runtime PM")
+I spend some time with this problem again and found out that it also
+depends on hclk. If that runs quicker than 2x sspX I couldn't reproduce
+the issue. When slowing down hclk to 1x sspX the issue reappeared with
+all stuff related to sspX keeping the same.
 
-> +};
-> +
->  /* list of all parent clock list */
->  PNAME(mout_aud_pll_p)		= { "oscclk", "fout_aud_pll", };
->  PNAME(mout_isp_pll_p)		= { "oscclk", "fout_isp_pll", };
-> @@ -792,6 +798,8 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
->  	.nr_clk_ids		= TOP_NR_CLK,
->  	.clk_regs		= top_clk_regs,
->  	.nr_clk_regs		= ARRAY_SIZE(top_clk_regs),
-> +	.suspend_regs		= top_suspend_regs,
-> +	.nr_suspend_regs	= ARRAY_SIZE(top_suspend_regs),
->  };
->  
->  static void __init exynos5433_cmu_top_init(struct device_node *np)
-> @@ -822,6 +830,11 @@ static const unsigned long cpif_clk_regs[] __initconst = {
->  	ENABLE_SCLK_CPIF,
->  };
->  
-> +static const struct samsung_clk_reg_dump cpif_suspend_regs[] = {
-> +	{ ENABLE_SCLK_CPIF, 0x3FF },	/* all clocks enabled */
-> +	{ MPHY_PLL_CON0, 0x81C70601 },	/* reset value + ENABLE bit */
-> +};
-> +
->  /* list of all parent clock list */
->  PNAME(mout_mphy_pll_p)		= { "oscclk", "fout_mphy_pll", };
->  
-> @@ -862,6 +875,8 @@ static const struct samsung_cmu_info cpif_cmu_info __initconst = {
->  	.nr_clk_ids		= CPIF_NR_CLK,
->  	.clk_regs		= cpif_clk_regs,
->  	.nr_clk_regs		= ARRAY_SIZE(cpif_clk_regs),
-> +	.suspend_regs		= cpif_suspend_regs,
-> +	.nr_suspend_regs	= ARRAY_SIZE(cpif_suspend_regs),
->  };
->  
->  static void __init exynos5433_cmu_cpif_init(struct device_node *np)
-> @@ -1547,6 +1562,11 @@ static const unsigned long peric_clk_regs[] __initconst = {
->  	ENABLE_IP_PERIC2,
->  };
->  
-> +static const struct samsung_clk_reg_dump peric_suspend_regs[] = {
-> +	{ ENABLE_PCLK_PERIC0, 0xE00FF000 },
-> +	{ ENABLE_SCLK_PERIC, 0x7 },
+Probably a problem when the value crosses the clock domain from sspX to
+hclk?!
 
-How about adding the comment of meaning of hex value as top/cpif_suspend_regs?
-
-> +};
-> +
->  static const struct samsung_div_clock peric_div_clks[] __initconst = {
->  	/* DIV_PERIC */
->  	DIV(CLK_DIV_SCLK_SCI, "div_sclk_sci", "oscclk", DIV_PERIC, 4, 4),
-> @@ -1705,6 +1725,8 @@ static const struct samsung_cmu_info peric_cmu_info __initconst = {
->  	.nr_clk_ids		= PERIC_NR_CLK,
->  	.clk_regs		= peric_clk_regs,
->  	.nr_clk_regs		= ARRAY_SIZE(peric_clk_regs),
-> +	.suspend_regs		= peric_suspend_regs,
-> +	.nr_suspend_regs	= ARRAY_SIZE(peric_suspend_regs),
->  };
->  
->  static void __init exynos5433_cmu_peric_init(struct device_node *np)
-> 
-
+Best regards
+Uwe
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Pengutronix e.K.                           | Uwe Kleine-K�nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
