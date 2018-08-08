@@ -1,136 +1,74 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:60464 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeHJALw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:11:52 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 09/24] watchdog: jz4740: Use regmap provided by TCU driver
-Date: Thu,  9 Aug 2018 23:43:59 +0200
-Message-Id: <20180809214414.20905-10-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Date: Wed, 8 Aug 2018 22:59:46 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+	devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+	bdong@ucrobotics.com, manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+	pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
+Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
+ SoCs
+Message-ID: <20180808172946.GA4188@Mani-XPS-13-9360>
+References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
+ <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
+ <20180730151131.GA28633@mani>
+ <20180807184710.GA26423@rob-hp-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+In-Reply-To: <20180807184710.GA26423@rob-hp-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
-Since we broke the ABI by changing the clock, the driver was also
-updated to use the regmap provided by the TCU driver.
+Hi Rob,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/watchdog/jz4740_wdt.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+On Tue, Aug 07, 2018 at 12:47:10PM -0600, Rob Herring wrote:
+> On Mon, Jul 30, 2018 at 08:41:31PM +0530, Manivannan Sadhasivam wrote:
+> > Hi Andreas,
+> > 
+> > On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
+> > > Hi Mani,
+> > > 
+> > > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
+> > > > This patchset adds Reset Controller (RMU) support for Actions Semi
+> > > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
+> > > > the clock subsystem in hardware. Hence, in software we integrate RMU
+> > > > support into common clock driver inorder to maintain compatibility.
+> > > 
+> > > Can this not be placed into drivers/reset/ by using mfd-simple with a
+> > > sub-node in DT?
+> 
+> That is exactly what I tell folks not to do. Design the DT based on h/w 
+> blocks, not current desired driver split for some OS.
+> 
+> > Actually I was not sure where to place this reset controller driver. When I
+> > looked into other similar ones such as sunxi, they just integrated into the
+> > clk subsystem. So I just chose that path. But yeah, this is hacky!
+> > 
+> > But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
+> > are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
+> > RMU has only 2 registers, the HW designers decided to use up the CMU memory
+> > map. So, maybe syscon would be best option I think. What is your opinion?
+> 
+> If there's nothing shared then it is not a syscon. If you can create 
+> separate address ranges, then 2 nodes is probably okay. If the registers 
+> are all mixed up, then 1 node.
+> 
 
- v6: New patch
+I don't quite understand the reason for not being syscon. The definition
+of syscon says that, "System controller node represents a register region
+containing a set of miscellaneous registers. The registers are not cohesive
+enough to represent as any specific type of device." which exactly fits
+this case. Only the registers of CMU & RMU are shared and not the HW block!
 
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 1d504ecf45e1..0f54306aee25 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -13,6 +13,7 @@
-  *
-  */
- 
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/types.h>
-@@ -25,10 +26,7 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
--
--#define JZ_REG_WDT_TIMER_DATA     0x0
--#define JZ_REG_WDT_COUNTER_ENABLE 0x4
--#define JZ_REG_WDT_TIMER_COUNTER  0x8
-+#include <linux/regmap.h>
- 
- #define DEFAULT_HEARTBEAT 5
- #define MAX_HEARTBEAT     2048
-@@ -48,7 +46,7 @@ MODULE_PARM_DESC(heartbeat,
- 
- struct jz4740_wdt_drvdata {
- 	struct watchdog_device wdt;
--	void __iomem *base;
-+	struct regmap *map;
- 	struct clk *clk;
- 	unsigned long clk_rate;
- };
-@@ -57,7 +55,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 	return 0;
- }
- 
-@@ -67,12 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 
--	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -96,7 +94,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 	clk_disable_unprepare(drvdata->clk);
- 
- 	return 0;
-@@ -138,7 +136,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct jz4740_wdt_drvdata *drvdata;
- 	struct watchdog_device *jz4740_wdt;
--	struct resource	*res;
- 	long rate;
- 	int ret;
- 
-@@ -174,10 +171,11 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	watchdog_set_nowayout(jz4740_wdt, nowayout);
- 	watchdog_set_drvdata(jz4740_wdt, drvdata);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(drvdata->base))
--		return PTR_ERR(drvdata->base);
-+	drvdata->map = dev_get_regmap(dev->parent, NULL);
-+	if (!drvdata->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
-+	}
- 
- 	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
- 	if (ret < 0)
--- 
-2.11.0
+Can you please clarify?
+
+Thanks,
+Mani
+
+> Rob
