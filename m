@@ -1,121 +1,79 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:29318 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FKD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:10:03 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B8743F9.8010908@samsung.com>
-Date: Thu, 30 Aug 2018 10:10:17 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
- handling suspend/resume
-In-reply-to: <20180829155046.29359-3-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
-        <20180829155046.29359-3-m.szyprowski@samsung.com>
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:46844 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727525AbeHIJbw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 05:31:52 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/3] clk: meson: add a sub EMMC clock controller support
+Date: Thu, 9 Aug 2018 15:07:20 +0800
+Message-ID: <20180809070724.11935-1-yixun.lan@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+This driver will add a MMC clock controller driver support.
+The original idea about adding a clock controller is during the
+discussion in the NAND driver mainline effort[1].
 
-On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
-> Replace common suspend/resume handling code by generic helper.
-> No functional change.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s3c2410.c | 43 ++-----------------------------
->  1 file changed, 2 insertions(+), 41 deletions(-)
-> 
+This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Changes since v3 [4]:
+ - separate clk-phase-delay driver
+ - replace clk_get_rate() with clk_hw_get_rate()
+ - collect Rob's R-Y
+ - drop 'meson-' prefix from compatible string
 
+Changes since v2 [3]:
+ - squash dt-binding clock-id patch
+ - update license
+ - fix alignment
+ - construct a clk register helper() function
 
-> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
-> index a9c887475054..8cb868f06257 100644
-> --- a/drivers/clk/samsung/clk-s3c2410.c
-> +++ b/drivers/clk/samsung/clk-s3c2410.c
-> @@ -11,7 +11,6 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> -#include <linux/syscore_ops.h>
->  
->  #include <dt-bindings/clock/s3c2410.h>
->  
-> @@ -40,9 +39,6 @@ enum s3c2410_plls {
->  
->  static void __iomem *reg_base;
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static struct samsung_clk_reg_dump *s3c2410_save;
-> -
->  /*
->   * list of controller registers to be saved and restored during a
->   * suspend/resume cycle.
-> @@ -57,42 +53,6 @@ static unsigned long s3c2410_clk_regs[] __initdata = {
->  	CAMDIVN,
->  };
->  
-> -static int s3c2410_clk_suspend(void)
-> -{
-> -	samsung_clk_save(reg_base, s3c2410_save,
-> -				ARRAY_SIZE(s3c2410_clk_regs));
-> -
-> -	return 0;
-> -}
-> -
-> -static void s3c2410_clk_resume(void)
-> -{
-> -	samsung_clk_restore(reg_base, s3c2410_save,
-> -				ARRAY_SIZE(s3c2410_clk_regs));
-> -}
-> -
-> -static struct syscore_ops s3c2410_clk_syscore_ops = {
-> -	.suspend = s3c2410_clk_suspend,
-> -	.resume = s3c2410_clk_resume,
-> -};
-> -
-> -static void __init s3c2410_clk_sleep_init(void)
-> -{
-> -	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
-> -						ARRAY_SIZE(s3c2410_clk_regs));
-> -	if (!s3c2410_save) {
-> -		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
-> -			__func__);
-> -		return;
-> -	}
-> -
-> -	register_syscore_ops(&s3c2410_clk_syscore_ops);
-> -	return;
-> -}
-> -#else
-> -static void __init s3c2410_clk_sleep_init(void) {}
-> -#endif
-> -
->  PNAME(fclk_p) = { "mpll", "div_slow" };
->  
->  static struct samsung_mux_clock s3c2410_common_muxes[] __initdata = {
-> @@ -461,7 +421,8 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
->  			ARRAY_SIZE(s3c244x_common_aliases));
->  	}
->  
-> -	s3c2410_clk_sleep_init();
-> +	samsung_clk_sleep_init(reg_base, s3c2410_clk_regs,
-> +			       ARRAY_SIZE(s3c2410_clk_regs));
->  
->  	samsung_clk_of_add_provider(np, ctx);
->  }
-> 
+Changes since v1 [2]:
+ - implement phase clock
+ - update compatible name
+ - adjust file name
+ - divider probe() into small functions, and re-use them
+
+[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+
+Yixun Lan (3):
+  clk: meson: add emmc sub clock phase delay driver
+  clk: meson: add DT documentation for emmc clock controller
+  clk: meson: add sub MMC clock controller driver
+
+ .../bindings/clock/amlogic,mmc-clkc.txt       |  31 ++
+ drivers/clk/meson/Kconfig                     |  10 +
+ drivers/clk/meson/Makefile                    |   3 +-
+ drivers/clk/meson/clk-phase-delay.c           |  96 ++++++
+ drivers/clk/meson/clkc.h                      |  13 +
+ drivers/clk/meson/mmc-clkc.c                  | 275 ++++++++++++++++++
+ include/dt-bindings/clock/amlogic,mmc-clkc.h  |  17 ++
+ 7 files changed, 444 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
