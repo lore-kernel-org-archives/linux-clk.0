@@ -1,59 +1,76 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <20180827162139.76196-1-chris.brandt@renesas.com> <20180829005228.GA5407@bogus>
-In-Reply-To: <20180829005228.GA5407@bogus>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Aug 2018 10:05:40 +0200
-Message-ID: <CAMuHMdWcvWDeSpewRDG=vAV+zsTO48a6kXTCL+34H_+Rnt0ung@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add R7S9210 support
-To: Rob Herring <robh@kernel.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:32804 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbeHJALw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:11:52 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 10/24] watchdog: jz4740: Avoid starting watchdog in set_timeout
+Date: Thu,  9 Aug 2018 23:44:00 +0200
+Message-Id: <20180809214414.20905-11-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Previously the jz4740_wdt_set_timeout() function was starting the timer
+unconditionally, even if it was stopped when that function was entered.
 
-On Wed, Aug 29, 2018 at 2:52 AM Rob Herring <robh@kernel.org> wrote:
-> On Mon, Aug 27, 2018 at 11:21:39AM -0500, Chris Brandt wrote:
-> > Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> > Standby.
-> >
-> > The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-> > for how the registers are laid out.
-> > The MSTP registers are only 8-bits wide, there is no status registers
-> > (MSTPST), and the register offsets are a little different. Since the RZ/A
-> > hardware manuals refer to these registers as the Standby Control Registers,
-> > we'll use that name to distinguish the RZ/A type for the R-Car type.
-> >
-> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> > ---
->
-> > +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-> > @@ -0,0 +1,192 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/*
->
->
-> > +++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
-> > @@ -0,0 +1,21 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+
->
-> The proper identifier is GPL-2.0-or-later
+Now, the timer will be restarted only if it was already running before
+this function is called.
 
-Documentation/process/license-rules.rst disagrees.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/watchdog/jz4740_wdt.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+ v6: New patch
 
-                        Geert
-
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index 0f54306aee25..45d9495170e5 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
++	u32 tcer;
+ 
++	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
+ 	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+ 
+ 	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
+ 	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+ 
+-	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
+ 
+ 	wdt_dev->timeout = new_timeout;
+ 	return 0;
+@@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+ 		return ret;
+ 
+ 	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+ 
+ 	return 0;
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
