@@ -1,40 +1,98 @@
-Return-Path: <lkp@intel.com>
-Date: Sun, 12 Aug 2018 05:30:06 +0800
-From: kbuild test robot <fengguang.wu@intel.com>
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: kbuild-all@01.org, ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-soc@vger.kernel.org
-Subject: [RFC PATCH] clk: qcom: gcc_sdm660_hws[] can be static
-Message-ID: <20180811213006.GA10693@ivb42>
-References: <20180810202123.29238-1-ctatlor97@gmail.com>
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v4 2/3] clk: meson: add DT documentation for emmc clock controller
+Date: Thu, 9 Aug 2018 15:07:22 +0800
+Message-ID: <20180809070724.11935-3-yixun.lan@amlogic.com>
+In-Reply-To: <20180809070724.11935-1-yixun.lan@amlogic.com>
+References: <20180809070724.11935-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180810202123.29238-1-ctatlor97@gmail.com>
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Document the MMC sub clock controller driver, the potential consumer
+of this driver is MMC or NAND. Also add four clock bindings IDs which
+provided by this driver.
 
-Fixes: 851e534f5d75 ("clk: qcom: Add Global Clock controller (GCC) driver for SDM660")
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
- gcc-sdm660.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+ include/dt-bindings/clock/amlogic,mmc-clkc.h  | 17 ++++++++++
+ 2 files changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
 
-diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-index bdb445a..cec8b41 100644
---- a/drivers/clk/qcom/gcc-sdm660.c
-+++ b/drivers/clk/qcom/gcc-sdm660.c
-@@ -2252,7 +2252,7 @@ static struct gdsc pcie_0_gdsc = {
- 	.flags = VOTABLE,
- };
- 
--struct clk_hw *gcc_sdm660_hws[] = {
-+static struct clk_hw *gcc_sdm660_hws[] = {
- 	[GCC_XO] = &xo.hw,
- 	[GCC_GPLL0_EARLY_DIV] = &gpll0_early_div.hw,
- 	[GCC_GPLL1_EARLY_DIV] = &gpll1_early_div.hw,
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+new file mode 100644
+index 000000000000..9e6d34389be8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+@@ -0,0 +1,31 @@
++* Amlogic MMC Sub Clock Controller Driver
++
++The Amlogic MMC clock controller generates and supplies clock to support
++MMC and NAND controller
++
++Required Properties:
++
++- compatible: should be:
++		"amlogic,gx-mmc-clkc"
++		"amlogic,axg-mmc-clkc"
++
++- #clock-cells: should be 1.
++- clocks: phandles to clocks corresponding to the clock-names property
++- clock-names: list of parent clock names
++	- "clkin0", "clkin1"
++
++Parent node should have the following properties :
++- compatible: "amlogic,axg-mmc-clkc", "syscon".
++- reg: base address and size of the MMC control register space.
++
++Example: Clock controller node:
++
++sd_mmc_c_clkc: clock-controller@7000 {
++	compatible = "amlogic,axg-mmc-clkc", "syscon";
++	reg = <0x0 0x7000 0x0 0x4>;
++	#clock-cells = <1>;
++
++	clock-names = "clkin0", "clkin1";
++	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
++		 <&clkc CLKID_FCLK_DIV2>;
++};
+diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+new file mode 100644
+index 000000000000..162b94949119
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson MMC sub clock tree IDs
++ *
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ * Author: Yixun Lan <yixun.lan@amlogic.com>
++ */
++
++#ifndef __MMC_CLKC_H
++#define __MMC_CLKC_H
++
++#define CLKID_MMC_DIV				1
++#define CLKID_MMC_PHASE_CORE			2
++#define CLKID_MMC_PHASE_TX			3
++#define CLKID_MMC_PHASE_RX			4
++
++#endif
+-- 
+2.17.1
