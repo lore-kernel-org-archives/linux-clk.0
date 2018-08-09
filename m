@@ -1,63 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:57628 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbeHUUiO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:14 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC, use COMPILE_TEST
-Date: Tue, 21 Aug 2018 19:16:25 +0200
-Message-Id: <20180821171635.22740-15-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	jernej.skrabec@siol.net
+Subject: [PATCH 1/5] clk: sunxi-ng: Add maximum rate constraint to NM PLLs
+Date: Thu,  9 Aug 2018 18:52:13 +0200
+Message-Id: <20180809165217.30680-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
+References: <20180809165217.30680-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Depending on MACH_INGENIC prevent us from creating a generic kernel that
-works on more than one MIPS board. Instead, we just depend on MIPS being
-set.
+On some NM PLLs, frequency can be set above PLL working range.
 
-On other architectures, this driver can still be built, thanks to
-COMPILE_TEST. This is used by automated tools to find bugs, for
-instance.
+Add a constraint for maximum supported rate. This way, drivers can
+specify which is maximum allowed rate for PLL.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/clk/sunxi-ng/ccu_nm.c |  7 +++++++
+ drivers/clk/sunxi-ng/ccu_nm.h | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
 
-Notes:
-     v5: New patch
-    
-     v6: No change
-    
-     v7: No change
-
- drivers/pwm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 58359bf22b96..e53ad662ef87 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -201,7 +201,7 @@ config PWM_IMX
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+index 4e2073307f34..6fe3c14f7b2d 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -124,6 +124,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return rate;
+ 	}
  
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
--	depends on MACH_INGENIC
-+	depends on MIPS || COMPILE_TEST
- 	depends on COMMON_CLK
- 	select INGENIC_TIMER
- 	help
++	if (nm->max_rate && rate > nm->max_rate) {
++		rate = nm->max_rate;
++		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
++			rate /= nm->fixed_post_div;
++		return rate;
++	}
++
+ 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
+ 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 			rate /= nm->fixed_post_div;
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+index 1d8b459c50b7..de232f2199a6 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.h
++++ b/drivers/clk/sunxi-ng/ccu_nm.h
+@@ -38,6 +38,7 @@ struct ccu_nm {
+ 
+ 	unsigned int		fixed_post_div;
+ 	unsigned int		min_rate;
++	unsigned int		max_rate;
+ 
+ 	struct ccu_common	common;
+ };
+@@ -115,6 +116,35 @@ struct ccu_nm {
+ 		},							\
+ 	}
+ 
++#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(_struct, _name,	\
++						 _parent, _reg,		\
++						 _min_rate, _max_rate,	\
++						 _nshift, _nwidth,	\
++						 _mshift, _mwidth,	\
++						 _frac_en, _frac_sel,	\
++						 _frac_rate_0,		\
++						 _frac_rate_1,		\
++						 _gate, _lock, _flags)	\
++	struct ccu_nm _struct = {					\
++		.enable		= _gate,				\
++		.lock		= _lock,				\
++		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
++		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
++		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
++						  _frac_rate_0,		\
++						  _frac_rate_1),	\
++		.min_rate	= _min_rate,				\
++		.max_rate	= _max_rate,				\
++		.common		= {					\
++			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FRACTIONAL,	\
++			.hw.init	= CLK_HW_INIT(_name,		\
++						      _parent,		\
++						      &ccu_nm_ops,	\
++						      _flags),		\
++		},							\
++	}
++
+ #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
+ 				    _nshift, _nwidth,			\
+ 				    _mshift, _mwidth,			\
 -- 
-2.11.0
+2.18.0
