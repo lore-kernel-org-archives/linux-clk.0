@@ -1,144 +1,133 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] clk: tegra: Don't enable already enabled PLLs
-Date: Sat, 18 Aug 2018 19:08:27 +0300
-Message-Id: <20180818160828.8198-1-digetx@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 20/24] MIPS: qi_lb60: Move PWM devices to devicetree
+Date: Thu,  9 Aug 2018 23:44:10 +0200
+Message-Id: <20180809214414.20905-21-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Initially Common Clock Framework isn't aware of the clock-enable status,
-this results in enabling of clocks that were enabled by bootloader. This
-is not a big deal for a regular clock-gates, but for PLL's it may have
-some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
-clock) may result in extra long period of PLL re-locking.
+Probe the few drivers using PWMs from devicetree, now that we have a
+devicetree node for the PWM driver.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 13 deletions(-)
+ arch/mips/boot/dts/ingenic/qi_lb60.dts | 14 ++++++++++++++
+ arch/mips/jz4740/board-qi_lb60.c       | 19 -------------------
+ 2 files changed, 14 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 830d1c87fa7c..ddb431247f08 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
- 	unsigned long flags = 0;
- 	int ret;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
+ v5: New patch
+
+ v6: No change
+
+diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+index 76aaf8982554..85529a142409 100644
+--- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
++++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+@@ -9,6 +9,14 @@
+ 	chosen {
+ 		stdout-path = &uart0;
+ 	};
 +
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 	struct tegra_clk_pll_freq_table sel;
-+	unsigned long input_rate;
- 	u32 val;
- 	int err;
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
++	beeper {
++		compatible = "pwm-beeper";
++		pwms = <&pwm 4 0 0>;
 +
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_pwm4>;
++	};
+ };
  
-@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
- 	int ret;
- 	unsigned long flags = 0;
+ &ext {
+@@ -30,4 +38,10 @@
+ 		groups = "uart0-data";
+ 		bias-disable;
+ 	};
++
++	pins_pwm4: pwm4 {
++		function = "pwm4";
++		groups = "pwm4";
++		bias-disable;
++	};
+ };
+diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
+index 60f0767507c6..2db32cb9ed47 100644
+--- a/arch/mips/jz4740/board-qi_lb60.c
++++ b/arch/mips/jz4740/board-qi_lb60.c
+@@ -27,7 +27,6 @@
+ #include <linux/power_supply.h>
+ #include <linux/power/jz4740-battery.h>
+ #include <linux/power/gpio-charger.h>
+-#include <linux/pwm.h>
  
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
+ #include <asm/mach-jz4740/gpio.h>
+ #include <asm/mach-jz4740/jz4740_fb.h>
+@@ -391,17 +390,6 @@ static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
+ 	.power_active_low	= 1,
+ };
  
-@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
- 		return -EINVAL;
- 	}
- 
-+	if (clk_pll_is_enabled(hw))
-+		return 0;
-+
- 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
- 
- 	if (pll->lock)
-@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
- 	return clk;
- }
- 
-+static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
-+{
-+	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	u32 val;
-+
-+	val = pll_readl_base(pll);
-+
-+	return val & PLLE_BASE_ENABLE ? 1 : 0;
-+}
-+
- static int clk_plle_tegra210_enable(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret = 0;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-+	unsigned long input_rate;
-+
-+	if (clk_plle_tegra210_is_enabled(hw))
-+		return 0;
-+
-+	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
- 
--static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
--{
--	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	u32 val;
+-/* beeper */
+-static struct pwm_lookup qi_lb60_pwm_lookup[] = {
+-	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
+-		   PWM_POLARITY_NORMAL),
+-};
 -
--	val = pll_readl_base(pll);
+-static struct platform_device qi_lb60_pwm_beeper = {
+-	.name = "pwm-beeper",
+-	.id = -1,
+-};
 -
--	return val & PLLE_BASE_ENABLE ? 1 : 0;
--}
+ /* charger */
+ static char *qi_lb60_batteries[] = {
+ 	"battery",
+@@ -450,10 +438,8 @@ static struct platform_device *jz_platform_devices[] __initdata = {
+ 	&jz4740_i2s_device,
+ 	&jz4740_codec_device,
+ 	&jz4740_adc_device,
+-	&jz4740_pwm_device,
+ 	&jz4740_dma_device,
+ 	&qi_lb60_gpio_keys,
+-	&qi_lb60_pwm_beeper,
+ 	&qi_lb60_charger_device,
+ 	&qi_lb60_audio_device,
+ };
+@@ -482,10 +468,6 @@ static struct pinctrl_map pin_map[] __initdata = {
+ 			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
+ 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
+ 			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
 -
- static const struct clk_ops tegra_clk_plle_tegra210_ops = {
- 	.is_enabled =  clk_plle_tegra210_is_enabled,
- 	.enable = clk_plle_tegra210_enable,
+-	/* PWM pin configuration */
+-	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
+-			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
+ };
+ 
+ 
+@@ -503,7 +485,6 @@ static int __init qi_lb60_init_platform_devices(void)
+ 	spi_register_board_info(qi_lb60_spi_board_info,
+ 				ARRAY_SIZE(qi_lb60_spi_board_info));
+ 
+-	pwm_add_table(qi_lb60_pwm_lookup, ARRAY_SIZE(qi_lb60_pwm_lookup));
+ 	pinctrl_register_mappings(pin_map, ARRAY_SIZE(pin_map));
+ 
+ 	return platform_add_devices(jz_platform_devices,
 -- 
-2.18.0
+2.11.0
