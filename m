@@ -1,217 +1,52 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] clk: tegra: Convert CCLKG mux to mux + clock divider on Tegra30
-Date: Thu, 30 Aug 2018 22:20:43 +0300
-Message-Id: <20180830192045.11017-2-digetx@gmail.com>
-In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
-References: <20180830192045.11017-1-digetx@gmail.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	jernej.skrabec@siol.net
+Subject: [PATCH 5/5] clk: sunxi-ng: a83t: Add max. rate constraint to video PLLs
+Date: Thu,  9 Aug 2018 18:52:17 +0200
+Message-Id: <20180809165217.30680-6-jernej.skrabec@siol.net>
+In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
+References: <20180809165217.30680-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Some of the CCLKG parents aren't accessible via device tree because they
-are created as non-DT clocks. Apparently there is no reason to define
-these clocks in that manner, hence convert CCLKG mux to mux + clock
-divider to remove the non-DT parent clocks. Now it is possible to request
-all of CCLKG parents from device tree, which is necessary for the CPUFreq
-driver.
+It may happen that clock framework finds optimal video PLL rate above
+that which is really supported by HW.
 
-Note that CCLKG bypasses clock divider only if PLLX is selected as the
-parent, hence previous CCLKG parents definition was incorrect.
+User manual doesn't really say what is upper limit for video PLLs on
+A83T. Because of that, use the maximum rate defined in BSP clk driver
+which is 3 GHz.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/tegra/clk-super.c    | 16 +++++++++++++-
- drivers/clk/tegra/clk-tegra210.c |  2 +-
- drivers/clk/tegra/clk-tegra30.c  | 38 +++++---------------------------
- drivers/clk/tegra/clk.h          |  9 ++++++--
- 4 files changed, 28 insertions(+), 37 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index 84267cfc4433..8ba58f7942d9 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -65,6 +65,8 @@ static u8 clk_super_get_parent(struct clk_hw *hw)
- 	    (source == mux->pllx_index))
- 		source = mux->div2_index;
- 
-+	mux->pllx_parent = (source == mux->pllx_index);
-+
- 	return source;
- }
- 
-@@ -114,6 +116,8 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	writel_relaxed(val, mux->reg);
- 	udelay(2);
- 
-+	mux->pllx_parent = (index == mux->pllx_index);
-+
- out:
- 	if (mux->lock)
- 		spin_unlock_irqrestore(mux->lock, flags);
-@@ -132,6 +136,9 @@ static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
- 	struct clk_hw *div_hw = &super->frac_div.hw;
- 
-+	if ((super->flags & TEGRA_CCLKG_DIVIDER) && super->pllx_parent)
-+		return *parent_rate;
-+
- 	__clk_hw_set_clk(div_hw, hw);
- 
- 	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-@@ -143,6 +150,9 @@ static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
- 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
- 	struct clk_hw *div_hw = &super->frac_div.hw;
- 
-+	if ((super->flags & TEGRA_CCLKG_DIVIDER) && super->pllx_parent)
-+		return parent_rate;
-+
- 	__clk_hw_set_clk(div_hw, hw);
- 
- 	return super->div_ops->recalc_rate(div_hw, parent_rate);
-@@ -154,6 +164,9 @@ static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
- 	struct clk_hw *div_hw = &super->frac_div.hw;
- 
-+	if ((super->flags & TEGRA_CCLKG_DIVIDER) && super->pllx_parent)
-+		return 0;
-+
- 	__clk_hw_set_clk(div_hw, hw);
- 
- 	return super->div_ops->set_rate(div_hw, rate, parent_rate);
-@@ -204,7 +217,7 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- }
- 
- struct clk *tegra_clk_register_super_clk(const char *name,
--		const char * const *parent_names, u8 num_parents,
-+		const char * const *parent_names, u8 num_parents, u8 pllx_index,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock)
- {
-@@ -232,6 +245,7 @@ struct clk *tegra_clk_register_super_clk(const char *name,
- 	super->frac_div.frac_width = 1;
- 	super->frac_div.lock = lock;
- 	super->div_ops = &tegra_clk_frac_div_ops;
-+	super->pllx_index = pllx_index;
- 
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	super->hw.init = &init;
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 9eb1cb14fce1..990c8773e50c 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3026,7 +3026,7 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 	clks[TEGRA210_CLK_CML1] = clk;
- 
- 	clk = tegra_clk_register_super_clk("aclk", aclk_parents,
--				ARRAY_SIZE(aclk_parents), 0, clk_base + 0x6e0,
-+				ARRAY_SIZE(aclk_parents), 0, 0, clk_base + 0x6e0,
- 				0, NULL);
- 	clks[TEGRA210_CLK_ACLK] = clk;
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index acfe661b2ae7..c4b78316ba8a 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -902,8 +902,8 @@ static void __init tegra30_pll_init(void)
- }
- 
- static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
--					"pll_p_cclkg", "pll_p_out4_cclkg",
--					"pll_p_out3_cclkg", "unused", "pll_x" };
-+					"pll_p", "pll_p_out4", "pll_p_out3",
-+					"unused", "pll_x" };
- static const char *cclk_lp_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
- 					 "pll_p_cclklp", "pll_p_out4_cclklp",
- 					 "pll_p_out3_cclklp", "unused", "pll_x",
-@@ -916,39 +916,11 @@ static void __init tegra30_super_clk_init(void)
- {
- 	struct clk *clk;
- 
--	/*
--	 * Clock input to cclk_g divided from pll_p using
--	 * U71 divider of cclk_g.
--	 */
--	clk = tegra_clk_register_divider("pll_p_cclkg", "pll_p",
--				clk_base + SUPER_CCLKG_DIVIDER, 0,
--				TEGRA_DIVIDER_INT, 16, 8, 1, NULL);
--	clk_register_clkdev(clk, "pll_p_cclkg", NULL);
--
--	/*
--	 * Clock input to cclk_g divided from pll_p_out3 using
--	 * U71 divider of cclk_g.
--	 */
--	clk = tegra_clk_register_divider("pll_p_out3_cclkg", "pll_p_out3",
--				clk_base + SUPER_CCLKG_DIVIDER, 0,
--				TEGRA_DIVIDER_INT, 16, 8, 1, NULL);
--	clk_register_clkdev(clk, "pll_p_out3_cclkg", NULL);
--
--	/*
--	 * Clock input to cclk_g divided from pll_p_out4 using
--	 * U71 divider of cclk_g.
--	 */
--	clk = tegra_clk_register_divider("pll_p_out4_cclkg", "pll_p_out4",
--				clk_base + SUPER_CCLKG_DIVIDER, 0,
--				TEGRA_DIVIDER_INT, 16, 8, 1, NULL);
--	clk_register_clkdev(clk, "pll_p_out4_cclkg", NULL);
--
- 	/* CCLKG */
--	clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
--				  ARRAY_SIZE(cclk_g_parents),
--				  CLK_SET_RATE_PARENT,
-+	clk = tegra_clk_register_super_clk("cclk_g", cclk_g_parents,
-+				  ARRAY_SIZE(cclk_g_parents), 8, 0,
- 				  clk_base + CCLKG_BURST_POLICY,
--				  0, 4, 0, 0, NULL);
-+				  TEGRA_CCLKG_DIVIDER, NULL);
- 	clks[TEGRA30_CLK_CCLK_G] = clk;
- 
- 	/*
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index d2c3a010f8e9..64922f0f5fdd 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -680,6 +680,9 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-  * Flags:
-  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
-  *     that this is LP cluster clock.
-+ *
-+ * TEGRA_CCLKG_DIVIDER - G cluster clock may bypass clocks divider. This flag
-+ *     indicates that this is G cluster clock.
-  */
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
-@@ -691,11 +694,13 @@ struct tegra_clk_super_mux {
- 	u8		div2_index;
- 	u8		pllx_index;
- 	spinlock_t	*lock;
-+	bool		pllx_parent;
- };
- 
- #define to_clk_super_mux(_hw) container_of(_hw, struct tegra_clk_super_mux, hw)
- 
--#define TEGRA_DIVIDER_2 BIT(0)
-+#define TEGRA_DIVIDER_2		BIT(0)
-+#define TEGRA_CCLKG_DIVIDER	BIT(1)
- 
- extern const struct clk_ops tegra_clk_super_ops;
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -703,7 +708,7 @@ struct clk *tegra_clk_register_super_mux(const char *name,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		u8 width, u8 pllx_index, u8 div2_index, spinlock_t *lock);
- struct clk *tegra_clk_register_super_clk(const char *name,
--		const char * const *parent_names, u8 num_parents,
-+		const char * const *parent_names, u8 num_parents, u8 pllx_index,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock);
- 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 7d08015b980d..2d6555d73170 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -108,6 +108,7 @@ static struct ccu_nkmp pll_video0_clk = {
+ 	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(0, 2), /* output divider */
++	.max_rate	= 3000000000UL,
+ 	.common		= {
+ 		.reg		= 0x010,
+ 		.lock_reg	= CCU_SUN8I_A83T_LOCK_REG,
+@@ -220,6 +221,7 @@ static struct ccu_nkmp pll_video1_clk = {
+ 	.n		= _SUNXI_CCU_MULT_OFFSET_MIN_MAX(8, 8, 0, 12, 0),
+ 	.m		= _SUNXI_CCU_DIV(16, 1), /* input divider */
+ 	.p		= _SUNXI_CCU_DIV(0, 2), /* external divider p */
++	.max_rate	= 3000000000UL,
+ 	.common		= {
+ 		.reg		= 0x04c,
+ 		.lock_reg	= CCU_SUN8I_A83T_LOCK_REG,
 -- 
 2.18.0
