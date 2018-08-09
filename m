@@ -1,180 +1,180 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx1.mailbox.org ([80.241.60.212]:64558 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726855AbeHDMy4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 4 Aug 2018 08:54:56 -0400
-Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Wu, Songjun" <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-15-songjun.wu@linux.intel.com>
- <20180803055640.GA32226@kroah.com>
- <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com>
- <20180803103023.GA6557@kroah.com>
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de>
-Date: Sat, 4 Aug 2018 12:54:22 +0200
+Return-Path: <Yixun.Lan@amlogic.com>
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
+	<liang.yang@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Qiufang Dai
+	<qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 1/3] clk: meson: add emmc sub clock phase delay driver
+Date: Thu, 9 Aug 2018 15:07:21 +0800
+Message-ID: <20180809070724.11935-2-yixun.lan@amlogic.com>
+In-Reply-To: <20180809070724.11935-1-yixun.lan@amlogic.com>
+References: <20180809070724.11935-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20180803103023.GA6557@kroah.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="iYaDZoiil5AJfzRaU241VXsHuivma9pSr"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: yixun.lan@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---iYaDZoiil5AJfzRaU241VXsHuivma9pSr
-Content-Type: multipart/mixed; boundary="yo3X2uHHNkbQafiGIhJb4q0TZSTXJ8cW0";
- protected-headers="v1"
-From: Hauke Mehrtens <hauke@hauke-m.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Wu, Songjun" <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
- chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
- linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Message-ID: <3360edd2-f3d8-b860-13fa-ce680edbfd0a@hauke-m.de>
-Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-15-songjun.wu@linux.intel.com>
- <20180803055640.GA32226@kroah.com>
- <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com>
- <20180803103023.GA6557@kroah.com>
-In-Reply-To: <20180803103023.GA6557@kroah.com>
+Export the emmc sub clock phase delay ops which will be used
+by the emmc sub clock driver itself.
 
---yo3X2uHHNkbQafiGIhJb4q0TZSTXJ8cW0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/Makefile          |  2 +-
+ drivers/clk/meson/clk-phase-delay.c | 96 +++++++++++++++++++++++++++++
+ drivers/clk/meson/clkc.h            | 13 ++++
+ 3 files changed, 110 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
 
-On 08/03/2018 12:30 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 03, 2018 at 03:33:38PM +0800, Wu, Songjun wrote:
->>
->>
->> On 8/3/2018 1:56 PM, Greg Kroah-Hartman wrote:
->>> On Fri, Aug 03, 2018 at 11:02:33AM +0800, Songjun Wu wrote:
->>>> Previous implementation uses platform-dependent API to get the clock=
-=2E
->>>> Those functions are not available for other SoC which uses the same =
-IP.
->>>> The CCF (Common Clock Framework) have an abstraction based APIs for
->>>> clock. In future, the platform specific code will be removed when th=
-e
->>>> legacy soc use CCF as well.
->>>> Change to use CCF APIs to get clock and rate. So that different SoCs=
-
->>>> can use the same driver.
->>>>
->>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->>>> ---
->>>>
->>>> Changes in v2: None
->>>>
->>>>   drivers/tty/serial/lantiq.c | 11 +++++++++++
->>>>   1 file changed, 11 insertions(+)
->>>>
->>>> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq=
-=2Ec
->>>> index 36479d66fb7c..35518ab3a80d 100644
->>>> --- a/drivers/tty/serial/lantiq.c
->>>> +++ b/drivers/tty/serial/lantiq.c
->>>> @@ -26,7 +26,9 @@
->>>>   #include <linux/clk.h>
->>>>   #include <linux/gpio.h>
->>>> +#ifdef CONFIG_LANTIQ
->>>>   #include <lantiq_soc.h>
->>>> +#endif
->>> That is never how you do this in Linux, you know better.
->>>
->>> Please go and get this patchset reviewed and signed-off-by from other=
-
->>> internal Intel kernel developers before resending it next time.  It i=
-s
->>> their job to find and fix your basic errors like this, not ours.
->> Thank you for your comment.
->> Actually, we have discussed this issue internally.
->> We put the reason why we use "#ifdef CONFIG_LANTIQ" preprocessor in co=
-mmit
->> message in "[PATCH v2 08/18] serial: intel: Get serial id from dts".
->> Please refer the commit message below.
->>
->> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
->> macro is defined in lantiq_soc.h.
->> lantiq_soc.h is in arch path for legacy product support.
->>
->> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
->>
->> If "#ifdef preprocessor" is changed to
->> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
->> code using LTQ_EARLY_ASC is compiled.
->> Compilation will fail for no LTQ_EARLY_ASC defined.
->=20
-> Sorry, but no.  Why is this one tiny driver/chip somehow more "special"=
-
-> than all of the tens of thousands of other devices we support to warren=
-t
-> it getting some sort of special exception to do things differently?
-> What happens to the next device that wants to do it this way?
->=20
-> Our coding style and rules are there for a reason, do not violate them
-> thinking your device is the only one that matters.
->=20
-> Do it properly, again, you all know better than this.
->=20
-> greg k-h
->=20
-Hi Greg,
-
-The problem is that the Lantiq SoC code in arch/mips/lantiq does not use
-the common clock framework, but it uses the clk framework directly. It
-defines CONFIG_HAVE_CLK and CONFIG_CLKDEV_LOOKUP, but not
-CONFIG_COMMON_CLK. The xRX500 SoC which is being added here is about 2
-generations more recent than the VR9/xRX200 SoC which is the latest
-which is supported by the code in arch/mips/lantiq. With this new SoC we
-switched to the common clock framework. This driver is used by the older
-SoC and also by the new ones because this IP core is pretty similar in
-all the SoCs.
-This patch makes it possible to use it with the legacy lantiq code and
-also with the common clock framework. I see multiple options to fix this
-problem.
-
-1. The current approach to have it as a compile variant for a) legacy
-lantiq arch code without common clock framework and b) support for SoCs
-using the common clock framework.
-2. Convert the lantiq arch code to the common clock framework. This
-would be a good approach, but it need some efforts.
-3. Remove the arch/mips/lantiq code. There are still users of this code.
-4. Use the old APIs also for the new xRX500 SoC, I do not like this
-approach.
-5. Move lantiq_soc.h to somewhere in include/linux/ so it is globally
-available and provide some better wrapper code.
-
-Hauke
-
-
---yo3X2uHHNkbQafiGIhJb4q0TZSTXJ8cW0--
-
---iYaDZoiil5AJfzRaU241VXsHuivma9pSr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEyz0/uAcd+JwXmwtD8bdnhZyy68cFAltlheYACgkQ8bdnhZyy
-68f9YwgAyE4M+WJKQQepmYvunvM3LLg05z/q/8X+xyQhnrAHO6UTp7st/3iW9/4m
-jpkObGOk/FbZ8luantnYYxtzldSrvdC6kkcc670NYLtNkeJIizifCLkIETXmmzQP
-791QZE4n6irE7xEBsK04oMrZnGi8P775RHQ2paSVvf1O2HMSiCy5vanTbU7tVta8
-BUZleZa2O7YGApgO9Vh5qnoh8QP1Oii1CkEFGEVqNysq6ik6IoVW17m5mxCzp75i
-XZw/a6ADFlAd+AdkwKC0xeYazUkDAXqrR+X2E12iH5vATwOwemXRmlrmexVNUpVe
-GIJ2FTuaGGbEzhro721wuXCUZegiOg==
-=Km41
------END PGP SIGNATURE-----
-
---iYaDZoiil5AJfzRaU241VXsHuivma9pSr--
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 72ec8c40d848..39ce5661b654 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Meson specific clk
+ #
+ 
+-obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
+new file mode 100644
+index 000000000000..6f226814cfec
+--- /dev/null
++++ b/drivers/clk/meson/clk-phase-delay.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Amlogic Meson MMC Sub Clock Controller Driver
++ *
++ * Copyright (c) 2017 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Yixun Lan <yixun.lan@amlogic.com>
++ */
++
++#include <linux/clk-provider.h>
++#include "clkc.h"
++
++#define SD_EMMC_CLOCK			0
++
++static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_phase_delay_data *ph =
++		meson_clk_get_phase_delay_data(clk);
++	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
++	unsigned long period_ps, p, d;
++	int degrees;
++	u32 val;
++
++	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
++	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
++	degrees = p * 360 / phase_num;
++
++	if (ph->delay_mask) {
++		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
++					 clk_hw_get_rate(hw));
++		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
++		degrees += d * ph->delay_step_ps * 360 / period_ps;
++		degrees %= 360;
++	}
++
++	return degrees;
++}
++
++static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
++					unsigned int phase,
++					unsigned int delay)
++{
++	struct meson_clk_phase_delay_data *ph = clk->data;
++	u32 val;
++
++	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
++
++	val &= ~ph->phase_mask;
++	val |= phase << __ffs(ph->phase_mask);
++
++	if (ph->delay_mask) {
++		val &= ~ph->delay_mask;
++		val |= delay << __ffs(ph->delay_mask);
++	}
++
++	regmap_write(clk->map, SD_EMMC_CLOCK, val);
++}
++
++static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_phase_delay_data *ph =
++		meson_clk_get_phase_delay_data(clk);
++	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
++	unsigned long period_ps, d = 0, r;
++	u64 p;
++
++	p = degrees % 360;
++
++	if (!ph->delay_mask) {
++		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
++	} else {
++		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
++					 clk_hw_get_rate(hw));
++
++		/* First compute the phase index (p), the remainder (r) is the
++		 * part we'll try to acheive using the delays (d).
++		 */
++		r = do_div(p, 360 / phase_num);
++		d = DIV_ROUND_CLOSEST(r * period_ps,
++				      360 * ph->delay_step_ps);
++		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
++	}
++
++	meson_clk_apply_phase_delay(clk, p, d);
++	return 0;
++}
++
++const struct clk_ops meson_clk_phase_delay_ops = {
++	.get_phase = meson_clk_phase_delay_get_phase,
++	.set_phase = meson_clk_phase_delay_set_phase,
++};
++EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 24cec16b6038..499834dd34f2 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -113,6 +113,18 @@ struct clk_regmap _name = {						\
+ 	},								\
+ };
+ 
++struct meson_clk_phase_delay_data {
++	unsigned long			phase_mask;
++	unsigned long			delay_mask;
++	unsigned int			delay_step_ps;
++};
++
++static inline struct meson_clk_phase_delay_data *
++meson_clk_get_phase_delay_data(struct clk_regmap *clk)
++{
++	return (struct meson_clk_phase_delay_data *)clk->data;
++}
++
+ /* clk_ops */
+ extern const struct clk_ops meson_clk_pll_ro_ops;
+ extern const struct clk_ops meson_clk_pll_ops;
+@@ -120,5 +132,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
+ extern const struct clk_ops meson_clk_mpll_ops;
+ extern const struct clk_ops meson_clk_phase_ops;
++extern const struct clk_ops meson_clk_phase_delay_ops;
+ 
+ #endif /* __CLKC_H */
+-- 
+2.17.1
