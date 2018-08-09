@@ -1,75 +1,61 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 02/24] dt-bindings: ingenic: Add DT bindings for TCU clocks
-Date: Tue, 21 Aug 2018 19:16:13 +0200
-Message-Id: <20180821171635.22740-3-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	jernej.skrabec@siol.net
+Subject: [PATCH 4/5] clk: sunxi-ng: nkmp: Add constraint for maximum rate
+Date: Thu,  9 Aug 2018 18:52:16 +0200
+Message-Id: <20180809165217.30680-5-jernej.skrabec@siol.net>
+In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
+References: <20180809165217.30680-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This header provides clock numbers for the ingenic,tcu
-DT binding.
+Some, if not most, NKMP PLLs can be set to higher rate that is really
+supported by HW.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Implement support for maximum frequency constrain for NKMP PLLs.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
+ drivers/clk/sunxi-ng/ccu_nkmp.c | 7 +++++++
+ drivers/clk/sunxi-ng/ccu_nkmp.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-Notes:
-     v2: Use SPDX identifier for the license
-    
-     v3: No change
-    
-     v4: No change
-    
-     v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
-    
-     v6: No change
-    
-     v7: No change
-
- include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
-
-diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-new file mode 100644
-index 000000000000..d569650a7945
---- /dev/null
-+++ b/include/dt-bindings/clock/ingenic,tcu.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,tcu DT binding.
-+ */
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
+index ebd9436d2c7c..9b49adb20d07 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.c
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
+@@ -137,6 +137,13 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nkmp->fixed_post_div;
+ 
++	if (nkmp->max_rate && rate > nkmp->max_rate) {
++		rate = nkmp->max_rate;
++		if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
++			rate /= nkmp->fixed_post_div;
++		return rate;
++	}
 +
-+#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+
-+#define TCU_CLK_TIMER0	0
-+#define TCU_CLK_TIMER1	1
-+#define TCU_CLK_TIMER2	2
-+#define TCU_CLK_TIMER3	3
-+#define TCU_CLK_TIMER4	4
-+#define TCU_CLK_TIMER5	5
-+#define TCU_CLK_TIMER6	6
-+#define TCU_CLK_TIMER7	7
-+#define TCU_CLK_WDT	8
-+#define TCU_CLK_OST	9
-+
-+#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+ 	_nkmp.min_n = nkmp->n.min ?: 1;
+ 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
+ 	_nkmp.min_k = nkmp->k.min ?: 1;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
+index 6940503e7fc4..a9f8c116a745 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkmp.h
++++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
+@@ -35,6 +35,7 @@ struct ccu_nkmp {
+ 	struct ccu_div_internal		p;
+ 
+ 	unsigned int		fixed_post_div;
++	unsigned int		max_rate;
+ 
+ 	struct ccu_common	common;
+ };
 -- 
-2.11.0
+2.18.0
