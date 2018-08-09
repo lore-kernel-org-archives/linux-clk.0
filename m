@@ -1,125 +1,253 @@
-Return-Path: <jcrouse@codeaurora.org>
-Date: Wed, 8 Aug 2018 08:51:23 -0600
-From: Jordan Crouse <jcrouse@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Amit Nischal <anischal@codeaurora.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-Message-ID: <20180808145123.GA18086@jcrouse-lnx.qualcomm.com>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
- <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
- <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
- <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
- <07e0321116993d27d6585bd1a186328d@codeaurora.org>
- <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
- <ee2113c9dd6a44e9669e60f760c76409@codeaurora.org>
- <20180806150437.GE21283@jcrouse-lnx.qualcomm.com>
- <153370789988.220756.1656616273823792690@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153370789988.220756.1656616273823792690@swboyd.mtv.corp.google.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 04/24] dt-bindings: Add doc for the Ingenic TCU drivers
+Date: Thu,  9 Aug 2018 23:43:54 +0200
+Message-Id: <20180809214414.20905-5-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 07, 2018 at 10:58:19PM -0700, Stephen Boyd wrote:
-> Quoting Jordan Crouse (2018-08-06 08:04:37)
-> > On Mon, Aug 06, 2018 at 02:37:18PM +0530, Amit Nischal wrote:
-> > > On 2018-08-03 04:14, Stephen Boyd wrote:
-> > > >Quoting Amit Nischal (2018-07-30 04:28:56)
-> > > >>On 2018-07-25 12:28, Stephen Boyd wrote:
-> > > >>>
-> > > >>> Ok. Sounds good! Is the rate range call really needed? It can't be
-> > > >>> determined in the PLL code with some table or avoided by making sure
-> > > >>> GPU
-> > > >>> uses OPP table with only approved frequencies?
-> > > >>>
-> > > >>
-> > > >>Currently fabia PLL code does not have any table to check this and
-> > > >>intention
-> > > >>was to avoid relying on the client to call set_rate with only approved
-> > > >>frequencies so we have added the set_rate_range() call in the GPUCC
-> > > >>driver
-> > > >>in order to set the rate range.
-> > > >>
-> > > >
-> > > >But GPU will use OPP so it doesn't seem like it really buys us anything
-> > > >here. And it really doesn't matter when the clk driver implementation
-> > > >doesn't use the min/max to clamp the values of the round_rate()
-> > > >call. Is
-> > > >that being done here? I need to double check. I would be more convinced
-> > > >if the implementation was looking at min/max to constrain the rate
-> > > >requested.
-> > > >
-> > > 
-> > > So our understanding is that GPU(client) driver will always call the
-> > > set_rate with approved frequencies only and we can completely rely
-> > > on the
-> > > client. Is our understanding is correct?
-> > 
-> > 
-> > First: on sdm845 the software doesn't set the GPU clocks - we rely on the GMU
-> > firmware to do that on our behalf but for the GPU at least this is an academic
-> > exercise.
-> 
-> So what is this GPU clk driver for then?
+Add documentation about how to properly use the Ingenic TCU
+(Timer/Counter Unit) drivers from devicetree.
 
-That is a good question. There is a hodgepodge of clocks for the GMU, GPU and
-SMMU and I'm not sure which ones are provided by the various clk drivers. This
-isn't my area of expertise.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
+ .../devicetree/bindings/timer/ingenic,tcu.txt      | 134 +++++++++++++++++++++
+ .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
+ 3 files changed, 134 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
 
-The GMU uses:
+ v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+     added content.
 
-GPU_CC_CX_GMU_CLK
-GPU_CC_CXO_CLK
-GCC_DDRSS_GPU_AXI_CLK
-GCC_GPU_MEMNOC_GFX_CLK
+ v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+       document.
+     - Moved main document to
+       Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+     - Updated documentation to reflect the new devicetree bindings.
 
-These are controlled by the GMU device.
+ v6: - Removed PWM/watchdog documentation files as asked by upstream
+     - Removed doc about properties that should be implicit
+     - Removed doc about ingenic,timer-channel /
+       ingenic,clocksource-channel as they are gone
+     - Fix WDT clock name in the binding doc
+     - Fix lengths of register areas in watchdog/pwm nodes
 
-The SMMU uses:
-
-GCC_GPU_CFG_AHB_CLK
-GCC_DDRSS_GPU_AXI_CLK
-GCC_GPU_MEMNOC_GFX_CLK
-
-These should be controlled by the SMMU device.
-
-Downstream defines these drivers for the GPU but we don't get/prepare/use
-them for the GPU device - I think they are there in case the GMU isn't
-working or is disabled for some other reason.
-
-GPU_CC_GX_GFX3D_CLK
-GPU_CC_CXO_CLK
-GCC_DDRSS_GPU_AXI_CLK
-GCC_GPU_MEMNOC_GFX_CLK
-GPU_CC_CX_GMU_CLK
-
-> > 
-> > But that said: traditionally we've expected that the clock driver correctly
-> > clamp the requested rate to the correct values. In the past we have taken
-> > advantage of this and we may in the future. I don't think it is reasonable
-> > to require the leaf driver to only pass "approved" frequencies especially
-> > since we depend on our own OPP table that may or may not be similar to the
-> > one used by the clock driver.
-> > 
-> 
-> Ok. Sounds like things can't be kept in sync between the clk driver and
-> the OPP tables. Why is that hard to do?
-
-Again, not my area of expertise. Traditionally the leaf driver is responsible
-for setting its own OPP table. I'm not sure if the clock driver can or should
-be in the role of switching up the table. We've always assumed that the clk
-driver will sanity check whatever we ask it for.
-
-Jordan
-
+diff --git a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt b/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+deleted file mode 100644
+index 7d9d3f90641b..000000000000
+--- a/Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-Ingenic JZ47xx PWM Controller
+-=============================
+-
+-Required properties:
+-- compatible: One of:
+-  * "ingenic,jz4740-pwm"
+-  * "ingenic,jz4770-pwm"
+-  * "ingenic,jz4780-pwm"
+-- #pwm-cells: Should be 3. See pwm.txt in this directory for a description
+-  of the cells format.
+-- clocks : phandle to the external clock.
+-- clock-names : Should be "ext".
+-
+-
+-Example:
+-
+-	pwm: pwm@10002000 {
+-		compatible = "ingenic,jz4740-pwm";
+-		reg = <0x10002000 0x1000>;
+-
+-		#pwm-cells = <3>;
+-
+-		clocks = <&ext>;
+-		clock-names = "ext";
+-	};
+diff --git a/Documentation/devicetree/bindings/timer/ingenic,tcu.txt b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+new file mode 100644
+index 000000000000..838ce5065534
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+@@ -0,0 +1,134 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit devicetree bindings
++==========================================================
++
++For a description of the TCU hardware and drivers, have a look at
++Documentation/mips/ingenic-tcu.txt.
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-tcu
++  * ingenic,jz4725b-tcu
++  * ingenic,jz4770-tcu
++- reg: Should be the offset/length value corresponding to the TCU registers
++- clocks: List of phandle & clock specifiers for clocks external to the TCU.
++  The "pclk", "rtc", "ext" and "tcu" clocks should be provided.
++- clock-names: List of name strings for the external clocks.
++- #clock-cells: Should be <1>;
++  Clock consumers specify this argument to identify a clock. The valid values
++  may be found in <dt-bindings/clock/ingenic,tcu.h>.
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value should be 1.
++- interrupt-parent : phandle of the interrupt controller.
++- interrupts : Specifies the interrupt the controller is connected to.
++
++
++Children nodes
++==========================================================
++
++
++PWM node:
++---------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-pwm
++  * ingenic,jz4725b-pwm
++- #pwm-cells: Should be 3. See ../pwm/pwm.txt for a description of the cell
++  format.
++- clocks: List of phandle & clock specifiers for the TCU clocks.
++- clock-names: List of name strings for the TCU clocks.
++
++
++Watchdog node:
++--------------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4740-watchdog
++  * ingenic,jz4780-watchdog
++- clocks: phandle to the WDT clock
++- clock-names: should be "wdt"
++
++
++OST node:
++---------
++
++Required properties:
++
++- compatible: Must be one of:
++  * ingenic,jz4725b-ost
++  * ingenic,jz4770-ost
++- clocks: phandle to the OST clock
++- clock-names: should be "ost"
++- interrupts : Specifies the interrupt the OST is connected to.
++
++
++Example
++==========================================================
++
++#include <dt-bindings/clock/jz4770-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
++
++/ {
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_RTC
++			  &cgu JZ4770_CLK_EXT
++			  &cgu JZ4770_CLK_PCLK
++			  &cgu JZ4770_CLK_EXT>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4740-watchdog";
++			reg = <0x0 0xc>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0x40>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
++
++		ost: timer@e0 {
++			compatible = "ingenic,jz4770-ost";
++			reg = <0xe0 0x20>;
++
++			clocks = <&tcu TCU_CLK_OST>;
++			clock-names = "ost";
++
++			interrupts = <15>;
++		};
++	};
++};
+diff --git a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+deleted file mode 100644
+index ce1cb72d5345..000000000000
+--- a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Ingenic Watchdog Timer (WDT) Controller for JZ4740 & JZ4780
+-
+-Required properties:
+-compatible: "ingenic,jz4740-watchdog" or "ingenic,jz4780-watchdog"
+-reg: Register address and length for watchdog registers
+-clocks: phandle to the RTC clock
+-clock-names: should be "rtc"
+-
+-Example:
+-
+-watchdog: jz4740-watchdog@10002000 {
+-	compatible = "ingenic,jz4740-watchdog";
+-	reg = <0x10002000 0x10>;
+-
+-	clocks = <&cgu JZ4740_CLK_RTC>;
+-	clock-names = "rtc";
+-};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
