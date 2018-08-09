@@ -1,129 +1,76 @@
-Return-Path: <brgl@bgdev.pl>
-MIME-Version: 1.0
-In-Reply-To: <20180827103915.GC13848@rapoport-lnx>
-References: <20180827082101.5036-1-brgl@bgdev.pl> <20180827082101.5036-2-brgl@bgdev.pl>
- <20180827103915.GC13848@rapoport-lnx>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 27 Aug 2018 14:28:45 +0200
-Message-ID: <CAMRc=MeCRw459ppuVK=w53C2eHOVVHPksF_4hx_dY1J-3fgPsQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
-To: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>, Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 02/24] dt-bindings: ingenic: Add DT bindings for TCU clocks
+Date: Thu,  9 Aug 2018 23:43:52 +0200
+Message-Id: <20180809214414.20905-3-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018-08-27 12:39 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
-> On Mon, Aug 27, 2018 at 10:21:01AM +0200, Bartosz Golaszewski wrote:
->> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
->> an example of how to use this new routine to shrink driver code.
->>
->> While we're at it: replace a call to kcalloc() with devm_kcalloc().
->>
->> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->> ---
->>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
->>  1 file changed, 4 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
->> index 08ef69945ffb..daa2192e6568 100644
->> --- a/drivers/clk/x86/clk-pmc-atom.c
->> +++ b/drivers/clk/x86/clk-pmc-atom.c
->> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
->>               plt_clk_unregister_fixed_rate(data->parents[i]);
->>  }
->>
->> -static void plt_clk_free_parent_names_loop(const char **parent_names,
->> -                                        unsigned int i)
->> -{
->> -     while (i--)
->> -             kfree_const(parent_names[i]);
->> -     kfree(parent_names);
->> -}
->> -
->>  static void plt_clk_unregister_loop(struct clk_plt_data *data,
->>                                   unsigned int i)
->>  {
->> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->>       if (!data->parents)
->>               return ERR_PTR(-ENOMEM);
->>
->> -     parent_names = kcalloc(nparents, sizeof(*parent_names),
->> -                            GFP_KERNEL);
->> +     parent_names = devm_kcalloc(&pdev->dev, nparents,
->> +                                 sizeof(*parent_names), GFP_KERNEL);
->>       if (!parent_names)
->>               return ERR_PTR(-ENOMEM);
->>
->> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->>                       err = PTR_ERR(data->parents[i]);
->>                       goto err_unreg;
->>               }
->> -             parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
->> +             parent_names[i] = devm_kstrdup_const(&pdev->dev,
->> +                                                  clks[i].name, GFP_KERNEL);
->>       }
->>
->>       data->nparents = nparents;
->> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->>
->>  err_unreg:
->>       plt_clk_unregister_fixed_rate_loop(data, i);
->> -     plt_clk_free_parent_names_loop(parent_names, i);
->
-> What happens if clks[i].name is not a part of RO data? The devm_kstrdup_const
-> will allocate memory and nothing will ever free it...
->
+This header provides clock numbers for the ingenic,tcu
+DT binding.
 
-I'm looking at it and trying to see if I'm missing something, but
-AFAIK the whole concept of devm_* is to leave out the resource
-management part.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
-devm_kstrdup_const() will internally call devm_kstrdup() for strings
-that are not in .rodata and once the device is detached, the string
-will be freed (or not if it's in .rodata).
+ v2: Use SPDX identifier for the license
 
-BR
-Bart
+ v3: No change
 
-> And, please don't drop kfree(parent_names) here.
->
->>       return ERR_PTR(err);
->>  }
->>
->> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
->>               goto err_unreg_clk_plt;
->>       }
->>
->> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
->> -
->>       platform_set_drvdata(pdev, data);
->>       return 0;
->>
->>  err_unreg_clk_plt:
->>       plt_clk_unregister_loop(data, i);
->>       plt_clk_unregister_parents(data);
->> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
->
-> Ditto.
->
->>       return err;
->>  }
->>
->> --
->> 2.18.0
->>
->
-> --
-> Sincerely yours,
-> Mike.
->
+ v4: No change
+
+ v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
+
+ v6: No change
+
+diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+new file mode 100644
+index 000000000000..d569650a7945
+--- /dev/null
++++ b/include/dt-bindings/clock/ingenic,tcu.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,tcu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++
++#define TCU_CLK_TIMER0	0
++#define TCU_CLK_TIMER1	1
++#define TCU_CLK_TIMER2	2
++#define TCU_CLK_TIMER3	3
++#define TCU_CLK_TIMER4	4
++#define TCU_CLK_TIMER5	5
++#define TCU_CLK_TIMER6	6
++#define TCU_CLK_TIMER7	7
++#define TCU_CLK_WDT	8
++#define TCU_CLK_OST	9
++
++#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
+-- 
+2.11.0
