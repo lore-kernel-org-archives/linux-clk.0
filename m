@@ -1,56 +1,280 @@
-Return-Path: <ezequiel@vanguardiasur.com.ar>
-MIME-Version: 1.0
-In-Reply-To: <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com> <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
-From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date: Wed, 29 Aug 2018 21:52:57 -0300
-Message-ID: <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] media: platform: Add Aspeed Video Engine driver
-To: Eddie James <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>,
-	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, andrew@aj.id.au,
-	Mauro Carvalho Chehab <mchehab@kernel.org>, joel@jms.id.au, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 19/24] MIPS: jz4740: Add DTS nodes for the TCU drivers
+Date: Thu,  9 Aug 2018 23:44:09 +0200
+Message-Id: <20180809214414.20905-20-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Eddie,
+Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
 
-On 29 August 2018 at 18:09, Eddie James <eajames@linux.vnet.ibm.com> wrote:
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting a service processor, the Video Engine can capture
-> the host processor graphics output.
->
-> Add a V4L2 driver to capture video data and compress it to JPEG images,
-> making the data available through a standard read interface.
->
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> ---
->  drivers/media/platform/Kconfig        |    8 +
->  drivers/media/platform/Makefile       |    1 +
->  drivers/media/platform/aspeed-video.c | 1307 +++++++++++++++++++++++++++++++++
->  3 files changed, 1316 insertions(+)
->  create mode 100644 drivers/media/platform/aspeed-video.c
->
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 94c1fe0..e599245 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -32,6 +32,14 @@ source "drivers/media/platform/davinci/Kconfig"
->
->  source "drivers/media/platform/omap/Kconfig"
->
-> +config VIDEO_ASPEED
-> +       tristate "Aspeed AST2400 and AST2500 Video Engine driver"
-> +       depends on VIDEO_V4L2
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/dts/ingenic/jz4740.dtsi | 51 +++++++++++++++++++++++---
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 59 ++++++++++++++++++++++++++++++
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 67 ++++++++++++++++++++++++++++++----
+ 3 files changed, 164 insertions(+), 13 deletions(-)
 
-It seems you are not using videobuf2. I think it should simplify the read
-I/O part and at the same time expose the other capture methods.
+ v5: New patch
 
-There are plenty of examples to follow.
+ v6: Fix register lengths in watchdog/pwm nodes
 
-Regards,
-Eze
+diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+index 26c6b561d6f7..bd4090b27dbb 100644
+--- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/clock/jz4740-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -45,12 +46,52 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
+-	watchdog: watchdog@10002000 {
+-		compatible = "ingenic,jz4740-watchdog";
+-		reg = <0x10002000 0x10>;
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4740-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
+ 
+-		clocks = <&cgu JZ4740_CLK_RTC>;
+-		clock-names = "rtc";
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4740_CLK_RTC
++			  &cgu JZ4740_CLK_EXT
++			  &cgu JZ4740_CLK_PCLK
++			  &cgu JZ4740_CLK_TCU>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <23 22 21>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4740-watchdog";
++			reg = <0x0 0xc>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0x40>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
+ 	};
+ 
+ 	rtc_dev: rtc@10003000 {
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+index 7c2804f3f5f1..1097b97fd7a9 100644
+--- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+ #include <dt-bindings/clock/jz4770-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
+ 
+ / {
+ 	#address-cells = <1>;
+@@ -46,6 +47,64 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_RTC
++			  &cgu JZ4770_CLK_EXT
++			  &cgu JZ4770_CLK_PCLK
++			  &cgu JZ4770_CLK_EXT>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4740-watchdog";
++			reg = <0x0 0xc>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0x40>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
++
++		ost: timer@e0 {
++			compatible = "ingenic,jz4770-ost";
++			reg = <0xe0 0x20>;
++
++			clocks = <&tcu TCU_CLK_OST>;
++			clock-names = "ost";
++
++			interrupts = <15>;
++		};
++	};
++
+ 	pinctrl: pin-controller@10010000 {
+ 		compatible = "ingenic,jz4770-pinctrl";
+ 		reg = <0x10010000 0x600>;
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index aa4e8f75ff5d..93da52eea1d2 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/clock/jz4780-cgu.h>
++#include <dt-bindings/clock/ingenic,tcu.h>
+ #include <dt-bindings/dma/jz4780-dma.h>
+ 
+ / {
+@@ -46,6 +47,64 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4780_CLK_RTCLK
++			  &cgu JZ4780_CLK_EXCLK
++			  &cgu JZ4780_CLK_PCLK
++			  &cgu JZ4780_CLK_EXCLK>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++
++		watchdog: watchdog@0 {
++			compatible = "ingenic,jz4780-watchdog";
++			reg = <0x0 0xc>;
++
++			clocks = <&tcu TCU_CLK_WDT>;
++			clock-names = "wdt";
++		};
++
++		pwm: pwm@10 {
++			compatible = "ingenic,jz4740-pwm";
++			reg = <0x10 0x40>;
++
++			#pwm-cells = <3>;
++
++			clocks = <&tcu TCU_CLK_TIMER0
++				  &tcu TCU_CLK_TIMER1
++				  &tcu TCU_CLK_TIMER2
++				  &tcu TCU_CLK_TIMER3
++				  &tcu TCU_CLK_TIMER4
++				  &tcu TCU_CLK_TIMER5
++				  &tcu TCU_CLK_TIMER6
++				  &tcu TCU_CLK_TIMER7>;
++			clock-names = "timer0", "timer1", "timer2", "timer3",
++				      "timer4", "timer5", "timer6", "timer7";
++		};
++
++		ost: timer@e0 {
++			compatible = "ingenic,jz4770-ost";
++			reg = <0xe0 0x20>;
++
++			clocks = <&tcu TCU_CLK_OST>;
++			clock-names = "ost";
++
++			interrupts = <15>;
++		};
++	};
++
+ 	rtc_dev: rtc@10003000 {
+ 		compatible = "ingenic,jz4780-rtc";
+ 		reg = <0x10003000 0x4c>;
+@@ -220,14 +279,6 @@
+ 		status = "disabled";
+ 	};
+ 
+-	watchdog: watchdog@10002000 {
+-		compatible = "ingenic,jz4780-watchdog";
+-		reg = <0x10002000 0x10>;
+-
+-		clocks = <&cgu JZ4780_CLK_RTCLK>;
+-		clock-names = "rtc";
+-	};
+-
+ 	nemc: nemc@13410000 {
+ 		compatible = "ingenic,jz4780-nemc";
+ 		reg = <0x13410000 0x10000>;
+-- 
+2.11.0
