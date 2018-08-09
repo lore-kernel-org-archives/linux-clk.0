@@ -1,43 +1,73 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <5b6cc314.1c69fb81.96ced.16f7@mx.google.com>
+Date: Thu, 09 Aug 2018 16:41:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: enric.balletbo@collabora.com
+Subject: Re: [PATCH 7/8] arm64: dts: rk3399: Add dfi and dmc nodes.
+References: <20180730081124.30698-1-enric.balletbo@collabora.com>
+ <20180730081124.30698-8-enric.balletbo@collabora.com>
+In-Reply-To: <20180730081124.30698-8-enric.balletbo@collabora.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: , Mark Rutland <mark.rutland@arm.com>,
+ Douglas Anderson <dianders@chromium.org>, David Airlie <airlied@linux.ie>,
+ Catalin Marinas <catalin.marinas@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Klaus Goger <klaus.goger@theobroma-systems.com>,
+ kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Brian Norris <briannorris@chromium.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Nickey Yang <nickey.yang@rock-chips.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org,
+ Randy Li <ayaka@soulik.info>, linux-pm@vger.kernel.org,
+ Derek Basehore <dbasehore@chromium.org>, Sean Paul <seanpaul@chromium.org>,
+ Mark Yao <markyao0591@gmail.com>, linux-arm-kernel@lists.infradead.org,
+ Jacob Chen <jacob-chen@iotwrt.com>, Lin Huang <hl@rock-chips.com>,
+ Sandy Huang <hjc@rock-chips.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ robin.murphy@arm.com
 MIME-Version: 1.0
-To: Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
-Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
- joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
- <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
- <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
-Message-ID: <153577001451.19113.16924655760277630355@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-Date: Fri, 31 Aug 2018 19:46:54 -0700
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Eddie James (2018-08-31 12:30:02)
-> =
+Hi, this is an automated email from Rob's (experimental) review bot. I
+found a couple of common problems with your patch. Please see below.
 
-> =
+On Mon, 30 Jul 2018 10:11:23 +0200, Enric Balletbo i Serra wrote:
+> From: Lin Huang <hl@rock-chips.com>
+> 
+> These are required to support DDR DVFS on rk3399 platform. The patch also
+> introduces two new files (rk3399-dram.h and rk3399-dram-default-timing)
+> with default DRAM settings.
+> 
+> Signed-off-by: Lin Huang <hl@rock-chips.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-> On 08/31/2018 12:56 PM, Stephen Boyd wrote:
-> > Quoting Eddie James (2018-08-29 14:09:29)
-> > Please let me know your merge strategy here. I can ack the clk patches
-> > because they look fine from high-level clk driver perspective (maybe
-> > Joel can take a closer look) or I can merge the patches into clk-next
-> > and get them into next release while the video driver gets reviewed.
-> =
+The preferred subject prefix is "dt-bindings: <binding dir>: ...".
 
-> Thanks for taking a look! Probably preferable to get the clk patches =
+> ---
+> 
+> Changes in v1:
+> - [RFC 8/10] Move rk3399-dram.h to dt-includes.
+> - [RFC 8/10] Put sdram default values under the dmc node.
+> - [RFC 8/10] Removed rk3399-dram-default-timing.dts
+> 
+>  .../boot/dts/rockchip/rk3399-op1-opp.dtsi     | 29 ++++++++
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi      | 49 +++++++++++++
+>  include/dt-bindings/power/rk3399-dram.h       | 73 +++++++++++++++++++
+>  3 files changed, 151 insertions(+)
+>  create mode 100644 include/dt-bindings/power/rk3399-dram.h
+> 
 
-> into clk-next first (though Joel reviewing would be great). I just put =
-
-> everything in the same set for the sake of explaining the necessity of =
-
-> the clk changes.
-> =
+DT bindings (including binding headers) should be a separate patch. See
+Documentation/devicetree/bindings/submitting-patches.txt.
 
 
-Ok. If Joel is able to review then I can easily merge it into clk-next.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
