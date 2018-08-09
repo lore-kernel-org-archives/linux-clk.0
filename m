@@ -1,37 +1,60 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/3] CPU clock changes for Tegra20/30
-Date: Thu, 30 Aug 2018 22:20:42 +0300
-Message-Id: <20180830192045.11017-1-digetx@gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC, use COMPILE_TEST
+Date: Thu,  9 Aug 2018 23:44:04 +0200
+Message-Id: <20180809214414.20905-15-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Depending on MACH_INGENIC prevent us from creating a generic kernel that
+works on more than one MIPS board. Instead, we just depend on MIPS being
+set.
 
-This series is a prerequisite for the CPUFREQ driver patches, it can be
-applied separately. CPUFREQ will be supported on Tegra30 once this and
-the CPUFREQ patch-series will be applied.
+On other architectures, this driver can still be built, thanks to
+COMPILE_TEST. This is used by automated tools to find bugs, for
+instance.
 
-Dmitry Osipenko (3):
-  clk: tegra: Convert CCLKG mux to mux + clock divider on Tegra30
-  clk: tegra: Add more rates to Tegra30 PLLX frequency table
-  clk: tegra: Poll PLLX lock-status on resume from suspend on Tegra20/30
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/pwm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/tegra/clk-super.c    |  16 +++-
- drivers/clk/tegra/clk-tegra20.c  |  51 ++++++++++--
- drivers/clk/tegra/clk-tegra210.c |   2 +-
- drivers/clk/tegra/clk-tegra30.c  | 131 +++++++++++++++++++++----------
- drivers/clk/tegra/clk.h          |   9 ++-
- 5 files changed, 156 insertions(+), 53 deletions(-)
+ v5: New patch
 
+ v6: No change
+
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 58359bf22b96..e53ad662ef87 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -201,7 +201,7 @@ config PWM_IMX
+ 
+ config PWM_JZ4740
+ 	tristate "Ingenic JZ47xx PWM support"
+-	depends on MACH_INGENIC
++	depends on MIPS || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	select INGENIC_TIMER
+ 	help
 -- 
-2.18.0
+2.11.0
