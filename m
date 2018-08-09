@@ -1,64 +1,32 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-sunxi@googlegroups.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>, stable@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: fix H6 bus clocks divider position
-Date: Thu,  9 Aug 2018 01:19:52 +0800
-Message-Id: <20180808171952.17263-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Message-ID: <5b6cc31e.1c69fb81.84377.d022@mx.google.com>
+Date: Thu, 09 Aug 2018 16:41:33 -0600
+From: Rob Herring <robh@kernel.org>
+To: krzk@kernel.org
+Subject: Re: [PATCH 2/3] clk: s2mps11,s3c64xx: Add SPDX license identifiers
+References: <20180807161713.28073-1-krzk@kernel.org> <20180807161713.28073-2-krzk@kernel.org>
+In-Reply-To: <20180807161713.28073-2-krzk@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, 	Krzysztof Kozlowski <krzk@kernel.org>, 	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, 	Michael Turquette <mturquette@baylibre.com>, 	Stephen Boyd <sboyd@kernel.org>, 	Sangbeom Kim <sbkim73@samsung.com>, 	, 	Mark Rutland <mark.rutland@arm.com>, 	Javier Martinez Canillas <javier@dowhile0.org>, 	linux-kernel@vger.kernel.org, 	linux-clk@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org, 	devicetree@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The bus clocks (AHB/APB) on Allwinner H6 have their second divider start
-at bit 8, according to the user manual and the BSP code. However,
-currently the divider is wrongly set to 16, thus the divider is not
-correctly read and the clock frequency is not correctly calculated.
+Hi, this is an automated email from Rob's (experimental) review bot. I
+found a couple of common problems with your patch. Please see below.
 
-Fix this bit offset on all affected bus clocks in ccu-sun50i-h6.
+On Tue,  7 Aug 2018 18:17:12 +0200, Krzysztof Kozlowski wrote:
+> Replace GPL v2.0 and v2.0+ license statements with SPDX license
+> identifiers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Cc: stable@vger.kernel.org # v4.17.y
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+The preferred subject prefix is "dt-bindings: <binding dir>: ...".
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index bdbfe78fe133..0f7a0ffd3f70 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -224,7 +224,7 @@ static SUNXI_CCU_MP_WITH_MUX(psi_ahb1_ahb2_clk, "psi-ahb1-ahb2",
- 			     psi_ahb1_ahb2_parents,
- 			     0x510,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
- 
-@@ -233,19 +233,19 @@ static const char * const ahb3_apb1_apb2_parents[] = { "osc24M", "osc32k",
- 						       "pll-periph0" };
- static SUNXI_CCU_MP_WITH_MUX(ahb3_clk, "ahb3", ahb3_apb1_apb2_parents, 0x51c,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
- 
- static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", ahb3_apb1_apb2_parents, 0x520,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
- 
- static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", ahb3_apb1_apb2_parents, 0x524,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
- 
--- 
-2.18.0
+> ---
+>  drivers/clk/clk-s2mps11.c                         | 21 +++++----------------
+>  include/dt-bindings/clock/samsung,s2mps11.h       |  5 +----
+>  include/dt-bindings/clock/samsung,s3c64xx-clock.h |  7 ++-----
+>  3 files changed, 8 insertions(+), 25 deletions(-)
+> 
+
+DT bindings (including binding headers) should be a separate patch. See
+Documentation/devicetree/bindings/submitting-patches.txt.
