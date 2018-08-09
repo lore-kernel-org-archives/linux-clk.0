@@ -1,44 +1,56 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 28 Aug 2018 19:52:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add R7S9210 support
-Message-ID: <20180829005228.GA5407@bogus>
-References: <20180827162139.76196-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180827162139.76196-1-chris.brandt@renesas.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v6 21/24] MIPS: qi_lb60: Reduce system timer and clocksource to 750 kHz
+Date: Thu,  9 Aug 2018 23:46:19 +0200
+Message-Id: <20180809214622.21256-1-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 27, 2018 at 11:21:39AM -0500, Chris Brandt wrote:
-> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> Standby.
-> 
-> The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-> for how the registers are laid out.
-> The MSTP registers are only 8-bits wide, there is no status registers
-> (MSTPST), and the register offsets are a little different. Since the RZ/A
-> hardware manuals refer to these registers as the Standby Control Registers,
-> we'll use that name to distinguish the RZ/A type for the R-Car type.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
+The default clock (12 MHz) is too fast for the system timer, which fails
+to report time accurately.
 
-> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-> @@ -0,0 +1,192 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ arch/mips/boot/dts/ingenic/qi_lb60.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+ v5: New patch
 
-> +++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0+
+ v6: Remove ingenic,clocksource-channel property
 
-The proper identifier is GPL-2.0-or-later
+diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+index 85529a142409..de9d45e2c24a 100644
+--- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
++++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+@@ -45,3 +45,9 @@
+ 		bias-disable;
+ 	};
+ };
++
++&tcu {
++	/* 750 kHz for the system timer and clocksource */
++	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
++	assigned-clock-rates = <750000>, <750000>;
++};
+-- 
+2.11.0
