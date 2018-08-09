@@ -1,62 +1,60 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
-	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
-	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v3 0/2] clk: meson-g12a: Add EE clock controller driver
-Date: Fri, 10 Aug 2018 16:47:36 +0800
-Message-ID: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:55138 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbeHJALe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:11:34 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v6 00/24] Ingenic TCU patchset v6
+Date: Thu,  9 Aug 2018 23:43:50 +0200
+Message-Id: <20180809214414.20905-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add a Clock driver for the Everything-Else part of
-the Amlogic Meson-G12A SoC.
+Hi,
 
-Changes since v2 at[2]
--fix fixed clocks's descriptions
--fix aligment
--add enable bit for plls base on [3] patches
--add fix clock gate bit
+This is the V6 of my Ingenic Timer/Counter Unit (TCU) patchset.
 
-Changes since v1 at[1]
--fix typo of 'Everything'.
--change the word 'AmLogic' to 'Amlogic'
--squash patch 1 and 2.
--delete usless message of "Trying obsolete regs".
--delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
--rebase on top of the "next/drivers" branch, and add g12a clock patch.
--add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
- g12a_sd_emmc_c_clk0_sel.
+Major changes since V5:
 
-[1]https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
-[2]https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
-[3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+- ingenic,timer-channel / ingenic,clocksource-channel devicetree
+  properties for the ingenic-timer driver are gone. The system timer
+  will default to use TCU channel #0, the clocksource will default to
+  use TCU channel #1. When a client driver requests one of these TCU
+  channels (e.g. the PWM driver), the ingenic-timer driver will
+  dynamically switch the system timer or clocksource to a new TCU
+  channel.
 
-Jian Hu (2):
-  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-  clk: meson-g12a: Add EE Clock controller driver
+- The big watchdog commit in v5 was split into multiple smaller commits.
 
- .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
- drivers/clk/meson/Kconfig                          |   10 +
- drivers/clk/meson/Makefile                         |    1 +
- drivers/clk/meson/g12a.c                           | 1128 ++++++++++++++++++++
- drivers/clk/meson/g12a.h                           |  128 +++
- include/dt-bindings/clock/g12a-clkc.h              |   93 ++
- 6 files changed, 1361 insertions(+)
- create mode 100644 drivers/clk/meson/g12a.c
- create mode 100644 drivers/clk/meson/g12a.h
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+- The watchdog driver now just sets its clock to the lowest rate
+  possible, and calculate the maximum timeout from that.
 
--- 
-1.9.1
+- The PWM driver now requests the TCU channels it wants to use using the
+  API functions provided by ingenic-timer. Channels 0 and 1 can now be
+  used.
+
+- The register lengths in the pwm/watchdog nodes were fixed. They no
+  longer overlap.
+
+- Small fixes here and there, see each patch's changelog for more info.
+
+Regards,
+-Paul Cercueil
