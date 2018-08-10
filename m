@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/4] clk: meson: clk-pll driver update
-Date: Wed,  1 Aug 2018 16:00:49 +0200
-Message-Id: <20180801140053.25899-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH 1/2] dt-bindings: clk: meson-g12a: Add G12A AO Clock Bindings
+Date: Fri, 10 Aug 2018 17:54:27 +0800
+Message-ID: <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
+In-Reply-To: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is yet another round of update to the amlogic pll driver.
+Add new clock controller compatible and dt-bingdings headers
+for the Always-On domain of the g12a SoC
 
- 1) Enable bit is added so we don't rely on the bootloader or the init
-    value to enable to pll device.
- 2) Remove unnecessary CLK_GET_RATE_NOCACHE flags.
- 3) OD post dividers are removed from the pll driver. This simplify the
-    driver and let us provide the clocks which exist between those
-    dividers. Some device are actually using these clocks.
- 4) The rates hard coded in parameter tables are remove. Instead, we
-    only rely on the parent rate and the parameters to calculate the
-    output rate, which is a lot better.
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+---
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  1 +
+ include/dt-bindings/clock/g12a-aoclkc.h            | 28 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100755 include/dt-bindings/clock/g12a-aoclkc.h
 
-This series has been tested on the gxl libretech cc and axg s400.
-I did not test it on meson8b yet.
-
-Changes since v1: [0]
- - improve commit description of patch 1
- - remove unnecessary CLK_GET_RATE_NOCACHE flags.
- - add missing CLK_SET_RATE_PARENT.
-
-[0]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
-
-Jerome Brunet (4):
-  clk: meson: clk-pll: add enable bit
-  clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
-  clk: meson: clk-pll: remove od parameters
-  clk: meson: clk-pll: drop hard-coded rates from pll tables
-
- drivers/clk/meson/axg.c     | 326 +++++++++++++----------
- drivers/clk/meson/axg.h     |   8 +-
- drivers/clk/meson/clk-pll.c | 156 +++++++----
- drivers/clk/meson/clkc.h    |  16 +-
- drivers/clk/meson/gxbb.c    | 518 ++++++++++++++++++------------------
- drivers/clk/meson/gxbb.h    |  10 +-
- drivers/clk/meson/meson8b.c | 173 ++++++------
- drivers/clk/meson/meson8b.h |   5 +-
- 8 files changed, 665 insertions(+), 547 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+index 3a88052..6f02288 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+@@ -10,6 +10,7 @@ Required Properties:
+ 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+ 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
+ 	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
++	- G12A (S905D2, S905X2) : "amlogic,g12a-aoclkc"
+ 	followed by the common "amlogic,meson-gx-aoclkc"
+ 
+ - #clock-cells: should be 1.
+diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
+new file mode 100755
+index 0000000..6b3f921
+--- /dev/null
++++ b/include/dt-bindings/clock/g12a-aoclkc.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++/*
++ * Copyright (c) 2016 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Jian Hu<jian.hu@amlogic.com>
++ */
++
++#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
++#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
++
++#define CLKID_AO_AHB_BUS		0
++#define CLKID_AO_REMOTE			1
++#define CLKID_AO_I2C_MASTER		2
++#define CLKID_AO_I2C_SLAVE		3
++#define CLKID_AO_UART1			4
++#define CLKID_AO_PROD_I2C		5
++#define CLKID_AO_UART2			6
++#define CLKID_AO_IR_BLASTER		7
++#define CLKID_AO_SAR_ADC		8
++#define CLKID_AO_CLK81			9
++#define CLKID_AO_SAR_ADC_SEL		10
++#define CLKID_AO_SAR_ADC_DIV		11
++#define CLKID_AO_SAR_ADC_CLK		12
++#define CLKID_AO_ALT_XTAL		13
++
++#endif
 -- 
-2.17.1
+1.9.1
