@@ -1,118 +1,141 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43885 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729662AbeHBMZH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 08:25:07 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 10 Aug 2018 06:37:12 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 0/6] provide power off support for iMX6 with external PMIC
-Date: Thu,  2 Aug 2018 12:34:19 +0200
-Message-Id: <20180802103425.3053-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 09/24] watchdog: jz4740: Use regmap provided by TCU
+ driver
+Message-ID: <20180810133712.GB29028@roeck-us.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+ <20180809214414.20905-10-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180809214414.20905-10-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-2018.08.02 v9:
-- remove include <linux/kallsyms.h>
-- rebase against current regulator/for-next branch and test it.
-- as result of previous discussions:
-  - there is no need to remove "syscon-poweroff" node, it is by default
-    disabled.
-  - supported PFUZE version is tested by pfuze_power_off_prepare_init()
-  - advantages or disadvantages of using this power off method should
-    be described in NXP SoC or PMIC documentation, not in change log or
-    devicetree.
+On Thu, Aug 09, 2018 at 11:43:59PM +0200, Paul Cercueil wrote:
+> Since we broke the ABI by changing the clock, the driver was also
+> updated to use the regmap provided by the TCU driver.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-2018.07.26:
-v8 is a rebase against kernel v4.18-rc6. No other changes are made.
-Added: linux-imx@nxp.com and yibin.gong@nxp.com to the CC.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-2018.05.17:
-update patches to version v7
-
-This patch series is providing power off support for Freescale/NXP iMX6 based
-boards with external power management integrated circuit (PMIC).
-As a first step the PMIC is configured to turn off the system if the
-standby pin is asserted. On second step we assert the standby pin.
-For this reason we need to use pm_power_off_prepare.
-
-Usage of stnadby pin for power off is described in official iMX6
-documentation.
-
-2018.03.05:
-As this patch set touches multiple subsystems I think it would make
-sense for Shawn Guo to take the all patch set.
-The only part which didn't receive an ACK is regulator stuff. So I would
-hope that Mark Brown can ACK it.
-
-Kind regards,
-Oleksij Rempel
-
-2017.12.06:
-Adding Linus. Probably there is no maintainer for this patch set.
-No changes are made, tested on v4.15-rc1.
-
-2017.10.27:
-Last version of this patch set was send at 20 Jun 2017, this is a rebase against
-kernel v4.14-rc6. Probably this set got lost. If I forgot to address some comments,
-please point me.
-
-changes:
-v7:
- - use EXPORT_SYMBOL_GPL(pm_power_off_prepare) instead of EXPORT_SYMBOL
- - call imx6q_suspend_finish() directly without cpu_suspend()
-
-v6:
- - rename imx6_pm_poweroff to imx6_pm_stby_poweroff
- - fix "MPIC_STBY_REQ" typo in the comment.
-
-v5:
- - remove useless includes from pm-imx6.c patch
- - add Acked-by to "regulator: pfuze100: add fsl,pmic-stby-poweroff property"
-   patch
-
-v4:
- - update comment in "regulator: pfuze100: add fsl,pmic-stby-poweroff ..."
-   patch
- - add Acked-by to "ARM: imx6q: provide documentation for new ..."
-   patch
-
-v3:
- - set pm_power_off_prepare = NULL on .remove.
- - documentation and spelling fixes.
- - use %pf instead of lookup_symbol_name.
-
-Oleksij Rempel (6):
-  ARM: imx6q: provide documentation for new fsl,pmic-stby-poweroff
-    property
-  ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff"
-    is set
-  kernel/reboot.c: export pm_power_off_prepare
-  regulator: pfuze100: add fsl,pmic-stby-poweroff property
-  regulator: pfuze100-regulator: provide pm_power_off_prepare handler
-  ARM: dts: imx6: RIoTboard provide standby on power off option
-
- .../devicetree/bindings/clock/imx6q-clock.txt |  8 ++
- .../bindings/regulator/pfuze100.txt           |  5 +
- arch/arm/boot/dts/imx6dl-riotboard.dts        |  5 +
- arch/arm/mach-imx/pm-imx6.c                   | 25 +++++
- drivers/regulator/pfuze100-regulator.c        | 91 +++++++++++++++++++
- kernel/reboot.c                               |  1 +
- 6 files changed, 135 insertions(+)
-
--- 
-2.18.0
-
+> ---
+>  drivers/watchdog/jz4740_wdt.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+> 
+>  v6: New patch
+> 
+> diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+> index 1d504ecf45e1..0f54306aee25 100644
+> --- a/drivers/watchdog/jz4740_wdt.c
+> +++ b/drivers/watchdog/jz4740_wdt.c
+> @@ -13,6 +13,7 @@
+>   *
+>   */
+>  
+> +#include <linux/mfd/ingenic-tcu.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/types.h>
+> @@ -25,10 +26,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> -
+> -#define JZ_REG_WDT_TIMER_DATA     0x0
+> -#define JZ_REG_WDT_COUNTER_ENABLE 0x4
+> -#define JZ_REG_WDT_TIMER_COUNTER  0x8
+> +#include <linux/regmap.h>
+>  
+>  #define DEFAULT_HEARTBEAT 5
+>  #define MAX_HEARTBEAT     2048
+> @@ -48,7 +46,7 @@ MODULE_PARM_DESC(heartbeat,
+>  
+>  struct jz4740_wdt_drvdata {
+>  	struct watchdog_device wdt;
+> -	void __iomem *base;
+> +	struct regmap *map;
+>  	struct clk *clk;
+>  	unsigned long clk_rate;
+>  };
+> @@ -57,7 +55,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+>  {
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+>  
+> -	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+>  	return 0;
+>  }
+>  
+> @@ -67,12 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+>  	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
+>  
+> -	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+>  
+> -	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
+> -	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+>  
+> -	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+>  
+>  	wdt_dev->timeout = new_timeout;
+>  	return 0;
+> @@ -96,7 +94,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+>  {
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+>  
+> -	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+>  	clk_disable_unprepare(drvdata->clk);
+>  
+>  	return 0;
+> @@ -138,7 +136,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct jz4740_wdt_drvdata *drvdata;
+>  	struct watchdog_device *jz4740_wdt;
+> -	struct resource	*res;
+>  	long rate;
+>  	int ret;
+>  
+> @@ -174,10 +171,11 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+>  	watchdog_set_nowayout(jz4740_wdt, nowayout);
+>  	watchdog_set_drvdata(jz4740_wdt, drvdata);
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(drvdata->base))
+> -		return PTR_ERR(drvdata->base);
+> +	drvdata->map = dev_get_regmap(dev->parent, NULL);
+> +	if (!drvdata->map) {
+> +		dev_err(dev, "regmap not found\n");
+> +		return -EINVAL;
+> +	}
+>  
+>  	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
+>  	if (ret < 0)
+> -- 
+> 2.11.0
+> 
