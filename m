@@ -1,35 +1,48 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 28 Aug 2018 19:36:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add jz4725b-cgu.h header
-Message-ID: <20180829003610.GA23941@bogus>
-References: <20180823131744.744-1-paul@crapouillou.net>
- <20180823131744.744-3-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180823131744.744-3-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:57427 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727381AbeHJRrX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Aug 2018 13:47:23 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Rongyi Chen <chenyi@tt-cool.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] clk: sunxi-ng: h6: fix PWM gate/reset offset
+Date: Fri, 10 Aug 2018 23:16:38 +0800
+Message-Id: <20180810151638.30900-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 23 Aug 2018 15:17:43 +0200, Paul Cercueil wrote:
-> This will be used from the devicetree bindings to specify the clocks
-> that should be obtained from the jz4725b-cgu driver.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->     No change
-> 
->  include/dt-bindings/clock/jz4725b-cgu.h | 35 +++++++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 include/dt-bindings/clock/jz4725b-cgu.h
-> 
+From: Rongyi Chen <chenyi@tt-cool.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Currently the register offset of the PWM bus gate in Allwinner H6 clock
+driver is wrong.
+
+Fix this issue.
+
+Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Rongyi Chen <chenyi@tt-cool.com>
+[Icenowy: refactor commit message]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index bdbfe78fe133..8eea58f9298c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -352,7 +352,7 @@ static SUNXI_CCU_GATE(bus_dbg_clk, "bus-dbg", "psi-ahb1-ahb2",
+ static SUNXI_CCU_GATE(bus_psi_clk, "bus-psi", "psi-ahb1-ahb2",
+ 		      0x79c, BIT(0), 0);
+ 
+-static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x79c, BIT(0), 0);
++static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x7ac, BIT(0), 0);
+ 
+ static SUNXI_CCU_GATE(bus_iommu_clk, "bus-iommu", "apb1", 0x7bc, BIT(0), 0);
+ 
+-- 
+2.18.0
