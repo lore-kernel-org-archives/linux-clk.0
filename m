@@ -1,141 +1,147 @@
-Return-Path: <enric.balletbo@collabora.com>
-Subject: Re: [PATCH 1/8] devfreq: rockchip-dfi: Move GRF definitions to a
- common place.
-To: Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>,
- Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
- David Airlie <airlied@linux.ie>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Derek Basehore <dbasehore@chromium.org>, linux-clk@vger.kernel.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
- Lin Huang <hl@rock-chips.com>, kernel@collabora.com, robin.murphy@arm.com,
- Sean Paul <seanpaul@chromium.org>, linux-arm-kernel@lists.infradead.org
-References: <20180730081124.30698-1-enric.balletbo@collabora.com>
- <CGME20180730081245epcas3p2794d7d7c21f4059ab89ec59a0ef9fa22@epcas3p2.samsung.com>
- <20180730081124.30698-2-enric.balletbo@collabora.com>
- <5B6170F4.4070102@samsung.com>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <94d01f35-7baa-aa6a-710e-c046fcf52286@collabora.com>
-Date: Tue, 7 Aug 2018 12:50:46 +0200
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
+	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
+	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v3 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+Date: Fri, 10 Aug 2018 16:47:37 +0800
+Message-ID: <1533890858-113020-2-git-send-email-jian.hu@amlogic.com>
+In-Reply-To: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
+References: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <5B6170F4.4070102@samsung.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Add new clock controller compatible and dt-bingdings headers
+for the Everything-Else domain of the g12a SoC
 
-On 01/08/18 10:36, Chanwoo Choi wrote:
-> Hi Enric,
-> 
-> On 2018년 07월 30일 17:11, Enric Balletbo i Serra wrote:
->> Some rk3399 GRF (Generic Register Files) definitions can be used for
->> different drivers. Move these definitions to a common include so we
->> don't need to duplicate these definitions.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v1:
->> - [RFC 1/10] Add Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> 
-> Even if you add the changes log, you are missing my Acked-by tag.
-> 
+Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+---
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
+ include/dt-bindings/clock/g12a-clkc.h              | 93 ++++++++++++++++++++++
+ 2 files changed, 94 insertions(+)
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
-Ops, right, sorry about that. I'll fix in next version.
-
->> - [RFC 1/10] s/Generic/General/ (Robin Murphy)
->> - [RFC 4/10] Removed from the series. I did not found a use case where not holding the mutex causes the issue.
->> - [RFC 7/10] Removed from the series. I did not found a use case where this matters.
->>
->>  drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
->>  include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
->>  2 files changed, 28 insertions(+), 16 deletions(-)
->>  create mode 100644 include/soc/rockchip/rk3399_grf.h
->>
->> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
->> index 22b113363ffc..2fbbcbeb644f 100644
->> --- a/drivers/devfreq/event/rockchip-dfi.c
->> +++ b/drivers/devfreq/event/rockchip-dfi.c
->> @@ -26,6 +26,8 @@
->>  #include <linux/list.h>
->>  #include <linux/of.h>
->>  
->> +#include <soc/rockchip/rk3399_grf.h>
->> +
->>  #define RK3399_DMC_NUM_CH	2
->>  
->>  /* DDRMON_CTRL */
->> @@ -43,18 +45,6 @@
->>  #define DDRMON_CH1_COUNT_NUM		0x3c
->>  #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
->>  
->> -/* pmu grf */
->> -#define PMUGRF_OS_REG2	0x308
->> -#define DDRTYPE_SHIFT	13
->> -#define DDRTYPE_MASK	7
->> -
->> -enum {
->> -	DDR3 = 3,
->> -	LPDDR3 = 6,
->> -	LPDDR4 = 7,
->> -	UNUSED = 0xFF
->> -};
->> -
->>  struct dmc_usage {
->>  	u32 access;
->>  	u32 total;
->> @@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
->>  	u32 ddr_type;
->>  
->>  	/* get ddr type */
->> -	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
->> -	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
->> +	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
->> +	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
->> +		    RK3399_PMUGRF_DDRTYPE_MASK;
->>  
->>  	/* clear DDRMON_CTRL setting */
->>  	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
->>  
->>  	/* set ddr type to dfi */
->> -	if (ddr_type == LPDDR3)
->> +	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
->>  		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
->> -	else if (ddr_type == LPDDR4)
->> +	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
->>  		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
->>  
->>  	/* enable count, use software mode */
->> diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
->> new file mode 100644
->> index 000000000000..3eebabcb2812
->> --- /dev/null
->> +++ b/include/soc/rockchip/rk3399_grf.h
->> @@ -0,0 +1,21 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +/*
->> + * Rockchip General Register Files definitions
->> + *
->> + * Copyright (c) 2018, Collabora Ltd.
->> + * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> + */
->> +
->> +#ifndef __SOC_RK3399_GRF_H
->> +#define __SOC_RK3399_GRF_H
->> +
->> +/* PMU GRF Registers */
->> +#define RK3399_PMUGRF_OS_REG2		0x308
->> +#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
->> +#define RK3399_PMUGRF_DDRTYPE_MASK	7
->> +#define RK3399_PMUGRF_DDRTYPE_DDR3	3
->> +#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
->> +#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
->> +#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
->> +
->> +#endif
->>
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index e950599..0833006 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ 		"amlogic,gxbb-clkc" for GXBB SoC,
+ 		"amlogic,gxl-clkc" for GXL and GXM SoC,
+ 		"amlogic,axg-clkc" for AXG SoC.
++		"amlogic,g12a-clkc" for G12A SoC.
+ 
+ - #clock-cells: should be 1.
+ 
+diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+new file mode 100644
+index 0000000..b55e6e1
+--- /dev/null
++++ b/include/dt-bindings/clock/g12a-clkc.h
+@@ -0,0 +1,93 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Meson-G12A clock tree IDs
++ *
++ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
++ */
++
++#ifndef __G12A_CLKC_H
++#define __G12A_CLKC_H
++
++#define CLKID_SYS_PLL				0
++#define CLKID_FIXED_PLL				1
++#define CLKID_FCLK_DIV2				2
++#define CLKID_FCLK_DIV3				3
++#define CLKID_FCLK_DIV4				4
++#define CLKID_FCLK_DIV5				5
++#define CLKID_FCLK_DIV7				6
++#define CLKID_GP0_PLL				7
++#define CLKID_CLK81				10
++#define CLKID_MPLL0				11
++#define CLKID_MPLL1				12
++#define CLKID_MPLL2				13
++#define CLKID_MPLL3				14
++#define CLKID_DDR				15
++#define CLKID_DOS				16
++#define CLKID_AUDIO_LOCKER			17
++#define CLKID_MIPI_DSI_HOST			18
++#define CLKID_ETH_PHY				19
++#define CLKID_ISA				20
++#define CLKID_PL301				21
++#define CLKID_PERIPHS				22
++#define CLKID_SPICC0				23
++#define CLKID_I2C				24
++#define CLKID_SANA				25
++#define CLKID_SD				26
++#define CLKID_RNG0				27
++#define CLKID_UART0				28
++#define CLKID_SPICC1				29
++#define CLKID_HIU_IFACE				30
++#define CLKID_MIPI_DSI_PHY			31
++#define CLKID_ASSIST_MISC			32
++#define CLKID_SD_EMMC_A				33
++#define CLKID_SD_EMMC_B				34
++#define CLKID_SD_EMMC_C				35
++#define CLKID_AUDIO_CODEC			36
++#define CLKID_AUDIO				37
++#define CLKID_ETH				38
++#define CLKID_DEMUX				39
++#define CLKID_AUDIO_IFIFO			40
++#define CLKID_ADC				41
++#define CLKID_UART1				42
++#define CLKID_G2D				43
++#define CLKID_RESET				44
++#define CLKID_PCIE_COMB				45
++#define CLKID_PARSER				46
++#define CLKID_USB				47
++#define CLKID_PCIE_PHY				48
++#define CLKID_AHB_ARB0				49
++#define CLKID_AHB_DATA_BUS			50
++#define CLKID_AHB_CTRL_BUS			51
++#define CLKID_HTX_HDCP22			52
++#define CLKID_HTX_PCLK				53
++#define CLKID_BT656				54
++#define CLKID_USB1_DDR_BRIDGE			55
++#define CLKID_MMC_PCLK				56
++#define CLKID_UART2				57
++#define CLKID_VPU_INTR				58
++#define CLKID_GIC				59
++#define CLKID_SD_EMMC_B_CLK0			60
++#define CLKID_SD_EMMC_C_CLK0			61
++#define CLKID_HIFI_PLL				71
++#define CLKID_VCLK2_VENCI0			77
++#define CLKID_VCLK2_VENCI1			78
++#define CLKID_VCLK2_VENCP0			79
++#define CLKID_VCLK2_VENCP1			80
++#define CLKID_VCLK2_VENCT0			81
++#define CLKID_VCLK2_VENCT1			82
++#define CLKID_VCLK2_OTHER			83
++#define CLKID_VCLK2_ENCI			84
++#define CLKID_VCLK2_ENCP			85
++#define CLKID_DAC_CLK				86
++#define CLKID_AOCLK				87
++#define CLKID_IEC958				88
++#define CLKID_ENC480P				89
++#define CLKID_RNG1				90
++#define CLKID_VCLK2_ENCT			91
++#define CLKID_VCLK2_ENCL			92
++#define CLKID_VCLK2_VENCLMMC			93
++#define CLKID_VCLK2_VENCL			94
++#define CLKID_VCLK2_OTHER1			95
++#define CLKID_FCLK_DIV2P5			96
++
++#endif /* __G12A_CLKC_H */
+-- 
+1.9.1
