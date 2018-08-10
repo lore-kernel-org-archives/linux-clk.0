@@ -1,195 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:35568 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbeHCE6F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:05 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH v2 06/18] MIPS: dts: Change upper case to lower case
-Date: Fri,  3 Aug 2018 11:02:25 +0800
-Message-Id: <20180803030237.3366-7-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH 0/2] clk: meson-g12a: Add AO clock controller driver
+Date: Fri, 10 Aug 2018 17:54:26 +0800
+Message-ID: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-All the upper case in unit-address and hex constants are
-changed to lower case according to the Linux conventions.
+Add a Clock driver for Always-On part of
+the Amlogic Meson-G12A SoC.
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+-The patch depends on "clk: meson-g12a: Add EE clock controller driver" patch [1]
+the parent clock of ao_clk81 is clk81 clock which provided in EE controller driver;
+the file of Makefile modify based on EE controller driver patch.
 
-Changes in v2: None
+[1]https://lkml.kernel.org/r/1533890858-113020-3-git-send-email-jian.hu@amlogic.com
 
- arch/mips/boot/dts/lantiq/danube.dtsi   | 42 ++++++++++++++++-----------------
- arch/mips/boot/dts/lantiq/easy50712.dts | 14 +++++------
- 2 files changed, 28 insertions(+), 28 deletions(-)
+Jian Hu (2):
+  dt-bindings: clk: meson-g12a: Add G12A AO Clock Bindings
+  clk: meson-g12a: Add AO Clock controller driver
 
-diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-index 2dd950181f8a..510be63c8bdf 100644
---- a/arch/mips/boot/dts/lantiq/danube.dtsi
-+++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-@@ -10,12 +10,12 @@
- 		};
- 	};
- 
--	biu@1F800000 {
-+	biu@1f800000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,biu", "simple-bus";
--		reg = <0x1F800000 0x800000>;
--		ranges = <0x0 0x1F800000 0x7FFFFF>;
-+		reg = <0x1f800000 0x800000>;
-+		ranges = <0x0 0x1f800000 0x7fffff>;
- 
- 		icu0: icu@80200 {
- 			#interrupt-cells = <1>;
-@@ -24,18 +24,18 @@
- 			reg = <0x80200 0x120>;
- 		};
- 
--		watchdog@803F0 {
-+		watchdog@803f0 {
- 			compatible = "lantiq,wdt";
--			reg = <0x803F0 0x10>;
-+			reg = <0x803f0 0x10>;
- 		};
- 	};
- 
--	sram@1F000000 {
-+	sram@1f000000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,sram";
--		reg = <0x1F000000 0x800000>;
--		ranges = <0x0 0x1F000000 0x7FFFFF>;
-+		reg = <0x1f000000 0x800000>;
-+		ranges = <0x0 0x1f000000 0x7fffff>;
- 
- 		eiu0: eiu@101000 {
- 			#interrupt-cells = <1>;
-@@ -66,41 +66,41 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		compatible = "lantiq,fpi", "simple-bus";
--		ranges = <0x0 0x10000000 0xEEFFFFF>;
--		reg = <0x10000000 0xEF00000>;
-+		ranges = <0x0 0x10000000 0xeefffff>;
-+		reg = <0x10000000 0xef00000>;
- 
--		gptu@E100A00 {
-+		gptu@e100a00 {
- 			compatible = "lantiq,gptu-xway";
--			reg = <0xE100A00 0x100>;
-+			reg = <0xe100a00 0x100>;
- 		};
- 
--		serial@E100C00 {
-+		serial@e100c00 {
- 			compatible = "lantiq,asc";
--			reg = <0xE100C00 0x400>;
-+			reg = <0xe100c00 0x400>;
- 			interrupt-parent = <&icu0>;
- 			interrupts = <112 113 114>;
- 		};
- 
--		dma0: dma@E104100 {
-+		dma0: dma@e104100 {
- 			compatible = "lantiq,dma-xway";
--			reg = <0xE104100 0x800>;
-+			reg = <0xe104100 0x800>;
- 		};
- 
--		ebu0: ebu@E105300 {
-+		ebu0: ebu@e105300 {
- 			compatible = "lantiq,ebu-xway";
--			reg = <0xE105300 0x100>;
-+			reg = <0xe105300 0x100>;
- 		};
- 
--		pci0: pci@E105400 {
-+		pci0: pci@e105400 {
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
- 			compatible = "lantiq,pci-xway";
- 			bus-range = <0x0 0x0>;
- 			ranges = <0x2000000 0 0x8000000 0x8000000 0 0x2000000	/* pci memory */
--				  0x1000000 0 0x00000000 0xAE00000 0 0x200000>; /* io space */
-+				  0x1000000 0 0x00000000 0xae00000 0 0x200000>; /* io space */
- 			reg = <0x7000000 0x8000		/* config space */
--				0xE105400 0x400>;	/* pci bridge */
-+				0xe105400 0x400>;	/* pci bridge */
- 		};
- 	};
- };
-diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
-index c37a33962f28..1ce20b7d05cb 100644
---- a/arch/mips/boot/dts/lantiq/easy50712.dts
-+++ b/arch/mips/boot/dts/lantiq/easy50712.dts
-@@ -52,14 +52,14 @@
- 			};
- 		};
- 
--		gpio: pinmux@E100B10 {
-+		gpio: pinmux@e100b10 {
- 			compatible = "lantiq,danube-pinctrl";
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&state_default>;
- 
- 			#gpio-cells = <2>;
- 			gpio-controller;
--			reg = <0xE100B10 0xA0>;
-+			reg = <0xe100b10 0xa0>;
- 
- 			state_default: pinmux {
- 				stp {
-@@ -82,26 +82,26 @@
- 			};
- 		};
- 
--		etop@E180000 {
-+		etop@e180000 {
- 			compatible = "lantiq,etop-xway";
--			reg = <0xE180000 0x40000>;
-+			reg = <0xe180000 0x40000>;
- 			interrupt-parent = <&icu0>;
- 			interrupts = <73 78>;
- 			phy-mode = "rmii";
- 			mac-address = [ 00 11 22 33 44 55 ];
- 		};
- 
--		stp0: stp@E100BB0 {
-+		stp0: stp@e100bb0 {
- 			#gpio-cells = <2>;
- 			compatible = "lantiq,gpio-stp-xway";
- 			gpio-controller;
--			reg = <0xE100BB0 0x40>;
-+			reg = <0xe100bb0 0x40>;
- 
- 			lantiq,shadow = <0xfff>;
- 			lantiq,groups = <0x3>;
- 		};
- 
--		pci@E105400 {
-+		pci@e105400 {
- 			lantiq,bus-clock = <33333333>;
- 			interrupt-map-mask = <0xf800 0x0 0x0 0x7>;
- 			interrupt-map = <
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
+ drivers/clk/meson/Makefile                         |   2 +-
+ drivers/clk/meson/g12a-aoclk.c                     | 170 +++++++++++++++++++++
+ drivers/clk/meson/g12a-aoclk.h                     |  36 +++++
+ include/dt-bindings/clock/g12a-aoclkc.h            |  28 ++++
+ 5 files changed, 236 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/g12a-aoclk.c
+ create mode 100644 drivers/clk/meson/g12a-aoclk.h
+ create mode 100755 include/dt-bindings/clock/g12a-aoclkc.h
+
 -- 
-2.11.0
-
+1.9.1
