@@ -1,83 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <sha@pengutronix.de>
+Date: Fri, 10 Aug 2018 08:03:34 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/4] Add i.MX8MQ clock driver
+Message-ID: <20180810060334.ookq3dm3vylp623o@pengutronix.de>
+References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-To: "David S . Miller" <davem@davemloft.net>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- Irina Tirdea <irina.tirdea@intel.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180827143200.8597-3-hdegoede@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, netdev@vger.kernel.org,
- Johannes Stezenbach <js@sig21.net>, Carlo Caione <carlo@endlessm.com>,
- linux-clk@vger.kernel.org
-References: <20180827143200.8597-1-hdegoede@redhat.com>
- <20180827143200.8597-3-hdegoede@redhat.com>
-Message-ID: <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
-Date: Mon, 27 Aug 2018 11:47:34 -0700
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Hans de Goede (2018-08-27 07:31:58)
-> On some boards a platform clock is used as clock for the r8169 chip,
-> this commit adds support for getting and enabling this clock (assuming
-> it has an "ether_clk" alias set on it).
-> =
+Hi Abel,
 
-> This is related to commit d31fd43c0f9a ("clk: x86: Do not gate clocks
-> enabled by the firmware") which is a previous attempt to fix this for some
-> x86 boards, but this causes all Cherry Trail SoC using boards to not reach
-> there lowest power states when suspending.
-> =
+On Thu, Aug 09, 2018 at 05:45:37PM +0300, Abel Vesa wrote:
+> This is basically just a resend of the following patchset:
+> 
+> https://www.spinics.net/lists/linux-clk/msg23141.html
+> 
+> I've just updated the patchset and implemented Shawn's
+> and Aisheng's comments.
+> 
+> I hope I haven't missed any of their comments.
 
-> This commit (together with an atom-pmc-clk driver commit adding the alias)
-> fixes things properly by making the r8169 get the clock and enable it when
-> it needs it.
-> =
+I think what I said to v2 back in march still stays valid:
 
-> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=3D193891#c102
-> Cc: Johannes Stezenbach <js@sig21.net>
-> Cc: Carlo Caione <carlo@endlessm.com>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> A general thought: The i.MX8M finally has a consistent clock tree. We
+> have for example 70 Peripheral clock slices consisting of a mux, a gate
+> and two dividers, all 70 looking the same.
+> For these it might make sense to create a more complex clock type
+> providing mux, gate and set rate functionality in one clock. This would
+> drastically reduce the number of clocks we have to handle.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Sascha
 
-> @@ -7614,6 +7616,11 @@ static void rtl_hw_initialize(struct rtl8169_priva=
-te *tp)
->         }
->  }
->  =
 
-> +static void rtl_disable_clk(void *data)
-> +{
-> +       clk_disable_unprepare(data);
-> +}
-> +
->  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id=
- *ent)
->  {
->         const struct rtl_cfg_info *cfg =3D rtl_cfg_infos + ent->driver_da=
-ta;
-> @@ -7647,6 +7654,32 @@ static int rtl_init_one(struct pci_dev *pdev, cons=
-t struct pci_device_id *ent)
->         mii->reg_num_mask =3D 0x1f;
->         mii->supports_gmii =3D cfg->has_gmii;
->  =
-
-> +       /* Get the *optional* external "ether_clk" used on some boards */
-> +       tp->clk =3D devm_clk_get(&pdev->dev, "ether_clk");
-
-An "optional" clk API is in flight, but it's easier to wait for that to
-merge and then this to be updated, so just take that as an FYI. It would
-be interesting to see how to support optional clks with clkdev lookups
-though, which would be needed in this case.
-
-How would you know that a clk device driver hasn't probed yet and isn't
-the driver that's actually providing the clk to this device on x86
-systems? With DT systems we can figure that out by looking at the DT and
-seeing if the device driver requesting the clk has the clocks property.
-On x86 systems it's all clkdev which doesn't really lend itself to
-solving this problem.
-
-> +       if (IS_ERR(tp->clk)) {
-> +               rc =3D PTR_ERR(tp->clk);
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
