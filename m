@@ -1,221 +1,245 @@
-Return-Path: <ulf.hansson@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40124 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727534AbeHJQGs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 12:06:48 -0400
+Date: Fri, 10 Aug 2018 06:36:48 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 08/24] watchdog: jz4740: Use WDT clock provided by TCU
+ driver
+Message-ID: <20180810133648.GA29028@roeck-us.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+ <20180809214414.20905-9-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20180803211132.71539.18482@harbor.lan>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180704065522.p4qpfnpayeobaok3@vireshk-i7> <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
- <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
- <CAPDyKFr7xxUV0pmQCoM1T_fZdBifWqJF6QJgHQe2JGUU0a6MJg@mail.gmail.com> <20180803211132.71539.18482@harbor.lan>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 23 Aug 2018 13:10:55 +0200
-Message-ID: <CAPDyKFppT5L5LN_G4UFMLbdB5DosXuw+dyvFzN3jZ2PAopVKNw@mail.gmail.com>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
-	linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-	Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180809214414.20905-9-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 3 August 2018 at 23:11, Michael Turquette <mturquette@baylibre.com> wrote:
-> Quoting Ulf Hansson (2018-07-31 03:35:50)
->> [...]
->>
->> >>
->> >> Another option is to use the ->runtime_suspend|resume() callbacks at
->> >> the genpd level. In principle when the device enters runtime suspend,
->> >> genpd can decide to drop the votes for the device (if some exist). At
->> >> runtime resume, genpd then should re-store the votes for the device it
->> >> had before it became runtime suspended (or if the vote became updated
->> >> in-between).
->> >
->> > I'd prefer to see the genpd layer do it instead of OPP layer controlling
->> > the on/off state. Calling dev_pm_opp_set_rate(dev, 0) just looks very
->> > weird and conflates clk frequency with power domain state which isn't
->> > exactly what we want. We want it to be related to the frequency _and_
->> > the enabled state. Plus it's like saying clk_set_rate(clk, 0) should
->> > turn the clk off, which we've never done before.
->>
->> Perhaps you misunderstood my suggestion!?
->>
->> Instead of having the driver to call dev_pm_opp_set_rate(dev, 0) from
->> their ->runtime_suspend() callbacks, my suggestion is to let genpd,
->> from its ->runtime_suspend() callback, temporarily drop the requested
->> performance level for the device. Hence genpd also needs to re-compute
->> and set a new aggregated performance value for the PM domain.
->>
->> The purpose was to make it transparent for drivers, as all they need
->> do is whatever they did before.
->>
->> >
->> > It would also be good to handle the on/off state in genpd because the
->> > genpd could have a governor attached to it that blocks on/off requests
->> > from drivers if the governor decides that the device is clk gating on
->> > and off quickly but it's not beneficial to change the voltage during the
->> > quick gating scenario because we spend more time changing voltage than
->> > clk gating. Connecting this all to genpd allows us to use the device
->> > power state as a signal to adjust the voltage, but leaves us flexibility
->> > to override it if it makes sense policy wise.
->>
->> Well, genpd already manages the on/off state!?
->>
->> Of course, I fully agree to the above, which seems also to be a good
->> reason to why my suggestion makes sense. Or am I missing something
->> here?
->>
->> >
->> > And please remember the other point here that many devices may all be
->> > sharing the same power domain and therefore the voltage that the domain
->> > runs at depends on many different clk frequencies for different devices
->> > and if those clks are enabled or not, aggregated into a single voltage
->> > requirement for the power domain.
->>
->> Right, the aggregation in genpd is done per device - not per clock. I
->> don't understand your concern, but again I may be missing something!?
->
-> I believe that this is an argument against using OPP as the performance
-> selection mechanism for all SoCs. It's data structures, along with the
-> fact that is seems to have no awareness of device idleness, means that
-> it's not really sufficient for more complex SoCs.
+On Thu, Aug 09, 2018 at 11:43:58PM +0200, Paul Cercueil wrote:
+> Instead of requesting the "ext" clock and handling the watchdog clock
+> divider and gating in the watchdog driver, we now request and use the
+> "wdt" clock that is supplied by the ingenic-timer "TCU" driver.
+> 
+> The major benefit is that the watchdog's clock rate and parent can now
+> be specified from within devicetree, instead of hardcoded in the driver.
+> 
+> Also, this driver won't poke anymore into the TCU registers to
+> enable/disable the clock, as this is now handled by the TCU driver.
+> 
+> On the bad side, we break the ABI with devicetree - as we now request a
+> different clock. In this very specific case it is still okay, as every
+> Ingenic JZ47xx-based board out there compile the devicetree within the
+> kernel; so it's still time to push breaking changes, in order to get a
+> clean devicetree that won't break once it musn't.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-Sorry, but this does not make sense to me. :-)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-For sure genpd has knowledge about "device's idleness", at least those
-that have been attached to it. This is controlled via genpd's
-->runtime_suspend() callback. See genpd_runtime_suspend() and
-__genpd_runtime_suspend(), which is being invoked per device. What am
-I missing here?
-
->
->>
->> > The runtime suspend state might be
->> > part of that aggregation equation, so that if a device's clk is off and
->> > it's been suspended for some time the voltage requirement for that clk
->> > frequency could be dropped, but if the device is resumed and the clk is
->> > still off then the voltage requirement can be ignored. We only need to
->> > make sure the power domain is at a high enough voltage when the clk is
->> > actually enabled though, so tying the voltage requirement drop to
->> > runtime PM of the device is not exactly correct.
->>
->> I see.
->>
->> For my understanding; you are saying that there may be use-cases when
->> one want to keep the device runtime resumed, but without having its
->> clock ungated, right?
->>
->> My guess is that this is a rather unusual case, no?
->
-> This is a common case if I understand Stephen's example: Imagine a power
-> island that scales voltage and may power clamp to zero. Now imagine that
-> within that power island are a dozen separate functional devices, each
-> consuming a dedicated functional clock input signal.
-
-Right.
-
->
-> It's possible to have the power island turned on so that one device can
-> function, but the other 11 devices will remain clock gated.
-
-Right.
-
->
-> I assume the right way to handle this is to nest a dozen device-level
-> genpd's within the power island-level genpd?
-
-No.
-
-Devices that belongs to the same "power island" shall be attached to
-the same PM domain (genpd).
-
-Each device within the same PM domain shall be separately managed
-through runtime PM, via its corresponding runtime PM callbacks.
-
-The job of genpd is to manage the PM domain, which means keeping it
-powered on, in case any of its attached devices are in use (runtime
-resumed). Not until all devices in the same PM domain becomes unused
-(runtime suspended), then genpd can try to power off the PM domain.
-
-> That mirrors the topology I
-> described above, and allows the lowest level genpds (functional
-> device-level) to gate and ungate clocks, and the parent genpd (power
-> island-level) will only be concerned with voltage control.
-
-Well, if there is "power island" topology, then that of course
-can/shall be modeled by using genpd, but unless I am missing
-something, that was not what you described above.
-
-Anyway, let's try to use the right terminology of genpd, which are
-master and subdomains, rather than parent/child.
-
->
->>
->> The point is, I think we can simply have the driver to call
->> dev_pm_opp_set_rate() to cover optimizations for these scenarios.
->>
->> >
->> > It may be that a device is composed of multiple power domains and those
->> > power domains each have their own clks with voltage requirements too.
->> > In this scenario, connecting the voltage requirement of the genpd to the
->> > runtime PM state of the device doesn't make sense at all. We'll get into
->> > a situation where half the device is "off" because a power domain and
->> > the clk for that power domain are off but we can't drop the voltage
->> > requirement because the overall device isn't runtime suspended. It's
->> > like the single genpd per device problem all over again. Let's not do
->> > that.
->>
->> I am *not* suggesting to remove the APIs in genpd for setting a
->> performance level. We can still do that and that should be sufficient
->> to cover any corner cases, don't you think?
->>
->> My suggestion was only to allow genpd to drop the votes (temporarily)
->> for a device that becomes runtime suspended.
->>
->> >
->> > So I'd rather see drivers calling some genpd API directly to indicate
->> > that the clk should turn off and the voltage domain constraint has gone
->> > away. We might want to transform OPP into a genpd of its own and then
->> > connect that OPP genpd to a clk domain genpd for some clk
->> > on/off/frequency part and a power domain for the voltage/corner scaling
->> > part. If we did that, then everything is a genpd that gets all
->> > aggregated in the genpd layer and drivers that only use OPP would be OK
->> > with their runtime PM state of their device affecting the OPP genpd's
->> > on/off state of clks and voltage requirements. Drivers that want finer
->> > control would be able to use some new genpd API to turn on and off the
->> > genpd when they want to.
->>
->> Sound like we need a white-board. :-)
->
-> We really do. Maybe I'll make the trip to Vancouver in September :-)
-
-Yes, it would be great to meet at Linaro connect! Please come! :-)
-
-Also, I have already asked Rafael to bring up the DVFS as a topic
-during our power management track at LPC in Vancouver in November.
-Let's see what gets scheduled.
-
->
-> I don't like the idea to "transform OPP into a genpd of its own", as
-> suggested by Stephen above. But I think all he needs to solve this issue
-> is nesting some functional clock-level genpds inside of a parent power
-> island-level genpd. This is a repeat of the three paragraphs I've
-> written above.
->
-> This approach achieves the same effect as turning opp into a genpd, but
-> I'm not inclined to try and change the OPP library to solve this
-> problem.
->
-> I think OPP is fine as-is: it makes it easy to handle the very simplest
-> DVFS cases.  Stephen's requirements (and that of most mobile SoCs) goes
-> beyond what the OPP library can and should offer.
->
-
-The above seems reasonable.
-
-On the other hand, Graham recently clarifies for QCOM SoCs, that clock
-controllers themselves have OPP constraints and not only clock
-consumers. To me this changes the situation, quite fundamentally as
-well.
-
-Kind regards
-Uffe
+> ---
+>  drivers/watchdog/Kconfig      |  2 +
+>  drivers/watchdog/jz4740_wdt.c | 86 +++++++++++++++++--------------------------
+>  2 files changed, 36 insertions(+), 52 deletions(-)
+> 
+>  v5: New patch
+> 
+>  v6: - Split regmap change to new patch 09/24
+>      - The code now sets the WDT clock to the smallest rate possible and
+>        calculates the maximum timeout from that
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 9af07fd92763..834222abbbdb 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1476,7 +1476,9 @@ config INDYDOG
+>  config JZ4740_WDT
+>  	tristate "Ingenic jz4740 SoC hardware watchdog"
+>  	depends on MACH_JZ4740 || MACH_JZ4780
+> +	depends on COMMON_CLK
+>  	select WATCHDOG_CORE
+> +	select INGENIC_TIMER
+>  	help
+>  	  Hardware driver for the built-in watchdog timer on Ingenic jz4740 SoCs.
+>  
+> diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+> index ec4d99a830ba..1d504ecf45e1 100644
+> --- a/drivers/watchdog/jz4740_wdt.c
+> +++ b/drivers/watchdog/jz4740_wdt.c
+> @@ -26,25 +26,9 @@
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+>  
+> -#include <asm/mach-jz4740/timer.h>
+> -
+>  #define JZ_REG_WDT_TIMER_DATA     0x0
+>  #define JZ_REG_WDT_COUNTER_ENABLE 0x4
+>  #define JZ_REG_WDT_TIMER_COUNTER  0x8
+> -#define JZ_REG_WDT_TIMER_CONTROL  0xC
+> -
+> -#define JZ_WDT_CLOCK_PCLK 0x1
+> -#define JZ_WDT_CLOCK_RTC  0x2
+> -#define JZ_WDT_CLOCK_EXT  0x4
+> -
+> -#define JZ_WDT_CLOCK_DIV_SHIFT   3
+> -
+> -#define JZ_WDT_CLOCK_DIV_1    (0 << JZ_WDT_CLOCK_DIV_SHIFT)
+> -#define JZ_WDT_CLOCK_DIV_4    (1 << JZ_WDT_CLOCK_DIV_SHIFT)
+> -#define JZ_WDT_CLOCK_DIV_16   (2 << JZ_WDT_CLOCK_DIV_SHIFT)
+> -#define JZ_WDT_CLOCK_DIV_64   (3 << JZ_WDT_CLOCK_DIV_SHIFT)
+> -#define JZ_WDT_CLOCK_DIV_256  (4 << JZ_WDT_CLOCK_DIV_SHIFT)
+> -#define JZ_WDT_CLOCK_DIV_1024 (5 << JZ_WDT_CLOCK_DIV_SHIFT)
+>  
+>  #define DEFAULT_HEARTBEAT 5
+>  #define MAX_HEARTBEAT     2048
+> @@ -65,7 +49,8 @@ MODULE_PARM_DESC(heartbeat,
+>  struct jz4740_wdt_drvdata {
+>  	struct watchdog_device wdt;
+>  	void __iomem *base;
+> -	struct clk *rtc_clk;
+> +	struct clk *clk;
+> +	unsigned long clk_rate;
+>  };
+>  
+>  static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+> @@ -80,31 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  				    unsigned int new_timeout)
+>  {
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+> -	unsigned int rtc_clk_rate;
+> -	unsigned int timeout_value;
+> -	unsigned short clock_div = JZ_WDT_CLOCK_DIV_1;
+> -
+> -	rtc_clk_rate = clk_get_rate(drvdata->rtc_clk);
+> -
+> -	timeout_value = rtc_clk_rate * new_timeout;
+> -	while (timeout_value > 0xffff) {
+> -		if (clock_div == JZ_WDT_CLOCK_DIV_1024) {
+> -			/* Requested timeout too high;
+> -			* use highest possible value. */
+> -			timeout_value = 0xffff;
+> -			break;
+> -		}
+> -		timeout_value >>= 2;
+> -		clock_div += (1 << JZ_WDT_CLOCK_DIV_SHIFT);
+> -	}
+> +	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
+>  
+>  	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+> -	writew(clock_div, drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
+>  
+>  	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
+>  	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+> -	writew(clock_div | JZ_WDT_CLOCK_RTC,
+> -		drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
+>  
+>  	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+>  
+> @@ -114,7 +80,13 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  
+>  static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+>  {
+> -	jz4740_timer_enable_watchdog();
+> +	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(drvdata->clk);
+> +	if (ret)
+> +		return ret;
+> +
+>  	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+>  
+>  	return 0;
+> @@ -125,7 +97,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+>  
+>  	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+> -	jz4740_timer_disable_watchdog();
+> +	clk_disable_unprepare(drvdata->clk);
+>  
+>  	return 0;
+>  }
+> @@ -163,26 +135,42 @@ MODULE_DEVICE_TABLE(of, jz4740_wdt_of_matches);
+>  
+>  static int jz4740_wdt_probe(struct platform_device *pdev)
+>  {
+> +	struct device *dev = &pdev->dev;
+>  	struct jz4740_wdt_drvdata *drvdata;
+>  	struct watchdog_device *jz4740_wdt;
+>  	struct resource	*res;
+> +	long rate;
+>  	int ret;
+>  
+> -	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct jz4740_wdt_drvdata),
+> -			       GFP_KERNEL);
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+>  	if (!drvdata)
+>  		return -ENOMEM;
+>  
+> -	if (heartbeat < 1 || heartbeat > MAX_HEARTBEAT)
+> -		heartbeat = DEFAULT_HEARTBEAT;
+> +	drvdata->clk = devm_clk_get(&pdev->dev, "wdt");
+> +	if (IS_ERR(drvdata->clk)) {
+> +		dev_err(&pdev->dev, "cannot find WDT clock\n");
+> +		return PTR_ERR(drvdata->clk);
+> +	}
+> +
+> +	/* Set smallest clock possible */
+> +	rate = clk_round_rate(drvdata->clk, 1);
+> +	if (rate < 0)
+> +		return rate;
+>  
+> +	ret = clk_set_rate(drvdata->clk, rate);
+> +	if (ret)
+> +		return ret;
+> +
+> +	drvdata->clk_rate = rate;
+>  	jz4740_wdt = &drvdata->wdt;
+>  	jz4740_wdt->info = &jz4740_wdt_info;
+>  	jz4740_wdt->ops = &jz4740_wdt_ops;
+> -	jz4740_wdt->timeout = heartbeat;
+>  	jz4740_wdt->min_timeout = 1;
+> -	jz4740_wdt->max_timeout = MAX_HEARTBEAT;
+> -	jz4740_wdt->parent = &pdev->dev;
+> +	jz4740_wdt->max_timeout = 0xffff / rate;
+> +	jz4740_wdt->timeout = clamp(heartbeat,
+> +				    jz4740_wdt->min_timeout,
+> +				    jz4740_wdt->max_timeout);
+> +	jz4740_wdt->parent = dev;
+>  	watchdog_set_nowayout(jz4740_wdt, nowayout);
+>  	watchdog_set_drvdata(jz4740_wdt, drvdata);
+>  
+> @@ -191,12 +179,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(drvdata->base))
+>  		return PTR_ERR(drvdata->base);
+>  
+> -	drvdata->rtc_clk = devm_clk_get(&pdev->dev, "rtc");
+> -	if (IS_ERR(drvdata->rtc_clk)) {
+> -		dev_err(&pdev->dev, "cannot find RTC clock\n");
+> -		return PTR_ERR(drvdata->rtc_clk);
+> -	}
+> -
+>  	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
+>  	if (ret < 0)
+>  		return ret;
+> -- 
+> 2.11.0
+> 
