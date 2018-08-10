@@ -1,105 +1,116 @@
-Return-Path: <michals@xilinx.com>
-Return-Path: michal.simek@xilinx.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
- Wizard IP
-To: Boris Brezillon <boris.brezillon@bootlin.com>, Michal Simek
-	<michal.simek@xilinx.com>, <zhengxunli@mxic.com.tw>
-CC: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
-	<mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
- Gala <galak@codeaurora.org>, <devicetree@vger.kernel.org>, Julien Su
-	<juliensu@mxic.com.tw>, Mason Yang <masonccyang@mxic.com.tw>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
- <20180801081950.10497-2-boris.brezillon@bootlin.com>
- <a8620c93-cf99-719d-d2bb-7d0f0b567130@xilinx.com>
- <20180801103404.4b9135dc@bbrezillon> <20180801103750.4f06150c@bbrezillon>
-From: Michal Simek <michal.simek@xilinx.com>
-Message-ID: <3a46704b-9cd8-021d-e527-7866ceb04e2f@xilinx.com>
-Date: Wed, 1 Aug 2018 10:40:51 +0200
-MIME-Version: 1.0
-In-Reply-To: <20180801103750.4f06150c@bbrezillon>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 4/9] dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
+Date: Fri, 10 Aug 2018 15:21:08 +0530
+Message-Id: <20180810095113.25292-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 1.8.2018 10:37, Boris Brezillon wrote:
-> On Wed, 1 Aug 2018 10:34:04 +0200
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> 
->> Hi Michal,
->>
->> On Wed, 1 Aug 2018 10:26:11 +0200
->> Michal Simek <michal.simek@xilinx.com> wrote:
->>
->>> Hi Boris,
->>>
->>> On 1.8.2018 10:19, Boris Brezillon wrote:  
->>>> Document Xilinx Clocking Wizard bindings.
->>>>
->>>> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>>> ---
->>>>  .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
->>>>  1 file changed, 28 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
->>>> new file mode 100644
->>>> index 000000000000..1bf7a764f4a9
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
->>>> @@ -0,0 +1,28 @@
->>>> +Device Tree Clock bindings for the "Clocking Wizard" IP provided by Xilinx
->>>> +
->>>> +This block can be used to generate up to 4 clock signals out of a single input
->>>> +clock. It embeds a PLL to generate an intermediate clock which then feeds 4
->>>> +clock dividers whose divider value can be adjusted based on the user needs.
->>>> +
->>>> +Required properties:
->>>> + - #clock-cells: must be 1. The cell is encoding the id of the output clk
->>>> +		 (from 0 to xlnx,clk-wizard-num-outputs - 1)
->>>> + - compatible: must be "xlnx,clk-wizard-5.1"
->>>> + - clocks: 2 clocks are required
->>>> + - clock-names: should contain 2 clock names: "aclk" and "clkin".
->>>> +		"aclk" is driving the register interface and "clk_in" is the
->>>> +		input clock signal that is used by the PLL block
->>>> + - xlnx,clk-wizard-num-outputs: this describe the number of output clocks
->>>> +				(chosen at synthesization time)
->>>> + - reg: registers used to configure the Clocking wizard block
->>>> +
->>>> +Example:
->>>> +
->>>> +	clkwizard: clkwizard@43c20000 {
->>>> +		compatible = "xlnx,clk-wizard-5.1";
->>>> +		reg = <0x43c20000 0x10000>;
->>>> +		clocks = <&clkc 18>, <&clkc 18>;
->>>> +		clock-names = "aclk", "clk_in1";
->>>> +		#clock-cells = <1>;
->>>> +		xlnx,clk-wizard-num-outputs = <2>;
->>>> +	};
->>>>     
->>>
->>> First of all this should be 1/2.  
->>
->> Hm, okay. Didn't know the order was important.
->>
->>>
->>> The second is that this driver is already in staging area
->>> (drivers/staging/clocking-wizard) for a while. That's why please use
->>> this driver or send patches on the top of this.  
->>
->> Crap! I didn't look in staging. BTW, any reason this driver is in
->> staging?
-> 
-> Nevermind, it's described in the TODO file. Looks like I'll need to add
-> clk-phase ops for my use case.
+Add device tree binding constants for Actions Semi S900 SoC Reset
+Management Unit (RMU).
 
-Please check https://github.com/Xilinx/linux-xlnx
-and IIRC the use case which is not supported and should be is that
-clocking-wizard itself can be configured to fixed configuration without
-register access. But it is questionable if this can be done by current
-fixed-factor-clock or not.
-But maybe there was something else too.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../dt-bindings/reset/actions,s900-reset.h    | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
 
-Thanks,
-Michal
+diff --git a/include/dt-bindings/reset/actions,s900-reset.h b/include/dt-bindings/reset/actions,s900-reset.h
+new file mode 100644
+index 000000000000..42c19d02e43b
+--- /dev/null
++++ b/include/dt-bindings/reset/actions,s900-reset.h
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
++//
++// Device Tree binding constants for Actions Semi S900 Reset Management Unit
++//
++// Copyright (c) 2018 Linaro Ltd.
++
++#ifndef __DT_BINDINGS_ACTIONS_S900_RESET_H
++#define __DT_BINDINGS_ACTIONS_S900_RESET_H
++
++#define RESET_CHIPID				0
++#define RESET_CPU_SCNT				1
++#define RESET_SRAMI				2
++#define RESET_DDR_CTL_PHY			3
++#define RESET_DMAC				4
++#define RESET_GPIO				5
++#define RESET_BISP_AXI				6
++#define RESET_CSI0				7
++#define RESET_CSI1				8
++#define RESET_DE				9
++#define RESET_DSI				10
++#define RESET_GPU3D_PA				11
++#define RESET_GPU3D_PB				12
++#define RESET_HDE				13
++#define RESET_I2C0				14
++#define RESET_I2C1				15
++#define RESET_I2C2				16
++#define RESET_I2C3				17
++#define RESET_I2C4				18
++#define RESET_I2C5				19
++#define RESET_IMX				20
++#define RESET_NANDC0				21
++#define RESET_NANDC1				22
++#define RESET_SD0				23
++#define RESET_SD1				24
++#define RESET_SD2				25
++#define RESET_SD3				26
++#define RESET_SPI0				27
++#define RESET_SPI1				28
++#define RESET_SPI2				29
++#define RESET_SPI3				30
++#define RESET_UART0				31
++#define RESET_UART1				32
++#define RESET_UART2				33
++#define RESET_UART3				34
++#define RESET_UART4				35
++#define RESET_UART5				36
++#define RESET_UART6				37
++#define RESET_HDMI				38
++#define RESET_LVDS				39
++#define RESET_EDP				40
++#define RESET_USB2HUB				41
++#define RESET_USB2HSIC				42
++#define RESET_USB3				43
++#define RESET_PCM1				44
++#define RESET_AUDIO				45
++#define RESET_PCM0				46
++#define RESET_SE				47
++#define RESET_GIC				48
++#define RESET_DDR_CTL_PHY_AXI			49
++#define RESET_CMU_DDR				50
++#define RESET_DMM				51
++#define RESET_HDCP2TX				52
++#define RESET_ETHERNET				53
++
++#endif /* __DT_BINDINGS_ACTIONS_S900_RESET_H */
+-- 
+2.17.1
