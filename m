@@ -1,82 +1,63 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam
-	<fabio.estevam@nxp.com>, Peng Fan <peng.fan@nxp.com>, Rob Herring
-	<robh@kernel.org>
-CC: dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Date: Fri, 31 Aug 2018 01:40:21 +0000
-Message-ID: 
- <DB3PR0402MB3916D437C4BB42A612CE5A19F50F0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 5/9] arm64: dts: actions: Add Reset Controller support for S700 SoC
+Date: Fri, 10 Aug 2018 15:21:09 +0530
+Message-Id: <20180810095113.25292-6-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGksIFN0ZXBoZW4NCg0KQW5zb24gSHVhbmcNCkJlc3QgUmVnYXJkcyENCg0KDQo+IC0tLS0tT3Jp
-Z2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCA8c2JveWRAa2VybmVsLm9y
-Zz4NCj4gU2VudDogRnJpZGF5LCBBdWd1c3QgMzEsIDIwMTggOToyOSBBTQ0KPiBUbzoga2VybmVs
-QHBlbmd1dHJvbml4LmRlOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+
-IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-DQo+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzLmhhdWVyQHBlbmd1dHJvbml4LmRlOyBzaGF3
-bmd1b0BrZXJuZWwub3JnOw0KPiBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT47IEZh
-YmlvIEVzdGV2YW0NCj4gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFBlbmcgRmFuIDxwZW5nLmZh
-bkBueHAuY29tPjsgUm9iIEhlcnJpbmcNCj4gPHJvYmhAa2VybmVsLm9yZz4NCj4gQ2M6IGRsLWxp
-bnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggMi8yXSBj
-bGs6IGlteDogaW14N2Q6IHJlbW92ZSBjbGtzX2luaXRfb24gYXJyYXkNCj4gDQo+IFF1b3Rpbmcg
-UGVuZyBGYW4gKDIwMTgtMDgtMTIgMTg6MTU6NDEpDQo+ID4gSGkgQW5zb24sDQo+ID4NCj4gPiA+
-ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPiA+IEZyb206IEFuc29uIEh1
-YW5nDQo+ID4gPiA+ID4gU2VudDogMjAxOOW5tDjmnIg45pelIDEyOjM5DQo+ID4gPiA+ID4gVG86
-IHNoYXduZ3VvQGtlcm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7DQo+ID4gPiA+ID4g
-a2VybmVsQHBlbmd1dHJvbml4LmRlOyBGYWJpbyBFc3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5j
-b20+Ow0KPiA+ID4gPiA+IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3Jn
-Ow0KPiA+ID4gPiA+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gPiA+
-ID4gPiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnDQo+ID4gPiA+ID4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+ID4g
-PiA+ID4gU3ViamVjdDogW1BBVENIIDIvMl0gY2xrOiBpbXg6IGlteDdkOiByZW1vdmUgY2xrc19p
-bml0X29uIGFycmF5DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBDbG9jayBmcmFtZXdvcmsgd2lsbCBl
-bmFibGUgdGhvc2UgY2xvY2tzIHJlZ2lzdGVyZWQgd2l0aA0KPiA+ID4gPiA+IENMS19JU19DUklU
-SUNBTCBmbGFnLCBzbyBubyBuZWVkIHRvIGhhdmUgY2xrc19pbml0X29uIGFycmF5DQo+ID4gPiA+
-ID4gZHVyaW5nIGNsb2NrDQo+ID4gPiA+IGluaXRpYWxpemF0aW9uIG5vdy4NCj4gPiA+ID4NCj4g
-PiA+ID4gV2lsbCBpdCBiZSBtb3JlIGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNyaXRp
-Y2FsLWNsb2NrcyA9IDx4eHg+Ig0KPiA+ID4gPiBvciAiaW5pdC1vbi1hcnJhcnk9PHh4eD4iDQo+
-ID4gPiA+IGFuZCBlbmFibGUgdGhvc2UgY2xvY2tzPw0KPiA+ID4NCj4gPiA+IFBhcnNpbmcgdGhl
-IGNsb2NrcyBhcnJheXMgZnJvbSBkdGIgaXMgYW5vdGhlciB3YXkgb2YgZW5hYmxpbmcNCj4gPiA+
-IGNyaXRpY2FsIGNsb2NrcywgYnV0IGZvciBjdXJyZW50IGkuTVg2LzcgcGxhdGZvcm1zLCB3ZSBp
-bXBsZW1lbnQgaXQNCj4gPiA+IGluIHNhbWUgd2F5IGFzIG1vc3Qgb2Ygb3RoZXIgU29DcywgY3Vy
-cmVudGx5IEkgZGlkIE5PVCBzZWUgYW55DQo+ID4gPiBuZWNlc3NpdHkgb2YgcHV0dGluZyB0aGVt
-IGluIGR0YiwganVzdCBhZGRpbmcgZmxhZyBkdXJpbmcgY2xvY2sNCj4gPiA+IHJlZ2lzdGVyaW5n
-IGlzIG1vcmUgc2ltcGxlLCBpZiB0aGVyZSBpcyBhbnkgc3BlY2lhbCByZXF1aXJlbWVudCBmb3IN
-Cj4gPiA+IGRpZmZlcmVudCBjbG9ja3Mgc2V0IHRvIGJlIGVuYWJsZWQsIHRoZW4gd2UgY2FuIGFk
-ZCBzdXBwb3J0IHRvIGVuYWJsZSB0aGUNCj4gbWV0aG9kIG9mIHBhcnNpbmcgY3JpdGljYWwtY2xv
-Y2tzIGZyb20gZHRiLiBKdXN0IG15IHR3byBjZW50cy4NCj4gPg0KPiA+IFRoaW5raW5nIGFib3V0
-IE9QLVRFRSB3YW50IHRvIHVzZSBvbmUgZGV2aWNlLCBidXQgaXQncyBjbG9ja3MgYXJlDQo+ID4g
-cmVnaXN0ZXJlZCBieSBMaW51eCwgYmVjYXVzZSB0aGVyZSBpcyBubyBtb2R1bGUgaW4gTGludXgg
-c2lkZSB1c2UgaXQsDQo+ID4gaXQgd2lsbCBzaHV0ZG93biB0aGUgY2xvY2ssIHdoaWNoIGNhdXNl
-IE9QLVRFRSBjb3VsZCBub3QgYWNjZXNzIHRoZSBkZXZpY2UuDQo+ID4NCj4gPiBUaGVuIHBlb3Bs
-ZSBoYXZlIHRvIG1vZGlmeSBjbGsgY29kZSB0byBhZGQgQ0xLX0lTX0NSSVRJQ0FMIGZsYWcgdG8N
-Cj4gPiBtYWtlIHN1cmUgdGhlIGNsb2NrcyBhcmUgbm90IHNodXRkb3duIGJ5IExpbnV4Lg0KPiA+
-DQo+ID4gSG93ZXZlciBhZGRpbmcgYSBuZXcgcHJvcGVydHkgaW4gY2xrIG5vZGUgYW5kIGxldCBk
-cml2ZXIgY29kZSBwYXJzZQ0KPiA+IHRoZSBkdHMsIHRoZXJlIGlzIG5vIG5lZWQgdG8gbW9kaWZ5
-IGNsayBkcml2ZXIgY29kZSB3aGVuIE9QLVRFRSBuZWVkcw0KPiBhbm90aGVyIGRldmljZSBjbG9j
-ay4NCj4gPg0KPiANCj4gSWYgT1AtVEVFIG5lZWRzIGxpbnV4IHRvIGtlZXAgdGhpbmdzIG9uIHRo
-ZW4gd2h5IGNhbid0IHRoZSBPUC1URUUgZHJpdmVyIGluDQo+IExpbnV4IHByb2JlLCBhY3F1aXJl
-IGNsb2NrcywgYW5kIGtlZXAgdGhlIGNsa3MgZW5hYmxlZCBmb3JldmVyPw0KIA0KWWVzLCBJIGFn
-cmVlIHdpdGggeW91LCBPUC1URUUgc2hvdWxkIG1haW50YWluIGl0cyBjbG9ja3Mgd2hlbiBPUC1U
-RUUgaXMgZW5hYmxlZC4NCg0KVGhpcyBpcyBPTkxZIGEgY29uY2VybiByYWlzZWQgYnkgUGVuZywg
-YWxsIHBsYXRmb3JtcycgY3VycmVudCBjbG9jayBkcml2ZXIgZG9lcyBOT1QgY29uc2lkZXINCnRo
-aXMgY2FzZSwgc28gSSB0aGluayB0aGlzIHBhdGNoIHNob3VsZCBiZSBmaW5lIGZvciBub3c/IFRo
-YW5rcy4NCg0KQW5zb24uDQoNCg0K
+Add reset controller property and bindings header for the
+Actions Semi S700 SoC DTS.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/actions/s700.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 59d29e4ca404..30c4c6ea89ea 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -5,6 +5,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/actions,s700-cmu.h>
++#include <dt-bindings/reset/actions,s700-reset.h>
+ 
+ / {
+ 	compatible = "actions,s700";
+@@ -165,6 +166,7 @@
+ 			reg = <0x0 0xe0168000 0x0 0x1000>;
+ 			clocks = <&hosc>, <&losc>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		sps: power-controller@e01b0100 {
+-- 
+2.17.1
