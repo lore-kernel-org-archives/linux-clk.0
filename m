@@ -1,92 +1,62 @@
-Return-Path: <boris.brezillon@bootlin.com>
-Date: Wed, 1 Aug 2018 10:37:50 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Michal Simek <michal.simek@xilinx.com>, <zhengxunli@mxic.com.tw>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@codeaurora.org>, <linux-clk@vger.kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
- <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
- Gala <galak@codeaurora.org>, <devicetree@vger.kernel.org>, Julien Su
- <juliensu@mxic.com.tw>, Mason Yang <masonccyang@mxic.com.tw>,
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
- Wizard IP
-Message-ID: <20180801103750.4f06150c@bbrezillon>
-In-Reply-To: <20180801103404.4b9135dc@bbrezillon>
-References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
-	<20180801081950.10497-2-boris.brezillon@bootlin.com>
-	<a8620c93-cf99-719d-d2bb-7d0f0b567130@xilinx.com>
-	<20180801103404.4b9135dc@bbrezillon>
+Return-Path: <Jian.Hu@amlogic.com>
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
+	<narmstrong@baylibre.com>
+CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
+ Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
+	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
+	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
+	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/2] clk: meson-g12a: Add EE clock controller driver
+Date: Fri, 10 Aug 2018 16:47:36 +0800
+Message-ID: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+Return-Path: jian.hu@amlogic.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 1 Aug 2018 10:34:04 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+Add a Clock driver for the Everything-Else part of
+the Amlogic Meson-G12A SoC.
 
-> Hi Michal,
-> 
-> On Wed, 1 Aug 2018 10:26:11 +0200
-> Michal Simek <michal.simek@xilinx.com> wrote:
-> 
-> > Hi Boris,
-> > 
-> > On 1.8.2018 10:19, Boris Brezillon wrote:  
-> > > Document Xilinx Clocking Wizard bindings.
-> > > 
-> > > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > ---
-> > >  .../devicetree/bindings/clock/xlnx,clk-wizard.txt  | 28 ++++++++++++++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
-> > > new file mode 100644
-> > > index 000000000000..1bf7a764f4a9
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/xlnx,clk-wizard.txt
-> > > @@ -0,0 +1,28 @@
-> > > +Device Tree Clock bindings for the "Clocking Wizard" IP provided by Xilinx
-> > > +
-> > > +This block can be used to generate up to 4 clock signals out of a single input
-> > > +clock. It embeds a PLL to generate an intermediate clock which then feeds 4
-> > > +clock dividers whose divider value can be adjusted based on the user needs.
-> > > +
-> > > +Required properties:
-> > > + - #clock-cells: must be 1. The cell is encoding the id of the output clk
-> > > +		 (from 0 to xlnx,clk-wizard-num-outputs - 1)
-> > > + - compatible: must be "xlnx,clk-wizard-5.1"
-> > > + - clocks: 2 clocks are required
-> > > + - clock-names: should contain 2 clock names: "aclk" and "clkin".
-> > > +		"aclk" is driving the register interface and "clk_in" is the
-> > > +		input clock signal that is used by the PLL block
-> > > + - xlnx,clk-wizard-num-outputs: this describe the number of output clocks
-> > > +				(chosen at synthesization time)
-> > > + - reg: registers used to configure the Clocking wizard block
-> > > +
-> > > +Example:
-> > > +
-> > > +	clkwizard: clkwizard@43c20000 {
-> > > +		compatible = "xlnx,clk-wizard-5.1";
-> > > +		reg = <0x43c20000 0x10000>;
-> > > +		clocks = <&clkc 18>, <&clkc 18>;
-> > > +		clock-names = "aclk", "clk_in1";
-> > > +		#clock-cells = <1>;
-> > > +		xlnx,clk-wizard-num-outputs = <2>;
-> > > +	};
-> > >     
-> > 
-> > First of all this should be 1/2.  
-> 
-> Hm, okay. Didn't know the order was important.
-> 
-> > 
-> > The second is that this driver is already in staging area
-> > (drivers/staging/clocking-wizard) for a while. That's why please use
-> > this driver or send patches on the top of this.  
-> 
-> Crap! I didn't look in staging. BTW, any reason this driver is in
-> staging?
+Changes since v2 at[2]
+-fix fixed clocks's descriptions
+-fix aligment
+-add enable bit for plls base on [3] patches
+-add fix clock gate bit
 
-Nevermind, it's described in the TODO file. Looks like I'll need to add
-clk-phase ops for my use case.
+Changes since v1 at[1]
+-fix typo of 'Everything'.
+-change the word 'AmLogic' to 'Amlogic'
+-squash patch 1 and 2.
+-delete usless message of "Trying obsolete regs".
+-delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
+-rebase on top of the "next/drivers" branch, and add g12a clock patch.
+-add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
+ g12a_sd_emmc_c_clk0_sel.
+
+[1]https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
+[2]https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
+[3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+
+Jian Hu (2):
+  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+  clk: meson-g12a: Add EE Clock controller driver
+
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
+ drivers/clk/meson/Kconfig                          |   10 +
+ drivers/clk/meson/Makefile                         |    1 +
+ drivers/clk/meson/g12a.c                           | 1128 ++++++++++++++++++++
+ drivers/clk/meson/g12a.h                           |  128 +++
+ include/dt-bindings/clock/g12a-clkc.h              |   93 ++
+ 6 files changed, 1361 insertions(+)
+ create mode 100644 drivers/clk/meson/g12a.c
+ create mode 100644 drivers/clk/meson/g12a.h
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+
+-- 
+1.9.1
