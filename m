@@ -1,137 +1,39 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v11 00/11] drivers: Introduce firmware dnd clock river for ZynqMP core
-Date: Fri, 3 Aug 2018 10:53:17 -0700
-Message-ID: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40779 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbeHJTTT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 15:19:19 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180810151638.30900-1-icenowy@aosc.io>
+References: <20180810151638.30900-1-icenowy@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 11 Aug 2018 00:48:19 +0800
+Message-ID: <CAGb2v66Wsjvz8Pdo+7JDHudOxqqWX_9qMX4kgiFHo8cJJou7Ew@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: h6: fix PWM gate/reset offset
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rongyi Chen <chenyi@tt-cool.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset is adding communication layer with firmware and clock driver who uses 
-those APIs to communicate with PMU.
-Firmware driver provides an interface to firmware APIs.Interface APIs can be used by any driver to communicate to
-PMUFW(Platform Management Unit). All requests go through ATF.
-This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries supported clock information from 
-firmware and regiters pll and output clocks with CCF.
+On Fri, Aug 10, 2018 at 11:16 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Rongyi Chen <chenyi@tt-cool.com>
+>
+> Currently the register offset of the PWM bus gate in Allwinner H6 clock
+> driver is wrong.
+>
+> Fix this issue.
+>
+> Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+> Signed-off-by: Rongyi Chen <chenyi@tt-cool.com>
+> [Icenowy: refactor commit message]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-v11:
- - Removed "Reveiwed-by:Stephen Boyd" tag from firmware binding
- - Updated clock and firmware driver to use probe method instead of init
- - Marked PMU payload arguments with __le32 for proper endienness code
- 
-v10:
- - Incorporated code review comments from v9 patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10478575/
-	https://patchwork.kernel.org/patch/10478457/
-	https://patchwork.kernel.org/patch/10478461/
-	https://patchwork.kernel.org/patch/10478463/
-	
-v9:
- - Fixed minor typo comments
+Queued up for 4.20. Thanks
 
-v8:
- - Corrected typo in clk Kconfig
- 
-v7:
- - Removed xilinx specific clock debugfs API support
- - Added reviewed-by tags for FW and clock bindings
- - Updated clock node name to clock-controller
-
-v6:
- - Broke patch series to have base FW driver and Clock driver user
- - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10230759/
-	https://patchwork.kernel.org/patch/10250047/
-
-v5:
- - Added ATF version check support
- - Updated some functions to be static 
- - Minor function name corrections
-
-v4:
- - Changed clock setrate/getrate API prototype to support 64 bit rate
- - Defined macros for get_node_status return values
- - Moved DT node as a child of firmware
- - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
- - Minor changes to incorporate other review comments from v3 patch series
-
-v3:
- - added some fixes to firmware-ggs.c
- - updated pinmux get/set function argument names to specify function id instead of node id
- - added new pinctrl query macros
- - incorporated review comments from v2 patch series
-
-v2:
- - change SPDX-License-Identifier license text style
- - split patch into multiple patches
- - Updated copyrights
- - Added ABI documentation
- - incorporated logical review comments from previuos patch. Discussed below:
-	https://patchwork.kernel.org/patch/10150665/
-
-Jolly Shah (1):
-  drivers: clk: Add ZynqMP clock driver
-
-Rajan Vaja (10):
-  dt-bindings: firmware: Add bindings for ZynqMP firmware
-  firmware: xilinx: Add Zynqmp firmware driver
-  firmware: xilinx: Add zynqmp IOCTL API for device control
-  firmware: xilinx: Add query data API
-  firmware: xilinx: Add clock APIs
-  firmware: xilinx: Add debugfs interface
-  firmware: xilinx: Add debugfs for IOCTL API
-  firmware: xilinx: Add debugfs for query data API
-  dt-bindings: clock: Add bindings for ZynqMP clock driver
-  firmware: xilinx: Replace init call with probe method
-
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/zynqmp/Kconfig                         |  10 +
- drivers/clk/zynqmp/Makefile                        |   4 +
- drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
- drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
- drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
- drivers/clk/zynqmp/clkc.c                          | 716 +++++++++++++++++++++
- drivers/clk/zynqmp/divider.c                       | 217 +++++++
- drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
- drivers/firmware/Kconfig                           |   1 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/xilinx/Kconfig                    |  23 +
- drivers/firmware/xilinx/Makefile                   |   5 +
- drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
- drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
- drivers/firmware/xilinx/zynqmp.c                   | 535 +++++++++++++++
- include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
- include/linux/firmware/xlnx-zynqmp.h               | 116 ++++
- 21 files changed, 2788 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
- create mode 100644 drivers/clk/zynqmp/Kconfig
- create mode 100644 drivers/clk/zynqmp/Makefile
- create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
- create mode 100644 drivers/clk/zynqmp/clkc.c
- create mode 100644 drivers/clk/zynqmp/divider.c
- create mode 100644 drivers/clk/zynqmp/pll.c
- create mode 100644 drivers/firmware/xilinx/Kconfig
- create mode 100644 drivers/firmware/xilinx/Makefile
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
- create mode 100644 drivers/firmware/xilinx/zynqmp.c
- create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
- create mode 100644 include/linux/firmware/xlnx-zynqmp.h
-
--- 
-2.7.4
+ChenYu
