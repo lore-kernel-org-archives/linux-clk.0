@@ -1,86 +1,127 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Cc: dl-linux-imx <linux-imx@nxp.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Message-ID: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
-Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Date: Thu, 30 Aug 2018 18:29:07 -0700
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 8/9] clk: actions: Add Actions Semi S700 SoC Reset Management Unit support
+Date: Fri, 10 Aug 2018 15:21:12 +0530
+Message-Id: <20180810095113.25292-9-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Peng Fan (2018-08-12 18:15:41)
-> Hi Anson,
-> =
+Add Reset Management Unit (RMU) support for Actions Semi S700 SoC.
 
-> > > > -----Original Message-----
-> > > > From: Anson Huang
-> > > > Sent: 2018=E5=B9=B48=E6=9C=888=E6=97=A5 12:39
-> > > > To: shawnguo@kernel.org; s.hauer@pengutronix.de;
-> > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > > > mturquette@baylibre.com; sboyd@kernel.org;
-> > > > linux-arm-kernel@lists.infradead.org;
-> > > > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > > > Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-> > > >
-> > > > Clock framework will enable those clocks registered with
-> > > > CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
-> > > > clock
-> > > initialization now.
-> > >
-> > > Will it be more flexible to parse dts saying "critical-clocks =3D <xx=
-x>"
-> > > or "init-on-arrary=3D<xxx>"
-> > > and enable those clocks?
-> > =
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-s700.c | 51 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-> > Parsing the clocks arrays from dtb is another way of enabling critical =
-clocks, but
-> > for current i.MX6/7 platforms, we implement it in same way as most of o=
-ther
-> > SoCs, currently I did NOT see any necessity of putting them in dtb, jus=
-t adding
-> > flag during clock registering is more simple, if there is any special r=
-equirement
-> > for different clocks set to be enabled, then we can add support to enab=
-le the
-> > method of parsing critical-clocks from dtb. Just my two cents.
-> =
-
-> Thinking about OP-TEE want to use one device, but it's clocks are registe=
-red
-> by Linux, because there is no module in Linux side use it, it will shutdo=
-wn the clock,
-> which cause OP-TEE could not access the device.
-> =
-
-> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make s=
-ure
-> the clocks are not shutdown by Linux.
-> =
-
-> However adding a new property in clk node and let driver code parse the d=
-ts,
-> there is no need to modify clk driver code when OP-TEE needs another devi=
-ce clock.
-> =
-
-
-If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
-in Linux probe, acquire clocks, and keep the clks enabled forever?
+diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
+index e7cacd677275..a2f34d13fb54 100644
+--- a/drivers/clk/actions/owl-s700.c
++++ b/drivers/clk/actions/owl-s700.c
+@@ -20,8 +20,10 @@
+ #include "owl-gate.h"
+ #include "owl-mux.h"
+ #include "owl-pll.h"
++#include "owl-reset.h"
+ 
+ #include <dt-bindings/clock/actions,s700-cmu.h>
++#include <dt-bindings/reset/actions,s700-reset.h>
+ 
+ #define CMU_COREPLL		(0x0000)
+ #define CMU_DEVPLL		(0x0004)
+@@ -569,20 +571,69 @@ static struct clk_hw_onecell_data s700_hw_clks = {
+ 		.num    = CLK_NR_CLKS,
+ };
+ 
++static const struct owl_reset_map s700_resets[] = {
++	[RESET_DE]	= { CMU_DEVRST0, BIT(0) },
++	[RESET_LCD0]	= { CMU_DEVRST0, BIT(1) },
++	[RESET_DSI]	= { CMU_DEVRST0, BIT(2) },
++	[RESET_CSI]	= { CMU_DEVRST0, BIT(13) },
++	[RESET_SI]	= { CMU_DEVRST0, BIT(14) },
++	[RESET_I2C0]	= { CMU_DEVRST1, BIT(0) },
++	[RESET_I2C1]	= { CMU_DEVRST1, BIT(1) },
++	[RESET_I2C2]	= { CMU_DEVRST1, BIT(2) },
++	[RESET_I2C3]	= { CMU_DEVRST1, BIT(3) },
++	[RESET_SPI0]	= { CMU_DEVRST1, BIT(4) },
++	[RESET_SPI1]	= { CMU_DEVRST1, BIT(5) },
++	[RESET_SPI2]	= { CMU_DEVRST1, BIT(6) },
++	[RESET_SPI3]	= { CMU_DEVRST1, BIT(7) },
++	[RESET_UART0]	= { CMU_DEVRST1, BIT(8) },
++	[RESET_UART1]	= { CMU_DEVRST1, BIT(9) },
++	[RESET_UART2]	= { CMU_DEVRST1, BIT(10) },
++	[RESET_UART3]	= { CMU_DEVRST1, BIT(11) },
++	[RESET_UART4]	= { CMU_DEVRST1, BIT(12) },
++	[RESET_UART5]	= { CMU_DEVRST1, BIT(13) },
++	[RESET_UART6]	= { CMU_DEVRST1, BIT(14) },
++	[RESET_KEY]	= { CMU_DEVRST1, BIT(24) },
++	[RESET_GPIO]	= { CMU_DEVRST1, BIT(25) },
++	[RESET_AUDIO]	= { CMU_DEVRST1, BIT(29) },
++};
++
+ static struct owl_clk_desc s700_clk_desc = {
+ 	.clks       = s700_clks,
+ 	.num_clks   = ARRAY_SIZE(s700_clks),
+ 
+ 	.hw_clks    = &s700_hw_clks,
++
++	.resets     = s700_resets,
++	.num_resets = ARRAY_SIZE(s700_resets),
+ };
+ 
+ static int s700_clk_probe(struct platform_device *pdev)
+ {
+ 	struct owl_clk_desc *desc;
++	struct owl_reset *reset;
++	int ret;
+ 
+ 	desc = &s700_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+ 
++	/*
++	 * FIXME: Reset controller registration should be moved to
++	 * common code, once all SoCs of Owl family supports it.
++	 */
++	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
++
++	reset->rcdev.of_node = pdev->dev.of_node;
++	reset->rcdev.ops = &owl_reset_ops;
++	reset->rcdev.nr_resets = desc->num_resets;
++	reset->reset_map = desc->resets;
++	reset->regmap = desc->regmap;
++
++	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
++	if (ret)
++		dev_err(&pdev->dev, "Failed to register reset controller\n");
++
+ 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
+ }
+ 
+-- 
+2.17.1
