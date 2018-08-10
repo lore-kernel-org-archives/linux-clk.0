@@ -1,132 +1,158 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-References: <20180721192846.18811-1-martin.blumenstingl@googlemail.com>
- <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
- <20180725200755.GA24555@rob-hp-laptop> <CAFBinCAdsC-VisufKu9jm0vZER6JjFq4O5WAfsMoXdQfzNFcfg@mail.gmail.com>
- <18543f2e-0162-9201-571c-73ce8d707e50@baylibre.com>
-In-Reply-To: <18543f2e-0162-9201-571c-73ce8d707e50@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Sun, 12 Aug 2018 20:35:17 +0200
-Message-ID: <CAFBinCDLWqXCcB3b3SAOxxkq+EbQazGmMVLbVLyTjWCD4wTarA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: meson8b: use the registers from
- the HHI syscon
-To: robh@kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com, mark.rutland@arm.com,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, carlo@caione.org,
-	khilman@baylibre.com, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 9/9] clk: actions: Add Actions Semi S900 SoC Reset Management Unit support
+Date: Fri, 10 Aug 2018 15:21:13 +0530
+Message-Id: <20180810095113.25292-10-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Add Reset Management Unit (RMU) support for Actions Semi S900 SoC.
 
-On Thu, Jul 26, 2018 at 9:32 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Hi Rob, Martin,
->
-> On 25/07/2018 23:16, Martin Blumenstingl wrote:
-> > Hi Rob,
-> >
-> > On Wed, Jul 25, 2018 at 10:07 PM Rob Herring <robh@kernel.org> wrote:
-> >>
-> >> On Sat, Jul 21, 2018 at 09:28:44PM +0200, Martin Blumenstingl wrote:
-> >>> The clock controller on Meson8/Meson8m2 and Meson8b is part of a
-> >>> register region called "HHI". This register area contains more
-> >>> functionality than just a clock controller:
-> >>> - the clock controller
-> >>> - some reset controller bits
-> >>> - temperature sensor calibration data (on Meson8b and Meson8m2 only)
-> >>> - HDMI controller
-> >>>
-> >>> The HHI register area may be accessed concurrently. Allow this by using
-> >>> a "system controller" as parent node.
-> >>
-> >> Why? A single node can be a provider of multiple things. Maybe the HDMI
-> >> should be a child since it will involve graph nodes, but the rest can be
-> >> one node. There should be numerous examples of blocks that are clock and
-> >> reset controllers.
-> > I understand that a node can provide multiple "things" - currently
-> > it's a clock controller and a reset controller
-> > the HDMI controller could also be integrated in a similar way
-> >
-> > however, I do not know how to access the temperature sensor calibration data
-> > there is an ADC - one of it's channel has access to a temperature sensor
-> > this ADC is located at CBUS offset 0x8680 and we already have a driver
-> > for it (meson-saradc)
-> > my problem is that the temperature sensor has to be calibrated - this
-> > is done by:
-> > - read data from efuse
-> > - write 4 bits of calibration data to some register in the ADC's register space
-> > - write a 5th bit of calibration data to a (seemingly random) register
-> > in the HHI register space
-> > (if one of the 5 bits is not written to it's correct location then the
-> > temperature sensor reads bogus values)
-> >
-> > I am not sure how to handle this without passing the HHI region to the
-> > meson-saradc driver and letting that initialize all the temperature
-> > calibration data bits (in it's own register space as well as the HHI
-> > register space)
-> > do you have any suggestion here?
->
-> The clock controller node was badly represented from the beginning, the
-> HHI register zone *is* a "system control" zone with a lot of different
-> registers controller the system, including all the EE clocks, *some* HDMI
-> PHY settings, *some* Video DAC settings, *some* memory power control...
->
-> Thus, the clock controller *is* entirely in the HHI registers space, but
-> the HHI register space should be used by other nodes for control some
-> part of the SoCs. This is why we decided to model the HHI zone as a
-> "syscon" to permit other node to have access to these registers and
-> "simple-mfd" to expose the *big* feature of the HHI : the clock controller.
-does our (Neil's and mine) explanation make sense to you?
-I understand your point that a DT node can provide multiple "things".
-this is the case on the Meson HHI region, but in addition to that the
-HHI region contains additional bits for other IP blocks. so my
-understanding is that using a syscon here is fine
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-s900.c | 82 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-> We are migrating the Meson8 because we already migrated the GX and because the
-> AXG family was pushed like this (and acked like this), so it's common sense
-> to align the 3 families because they share the same characteristics here.
->
-> Neil
->
-> >
-> >>>
-> >>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> >>> ---
-> >>>  .../bindings/clock/amlogic,meson8b-clkc.txt         | 13 +++++--------
-> >>>  1 file changed, 5 insertions(+), 8 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> >>> index b455c5aa9139..38fb979210d3 100644
-> >>> --- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> >>> +++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-> >>> @@ -9,15 +9,13 @@ Required Properties:
-> >>>       - "amlogic,meson8-clkc" for Meson8 (S802) SoCs
-> >>>       - "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
-> >>>       - "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
-> >>> -- reg: it must be composed by two tuples:
-> >>> -     0) physical base address of the xtal register and length of memory
-> >>> -        mapped region.
-> >>> -     1) physical base address of the clock controller and length of memory
-> >>> -        mapped region.
-> >>> -
-> >>>  - #clock-cells: should be 1.
-> >>>  - #reset-cells: should be 1.
-> >>>
-> >>> +Parent node should have the following properties :
-> >>> +- compatible: "syscon", "simple-mfd"
-> >>
-> >> These 2 compatibles alone are not valid.
-> > so I should add (for example) "amlogic,meson8b-hhi-sysctrl" as first compatible?
-> > so the result would be: compatible = "amlogic,meson8b-hhi-sysctrl",
-> > "syscon", "simple-mfd";
->
-> yes, we used a specific compatible for GX and AXG like this.
->
-> Question, what should be the order between "syscon" and "simple-mfd" ?
-for consistency I will go with whatever the GX and AXG dt-bindings use
-
-
-Regards
-Martin
+diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
+index bb7ee872d316..790890978424 100644
+--- a/drivers/clk/actions/owl-s900.c
++++ b/drivers/clk/actions/owl-s900.c
+@@ -19,8 +19,10 @@
+ #include "owl-gate.h"
+ #include "owl-mux.h"
+ #include "owl-pll.h"
++#include "owl-reset.h"
+ 
+ #include <dt-bindings/clock/actions,s900-cmu.h>
++#include <dt-bindings/reset/actions,s900-reset.h>
+ 
+ #define CMU_COREPLL		(0x0000)
+ #define CMU_DEVPLL		(0x0004)
+@@ -684,20 +686,100 @@ static struct clk_hw_onecell_data s900_hw_clks = {
+ 	.num	= CLK_NR_CLKS,
+ };
+ 
++static const struct owl_reset_map s900_resets[] = {
++	[RESET_DMAC]		= { CMU_DEVRST0, BIT(0) },
++	[RESET_SRAMI]		= { CMU_DEVRST0, BIT(1) },
++	[RESET_DDR_CTL_PHY]	= { CMU_DEVRST0, BIT(2) },
++	[RESET_NANDC0]		= { CMU_DEVRST0, BIT(3) },
++	[RESET_SD0]		= { CMU_DEVRST0, BIT(4) },
++	[RESET_SD1]		= { CMU_DEVRST0, BIT(5) },
++	[RESET_PCM1]		= { CMU_DEVRST0, BIT(6) },
++	[RESET_DE]		= { CMU_DEVRST0, BIT(7) },
++	[RESET_LVDS]		= { CMU_DEVRST0, BIT(8) },
++	[RESET_SD2]		= { CMU_DEVRST0, BIT(9) },
++	[RESET_DSI]		= { CMU_DEVRST0, BIT(10) },
++	[RESET_CSI0]		= { CMU_DEVRST0, BIT(11) },
++	[RESET_BISP_AXI]	= { CMU_DEVRST0, BIT(12) },
++	[RESET_CSI1]		= { CMU_DEVRST0, BIT(13) },
++	[RESET_GPIO]		= { CMU_DEVRST0, BIT(15) },
++	[RESET_EDP]		= { CMU_DEVRST0, BIT(16) },
++	[RESET_AUDIO]		= { CMU_DEVRST0, BIT(17) },
++	[RESET_PCM0]		= { CMU_DEVRST0, BIT(18) },
++	[RESET_HDE]		= { CMU_DEVRST0, BIT(21) },
++	[RESET_GPU3D_PA]	= { CMU_DEVRST0, BIT(22) },
++	[RESET_IMX]		= { CMU_DEVRST0, BIT(23) },
++	[RESET_SE]		= { CMU_DEVRST0, BIT(24) },
++	[RESET_NANDC1]		= { CMU_DEVRST0, BIT(25) },
++	[RESET_SD3]		= { CMU_DEVRST0, BIT(26) },
++	[RESET_GIC]		= { CMU_DEVRST0, BIT(27) },
++	[RESET_GPU3D_PB]	= { CMU_DEVRST0, BIT(28) },
++	[RESET_DDR_CTL_PHY_AXI]	= { CMU_DEVRST0, BIT(29) },
++	[RESET_CMU_DDR]		= { CMU_DEVRST0, BIT(30) },
++	[RESET_DMM]		= { CMU_DEVRST0, BIT(31) },
++	[RESET_USB2HUB]		= { CMU_DEVRST1, BIT(0) },
++	[RESET_USB2HSIC]	= { CMU_DEVRST1, BIT(1) },
++	[RESET_HDMI]		= { CMU_DEVRST1, BIT(2) },
++	[RESET_HDCP2TX]		= { CMU_DEVRST1, BIT(3) },
++	[RESET_UART6]		= { CMU_DEVRST1, BIT(4) },
++	[RESET_UART0]		= { CMU_DEVRST1, BIT(5) },
++	[RESET_UART1]		= { CMU_DEVRST1, BIT(6) },
++	[RESET_UART2]		= { CMU_DEVRST1, BIT(7) },
++	[RESET_SPI0]		= { CMU_DEVRST1, BIT(8) },
++	[RESET_SPI1]		= { CMU_DEVRST1, BIT(9) },
++	[RESET_SPI2]		= { CMU_DEVRST1, BIT(10) },
++	[RESET_SPI3]		= { CMU_DEVRST1, BIT(11) },
++	[RESET_I2C0]		= { CMU_DEVRST1, BIT(12) },
++	[RESET_I2C1]		= { CMU_DEVRST1, BIT(13) },
++	[RESET_USB3]		= { CMU_DEVRST1, BIT(14) },
++	[RESET_UART3]		= { CMU_DEVRST1, BIT(15) },
++	[RESET_UART4]		= { CMU_DEVRST1, BIT(16) },
++	[RESET_UART5]		= { CMU_DEVRST1, BIT(17) },
++	[RESET_I2C2]		= { CMU_DEVRST1, BIT(18) },
++	[RESET_I2C3]		= { CMU_DEVRST1, BIT(19) },
++	[RESET_ETHERNET]	= { CMU_DEVRST1, BIT(20) },
++	[RESET_CHIPID]		= { CMU_DEVRST1, BIT(21) },
++	[RESET_I2C4]		= { CMU_DEVRST1, BIT(22) },
++	[RESET_I2C5]		= { CMU_DEVRST1, BIT(23) },
++	[RESET_CPU_SCNT]	= { CMU_DEVRST1, BIT(30) }
++};
++
+ static struct owl_clk_desc s900_clk_desc = {
+ 	.clks	    = s900_clks,
+ 	.num_clks   = ARRAY_SIZE(s900_clks),
+ 
+ 	.hw_clks    = &s900_hw_clks,
++
++	.resets     = s900_resets,
++	.num_resets = ARRAY_SIZE(s900_resets),
+ };
+ 
+ static int s900_clk_probe(struct platform_device *pdev)
+ {
+ 	struct owl_clk_desc *desc;
++	struct owl_reset *reset;
++	int ret;
+ 
+ 	desc = &s900_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+ 
++	/*
++	 * FIXME: Reset controller registration should be moved to
++	 * common code, once all SoCs of Owl family supports it.
++	 */
++	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
++
++	reset->rcdev.of_node = pdev->dev.of_node;
++	reset->rcdev.ops = &owl_reset_ops;
++	reset->rcdev.nr_resets = desc->num_resets;
++	reset->reset_map = desc->resets;
++	reset->regmap = desc->regmap;
++
++	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
++	if (ret)
++		dev_err(&pdev->dev, "Failed to register reset controller\n");
++
+ 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
+ }
+ 
+-- 
+2.17.1
