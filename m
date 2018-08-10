@@ -1,98 +1,73 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33402 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727767AbeHJQIt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 12:08:49 -0400
+Date: Fri, 10 Aug 2018 06:38:50 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
         linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 13/24] pwm: jz4740: Allow selection of PWM channels 0 and 1
-Date: Tue, 21 Aug 2018 19:16:24 +0200
-Message-Id: <20180821171635.22740-14-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 11/24] watchdog: jz4740: Drop dependency on
+ MACH_JZ47xx, use COMPILE_TEST
+Message-ID: <20180810133850.GD29028@roeck-us.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+ <20180809214414.20905-12-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180809214414.20905-12-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The TCU channels 0 and 1 were previously reserved for system tasks, and
-thus unavailable for PWM.
+On Thu, Aug 09, 2018 at 11:44:01PM +0200, Paul Cercueil wrote:
+> Depending on MACH_JZ47xx prevent us from creating a generic kernel that
+> works on more than one MIPS board. Instead, we just depend on MIPS being
+> set.
+> 
+> On other architectures, this driver can still be built, thanks to
+> COMPILE_TEST. This is used by automated tools to find bugs, for
+> instance.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-This commit uses the newly introduced API functions of the ingenic-timer
-driver to request/release the TCU channels that should be used as PWM.
-This allows all the TCU channels to be used as PWM.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
-
-Notes:
-     v6: New patch
-    
-     v7: No change
-
- drivers/pwm/pwm-jz4740.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index 1bda8d8e9865..d08274ec007f 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -43,27 +43,30 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 	char clk_name[16];
- 	int ret;
- 
--	/*
--	 * Timers 0 and 1 are used for system tasks, so they are unavailable
--	 * for use as PWMs.
--	 */
--	if (pwm->hwpwm < 2)
--		return -EBUSY;
-+	ret = ingenic_tcu_request_channel(pwm->hwpwm);
-+	if (ret)
-+		return ret;
- 
- 	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
- 
- 	clk = clk_get(chip->dev, clk_name);
--	if (IS_ERR(clk))
--		return PTR_ERR(clk);
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
-+		goto err_free_channel;
-+	}
- 
- 	ret = clk_prepare_enable(clk);
--	if (ret) {
--		clk_put(clk);
--		return ret;
--	}
-+	if (ret)
-+		goto err_clk_put;
- 
- 	jz->clks[pwm->hwpwm] = clk;
- 	return 0;
-+
-+err_clk_put:
-+	clk_put(clk);
-+err_free_channel:
-+	ingenic_tcu_release_channel(pwm->hwpwm);
-+	return ret;
- }
- 
- static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
-@@ -73,6 +76,7 @@ static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- 
- 	clk_disable_unprepare(clk);
- 	clk_put(clk);
-+	ingenic_tcu_release_channel(pwm->hwpwm);
- }
- 
- static int jz4740_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
--- 
-2.11.0
+> ---
+>  drivers/watchdog/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+>  v5: New patch
+> 
+>  v6: No change
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 834222abbbdb..13a46cfa69b0 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1475,7 +1475,7 @@ config INDYDOG
+>  
+>  config JZ4740_WDT
+>  	tristate "Ingenic jz4740 SoC hardware watchdog"
+> -	depends on MACH_JZ4740 || MACH_JZ4780
+> +	depends on MIPS || COMPILE_TEST
+>  	depends on COMMON_CLK
+>  	select WATCHDOG_CORE
+>  	select INGENIC_TIMER
+> -- 
+> 2.11.0
+> 
