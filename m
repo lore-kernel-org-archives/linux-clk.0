@@ -1,133 +1,85 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 1/9] clk: actions: Cache regmap info in private clock descriptor
-Date: Fri, 10 Aug 2018 15:21:05 +0530
-Message-Id: <20180810095113.25292-2-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39258 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728104AbeHJQHe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 12:07:34 -0400
+Date: Fri, 10 Aug 2018 06:37:35 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 10/24] watchdog: jz4740: Avoid starting watchdog in
+ set_timeout
+Message-ID: <20180810133735.GC29028@roeck-us.net>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+ <20180809214414.20905-11-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180809214414.20905-11-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-In order to support the reset controller, regmap info needs to
-be cached in the private clock descriptor, owl_clk_desc. Hence,
-save that and also make the clock descriptor struct non const.
+On Thu, Aug 09, 2018 at 11:44:00PM +0200, Paul Cercueil wrote:
+> Previously the jz4740_wdt_set_timeout() function was starting the timer
+> unconditionally, even if it was stopped when that function was entered.
+> 
+> Now, the timer will be restarted only if it was already running before
+> this function is called.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/owl-common.c | 3 ++-
- drivers/clk/actions/owl-common.h | 3 ++-
- drivers/clk/actions/owl-s700.c   | 4 ++--
- drivers/clk/actions/owl-s900.c   | 4 ++--
- 4 files changed, 8 insertions(+), 6 deletions(-)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 61c1071b5180..32dd29e0a37e 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -39,7 +39,7 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
- }
- 
- int owl_clk_regmap_init(struct platform_device *pdev,
--			 const struct owl_clk_desc *desc)
-+			struct owl_clk_desc *desc)
- {
- 	void __iomem *base;
- 	struct regmap *regmap;
-@@ -57,6 +57,7 @@ int owl_clk_regmap_init(struct platform_device *pdev,
- 	}
- 
- 	owl_clk_set_regmap(desc, regmap);
-+	desc->regmap = regmap;
- 
- 	return 0;
- }
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-index 4fd726ec54a6..56f01f7774aa 100644
---- a/drivers/clk/actions/owl-common.h
-+++ b/drivers/clk/actions/owl-common.h
-@@ -26,6 +26,7 @@ struct owl_clk_desc {
- 	struct owl_clk_common		**clks;
- 	unsigned long			num_clks;
- 	struct clk_hw_onecell_data	*hw_clks;
-+	struct regmap			*regmap;
- };
- 
- static inline struct owl_clk_common *
-@@ -35,7 +36,7 @@ static inline struct owl_clk_common *
- }
- 
- int owl_clk_regmap_init(struct platform_device *pdev,
--			 const struct owl_clk_desc *desc);
-+			struct owl_clk_desc *desc);
- int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
- 
- #endif /* _OWL_COMMON_H_ */
-diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
-index 5e9531392ee5..e7cacd677275 100644
---- a/drivers/clk/actions/owl-s700.c
-+++ b/drivers/clk/actions/owl-s700.c
-@@ -569,7 +569,7 @@ static struct clk_hw_onecell_data s700_hw_clks = {
- 		.num    = CLK_NR_CLKS,
- };
- 
--static const struct owl_clk_desc s700_clk_desc = {
-+static struct owl_clk_desc s700_clk_desc = {
- 	.clks       = s700_clks,
- 	.num_clks   = ARRAY_SIZE(s700_clks),
- 
-@@ -578,7 +578,7 @@ static const struct owl_clk_desc s700_clk_desc = {
- 
- static int s700_clk_probe(struct platform_device *pdev)
- {
--	const struct owl_clk_desc *desc;
-+	struct owl_clk_desc *desc;
- 
- 	desc = &s700_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
-diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
-index 7f60ed6afe63..bb7ee872d316 100644
---- a/drivers/clk/actions/owl-s900.c
-+++ b/drivers/clk/actions/owl-s900.c
-@@ -684,7 +684,7 @@ static struct clk_hw_onecell_data s900_hw_clks = {
- 	.num	= CLK_NR_CLKS,
- };
- 
--static const struct owl_clk_desc s900_clk_desc = {
-+static struct owl_clk_desc s900_clk_desc = {
- 	.clks	    = s900_clks,
- 	.num_clks   = ARRAY_SIZE(s900_clks),
- 
-@@ -693,7 +693,7 @@ static const struct owl_clk_desc s900_clk_desc = {
- 
- static int s900_clk_probe(struct platform_device *pdev)
- {
--	const struct owl_clk_desc *desc;
-+	struct owl_clk_desc *desc;
- 
- 	desc = &s900_clk_desc;
- 	owl_clk_regmap_init(pdev, desc);
--- 
-2.17.1
+> ---
+>  drivers/watchdog/jz4740_wdt.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+>  v6: New patch
+> 
+> diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+> index 0f54306aee25..45d9495170e5 100644
+> --- a/drivers/watchdog/jz4740_wdt.c
+> +++ b/drivers/watchdog/jz4740_wdt.c
+> @@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  {
+>  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+>  	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
+> +	u32 tcer;
+>  
+> +	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
+>  	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+>  
+>  	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
+>  	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+>  
+> -	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
+>  
+>  	wdt_dev->timeout = new_timeout;
+>  	return 0;
+> @@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+>  		return ret;
+>  
+>  	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.11.0
+> 
