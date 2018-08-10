@@ -1,64 +1,133 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <e6592bd2f2505e30bb27e1cd4cbb031344cc3459.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/4] clk: meson: clk-pll driver update
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date: Mon, 27 Aug 2018 14:59:52 +0200
-In-Reply-To: <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
-References: <20180801140053.25899-1-jbrunet@baylibre.com>
-         <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	afaerber@suse.de,
+	robh+dt@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	liuwei@actions-semi.com,
+	mp-cs@actions-semi.com,
+	96boards@ucrobotics.com,
+	devicetree@vger.kernel.org,
+	daniel.thompson@linaro.org,
+	amit.kucheria@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hzhang@ucrobotics.com,
+	bdong@ucrobotics.com,
+	manivannanece23@gmail.com,
+	thomas.liau@actions-semi.com,
+	jeff.chen@actions-semi.com,
+	pn@denx.de,
+	edgar.righi@lsitec.org.br,
+	sravanhome@gmail.com,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 1/9] clk: actions: Cache regmap info in private clock descriptor
+Date: Fri, 10 Aug 2018 15:21:05 +0530
+Message-Id: <20180810095113.25292-2-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, 2018-08-12 at 20:26 +0200, Martin Blumenstingl wrote:
-> Hi Jerome,
-> 
-> On Wed, Aug 1, 2018 at 4:00 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > 
-> > This patchset is yet another round of update to the amlogic pll driver.
-> > 
-> >  1) Enable bit is added so we don't rely on the bootloader or the init
-> >     value to enable to pll device.
-> >  2) Remove unnecessary CLK_GET_RATE_NOCACHE flags.
-> >  3) OD post dividers are removed from the pll driver. This simplify the
-> >     driver and let us provide the clocks which exist between those
-> >     dividers. Some device are actually using these clocks.
-> >  4) The rates hard coded in parameter tables are remove. Instead, we
-> >     only rely on the parent rate and the parameters to calculate the
-> >     output rate, which is a lot better.
-> > 
-> > This series has been tested on the gxl libretech cc and axg s400.
-> > I did not test it on meson8b yet.
-> > 
-> > Changes since v1: [0]
-> >  - improve commit description of patch 1
-> >  - remove unnecessary CLK_GET_RATE_NOCACHE flags.
-> >  - add missing CLK_SET_RATE_PARENT.
-> > 
-> > [0]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
-> > 
-> > Jerome Brunet (4):
-> >   clk: meson: clk-pll: add enable bit
-> >   clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
-> >   clk: meson: clk-pll: remove od parameters
-> >   clk: meson: clk-pll: drop hard-coded rates from pll tables
-> 
-> for the whole series:
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> as well as:
-> Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> (tested on Meson8b / Odroid-C1, even CPU frequency scaling still works
-> with my out-of-tree patches)
+In order to support the reset controller, regmap info needs to
+be cached in the private clock descriptor, owl_clk_desc. Hence,
+save that and also make the clock descriptor struct non const.
 
-Collected tags, rebased and queued for 4.20
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/owl-common.c | 3 ++-
+ drivers/clk/actions/owl-common.h | 3 ++-
+ drivers/clk/actions/owl-s700.c   | 4 ++--
+ drivers/clk/actions/owl-s900.c   | 4 ++--
+ 4 files changed, 8 insertions(+), 6 deletions(-)
 
-> 
-> 
-> Regards
-> Martin
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 61c1071b5180..32dd29e0a37e 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -39,7 +39,7 @@ static void owl_clk_set_regmap(const struct owl_clk_desc *desc,
+ }
+ 
+ int owl_clk_regmap_init(struct platform_device *pdev,
+-			 const struct owl_clk_desc *desc)
++			struct owl_clk_desc *desc)
+ {
+ 	void __iomem *base;
+ 	struct regmap *regmap;
+@@ -57,6 +57,7 @@ int owl_clk_regmap_init(struct platform_device *pdev,
+ 	}
+ 
+ 	owl_clk_set_regmap(desc, regmap);
++	desc->regmap = regmap;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
+index 4fd726ec54a6..56f01f7774aa 100644
+--- a/drivers/clk/actions/owl-common.h
++++ b/drivers/clk/actions/owl-common.h
+@@ -26,6 +26,7 @@ struct owl_clk_desc {
+ 	struct owl_clk_common		**clks;
+ 	unsigned long			num_clks;
+ 	struct clk_hw_onecell_data	*hw_clks;
++	struct regmap			*regmap;
+ };
+ 
+ static inline struct owl_clk_common *
+@@ -35,7 +36,7 @@ static inline struct owl_clk_common *
+ }
+ 
+ int owl_clk_regmap_init(struct platform_device *pdev,
+-			 const struct owl_clk_desc *desc);
++			struct owl_clk_desc *desc);
+ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks);
+ 
+ #endif /* _OWL_COMMON_H_ */
+diff --git a/drivers/clk/actions/owl-s700.c b/drivers/clk/actions/owl-s700.c
+index 5e9531392ee5..e7cacd677275 100644
+--- a/drivers/clk/actions/owl-s700.c
++++ b/drivers/clk/actions/owl-s700.c
+@@ -569,7 +569,7 @@ static struct clk_hw_onecell_data s700_hw_clks = {
+ 		.num    = CLK_NR_CLKS,
+ };
+ 
+-static const struct owl_clk_desc s700_clk_desc = {
++static struct owl_clk_desc s700_clk_desc = {
+ 	.clks       = s700_clks,
+ 	.num_clks   = ARRAY_SIZE(s700_clks),
+ 
+@@ -578,7 +578,7 @@ static const struct owl_clk_desc s700_clk_desc = {
+ 
+ static int s700_clk_probe(struct platform_device *pdev)
+ {
+-	const struct owl_clk_desc *desc;
++	struct owl_clk_desc *desc;
+ 
+ 	desc = &s700_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+diff --git a/drivers/clk/actions/owl-s900.c b/drivers/clk/actions/owl-s900.c
+index 7f60ed6afe63..bb7ee872d316 100644
+--- a/drivers/clk/actions/owl-s900.c
++++ b/drivers/clk/actions/owl-s900.c
+@@ -684,7 +684,7 @@ static struct clk_hw_onecell_data s900_hw_clks = {
+ 	.num	= CLK_NR_CLKS,
+ };
+ 
+-static const struct owl_clk_desc s900_clk_desc = {
++static struct owl_clk_desc s900_clk_desc = {
+ 	.clks	    = s900_clks,
+ 	.num_clks   = ARRAY_SIZE(s900_clks),
+ 
+@@ -693,7 +693,7 @@ static const struct owl_clk_desc s900_clk_desc = {
+ 
+ static int s900_clk_probe(struct platform_device *pdev)
+ {
+-	const struct owl_clk_desc *desc;
++	struct owl_clk_desc *desc;
+ 
+ 	desc = &s900_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+-- 
+2.17.1
