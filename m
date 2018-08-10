@@ -1,67 +1,97 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, rohitkr@codeaurora.org
-References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
- <1530773721-14668-2-git-send-email-tdas@codeaurora.org>
- <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <408b3b59-d171-175c-f6da-b5d6f42a954d@codeaurora.org>
-Date: Fri, 3 Aug 2018 17:49:31 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga07.intel.com ([134.134.136.100]:16472 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726610AbeHJKm0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Aug 2018 06:42:26 -0400
+Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-9-songjun.wu@linux.intel.com>
+ <CAMuHMdXkGchPN337dXbBVOFsb1o-Tkh8S_z=uCm3Z0sDjPVMKA@mail.gmail.com>
+ <734bddbc-a5aa-d50d-0e7b-d8adc4d1afb2@linux.intel.com>
+ <CAMuHMdVgC__AJHCEKT9UhdK4Jh4bm-s0ihH8mvx7KQ7+vzh6Ag@mail.gmail.com>
+From: "Wu, Songjun" <songjun.wu@linux.intel.com>
+Message-ID: <ba7e68d4-d749-1afc-8a4f-57ebee88a1fb@linux.intel.com>
+Date: Fri, 10 Aug 2018 16:13:34 +0800
 MIME-Version: 1.0
-In-Reply-To: <153092054581.143105.16123786121344421693@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAMuHMdVgC__AJHCEKT9UhdK4Jh4bm-s0ihH8mvx7KQ7+vzh6Ag@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
 
-On 7/7/2018 5:12 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-04 23:55:20)
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> new file mode 100644
->> index 0000000..fe7378b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> @@ -0,0 +1,22 @@
->> +Qualcomm LPASS Clock Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible   : shall contain "qcom,sdm845-lpasscc"
->> +- #clock-cells : from common clock binding, shall contain 1.
->> +- reg          : shall contain base register address and size.
->> +- reg-names    : shall contain the register names of LPASS domain
->> +                       "lpass_gcc", "lpass_cc", "lpass_qdsp6ss".
->> +
->> +Example:
->> +
->> +The below node has to be defined in the cases where the LPASS peripheral loader
->> +would bring the subsystem out of reset.
->> +
->> +       lpasscc: clock-controller {
->> +               compatible = "qcom,sdm845-lpasscc";
->> +               reg = <0x00147000 0x20>, <0x17014000 0x1f004>,
-> 
-> This first reg is inside GCC though? Why isn't it added to the gcc
-> sdm845 driver? And then the next two might make sense as a different
-> region, but the reg property ending in 20 looks really weird.
+On 8/8/2018 4:33 PM, Geert Uytterhoeven wrote:
+> Hi Songjun,
 >
-I have moved the GCC registers in the GCC driver with a device tree 
-property flag. And also have mapped the lpass_qdsp6ss CC region.
+> On Wed, Aug 8, 2018 at 6:05 AM Wu, Songjun <songjun.wu@linux.intel.com> wrote:
+>> On 8/7/2018 3:33 PM, Geert Uytterhoeven wrote:
+>>> On Fri, Aug 3, 2018 at 5:04 AM Songjun Wu <songjun.wu@linux.intel.com> wrote:
+>>>> Get serial id from dts.
+>>>>
+>>>> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
+>>>> macro is defined in lantiq_soc.h.
+>>>> lantiq_soc.h is in arch path for legacy product support.
+>>>>
+>>>> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
+>>>>
+>>>> If "#ifdef preprocessor" is changed to
+>>>> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
+>>>> code using LTQ_EARLY_ASC is compiled.
+>>>> Compilation will fail for no LTQ_EARLY_ASC defined.
+>>>>
+>>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>>> Thanks for your patch!
+>>>
+>>>> @@ -699,9 +700,19 @@ lqasc_probe(struct platform_device *pdev)
+>>>>                   return -ENODEV;
+>>>>           }
+>>>>
+>>>> -       /* check if this is the console port */
+>>>> -       if (mmres->start != CPHYSADDR(LTQ_EARLY_ASC))
+>>>> -               line = 1;
+>>>> +       /* get serial id */
+>>>> +       line = of_alias_get_id(node, "serial");
+>>>> +       if (line < 0) {
+>>>> +#ifdef CONFIG_LANTIQ
+>>>> +               if (mmres->start == CPHYSADDR(LTQ_EARLY_ASC))
+>>>> +                       line = 0;
+>>>> +               else
+>>>> +                       line = 1;
+>>>> +#else
+>>>> +               dev_err(&pdev->dev, "failed to get alias id, errno %d\n", line);
+>>>> +               return line;
+>>> Please note that not providing a fallback here makes life harder when using
+>>> DT overlays.
+>>> See the description of commit 7678f4c20fa7670f ("serial: sh-sci: Add support
+>>> for dynamic instances") for background info.
+>> Thanks for your comment.
+>> The logic in commit 7678f4c20fa7670f is not suitable here.
+>> We need to know which serial instance is used for console.
+>> We cannot use dynamic serial instance here.
+> Why does the driver need to use which serial instance is used for the console?
+> Hardcoding that is not an option, as the board DTS may specify the console using
+> chosen/stdout-path.
+In legacy platform in open source, it only defined asc1 in dts.
+There's no asc0 in legacy dts.While in the new platform, asc0
+is defined in dts. There's no asc1 in new platform dts.
+To avoid hard code in driver, alias serial0 is used to unified
+driver code. Actually only one serial is supported in SoC.
 
->> +                       <0x17300020 0x20>;
->> +               reg-names = "lpass_gcc", "lpass_cc", "lpass_qdsp6ss";
->> +               #clock-cells = <1>;
->> +       };
+aliases {
+         serial0 = &asc0;
+};
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+chosen {
+     bootargs = "earlycon  clk_ignore_unused";
+     stdout-path = "serial0";
+};
