@@ -1,44 +1,30 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <shubhrajyoti.datta@gmail.com>
 MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-6-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-6-songjun.wu@linux.intel.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 6 Aug 2018 09:16:06 -0600
-Message-ID: <CAL_JsqLMZbDuUsqbg63P-pO4D_L6PHqhJqj2NXfu9xwmu3Rabw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/18] dt-binding: MIPS: Add documentation of Intel
- MIPS SoCs
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Mark Rutland <mark.rutland@arm.com>
+In-Reply-To: <20180801081950.10497-2-boris.brezillon@bootlin.com>
+References: <20180801081950.10497-1-boris.brezillon@bootlin.com> <20180801081950.10497-2-boris.brezillon@bootlin.com>
+From: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date: Sat, 11 Aug 2018 16:18:54 +0530
+Message-ID: <CAKfKVtGHwafCtPo2MR-dw-61UYH3A4H3bRZ9ipGuGx5bLBNp3Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
+ Wizard IP
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Julien Su <juliensu@mxic.com.tw>,
+	Mason Yang <masonccyang@mxic.com.tw>, zhengxunli@mxic.com.tw,
+	linux-arm-kernel@lists.infradead.org, Michal Simek <michal.simek@xilinx.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
->
-> From: Hua Ma <hua.ma@linux.intel.com>
->
-> This patch adds binding documentation for the
-> compatible values of the Intel MIPS SoCs.
->
-> Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
->
-> Changes in v2:
-> - New patch split from previous patch
-> - Add the board and chip compatible in dt document
->
->  Documentation/devicetree/bindings/mips/intel.txt | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/intel.txt
+Hi  Boris,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+On Wed, Aug 1, 2018 at 1:49 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> Document Xilinx Clocking Wizard bindings.
+>
+
+Thanks for the patches.
+Are you planning to post another version patching the staging?
