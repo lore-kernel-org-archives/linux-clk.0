@@ -1,50 +1,48 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52207 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbeHMSHG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 14:07:06 -0400
-Date: Mon, 13 Aug 2018 09:24:22 -0600
-From: Rob Herring <robh@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 04/24] dt-bindings: Add doc for the Ingenic TCU drivers
-Message-ID: <20180813152422.GA18650@rob-hp-laptop>
-References: <20180809214414.20905-1-paul@crapouillou.net>
- <20180809214414.20905-5-paul@crapouillou.net>
+Return-Path: <boris.brezillon@bootlin.com>
+Date: Sat, 11 Aug 2018 15:41:35 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Rob Herring
+ <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland
+ <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar
+ Gala <galak@codeaurora.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Julien Su
+ <juliensu@mxic.com.tw>, Mason Yang <masonccyang@mxic.com.tw>,
+ zhengxunli@mxic.com.tw, linux-arm-kernel@lists.infradead.org, Michal Simek
+ <michal.simek@xilinx.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: Add bindings for the Clocking
+ Wizard IP
+Message-ID: <20180811154135.4e998d6b@bbrezillon>
+In-Reply-To: <CAKfKVtGHwafCtPo2MR-dw-61UYH3A4H3bRZ9ipGuGx5bLBNp3Q@mail.gmail.com>
+References: <20180801081950.10497-1-boris.brezillon@bootlin.com>
+	<20180801081950.10497-2-boris.brezillon@bootlin.com>
+	<CAKfKVtGHwafCtPo2MR-dw-61UYH3A4H3bRZ9ipGuGx5bLBNp3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180809214414.20905-5-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 09, 2018 at 11:43:54PM +0200, Paul Cercueil wrote:
-> Add documentation about how to properly use the Ingenic TCU
-> (Timer/Counter Unit) drivers from devicetree.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
->  .../devicetree/bindings/timer/ingenic,tcu.txt      | 134 +++++++++++++++++++++
->  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
->  3 files changed, 134 insertions(+), 42 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
->  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+Hi Shubhrajyoti,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Sat, 11 Aug 2018 16:18:54 +0530
+Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com> wrote:
+
+> Hi  Boris,
+> 
+> 
+> On Wed, Aug 1, 2018 at 1:49 PM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > Document Xilinx Clocking Wizard bindings.
+> >  
+> 
+> Thanks for the patches.
+> Are you planning to post another version patching the staging?
+
+Yes, but that won't happen before a few weeks, so, if you can't wait,
+feel free to port my changes to the existing driver. Would be good to
+also address the aspect that initially prevented this driver from being
+merged in the clk subsystem, so that we can finally move it there.
+
+Regards,
+
+Boris
