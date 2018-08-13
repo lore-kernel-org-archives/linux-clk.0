@@ -1,91 +1,85 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
-Date: Tue, 28 Aug 2018 11:33:30 +0200
-Message-Id: <20180828093332.20674-3-brgl@bgdev.pl>
-In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 11/14] dt-bindings: clock: Document qcom,krait-cc
+Date: Mon, 13 Aug 2018 19:06:04 +0530
+Message-Id: <1534167367-17545-12-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Export this routine so that we can use it later in devm_kstrdup_const()
-and devm_kfree_const().
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+The Krait clock controller controls the krait CPU and the L2 clocks
+consisting a primary mux and secondary mux. Add document for that.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- include/asm-generic/sections.h | 14 ++++++++++++++
- mm/util.c                      |  7 -------
- 2 files changed, 14 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/clock/qcom,krait-cc.txt    | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
 
-diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
-index 849cd8eb5ca0..d79abca81a52 100644
---- a/include/asm-generic/sections.h
-+++ b/include/asm-generic/sections.h
-@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
- 	return memory_intersects(__init_begin, __init_end, virt, size);
- }
- 
-+/**
-+ * is_kernel_rodata - checks if the pointer address is located in the
-+ *                    .rodata section
-+ *
-+ * @addr: address to check
-+ *
-+ * Returns: true if the address is located in .rodata, false otherwise.
-+ */
-+static inline bool is_kernel_rodata(unsigned long addr)
-+{
-+	return addr >= (unsigned long)__start_rodata &&
-+	       addr < (unsigned long)__end_rodata;
-+}
+diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+new file mode 100644
+index 0000000..030ba60
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+@@ -0,0 +1,34 @@
++Krait Clock Controller
 +
- #endif /* _ASM_GENERIC_SECTIONS_H_ */
-diff --git a/mm/util.c b/mm/util.c
-index d2890a407332..41e9892a50ce 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -15,17 +15,10 @@
- #include <linux/vmalloc.h>
- #include <linux/userfaultfd_k.h>
- 
--#include <asm/sections.h>
- #include <linux/uaccess.h>
- 
- #include "internal.h"
- 
--static inline int is_kernel_rodata(unsigned long addr)
--{
--	return addr >= (unsigned long)__start_rodata &&
--		addr < (unsigned long)__end_rodata;
--}
--
- /**
-  * kfree_const - conditionally free memory
-  * @x: pointer to the memory
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++			"qcom,krait-cc-v1"
++			"qcom,krait-cc-v2"
++
++- #clock-cells:
++	Usage: required
++	Value type: <u32>
++	Definition: must be 1
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the clock parents of hfpll, secondary muxes.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
++
++Example:
++
++	kraitcc: clock-controller {
++		compatible = "qcom,krait-cc-v1";
++		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
++		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
++		#clock-cells = <1>;
++	};
 -- 
-2.18.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
