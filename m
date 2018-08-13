@@ -1,131 +1,117 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 09/14] dt-bindings: arm: Document qcom,kpss-gcc
-Date: Mon, 13 Aug 2018 19:06:02 +0530
-Message-Id: <1534167367-17545-10-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <1534151523.17494.48.camel@mtkswgap22>
+Subject: Re: [PATCH v5 01/11] dt-bindings: clock: mediatek: document clk
+ bindings for Mediatek MT6765 SoC
+From: Owen Chen <owen.chen@mediatek.com>
+To: Rob Herring <robh@kernel.org>
+CC: Mars Cheng <mars.cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Date: Mon, 13 Aug 2018 17:12:03 +0800
+In-Reply-To: <20180720174331.GA26945@rob-hp-laptop>
+References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+         <1531817552-17221-2-git-send-email-mars.cheng@mediatek.com>
+         <20180720174331.GA26945@rob-hp-laptop>
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+On Fri, 2018-07-20 at 11:43 -0600, Rob Herring wrote:
+> On Tue, Jul 17, 2018 at 04:52:22PM +0800, Mars Cheng wrote:
+> > This patch adds the binding documentation for apmixedsys, audsys, camsys,
+> > imgsys, infracfg, mipi0a, topckgen, vcodecsys
+> > 
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> > ---
+> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+> >  .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
+> >  .../bindings/arm/mediatek/mediatek,camsys.txt      |   27 ++++++++++++++++++++
+> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+> >  .../bindings/arm/mediatek/mediatek,mipi0a.txt      |   23 +++++++++++++++++
+> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
+> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+> >  .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |   22 ++++++++++++++++
+> >  10 files changed, 79 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > index b404d59..44eaeac 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+> > @@ -8,6 +8,7 @@ Required Properties:
+> >  - compatible: Should be one of:
+> >  	- "mediatek,mt2701-apmixedsys"
+> >  	- "mediatek,mt2712-apmixedsys", "syscon"
+> > +	- "mediatek,mt6765-apmixedsys", "syscon"
+> >  	- "mediatek,mt6797-apmixedsys"
+> >  	- "mediatek,mt7622-apmixedsys"
+> >  	- "mediatek,mt8135-apmixedsys"
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > index 34a69ba..9a8672a 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+> > @@ -7,6 +7,7 @@ Required Properties:
+> >  
+> >  - compatible: Should be one of:
+> >  	- "mediatek,mt2701-audsys", "syscon"
+> > +	- "mediatek,mt6765-audsys", "syscon"
+> >  	- "mediatek,mt7622-audsys", "syscon"
+> >  - #clock-cells: Must be 1
+> >  
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> > new file mode 100644
+> > index 0000000..dc75783
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+> > @@ -0,0 +1,27 @@
+> > +MediaTek CAMSYS controller
+> > +============================
+> > +
+> > +The MediaTek CAMSYS controller provides various clocks to the system.
+> 
+> Only clocks? If so, then this should be moved to bindings/clocks/.
+> 
 
-The ACC and GCC regions present in KPSSv1 contain registers to
-control clocks and power to each Krait CPU and L2. Documenting
-the bindings here.
+camsys conclude not only clks but also mtcmos, so it's better to put
+this node in this path.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  | 19 ++++++++++
- .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 44 ++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-index 1333db9..7f69636 100644
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-@@ -21,10 +21,29 @@ PROPERTIES
- 		    the register region. An optional second element specifies
- 		    the base address and size of the alias register region.
- 
-+- clocks:
-+        Usage: required
-+        Value type: <prop-encoded-array>
-+        Definition: reference to the pll parents.
-+
-+- clock-names:
-+        Usage: required
-+        Value type: <stringlist>
-+        Definition: must be "pll8_vote", "pxo".
-+
-+- clock-output-names:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpuX_aux where X is a
-+		    CPU number starting at 0.
-+
- Example:
- 
- 	clock-controller@2088000 {
- 		compatible = "qcom,kpss-acc-v2";
- 		reg = <0x02088000 0x1000>,
- 		      <0x02008000 0x1000>;
-+		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
-+		clock-names = "pll8_vote", "pxo";
-+		clock-output-names = "acpu0_aux";
- 	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-new file mode 100644
-index 0000000..e628758
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-@@ -0,0 +1,44 @@
-+Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: should be one of the following. The generic compatible
-+			"qcom,kpss-gcc" should also be included.
-+			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: base address and size of the register region
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the pll parents.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "pll8_vote", "pxo".
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpu_l2_aux indicating
-+		    an L2 cache auxiliary clock.
-+
-+Example:
-+
-+	l2cc: clock-controller@2011000 {
-+		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-+		reg = <0x2011000 0x1000>;
-+		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
-+		clock-names = "pll8_vote", "pxo";
-+		clock-output-names = "acpu_l2_aux";
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: Should be one of:
+> > +	- "mediatek,mt6765-camsys", "syscon"
+> > +- #clock-cells: Must be 1
+> > +
+> > +The AUDSYS controller uses the common clk binding from
+> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> > +
+> > +Required sub-nodes:
+> > +-------
+> > +For common binding part and usage, refer to
+> > +../sonud/mt2701-afe-pcm.txt.
+> > +
+> > +Example:
+> > +
+> > +camsys: camsys@1a000000  {
+> 
+> clock-controller@...
+> 
+> if the above answer is yes.
+> 
+> Same comments on the other docs.
