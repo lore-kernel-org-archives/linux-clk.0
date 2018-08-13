@@ -1,42 +1,38 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 9 Aug 2018 15:37:55 -0600
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io0-f194.google.com ([209.85.223.194]:39586 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729025AbeHMUge (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 16:36:34 -0400
+Date: Mon, 13 Aug 2018 11:53:17 -0600
 From: Rob Herring <robh@kernel.org>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: add binding for i.MX8MQ CCM
-Message-ID: <20180809213755.GA23245@rob-hp-laptop>
-References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
- <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
+To: Songjun Wu <songjun.wu@linux.intel.com>
+Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 18/18] dt-bindings: serial: lantiq: Add optional
+ properties for CCF
+Message-ID: <20180813175317.GA31286@rob-hp-laptop>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-19-songjun.wu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1533825941-17224-2-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <20180803030237.3366-19-songjun.wu@linux.intel.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 09, 2018 at 05:45:38PM +0300, Abel Vesa wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
+On Fri, Aug 03, 2018 at 11:02:37AM +0800, Songjun Wu wrote:
+> Clocks and clock-names are updated in device tree binding.
 > 
-> This adds the binding for the i.MX8MQ Clock Controller Module.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
 > ---
->  .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
->  include/dt-bindings/clock/imx8mq-clock.h           | 629 +++++++++++++++++++++
->  2 files changed, 649 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
->  create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+> 
+> Changes in v2: None
+> 
+>  Documentation/devicetree/bindings/serial/lantiq_asc.txt | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
-Please add acks/reviewed-bys when posting new versions even if it was 
-back in January.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
