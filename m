@@ -1,303 +1,448 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:33964 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeHJAL6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:11:58 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 12/24] pwm: jz4740: Use regmap and clocks from TCU driver
-Date: Thu,  9 Aug 2018 23:44:02 +0200
-Message-Id: <20180809214414.20905-13-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 10/14] clk: qcom: Add Krait clock controller driver
+Date: Mon, 13 Aug 2018 19:06:03 +0530
+Message-Id: <1534167367-17545-11-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The ingenic-timer "TCU" driver provides us with a regmap, that we can
-use to safely access the TCU registers.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-It also provides us with clocks, that can be (un)gated, reparented or
-reclocked from devicetree, instead of having these settings hardcoded in
-this driver.
+The Krait CPU clocks are made up of a primary mux and secondary
+mux for each CPU and the L2, controlled via cp15 accessors. For
+Kraits within KPSSv1 each secondary mux accepts a different aux
+source, but on KPSSv2 each secondary mux accepts the same aux
+source.
 
-While this driver is devicetree-compatible, it is never (as of now)
-probed from devicetree, so this change does not introduce a ABI problem
-with current devicetree files.
-
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/pwm/Kconfig      |   2 +
- drivers/pwm/pwm-jz4740.c | 124 +++++++++++++++++++++++++++++++----------------
- 2 files changed, 83 insertions(+), 43 deletions(-)
+ drivers/clk/qcom/Kconfig     |   8 +
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c |   4 +-
+ drivers/clk/qcom/krait-cc.c  | 341 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 352 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/qcom/krait-cc.c
 
- v5: New patch
-
- v6: Drop requirement of probing from devicetree
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index a4d262db9945..58359bf22b96 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -202,6 +202,8 @@ config PWM_IMX
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
- 	depends on MACH_INGENIC
-+	depends on COMMON_CLK
-+	select INGENIC_TIMER
- 	help
- 	  Generic PWM framework driver for Ingenic JZ47xx based
- 	  machines.
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index a7b134af5e04..1bda8d8e9865 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -14,21 +14,21 @@
-  */
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index b17f638..4d0b88f 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -270,6 +270,14 @@ config KPSS_XCC
+ 	  if you want to support CPU frequency scaling on devices such
+ 	  as MSM8960, APQ8064, etc.
  
- #include <linux/clk.h>
++config KRAITCC
++	tristate "Krait Clock Controller"
++	depends on COMMON_CLK_QCOM && ARM
++	select KRAIT_CLOCKS
++	help
++	  Support for the Krait CPU clocks on Qualcomm devices.
++	  Say Y if you want to support CPU frequency scaling.
++
+ config KRAIT_CLOCKS
+ 	bool
+ 	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index b9cf068..dd30198 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -45,3 +45,4 @@ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+ obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
+ obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
++obj-$(CONFIG_KRAITCC) += krait-cc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+index 2e41767..7ede744 100644
+--- a/drivers/clk/qcom/clk-krait.c
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -44,7 +44,7 @@ static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
+ 	u32 sel;
+ 
+-	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	sel = clk_mux_index_to_val(mux->parent_map, 0, index);
+ 	mux->en_mask = sel;
+ 	/* Don't touch mux if CPU is off as it won't work */
+ 	if (__clk_is_enabled(hw->clk))
+@@ -63,7 +63,7 @@ static u8 krait_mux_get_parent(struct clk_hw *hw)
+ 	sel &= mux->mask;
+ 	mux->en_mask = sel;
+ 
+-	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
++	return clk_mux_val_to_index(hw, mux->parent_map, 0, sel);
+ }
+ 
+ const struct clk_ops krait_mux_clk_ops = {
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+new file mode 100644
+index 0000000..7c9dfb0
+--- /dev/null
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -0,0 +1,341 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/clk.h>
 +#include <linux/clk-provider.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
--
--#include <asm/mach-jz4740/timer.h>
-+#include <linux/regmap.h>
- 
- #define NUM_PWM 8
- 
- struct jz4740_pwm_chip {
- 	struct pwm_chip chip;
--	struct clk *clk;
-+	struct clk *clks[NUM_PWM];
-+	struct regmap *map;
- };
- 
- static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
-@@ -38,6 +38,11 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
- 
- static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
++#include <linux/slab.h>
++
++#include "clk-krait.h"
++
++static unsigned int sec_mux_map[] = {
++	2,
++	0,
++};
++
++static unsigned int pri_mux_map[] = {
++	1,
++	2,
++	0,
++};
++
++static int
++krait_add_div(struct device *dev, int id, const char *s, unsigned int offset)
++{
++	struct krait_div2_clk *div;
++	struct clk_init_data init = {
++		.num_parents = 1,
++		.ops = &krait_div2_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	const char *p_names[1];
 +	struct clk *clk;
-+	char clk_name[16];
++
++	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return -ENOMEM;
++
++	div->width = 2;
++	div->shift = 6;
++	div->lpl = id >= 0;
++	div->offset = offset;
++	div->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
++	if (!init.name)
++		return -ENOMEM;
++
++	init.parent_names = p_names;
++	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
++	if (!p_names[0]) {
++		kfree(init.name);
++		return -ENOMEM;
++	}
++
++	clk = devm_clk_register(dev, &div->hw);
++	kfree(p_names[0]);
++	kfree(init.name);
++
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static int
++krait_add_sec_mux(struct device *dev, int id, const char *s,
++		  unsigned int offset, bool unique_aux)
++{
++	struct krait_mux_clk *mux;
++	static const char *sec_mux_list[] = {
++		"acpu_aux",
++		"qsb",
++	};
++	struct clk_init_data init = {
++		.parent_names = sec_mux_list,
++		.num_parents = ARRAY_SIZE(sec_mux_list),
++		.ops = &krait_mux_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	struct clk *clk;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return -ENOMEM;
++
++	mux->offset = offset;
++	mux->lpl = id >= 0;
++	mux->mask = 0x3;
++	mux->shift = 2;
++	mux->parent_map = sec_mux_map;
++	mux->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
++	if (!init.name)
++		return -ENOMEM;
++
++	if (unique_aux) {
++		sec_mux_list[0] = kasprintf(GFP_KERNEL, "acpu%s_aux", s);
++		if (!sec_mux_list[0]) {
++			clk = ERR_PTR(-ENOMEM);
++			goto err_aux;
++		}
++	}
++
++	clk = devm_clk_register(dev, &mux->hw);
++
++	if (unique_aux)
++		kfree(sec_mux_list[0]);
++err_aux:
++	kfree(init.name);
++	return PTR_ERR_OR_ZERO(clk);
++}
++
++static struct clk *
++krait_add_pri_mux(struct device *dev, int id, const char *s,
++		  unsigned int offset)
++{
++	struct krait_mux_clk *mux;
++	const char *p_names[3];
++	struct clk_init_data init = {
++		.parent_names = p_names,
++		.num_parents = ARRAY_SIZE(p_names),
++		.ops = &krait_mux_clk_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	};
++	struct clk *clk;
++
++	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	mux->mask = 0x3;
++	mux->shift = 0;
++	mux->offset = offset;
++	mux->lpl = id >= 0;
++	mux->parent_map = pri_mux_map;
++	mux->hw.init = &init;
++
++	init.name = kasprintf(GFP_KERNEL, "krait%s_pri_mux", s);
++	if (!init.name)
++		return ERR_PTR(-ENOMEM);
++
++	p_names[0] = kasprintf(GFP_KERNEL, "hfpll%s", s);
++	if (!p_names[0]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p0;
++	}
++
++	p_names[1] = kasprintf(GFP_KERNEL, "hfpll%s_div", s);
++	if (!p_names[1]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p1;
++	}
++
++	p_names[2] = kasprintf(GFP_KERNEL, "krait%s_sec_mux", s);
++	if (!p_names[2]) {
++		clk = ERR_PTR(-ENOMEM);
++		goto err_p2;
++	}
++
++	clk = devm_clk_register(dev, &mux->hw);
++
++	kfree(p_names[2]);
++err_p2:
++	kfree(p_names[1]);
++err_p1:
++	kfree(p_names[0]);
++err_p0:
++	kfree(init.name);
++	return clk;
++}
++
++/* id < 0 for L2, otherwise id == physical CPU number */
++static struct clk *krait_add_clks(struct device *dev, int id, bool unique_aux)
++{
 +	int ret;
++	unsigned int offset;
++	void *p = NULL;
++	const char *s;
++	struct clk *clk;
 +
- 	/*
- 	 * Timers 0 and 1 are used for system tasks, so they are unavailable
- 	 * for use as PWMs.
-@@ -45,65 +50,89 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 	if (pwm->hwpwm < 2)
- 		return -EBUSY;
- 
--	jz4740_timer_start(pwm->hwpwm);
-+	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
++	if (id >= 0) {
++		offset = 0x4501 + (0x1000 * id);
++		s = p = kasprintf(GFP_KERNEL, "%d", id);
++		if (!s)
++			return ERR_PTR(-ENOMEM);
++	} else {
++		offset = 0x500;
++		s = "_l2";
++	}
 +
-+	clk = clk_get(chip->dev, clk_name);
++	ret = krait_add_div(dev, id, s, offset);
++	if (ret) {
++		clk = ERR_PTR(ret);
++		goto err;
++	}
++
++	ret = krait_add_sec_mux(dev, id, s, offset, unique_aux);
++	if (ret) {
++		clk = ERR_PTR(ret);
++		goto err;
++	}
++
++	clk = krait_add_pri_mux(dev, id, s, offset);
++err:
++	kfree(p);
++	return clk;
++}
++
++static struct clk *krait_of_get(struct of_phandle_args *clkspec, void *data)
++{
++	unsigned int idx = clkspec->args[0];
++	struct clk **clks = data;
++
++	if (idx >= 5) {
++		pr_err("%s: invalid clock index %d\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return clks[idx] ? : ERR_PTR(-ENODEV);
++}
++
++static const struct of_device_id krait_cc_match_table[] = {
++	{ .compatible = "qcom,krait-cc-v1", (void *)1UL },
++	{ .compatible = "qcom,krait-cc-v2" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, krait_cc_match_table);
++
++static int krait_cc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const struct of_device_id *id;
++	unsigned long cur_rate, aux_rate;
++	int cpu;
++	struct clk *clk;
++	struct clk **clks;
++	struct clk *l2_pri_mux_clk;
++
++	id = of_match_device(krait_cc_match_table, dev);
++	if (!id)
++		return -ENODEV;
++
++	/* Rate is 1 because 0 causes problems for __clk_mux_determine_rate */
++	clk = clk_register_fixed_rate(dev, "qsb", NULL, 0, 1);
 +	if (IS_ERR(clk))
 +		return PTR_ERR(clk);
- 
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		clk_put(clk);
-+		return ret;
++
++	if (!id->data) {
++		clk = clk_register_fixed_factor(dev, "acpu_aux",
++						"gpll0_vote", 0, 1, 2);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
 +	}
 +
-+	jz->clks[pwm->hwpwm] = clk;
- 	return 0;
- }
- 
- static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	jz4740_timer_set_ctrl(pwm->hwpwm, 0);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-+	struct clk *clk = jz->clks[pwm->hwpwm];
- 
--	jz4740_timer_stop(pwm->hwpwm);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
- }
- 
- static int jz4740_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
--	ctrl |= JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
--	jz4740_timer_enable(pwm->hwpwm);
-+	/* Enable PWM output */
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, TCU_TCSR_PWM_EN);
- 
-+	/* Start counter */
-+	regmap_write(jz->map, TCU_REG_TESR, BIT(pwm->hwpwm));
- 	return 0;
- }
- 
- static void jz4740_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->hwpwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
- 	/* Disable PWM output.
- 	 * In TCU2 mode (channel 1/2 on JZ4750+), this must be done before the
- 	 * counter is stopped, while in TCU1 mode the order does not matter.
- 	 */
--	ctrl &= ~JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, 0);
- 
- 	/* Stop counter */
--	jz4740_timer_disable(pwm->hwpwm);
-+	regmap_write(jz->map, TCU_REG_TECR, BIT(pwm->hwpwm));
- }
- 
- static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			     int duty_ns, int period_ns)
- {
- 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
-+	struct clk *clk = jz4740->clks[pwm->hwpwm];
-+	unsigned long rate, new_rate, period, duty;
- 	unsigned long long tmp;
--	unsigned long period, duty;
--	unsigned int prescaler = 0;
--	uint16_t ctrl;
-+	unsigned int tcsr;
- 	bool is_enabled;
- 
--	tmp = (unsigned long long)clk_get_rate(jz4740->clk) * period_ns;
--	do_div(tmp, 1000000000);
--	period = tmp;
-+	rate = clk_get_rate(clk);
++	/* Krait configurations have at most 4 CPUs and one L2 */
++	clks = devm_kcalloc(dev, 5, sizeof(*clks), GFP_KERNEL);
++	if (!clks)
++		return -ENOMEM;
 +
-+	for (;;) {
-+		tmp = (unsigned long long) rate * period_ns;
-+		do_div(tmp, 1000000000);
- 
--	while (period > 0xffff && prescaler < 6) {
--		period >>= 2;
--		++prescaler;
-+		if (tmp <= 0xffff)
-+			break;
-+
-+		new_rate = clk_round_rate(clk, rate / 2);
-+
-+		if (new_rate < rate)
-+			rate = new_rate;
-+		else
-+			return -EINVAL;
- 	}
- 
--	if (prescaler == 6)
--		return -EINVAL;
-+	clk_set_rate(clk, rate);
-+
-+	period = tmp;
- 
- 	tmp = (unsigned long long)period * duty_ns;
- 	do_div(tmp, period_ns);
-@@ -112,18 +141,23 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (duty >= period)
- 		duty = period - 1;
- 
--	is_enabled = jz4740_timer_is_enabled(pwm->hwpwm);
-+	regmap_read(jz4740->map, TCU_REG_TER, &tcsr);
-+	is_enabled = tcsr & BIT(pwm->hwpwm);
- 	if (is_enabled)
- 		jz4740_pwm_disable(chip, pwm);
- 
--	jz4740_timer_set_count(pwm->hwpwm, 0);
--	jz4740_timer_set_duty(pwm->hwpwm, duty);
--	jz4740_timer_set_period(pwm->hwpwm, period);
-+	/* Set abrupt shutdown */
-+	regmap_update_bits(jz4740->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_SD, TCU_TCSR_PWM_SD);
-+
-+	/* Reset counter to 0 */
-+	regmap_write(jz4740->map, TCU_REG_TCNTc(pwm->hwpwm), 0);
- 
--	ctrl = JZ_TIMER_CTRL_PRESCALER(prescaler) | JZ_TIMER_CTRL_SRC_EXT |
--		JZ_TIMER_CTRL_PWM_ABBRUPT_SHUTDOWN;
-+	/* Set duty */
-+	regmap_write(jz4740->map, TCU_REG_TDHRc(pwm->hwpwm), duty);
- 
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	/* Set period */
-+	regmap_write(jz4740->map, TCU_REG_TDFRc(pwm->hwpwm), period);
- 
- 	if (is_enabled)
- 		jz4740_pwm_enable(chip, pwm);
-@@ -134,18 +168,19 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- static int jz4740_pwm_set_polarity(struct pwm_chip *chip,
- 		struct pwm_device *pwm, enum pwm_polarity polarity)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
- 	switch (polarity) {
- 	case PWM_POLARITY_NORMAL:
--		ctrl &= ~JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_INITL_HIGH, 0);
- 		break;
- 	case PWM_POLARITY_INVERSED:
--		ctrl |= JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+			TCU_TCSR_PWM_INITL_HIGH, TCU_TCSR_PWM_INITL_HIGH);
- 		break;
- 	}
- 
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
- 	return 0;
- }
- 
-@@ -162,16 +197,19 @@ static const struct pwm_ops jz4740_pwm_ops = {
- static int jz4740_pwm_probe(struct platform_device *pdev)
- {
- 	struct jz4740_pwm_chip *jz4740;
-+	struct device *dev = &pdev->dev;
- 
--	jz4740 = devm_kzalloc(&pdev->dev, sizeof(*jz4740), GFP_KERNEL);
-+	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
- 	if (!jz4740)
- 		return -ENOMEM;
- 
--	jz4740->clk = devm_clk_get(&pdev->dev, "ext");
--	if (IS_ERR(jz4740->clk))
--		return PTR_ERR(jz4740->clk);
-+	jz4740->map = dev_get_regmap(dev->parent, NULL);
-+	if (!jz4740->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
++	for_each_possible_cpu(cpu) {
++		clk = krait_add_clks(dev, cpu, id->data);
++		if (IS_ERR(clk))
++			return PTR_ERR(clk);
++		clks[cpu] = clk;
 +	}
- 
--	jz4740->chip.dev = &pdev->dev;
-+	jz4740->chip.dev = dev;
- 	jz4740->chip.ops = &jz4740_pwm_ops;
- 	jz4740->chip.npwm = NUM_PWM;
- 	jz4740->chip.base = -1;
++
++	l2_pri_mux_clk = krait_add_clks(dev, -1, id->data);
++	if (IS_ERR(l2_pri_mux_clk))
++		return PTR_ERR(l2_pri_mux_clk);
++	clks[4] = l2_pri_mux_clk;
++
++	/*
++	 * We don't want the CPU or L2 clocks to be turned off at late init
++	 * if CPUFREQ or HOTPLUG configs are disabled. So, bump up the
++	 * refcount of these clocks. Any cpufreq/hotplug manager can assume
++	 * that the clocks have already been prepared and enabled by the time
++	 * they take over.
++	 */
++	for_each_online_cpu(cpu) {
++		clk_prepare_enable(l2_pri_mux_clk);
++		WARN(clk_prepare_enable(clks[cpu]),
++		     "Unable to turn on CPU%d clock", cpu);
++	}
++
++	/*
++	 * Force reinit of HFPLLs and muxes to overwrite any potential
++	 * incorrect configuration of HFPLLs and muxes by the bootloader.
++	 * While at it, also make sure the cores are running at known rates
++	 * and print the current rate.
++	 *
++	 * The clocks are set to aux clock rate first to make sure the
++	 * secondary mux is not sourcing off of QSB. The rate is then set to
++	 * two different rates to force a HFPLL reinit under all
++	 * circumstances.
++	 */
++	cur_rate = clk_get_rate(l2_pri_mux_clk);
++	aux_rate = 384000000;
++	if (cur_rate == 1) {
++		pr_info("L2 @ QSB rate. Forcing new rate.\n");
++		cur_rate = aux_rate;
++	}
++	clk_set_rate(l2_pri_mux_clk, aux_rate);
++	clk_set_rate(l2_pri_mux_clk, 2);
++	clk_set_rate(l2_pri_mux_clk, cur_rate);
++	pr_info("L2 @ %lu KHz\n", clk_get_rate(l2_pri_mux_clk) / 1000);
++	for_each_possible_cpu(cpu) {
++		clk = clks[cpu];
++		cur_rate = clk_get_rate(clk);
++		if (cur_rate == 1) {
++			pr_info("CPU%d @ QSB rate. Forcing new rate.\n", cpu);
++			cur_rate = aux_rate;
++		}
++
++		clk_set_rate(clk, aux_rate);
++		clk_set_rate(clk, 2);
++		clk_set_rate(clk, cur_rate);
++		pr_info("CPU%d @ %lu KHz\n", cpu, clk_get_rate(clk) / 1000);
++	}
++
++	of_clk_add_provider(dev->of_node, krait_of_get, clks);
++
++	return 0;
++}
++
++static struct platform_driver krait_cc_driver = {
++	.probe = krait_cc_probe,
++	.driver = {
++		.name = "krait-cc",
++		.of_match_table = krait_cc_match_table,
++	},
++};
++module_platform_driver(krait_cc_driver);
++
++MODULE_DESCRIPTION("Krait CPU Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:krait-cc");
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
