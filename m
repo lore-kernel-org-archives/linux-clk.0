@@ -1,85 +1,50 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 3/9] dt-bindings: reset: Add binding constants for Actions Semi S700 RMU
-Date: Fri, 10 Aug 2018 15:21:07 +0530
-Message-Id: <20180810095113.25292-4-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52207 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728293AbeHMSHG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 14:07:06 -0400
+Date: Mon, 13 Aug 2018 09:24:22 -0600
+From: Rob Herring <robh@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 04/24] dt-bindings: Add doc for the Ingenic TCU drivers
+Message-ID: <20180813152422.GA18650@rob-hp-laptop>
+References: <20180809214414.20905-1-paul@crapouillou.net>
+ <20180809214414.20905-5-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180809214414.20905-5-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding constants for Actions Semi S700 SoC Reset
-Management Unit (RMU).
+On Thu, Aug 09, 2018 at 11:43:54PM +0200, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 134 +++++++++++++++++++++
+>  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
+>  3 files changed, 134 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../dt-bindings/reset/actions,s700-reset.h    | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 include/dt-bindings/reset/actions,s700-reset.h
-
-diff --git a/include/dt-bindings/reset/actions,s700-reset.h b/include/dt-bindings/reset/actions,s700-reset.h
-new file mode 100644
-index 000000000000..5e3b16b8ef53
---- /dev/null
-+++ b/include/dt-bindings/reset/actions,s700-reset.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+//
-+// Device Tree binding constants for Actions Semi S700 Reset Management Unit
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+
-+#ifndef __DT_BINDINGS_ACTIONS_S700_RESET_H
-+#define __DT_BINDINGS_ACTIONS_S700_RESET_H
-+
-+#define RESET_AUDIO				0
-+#define RESET_CSI				1
-+#define RESET_DE				2
-+#define RESET_DSI				3
-+#define RESET_GPIO				4
-+#define RESET_I2C0				5
-+#define RESET_I2C1				6
-+#define RESET_I2C2				7
-+#define RESET_I2C3				8
-+#define RESET_KEY				9
-+#define RESET_LCD0				10
-+#define RESET_SI				11
-+#define RESET_SPI0				12
-+#define RESET_SPI1				13
-+#define RESET_SPI2				14
-+#define RESET_SPI3				15
-+#define RESET_UART0				16
-+#define RESET_UART1				17
-+#define RESET_UART2				18
-+#define RESET_UART3				19
-+#define RESET_UART4				20
-+#define RESET_UART5				21
-+#define RESET_UART6				22
-+
-+#endif /* __DT_BINDINGS_ACTIONS_S700_RESET_H */
--- 
-2.17.1
