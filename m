@@ -1,61 +1,153 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
-	<gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
-	<sudeep.holla@arm.com>, <hkallweit1@gmail.com>, <keescook@chromium.org>,
-	<dmitry.torokhov@gmail.com>, <mturquette@baylibre.com>,
-	<sboyd@codeaurora.org>, <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
-	<mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Jolly Shah
-	<jollys@xilinx.com>
-Subject: [PATCH v11 07/11] firmware: xilinx: Add debugfs for IOCTL API
-Date: Fri, 3 Aug 2018 10:53:24 -0700
-Message-ID: <1533318808-10781-8-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <anischal@codeaurora.org>
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	Odelu Kukatla <okukatla@codeaurora.org>,
+	Taniya Das <tdas@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v3 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
+Date: Mon, 13 Aug 2018 12:03:04 +0530
+Message-Id: <1534141987-29601-2-git-send-email-anischal@codeaurora.org>
+In-Reply-To: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajanv@xilinx.com>
+For some of the GDSCs, there is a requirement to enable/disable the
+few clocks before turning on/off the gdsc power domain. Add support
+for the same by specifying a list of clk_hw pointers per gdsc and
+enable/disable them along with power domain on/off callbacks.
 
-Add debugfs file to set/get IOCTL using debugfs interface.
-
-Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/firmware/xilinx/zynqmp-debug.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h |  5 +++++
+ 2 files changed, 49 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
-index fcbdd6e..fc11db9 100644
---- a/drivers/firmware/xilinx/zynqmp-debug.c
-+++ b/drivers/firmware/xilinx/zynqmp-debug.c
-@@ -32,6 +32,7 @@ static char debugfs_buf[PAGE_SIZE];
- #define PM_API(id)		 {id, #id, strlen(#id)}
- static struct pm_api_info pm_api_list[] = {
- 	PM_API(PM_GET_API_VERSION),
-+	PM_API(PM_IOCTL),
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index a077133..b6adca1 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -12,6 +12,8 @@
+  */
+ 
+ #include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+ 			   GMEM_RESET_MASK, 0);
+ }
++
++static int gdsc_clk_prepare_enable(struct gdsc *sc)
++{
++	int i, ret;
++
++	for (i = 0; i < sc->clk_count; i++) {
++		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
++		if (ret) {
++			for (i--; i >= 0; i--)
++				clk_disable_unprepare(sc->clk_hws[i]->clk);
++			return ret;
++		}
++	}
++	return 0;
++}
++
++static void gdsc_clk_disable_unprepare(struct gdsc *sc)
++{
++	int i;
++
++	for (i = 0; i < sc->clk_count; i++)
++		clk_disable_unprepare(sc->clk_hws[i]->clk);
++}
++
+ static int gdsc_enable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
++	}
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_deassert_reset(sc);
+ 
+@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 		udelay(1);
+ 	}
+ 
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
++
+ 	return 0;
+ }
+ 
+@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+ 	int ret;
+ 
++	if (sc->clk_count) {
++		ret = gdsc_clk_prepare_enable(sc);
++		if (ret)
++			return ret;
++	}
++
+ 	if (sc->pwrsts == PWRSTS_ON)
+ 		return gdsc_assert_reset(sc);
+ 
+@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+ 	if (sc->flags & CLAMP_IO)
+ 		gdsc_assert_clamp_io(sc);
+ 
++	if (sc->clk_count)
++		gdsc_clk_disable_unprepare(sc);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index bd1f2c7..59957d7 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -17,6 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/pm_domain.h>
+ 
++struct clk_hw;
+ struct regmap;
+ struct reset_controller_dev;
+ 
+@@ -32,6 +33,8 @@
+  * @resets: ids of resets associated with this gdsc
+  * @reset_count: number of @resets
+  * @rcdev: reset controller
++ * @clk_count: number of associated clocks
++ * @clk_hws: clk_hw pointers for associated clocks with gdsc
+  */
+ struct gdsc {
+ 	struct generic_pm_domain	pd;
+@@ -60,6 +63,8 @@ struct gdsc {
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
++	unsigned int			clk_count;
++	struct clk_hw			*clk_hws[];
  };
  
- /**
-@@ -95,6 +96,15 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
- 		sprintf(debugfs_buf, "PM-API Version = %d.%d\n",
- 			pm_api_version >> 16, pm_api_version & 0xffff);
- 		break;
-+	case PM_IOCTL:
-+		ret = eemi_ops->ioctl(pm_api_arg[0], pm_api_arg[1],
-+				      pm_api_arg[2], pm_api_arg[3],
-+				      &pm_api_ret[0]);
-+		if (!ret && (pm_api_arg[1] == IOCTL_GET_PLL_FRAC_MODE ||
-+			     pm_api_arg[1] == IOCTL_GET_PLL_FRAC_DATA))
-+			sprintf(debugfs_buf, "IOCTL return value: %u\n",
-+				pm_api_ret[1]);
-+		break;
- 	default:
- 		sprintf(debugfs_buf, "Unsupported PM-API request\n");
- 		ret = -EINVAL;
+ struct gdsc_desc {
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
