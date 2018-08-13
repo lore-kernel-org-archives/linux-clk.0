@@ -1,175 +1,176 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 02/11] dt-bindings: clock: am43xx: add clkctrl indices for new data layout
-Date: Fri, 31 Aug 2018 18:06:58 +0300
-Message-ID: <1535728027-24573-3-git-send-email-t-kristo@ti.com>
-In-Reply-To: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
-References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 03/14] clk: qcom: Add HFPLL driver
+Date: Mon, 13 Aug 2018 19:05:56 +0530
+Message-Id: <1534167367-17545-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The new data layout will be split based on clockdomain boundaries, instead
-of CM boundaries. This introduces a few new clkctrl providers, that have
-different indices for the clkctrl data.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+On some devices (MSM8974 for example), the HFPLLs are
+instantiated within the Krait processor subsystem as separate
+register regions. Add a driver for these PLLs so that we can
+provide HFPLL clocks for use by the system.
+
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- include/dt-bindings/clock/am4.h | 132 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
+ drivers/clk/qcom/Kconfig  |  8 ++++
+ drivers/clk/qcom/Makefile |  1 +
+ drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
+ create mode 100644 drivers/clk/qcom/hfpll.c
 
-diff --git a/include/dt-bindings/clock/am4.h b/include/dt-bindings/clock/am4.h
-index d21df00..0f545b5 100644
---- a/include/dt-bindings/clock/am4.h
-+++ b/include/dt-bindings/clock/am4.h
-@@ -16,6 +16,8 @@
- #define AM4_CLKCTRL_OFFSET	0x20
- #define AM4_CLKCTRL_INDEX(offset)	((offset) - AM4_CLKCTRL_OFFSET)
- 
-+/* XXX: Compatibility part begin, remove this once compatibility support is no longer needed */
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 9c3480d..95f9980 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -253,3 +253,11 @@ config SPMI_PMIC_CLKDIV
+ 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+ 	  clkdiv outputs of the PMIC. These clocks are typically wired
+ 	  through alternate functions on GPIO pins.
 +
- /* l4_wkup clocks */
- #define AM4_ADC_TSC_CLKCTRL	AM4_CLKCTRL_INDEX(0x120)
- #define AM4_L4_WKUP_CLKCTRL	AM4_CLKCTRL_INDEX(0x220)
-@@ -110,4 +112,134 @@
- #define AM4_DSS_CORE_CLKCTRL	AM4_CLKCTRL_INDEX(0xa20)
- #define AM4_CPGMAC0_CLKCTRL	AM4_CLKCTRL_INDEX(0xb20)
- 
-+/* XXX: Compatibility part end. */
++config QCOM_HFPLL
++	tristate "High-Frequency PLL (HFPLL) Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the high-frequency PLLs present on Qualcomm devices.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as MSM8974, APQ8084, etc.
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 1331ed7..d486aa3 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -42,3 +42,4 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+new file mode 100644
+index 0000000..a6de7101
+--- /dev/null
++++ b/drivers/clk/qcom/hfpll.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+/* l3s_tsc clocks */
-+#define AM4_L3S_TSC_CLKCTRL_OFFSET	0x120
-+#define AM4_L3S_TSC_CLKCTRL_INDEX(offset)	((offset) - AM4_L3S_TSC_CLKCTRL_OFFSET)
-+#define AM4_L3S_TSC_ADC_TSC_CLKCTRL	AM4_L3S_TSC_CLKCTRL_INDEX(0x120)
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
 +
-+/* l4_wkup_aon clocks */
-+#define AM4_L4_WKUP_AON_CLKCTRL_OFFSET	0x228
-+#define AM4_L4_WKUP_AON_CLKCTRL_INDEX(offset)	((offset) - AM4_L4_WKUP_AON_CLKCTRL_OFFSET)
-+#define AM4_L4_WKUP_AON_WKUP_M3_CLKCTRL	AM4_L4_WKUP_AON_CLKCTRL_INDEX(0x228)
-+#define AM4_L4_WKUP_AON_COUNTER_32K_CLKCTRL	AM4_L4_WKUP_AON_CLKCTRL_INDEX(0x230)
++#include "clk-regmap.h"
++#include "clk-hfpll.h"
 +
-+/* l4_wkup clocks */
-+#define AM4_L4_WKUP_CLKCTRL_OFFSET	0x220
-+#define AM4_L4_WKUP_CLKCTRL_INDEX(offset)	((offset) - AM4_L4_WKUP_CLKCTRL_OFFSET)
-+#define AM4_L4_WKUP_L4_WKUP_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x220)
-+#define AM4_L4_WKUP_TIMER1_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x328)
-+#define AM4_L4_WKUP_WD_TIMER2_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x338)
-+#define AM4_L4_WKUP_I2C1_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x340)
-+#define AM4_L4_WKUP_UART1_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x348)
-+#define AM4_L4_WKUP_SMARTREFLEX0_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x350)
-+#define AM4_L4_WKUP_SMARTREFLEX1_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x358)
-+#define AM4_L4_WKUP_CONTROL_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x360)
-+#define AM4_L4_WKUP_GPIO1_CLKCTRL	AM4_L4_WKUP_CLKCTRL_INDEX(0x368)
++static const struct hfpll_data hdata = {
++	.mode_reg = 0x00,
++	.l_reg = 0x04,
++	.m_reg = 0x08,
++	.n_reg = 0x0c,
++	.user_reg = 0x10,
++	.config_reg = 0x14,
++	.config_val = 0x430405d,
++	.status_reg = 0x1c,
++	.lock_bit = 16,
 +
-+/* mpu clocks */
-+#define AM4_MPU_MPU_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++	.user_val = 0x8,
++	.user_vco_mask = 0x100000,
++	.low_vco_max_rate = 1248000000,
++	.min_rate = 537600000UL,
++	.max_rate = 2900000000UL,
++};
 +
-+/* gfx_l3 clocks */
-+#define AM4_GFX_L3_GFX_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++static const struct of_device_id qcom_hfpll_match_table[] = {
++	{ .compatible = "qcom,hfpll" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
 +
-+/* l4_rtc clocks */
-+#define AM4_L4_RTC_RTC_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
++static const struct regmap_config hfpll_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0x30,
++	.fast_io	= true,
++};
 +
-+/* l3 clocks */
-+#define AM4_L3_L3_MAIN_CLKCTRL	AM4_CLKCTRL_INDEX(0x20)
-+#define AM4_L3_AES_CLKCTRL	AM4_CLKCTRL_INDEX(0x28)
-+#define AM4_L3_DES_CLKCTRL	AM4_CLKCTRL_INDEX(0x30)
-+#define AM4_L3_L3_INSTR_CLKCTRL	AM4_CLKCTRL_INDEX(0x40)
-+#define AM4_L3_OCMCRAM_CLKCTRL	AM4_CLKCTRL_INDEX(0x50)
-+#define AM4_L3_SHAM_CLKCTRL	AM4_CLKCTRL_INDEX(0x58)
-+#define AM4_L3_TPCC_CLKCTRL	AM4_CLKCTRL_INDEX(0x78)
-+#define AM4_L3_TPTC0_CLKCTRL	AM4_CLKCTRL_INDEX(0x80)
-+#define AM4_L3_TPTC1_CLKCTRL	AM4_CLKCTRL_INDEX(0x88)
-+#define AM4_L3_TPTC2_CLKCTRL	AM4_CLKCTRL_INDEX(0x90)
-+#define AM4_L3_L4_HS_CLKCTRL	AM4_CLKCTRL_INDEX(0xa0)
++static int qcom_hfpll_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	void __iomem *base;
++	struct regmap *regmap;
++	struct clk_hfpll *h;
++	struct clk_init_data init = {
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_ops_hfpll,
++	};
 +
-+/* l3s clocks */
-+#define AM4_L3S_CLKCTRL_OFFSET	0x68
-+#define AM4_L3S_CLKCTRL_INDEX(offset)	((offset) - AM4_L3S_CLKCTRL_OFFSET)
-+#define AM4_L3S_VPFE0_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x68)
-+#define AM4_L3S_VPFE1_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x70)
-+#define AM4_L3S_GPMC_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x220)
-+#define AM4_L3S_MCASP0_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x238)
-+#define AM4_L3S_MCASP1_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x240)
-+#define AM4_L3S_MMC3_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x248)
-+#define AM4_L3S_QSPI_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x258)
-+#define AM4_L3S_USB_OTG_SS0_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x260)
-+#define AM4_L3S_USB_OTG_SS1_CLKCTRL	AM4_L3S_CLKCTRL_INDEX(0x268)
++	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
++	if (!h)
++		return -ENOMEM;
 +
-+/* pruss_ocp clocks */
-+#define AM4_PRUSS_OCP_CLKCTRL_OFFSET	0x320
-+#define AM4_PRUSS_OCP_CLKCTRL_INDEX(offset)	((offset) - AM4_PRUSS_OCP_CLKCTRL_OFFSET)
-+#define AM4_PRUSS_OCP_PRUSS_CLKCTRL	AM4_PRUSS_OCP_CLKCTRL_INDEX(0x320)
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+/* l4ls clocks */
-+#define AM4_L4LS_CLKCTRL_OFFSET	0x420
-+#define AM4_L4LS_CLKCTRL_INDEX(offset)	((offset) - AM4_L4LS_CLKCTRL_OFFSET)
-+#define AM4_L4LS_L4_LS_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x420)
-+#define AM4_L4LS_D_CAN0_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x428)
-+#define AM4_L4LS_D_CAN1_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x430)
-+#define AM4_L4LS_EPWMSS0_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x438)
-+#define AM4_L4LS_EPWMSS1_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x440)
-+#define AM4_L4LS_EPWMSS2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x448)
-+#define AM4_L4LS_EPWMSS3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x450)
-+#define AM4_L4LS_EPWMSS4_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x458)
-+#define AM4_L4LS_EPWMSS5_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x460)
-+#define AM4_L4LS_ELM_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x468)
-+#define AM4_L4LS_GPIO2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x478)
-+#define AM4_L4LS_GPIO3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x480)
-+#define AM4_L4LS_GPIO4_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x488)
-+#define AM4_L4LS_GPIO5_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x490)
-+#define AM4_L4LS_GPIO6_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x498)
-+#define AM4_L4LS_HDQ1W_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4a0)
-+#define AM4_L4LS_I2C2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4a8)
-+#define AM4_L4LS_I2C3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4b0)
-+#define AM4_L4LS_MAILBOX_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4b8)
-+#define AM4_L4LS_MMC1_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4c0)
-+#define AM4_L4LS_MMC2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4c8)
-+#define AM4_L4LS_RNG_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x4e0)
-+#define AM4_L4LS_SPI0_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x500)
-+#define AM4_L4LS_SPI1_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x508)
-+#define AM4_L4LS_SPI2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x510)
-+#define AM4_L4LS_SPI3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x518)
-+#define AM4_L4LS_SPI4_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x520)
-+#define AM4_L4LS_SPINLOCK_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x528)
-+#define AM4_L4LS_TIMER2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x530)
-+#define AM4_L4LS_TIMER3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x538)
-+#define AM4_L4LS_TIMER4_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x540)
-+#define AM4_L4LS_TIMER5_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x548)
-+#define AM4_L4LS_TIMER6_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x550)
-+#define AM4_L4LS_TIMER7_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x558)
-+#define AM4_L4LS_TIMER8_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x560)
-+#define AM4_L4LS_TIMER9_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x568)
-+#define AM4_L4LS_TIMER10_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x570)
-+#define AM4_L4LS_TIMER11_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x578)
-+#define AM4_L4LS_UART2_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x580)
-+#define AM4_L4LS_UART3_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x588)
-+#define AM4_L4LS_UART4_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x590)
-+#define AM4_L4LS_UART5_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x598)
-+#define AM4_L4LS_UART6_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x5a0)
-+#define AM4_L4LS_OCP2SCP0_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x5b8)
-+#define AM4_L4LS_OCP2SCP1_CLKCTRL	AM4_L4LS_CLKCTRL_INDEX(0x5c0)
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
 +
-+/* emif clocks */
-+#define AM4_EMIF_CLKCTRL_OFFSET	0x720
-+#define AM4_EMIF_CLKCTRL_INDEX(offset)	((offset) - AM4_EMIF_CLKCTRL_OFFSET)
-+#define AM4_EMIF_EMIF_CLKCTRL	AM4_EMIF_CLKCTRL_INDEX(0x720)
++	if (of_property_read_string_index(dev->of_node, "clock-output-names",
++					  0, &init.name))
++		return -ENODEV;
 +
-+/* dss clocks */
-+#define AM4_DSS_CLKCTRL_OFFSET	0xa20
-+#define AM4_DSS_CLKCTRL_INDEX(offset)	((offset) - AM4_DSS_CLKCTRL_OFFSET)
-+#define AM4_DSS_DSS_CORE_CLKCTRL	AM4_DSS_CLKCTRL_INDEX(0xa20)
++	h->d = &hdata;
++	h->clkr.hw.init = &init;
++	spin_lock_init(&h->lock);
 +
-+/* cpsw_125mhz clocks */
-+#define AM4_CPSW_125MHZ_CLKCTRL_OFFSET	0xb20
-+#define AM4_CPSW_125MHZ_CLKCTRL_INDEX(offset)	((offset) - AM4_CPSW_125MHZ_CLKCTRL_OFFSET)
-+#define AM4_CPSW_125MHZ_CPGMAC0_CLKCTRL	AM4_CPSW_125MHZ_CLKCTRL_INDEX(0xb20)
++	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
++}
 +
- #endif
++static struct platform_driver qcom_hfpll_driver = {
++	.probe		= qcom_hfpll_probe,
++	.driver		= {
++		.name	= "qcom-hfpll",
++		.of_match_table = qcom_hfpll_match_table,
++	},
++};
++module_platform_driver(qcom_hfpll_driver);
++
++MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-hfpll");
 -- 
-1.9.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
