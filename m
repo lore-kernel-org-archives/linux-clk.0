@@ -1,63 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 28 Aug 2018 10:30:54 -0700
-From: Paul Burton <paul.burton@mips.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 12/24] pwm: jz4740: Use regmap and clocks from TCU
- driver
-Message-ID: <20180828173054.jlzczfxwjipdwntt@pburton-laptop>
-References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-13-paul@crapouillou.net>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 13 Aug 2018 11:43:51 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: Add some missing gcc clks for msm8996
+Message-ID: <20180813184351.GG23866@tuxbook-pro>
+References: <20180809220119.18932-1-bjorn.andersson@linaro.org>
+ <153391387168.37448.10798348572941173469@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180821171635.22740-13-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <153391387168.37448.10798348572941173469@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Thierry,
+On Fri 10 Aug 08:11 PDT 2018, Stephen Boyd wrote:
 
-On Tue, Aug 21, 2018 at 07:16:23PM +0200, Paul Cercueil wrote:
-> The ingenic-timer "TCU" driver provides us with a regmap, that we can
-> use to safely access the TCU registers.
+> Quoting Bjorn Andersson (2018-08-09 15:01:19)
+> > From: Rajendra Nayak <rnayak@codeaurora.org>
+> > 
+> > Add a few missing gcc clks for msm8996
+> > 
+> > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> > [bjorn: omit aggre0_noc_qosgen_extref_clk]
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
 > 
-> It also provides us with clocks, that can be (un)gated, reparented or
-> reclocked from devicetree, instead of having these settings hardcoded in
-> this driver.
+> This is still going on?! I'm going to ignore Rob's auto email on this
+> patch.
 > 
-> While this driver is devicetree-compatible, it is never (as of now)
-> probed from devicetree, so this change does not introduce a ABI problem
-> with current devicetree files.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->      v5: New patch
->     
->      v6: Drop requirement of probing from devicetree
->     
->      v7: No change
-> 
->  drivers/pwm/Kconfig      |   2 +
->  drivers/pwm/pwm-jz4740.c | 124 +++++++++++++++++++++++++++++++----------------
->  2 files changed, 83 insertions(+), 43 deletions(-)
 
-How do patches 12-16 of this series look to you from a drivers/pwm
-perspective?
+There wasn't much "going on" since your last reply, found this on the
+floor between some chairs...
 
-If you're happy with them it'd be great to get an ack so I can take this
-through the MIPS tree along with the rest of the series.
 
-Thanks,
-    Paul
+The issue pointed to you on v1 was that there was another patch that
+already added two of the clocks, so this v2 simply drops the two
+duplicated clocks; i.e. solves the merge conflict.
+
+What I see now is that I did forget to carry Rob's R-b from v1.
+
+Regards,
+Bjorn
