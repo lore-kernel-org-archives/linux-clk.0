@@ -1,115 +1,151 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] clk: tegra20: Enable lock-status polling for PLLs
-Date: Sat, 18 Aug 2018 19:08:28 +0300
-Message-Id: <20180818160828.8198-2-digetx@gmail.com>
-In-Reply-To: <20180818160828.8198-1-digetx@gmail.com>
-References: <20180818160828.8198-1-digetx@gmail.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 01/14] ARM: Add Krait L2 register accessor functions
+Date: Mon, 13 Aug 2018 19:05:54 +0530
+Message-Id: <1534167367-17545-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently all PLL's on Tegra20 use a hardcoded delay despite of having
-a lock-status bit. The lock-status polling was disabled ~7 years ago
-because apparently some PLL was failing to lock. That issue isn't
-observable with the modern kernel, hence let's assume it was some
-unrelated bug and enable the lock-status polling. This significantly
-reduces delay of any operation that require PLL to lock.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Krait CPUs have a handful of L2 cache controller registers that
+live behind a cp15 based indirection register. First you program
+the indirection register (l2cpselr) to point the L2 'window'
+register (l2cpdr) at what you want to read/write.  Then you
+read/write the 'window' register to do what you want. The
+l2cpselr register is not banked per-cpu so we must lock around
+accesses to it to prevent other CPUs from re-pointing l2cpdr
+underneath us.
+
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/tegra/clk-tegra20.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ arch/arm/common/Kconfig                   |  3 ++
+ arch/arm/common/Makefile                  |  1 +
+ arch/arm/common/krait-l2-accessors.c      | 48 +++++++++++++++++++++++++++++++
+ arch/arm/include/asm/krait-l2-accessors.h |  9 ++++++
+ 4 files changed, 61 insertions(+)
+ create mode 100644 arch/arm/common/krait-l2-accessors.c
+ create mode 100644 arch/arm/include/asm/krait-l2-accessors.h
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..75415854ce12 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -298,7 +298,8 @@ static struct tegra_clk_pll_params pll_c_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_c_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index e5ad070..c8e1986 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -7,6 +7,9 @@ config DMABOUNCE
+ 	bool
+ 	select ZONE_DMA
  
- static struct tegra_clk_pll_params pll_m_params = {
-@@ -314,7 +315,8 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_m_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
++config KRAIT_L2_ACCESSORS
++	bool
++
+ config SHARP_LOCOMO
+ 	bool
  
- static struct tegra_clk_pll_params pll_p_params = {
-@@ -331,7 +333,7 @@ static struct tegra_clk_pll_params pll_p_params = {
- 	.lock_delay = 300,
- 	.freq_table = pll_p_freq_table,
- 	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
--		 TEGRA_PLL_HAS_LOCK_ENABLE,
-+		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
- 	.fixed_rate =  216000000,
- };
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 3157be4..219a260 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -7,6 +7,7 @@ obj-y				+= firmware.o
  
-@@ -348,7 +350,8 @@ static struct tegra_clk_pll_params pll_a_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_a_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
- 
- static struct tegra_clk_pll_params pll_d_params = {
-@@ -364,7 +367,8 @@ static struct tegra_clk_pll_params pll_d_params = {
- 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
- 	.lock_delay = 1000,
- 	.freq_table = pll_d_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
- 
- static const struct pdiv_map pllu_p[] = {
-@@ -387,7 +391,8 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.lock_delay = 1000,
- 	.pdiv_tohw = pllu_p,
- 	.freq_table = pll_u_freq_table,
--	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
- 
- static struct tegra_clk_pll_params pll_x_params = {
-@@ -403,7 +408,8 @@ static struct tegra_clk_pll_params pll_x_params = {
- 	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
- 	.freq_table = pll_x_freq_table,
--	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
-+	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
-+		 TEGRA_PLL_USE_LOCK,
- };
- 
- static struct tegra_clk_pll_params pll_e_params = {
-@@ -421,7 +427,7 @@ static struct tegra_clk_pll_params pll_e_params = {
- 	.pdiv_tohw = plle_p,
- 	.freq_table = pll_e_freq_table,
- 	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_LOCK_MISC |
--		 TEGRA_PLL_HAS_LOCK_ENABLE,
-+		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
- 	.fixed_rate = 100000000,
- };
- 
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
++obj-$(CONFIG_KRAIT_L2_ACCESSORS) += krait-l2-accessors.o
+ obj-$(CONFIG_SHARP_LOCOMO)	+= locomo.o
+ obj-$(CONFIG_SHARP_PARAM)	+= sharpsl_param.o
+ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+diff --git a/arch/arm/common/krait-l2-accessors.c b/arch/arm/common/krait-l2-accessors.c
+new file mode 100644
+index 0000000..9a97dda
+--- /dev/null
++++ b/arch/arm/common/krait-l2-accessors.c
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/spinlock.h>
++#include <linux/export.h>
++
++#include <asm/barrier.h>
++#include <asm/krait-l2-accessors.h>
++
++static DEFINE_RAW_SPINLOCK(krait_l2_lock);
++
++void krait_set_l2_indirect_reg(u32 addr, u32 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then write to the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mcr p15, 3, %0, c15, c0, 7 @ l2cpdr" : : "r" (val));
++	isb();
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++}
++EXPORT_SYMBOL(krait_set_l2_indirect_reg);
++
++u32 krait_get_l2_indirect_reg(u32 addr)
++{
++	u32 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&krait_l2_lock, flags);
++	/*
++	 * Select the L2 window by poking l2cpselr, then read from the window
++	 * via l2cpdr.
++	 */
++	asm volatile ("mcr p15, 3, %0, c15, c0, 6 @ l2cpselr" : : "r" (addr));
++	isb();
++	asm volatile ("mrc p15, 3, %0, c15, c0, 7 @ l2cpdr" : "=r" (val));
++
++	raw_spin_unlock_irqrestore(&krait_l2_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(krait_get_l2_indirect_reg);
+diff --git a/arch/arm/include/asm/krait-l2-accessors.h b/arch/arm/include/asm/krait-l2-accessors.h
+new file mode 100644
+index 0000000..a5f2cdd
+--- /dev/null
++++ b/arch/arm/include/asm/krait-l2-accessors.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __ASMARM_KRAIT_L2_ACCESSORS_H
++#define __ASMARM_KRAIT_L2_ACCESSORS_H
++
++extern void krait_set_l2_indirect_reg(u32 addr, u32 val);
++extern u32 krait_get_l2_indirect_reg(u32 addr);
++
++#endif
 -- 
-2.18.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
