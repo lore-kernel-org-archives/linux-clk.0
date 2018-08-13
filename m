@@ -1,53 +1,51 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for
- sdm845 to header
-To: Rob Herring <robh@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Cc: sboyd@kernel.org, andy.gross@linaro.org, girishm@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
-        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180724174513.174018-1-dianders@chromium.org>
- <20180724174513.174018-2-dianders@chromium.org>
- <20180725160102.GA18545@rob-hp-laptop>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <a081f764-ae7d-e92a-fb15-370768f4fe5c@codeaurora.org>
-Date: Fri, 10 Aug 2018 13:38:18 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53062 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbeHMSIz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 14:08:55 -0400
+Subject: Re: [PATCH v3 0/4] clk: clk: Add functions to save/restore clock
+ context en-masse
+To: Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>
+CC: <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+ <20180710055605.GF99251@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <ff0fdd50-a674-9475-290a-053ebf415ff8@ti.com>
+Date: Mon, 13 Aug 2018 18:25:30 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180725160102.GA18545@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180710055605.GF99251@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 7/25/2018 9:31 PM, Rob Herring wrote:
-> On Tue, Jul 24, 2018 at 10:45:12AM -0700, Douglas Anderson wrote:
->> These clocks will need to be defined in the clock driver and
->> referenced in device tree files.
->>
->> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> ---
->>
->> Changes in v3: None
->> Changes in v2: None
->>
->>   include/dt-bindings/clock/qcom,gcc-sdm845.h | 3 +++
->>   1 file changed, 3 insertions(+)
+On 10/07/18 08:56, Tony Lindgren wrote:
+> * Keerthy <j-keerthy@ti.com> [180621 01:18]:
+>> Deep enough power saving mode can result into losing context of the clock
+>> registers also, and they need to be restored once coming back from the power
+>> saving mode. Hence add functions to save/restore clock context.
 > 
-> Acked-by: Rob Herring <robh@kernel.org>
-   Reviewed-by: Taniya Das <tdas@codeaurora.org>
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Patches 1 to 3 look good to me:
+> 
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> 
+> Stephen, if no more comments, can you please set up an immutable
+> branch for me as otherwise the last patch might cause merge
+> conflicts?
+> 
+> Regards,
+> 
+> Tony
 > 
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+Stephen, Mike,
 
+Any concerns about this series? This series touches core clock APIs 
+slightly, but from my side these look fine. Do you want to pick #1-#3 up 
+yourself or do you want me to setup a pull-req? Patch #4 seems like 
+should go in via Tony's tree.
+
+-Tero
 --
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
