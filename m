@@ -1,44 +1,299 @@
-Return-Path: <oss@buserror.net>
-Message-ID: <1dd3074eabb496155c4d1abb83c82c52529a656a.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Rob Herring <robh+dt@kernel.org>, vabhav.sharma@nxp.com
-Cc: Mark Rutland <mark.rutland@arm.com>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-kernel-owner@vger.kernel.org, Viresh
- Kumar <viresh.kumar@linaro.org>, Michael Turquette
- <mturquette@baylibre.com>, Will Deacon <will.deacon@arm.com>, Masahiro
- Yamada <yamada.masahiro@socionext.com>,  Sriram Dash <sriram.dash@nxp.com>,
- linux-clk <linux-clk@vger.kernel.org>, Udit Kumar <udit.kumar@nxp.com>,
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, devicetree@vger.kernel.org,  Arnd Bergmann
- <arnd@arndb.de>, "open list:THERMAL" <linux-pm@vger.kernel.org>,
- V.Sethi@nxp.com, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>, Stephen Boyd <sboyd@kernel.org>,
- Priyanka Jain <priyanka.jain@nxp.com>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Date: Tue, 28 Aug 2018 19:28:06 -0500
-In-Reply-To: <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-	 <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
-	 <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Subject: Re: [PATCH 5/5] arm64: dts: add LX2160ARDB board support
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:60182 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbeHMQU4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 12:20:56 -0400
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
+        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, thierry.escande@linaro.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 14/14] cpufreq: qcom: Add support for krait based socs
+Date: Mon, 13 Aug 2018 19:06:07 +0530
+Message-Id: <1534167367-17545-15-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, 2018-08-21 at 15:45 -0500, Rob Herring wrote:
-> On Mon, Aug 20, 2018 at 1:52 PM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
-> > +/ {
-> > +       model = "NXP Layerscape LX2160ARDB";
-> > +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
-> > +
-> > +       aliases {
-> > +               crypto = &crypto;
-> 
-> Drop this. Aliases should be numbered, and this is not a standard
-> alias name either.
+In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+that has KRAIT processors the voltage/current value of each OPP
+varies based on the silicon variant in use.
 
-Is this a new rule?  In any case, U-Boot looks for a "crypto" alias.
+The required OPP related data is determined based on
+the efuse value. This is similar to the existing code for
+kryo cores. So adding support for krait cores here.
 
--Scott
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ .../devicetree/bindings/opp/qcom-nvmem-cpufreq.txt |   3 +-
+ drivers/cpufreq/Kconfig.arm                        |   2 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+ drivers/cpufreq/qcom-cpufreq-nvmem.c               | 151 +++++++++++++++++++--
+ 4 files changed, 149 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+index 6dcdfcd..7bc0f1a 100644
+--- a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
++++ b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+@@ -19,7 +19,8 @@ In 'cpus' nodes:
+ 
+ In 'operating-points-v2' table:
+ - compatible: Should be
+-	- 'operating-points-v2-qcom-cpu' for apq8096 and msm8996.
++	- 'operating-points-v2-qcom-cpu' for apq8096, msm8996, msm8974,
++					     apq8064, msm8960 and ipq8074.
+ - nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+ 		efuse registers that has information about the
+ 		speedbin that is used to select the right frequency/voltage
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 13fbd97..497ae89 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -126,7 +126,7 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 
+ config ARM_QCOM_CPUFREQ_NVMEM
+ 	tristate "Qualcomm nvmem based CPUFreq"
+-	depends on ARM64
++	depends on ARCH_QCOM
+ 	depends on QCOM_QFPROM
+ 	depends on QCOM_SMEM
+ 	select PM_OPP
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index fe14c57..917cdc2 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -128,6 +128,11 @@
+ 	{ .compatible = "ti,am43", },
+ 	{ .compatible = "ti,dra7", },
+ 
++	{ .compatible = "qcom,ipq8064", },
++	{ .compatible = "qcom,apq8064", },
++	{ .compatible = "qcom,msm8974", },
++	{ .compatible = "qcom,msm8960", },
++
+ 	{ }
+ };
+ 
+diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+index 0ad8e5b..5f2add0 100644
+--- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
++++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+@@ -45,6 +45,82 @@ enum _msm8996_version {
+ 
+ static struct platform_device *cpufreq_dt_pdev, *cpufreq_pdev;
+ 
++static void __init get_krait_bin_format_a(int *speed, int *pvs, int *pvs_ver,
++					  struct nvmem_cell *pvs_nvmem, u8 *buf)
++{
++	u32 pte_efuse;
++
++	pte_efuse = *((u32 *)buf);
++
++	*speed = pte_efuse & 0xf;
++	if (*speed == 0xf)
++		*speed = (pte_efuse >> 4) & 0xf;
++
++	if (*speed == 0xf) {
++		*speed = 0;
++		pr_warn("Speed bin: Defaulting to %d\n", *speed);
++	} else {
++		pr_info("Speed bin: %d\n", *speed);
++	}
++
++	*pvs = (pte_efuse >> 10) & 0x7;
++	if (*pvs == 0x7)
++		*pvs = (pte_efuse >> 13) & 0x7;
++
++	if (*pvs == 0x7) {
++		*pvs = 0;
++		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
++	} else {
++		pr_info("PVS bin: %d\n", *pvs);
++	}
++
++	kfree(buf);
++}
++
++static void __init get_krait_bin_format_b(int *speed, int *pvs, int *pvs_ver,
++					  struct nvmem_cell *pvs_nvmem, u8 *buf)
++{
++	u32 pte_efuse, redundant_sel;
++
++	pte_efuse = *((u32 *)buf);
++	redundant_sel = (pte_efuse >> 24) & 0x7;
++	*speed = pte_efuse & 0x7;
++
++	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
++	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
++	*pvs_ver = (pte_efuse >> 4) & 0x3;
++
++	switch (redundant_sel) {
++	case 1:
++		*speed = (pte_efuse >> 27) & 0xf;
++		break;
++	case 2:
++		*pvs = (pte_efuse >> 27) & 0xf;
++		break;
++	}
++
++	/* Check SPEED_BIN_BLOW_STATUS */
++	if (pte_efuse & BIT(3)) {
++		pr_info("Speed bin: %d\n", *speed);
++	} else {
++		pr_warn("Speed bin not set. Defaulting to 0!\n");
++		*speed = 0;
++	}
++
++	/* Check PVS_BLOW_STATUS */
++	pte_efuse = *(((u32 *)buf) + 4);
++	pte_efuse &= BIT(21);
++	if (pte_efuse) {
++		pr_info("PVS bin: %d\n", *pvs);
++	} else {
++		pr_warn("PVS bin not set. Defaulting to 0!\n");
++		*pvs = 0;
++	}
++
++	pr_info("PVS version: %d\n", *pvs_ver);
++	kfree(buf);
++}
++
+ static enum _msm8996_version __init qcom_cpufreq_get_msm_id(void)
+ {
+ 	size_t len;
+@@ -74,6 +150,35 @@ static enum _msm8996_version __init qcom_cpufreq_get_msm_id(void)
+ 	return version;
+ }
+ 
++static int qcom_cpufreq_krait_name_version(struct device *cpu_dev,
++					   struct nvmem_cell *speedbin_nvmem,
++					   char **name,
++					   u32 *versions)
++{
++	int speed = 0, pvs = 0, pvs_ver = 0;
++	u8 *buf;
++	size_t len;
++
++	buf = nvmem_cell_read(speedbin_nvmem, &len);
++	if (len == 4) {
++		get_krait_bin_format_a(&speed, &pvs, &pvs_ver,
++				       speedbin_nvmem, buf);
++	} else if (len == 8) {
++		get_krait_bin_format_b(&speed, &pvs, &pvs_ver,
++				       speedbin_nvmem, buf);
++	} else {
++		dev_err(cpu_dev, "Unable to read nvmem data. Defaulting to 0!\n");
++		return -ENODEV;
++	}
++
++	snprintf(*name, sizeof("speedXX-pvsXX-vXX"), "speed%d-pvs%d-v%d",
++		 speed, pvs, pvs_ver);
++
++	*versions = (1 << speed);
++
++	return 0;
++}
++
+ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
+ 					  struct nvmem_cell *speedbin_nvmem,
+ 					  char **pvs_name,
+@@ -83,6 +188,7 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
+ 	u8 *speedbin;
+ 	enum _msm8996_version msm8996_version;
+ 
++	*pvs_name = NULL;
+ 	msm8996_version = qcom_cpufreq_get_msm_id();
+ 	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+ 		dev_err(cpu_dev, "Not Snapdragon 820/821!");
+@@ -111,7 +217,7 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
+ 
+ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ {
+-	struct opp_table *opp_tables[NR_CPUS] = { NULL };
++	struct opp_table *tbl1[NR_CPUS] = { NULL }, *tbl2[NR_CPUS] = { NULL };
+ 	int (*get_version)(struct device *cpu_dev,
+ 			   struct nvmem_cell *speedbin_nvmem,
+ 			   char **name, int *versions);
+@@ -120,8 +226,8 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ 	struct device *cpu_dev;
+ 	unsigned cpu;
+ 	u32 versions;
+-	char *pvs_name = NULL;
+ 	const struct of_device_id *match;
++	char *pvs_name = "speedXX-pvsXX-vXX";
+ 	int ret;
+ 
+ 	cpu_dev = get_cpu_device(0);
+@@ -163,10 +269,19 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ 			goto free_opp;
+ 		}
+ 
+-		opp_tables[cpu] = dev_pm_opp_set_supported_hw(cpu_dev,
+-							      &versions, 1);
+-		if (IS_ERR(opp_tables[cpu])) {
+-			ret = PTR_ERR(opp_tables[cpu]);
++		if (pvs_name) {
++			tbl1[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
++			if (IS_ERR(tbl1[cpu])) {
++				ret = PTR_ERR(tbl1[cpu]);
++				dev_err(cpu_dev, "Failed to add OPP name %s\n",
++					pvs_name);
++				goto free_opp;
++			}
++		}
++
++		tbl2[cpu] = dev_pm_opp_set_supported_hw(cpu_dev, &versions, 1);
++		if (IS_ERR(tbl2[cpu])) {
++			ret = PTR_ERR(tbl2[cpu]);
+ 			dev_err(cpu_dev, "Failed to set supported hardware\n");
+ 			goto free_opp;
+ 		}
+@@ -182,9 +297,15 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ 
+ free_opp:
+ 	for_each_possible_cpu(cpu) {
+-		if (IS_ERR_OR_NULL(opp_tables[cpu]))
++		if (IS_ERR_OR_NULL(tbl1[cpu]))
++			break;
++		dev_pm_opp_put_prop_name(tbl1[cpu]);
++	}
++
++	for_each_possible_cpu(cpu) {
++		if (IS_ERR_OR_NULL(tbl2[cpu]))
+ 			break;
+-		dev_pm_opp_put_supported_hw(opp_tables[cpu]);
++		dev_pm_opp_put_supported_hw(tbl2[cpu]);
+ 	}
+ 
+ 	return ret;
+@@ -205,8 +326,18 @@ static int qcom_cpufreq_remove(struct platform_device *pdev)
+ };
+ 
+ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
+-	{ .compatible = "qcom,apq8096", .data = qcom_cpufreq_kryo_name_version},
+-	{ .compatible = "qcom,msm8996", .data = qcom_cpufreq_kryo_name_version},
++	{ .compatible = "qcom,apq8096",
++	  .data = qcom_cpufreq_kryo_name_version},
++	{ .compatible = "qcom,msm8996",
++	  .data = qcom_cpufreq_kryo_name_version},
++	{ .compatible = "qcom,ipq8064",
++	  .data = qcom_cpufreq_krait_name_version },
++	{ .compatible = "qcom,apq8064",
++	  .data = qcom_cpufreq_krait_name_version },
++	{ .compatible = "qcom,msm8974",
++	  .data = qcom_cpufreq_krait_name_version },
++	{ .compatible = "qcom,msm8960",
++	  .data = qcom_cpufreq_krait_name_version },
+ 	{},
+ };
+ 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
