@@ -1,306 +1,131 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:40384
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726026AbeHTKbB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Aug 2018 06:31:01 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND v5 2/5] clk: imx: add fractional PLL output clock
-Date: Mon, 20 Aug 2018 10:16:04 +0300
-Message-Id: <1534749367-31085-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH 09/14] dt-bindings: arm: Document qcom,kpss-gcc
+Date: Mon, 13 Aug 2018 19:06:02 +0530
+Message-Id: <1534167367-17545-10-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-This is a new clock type introduced on i.MX8.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. Documenting
+the bindings here.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 230 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 234 insertions(+)
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  | 19 ++++++++++
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 44 ++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y += \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
- 	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-new file mode 100644
-index 0000000..c80c6ed
---- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,230 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD			19
-+#define PLL_PD_MASK		BIT(PLL_PD)
-+#define PLL_BYPASS		14
-+#define PLL_BYPASS_MASK		BIT(PLL_BYPASS)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	0xffffff
-+#define PLL_INT_DIV_MASK	0x7f
-+#define PLL_OUTPUT_DIV_MASK	0x1f
-+#define PLL_FRAC_DENOM		0x1000000
-+
-+struct clk_frac_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-+
-+static int clk_wait_lock(struct clk_frac_pll *pll)
-+{
-+	unsigned long timeout = jiffies + msecs_to_jiffies(10);
-+	u32 val;
-+
-+	/* Wait for PLL to lock */
-+	do {
-+		if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+	} while (1);
-+
-+	return readl_poll_timeout(pll->base, val,
-+					val & PLL_LOCK_STATUS, 0, 1000);
-+}
-+
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	unsigned long timeout = jiffies + msecs_to_jiffies(50);
-+	u32 val;
-+
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
-+
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	do {
-+		if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+	} while (1);
-+
-+	return readl_poll_timeout(pll->base, val,
-+					val & PLL_NEWDIV_ACK, 0, 1000);
-+}
-+
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
-+}
-+
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	divff = (val >> 7) & PLL_FRAC_DIV_MASK;
-+	divfi = (val & PLL_INT_DIV_MASK);
-+
-+	temp64 = (u64)parent_rate * 8;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /= divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64)(rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	temp64 = (u64)parent_rate;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + (unsigned long)temp64) / 2;
-+}
-+
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64;
-+	int ret;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64) (rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	val &= ~((PLL_FRAC_DIV_MASK << 7) | (PLL_INT_DIV_MASK));
-+	val |= ((divff << 7) | (divfi - 1));
-+	writel_relaxed(val, pll->base + PLL_CFG1);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret = clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops clk_frac_pll_ops = {
-+	.prepare	= clk_pll_prepare,
-+	.unprepare	= clk_pll_unprepare,
-+	.is_prepared	= clk_pll_is_prepared,
-+	.recalc_rate	= clk_pll_recalc_rate,
-+	.round_rate	= clk_pll_round_rate,
-+	.set_rate	= clk_pll_set_rate,
-+};
-+
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
-+{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
-+	struct clk *clk;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	init.ops = &clk_frac_pll_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..13daf1c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+index 1333db9..7f69636 100644
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+@@ -21,10 +21,29 @@ PROPERTIES
+ 		    the register region. An optional second element specifies
+ 		    the base address and size of the alias register region.
  
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
++- clocks:
++        Usage: required
++        Value type: <prop-encoded-array>
++        Definition: reference to the pll parents.
 +
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
++- clock-names:
++        Usage: required
++        Value type: <stringlist>
++        Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: optional
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpuX_aux where X is a
++		    CPU number starting at 0.
++
+ Example:
+ 
+ 	clock-controller@2088000 {
+ 		compatible = "qcom,kpss-acc-v2";
+ 		reg = <0x02088000 0x1000>,
+ 		      <0x02008000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu0_aux";
+ 	};
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+new file mode 100644
+index 0000000..e628758
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+@@ -0,0 +1,44 @@
++Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: should be one of the following. The generic compatible
++			"qcom,kpss-gcc" should also be included.
++			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: base address and size of the register region
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the pll parents.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpu_l2_aux indicating
++		    an L2 cache auxiliary clock.
++
++Example:
++
++	l2cc: clock-controller@2011000 {
++		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
++		reg = <0x2011000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu_l2_aux";
++	};
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
