@@ -1,137 +1,360 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55850 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729218AbeH2Tsj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:39 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 10/10] clk: samsung: exynos5420: Use generic helper for
- handling suspend/resume
-Date: Wed, 29 Aug 2018 17:50:46 +0200
-Message-id: <20180829155046.29359-11-m.szyprowski@samsung.com>
-In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155103eucas1p16b6cddb4babcfb60a3257e017bea347e@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 02/14] clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
+Date: Tue, 14 Aug 2018 17:42:21 +0530
+Message-Id: <1534248753-2440-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-No functional change.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+HFPLLs are the main frequency source for Krait CPU clocks. Add
+support for changing the rate of these PLLs.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 73 +++-------------------------
- 1 file changed, 7 insertions(+), 66 deletions(-)
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-hfpll.c | 244 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-hfpll.h |  44 ++++++++
+ 3 files changed, 289 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-hfpll.c
+ create mode 100644 drivers/clk/qcom/clk-hfpll.h
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 95e1bf69449b..9f2f53d7be70 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -15,7 +15,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 21a4503..7818e6c 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
  
- #include "clk.h"
- #include "clk-cpu.h"
-@@ -156,10 +155,6 @@ enum exynos5x_plls {
- static void __iomem *reg_base;
- static enum exynos5x_soc exynos5x_soc;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *exynos5x_save;
--static struct samsung_clk_reg_dump *exynos5800_save;
--
- /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -283,66 +278,6 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
- };
- 
--static int exynos5420_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, exynos5x_save,
--				ARRAY_SIZE(exynos5x_clk_regs));
--
--	if (exynos5x_soc == EXYNOS5800)
--		samsung_clk_save(reg_base, exynos5800_save,
--				ARRAY_SIZE(exynos5800_clk_regs));
--
--	samsung_clk_restore(reg_base, exynos5420_set_clksrc,
--				ARRAY_SIZE(exynos5420_set_clksrc));
--
--	return 0;
--}
--
--static void exynos5420_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, exynos5x_save,
--				ARRAY_SIZE(exynos5x_clk_regs));
--
--	if (exynos5x_soc == EXYNOS5800)
--		samsung_clk_restore(reg_base, exynos5800_save,
--				ARRAY_SIZE(exynos5800_clk_regs));
--}
--
--static struct syscore_ops exynos5420_clk_syscore_ops = {
--	.suspend = exynos5420_clk_suspend,
--	.resume = exynos5420_clk_resume,
--};
--
--static void __init exynos5420_clk_sleep_init(void)
--{
--	exynos5x_save = samsung_clk_alloc_reg_dump(exynos5x_clk_regs,
--					ARRAY_SIZE(exynos5x_clk_regs));
--	if (!exynos5x_save) {
--		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--			__func__);
--		return;
--	}
--
--	if (exynos5x_soc == EXYNOS5800) {
--		exynos5800_save =
--			samsung_clk_alloc_reg_dump(exynos5800_clk_regs,
--					ARRAY_SIZE(exynos5800_clk_regs));
--		if (!exynos5800_save)
--			goto err_soc;
--	}
--
--	register_syscore_ops(&exynos5420_clk_syscore_ops);
--	return;
--err_soc:
--	kfree(exynos5x_save);
--	pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--		__func__);
--	return;
--}
--#else
--static void __init exynos5420_clk_sleep_init(void) {}
--#endif
--
- /* list of all parent clocks */
- PNAME(mout_mspll_cpu_p) = {"mout_sclk_cpll", "mout_sclk_dpll",
- 				"mout_sclk_mpll", "mout_sclk_spll"};
-@@ -1540,7 +1475,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 		mout_kfc_p[0], mout_kfc_p[1], 0x28200,
- 		exynos5420_kfcclk_d, ARRAY_SIZE(exynos5420_kfcclk_d), 0);
- 
--	exynos5420_clk_sleep_init();
-+	samsung_clk_sleep_init2(reg_base, exynos5x_clk_regs,
-+			       ARRAY_SIZE(exynos5x_clk_regs),
-+			       exynos5420_set_clksrc,
-+			       ARRAY_SIZE(exynos5420_set_clksrc));
-+	if (soc == EXYNOS5800)
-+		samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
-+				       ARRAY_SIZE(exynos5800_clk_regs));
- 	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
- 			     exynos5x_subcmus);
- 
+diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
+new file mode 100644
+index 0000000..3c04805
+--- /dev/null
++++ b/drivers/clk/qcom/clk-hfpll.c
+@@ -0,0 +1,244 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/export.h>
++#include <linux/regmap.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include "clk-regmap.h"
++#include "clk-hfpll.h"
++
++#define PLL_OUTCTRL	BIT(0)
++#define PLL_BYPASSNL	BIT(1)
++#define PLL_RESET_N	BIT(2)
++
++/* Initialize a HFPLL at a given rate and enable it. */
++static void __clk_hfpll_init_once(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++
++	if (likely(h->init_done))
++		return;
++
++	/* Configure PLL parameters for integer mode. */
++	if (hd->config_val)
++		regmap_write(regmap, hd->config_reg, hd->config_val);
++	regmap_write(regmap, hd->m_reg, 0);
++	regmap_write(regmap, hd->n_reg, 1);
++
++	if (hd->user_reg) {
++		u32 regval = hd->user_val;
++		unsigned long rate;
++
++		rate = clk_hw_get_rate(hw);
++
++		/* Pick the right VCO. */
++		if (hd->user_vco_mask && rate > hd->low_vco_max_rate)
++			regval |= hd->user_vco_mask;
++		regmap_write(regmap, hd->user_reg, regval);
++	}
++
++	if (hd->droop_reg)
++		regmap_write(regmap, hd->droop_reg, hd->droop_val);
++
++	h->init_done = true;
++}
++
++static void __clk_hfpll_enable(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 val;
++
++	__clk_hfpll_init_once(hw);
++
++	/* Disable PLL bypass mode. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_BYPASSNL, PLL_BYPASSNL);
++
++	/*
++	 * H/W requires a 5us delay between disabling the bypass and
++	 * de-asserting the reset. Delay 10us just to be safe.
++	 */
++	udelay(10);
++
++	/* De-assert active-low PLL reset. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_RESET_N, PLL_RESET_N);
++
++	/* Wait for PLL to lock. */
++	if (hd->status_reg) {
++		do {
++			regmap_read(regmap, hd->status_reg, &val);
++		} while (!(val & BIT(hd->lock_bit)));
++	} else {
++		udelay(60);
++	}
++
++	/* Enable PLL output. */
++	regmap_update_bits(regmap, hd->mode_reg, PLL_OUTCTRL, PLL_OUTCTRL);
++}
++
++/* Enable an already-configured HFPLL. */
++static int clk_hfpll_enable(struct clk_hw *hw)
++{
++	unsigned long flags;
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode;
++
++	spin_lock_irqsave(&h->lock, flags);
++	regmap_read(regmap, hd->mode_reg, &mode);
++	if (!(mode & (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)))
++		__clk_hfpll_enable(hw);
++	spin_unlock_irqrestore(&h->lock, flags);
++
++	return 0;
++}
++
++static void __clk_hfpll_disable(struct clk_hfpll *h)
++{
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++
++	/*
++	 * Disable the PLL output, disable test mode, enable the bypass mode,
++	 * and assert the reset.
++	 */
++	regmap_update_bits(regmap, hd->mode_reg,
++			   PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL, 0);
++}
++
++static void clk_hfpll_disable(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	unsigned long flags;
++
++	spin_lock_irqsave(&h->lock, flags);
++	__clk_hfpll_disable(h);
++	spin_unlock_irqrestore(&h->lock, flags);
++}
++
++static long clk_hfpll_round_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long *parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	unsigned long rrate;
++
++	rate = clamp(rate, hd->min_rate, hd->max_rate);
++
++	rrate = DIV_ROUND_UP(rate, *parent_rate) * *parent_rate;
++	if (rrate > hd->max_rate)
++		rrate -= *parent_rate;
++
++	return rrate;
++}
++
++/*
++ * For optimization reasons, assumes no downstream clocks are actively using
++ * it.
++ */
++static int clk_hfpll_set_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	unsigned long flags;
++	u32 l_val, val;
++	bool enabled;
++
++	l_val = rate / parent_rate;
++
++	spin_lock_irqsave(&h->lock, flags);
++
++	enabled = __clk_is_enabled(hw->clk);
++	if (enabled)
++		__clk_hfpll_disable(h);
++
++	/* Pick the right VCO. */
++	if (hd->user_reg && hd->user_vco_mask) {
++		regmap_read(regmap, hd->user_reg, &val);
++		if (rate <= hd->low_vco_max_rate)
++			val &= ~hd->user_vco_mask;
++		else
++			val |= hd->user_vco_mask;
++		regmap_write(regmap, hd->user_reg, val);
++	}
++
++	regmap_write(regmap, hd->l_reg, l_val);
++
++	if (enabled)
++		__clk_hfpll_enable(hw);
++
++	spin_unlock_irqrestore(&h->lock, flags);
++
++	return 0;
++}
++
++static unsigned long clk_hfpll_recalc_rate(struct clk_hw *hw,
++					   unsigned long parent_rate)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 l_val;
++
++	regmap_read(regmap, hd->l_reg, &l_val);
++
++	return l_val * parent_rate;
++}
++
++static void clk_hfpll_init(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode, status;
++
++	regmap_read(regmap, hd->mode_reg, &mode);
++	if (mode != (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL)) {
++		__clk_hfpll_init_once(hw);
++		return;
++	}
++
++	if (hd->status_reg) {
++		regmap_read(regmap, hd->status_reg, &status);
++		if (!(status & BIT(hd->lock_bit))) {
++			WARN(1, "HFPLL %s is ON, but not locked!\n",
++			     __clk_get_name(hw->clk));
++			clk_hfpll_disable(hw);
++			__clk_hfpll_init_once(hw);
++		}
++	}
++}
++
++static int hfpll_is_enabled(struct clk_hw *hw)
++{
++	struct clk_hfpll *h = to_clk_hfpll(hw);
++	struct hfpll_data const *hd = h->d;
++	struct regmap *regmap = h->clkr.regmap;
++	u32 mode;
++
++	regmap_read(regmap, hd->mode_reg, &mode);
++	mode &= 0x7;
++	return mode == (PLL_BYPASSNL | PLL_RESET_N | PLL_OUTCTRL);
++}
++
++const struct clk_ops clk_ops_hfpll = {
++	.enable = clk_hfpll_enable,
++	.disable = clk_hfpll_disable,
++	.is_enabled = hfpll_is_enabled,
++	.round_rate = clk_hfpll_round_rate,
++	.set_rate = clk_hfpll_set_rate,
++	.recalc_rate = clk_hfpll_recalc_rate,
++	.init = clk_hfpll_init,
++};
++EXPORT_SYMBOL_GPL(clk_ops_hfpll);
+diff --git a/drivers/clk/qcom/clk-hfpll.h b/drivers/clk/qcom/clk-hfpll.h
+new file mode 100644
+index 0000000..2a57b2f
+--- /dev/null
++++ b/drivers/clk/qcom/clk-hfpll.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __QCOM_CLK_HFPLL_H__
++#define __QCOM_CLK_HFPLL_H__
++
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++#include "clk-regmap.h"
++
++struct hfpll_data {
++	u32 mode_reg;
++	u32 l_reg;
++	u32 m_reg;
++	u32 n_reg;
++	u32 user_reg;
++	u32 droop_reg;
++	u32 config_reg;
++	u32 status_reg;
++	u8  lock_bit;
++
++	u32 droop_val;
++	u32 config_val;
++	u32 user_val;
++	u32 user_vco_mask;
++	unsigned long low_vco_max_rate;
++
++	unsigned long min_rate;
++	unsigned long max_rate;
++};
++
++struct clk_hfpll {
++	struct hfpll_data const *d;
++	int init_done;
++
++	struct clk_regmap clkr;
++	spinlock_t lock;
++};
++
++#define to_clk_hfpll(_hw) \
++	container_of(to_clk_regmap(_hw), struct clk_hfpll, clkr)
++
++extern const struct clk_ops clk_ops_hfpll;
++
++#endif
 -- 
-2.17.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
