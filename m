@@ -1,194 +1,36 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <8ba84364847ae800fcfcab34573a25996d8724fd.camel@baylibre.com>
-Subject: Re: [PATCH v4 1/3] clk: meson: add emmc sub clock phase delay driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>, Neil Armstrong
- <narmstrong@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
- Rob Herring <robh@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Liang Yang <liang.yang@amlogic.com>,
- Jianxin Pan <jianxin.pan@amlogic.com>, Qiufang Dai
- <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
- linux-clk@vger.kernel.org,  linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Date: Fri, 10 Aug 2018 14:27:21 +0200
-In-Reply-To: <20180809070724.11935-2-yixun.lan@amlogic.com>
-References: <20180809070724.11935-1-yixun.lan@amlogic.com>
-	 <20180809070724.11935-2-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 14 Aug 2018 14:38:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Javier Martinez Canillas <javier@dowhile0.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: s2mps11,s3c64xx: Add SPDX license identifiers
+Message-ID: <20180814203821.GA29323@rob-hp-laptop>
+References: <20180807161713.28073-1-krzk@kernel.org>
+ <20180807161713.28073-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180807161713.28073-2-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-08-09 at 15:07 +0800, Yixun Lan wrote:
-> Export the emmc sub clock phase delay ops which will be used
-> by the emmc sub clock driver itself.
+On Tue,  7 Aug 2018 18:17:12 +0200, Krzysztof Kozlowski wrote:
+> Replace GPL v2.0 and v2.0+ license statements with SPDX license
+> identifiers.
 > 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
->  drivers/clk/meson/Makefile          |  2 +-
->  drivers/clk/meson/clk-phase-delay.c | 96 +++++++++++++++++++++++++++++
->  drivers/clk/meson/clkc.h            | 13 ++++
->  3 files changed, 110 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+>  drivers/clk/clk-s2mps11.c                         | 21 +++++----------------
+>  include/dt-bindings/clock/samsung,s2mps11.h       |  5 +----
+>  include/dt-bindings/clock/samsung,s3c64xx-clock.h |  7 ++-----
+>  3 files changed, 8 insertions(+), 25 deletions(-)
 > 
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c40d848..39ce5661b654 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Meson specific clk
->  #
->  
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
-> new file mode 100644
-> index 000000000000..6f226814cfec
-> --- /dev/null
-> +++ b/drivers/clk/meson/clk-phase-delay.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc.h"
-> +
-> +#define SD_EMMC_CLOCK			0
 
-Drop this and use struct parm please.
-
-> +
-> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph =
-> +		meson_clk_get_phase_delay_data(clk);
-> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
-> +	unsigned long period_ps, p, d;
-> +	int degrees;
-> +	u32 val;
-> +
-> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
-> +	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
-> +	degrees = p * 360 / phase_num;
-> +
-> +	if (ph->delay_mask) {
-> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-> +					 clk_hw_get_rate(hw));
-> +		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
-> +		degrees += d * ph->delay_step_ps * 360 / period_ps;
-> +		degrees %= 360;
-> +	}
-> +
-> +	return degrees;
-> +}
-> +
-> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
-> +					unsigned int phase,
-> +					unsigned int delay)
-> +{
-> +	struct meson_clk_phase_delay_data *ph = clk->data;
-> +	u32 val;
-> +
-> +	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
-> +
-> +	val &= ~ph->phase_mask;
-> +	val |= phase << __ffs(ph->phase_mask);
-> +
-> +	if (ph->delay_mask) {
-
-This imply that delay is delay is optional. In such case, it would be a regular
-"phase" and we already have a  driver for this. Please remove all the related
-code and make this parameter required for this clock type.
-
-In the future, maybe we'll merge the 2 drivers.
-
-> +		val &= ~ph->delay_mask;
-> +		val |= delay << __ffs(ph->delay_mask);
-> +	}
-> +
-> +	regmap_write(clk->map, SD_EMMC_CLOCK, val);
-> +}
-> +
-> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph =
-> +		meson_clk_get_phase_delay_data(clk);
-> +	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
-> +	unsigned long period_ps, d = 0, r;
-> +	u64 p;
-> +
-> +	p = degrees % 360;
-> +
-> +	if (!ph->delay_mask) {
-> +		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
-> +	} else {
-> +		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-> +					 clk_hw_get_rate(hw));
-> +
-> +		/* First compute the phase index (p), the remainder (r) is the
-> +		 * part we'll try to acheive using the delays (d).
-> +		 */
-> +		r = do_div(p, 360 / phase_num);
-> +		d = DIV_ROUND_CLOSEST(r * period_ps,
-> +				      360 * ph->delay_step_ps);
-> +		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
-> +	}
-> +
-> +	meson_clk_apply_phase_delay(clk, p, d);
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_clk_phase_delay_ops = {
-> +	.get_phase = meson_clk_phase_delay_get_phase,
-> +	.set_phase = meson_clk_phase_delay_set_phase,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 24cec16b6038..499834dd34f2 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -113,6 +113,18 @@ struct clk_regmap _name = {						\
->  	},								\
->  };
->  
-> +struct meson_clk_phase_delay_data {
-> +	unsigned long			phase_mask;
-> +	unsigned long			delay_mask;
-
-Like every other clock drivers in the amlogic directory, please use struct parm
-to decribe the fields.
-
-> +	unsigned int			delay_step_ps;
-> +};
-> +
-> +static inline struct meson_clk_phase_delay_data *
-> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-> +{
-> +	return (struct meson_clk_phase_delay_data *)clk->data;
-> +}
-> +
->  /* clk_ops */
->  extern const struct clk_ops meson_clk_pll_ro_ops;
->  extern const struct clk_ops meson_clk_pll_ops;
-> @@ -120,5 +132,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
->  extern const struct clk_ops meson_clk_mpll_ro_ops;
->  extern const struct clk_ops meson_clk_mpll_ops;
->  extern const struct clk_ops meson_clk_phase_ops;
-> +extern const struct clk_ops meson_clk_phase_delay_ops;
->  
->  #endif /* __CLKC_H */
+Reviewed-by: Rob Herring <robh@kernel.org>
