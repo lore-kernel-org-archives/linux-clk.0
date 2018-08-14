@@ -1,137 +1,332 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-CC: Lucas Stach <l.stach@pengutronix.de>, Sascha Hauer
-	<kernel@pengutronix.de>, "A.s. Dong" <aisheng.dong@nxp.com>, Fabio Estevam
-	<fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>, Mark Rutland
-	<mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Boyd
-	<sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Abel Vesa
-	<abelvesa@linux.com>, dl-linux-imx <linux-imx@nxp.com>, Shawn Guo
-	<shawnguo@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH v6 3/5] clk: imx: add SCCG PLL type
-Date: Tue, 28 Aug 2018 10:58:22 +0000
-Message-ID: <20180828105821.gbd7tba7uvmeeqcx@fsr-ub1664-175>
-References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
- <1534945703-4730-4-git-send-email-abel.vesa@nxp.com>
- <20180824074011.lufm653imkf6fyd3@pengutronix.de>
-In-Reply-To: <20180824074011.lufm653imkf6fyd3@pengutronix.de>
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
+        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, thierry.escande@linaro.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 13/14] cpufreq: qcom: Re-organise kryo cpufreq to use it for other nvmem based qcom socs
+Date: Tue, 14 Aug 2018 17:42:32 +0530
+Message-Id: <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 24, 2018 at 09:40:11AM +0200, Sascha Hauer wrote:
-> +Cc Andrey Smirnov who made me aware of this issue.
->=20
-> On Wed, Aug 22, 2018 at 04:48:21PM +0300, Abel Vesa wrote:
-> > From: Lucas Stach <l.stach@pengutronix.de>
-> >=20
-> > The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-> > The driver currently misses the PLL lock check, as the preliminary
-> > documentation mentions lock configurations, but is quiet about where
-> > to find the actual lock status signal.
-> >=20
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > ---
-> > +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +			    unsigned long parent_rate)
-> > +{
-> > +	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +	u32 val;
-> > +	u32 divf;
-> > +
-> > +	divf =3D rate / (parent_rate * 2);
-> > +
-> > +	val =3D readl_relaxed(pll->base + PLL_CFG2);
-> > +	val &=3D ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
-> > +	val |=3D (divf - 1) << PLL_DIVF1_SHIFT;
-> > +	writel_relaxed(val, pll->base + PLL_CFG2);
-> > +
-> > +	/* FIXME: PLL lock check */
->=20
-> Shouldn't be too hard to add, no?
+The kryo cpufreq driver reads the nvmem cell and uses that data to
+populate the opps. There are other qcom cpufreq socs like krait which
+does similar thing. Except for the interpretation of the read data,
+rest of the driver is same for both the cases. So pull the common things
+out for reuse.
 
-Added to the next version which I intend to send today.
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ .../{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt}   |   6 +-
+ drivers/cpufreq/Kconfig.arm                        |   4 +-
+ drivers/cpufreq/Makefile                           |   2 +-
+ .../{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c}  | 124 ++++++++++++---------
+ 4 files changed, 80 insertions(+), 56 deletions(-)
+ rename Documentation/devicetree/bindings/opp/{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt} (99%)
+ rename drivers/cpufreq/{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c} (65%)
 
->=20
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int clk_pll1_prepare(struct clk_hw *hw)
-> > +{
-> > +	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-> > +	u32 val;
-> > +
-> > +	val =3D readl_relaxed(pll->base);
-> > +	val &=3D ~(1 << PLL_PD);
-> > +	writel_relaxed(val, pll->base);
->=20
-> pll->base + PLL_CFG0 please.
-
-Same as above.
-
->=20
-> > +static const struct clk_ops clk_sccg_pll1_ops =3D {
-> > +	.is_prepared	=3D clk_pll1_is_prepared,
-> > +	.recalc_rate	=3D clk_pll1_recalc_rate,
-> > +	.round_rate	=3D clk_pll1_round_rate,
-> > +	.set_rate	=3D clk_pll1_set_rate,
-> > +};
-> > +
-> > +static const struct clk_ops clk_sccg_pll2_ops =3D {
-> > +	.prepare	=3D clk_pll1_prepare,
-> > +	.unprepare	=3D clk_pll1_unprepare,
-> > +	.recalc_rate	=3D clk_pll2_recalc_rate,
-> > +	.round_rate	=3D clk_pll2_round_rate,
-> > +	.set_rate	=3D clk_pll2_set_rate,
-> > +};
->=20
-> So these are two PLLs that share the same enable register. Doing the
-> prepare/unprepare for only one PLL can lead to all kinds of trouble.
-> Finding a good abstraction the properly handles this case with the
-> clock framework is probably also not easy.
->=20
-> I could imagine we'll need to track the enable state on both PLLs and
-> only if both are disabled we disable it in hardware.
->=20
-> With the current code we disable the PLLs when all consumers are
-> reparented to pll1, which probably has bad effects.
->=20
-
-So it took me a while to understand exactly why this needs to stay like it =
-is.
-
-The PLL1 is never used by any device, instead it is used as a source for PL=
-L2.
-
-But because the interlink between the two of them is too complicated,
-the PLLs 1 and 2 need to be separate clocks.
-
-As for the disabling, it's safe to disable just the second one because,
-as mentioned above, the first PLL is never used alone by a device.
-
-If there isn't anything else here to discuss, I would like to send the next
-version of this patchset with all the other comments taken care of.
-
-Abel
-
-> Sascha
->=20
-> --=20
-> Pengutronix e.K.                           |                             =
-|
-> Industrial Linux Solutions                 | https://emea01.safelinks.pro=
-tection.outlook.com/?url=3Dhttp%3A%2F%2Fwww.pengutronix.de%2F&amp;data=3D02=
-%7C01%7Cabel.vesa%40nxp.com%7C5e9c7c6f9e464ed522f108d60994d471%7C686ea1d3bc=
-2b4c6fa92cd99c5c301635%7C0%7C0%7C636706932168087639&amp;sdata=3DXbfFq5z%2FR=
-tkq6yGgwSyk6dNCZVuXOzY%2Fiygmwle3C2I%3D&amp;reserved=3D0  |
-> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
-
--- =
+diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+similarity index 99%
+rename from Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
+rename to Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+index c2127b9..6dcdfcd 100644
+--- a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
++++ b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+@@ -19,7 +19,7 @@ In 'cpus' nodes:
+ 
+ In 'operating-points-v2' table:
+ - compatible: Should be
+-	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
++	- 'operating-points-v2-qcom-cpu' for apq8096 and msm8996.
+ - nvmem-cells: A phandle pointing to a nvmem-cells node representing the
+ 		efuse registers that has information about the
+ 		speedbin that is used to select the right frequency/voltage
+@@ -127,7 +127,7 @@ Example 1:
+ 	};
+ 
+ 	cluster0_opp: opp_table0 {
+-		compatible = "operating-points-v2-kryo-cpu";
++		compatible = "operating-points-v2-qcom-cpu";
+ 		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+@@ -338,7 +338,7 @@ Example 1:
+ 	};
+ 
+ 	cluster1_opp: opp_table1 {
+-		compatible = "operating-points-v2-kryo-cpu";
++		compatible = "operating-points-v2-qcom-cpu";
+ 		nvmem-cells = <&speedbin_efuse>;
+ 		opp-shared;
+ 
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 52f5f1a..13fbd97 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -124,8 +124,8 @@ config ARM_OMAP2PLUS_CPUFREQ
+ 	depends on ARCH_OMAP2PLUS
+ 	default ARCH_OMAP2PLUS
+ 
+-config ARM_QCOM_CPUFREQ_KRYO
+-	tristate "Qualcomm Kryo based CPUFreq"
++config ARM_QCOM_CPUFREQ_NVMEM
++	tristate "Qualcomm nvmem based CPUFreq"
+ 	depends on ARM64
+ 	depends on QCOM_QFPROM
+ 	depends on QCOM_SMEM
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index fb4a2ec..5544441 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -65,7 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+-obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_NVMEM)	+= qcom-cpufreq-nvmem.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+similarity index 65%
+rename from drivers/cpufreq/qcom-cpufreq-kryo.c
+rename to drivers/cpufreq/qcom-cpufreq-nvmem.c
+index efc9a7a..0ad8e5b 100644
+--- a/drivers/cpufreq/qcom-cpufreq-kryo.c
++++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+@@ -9,7 +9,7 @@
+  * based on the silicon variant in use. Qualcomm Process Voltage Scaling Tables
+  * defines the voltage and frequency value based on the msm-id in SMEM
+  * and speedbin blown in the efuse combination.
+- * The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the SoC
++ * The qcom-cpufreq driver reads the msm-id and efuse value from the SoC
+  * to provide the OPP framework with required information.
+  * This is used to determine the voltage and frequency value for each OPP of
+  * operating-points-v2 table when it is parsed by the OPP framework.
+@@ -22,6 +22,7 @@
+ #include <linux/module.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_opp.h>
+ #include <linux/slab.h>
+@@ -42,9 +43,9 @@ enum _msm8996_version {
+ 	NUM_OF_MSM8996_VERSIONS,
+ };
+ 
+-struct platform_device *cpufreq_dt_pdev, *kryo_cpufreq_pdev;
++static struct platform_device *cpufreq_dt_pdev, *cpufreq_pdev;
+ 
+-static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
++static enum _msm8996_version __init qcom_cpufreq_get_msm_id(void)
+ {
+ 	size_t len;
+ 	u32 *msm_id;
+@@ -73,34 +74,70 @@ static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
+ 	return version;
+ }
+ 
+-static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
++static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
++					  struct nvmem_cell *speedbin_nvmem,
++					  char **pvs_name,
++					  u32 *versions)
+ {
+-	struct opp_table *opp_tables[NR_CPUS] = {0};
++	size_t len;
++	u8 *speedbin;
+ 	enum _msm8996_version msm8996_version;
++
++	msm8996_version = qcom_cpufreq_get_msm_id();
++	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
++		dev_err(cpu_dev, "Not Snapdragon 820/821!");
++		return -ENODEV;
++	}
++
++	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	if (IS_ERR(speedbin))
++		return PTR_ERR(speedbin);
++
++	switch (msm8996_version) {
++	case MSM8996_V3:
++		*versions = 1 << (unsigned int)(*speedbin);
++		break;
++	case MSM8996_SG:
++		*versions = 1 << ((unsigned int)(*speedbin) + 4);
++		break;
++	default:
++		BUG();
++		break;
++	}
++
++	kfree(speedbin);
++	return 0;
++}
++
++static int qcom_cpufreq_probe(struct platform_device *pdev)
++{
++	struct opp_table *opp_tables[NR_CPUS] = { NULL };
++	int (*get_version)(struct device *cpu_dev,
++			   struct nvmem_cell *speedbin_nvmem,
++			   char **name, int *versions);
+ 	struct nvmem_cell *speedbin_nvmem;
+ 	struct device_node *np;
+ 	struct device *cpu_dev;
+ 	unsigned cpu;
+-	u8 *speedbin;
+ 	u32 versions;
+-	size_t len;
++	char *pvs_name = NULL;
++	const struct of_device_id *match;
+ 	int ret;
+ 
+ 	cpu_dev = get_cpu_device(0);
+ 	if (!cpu_dev)
+ 		return -ENODEV;
+ 
+-	msm8996_version = qcom_cpufreq_kryo_get_msm_id();
+-	if (NUM_OF_MSM8996_VERSIONS == msm8996_version) {
+-		dev_err(cpu_dev, "Not Snapdragon 820/821!");
++	match = pdev->dev.platform_data;
++	get_version = match->data;
++	if (!get_version)
+ 		return -ENODEV;
+-	}
+ 
+ 	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
+ 	if (!np)
+ 		return -ENOENT;
+ 
+-	ret = of_device_is_compatible(np, "operating-points-v2-kryo-cpu");
++	ret = of_device_is_compatible(np, "operating-points-v2-qcom-cpu");
+ 	if (!ret) {
+ 		of_node_put(np);
+ 		return -ENOENT;
+@@ -114,23 +151,10 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+ 		return PTR_ERR(speedbin_nvmem);
+ 	}
+ 
+-	speedbin = nvmem_cell_read(speedbin_nvmem, &len);
++	ret = get_version(cpu_dev, speedbin_nvmem, &pvs_name, &versions);
+ 	nvmem_cell_put(speedbin_nvmem);
+-	if (IS_ERR(speedbin))
+-		return PTR_ERR(speedbin);
+-
+-	switch (msm8996_version) {
+-	case MSM8996_V3:
+-		versions = 1 << (unsigned int)(*speedbin);
+-		break;
+-	case MSM8996_SG:
+-		versions = 1 << ((unsigned int)(*speedbin) + 4);
+-		break;
+-	default:
+-		BUG();
+-		break;
+-	}
+-	kfree(speedbin);
++	if (ret)
++		return ret;
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		cpu_dev = get_cpu_device(cpu);
+@@ -166,24 +190,24 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int qcom_cpufreq_kryo_remove(struct platform_device *pdev)
++static int qcom_cpufreq_remove(struct platform_device *pdev)
+ {
+ 	platform_device_unregister(cpufreq_dt_pdev);
+ 	return 0;
+ }
+ 
+-static struct platform_driver qcom_cpufreq_kryo_driver = {
+-	.probe = qcom_cpufreq_kryo_probe,
+-	.remove = qcom_cpufreq_kryo_remove,
++static struct platform_driver qcom_cpufreq_driver = {
++	.probe = qcom_cpufreq_probe,
++	.remove = qcom_cpufreq_remove,
+ 	.driver = {
+-		.name = "qcom-cpufreq-kryo",
++		.name = "qcom-cpufreq",
+ 	},
+ };
+ 
+-static const struct of_device_id qcom_cpufreq_kryo_match_list[] __initconst = {
+-	{ .compatible = "qcom,apq8096", },
+-	{ .compatible = "qcom,msm8996", },
+-	{}
++static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
++	{ .compatible = "qcom,apq8096", .data = qcom_cpufreq_kryo_name_version},
++	{ .compatible = "qcom,msm8996", .data = qcom_cpufreq_kryo_name_version},
++	{},
+ };
+ 
+ /*
+@@ -192,7 +216,7 @@ static int qcom_cpufreq_kryo_remove(struct platform_device *pdev)
+  * which may be defered as well. The init here is only registering
+  * the driver and the platform device.
+  */
+-static int __init qcom_cpufreq_kryo_init(void)
++static int __init qcom_cpufreq_init(void)
+ {
+ 	struct device_node *np = of_find_node_by_path("/");
+ 	const struct of_device_id *match;
+@@ -201,32 +225,32 @@ static int __init qcom_cpufreq_kryo_init(void)
+ 	if (!np)
+ 		return -ENODEV;
+ 
+-	match = of_match_node(qcom_cpufreq_kryo_match_list, np);
++	match = of_match_node(qcom_cpufreq_match_list, np);
+ 	of_node_put(np);
+ 	if (!match)
+ 		return -ENODEV;
+ 
+-	ret = platform_driver_register(&qcom_cpufreq_kryo_driver);
++	ret = platform_driver_register(&qcom_cpufreq_driver);
+ 	if (unlikely(ret < 0))
+ 		return ret;
+ 
+-	kryo_cpufreq_pdev = platform_device_register_simple(
+-		"qcom-cpufreq-kryo", -1, NULL, 0);
+-	ret = PTR_ERR_OR_ZERO(kryo_cpufreq_pdev);
++	cpufreq_pdev = platform_device_register_data(NULL, "qcom-cpufreq",
++						     -1, match, sizeof(*match));
++	ret = PTR_ERR_OR_ZERO(cpufreq_pdev);
+ 	if (0 == ret)
+ 		return 0;
+ 
+-	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
++	platform_driver_unregister(&qcom_cpufreq_driver);
+ 	return ret;
+ }
+-module_init(qcom_cpufreq_kryo_init);
++module_init(qcom_cpufreq_init);
+ 
+-static void __init qcom_cpufreq_kryo_exit(void)
++static void __init qcom_cpufreq_exit(void)
+ {
+-	platform_device_unregister(kryo_cpufreq_pdev);
+-	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
++	platform_device_unregister(cpufreq_pdev);
++	platform_driver_unregister(&qcom_cpufreq_driver);
+ }
+-module_exit(qcom_cpufreq_kryo_exit);
++module_exit(qcom_cpufreq_exit);
+ 
+-MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. CPUfreq driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
