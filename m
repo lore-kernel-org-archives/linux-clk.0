@@ -1,323 +1,332 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-imx@nxp.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v3 3/4] clk: imx: add SCCG PLL type
-Date: Thu,  9 Aug 2018 17:45:40 +0300
-Message-Id: <1533825941-17224-4-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
-References: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37326 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728541AbeHNM3X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Aug 2018 08:29:23 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+References: <20180809214414.20905-1-paul@crapouillou.net> <20180809214414.20905-7-paul@crapouillou.net>
+In-Reply-To: <20180809214414.20905-7-paul@crapouillou.net>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Tue, 14 Aug 2018 11:42:47 +0200
+Message-ID: <CA+7wUsxKtiJZD35dvT7UrmWYXcDdpmRq3NVM25=dX=4qQ_ewuw@mail.gmail.com>
+Subject: Re: [PATCH v6 06/24] clocksource: Add driver for the Ingenic JZ47xx OST
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, thierry.reding@gmail.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, wim@linux-watchdog.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maarten ter Huurne <maarten@treewalker.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+On Thu, Aug 9, 2018 at 11:44 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> From: Maarten ter Huurne <maarten@treewalker.org>
+>
+> OST is the OS Timer, a 64-bit timer/counter with buffered reading.
+>
+> SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
+> JZ4780 have a 64-bit OST.
+>
+> This driver will register both a clocksource and a sched_clock to the
+> system.
 
-The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-The driver currently misses the PLL lock check, as the preliminary
-documentation mentions lock configurations, but is quiet about where
-to find the actual lock status signal.
+With CONFIG_DEBUG_SECTION_MISMATCH=y here is what I see:
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/Makefile       |   3 +-
- drivers/clk/imx/clk-sccg-pll.c | 231 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   9 ++
- 3 files changed, 242 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+  MODPOST vmlinux.o
+WARNING: vmlinux.o(.data+0x26600): Section mismatch in reference from
+the variable ingenic_ost_driver to the function
+.init.text:ingenic_ost_probe()
+The variable ingenic_ost_driver references
+the function __init ingenic_ost_probe()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4893c1f..b87513c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-sccg-pll.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-new file mode 100644
-index 0000000..886ae03
---- /dev/null
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+/* PLL CFGs */
-+#define PLL_CFG0	0x0
-+#define PLL_CFG1	0x4
-+#define PLL_CFG2	0x8
-+
-+#define PLL_DIVF1_SHIFT	13
-+#define PLL_DIVF2_SHIFT	7
-+#define PLL_DIVF_MASK	0x3f
-+
-+#define PLL_DIVR1_SHIFT	25
-+#define PLL_DIVR2_SHIFT	19
-+#define PLL_DIVR1_MASK	0x3
-+#define PLL_DIVR2_MASK	0x3f
-+#define PLL_REF_SHIFT	0
-+#define PLL_REF_MASK	0x3
-+
-+#define PLL_LOCK	31
-+#define PLL_PD		7
-+
-+#define OSC_25M		25000000
-+#define OSC_27M		27000000
-+
-+struct clk_sccg_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-+
-+static int clk_pll1_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & (1 << PLL_PD)) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, divf;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
-+
-+	return parent_rate * 2 * (divf + 1);
-+}
-+
-+static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 div;
-+
-+	div = rate / (parent_rate * 2);
-+
-+	return parent_rate * div * 2;
-+}
-+
-+static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+	u32 divf;
-+
-+	divf = rate / (parent_rate * 2);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
-+	val |= (divf - 1) << PLL_DIVF1_SHIFT;
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static int clk_pll1_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base);
-+	val &= ~(1 << PLL_PD);
-+	writel_relaxed(val, pll->base);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static void clk_pll1_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base);
-+	val |= (1 << PLL_PD);
-+	writel_relaxed(val, pll->base);
-+}
-+
-+static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, ref, divr1, divf1, divr2, divf2;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
-+	case 0:
-+		ref = OSC_25M;
-+		break;
-+	case 1:
-+		ref = OSC_27M;
-+		break;
-+	default:
-+		ref = OSC_25M;
-+		break;
-+	}
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
-+	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
-+	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
-+	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
-+
-+	temp64 = ref * 2;
-+	temp64 *= (divf1 + 1) * (divf2 + 1);
-+
-+	do_div(temp64, (divr1 + 1) * (divr2 + 1));
-+
-+	return (unsigned long)temp64;
-+}
-+
-+static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u32 div;
-+	unsigned long parent_rate = *prate;
-+
-+	div = rate / (parent_rate);
-+
-+	return parent_rate * div;
-+}
-+
-+static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	u32 val;
-+	u32 divf;
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+
-+	divf = rate / (parent_rate);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
-+	val |= (divf - 1) << PLL_DIVF2_SHIFT;
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_sccg_pll1_ops = {
-+	.is_prepared	= clk_pll1_is_prepared,
-+	.recalc_rate	= clk_pll1_recalc_rate,
-+	.round_rate	= clk_pll1_round_rate,
-+	.set_rate	= clk_pll1_set_rate,
-+};
-+
-+static const struct clk_ops clk_sccg_pll2_ops = {
-+	.prepare	= clk_pll1_prepare,
-+	.unprepare	= clk_pll1_unprepare,
-+	.recalc_rate	= clk_pll2_recalc_rate,
-+	.round_rate	= clk_pll2_round_rate,
-+	.set_rate	= clk_pll2_set_rate,
-+};
-+
-+struct clk *imx_clk_sccg_pll(const char *name,
-+				const char *parent_name,
-+				void __iomem *base,
-+				enum imx_sccg_pll_type pll_type)
-+{
-+	struct clk_sccg_pll *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	switch (pll_type) {
-+	case SCCG_PLL1:
-+		init.ops = &clk_sccg_pll1_ops;
-+		break;
-+	case SCCG_PLL2:
-+		init.ops = &clk_sccg_pll2_ops;
-+		break;
-+	}
-+
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 13daf1c..12b3fd6 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -21,6 +21,11 @@ enum imx_pllv1_type {
- 	IMX_PLLV1_IMX35,
- };
- 
-+enum imx_sccg_pll_type {
-+	SCCG_PLL1,
-+	SCCG_PLL2,
-+};
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
- 
-@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
- struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
- 			     void __iomem *base);
- 
-+struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
-+			     void __iomem *base,
-+			     enum imx_sccg_pll_type pll_type);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
--- 
-2.7.4
+WARNING: vmlinux.o(.data+0x26660): Section mismatch in reference from
+the variable ingenic_tcu_driver to the function
+.init.text:ingenic_tcu_probe()
+The variable ingenic_tcu_driver references
+the function __init ingenic_tcu_probe()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+
+Thanks
+
+> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>  drivers/clocksource/Kconfig       |   8 ++
+>  drivers/clocksource/Makefile      |   1 +
+>  drivers/clocksource/ingenic-ost.c | 208 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 217 insertions(+)
+>  create mode 100644 drivers/clocksource/ingenic-ost.c
+>
+>  v5: New patch
+>
+>  v6: - Get rid of SoC IDs; pass pointer to ingenic_ost_soc_info as
+>        devicetree match data instead.
+>      - Use device_get_match_data() instead of the of_* variant
+>      - Handle error of dev_get_regmap() properly
+>
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 98f708208a8d..e855938c69f1 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -619,4 +619,12 @@ config INGENIC_TIMER
+>         help
+>           Support for the timer/counter unit of the Ingenic JZ SoCs.
+>
+> +config INGENIC_OST
+> +       bool "Ingenic JZ47xx Operating System Timer"
+> +       depends on MIPS || COMPILE_TEST
+> +       depends on COMMON_CLK
+> +       select INGENIC_TIMER
+> +       help
+> +         Support for the OS Timer of the Ingenic JZ4770 or similar SoC.
+> +
+>  endmenu
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index 26877505d400..56ce37252944 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -75,6 +75,7 @@ obj-$(CONFIG_ASM9260_TIMER)           += asm9260_timer.o
+>  obj-$(CONFIG_H8300_TMR8)               += h8300_timer8.o
+>  obj-$(CONFIG_H8300_TMR16)              += h8300_timer16.o
+>  obj-$(CONFIG_H8300_TPU)                        += h8300_tpu.o
+> +obj-$(CONFIG_INGENIC_OST)              += ingenic-ost.o
+>  obj-$(CONFIG_INGENIC_TIMER)            += ingenic-timer.o
+>  obj-$(CONFIG_CLKSRC_ST_LPC)            += clksrc_st_lpc.o
+>  obj-$(CONFIG_X86_NUMACHIP)             += numachip.o
+> diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
+> new file mode 100644
+> index 000000000000..400d30656790
+> --- /dev/null
+> +++ b/drivers/clocksource/ingenic-ost.c
+> @@ -0,0 +1,208 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * JZ47xx SoCs TCU Operating System Timer driver
+> + *
+> + * Copyright (C) 2016 Maarten ter Huurne <maarten@treewalker.org>
+> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clocksource.h>
+> +#include <linux/mfd/ingenic-tcu.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm.h>
+> +#include <linux/regmap.h>
+> +#include <linux/sched_clock.h>
+> +
+> +#include "ingenic-timer.h"
+> +
+> +#define TCU_OST_TCSR_MASK      0xc0
+> +#define TCU_OST_TCSR_CNT_MD    BIT(15)
+> +
+> +#define TCU_OST_CHANNEL                15
+> +
+> +struct ingenic_ost_soc_info {
+> +       bool is64bit;
+> +};
+> +
+> +struct ingenic_ost {
+> +       struct regmap *map;
+> +       struct clk *clk;
+> +
+> +       struct clocksource cs;
+> +};
+> +
+> +static u64 notrace ingenic_ost_read_cntl(void)
+> +{
+> +       /* Bypass the regmap here as we must return as soon as possible */
+> +       return readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
+> +}
+> +
+> +static u64 notrace ingenic_ost_read_cnth(void)
+> +{
+> +       /* Bypass the regmap here as we must return as soon as possible */
+> +       return readl(ingenic_tcu_base + TCU_REG_OST_CNTH);
+> +}
+> +
+> +static u64 notrace ingenic_ost_clocksource_read(struct clocksource *cs)
+> +{
+> +       u32 val1, val2;
+> +       u64 count, recount;
+> +       s64 diff;
+> +
+> +       /*
+> +        * The buffering of the upper 32 bits of the timer prevents wrong
+> +        * results from the bottom 32 bits overflowing due to the timer ticking
+> +        * along. However, it does not prevent wrong results from simultaneous
+> +        * reads of the timer, which could reset the buffer mid-read.
+> +        * Since this kind of wrong read can happen only when the bottom bits
+> +        * overflow, there will be minutes between wrong reads, so if we read
+> +        * twice in succession, at least one of the reads will be correct.
+> +        */
+> +
+> +       /* Bypass the regmap here as we must return as soon as possible */
+> +       val1 = readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
+> +       val2 = readl(ingenic_tcu_base + TCU_REG_OST_CNTHBUF);
+> +       count = (u64)val1 | (u64)val2 << 32;
+> +
+> +       val1 = readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
+> +       val2 = readl(ingenic_tcu_base + TCU_REG_OST_CNTHBUF);
+> +       recount = (u64)val1 | (u64)val2 << 32;
+> +
+> +       /*
+> +        * A wrong read will produce a result that is 1<<32 too high: the bottom
+> +        * part from before overflow and the upper part from after overflow.
+> +        * Therefore, the lower value of the two reads is the correct value.
+> +        */
+> +
+> +       diff = (s64)(recount - count);
+> +       if (unlikely(diff < 0))
+> +               count = recount;
+> +
+> +       return count;
+> +}
+> +
+> +static int __init ingenic_ost_probe(struct platform_device *pdev)
+> +{
+> +       const struct ingenic_ost_soc_info *soc_info;
+> +       struct device *dev = &pdev->dev;
+> +       struct ingenic_ost *ost;
+> +       struct clocksource *cs;
+> +       unsigned long rate, flags;
+> +       int err;
+> +
+> +       soc_info = device_get_match_data(dev);
+> +       if (!soc_info)
+> +               return -EINVAL;
+> +
+> +       ost = devm_kzalloc(dev, sizeof(*ost), GFP_KERNEL);
+> +       if (!ost)
+> +               return -ENOMEM;
+> +
+> +       ost->map = dev_get_regmap(dev->parent, NULL);
+> +       if (!ost->map) {
+> +               dev_err(dev, "regmap not found\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       ost->clk = devm_clk_get(dev, "ost");
+> +       if (IS_ERR(ost->clk))
+> +               return PTR_ERR(ost->clk);
+> +
+> +       err = clk_prepare_enable(ost->clk);
+> +       if (err)
+> +               return err;
+> +
+> +       /* Clear counter high/low registers */
+> +       if (soc_info->is64bit)
+> +               regmap_write(ost->map, TCU_REG_OST_CNTL, 0);
+> +       regmap_write(ost->map, TCU_REG_OST_CNTH, 0);
+> +
+> +       /* Don't reset counter at compare value. */
+> +       regmap_update_bits(ost->map, TCU_REG_OST_TCSR,
+> +                          TCU_OST_TCSR_MASK, TCU_OST_TCSR_CNT_MD);
+> +
+> +       rate = clk_get_rate(ost->clk);
+> +
+> +       /* Enable OST TCU channel */
+> +       regmap_write(ost->map, TCU_REG_TESR, BIT(TCU_OST_CHANNEL));
+> +
+> +       cs = &ost->cs;
+> +       cs->name        = "ingenic-ost";
+> +       cs->rating      = 320;
+> +       cs->flags       = CLOCK_SOURCE_IS_CONTINUOUS;
+> +
+> +       if (soc_info->is64bit) {
+> +               cs->mask = CLOCKSOURCE_MASK(64);
+> +               cs->read = ingenic_ost_clocksource_read;
+> +       } else {
+> +               cs->mask = CLOCKSOURCE_MASK(32);
+> +               cs->read = (u64 (*)(struct clocksource *))ingenic_ost_read_cnth;
+> +       }
+> +
+> +       err = clocksource_register_hz(cs, rate);
+> +       if (err) {
+> +               dev_err(dev, "clocksource registration failed: %d\n", err);
+> +               clk_disable_unprepare(ost->clk);
+> +               return err;
+> +       }
+> +
+> +       /* Cannot register a sched_clock with interrupts on */
+> +       local_irq_save(flags);
+> +       if (soc_info->is64bit)
+> +               sched_clock_register(ingenic_ost_read_cntl, 32, rate);
+> +       else
+> +               sched_clock_register(ingenic_ost_read_cnth, 32, rate);
+> +       local_irq_restore(flags);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int ingenic_ost_suspend(struct device *dev)
+> +{
+> +       struct ingenic_ost *ost = dev_get_drvdata(dev);
+> +
+> +       clk_disable(ost->clk);
+> +       return 0;
+> +}
+> +
+> +static int ingenic_ost_resume(struct device *dev)
+> +{
+> +       struct ingenic_ost *ost = dev_get_drvdata(dev);
+> +
+> +       return clk_enable(ost->clk);
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(ingenic_ost_pm_ops, ingenic_ost_suspend,
+> +                        ingenic_ost_resume);
+> +#define INGENIC_OST_PM_OPS (&ingenic_ost_pm_ops)
+> +#else
+> +#define INGENIC_OST_PM_OPS NULL
+> +#endif /* CONFIG_PM_SUSPEND */
+> +
+> +static const struct ingenic_ost_soc_info jz4725b_ost_soc_info = {
+> +       .is64bit = false,
+> +};
+> +
+> +static const struct ingenic_ost_soc_info jz4770_ost_soc_info = {
+> +       .is64bit = true,
+> +};
+> +
+> +static const struct of_device_id ingenic_ost_of_match[] = {
+> +       { .compatible = "ingenic,jz4725b-ost", .data = &jz4725b_ost_soc_info, },
+> +       { .compatible = "ingenic,jz4770-ost",  .data = &jz4770_ost_soc_info,  },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, ingenic_ost_of_match);
+> +
+> +static struct platform_driver ingenic_ost_driver = {
+> +       .probe = ingenic_ost_probe,
+> +       .driver = {
+> +               .name   = "ingenic-ost",
+> +               .pm     = INGENIC_OST_PM_OPS,
+> +               .of_match_table = ingenic_ost_of_match,
+> +       },
+> +};
+> +module_platform_driver(ingenic_ost_driver);
+> --
+> 2.11.0
+>
