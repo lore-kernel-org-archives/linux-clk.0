@@ -1,301 +1,167 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Amit Nischal <anischal@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v4 1/2] clk: qcom: Add support for RCG to register for DFS
-Date: Sat, 11 Aug 2018 07:23:55 +0530
-Message-Id: <1533952436-17221-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
+        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, thierry.escande@linaro.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 03/14] clk: qcom: Add HFPLL driver
+Date: Tue, 14 Aug 2018 17:42:22 +0530
+Message-Id: <1534248753-2440-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dynamic Frequency switch is a feature of clock controller by which request
-from peripherals allows automatic switching frequency of input clock
-without SW intervention. There are various performance levels associated
-with a root clock. When the input performance state changes, the source
-clocks and division ratios of the new performance state are loaded on to
-RCG via HW and the RCG switches to new clock frequency when the RCG is in
-DFS HW enabled mode.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Register the root clock generators(RCG) to switch to use the dfs clock ops
-in the cases where DFS is enabled. The clk_round_rate() called by the clock
-consumer would invoke the dfs determine clock ops and would read the DFS
-performance level registers to identify all the frequencies supported and
-update the frequency table. The DFS clock consumers would maintain these
-frequency mapping and request the desired performance levels.
+On some devices (MSM8974 for example), the HFPLLs are
+instantiated within the Krait processor subsystem as separate
+register regions. Add a driver for these PLLs so that we can
+provide HFPLL clocks for use by the system.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/qcom/clk-rcg.h  |   2 +
- drivers/clk/qcom/clk-rcg2.c | 224 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 226 insertions(+)
+ drivers/clk/qcom/Kconfig  |  8 ++++
+ drivers/clk/qcom/Makefile |  1 +
+ drivers/clk/qcom/hfpll.c  | 96 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
+ create mode 100644 drivers/clk/qcom/hfpll.c
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index dbd5a9e..e6300e0 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -163,4 +163,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
- 
-+extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-+			     struct clk_rcg2 **rcgs, int num_clks);
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4..55a5b58 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/regmap.h>
- #include <linux/math64.h>
-+#include <linux/slab.h>
- 
- #include <asm/div64.h>
- 
-@@ -40,6 +41,14 @@
- #define N_REG			0xc
- #define D_REG			0x10
- 
-+/* Dynamic Frequency Scaling */
-+#define MAX_PERF_LEVEL		8
-+#define SE_CMD_DFSR_OFFSET	0x14
-+#define SE_CMD_DFS_EN		BIT(0)
-+#define SE_PERF_DFSR(level)	(0x1c + 0x4 * (level))
-+#define SE_PERF_M_DFSR(level)	(0x5c + 0x4 * (level))
-+#define SE_PERF_N_DFSR(level)	(0x9c + 0x4 * (level))
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 0647686..21aec10 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -272,3 +272,11 @@ config SPMI_PMIC_CLKDIV
+ 	  Technologies, Inc. SPMI PMIC. It configures the frequency of
+ 	  clkdiv outputs of the PMIC. These clocks are typically wired
+ 	  through alternate functions on GPIO pins.
 +
- enum freq_policy {
- 	FLOOR,
- 	CEIL,
-@@ -929,3 +938,218 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++config QCOM_HFPLL
++	tristate "High-Frequency PLL (HFPLL) Clock Controller"
++	depends on COMMON_CLK_QCOM
++	help
++	  Support for the high-frequency PLLs present on Qualcomm devices.
++	  Say Y if you want to support CPU frequency scaling on devices
++	  such as MSM8974, APQ8084, etc.
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7818e6c..f82eeac 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -44,3 +44,4 @@ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
++obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+new file mode 100644
+index 0000000..a6de7101
+--- /dev/null
++++ b/drivers/clk/qcom/hfpll.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+/* Common APIs to be used for DFS based RCGR */
-+static unsigned long clk_rcg2_calculate_freq(struct clk_hw *hw,
-+		int level, struct freq_tbl *f)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct clk_hw *p;
-+	unsigned long prate = 0;
-+	u32 val, mask, cfg, m_off, n_off, offset, mode;
-+	int i, ret, num_parents;
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
 +
-+	offset = SE_PERF_DFSR(level);
-+	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
-+	if (ret)
-+		return ret;
++#include "clk-regmap.h"
++#include "clk-hfpll.h"
 +
-+	mask = BIT(rcg->hid_width) - 1;
-+	f->pre_div = cfg & mask ? (cfg & mask) : 1;
++static const struct hfpll_data hdata = {
++	.mode_reg = 0x00,
++	.l_reg = 0x04,
++	.m_reg = 0x08,
++	.n_reg = 0x0c,
++	.user_reg = 0x10,
++	.config_reg = 0x14,
++	.config_val = 0x430405d,
++	.status_reg = 0x1c,
++	.lock_bit = 16,
 +
-+	mode = cfg & CFG_MODE_MASK;
-+	mode >>= CFG_MODE_SHIFT;
-+
-+	cfg &= CFG_SRC_SEL_MASK;
-+	cfg >>= CFG_SRC_SEL_SHIFT;
-+
-+	num_parents = clk_hw_get_num_parents(hw);
-+	for (i = 0; i < num_parents; i++) {
-+		if (cfg == rcg->parent_map[i].cfg) {
-+			f->src = rcg->parent_map[i].src;
-+			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
-+			prate = clk_hw_get_rate(p);
-+		}
-+	}
-+
-+	if (mode) {
-+		/* Calculate M & N values */
-+		m_off = SE_PERF_M_DFSR(level);
-+		n_off = SE_PERF_N_DFSR(level);
-+
-+		mask = BIT(rcg->mnd_width) - 1;
-+		ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_off,
-+					&val);
-+		if (ret) {
-+			pr_err("Failed to read M offset register\n");
-+			return ret;
-+		}
-+		val &= mask;
-+		f->m = val;
-+
-+		ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_off,
-+					&val);
-+		if (ret) {
-+			pr_err("Failed to read N offset register\n");
-+			return ret;
-+		}
-+		/* val ~(N-M) */
-+		val = ~val;
-+		val &= mask;
-+		val += f->m;
-+		f->n = val;
-+	}
-+
-+	return calc_rate(prate, f->m, f->n, mode, f->pre_div);
-+}
-+
-+static int clk_rcg2_dfs_populate_freq_table(struct clk_rcg2 *rcg)
-+{
-+	struct freq_tbl *freq_tbl;
-+	unsigned long calc_freq;
-+	int i;
-+
-+	freq_tbl = kcalloc(MAX_PERF_LEVEL, sizeof(*freq_tbl),
-+				GFP_KERNEL);
-+	if (!freq_tbl)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < MAX_PERF_LEVEL; i++) {
-+		calc_freq = clk_rcg2_calculate_freq(&rcg->clkr.hw,
-+							i, &freq_tbl[i]);
-+		if (calc_freq < 0) {
-+			kfree(freq_tbl);
-+			return calc_freq;
-+		}
-+
-+		freq_tbl[i].freq = calc_freq;
-+	}
-+	rcg->freq_tbl = freq_tbl;
-+
-+	return 0;
-+}
-+
-+static int clk_rcg2_dfs_determine_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	if (!rcg->freq_tbl) {
-+		ret = clk_rcg2_dfs_populate_freq_table(rcg);
-+		if (ret) {
-+			pr_err("Failed to update DFS tables for %s\n",
-+					clk_hw_get_name(hw));
-+			return ret;
-+		}
-+	}
-+
-+	return clk_rcg2_shared_ops.determine_rate(hw, req);
-+}
-+
-+static unsigned long
-+clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask, level;
-+	int num_parents, i;
-+	unsigned long prate;
-+
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-+				SE_CMD_DFSR_OFFSET, &cfg);
-+	level = (GENMASK(4, 1) & cfg) >> 1;
-+
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-+				SE_PERF_DFSR(level), &cfg);
-+	if (rcg->mnd_width) {
-+		mask = BIT(rcg->mnd_width) - 1;
-+		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-+				SE_PERF_M_DFSR(level), &m);
-+		m &= mask;
-+		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
-+				SE_PERF_N_DFSR(level), &n);
-+		n =  ~n;
-+		n &= mask;
-+		n += m;
-+		mode = cfg & CFG_MODE_MASK;
-+		mode >>= CFG_MODE_SHIFT;
-+	}
-+
-+	mask = BIT(rcg->hid_width) - 1;
-+	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-+	hid_div &= mask;
-+	cfg &= CFG_SRC_SEL_MASK;
-+	cfg >>= CFG_SRC_SEL_SHIFT;
-+
-+	num_parents = clk_hw_get_num_parents(hw);
-+	for (i = 0; i < num_parents; i++) {
-+		if (cfg == rcg->parent_map[i].cfg) {
-+			prate = clk_hw_get_rate(
-+				clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
-+			if (parent_rate != prate)
-+				parent_rate = prate;
-+		}
-+	}
-+
-+
-+	return calc_rate(parent_rate, m, n, mode, hid_div);
-+}
-+
-+static const struct clk_ops clk_rcg2_dfs_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.determine_rate = clk_rcg2_dfs_determine_rate,
-+	.recalc_rate = clk_rcg2_dfs_recalc_rate,
++	.user_val = 0x8,
++	.user_vco_mask = 0x100000,
++	.low_vco_max_rate = 1248000000,
++	.min_rate = 537600000UL,
++	.max_rate = 2900000000UL,
 +};
 +
-+static int clk_rcg2_enable_dfs(struct clk_rcg2 *rcg, struct regmap *regmap)
++static const struct of_device_id qcom_hfpll_match_table[] = {
++	{ .compatible = "qcom,hfpll" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
++
++static const struct regmap_config hfpll_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.max_register	= 0x30,
++	.fast_io	= true,
++};
++
++static int qcom_hfpll_probe(struct platform_device *pdev)
 +{
-+	struct clk_init_data *init;
-+	u32 val;
-+	int ret;
++	struct resource *res;
++	struct device *dev = &pdev->dev;
++	void __iomem *base;
++	struct regmap *regmap;
++	struct clk_hfpll *h;
++	struct clk_init_data init = {
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_ops_hfpll,
++	};
 +
-+	ret = regmap_read(regmap, rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET,
-+			  &val);
-+	if (ret)
-+		return -EINVAL;
-+
-+	if (!(val & SE_CMD_DFS_EN))
-+		return 0;
-+
-+	init = kzalloc(sizeof(*init), GFP_KERNEL);
-+	if (!init)
++	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
++	if (!h)
 +		return -ENOMEM;
 +
-+	init->name = rcg->clkr.hw.init->name;
-+	init->flags = rcg->clkr.hw.init->flags;
-+	init->parent_names = rcg->clkr.hw.init->parent_names;
-+	init->num_parents = rcg->clkr.hw.init->num_parents;
-+	init->flags = CLK_GET_RATE_NOCACHE;
-+	init->ops = &clk_rcg2_dfs_ops;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+	rcg->clkr.hw.init = init;
-+	rcg->freq_tbl = NULL;
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, &hfpll_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
 +
-+	pr_debug("DFS registered for clk %s\n", init->name);
++	if (of_property_read_string_index(dev->of_node, "clock-output-names",
++					  0, &init.name))
++		return -ENODEV;
 +
-+	return 0;
++	h->d = &hdata;
++	h->clkr.hw.init = &init;
++	spin_lock_init(&h->lock);
++
++	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
 +}
 +
-+int qcom_cc_register_rcg_dfs(struct regmap *regmap,
-+			    struct clk_rcg2 **rcgs, int num_clks)
-+{
-+	int i, ret;
++static struct platform_driver qcom_hfpll_driver = {
++	.probe		= qcom_hfpll_probe,
++	.driver		= {
++		.name	= "qcom-hfpll",
++		.of_match_table = qcom_hfpll_match_table,
++	},
++};
++module_platform_driver(qcom_hfpll_driver);
 +
-+	for (i = 0; i < num_clks; i++) {
-+		ret = clk_rcg2_enable_dfs(rcgs[i], regmap);
-+		if (ret) {
-+			const char *name = rcgs[i]->clkr.hw.init->name;
-+
-+			pr_err("DFS register failed for clk %s\n", name);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
++MODULE_DESCRIPTION("QCOM HFPLL Clock Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-hfpll");
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
