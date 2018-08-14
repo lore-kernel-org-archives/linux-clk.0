@@ -1,46 +1,112 @@
-Return-Path: <Akshu.Agrawal@amd.com>
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-To: 
-Cc: djkurtz@chromium.org,
-	akshu.agrawal@amd.com,
-	Alexander.Deucher@amd.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Akshu Agrawal <Akshu.Agrawal@amd.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: x86: Set default parent to 48Mhz
-Date: Tue, 21 Aug 2018 12:21:57 +0530
-Message-Id: <1534834341-18345-1-git-send-email-akshu.agrawal@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: akshu.agrawal@amd.com
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 04/14] dt-bindings: clock: Document qcom,hfpll
+Date: Tue, 14 Aug 2018 17:42:23 +0530
+Message-Id: <1534248753-2440-5-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-System clk provided in ST soc can be set to:
-48Mhz, non-spread
-25Mhz, spread
-To get accurate rate, we need it to set it at non-spread
-option which is 48Mhz.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Adds bindings document for qcom,hfpll instantiated within
+the Krait processor subsystem as separate register region.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/clk/x86/clk-st.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/clock/qcom,hfpll.txt       | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
 
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-index fb62f39..3a0996f 100644
---- a/drivers/clk/x86/clk-st.c
-+++ b/drivers/clk/x86/clk-st.c
-@@ -46,7 +46,7 @@ static int st_clk_probe(struct platform_device *pdev)
- 		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
- 		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
- 
--	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-+	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
- 
- 	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
- 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+new file mode 100644
+index 0000000..ec02a02
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -0,0 +1,60 @@
++High-Frequency PLL (HFPLL)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>:
++		shall contain only one of the following. The generic
++		compatible "qcom,hfpll" should be also included.
++
++                        "qcom,hfpll-ipq8064", "qcom,hfpll"
++                        "qcom,hfpll-apq8064", "qcom,hfpll"
++                        "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8960", "qcom,hfpll"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: address and size of HPLL registers. An optional second
++		    element specifies the address and size of the alias
++		    register region.
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the xo clock.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "xo".
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
++		    starting at 0. Otherwise hfpll_Y where Y is more specific
++		    such as "l2".
++
++Example:
++
++1) An HFPLL for the L2 cache.
++
++	clock-controller@f9016000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf9016000 0x30>;
++		clocks = <&xo_board>;
++		clock-names = "xo";
++		clock-output-names = "hfpll_l2";
++	};
++
++2) An HFPLL for CPU0. This HFPLL has the alias register region.
++
++	clock-controller@f908a000 {
++		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
++		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
++		clocks = <&xo_board>;
++		clock-names = "xo";
++		clock-output-names = "hfpll0";
++	};
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
