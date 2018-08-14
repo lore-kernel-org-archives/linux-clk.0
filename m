@@ -1,76 +1,132 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:58200 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727948AbeHUUiI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:08 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 10/24] watchdog: jz4740: Avoid starting watchdog in set_timeout
-Date: Tue, 21 Aug 2018 19:16:21 +0200
-Message-Id: <20180821171635.22740-11-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 09/14] dt-bindings: arm: Document qcom,kpss-gcc
+Date: Tue, 14 Aug 2018 17:42:28 +0530
+Message-Id: <1534248753-2440-10-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Previously the jz4740_wdt_set_timeout() function was starting the timer
-unconditionally, even if it was stopped when that function was entered.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Now, the timer will be restarted only if it was already running before
-this function is called.
+The ACC and GCC regions present in KPSSv1 contain registers to
+control clocks and power to each Krait CPU and L2. Documenting
+the bindings here.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
+ .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  | 19 ++++++++++
+ .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 44 ++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
 
-Notes:
-     v6: New patch
-    
-     v7: No change
-
- drivers/watchdog/jz4740_wdt.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 0f54306aee25..45d9495170e5 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
-+	u32 tcer;
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+index 1333db9..7f69636 100644
+--- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
+@@ -21,10 +21,29 @@ PROPERTIES
+ 		    the register region. An optional second element specifies
+ 		    the base address and size of the alias register region.
  
-+	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
++- clocks:
++        Usage: required
++        Value type: <prop-encoded-array>
++        Definition: reference to the pll parents.
++
++- clock-names:
++        Usage: required
++        Value type: <stringlist>
++        Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: optional
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpuX_aux where X is a
++		    CPU number starting at 0.
++
+ Example:
  
- 	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
- 	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
- 		return ret;
- 
- 	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	return 0;
- }
+ 	clock-controller@2088000 {
+ 		compatible = "qcom,kpss-acc-v2";
+ 		reg = <0x02088000 0x1000>,
+ 		      <0x02008000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu0_aux";
+ 	};
+diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+new file mode 100644
+index 0000000..e628758
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+@@ -0,0 +1,44 @@
++Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
++
++PROPERTIES
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: should be one of the following. The generic compatible
++			"qcom,kpss-gcc" should also be included.
++			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
++			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: base address and size of the register region
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the pll parents.
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "pll8_vote", "pxo".
++
++- clock-output-names:
++	Usage: required
++	Value type: <string>
++	Definition: Name of the output clock. Typically acpu_l2_aux indicating
++		    an L2 cache auxiliary clock.
++
++Example:
++
++	l2cc: clock-controller@2011000 {
++		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
++		reg = <0x2011000 0x1000>;
++		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++		clock-names = "pll8_vote", "pxo";
++		clock-output-names = "acpu_l2_aux";
++	};
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
