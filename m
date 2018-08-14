@@ -1,191 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57188 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726793AbeH0Qvf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Aug 2018 12:51:35 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RD4sD0037941
-        for <linux-clk@vger.kernel.org>; Mon, 27 Aug 2018 09:04:59 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4g71meh1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-clk@vger.kernel.org>; Mon, 27 Aug 2018 09:04:59 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-clk@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 27 Aug 2018 14:04:57 +0100
-Date: Mon, 27 Aug 2018 16:04:46 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
-References: <20180827082101.5036-1-brgl@bgdev.pl>
- <20180827082101.5036-2-brgl@bgdev.pl>
- <20180827103915.GC13848@rapoport-lnx>
- <CAMRc=MeCRw459ppuVK=w53C2eHOVVHPksF_4hx_dY1J-3fgPsQ@mail.gmail.com>
- <20180827125226.GD13848@rapoport-lnx>
- <CAMRc=MchWQEiH82KYdXvPWzJ6U9YLLJ8425M3Jct1O0EMZpokA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAMRc=MchWQEiH82KYdXvPWzJ6U9YLLJ8425M3Jct1O0EMZpokA@mail.gmail.com>
-Message-Id: <20180827130446.GE13848@rapoport-lnx>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 06/14] clk: qcom: Add IPQ806X's HFPLLs
+Date: Tue, 14 Aug 2018 17:42:25 +0530
+Message-Id: <1534248753-2440-7-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 27, 2018 at 02:58:46PM +0200, Bartosz Golaszewski wrote:
-> 2018-08-27 14:52 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
-> > On Mon, Aug 27, 2018 at 02:28:45PM +0200, Bartosz Golaszewski wrote:
-> >> 2018-08-27 12:39 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
-> >> > On Mon, Aug 27, 2018 at 10:21:01AM +0200, Bartosz Golaszewski wrote:
-> >> >> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> >> >> an example of how to use this new routine to shrink driver code.
-> >> >>
-> >> >> While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> >> >>
-> >> >> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> >> >> ---
-> >> >>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
-> >> >>  1 file changed, 4 insertions(+), 15 deletions(-)
-> >> >>
-> >> >> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> >> >> index 08ef69945ffb..daa2192e6568 100644
-> >> >> --- a/drivers/clk/x86/clk-pmc-atom.c
-> >> >> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> >> >> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
-> >> >>               plt_clk_unregister_fixed_rate(data->parents[i]);
-> >> >>  }
-> >> >>
-> >> >> -static void plt_clk_free_parent_names_loop(const char **parent_names,
-> >> >> -                                        unsigned int i)
-> >> >> -{
-> >> >> -     while (i--)
-> >> >> -             kfree_const(parent_names[i]);
-> >> >> -     kfree(parent_names);
-> >> >> -}
-> >> >> -
-> >> >>  static void plt_clk_unregister_loop(struct clk_plt_data *data,
-> >> >>                                   unsigned int i)
-> >> >>  {
-> >> >> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
-> >> >>       if (!data->parents)
-> >> >>               return ERR_PTR(-ENOMEM);
-> >> >>
-> >> >> -     parent_names = kcalloc(nparents, sizeof(*parent_names),
-> >> >> -                            GFP_KERNEL);
-> >> >> +     parent_names = devm_kcalloc(&pdev->dev, nparents,
-> >> >> +                                 sizeof(*parent_names), GFP_KERNEL);
-> >> >>       if (!parent_names)
-> >> >>               return ERR_PTR(-ENOMEM);
-> >> >>
-> >> >> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
-> >> >>                       err = PTR_ERR(data->parents[i]);
-> >> >>                       goto err_unreg;
-> >> >>               }
-> >> >> -             parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-> >> >> +             parent_names[i] = devm_kstrdup_const(&pdev->dev,
-> >> >> +                                                  clks[i].name, GFP_KERNEL);
-> >> >>       }
-> >> >>
-> >> >>       data->nparents = nparents;
-> >> >> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
-> >> >>
-> >> >>  err_unreg:
-> >> >>       plt_clk_unregister_fixed_rate_loop(data, i);
-> >> >> -     plt_clk_free_parent_names_loop(parent_names, i);
-> >> >
-> >> > What happens if clks[i].name is not a part of RO data? The devm_kstrdup_const
-> >> > will allocate memory and nothing will ever free it...
-> >> >
-> >>
-> >> I'm looking at it and trying to see if I'm missing something, but
-> >> AFAIK the whole concept of devm_* is to leave out the resource
-> >> management part.
-> >>
-> >> devm_kstrdup_const() will internally call devm_kstrdup() for strings
-> >> that are not in .rodata and once the device is detached, the string
-> >> will be freed (or not if it's in .rodata).
-> >
-> > And when it's going to be freed, how the resource management will know
-> > whether it's .rodata or not?
-> >
-> 
-> If the string to be duplicated is in .rodata, it's returned as is from
-> devm_kstrdup_const(). Never gets added to the devres list, never get's
-> freed. When the string to be duplicated is not in .rodata,
-> devm_kstrdup() is called from devm_kstrdup_const(). Now the string is
-> in the devres list of this device and it will get freed on driver
-> detach. I really don't see what else could be a problem here.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Thanks for the clarification.
-I think that it's worth adding a similar explanation to the changelog of
-the first patch.
+Describe the HFPLLs present on IPQ806X devices.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 5f61225..33d1bc5 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
  
-> BR
-> Bart
-> 
-> >> BR
-> >> Bart
-> >>
-> >> > And, please don't drop kfree(parent_names) here.
-> >> >
-> >> >>       return ERR_PTR(err);
-> >> >>  }
-> >> >>
-> >> >> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
-> >> >>               goto err_unreg_clk_plt;
-> >> >>       }
-> >> >>
-> >> >> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> >> >> -
-> >> >>       platform_set_drvdata(pdev, data);
-> >> >>       return 0;
-> >> >>
-> >> >>  err_unreg_clk_plt:
-> >> >>       plt_clk_unregister_loop(data, i);
-> >> >>       plt_clk_unregister_parents(data);
-> >> >> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> >> >
-> >> > Ditto.
-> >> >
-> >> >>       return err;
-> >> >>  }
-> >> >>
-> >> >> --
-> >> >> 2.18.0
-> >> >>
-> >> >
-> >> > --
-> >> > Sincerely yours,
-> >> > Mike.
-> >> >
-> >>
-> >
-> > --
-> > Sincerely yours,
-> > Mike.
-> >
-> 
-
+ static struct clk_pll pll0 = {
+@@ -113,6 +114,84 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -2797,6 +2876,9 @@ enum {
+ 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
+ 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
+ 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq806x_resets[] = {
 -- 
-Sincerely yours,
-Mike.
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
