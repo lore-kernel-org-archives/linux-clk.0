@@ -1,101 +1,262 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <153504874119.28926.4197673432816461627@swboyd.mtv.corp.google.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
- <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
- <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
- <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
- <4cda3c7e-3ac3-af97-6d9f-24dd5a4efa28@codeaurora.org>
- <153504874119.28926.4197673432816461627@swboyd.mtv.corp.google.com>
-Message-ID: <153540388675.129321.14679244317392825384@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-Date: Mon, 27 Aug 2018 14:04:46 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:39752 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729420AbeHNPAb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Aug 2018 11:00:31 -0400
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
+        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, thierry.escande@linaro.org,
+        linux-kernel@vger.kernel.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 05/14] clk: qcom: Add MSM8960/APQ8064's HFPLLs
+Date: Tue, 14 Aug 2018 17:42:24 +0530
+Message-Id: <1534248753-2440-6-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Stephen Boyd (2018-08-23 11:25:41)
-> Quoting Taniya Das (2018-08-22 03:28:31)
-> > =
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-> > > =
+Describe the HFPLLs present on MSM8960 and APQ8064 devices.
 
-> > > Hmmmm. Ok. That won't work then. recalc_rate() better not try to
-> > > populate the frequency table then or it will not work. So I suppose it
-> > > needs to fallback to reading the registers and assuming the parent_ra=
-te
-> > > coming in is the actual frequency of it's parent until the frequency
-> > > table pointer is non-NULL. Would that work?
-> > > =
+Acked-by: Rob Herring <robh@kernel.org> (bindings)
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8960.c               | 172 +++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8960.h |   2 +
+ 2 files changed, 174 insertions(+)
 
-> > Yes that would work.
-> =
-
-> Ok.
-> =
-
-> > =
-
-> > > BTW, does DFS switch parents without software knowing about it? =
-
-> > DFS would not switch until a HW request is sent, but SW would be unware =
-
-> > of the switch except the current_perf_state being updated with the =
-
-> > requested level.
-> > =
-
-> > What
-> > > happens in that case? Does the QUP driver make sure that the new pare=
-nt
-> > > of this RCG is properly enabled so that it can switch to it when need=
-ed?
-> > =
-
-> > I am not sure if they poll for any of their QUP HW state to make sure =
-
-> > the switch is complete.
-> > =
-
-> > > I'm still trying to understand this whole design. Who takes care of t=
-he
-> > > voltage requirements in this case? The QUP driver as well?
-> > > =
-
-> > =
-
-> > When the QUP driver requires to switch to new performance level, the =
-
-> > first request would be to set_rate()(QUP driver would get the list of =
-
-> > supported frequencies using the clk_round_rate()) which in QCOM clock =
-
-> > driver would take care of setting the required voltage for the new =
-
-> > parent switch.
-> =
-
-> It would also make sure that the new parent is enabled if the QUP clk is
-> enabled. That's another concern. Does the PLL turn on automatically when
-> the RCG switches to it?
-> =
-
-> > Then the QUP driver would request the HW for a new perf switch which =
-
-> > would result to a DFS switch for the QUP clocks.
-> =
-
-> It sounds like the QUP driver does half of the work via the clk APIs and
-> then the other half through the DFS register. Maybe the QUP driver
-> should be registering a clk as well for its DFS register so it can all
-> be clk API calls here. Something to consider. Anyway, that's not
-> important to this patch so here's the updated patch.
-
-I've squashed this in and applied the patches.
+diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
+index fd495e0..3994747 100644
+--- a/drivers/clk/qcom/gcc-msm8960.c
++++ b/drivers/clk/qcom/gcc-msm8960.c
+@@ -30,6 +30,7 @@
+ #include "clk-pll.h"
+ #include "clk-rcg.h"
+ #include "clk-branch.h"
++#include "clk-hfpll.h"
+ #include "reset.h"
+ 
+ static struct clk_pll pll3 = {
+@@ -86,6 +87,164 @@
+ 	},
+ };
+ 
++static struct hfpll_data hfpll0_data = {
++	.mode_reg = 0x3200,
++	.l_reg = 0x3208,
++	.m_reg = 0x320c,
++	.n_reg = 0x3210,
++	.config_reg = 0x3204,
++	.status_reg = 0x321c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3214,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll0 = {
++	.d = &hfpll0_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll0",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
++};
++
++static struct hfpll_data hfpll1_8064_data = {
++	.mode_reg = 0x3240,
++	.l_reg = 0x3248,
++	.m_reg = 0x324c,
++	.n_reg = 0x3250,
++	.config_reg = 0x3244,
++	.status_reg = 0x325c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3254,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct hfpll_data hfpll1_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll1 = {
++	.d = &hfpll1_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll1",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
++};
++
++static struct hfpll_data hfpll2_data = {
++	.mode_reg = 0x3280,
++	.l_reg = 0x3288,
++	.m_reg = 0x328c,
++	.n_reg = 0x3290,
++	.config_reg = 0x3284,
++	.status_reg = 0x329c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3294,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll2 = {
++	.d = &hfpll2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll2.lock),
++};
++
++static struct hfpll_data hfpll3_data = {
++	.mode_reg = 0x32c0,
++	.l_reg = 0x32c8,
++	.m_reg = 0x32cc,
++	.n_reg = 0x32d0,
++	.config_reg = 0x32c4,
++	.status_reg = 0x32dc,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x32d4,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll3 = {
++	.d = &hfpll3_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll3",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll3.lock),
++};
++
++static struct hfpll_data hfpll_l2_8064_data = {
++	.mode_reg = 0x3300,
++	.l_reg = 0x3308,
++	.m_reg = 0x330c,
++	.n_reg = 0x3310,
++	.config_reg = 0x3304,
++	.status_reg = 0x331c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3314,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct hfpll_data hfpll_l2_data = {
++	.mode_reg = 0x3400,
++	.l_reg = 0x3408,
++	.m_reg = 0x340c,
++	.n_reg = 0x3410,
++	.config_reg = 0x3404,
++	.status_reg = 0x341c,
++	.config_val = 0x7845c665,
++	.droop_reg = 0x3414,
++	.droop_val = 0x0108c000,
++	.min_rate = 600000000UL,
++	.max_rate = 1800000000UL,
++};
++
++static struct clk_hfpll hfpll_l2 = {
++	.d = &hfpll_l2_data,
++	.clkr.hw.init = &(struct clk_init_data){
++		.parent_names = (const char *[]){ "pxo" },
++		.num_parents = 1,
++		.name = "hfpll_l2",
++		.ops = &clk_ops_hfpll,
++		.flags = CLK_IGNORE_UNUSED,
++	},
++	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
++};
++
+ static struct clk_pll pll14 = {
+ 	.l_reg = 0x31c4,
+ 	.m_reg = 0x31c8,
+@@ -3107,6 +3266,9 @@ enum {
+ 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
+ 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
+ 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_msm8960_resets[] = {
+@@ -3318,6 +3480,11 @@ enum {
+ 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
+ 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
+ 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
++	[PLL9] = &hfpll0.clkr,
++	[PLL10] = &hfpll1.clkr,
++	[PLL12] = &hfpll_l2.clkr,
++	[PLL16] = &hfpll2.clkr,
++	[PLL17] = &hfpll3.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_apq8064_resets[] = {
+@@ -3477,6 +3644,11 @@ static int gcc_msm8960_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (match->data == &gcc_apq8064_desc) {
++		hfpll1.d = &hfpll1_8064_data;
++		hfpll_l2.d = &hfpll_l2_8064_data;
++	}
++
+ 	tsens = platform_device_register_data(&pdev->dev, "qcom-tsens", -1,
+ 					      NULL, 0);
+ 	if (IS_ERR(tsens))
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8960.h b/include/dt-bindings/clock/qcom,gcc-msm8960.h
+index 7d20eed..e02742f 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8960.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8960.h
+@@ -319,5 +319,7 @@
+ #define CE3_SRC					303
+ #define CE3_CORE_CLK				304
+ #define CE3_H_CLK				305
++#define PLL16					306
++#define PLL17					307
+ 
+ #endif
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
