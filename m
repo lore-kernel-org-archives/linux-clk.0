@@ -1,105 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:57628 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbeHUUiR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:17 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 16/24] pwm: jz4740: Add support for the JZ4725B
-Date: Tue, 21 Aug 2018 19:16:27 +0200
-Message-Id: <20180821171635.22740-17-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <marcel@ziswiler.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Stefan Agner <stefan@agner.ch>,
+	Peter Geis <pgwipeout@gmail.com>,
+	Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2] clk: tegra: probe deferral error reporting
+Date: Tue, 14 Aug 2018 11:18:05 +0200
+Message-Id: <20180814091805.1363-1-marcel@ziswiler.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM in the JZ4725B works the same as in the JZ4740, except that it
-only has 6 channels available instead of 8.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Actually report the error code from devm_regulator_get() which may as
+well just be a probe deferral.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
 ---
 
-Notes:
-     v5: New patch
-    
-     v6: - Move of_device_id structure back at the bottom (less noise in
-           patch)
-         - Use device_get_match_data() instead of of_* variant
-    
-     v7: No change
+Changes in v2:
+- Silence probe deferral as discussed between Peter, Stefan and Stephen.
+- Fix line over 80 characters as reported by checkpatch.
 
- drivers/pwm/pwm-jz4740.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-dfll.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index 5814825d9bed..66a72bd7424f 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -25,6 +25,10 @@
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 48ee43734e05..ebb0e1b6bf01 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
  
- #define NUM_PWM 8
- 
-+struct jz4740_soc_info {
-+	unsigned int num_pwms;
-+};
+ 	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+ 	if (IS_ERR(td->vdd_reg)) {
+-		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+-		return PTR_ERR(td->vdd_reg);
++		ret = PTR_ERR(td->vdd_reg);
++		if (ret != -EPROBE_DEFER)
++			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
++				ret);
 +
- struct jz4740_pwm_chip {
- 	struct pwm_chip chip;
- 	struct clk *clks[NUM_PWM];
-@@ -200,9 +204,14 @@ static const struct pwm_ops jz4740_pwm_ops = {
++		return ret;
+ 	}
  
- static int jz4740_pwm_probe(struct platform_device *pdev)
- {
-+	const struct jz4740_soc_info *soc_info;
- 	struct jz4740_pwm_chip *jz4740;
- 	struct device *dev = &pdev->dev;
- 
-+	soc_info = device_get_match_data(dev);
-+	if (!soc_info)
-+		return -EINVAL;
-+
- 	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
- 	if (!jz4740)
- 		return -ENOMEM;
-@@ -215,7 +224,7 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
- 
- 	jz4740->chip.dev = dev;
- 	jz4740->chip.ops = &jz4740_pwm_ops;
--	jz4740->chip.npwm = NUM_PWM;
-+	jz4740->chip.npwm = soc_info->num_pwms;
- 	jz4740->chip.base = -1;
- 	jz4740->chip.of_xlate = of_pwm_xlate_with_flags;
- 	jz4740->chip.of_pwm_n_cells = 3;
-@@ -233,8 +242,17 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_OF
-+static const struct jz4740_soc_info jz4740_soc_info = {
-+	.num_pwms = 8,
-+};
-+
-+static const struct jz4740_soc_info jz4725b_soc_info = {
-+	.num_pwms = 6,
-+};
-+
- static const struct of_device_id jz4740_pwm_dt_ids[] = {
--	{ .compatible = "ingenic,jz4740-pwm", },
-+	{ .compatible = "ingenic,jz4740-pwm", .data = &jz4740_soc_info },
-+	{ .compatible = "ingenic,jz4725b-pwm", .data = &jz4725b_soc_info },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
+ 	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
 -- 
-2.11.0
+2.14.4
