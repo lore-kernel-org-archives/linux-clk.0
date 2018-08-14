@@ -1,74 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:27336 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726841AbeHCE6J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:09 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH v2 07/18] MIPS: dts: Add aliases node for lantiq danube serial
-Date: Fri,  3 Aug 2018 11:02:26 +0800
-Message-Id: <20180803030237.3366-8-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 14 Aug 2018 14:48:01 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <narmstrong@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Carlo Caione <carlo@caione.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>,
+	Jianxin Pan <jianxin.pan@amlogic.com>, linux-clk@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clk: meson-g12a: Add G12A AO Clock
+ Bindings
+Message-ID: <20180814204801.GA9362@rob-hp-laptop>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+ <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Previous implementation uses a hard-coded register value to check
-if the current serial entity is the console entity.
-Now the lantiq serial driver uses the aliases for the index of the
-serial port.
-The lantiq danube serial dts are updated with aliases to support this.
+On Fri, Aug 10, 2018 at 05:54:27PM +0800, Jian Hu wrote:
+> Add new clock controller compatible and dt-bingdings headers
+> for the Always-On domain of the g12a SoC
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  1 +
+>  include/dt-bindings/clock/g12a-aoclkc.h            | 28 ++++++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+>  create mode 100755 include/dt-bindings/clock/g12a-aoclkc.h
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+checkpatch says wrong mode.
 
-Changes in v2: None
-
- arch/mips/boot/dts/lantiq/danube.dtsi   | 2 +-
- arch/mips/boot/dts/lantiq/easy50712.dts | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-index 510be63c8bdf..73746d7577d7 100644
---- a/arch/mips/boot/dts/lantiq/danube.dtsi
-+++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-@@ -74,7 +74,7 @@
- 			reg = <0xe100a00 0x100>;
- 		};
- 
--		serial@e100c00 {
-+		asc1: serial@e100c00 {
- 			compatible = "lantiq,asc";
- 			reg = <0xe100c00 0x400>;
- 			interrupt-parent = <&icu0>;
-diff --git a/arch/mips/boot/dts/lantiq/easy50712.dts b/arch/mips/boot/dts/lantiq/easy50712.dts
-index 1ce20b7d05cb..452860ca1868 100644
---- a/arch/mips/boot/dts/lantiq/easy50712.dts
-+++ b/arch/mips/boot/dts/lantiq/easy50712.dts
-@@ -4,6 +4,10 @@
- /include/ "danube.dtsi"
- 
- / {
-+	aliases {
-+		serial0 = &asc1;
-+	};
-+
- 	chosen {
- 		bootargs = "console=ttyLTQ0,115200 init=/etc/preinit";
- 	};
--- 
-2.11.0
-
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+> index 3a88052..6f02288 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
+> @@ -10,6 +10,7 @@ Required Properties:
+>  	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
+>  	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
+>  	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
+> +	- G12A (S905D2, S905X2) : "amlogic,g12a-aoclkc"
+>  	followed by the common "amlogic,meson-gx-aoclkc"
+>  
+>  - #clock-cells: should be 1.
+> diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
+> new file mode 100755
+> index 0000000..6b3f921
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/g12a-aoclkc.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+> +/*
+> + * Copyright (c) 2016 BayLibre, SAS
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Jian Hu<jian.hu@amlogic.com>
+> + */
+> +
+> +#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
+> +#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
+> +
+> +#define CLKID_AO_AHB_BUS		0
+> +#define CLKID_AO_REMOTE			1
+> +#define CLKID_AO_I2C_MASTER		2
+> +#define CLKID_AO_I2C_SLAVE		3
+> +#define CLKID_AO_UART1			4
+> +#define CLKID_AO_PROD_I2C		5
+> +#define CLKID_AO_UART2			6
+> +#define CLKID_AO_IR_BLASTER		7
+> +#define CLKID_AO_SAR_ADC		8
+> +#define CLKID_AO_CLK81			9
+> +#define CLKID_AO_SAR_ADC_SEL		10
+> +#define CLKID_AO_SAR_ADC_DIV		11
+> +#define CLKID_AO_SAR_ADC_CLK		12
+> +#define CLKID_AO_ALT_XTAL		13
+> +
+> +#endif
+> -- 
+> 1.9.1
+> 
