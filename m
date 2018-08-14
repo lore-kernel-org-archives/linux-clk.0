@@ -1,106 +1,249 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:33964 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbeHJAMF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:12:05 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 16/24] pwm: jz4740: Add support for the JZ4725B
-Date: Thu,  9 Aug 2018 23:44:06 +0200
-Message-Id: <20180809214414.20905-17-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+To: mark.rutland@arm.com,
+	robh@kernel.org,
+	sudeep.holla@arm.com,
+	linux@arm.linux.org.uk,
+	ctatlor97@gmail.com,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	mturquette@baylibre.com,
+	linux-pm@vger.kernel.org,
+	sboyd@codeaurora.org,
+	linux@armlinux.org.uk,
+	thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org,
+	david.brown@linaro.org,
+	devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v12 07/14] clk: qcom: Add support for Krait clocks
+Date: Tue, 14 Aug 2018 17:42:26 +0530
+Message-Id: <1534248753-2440-8-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-The PWM in the JZ4725B works the same as in the JZ4740, except that it
-only has 6 channels available instead of 8.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+The Krait clocks are made up of a series of muxes and a divider
+that choose between a fixed rate clock and dedicated HFPLLs for
+each CPU. Instead of using mmio accesses to remux parents, the
+Krait implementation exposes the remux control via cp15
+registers. Support these clocks.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/pwm/pwm-jz4740.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/Kconfig     |   4 ++
+ drivers/clk/qcom/Makefile    |   1 +
+ drivers/clk/qcom/clk-krait.c | 124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-krait.h |  37 +++++++++++++
+ 4 files changed, 166 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-krait.c
+ create mode 100644 drivers/clk/qcom/clk-krait.h
 
- v5: New patch
-
- v6: - Move of_device_id structure back at the bottom (less noise in
-       patch)
-     - Use device_get_match_data() instead of of_* variant
-
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index 5814825d9bed..66a72bd7424f 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -25,6 +25,10 @@
- 
- #define NUM_PWM 8
- 
-+struct jz4740_soc_info {
-+	unsigned int num_pwms;
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 21aec10..ada4160 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -280,3 +280,7 @@ config QCOM_HFPLL
+ 	  Support for the high-frequency PLLs present on Qualcomm devices.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as MSM8974, APQ8084, etc.
++
++config KRAIT_CLOCKS
++	bool
++	select KRAIT_L2_ACCESSORS
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index f82eeac..506c4cf 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -11,6 +11,7 @@ clk-qcom-y += clk-branch.o
+ clk-qcom-y += clk-regmap-divider.o
+ clk-qcom-y += clk-regmap-mux.o
+ clk-qcom-y += clk-regmap-mux-div.o
++clk-qcom-$(CONFIG_KRAIT_CLOCKS) += clk-krait.o
+ clk-qcom-y += clk-hfpll.o
+ clk-qcom-y += reset.o
+ clk-qcom-$(CONFIG_QCOM_GDSC) += gdsc.o
+diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
+new file mode 100644
+index 0000000..2e41767
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.c
+@@ -0,0 +1,124 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/clk-provider.h>
++#include <linux/spinlock.h>
++
++#include <asm/krait-l2-accessors.h>
++
++#include "clk-krait.h"
++
++/* Secondary and primary muxes share the same cp15 register */
++static DEFINE_SPINLOCK(krait_clock_reg_lock);
++
++#define LPL_SHIFT	8
++static void __krait_mux_set_sel(struct krait_mux_clk *mux, int sel)
++{
++	unsigned long flags;
++	u32 regval;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	regval = krait_get_l2_indirect_reg(mux->offset);
++	regval &= ~(mux->mask << mux->shift);
++	regval |= (sel & mux->mask) << mux->shift;
++	if (mux->lpl) {
++		regval &= ~(mux->mask << (mux->shift + LPL_SHIFT));
++		regval |= (sel & mux->mask) << (mux->shift + LPL_SHIFT);
++	}
++	krait_set_l2_indirect_reg(mux->offset, regval);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	/* Wait for switch to complete. */
++	mb();
++	udelay(1);
++}
++
++static int krait_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = clk_mux_reindex(index, mux->parent_map, 0);
++	mux->en_mask = sel;
++	/* Don't touch mux if CPU is off as it won't work */
++	if (__clk_is_enabled(hw->clk))
++		__krait_mux_set_sel(mux, sel);
++
++	return 0;
++}
++
++static u8 krait_mux_get_parent(struct clk_hw *hw)
++{
++	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
++	u32 sel;
++
++	sel = krait_get_l2_indirect_reg(mux->offset);
++	sel >>= mux->shift;
++	sel &= mux->mask;
++	mux->en_mask = sel;
++
++	return clk_mux_get_parent(hw, sel, mux->parent_map, 0);
++}
++
++const struct clk_ops krait_mux_clk_ops = {
++	.set_parent = krait_mux_set_parent,
++	.get_parent = krait_mux_get_parent,
++	.determine_rate = __clk_mux_determine_rate_closest,
++};
++EXPORT_SYMBOL_GPL(krait_mux_clk_ops);
++
++/* The divider can divide by 2, 4, 6 and 8. But we only really need div-2. */
++static long krait_div2_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	*parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), rate * 2);
++	return DIV_ROUND_UP(*parent_rate, 2);
++}
++
++static int krait_div2_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	unsigned long flags;
++	u32 val;
++	u32 mask = BIT(d->width) - 1;
++
++	if (d->lpl)
++		mask = mask << (d->shift + LPL_SHIFT) | mask << d->shift;
++
++	spin_lock_irqsave(&krait_clock_reg_lock, flags);
++	val = krait_get_l2_indirect_reg(d->offset);
++	val &= ~mask;
++	krait_set_l2_indirect_reg(d->offset, val);
++	spin_unlock_irqrestore(&krait_clock_reg_lock, flags);
++
++	return 0;
++}
++
++static unsigned long
++krait_div2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
++{
++	struct krait_div2_clk *d = to_krait_div2_clk(hw);
++	u32 mask = BIT(d->width) - 1;
++	u32 div;
++
++	div = krait_get_l2_indirect_reg(d->offset);
++	div >>= d->shift;
++	div &= mask;
++	div = (div + 1) * 2;
++
++	return DIV_ROUND_UP(parent_rate, div);
++}
++
++const struct clk_ops krait_div2_clk_ops = {
++	.round_rate = krait_div2_round_rate,
++	.set_rate = krait_div2_set_rate,
++	.recalc_rate = krait_div2_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(krait_div2_clk_ops);
+diff --git a/drivers/clk/qcom/clk-krait.h b/drivers/clk/qcom/clk-krait.h
+new file mode 100644
+index 0000000..441ba1e
+--- /dev/null
++++ b/drivers/clk/qcom/clk-krait.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __QCOM_CLK_KRAIT_H
++#define __QCOM_CLK_KRAIT_H
++
++#include <linux/clk-provider.h>
++
++struct krait_mux_clk {
++	unsigned int	*parent_map;
++	u32		offset;
++	u32		mask;
++	u32		shift;
++	u32		en_mask;
++	bool		lpl;
++
++	struct clk_hw	hw;
++	struct notifier_block   clk_nb;
 +};
 +
- struct jz4740_pwm_chip {
- 	struct pwm_chip chip;
- 	struct clk *clks[NUM_PWM];
-@@ -200,9 +204,14 @@ static const struct pwm_ops jz4740_pwm_ops = {
- 
- static int jz4740_pwm_probe(struct platform_device *pdev)
- {
-+	const struct jz4740_soc_info *soc_info;
- 	struct jz4740_pwm_chip *jz4740;
- 	struct device *dev = &pdev->dev;
- 
-+	soc_info = device_get_match_data(dev);
-+	if (!soc_info)
-+		return -EINVAL;
++#define to_krait_mux_clk(_hw) container_of(_hw, struct krait_mux_clk, hw)
 +
- 	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
- 	if (!jz4740)
- 		return -ENOMEM;
-@@ -215,7 +224,7 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
- 
- 	jz4740->chip.dev = dev;
- 	jz4740->chip.ops = &jz4740_pwm_ops;
--	jz4740->chip.npwm = NUM_PWM;
-+	jz4740->chip.npwm = soc_info->num_pwms;
- 	jz4740->chip.base = -1;
- 	jz4740->chip.of_xlate = of_pwm_xlate_with_flags;
- 	jz4740->chip.of_pwm_n_cells = 3;
-@@ -233,8 +242,17 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_OF
-+static const struct jz4740_soc_info jz4740_soc_info = {
-+	.num_pwms = 8,
++extern const struct clk_ops krait_mux_clk_ops;
++
++struct krait_div2_clk {
++	u32		offset;
++	u8		width;
++	u32		shift;
++	bool		lpl;
++
++	struct clk_hw	hw;
 +};
 +
-+static const struct jz4740_soc_info jz4725b_soc_info = {
-+	.num_pwms = 6,
-+};
++#define to_krait_div2_clk(_hw) container_of(_hw, struct krait_div2_clk, hw)
 +
- static const struct of_device_id jz4740_pwm_dt_ids[] = {
--	{ .compatible = "ingenic,jz4740-pwm", },
-+	{ .compatible = "ingenic,jz4740-pwm", .data = &jz4740_soc_info },
-+	{ .compatible = "ingenic,jz4725b-pwm", .data = &jz4725b_soc_info },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
++extern const struct clk_ops krait_div2_clk_ops;
++
++#endif
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
