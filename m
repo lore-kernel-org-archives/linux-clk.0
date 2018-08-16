@@ -1,69 +1,46 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([185.11.138.130]:41270 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbeHBNHJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Aug 2018 09:07:09 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Tony Xie <tony.xie@rock-chips.com>
-Cc: broonie@kernel.org, lee.jones@linaro.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v2 3/5] dt-bindings: mfd: rk808: Add binding informations for RK809 and RK817.
-Date: Thu, 02 Aug 2018 13:16:18 +0200
-Message-ID: <2820701.ErqR8ge6r7@phil>
-In-Reply-To: <1533023850-29004-4-git-send-email-tony.xie@rock-chips.com>
-References: <1533023850-29004-1-git-send-email-tony.xie@rock-chips.com> <1533023850-29004-4-git-send-email-tony.xie@rock-chips.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40668 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390270AbeHPMD3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Aug 2018 08:03:29 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y9-v6so3640948wma.5
+        for <linux-clk@vger.kernel.org>; Thu, 16 Aug 2018 02:06:22 -0700 (PDT)
+Date: Thu, 16 Aug 2018 10:06:19 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, eballetbo@gmail.com,
+        linus.walleij@linaro.org, mazziesaccount@gmail.com,
+        dmitry.torokhov@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, broonie@kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v12 2/2] mfd: bd71837: Devicetree bindings for ROHM
+ BD71837 PMIC
+Message-ID: <20180816090619.GD10054@dell>
+References: <cover.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
+ <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <d053f54e5ce726ffaa95fbd9c20962a49dd1ee07.1533292711.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Tony,
+On Fri, 03 Aug 2018, Matti Vaittinen wrote:
 
-Am Dienstag, 31. Juli 2018, 09:57:28 CEST schrieb Tony Xie:
-> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+> Document devicetree bindings for ROHM BD71837 PMIC MFD.
 > 
-> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-I don't see the devicetree binding maintainers listed in the recipient
-list, so adding them in the next iteration might increase your chances
-to get an Ack on the binding.
+Applied, thanks.
 
-scripts/get_maintainer.pl -f Documentation/devicetree/bindings lists
-
-Rob Herring <robh+dt@kernel.org>
-Mark Rutland <mark.rutland@arm.com>
-
-as the main dt maintainers.
-
-[...]
-
-> @@ -99,6 +147,13 @@ number as described in RK818 datasheet.
->  	- HDMI_SWITCH
->  	- OTG_SWITCH
->  
-> +There are three pins needed to config, named "gpio_ts" "gpio_gt" "gpio_slp".
-> +	The gpio_gt and gpio_ts pins support the gpio function.
-> +	The gpio_slp pin is for controlling the pmic states, as below:
-> +		- reset
-> +		- power down
-> +		- sleep
-> +
-
-Is this common for all rk8xx pmics or just the two new ones?
-As the paragraph above makes it sound like these are present on all
-and I didn't find mention of them in the datasheets for previous pmics
-I have.
-
-Also to me it is not clear in what way these should be used and I didn't
-find any mention of them at all in the rest of your series.
-
-
-Heiko
-
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
