@@ -1,64 +1,50 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 1/5] dt-bindings: arm64: add compatible for LX2160A
-Date: Mon, 20 Aug 2018 12:17:12 +0530
-Message-Id: <1534747636-20064-2-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 17 Aug 2018 09:09:27 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
+	linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
+	viresh.kumar@linaro.org, mturquette@baylibre.com,
+	linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+	linux@armlinux.org.uk, thierry.escande@linaro.org,
+	linux-kernel@vger.kernel.org, david.brown@linaro.org,
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	andy.gross@linaro.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	niklas.cassel@linaro.org, sricharan@codeaurora.org
+Subject: Re: [PATCH v12 14/14] cpufreq: qcom: Add support for krait based socs
+Message-ID: <20180817150927.GA20248@rob-hp-laptop>
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+ <1534248753-2440-15-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1534248753-2440-15-git-send-email-sricharan@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add compatible for LX2160A SoC,QDS and RDB board
+Hi, this email is from Rob's (experimental) review bot. I found a couple
+of common problems with your patch. Please see below.
 
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
----
- Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Tue, 14 Aug 2018 17:42:33 +0530, Sricharan R wrote:
+> In Certain QCOM SoCs like ipq8064, apq8064, msm8960, msm8974
+> that has KRAIT processors the voltage/current value of each OPP
+> varies based on the silicon variant in use.
+> 
+> The required OPP related data is determined based on
+> the efuse value. This is similar to the existing code for
+> kryo cores. So adding support for krait cores here.
+> 
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index cdb9dd7..76256bd 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -218,3 +218,15 @@ Required root node properties:
- LS2088A ARMv8 based RDB Board
- Required root node properties:
-     - compatible = "fsl,ls2088a-rdb", "fsl,ls2088a";
-+
-+LX2160A SoC
-+Required root node properties:
-+    - compatible = "fsl,lx2160a";
-+
-+LX2160A ARMv8 based QDS Board
-+Required root node properties:
-+    - compatible = "fsl,lx2160a-qds", "fsl,lx2160a";
-+
-+LX2160A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
--- 
-2.7.4
+The preferred subject prefix is "dt-bindings: <binding dir>: ...".
+
+> ---
+>  .../devicetree/bindings/opp/qcom-nvmem-cpufreq.txt |   3 +-
+>  drivers/cpufreq/Kconfig.arm                        |   2 +-
+>  drivers/cpufreq/cpufreq-dt-platdev.c               |   5 +
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c               | 151 +++++++++++++++++++--
+>  4 files changed, 149 insertions(+), 12 deletions(-)
+> 
+
+DT bindings (including binding headers) should be a separate patch. See
+Documentation/devicetree/bindings/submitting-patches.txt.
