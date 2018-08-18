@@ -1,37 +1,57 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <stefan@agner.ch>
 MIME-Version: 1.0
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- Jiancheng Xue <xuejiancheng@hisilicon.com>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180726004719.GA9896@embeddedor.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-References: <20180726004719.GA9896@embeddedor.com>
-Message-ID: <153573701576.93865.614018614668737096@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] reset: hisilicon: fix potential NULL pointer dereference
-Date: Fri, 31 Aug 2018 10:36:55 -0700
+Content-Type: text/plain; charset=US-ASCII
+Date: Sat, 18 Aug 2018 14:45:47 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
+ <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler
+ <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver
+ <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
+In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
+References: <20180814091805.1363-1-marcel@ziswiler.com>
+Message-ID: <bd9a8bb8c140fab18f88d383a0b7d5f1@agner.ch>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gustavo A. R. Silva (2018-07-25 17:47:19)
-> There is a potential execution path in which function
-> platform_get_resource() returns NULL. If this happens,
-> we will end up having a NULL pointer dereference.
-> =
+On 14.08.2018 11:18, Marcel Ziswiler wrote:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> Actually report the error code from devm_regulator_get() which may as
+> well just be a probe deferral.
+> 
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-> Fix this by replacing devm_ioremap with devm_ioremap_resource,
-> which has the NULL check and the memory region request.
-> =
+Reviewed-by: Stefan Agner <stefan@agner.ch>
 
-> This code was detected with the help of Coccinelle.
-> =
-
-> Cc: stable@vger.kernel.org
-> Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_res=
-et_init")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
 > ---
-
-Nobody has reviewed, so I guess applied to clk-next unless someone
-complains.
+> 
+> Changes in v2:
+> - Silence probe deferral as discussed between Peter, Stefan and Stephen.
+> - Fix line over 80 characters as reported by checkpatch.
+> 
+>  drivers/clk/tegra/clk-dfll.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+> index 48ee43734e05..ebb0e1b6bf01 100644
+> --- a/drivers/clk/tegra/clk-dfll.c
+> +++ b/drivers/clk/tegra/clk-dfll.c
+> @@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
+>  
+>  	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
+>  	if (IS_ERR(td->vdd_reg)) {
+> -		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
+> -		return PTR_ERR(td->vdd_reg);
+> +		ret = PTR_ERR(td->vdd_reg);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
+> +				ret);
+> +
+> +		return ret;
+>  	}
+>  
+>  	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
