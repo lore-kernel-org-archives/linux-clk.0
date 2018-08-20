@@ -1,87 +1,90 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	thor.thayer@linux.intel.com,
-	linux-imx@nxp.com,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH V4 1/4] clk: bulk: add of_clk_bulk_get()
-Date: Wed, 29 Aug 2018 20:51:37 +0800
-Message-Id: <1535547100-25634-2-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1535547100-25634-1-git-send-email-aisheng.dong@nxp.com>
-References: <1535547100-25634-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:42173 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726683AbeHTQ7k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:59:40 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
+Date: Mon, 20 Aug 2018 21:40:13 +0800
+Message-Id: <20180820134013.16527-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-'clock-names' property is optional in DT, so of_clk_bulk_get() is
-introduced here to handle this for DT users without 'clock-names'
-specified. Later clk_bulk_get_all() will be implemented on top of
-it and this API will be kept private until someone proves they need
-it because they don't have a struct device pointer.
+On the H6, the MMC module clocks are fixed in the new timing mode,
+i.e. they do not have a bit to select the mode. These clocks have
+a 2x divider somewhere between the clock and the MMC module.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Reported-by: Shawn Guo <shawnguo@kernel.org>
-Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-v3->v4:
- * no changes
-v2->v3:
- * remove #if define condition
- * remove EXPORT_SYMBOL
----
- drivers/clk/clk-bulk.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+To be consistent with other SoCs supporting the new timing mode,
+we model the 2x divider as a fixed post-divider on the MMC module
+clocks.
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 6904ed6..4460ac5 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -19,6 +19,35 @@
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/export.h>
-+#include <linux/of.h>
-+
-+static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-+					struct clk_bulk_data *clks)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_clks; i++)
-+		clks[i].clk = NULL;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].clk = of_clk_get(np, i);
-+		if (IS_ERR(clks[i].clk)) {
-+			ret = PTR_ERR(clks[i].clk);
-+			pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
-+			       np, i, ret);
-+			clks[i].clk = NULL;
-+			goto err;
-+		}
-+	}
-+
-+	return 0;
-+
-+err:
-+	clk_bulk_put(i, clks);
-+
-+	return ret;
-+}
+This patch adds the post-dividers to the MMC clocks, following the
+approach on A64.
+
+Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index bdbfe78fe133..3d60f7978506 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
  
- void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
- {
+ static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
+ 					    "pll-periph1-2x" };
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
+ 
+ static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
+ static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
 -- 
-2.7.4
+2.18.0
