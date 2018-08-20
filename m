@@ -1,48 +1,320 @@
-Return-Path: <yibin.gong@nxp.com>
-From: Robin Gong <yibin.gong@nxp.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Lucas Stach
-	<l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Mark Brown
-	<broonie@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-CC: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob
- Herring <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "A.s. Dong"
-	<aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>, Russell King
-	<linux@armlinux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, Leonard
- Crestez <leonard.crestez@nxp.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v8 1/6] ARM: imx6q: provide documentation for new
- fsl,pmic-stby-poweroff property
-Date: Mon, 6 Aug 2018 02:34:43 +0000
-Message-ID: 
- <DB6PR04MB3223362445234D81383F0D1689200@DB6PR04MB3223.eurprd04.prod.outlook.com>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-2-o.rempel@pengutronix.de>
- <DB6PR04MB3223605CB1F5E06D4A278B3C892B0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <84c1921c-922e-4b5d-b688-db89047fa1db@pengutronix.de>
- <DB6PR04MB32236EA307DCD070771B1D4D892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <1532680211.32306.36.camel@pengutronix.de>
- <DB6PR04MB32239840E3DF12328A3E7E47892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-In-Reply-To: <02f4b642-14a8-f2db-ea23-c42a4f6f1652@pengutronix.de>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND v5 3/5] clk: imx: add SCCG PLL type
+Date: Mon, 20 Aug 2018 10:16:05 +0300
+Message-Id: <1534749367-31085-4-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
+References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-DQoNCj4gPj4gTm90IGFsbCBib2FyZHMgZm9sbG93IHRoZSByZWZlcmVuY2UgZGVzaWduLCB0aGF0
-J3MgYSBmYWN0IG9mIGxpZmUuDQo+ID4+DQo+ID4+IFBsZWFzZSBsb29rIGF0IHRoZSBpLk1YNlEg
-cmVmZXJlbmNlIG1hbnVhbC4gVGhlIHNlcXVlbmNlIGltcGxlbWVudGVkDQo+ID4+IGluIHRoaXMg
-cGF0Y2hzZXQgY2FuIGJlIGZvdW5kIGFzIGEgdmFsaWQgd2F5IHRvIHBvd2VyIG9mZiB0aGUgc3lz
-dGVtDQo+ID4+IGluDQo+ID4+ICI2MC40LjMgUG93ZXIgbW9kZSB0cmFuc2l0aW9ucyIgIk5vcm1h
-bCBPTiB0byBPRkYgd2l0aCBleHRlcm5hbA0KPiA+PiBQTUlDIiwgc28gdGhlcmUgaXMgaGFyZGx5
-IGFueSB3YXkgdG8gYXJndWUgdGhhdCB0aGlzIGlzIGEgYm9hcmQNCj4gPj4gc3BlY2lmaWMgcXVp
-cmsuIFRoaXMgaXMgb25lIG9mIHRoZSBGcmVlc2NhbGUvTlhQIHJlY29tbWVuZGVkIHNlcXVlbmNl
-cyB0bw0KPiB0dXJuIG9mZiB0aGUgc3lzdGVtLg0KPiANCj4gPiBPa2F5LCBidXQgY291bGQgeW91
-IGFkZCBvbmUgbW9yZSBjb21tZW50IGZvciB0aGlzIHNvbHV0aW9uPyBSVEMgYWxhcm0NCj4gPiBh
-bmQgT05PRkYgQnV0dG9uIHdha2V1cCBmZWF0dXJlIGNhbid0IGJlIHN1cHBvcnQgaW4gdGhpcyBj
-YXNlLg0KPiANCj4gRW5vdWdoIHRvIGFkZCBpdCBpbiB0byBjaGFuZ2Vsb2c/IG9yIHNob3VsZCBp
-dCBnbyB0byB0aGUgYmluZGluZyBkb2N1bWVudGF0aW9uPw0KVGhlIGJpbmRpbmcgZG9jIGlzIGJl
-dHRlci4NCg0K
+From: Lucas Stach <l.stach@pengutronix.de>
+
+The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+The driver currently misses the PLL lock check, as the preliminary
+documentation mentions lock configurations, but is quiet about where
+to find the actual lock status signal.
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/Makefile       |   3 +-
+ drivers/clk/imx/clk-sccg-pll.c | 231 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   9 ++
+ 3 files changed, 242 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 4893c1f..b87513c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-sccg-pll.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
+new file mode 100644
+index 0000000..886ae03
+--- /dev/null
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2018 NXP.
++ */
++
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++
++#include "clk.h"
++
++/* PLL CFGs */
++#define PLL_CFG0	0x0
++#define PLL_CFG1	0x4
++#define PLL_CFG2	0x8
++
++#define PLL_DIVF1_SHIFT	13
++#define PLL_DIVF2_SHIFT	7
++#define PLL_DIVF_MASK	0x3f
++
++#define PLL_DIVR1_SHIFT	25
++#define PLL_DIVR2_SHIFT	19
++#define PLL_DIVR1_MASK	0x3
++#define PLL_DIVR2_MASK	0x3f
++#define PLL_REF_SHIFT	0
++#define PLL_REF_MASK	0x3
++
++#define PLL_LOCK	31
++#define PLL_PD		7
++
++#define OSC_25M		25000000
++#define OSC_27M		27000000
++
++struct clk_sccg_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
++
++#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
++
++static int clk_pll1_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	return (val & (1 << PLL_PD)) ? 0 : 1;
++}
++
++static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, divf;
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
++
++	return parent_rate * 2 * (divf + 1);
++}
++
++static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	u32 div;
++
++	div = rate / (parent_rate * 2);
++
++	return parent_rate * div * 2;
++}
++
++static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++	u32 divf;
++
++	divf = rate / (parent_rate * 2);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
++	val |= (divf - 1) << PLL_DIVF1_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static int clk_pll1_prepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base);
++	val &= ~(1 << PLL_PD);
++	writel_relaxed(val, pll->base);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static void clk_pll1_unprepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base);
++	val |= (1 << PLL_PD);
++	writel_relaxed(val, pll->base);
++}
++
++static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, ref, divr1, divf1, divr2, divf2;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
++	case 0:
++		ref = OSC_25M;
++		break;
++	case 1:
++		ref = OSC_27M;
++		break;
++	default:
++		ref = OSC_25M;
++		break;
++	}
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
++	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
++	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
++	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
++
++	temp64 = ref * 2;
++	temp64 *= (divf1 + 1) * (divf2 + 1);
++
++	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++
++	return (unsigned long)temp64;
++}
++
++static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 div;
++	unsigned long parent_rate = *prate;
++
++	div = rate / (parent_rate);
++
++	return parent_rate * div;
++}
++
++static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 val;
++	u32 divf;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++
++	divf = rate / (parent_rate);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
++	val |= (divf - 1) << PLL_DIVF2_SHIFT;
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	/* FIXME: PLL lock check */
++
++	return 0;
++}
++
++static const struct clk_ops clk_sccg_pll1_ops = {
++	.is_prepared	= clk_pll1_is_prepared,
++	.recalc_rate	= clk_pll1_recalc_rate,
++	.round_rate	= clk_pll1_round_rate,
++	.set_rate	= clk_pll1_set_rate,
++};
++
++static const struct clk_ops clk_sccg_pll2_ops = {
++	.prepare	= clk_pll1_prepare,
++	.unprepare	= clk_pll1_unprepare,
++	.recalc_rate	= clk_pll2_recalc_rate,
++	.round_rate	= clk_pll2_round_rate,
++	.set_rate	= clk_pll2_set_rate,
++};
++
++struct clk *imx_clk_sccg_pll(const char *name,
++				const char *parent_name,
++				void __iomem *base,
++				enum imx_sccg_pll_type pll_type)
++{
++	struct clk_sccg_pll *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++	init.name = name;
++	switch (pll_type) {
++	case SCCG_PLL1:
++		init.ops = &clk_sccg_pll1_ops;
++		break;
++	case SCCG_PLL2:
++		init.ops = &clk_sccg_pll2_ops;
++		break;
++	}
++
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 13daf1c..12b3fd6 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -21,6 +21,11 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
+ };
+ 
++enum imx_sccg_pll_type {
++	SCCG_PLL1,
++	SCCG_PLL2,
++};
++
+ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ 		const char *parent, void __iomem *base);
+ 
+@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+ 
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base,
++			     enum imx_sccg_pll_type pll_type);
++
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
+-- 
+2.7.4
