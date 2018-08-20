@@ -1,83 +1,77 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/3] clk: tegra: Add more rates to Tegra30 PLLX frequency table
-Date: Thu, 30 Aug 2018 22:20:44 +0300
-Message-Id: <20180830192045.11017-3-digetx@gmail.com>
-In-Reply-To: <20180830192045.11017-1-digetx@gmail.com>
-References: <20180830192045.11017-1-digetx@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:41353 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726646AbeHTQwk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Aug 2018 12:52:40 -0400
+Date: Mon, 20 Aug 2018 15:36:47 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/5] Set max rate for video PLLs
+Message-ID: <20180820133647.vpj7p36ir334g4am@flea>
+References: <20180809165217.30680-1-jernej.skrabec@siol.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zyn3xcoio4kmfyvv"
+In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add more predefined rates to the PLLX table, allowing to lower the rate
-down to 312MHz. This gives more variations of frequency selection to the
-CPUFREQ driver.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra30.c | 42 +++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+--zyn3xcoio4kmfyvv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c4b78316ba8a..0f8797ca39e2 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -342,6 +342,48 @@ static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
- 	{ 16800000, 1000000000,  833, 14, 1, 8 }, /* actual: 999.6 MHz */
- 	{ 19200000, 1000000000,  625, 12, 1, 8 },
- 	{ 26000000, 1000000000, 1000, 26, 1, 8 },
-+	/* 912 MHz */
-+	{ 12000000,  912000000,  912, 12, 1, 8 },
-+	{ 13000000,  912000000,  912, 13, 1, 8 },
-+	{ 16800000,  912000000,  760, 14, 1, 8 },
-+	{ 19200000,  912000000,  760, 16, 1, 8 },
-+	{ 26000000,  912000000,  912, 26, 1, 8 },
-+	/* 816 MHz */
-+	{ 12000000,  816000000,  816, 12, 1, 8 },
-+	{ 13000000,  816000000,  816, 13, 1, 8 },
-+	{ 16800000,  816000000,  680, 14, 1, 8 },
-+	{ 19200000,  816000000,  680, 16, 1, 8 },
-+	{ 26000000,  816000000,  816, 26, 1, 8 },
-+	/* 760 MHz */
-+	{ 12000000,  760000000,  760, 12, 1, 8 },
-+	{ 13000000,  760000000,  760, 13, 1, 8 },
-+	{ 16800000,  760000000,  950, 21, 1, 8 },
-+	{ 19200000,  760000000,  950, 24, 1, 8 },
-+	{ 26000000,  760000000,  760, 26, 1, 8 },
-+	/* 750 MHz */
-+	{ 12000000,  750000000,  750, 12, 1, 8 },
-+	{ 13000000,  750000000,  750, 13, 1, 8 },
-+	{ 16800000,  750000000,  625, 14, 1, 8 },
-+	{ 19200000,  750000000,  625, 16, 1, 8 },
-+	{ 26000000,  750000000,  750, 26, 1, 8 },
-+	/* 608 MHz */
-+	{ 12000000,  608000000,  608, 12, 1, 8 },
-+	{ 13000000,  608000000,  608, 13, 1, 8 },
-+	{ 16800000,  608000000,  760, 21, 1, 8 },
-+	{ 19200000,  608000000,  380, 12, 1, 8 },
-+	{ 26000000,  608000000,  608, 26, 1, 8 },
-+	/* 456 MHz */
-+	{ 12000000,  456000000,  456, 12, 1, 8 },
-+	{ 13000000,  456000000,  456, 13, 1, 8 },
-+	{ 16800000,  456000000,  380, 15, 1, 8 },
-+	{ 19200000,  456000000,  380, 14, 1, 8 },
-+	{ 26000000,  456000000,  456, 26, 1, 8 },
-+	/* 312 MHz */
-+	{ 12000000,  312000000,  312, 12, 1, 8 },
-+	{ 13000000,  312000000,  312, 13, 1, 8 },
-+	{ 16800000,  312000000,  260, 14, 1, 8 },
-+	{ 19200000,  312000000,  260, 16, 1, 8 },
-+	{ 26000000,  312000000,  312, 26, 1, 8 },
- 	{        0,          0,    0,  0, 0, 0 },
- };
- 
--- 
-2.18.0
+On Thu, Aug 09, 2018 at 06:52:12PM +0200, Jernej Skrabec wrote:
+> This patch series implement maximum rate constraint for video PLLs,
+> because it is possible to set higher PLL rate that is actually
+> supported in HW.
+>=20
+> Issue became apparent when user reported non-working monitor connected
+> to board with H5 SoC. Native monitor resolution in this case was
+> 2560x1080, with 185580 kHz pixel clock. Clock subsystem found out that
+> best matching pixel clock can be generated if video PLL is set to 2040
+> MHz, which is way out of specs for PLL. With this patch series applied,
+> everything worked just fine, with slightly higher rate error, but within
+> working limits for PLL and HDMI.
+>=20
+> I'm not sure if "Fixes" tag should be added. It solves real world
+> problem, but there was nothing wrongly implemented, just upper limit
+> is missing.
+>=20
+> While user reported that these patches solve the issue on H5, I added
+> similar fixes for other SoCs too. Since I don't have such monitor,
+> I only tested if board boots up and if HDMI works (H3, R40 and A83T).
+
+Queued for 4.20, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zyn3xcoio4kmfyvv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt6w+4ACgkQ0rTAlCFN
+r3T9Qg/7B308BYfOx10shjSayQgyDKLjhhnbpIJAaqCNvFpJws2N45+3A6zndjH9
+03XaTrno1MyG39ZvZpI4ugacHPLaqvfC2JkbyIPI8YDSvyGKFIxtsN98dnhtG+UO
+T5osMUT6DeX9W4dGZCyP15Ml0kBLEifIMx+6aQRwrOIk1+OfdHwHw7gvXqiPqsDy
+7vnNOYbPO7YuFt6g+uGDtXiPjIoOYCumltr9ZMspPwNY63RQDUoZxvmosHyIoTCB
+7AQZMqD8kw0dw/ahmftAjZIco0F1WzkEk0mxYb8E9x9Ppf8GQqaS7XfpL3EYF1TZ
+2p8OhObhL61IR8CnX6tJ+QZnfnk4uaKfC9MxHYEGFXzC7MU7hSXcHZyILCLymEBX
+gwqz7whcm6dXyYh7pI32WM/adAkal0GUpsdpvPbPzK8cVqFuk9uUqQedZMMHZ4Lv
+GKaeQ3420Yb284CGBIf+cZueU6SmuRQ6fAZnjTPeLoieZv8NJq5Iz3wnSQdWt4pO
+6vQwgFpZpYto4Z158bk1wip6vK2EWDwxDEnja1bQStmx7c4SEjvtmi4XirUorn1N
+bJGiMuc/MXBIbDXmzswQz1wkBxHPSTvWz8vFuyjVOZGm2GxHMuXUocTePMytpfu3
+zcJSwu82chOTFR2lSv92Xpb/wOonToKnOKPFopqzrS95/UdtK/U=
+=/uUV
+-----END PGP SIGNATURE-----
+
+--zyn3xcoio4kmfyvv--
