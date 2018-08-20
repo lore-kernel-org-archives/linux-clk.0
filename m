@@ -1,47 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:33452 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbeHCE6i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:38 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 15/18] serial: intel: Support more platform
-Date: Fri,  3 Aug 2018 11:02:34 +0800
-Message-Id: <20180803030237.3366-16-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <thor.thayer@linux.intel.com>
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCH V3 0/4] clk: new APIs to handle all available clocks
+To: "A.s. Dong" <aisheng.dong@nxp.com>, "sboyd@kernel.org"
+ <sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>, dl-linux-imx
+ <linux-imx@nxp.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <ed7573b6-b8bf-9625-7c8f-7ee47a7be106@linux.intel.com>
+Date: Mon, 20 Aug 2018 11:32:15 -0500
+MIME-Version: 1.0
+In-Reply-To: <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Support more platform.
+Hi,
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+On 08/16/2018 09:33 PM, A.s. Dong wrote:
+> Hi Stephen,
+> 
+> Do you want me to resend this series for review?
+> It seems have been pending for quite a long time.
+> 
+> Thor just pinged me for its status as he wants to use it.
+> 
+> Regards
+> Dong Aisheng
+> 
+>> -----Original Message-----
+>> From: A.s. Dong
+>> Sent: Wednesday, June 20, 2018 10:54 AM
+>> To: linux-clk@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
+>> linux-imx <linux-imx@nxp.com>
+>> Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
+>>
+>> Ping....
+>>
+>>> -----Original Message-----
+>>> From: A.s. Dong
+>>> Sent: Friday, May 25, 2018 6:37 PM
+>>> To: linux-clk@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org;
+>>> linux-arm-kernel@lists.infradead.org;
+>>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
+>>> linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+>>> Subject: [PATCH V3 0/4] clk: new APIs to handle all available clocks
+>>>
+>>> This patch series is a continue of discussion from here,
+>>> https://patchwork.kernel.org/patch/9986293/
+>>> that some users may want to handle all available clocks from device
+>>> tree without need to know the detailed clock information likes clock
+>>> numbers and names. This is useful in writing some generic drivers to handle
+>> clock part.
+>>>
+>>> Note:
+>>> This patch series is tested on MX6Q SDB cpufreq driver with a minor
+>>> change to switch to use clk_bulk_get_all.
+>>> But patch 4 only test compiling. Hopefully someone could help test the
+>>> function.
+>>>
+>>> v2->v3:
+>>>   * address all comments from Stephen
+>>>   * fix build warnings on other architectures.
+>>> v1->v2:
+>>>   * add clk_bulk_{get|put}_all() which only supports DT platform
+>>> currently
+>>>   * remove _all variants and the wrapper struct clk_bulk
+>>>   * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+>>>     proves they need it because they don't have a struct device pointer.
+>>>
+>>> Dong Aisheng (4):
+>>>    clk: bulk: add of_clk_bulk_get()
+>>>    clk: add new APIs to operate on all available clocks
+>>>    clk: add managed version of clk_bulk_get_all
+>>>    video: simplefb: switch to use clk_bulk API to simplify clock
+>>>      operations
+>>>
+>>>   drivers/clk/clk-bulk.c         | 80
+>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/clk-devres.c       | 24 +++++++++++++
+>>>   drivers/video/fbdev/simplefb.c | 66 +++++++---------------------------
+>>>   include/linux/clk.h            | 65 +++++++++++++++++++++++++++++++++-
+>>>   4 files changed, 180 insertions(+), 55 deletions(-)
+>>>
+>>> --
+>>> 2.7.4
+> 
+> 
 
-Changes in v2: None
+Nice patchset!
 
- drivers/tty/serial/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW, I've tested patches 1-3 on Stratix10 SOCFPGA for a SMMU driver I'm 
+working on.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index df8bd0c7b97d..564c71fc24bb 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1062,7 +1062,7 @@ config SERIAL_OMAP_CONSOLE
- 
- config SERIAL_LANTIQ
- 	bool "Lantiq serial driver"
--	depends on LANTIQ
-+	depends on LANTIQ || INTEL_MIPS || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_CORE_CONSOLE
- 	select SERIAL_EARLYCON
--- 
-2.11.0
-
+Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
