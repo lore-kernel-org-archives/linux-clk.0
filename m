@@ -1,56 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 21/24] MIPS: qi_lb60: Reduce system timer and clocksource to 750 kHz
-Date: Thu,  9 Aug 2018 23:46:19 +0200
-Message-Id: <20180809214622.21256-1-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:42714 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbeHTReL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Aug 2018 13:34:11 -0400
+Date: Mon, 20 Aug 2018 16:18:10 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to
+ MMC module clocks
+Message-ID: <20180820141810.botskv2xkzpnd5t3@flea>
+References: <20180820134013.16527-1-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wuwvpbr7iymq763q"
+In-Reply-To: <20180820134013.16527-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The default clock (12 MHz) is too fast for the system timer, which fails
-to report time accurately.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/qi_lb60.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+--wuwvpbr7iymq763q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- v5: New patch
+On Mon, Aug 20, 2018 at 09:40:13PM +0800, Icenowy Zheng wrote:
+> On the H6, the MMC module clocks are fixed in the new timing mode,
+> i.e. they do not have a bit to select the mode. These clocks have
+> a 2x divider somewhere between the clock and the MMC module.
+>=20
+> To be consistent with other SoCs supporting the new timing mode,
+> we model the 2x divider as a fixed post-divider on the MMC module
+> clocks.
+>=20
+> This patch adds the post-dividers to the MMC clocks, following the
+> approach on A64.
+>=20
+> Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
- v6: Remove ingenic,clocksource-channel property
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-index 85529a142409..de9d45e2c24a 100644
---- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
-+++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-@@ -45,3 +45,9 @@
- 		bias-disable;
- 	};
- };
-+
-+&tcu {
-+	/* 750 kHz for the system timer and clocksource */
-+	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
-+	assigned-clock-rates = <750000>, <750000>;
-+};
--- 
-2.11.0
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--wuwvpbr7iymq763q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt6zaEACgkQ0rTAlCFN
+r3RWghAAkhrVUQJTzPlKG8SkHqsIx4DqoBtRE+KNb4Z+fhoP6hOX17nHwZ12SZT+
+DYtX2qp6UsqVtin6v0cDjOET73TB7e34rK/mgGI2XDGz2wsD0l6TrSxCE+klBNfW
+5QYVzzg9YVEfY2yXKmu++UEdOPFPiXgv5xuBWqp72PhZQhBH0VvppVKxaIjRv8PX
+/A5HMrXBaNi5nnYu82vWbuYtzw55fu5jNSppn0RYNmvr2pfGH0CtyH+uxIneMOQf
+jzZnAZHWbwLHvSARgCse9w7R6R+C5FZCSNC+TtMZ9mI2gw8/uvyxZ2pm6/jDuLaM
+WDpgpLblpQ7jqUR1iGfy4czR2PDPLHCnLdlJ28HFO4/tYVQiCjGABhPEaxorQOHt
+VdLMXaobpwOqNI8l148DyCZ2aud+O5AHhMgGDvM/eOMaQNZ/wv8DezikVvZfB8k9
+mJDSWN01vSQk+t+7xh7Jul/FP13bKhXoYVsPJkyugZIj0BSMYVxTh0puuvn3bnQC
+8RyFNuP5kyQWWvfXn2304c1j1BzuJQIa29KnIe6E04KaZXzTLmesv+XGbiaQkHuc
+H5OE6+XtmDOx17jopvWBlW7+VjcBC3XMXXSsCzkanHmQoU1jtx+qDbO0F9L+vl7y
+f9yW1R76UaDfXpD/fcbkZ9qgn+sGn7gWzXxCDjVTaPrGsIr9fno=
+=hD5r
+-----END PGP SIGNATURE-----
+
+--wuwvpbr7iymq763q--
