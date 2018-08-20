@@ -1,485 +1,272 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Mon, 20 Aug 2018 22:20:20 -0500
-Message-Id: <20180821032020.81254-1-chris.brandt@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42074 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbeHTV2h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Aug 2018 17:28:37 -0400
+Date: Mon, 20 Aug 2018 13:11:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, dongas86@gmail.com,
+        kernel@pengutronix.de, shawnguo@kernel.org, fabio.estevam@nxp.com,
+        linux-imx@nxp.com, Mark Rutland <mark.rutland@arm.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+Message-ID: <20180820181155.GA13901@bogus>
+References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
+ <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-Standby.
+On Tue, Aug 21, 2018 at 12:08:21AM +0800, Dong Aisheng wrote:
+> The System Controller Firmware (SCFW) is a low-level system function
+> which runs on a dedicated Cortex-M core to provide power, clock, and
+> resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> (QM, QP), and i.MX8QX (QXP, DX).
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> v4->v5:
+>  * scu node should be under firmware node
+>  * add pd/clk/pinctrl binding as well according to Rob's suggestion
+>  * switch to new generic MU binding
+>    Use 8 separate mu channels in one MU instance for SCU communication
+> v3->v4:
+>  * fully change to mailbox binding
+>  * add child node description
+> v2->v3:
+>  * update a bit to mailbox binding
+> v1->v2:
+>  * remove status
+>  * changed to mu1
+> ---
+>  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 179 +++++++++++++++++++++
+>  1 file changed, 179 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> new file mode 100644
+> index 0000000..2cd7e4a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> @@ -0,0 +1,179 @@
+> +NXP i.MX System Controller Firmware (SCFW) --------------------------------------------------------------------
 
-The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-for how the registers are laid out.
-The MSTP registers are only 8-bits wide, there is no status registers
-(MSTPST), and the register offsets are a little different. Since the RZ/A
-hardware manuals refer to these registers as the Standby Control Registers,
-we'll use that name to distinguish the RZ/A type for the R-Car type.
+Think you wanted a newline here              ^?
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r7s9210-cpg-mssr.c             | 189 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  66 +++++--
- drivers/clk/renesas/renesas-cpg-mssr.h             |   6 +
- include/dt-bindings/clock/r7s9210-cpg-mssr.h       |  21 +++
- 7 files changed, 280 insertions(+), 11 deletions(-)
- create mode 100644 drivers/clk/renesas/r7s9210-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r7s9210-cpg-mssr.h
+> +
+> +The System Controller Firmware (SCFW) is a low-level system function
+> +which runs on a dedicated Cortex-M core to provide power, clock, and
+> +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> +(QM, QP), and i.MX8QX (QXP, DX).
+> +
+> +The AP communicates with the SC using a multi-ported MU module found
+> +in the LSIO subsystem. The current definition of this MU module provides
+> +5 remote AP connections to the SC to support up to 5 execution environments
+> +(TZ, HV, standard Linux, etc.). The SC side of this MU module interfaces
+> +with the LSIO DSC IP bus. The SC firmware will communicate with this MU
+> +using the MSI bus.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index db542abadb75..66ca973edd77 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -13,6 +13,7 @@ They provide the following functionalities:
- 
- Required Properties:
-   - compatible: Must be one of:
-+      - "renesas,r7s9210-cpg-mssr" for the r7s9210 SoC (RZ/A2)
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-@@ -37,7 +38,7 @@ Required Properties:
-   - clock-names: List of external parent clock names. Valid names are:
-       - "extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7792,
- 		 r8a7793, r8a7794, r8a7795, r8a7796, r8a77965, r8a77970,
--		 r8a77980, r8a77990, r8a77995)
-+		 r8a77980, r8a77990, r8a77995, r7s9210)
-       - "extalr" (r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
-       - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
- 		     r8a7794)
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 9022bbe1297e..d8ccdaba5103 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -3,6 +3,7 @@ config CLK_RENESAS
- 	default y if ARCH_RENESAS
- 	select CLK_EMEV2 if ARCH_EMEV2
- 	select CLK_RZA1 if ARCH_R7S72100
-+	select CLK_R7S9210 if ARCH_R7S9210
- 	select CLK_R8A73A4 if ARCH_R8A73A4
- 	select CLK_R8A7740 if ARCH_R8A7740
- 	select CLK_R8A7743 if ARCH_R8A7743
-@@ -45,6 +46,10 @@ config CLK_RZA1
- 	bool "RZ/A1H clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
- 
-+config CLK_R7S9210
-+	bool "RZ/A2 clock support" if COMPILE_TEST
-+	select CLK_RENESAS_CPG_MSSR
-+
- config CLK_R8A73A4
- 	bool "R-Mobile APE6 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index e4aa3d6143d2..d95bfd758a14 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -2,6 +2,7 @@
- # SoC
- obj-$(CONFIG_CLK_EMEV2)			+= clk-emev2.o
- obj-$(CONFIG_CLK_RZA1)			+= clk-rz.o
-+obj-$(CONFIG_CLK_R7S9210)		+= r7s9210-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A73A4)		+= clk-r8a73a4.o
- obj-$(CONFIG_CLK_R8A7740)		+= clk-r8a7740.o
- obj-$(CONFIG_CLK_R8A7743)		+= r8a7743-cpg-mssr.o
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-new file mode 100644
-index 000000000000..8b4bdd0ec06a
---- /dev/null
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -0,0 +1,189 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * r7s9210 Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Based on r8a7795-cpg-mssr.c
-+ *
-+ * Copyright (C) 2018 Chris Brandt
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ *
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <dt-bindings/clock/r7s9210-cpg-mssr.h>
-+#include "renesas-cpg-mssr.h"
-+
-+#define CPG_FRQCR	0x00
-+#define CPG_CKIOSEL	0xF0
-+#define CPG_SCLKSEL	0xF4
-+
-+#define PORTL_PIDR	0xFCFFE074
-+static u8 cpg_mode;
-+
-+/* Internal Clock ratio table */
-+static const unsigned int ratio_tab[5][5] = {
-+			/* I,  G,  B, P1, P0 */
-+			{  2,  4,  8, 16, 32 },	/* FRQCR = 0x012 */
-+			{  4,  4,  8, 16, 32 },	/* FRQCR = 0x112 */
-+			{  8,  4,  8, 16, 32 },	/* FRQCR = 0x212 */
-+			{ 16,  8, 16, 16, 32 },	/* FRQCR = 0x322 */
-+			{ 16, 16, 32, 32, 32 },	/* FRQCR = 0x333 */
-+			};
-+
-+enum rz_clk_types {
-+	CLK_TYPE_RZA_MAIN = CLK_TYPE_CUSTOM,
-+	CLK_TYPE_RZA_PLL,
-+};
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R7S9210_CLK_P0,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_PLL,
-+	CLK_I,
-+	CLK_G,
-+	CLK_B,
-+	CLK_P1,
-+	CLK_P1C,
-+	CLK_P0,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+static struct cpg_core_clk r7s9210_core_clks[] = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",     CLK_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
-+	DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
-+
-+	/* Core Clock Outputs */
-+	DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
-+	DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
-+	DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
-+	DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
-+	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
-+	DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
-+};
-+
-+static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
-+	DEF_MOD("ostm0",	 306,	R7S9210_CLK_P1C),
-+	DEF_MOD("ostm1",	 305,	R7S9210_CLK_P1C),
-+	DEF_MOD("ostm2",	 304,	R7S9210_CLK_P1C),
-+
-+	DEF_MOD("scif0",	 407,	R7S9210_CLK_P1C),
-+	DEF_MOD("scif1",	 406,	R7S9210_CLK_P1C),
-+	DEF_MOD("scif2",	 405,	R7S9210_CLK_P1C),
-+	DEF_MOD("scif3",	 404,	R7S9210_CLK_P1C),
-+	DEF_MOD("scif4",	 403,	R7S9210_CLK_P1C),
-+
-+	DEF_MOD("i2c0",		 807,	R7S9210_CLK_P1),
-+	DEF_MOD("i2c1",		 806,	R7S9210_CLK_P1),
-+	DEF_MOD("i2c2",		 805,	R7S9210_CLK_P1),
-+	DEF_MOD("i2c3",		 804,	R7S9210_CLK_P1),
-+};
-+
-+struct clk * __init rza2_cpg_clk_register(struct device *dev,
-+	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-+	struct clk **clks, void __iomem *base,
-+	struct raw_notifier_head *notifiers)
-+{
-+	const struct clk *parent;
-+	unsigned int mult = 1;
-+	unsigned int div = 1;
-+	u16 frqcr;
-+	u8 index;
-+	int i;
-+
-+	parent = clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	switch (core->id) {
-+	case CLK_MAIN:
-+		break;
-+
-+	case CLK_PLL:
-+		if (cpg_mode)
-+			mult = 44;	/* Divider 1 is 1/2 */
-+		else
-+			mult = 88;	/* Divider 1 is 1 */
-+		break;
-+
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	/* Adjust the dividers based on the current FRQCR setting */
-+	if (core->id == CLK_MAIN) {
-+
-+		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
-+		if (clk_get_rate((struct clk *)parent) > 12000000)
-+			cpg_mode = 1;
-+
-+		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
-+		if (frqcr == 0x012)
-+			index = 0;
-+		else if (frqcr == 0x112)
-+			index = 1;
-+		else if (frqcr == 0x212)
-+			index = 2;
-+		else if (frqcr == 0x322)
-+			index = 3;
-+		else if (frqcr == 0x333)
-+			index = 4;
-+		else
-+			BUG_ON(1);	/* Illegal FRQCR value */
-+
-+		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
-+			switch (r7s9210_core_clks[i].id) {
-+			case R7S9210_CLK_I:
-+				r7s9210_core_clks[i].div = ratio_tab[index][0];
-+				break;
-+			case R7S9210_CLK_G:
-+				r7s9210_core_clks[i].div = ratio_tab[index][1];
-+				break;
-+			case R7S9210_CLK_B:
-+				r7s9210_core_clks[i].div = ratio_tab[index][2];
-+				break;
-+			case R7S9210_CLK_P1:
-+			case R7S9210_CLK_P1C:
-+				r7s9210_core_clks[i].div = ratio_tab[index][3];
-+				break;
-+			case R7S9210_CLK_P0:
-+				r7s9210_core_clks[i].div = ratio_tab[index][4];
-+				break;
-+			}
-+		}
-+	}
-+
-+	return clk_register_fixed_factor(NULL, core->name,
-+					 __clk_get_name(parent), 0, mult, div);
-+}
-+
-+const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r7s9210_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r7s9210_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r7s9210_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r7s9210_mod_clks),
-+	.num_hw_mod_clks = 9 * 32, /* includes STBCR0/1/2 which don't exist */
-+
-+	/* Callbacks */
-+	.cpg_clk_register = rza2_cpg_clk_register,
-+
-+	/* RZ/A2 has Standby Control Registers */
-+	.stbyctrl = true,
-+};
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index e04338932786..80882eadf95f 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -73,6 +73,17 @@ static const u16 smstpcr[] = {
- 
- #define	SMSTPCR(i)	smstpcr[i]
- 
-+/*
-+ * Standby Control Register offsets (RZ/A)
-+ * Base address is FRQCR register
-+ */
-+
-+static const u16 stbcr[] = {
-+	0x000, 0x000, 0x014, 0x410, 0x414, 0x418, 0x41C, 0x420,
-+	0x424, 0x428, 0x42C, 0x430, 0x434, 0x460,
-+};
-+
-+#define	STBCR(i)	stbcr[i]
- 
- /*
-  * Software Reset Register offsets
-@@ -110,6 +121,7 @@ static const u16 srcr[] = {
-  * @notifiers: Notifier chain to save/restore clock state for system resume
-  * @smstpcr_saved[].mask: Mask of SMSTPCR[] bits under our control
-  * @smstpcr_saved[].val: Saved values of SMSTPCR[]
-+ * @stbyctrl: This device has Standby Control Registers
-  */
- struct cpg_mssr_priv {
- #ifdef CONFIG_RESET_CONTROLLER
-@@ -123,6 +135,7 @@ struct cpg_mssr_priv {
- 	unsigned int num_core_clks;
- 	unsigned int num_mod_clks;
- 	unsigned int last_dt_core_clk;
-+	bool stbyctrl;
- 
- 	struct raw_notifier_head notifiers;
- 	struct {
-@@ -162,16 +175,29 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		enable ? "ON" : "OFF");
- 	spin_lock_irqsave(&priv->rmw_lock, flags);
- 
--	value = readl(priv->base + SMSTPCR(reg));
--	if (enable)
--		value &= ~bitmask;
--	else
--		value |= bitmask;
--	writel(value, priv->base + SMSTPCR(reg));
-+	if (priv->stbyctrl) {
-+		value = readb(priv->base + STBCR(reg));
-+		if (enable)
-+			value &= ~bitmask;
-+		else
-+			value |= bitmask;
-+		writeb(value, priv->base + STBCR(reg));
-+
-+		/* dummy read to ensure write has completed */
-+		readb(priv->base + STBCR(reg));
-+		barrier_data(priv->base + STBCR(reg));
-+	} else {
-+		value = readl(priv->base + SMSTPCR(reg));
-+		if (enable)
-+			value &= ~bitmask;
-+		else
-+			value |= bitmask;
-+		writel(value, priv->base + SMSTPCR(reg));
-+	}
- 
- 	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
--	if (!enable)
-+	if (!enable || priv->stbyctrl)
- 		return 0;
- 
- 	for (i = 1000; i > 0; --i) {
-@@ -205,7 +231,10 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
- 	struct cpg_mssr_priv *priv = clock->priv;
- 	u32 value;
- 
--	value = readl(priv->base + MSTPSR(clock->index / 32));
-+	if (priv->stbyctrl)
-+		value = readb(priv->base + STBCR(clock->index / 32));
-+	else
-+		value = readl(priv->base + MSTPSR(clock->index / 32));
- 
- 	return !(value & BIT(clock->index % 32));
- }
-@@ -734,6 +763,12 @@ static const struct of_device_id cpg_mssr_match[] = {
- 		.compatible = "renesas,r8a77995-cpg-mssr",
- 		.data = &r8a77995_cpg_mssr_info,
- 	},
-+#endif
-+#ifdef CONFIG_CLK_R7S9210
-+	{
-+		.compatible = "renesas,r7s9210-cpg-mssr",
-+		.data = &r7s9210_cpg_mssr_info,
-+	},
- #endif
- 	{ /* sentinel */ }
- };
-@@ -785,13 +820,23 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 		if (!mask)
- 			continue;
- 
--		oldval = readl(priv->base + SMSTPCR(reg));
-+		if (priv->stbyctrl)
-+			oldval = readb(priv->base + STBCR(reg));
-+		else
-+			oldval = readl(priv->base + SMSTPCR(reg));
- 		newval = oldval & ~mask;
- 		newval |= priv->smstpcr_saved[reg].val & mask;
- 		if (newval == oldval)
- 			continue;
- 
--		writel(newval, priv->base + SMSTPCR(reg));
-+		if (priv->stbyctrl) {
-+			writeb(newval, priv->base + STBCR(reg));
-+			/* dummy read to ensure write has completed */
-+			readb(priv->base + STBCR(reg));
-+			barrier_data(priv->base + STBCR(reg));
-+			continue;
-+		} else
-+			writel(newval, priv->base + SMSTPCR(reg));
- 
- 		/* Wait until enabled clocks are really enabled */
- 		mask &= ~priv->smstpcr_saved[reg].val;
-@@ -863,6 +908,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 	priv->num_mod_clks = info->num_hw_mod_clks;
- 	priv->last_dt_core_clk = info->last_dt_core_clk;
- 	RAW_INIT_NOTIFIER_HEAD(&priv->notifiers);
-+	priv->stbyctrl = info->stbyctrl;
- 
- 	for (i = 0; i < nclks; i++)
- 		clks[i] = ERR_PTR(-ENOENT);
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 87bb8f368d4e..e65259ed4052 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -103,6 +103,10 @@ struct device_node;
-      *
-      * @init: Optional callback to perform SoC-specific initialization
-      * @cpg_clk_register: Optional callback to handle special Core Clock types
-+     *
-+     * @stbyctrl: This device has Standby Control Registers which are 8-bits
-+     *            wide, no status registers (MSTPSR) and have different address
-+     *            offsets.
-      */
- 
- struct cpg_mssr_info {
-@@ -111,6 +115,7 @@ struct cpg_mssr_info {
- 	unsigned int num_core_clks;
- 	unsigned int last_dt_core_clk;
- 	unsigned int num_total_core_clks;
-+	bool stbyctrl;
- 
- 	/* Module Clocks */
- 	const struct mssr_mod_clk *mod_clks;
-@@ -148,6 +153,7 @@ extern const struct cpg_mssr_info r8a77970_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a77990_cpg_mssr_info;
- extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
-+extern const struct cpg_mssr_info r7s9210_cpg_mssr_info;
- 
- 
-     /*
-diff --git a/include/dt-bindings/clock/r7s9210-cpg-mssr.h b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
-new file mode 100644
-index 000000000000..b124bb65e9fc
---- /dev/null
-+++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0+
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* R7S9210 CPG Core Clocks */
-+#define R7S9210_CLK_PLL			0
-+#define R7S9210_CLK_I			1
-+#define R7S9210_CLK_G			2
-+#define R7S9210_CLK_B			3
-+#define R7S9210_CLK_P1			4
-+#define R7S9210_CLK_P1C			5
-+#define R7S9210_CLK_P0			6
-+
-+#endif /* __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__ */
--- 
-2.16.1
+How are 5 users supported with only 4 channels defined below?
+
+> +
+> +System Controller Device Node:
+> +============================================================
+> +
+> +The scu node with the following properties shall be under the /firmware/ node.
+> +
+> +Required properties:
+> +-------------------
+> +- compatible:	should be "fsl,imx-scu".
+> +- mbox-names:	should include "tx0", "tx1", "tx2", "tx3",
+> +			       "rx0", "rx1", "rx2", "rx3".
+> +- mboxes:	List of phandle of 4 MU channels for tx and 4 MU channels
+> +		for rx. All 8 MU channels must be in the same MU instance.
+> +		Cross instances are not allowed. The MU instance can only
+> +		be one of LSIO MU0~M4 for imx8qxp and imx8qm. Users need
+> +		to make sure use the one which is not conflict with other
+> +		execution environments. e.g. ATF.
+
+How is one supposed to know what channels are in use already?
+
+IMO, ATF should remove the channel it uses before passing the DT to the 
+next stage. That doesn't help if later stages get a different DT though.
+
+> +		Note:
+> +		Channel 0 must be "tx0" or "rx0".
+> +		Channel 1 must be "tx1" or "rx1".
+> +		Channel 2 must be "tx2" or "rx2".
+> +		Channel 3 must be "tx3" or "rx3".
+> +		e.g.
+> +		mboxes = <&lsio_mu1 0 0
+> +			  &lsio_mu1 0 1
+> +			  &lsio_mu1 0 2
+> +			  &lsio_mu1 0 3
+> +			  &lsio_mu1 1 0
+> +			  &lsio_mu1 1 1
+> +			  &lsio_mu1 1 2
+> +			  &lsio_mu1 1 3>;
+> +		See Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> +		for detailed mailbox binding.
+> +
+> +i.MX SCU Client Device Node:
+> +============================================================
+> +
+> +Client nodes are maintained as children of the relevant IMX-SCU device node.
+> +
+> +Power domain bindings based on SCU Message Protocol
+> +------------------------------------------------------------
+> +
+> +This binding for the SCU power domain providers uses the generic power
+> +domain binding[2].
+> +
+> +Required properties:
+> +- compatible:		Should be "fsl,scu-pd".
+> +- #address-cells:	Should be 1.
+> +- #size-cells:		Should be 0.
+> +
+> +Required properties for power domain sub nodes:
+> +- #power-domain-cells:	Must be 0.
+> +
+> +Optional Properties:
+> +- reg:			Resource ID of this power domain.
+> +			No exist means uncontrollable by user.
+> +			See detailed Resource ID list from:
+> +			include/dt-bindings/power/imx-rsrc.h
+> +- power-domains:	phandle pointing to the parent power domain.
+> +
+> +Clock bindings based on SCU Message Protocol
+> +------------------------------------------------------------
+> +
+> +This binding uses the common clock binding[1].
+> +
+> +Required properties:
+> +- compatible:		Should be "fsl,imx8qxp-clock".
+> +- #clock-cells:		Should be 1. Contains the Clock ID value.
+
+There was a recent patch adding input clocks to other i.MX CCM bindings. 
+Is that needed here?
+
+> +
+> +The clock consumer should specify the desired clock by having the clock
+> +ID in its "clocks" phandle cell.
+> +
+> +See the full list of clock IDs from:
+> +include/dt-bindings/clock/imx8qxp-clock.h
+> +
+> +Pinctrl bindings based on SCU Message Protocol
+> +------------------------------------------------------------
+> +
+> +This binding uses the i.MX common pinctrl binding[3].
+> +
+> +Required properties:
+> +- compatible:		Should be "fsl,imx8qxp-iomuxc".
+> +
+> +Required properties for Pinctrl sub nodes:
+> +- fsl,pins:		Each entry consists of 3 integers which represents
+> +			the mux and config setting for one pin. The first 2
+> +			integers <pin_id mux_mode> are specified using a
+> +			PIN_FUNC_ID macro, which can be found in
+> +			<dt-bindings/pinctrl/pads-imx8qxp.h>.
+> +			The last integer CONFIG is the pad setting value like
+> +			pull-up on this pin.
+> +
+> +			Please refer to i.MX8QXP Reference Manual for detailed
+> +			CONFIG settings.
+> +
+> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> +[2] Documentation/devicetree/bindings/power/power_domain.txt
+> +[3] Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
+> +
+> +Example (imx8qxp):
+> +-------------
+> +lsio_mu1: mailbox@5d1c0000 {
+> +	...
+> +	#mbox-cells = <2>;
+> +};
+> +
+> +firmware {
+> +	scu {
+> +		compatible = "fsl,imx-scu";
+> +		mbox-names = "tx0", "tx1", "tx2", "tx3",
+> +			     "rx0", "rx1", "rx2", "rx3";
+> +		mboxes = <&lsio_mu1 0 0
+> +			  &lsio_mu1 0 1
+> +			  &lsio_mu1 0 2
+> +			  &lsio_mu1 0 3
+> +			  &lsio_mu1 1 0
+> +			  &lsio_mu1 1 1
+> +			  &lsio_mu1 1 2
+> +			  &lsio_mu1 1 3>;
+> +
+> +		clk: clk {
+> +			compatible = "fsl,imx8qxp-clk";
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		iomuxc {
+> +			compatible = "fsl,imx8qxp-iomuxc";
+> +
+> +			pinctrl_lpuart0: lpuart0grp {
+> +				fsl,pins = <
+> +					SC_P_UART0_RX_ADMA_UART0_RX	0x06000020
+> +					SC_P_UART0_TX_ADMA_UART0_TX	0x06000020
+> +				>;
+> +			};
+> +			...
+> +		};
+> +
+> +		imx8qx-pm {
+> +			compatible = "fsl,scu-pd";
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			pd_dma: dma-power-domain {
+> +				#power-domain-cells = <0>;
+> +
+> +				pd_dma_lpuart0: dma-lpuart0@57 {
+> +					reg = <SC_R_UART_0>;
+> +					#power-domain-cells = <0>;
+> +					power-domains = <&pd_dma>;
+> +				};
+> +				...
+> +			};
+> +			...
+> +		};
+> +	};
+> +};
+> +
+> +serial@5a060000 {
+> +	...
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_lpuart0>;
+> +	clocks = <&clk IMX8QXP_UART0_CLK>,
+> +		 <&clk IMX8QXP_UART0_IPG_CLK>;
+> +	clock-names = "per", "ipg";
+> +	power-domains = <&pd_dma_lpuart0>;
+> +};
+> -- 
+> 2.7.4
+> 
