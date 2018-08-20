@@ -1,74 +1,49 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Date: Wed, 8 Aug 2018 22:59:46 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v12 13/14] cpufreq: qcom: Re-organise kryo cpufreq to use
+ it for other nvmem based qcom socs
 To: Rob Herring <robh@kernel.org>
-Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-clk@vger.kernel.org, liuwei@actions-semi.com,
-	mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-	devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-	bdong@ucrobotics.com, manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
-	pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com
-Subject: Re: [PATCH 0/9] Add Reset Controller support for Actions Semi Owl
- SoCs
-Message-ID: <20180808172946.GA4188@Mani-XPS-13-9360>
-References: <20180727184527.13287-1-manivannan.sadhasivam@linaro.org>
- <c3ae668a-6bcc-a0eb-1e00-14ef9d607316@suse.de>
- <20180730151131.GA28633@mani>
- <20180807184710.GA26423@rob-hp-laptop>
+Cc: mark.rutland@arm.com, sudeep.holla@arm.com, linux@arm.linux.org.uk,
+ ctatlor97@gmail.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+ mturquette@baylibre.com, linux-pm@vger.kernel.org, sboyd@codeaurora.org,
+ linux@armlinux.org.uk, thierry.escande@linaro.org,
+ linux-kernel@vger.kernel.org, david.brown@linaro.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ andy.gross@linaro.org, linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, niklas.cassel@linaro.org
+References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+ <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
+ <20180817150902.GA19164@rob-hp-laptop>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <a89bd80c-bdfc-77ed-1de9-9cad38da7cf5@codeaurora.org>
+Date: Mon, 20 Aug 2018 18:15:12 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180807184710.GA26423@rob-hp-laptop>
+In-Reply-To: <20180817150902.GA19164@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi Rob,
 
-On Tue, Aug 07, 2018 at 12:47:10PM -0600, Rob Herring wrote:
-> On Mon, Jul 30, 2018 at 08:41:31PM +0530, Manivannan Sadhasivam wrote:
-> > Hi Andreas,
-> > 
-> > On Mon, Jul 30, 2018 at 12:26:07PM +0200, Andreas Färber wrote:
-> > > Hi Mani,
-> > > 
-> > > Am 27.07.2018 um 20:45 schrieb Manivannan Sadhasivam:
-> > > > This patchset adds Reset Controller (RMU) support for Actions Semi
-> > > > Owl SoCs, S900 and S700. For the Owl SoCs, RMU has been integrated into
-> > > > the clock subsystem in hardware. Hence, in software we integrate RMU
-> > > > support into common clock driver inorder to maintain compatibility.
-> > > 
-> > > Can this not be placed into drivers/reset/ by using mfd-simple with a
-> > > sub-node in DT?
+On 8/17/2018 8:39 PM, Rob Herring wrote:
+> Hi, this email is from Rob's (experimental) review bot. I found a couple
+> of common problems with your patch. Please see below.
 > 
-> That is exactly what I tell folks not to do. Design the DT based on h/w 
-> blocks, not current desired driver split for some OS.
+> On Tue, 14 Aug 2018 17:42:32 +0530, Sricharan R wrote:
+>> The kryo cpufreq driver reads the nvmem cell and uses that data to
+>> populate the opps. There are other qcom cpufreq socs like krait which
+>> does similar thing. Except for the interpretation of the read data,
+>> rest of the driver is same for both the cases. So pull the common things
+>> out for reuse.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 > 
-> > Actually I was not sure where to place this reset controller driver. When I
-> > looked into other similar ones such as sunxi, they just integrated into the
-> > clk subsystem. So I just chose that path. But yeah, this is hacky!
-> > 
-> > But this RMU is not MFD by any means. Since the CMU (Clock) and RMU (Reset)
-> > are two separate IPs inside SoC, we shouldn't describe it as a MFD driver. Since
-> > RMU has only 2 registers, the HW designers decided to use up the CMU memory
-> > map. So, maybe syscon would be best option I think. What is your opinion?
-> 
-> If there's nothing shared then it is not a syscon. If you can create 
-> separate address ranges, then 2 nodes is probably okay. If the registers 
-> are all mixed up, then 1 node.
+> The preferred subject prefix is "dt-bindings: <binding dir>: ...".
 > 
 
-I don't quite understand the reason for not being syscon. The definition
-of syscon says that, "System controller node represents a register region
-containing a set of miscellaneous registers. The registers are not cohesive
-enough to represent as any specific type of device." which exactly fits
-this case. Only the registers of CMU & RMU are shared and not the HW block!
+ ok, will change and keep the bindings update part out for this and the next
+ patch.
 
-Can you please clarify?
+Regards,
+ Sricharan
 
-Thanks,
-Mani
-
-> Rob
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
