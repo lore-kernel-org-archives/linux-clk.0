@@ -1,72 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:35296 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbeHXNLA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 09:11:00 -0400
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH 0/5] arm64: dts: NXP: add basic dts file for LX2160A SoC
+Date: Mon, 20 Aug 2018 12:17:11 +0530
+Message-Id: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
- <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com> <20180820181155.GA13901@bogus>
- <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Fri, 24 Aug 2018 15:06:58 +0530
-Message-ID: <CABb+yY1+J+=nV2gNN30KLr2YQDy_g81-dJS1DJq8NgUv7Qqcog@mail.gmail.com>
-Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
-To: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Dong Aisheng <dongas86@gmail.com>,
-        ", Sascha Hauer" <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, ulf.hansson@linaro.org,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 21, 2018 at 8:30 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
->
-> > > +
-> > > +The System Controller Firmware (SCFW) is a low-level system function
-> > > +which runs on a dedicated Cortex-M core to provide power, clock, and
-> > > +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
-> > > +(QM, QP), and i.MX8QX (QXP, DX).
-> > > +
-> > > +The AP communicates with the SC using a multi-ported MU module found
-> > > +in the LSIO subsystem. The current definition of this MU module
-> > > +provides
-> > > +5 remote AP connections to the SC to support up to 5 execution
-> > > +environments (TZ, HV, standard Linux, etc.). The SC side of this MU
-> > > +module interfaces with the LSIO DSC IP bus. The SC firmware will
-> > > +communicate with this MU using the MSI bus.
-> >
-> > How are 5 users supported with only 4 channels defined below?
->
-> There're 5 MU instances designed to be specifically communicate with
-> SCU Firmware on MX8 hardware.
->
-This is correct.
+- Add compatible string for LX2160A clockgen support
+- Add compatible string to initialize LX2160A guts driver
+- Add compatible string for LX2160A support in dt-bindings
+- Add dts file to enable support for LX2160A SoC and LX2160A RDB
+  (Reference design board)
 
-> With the new generic mu binding [1], each MU instance is abstracted
-> Into 16 virtual MU channels. (4 Tx, 4 Rx, 4 Tx doorbell, 4 Rx doorbell).
-> (MU has 4 pair of Tx/Rx data register which can be used to send/receive
-> multi words. With new binding, each data register is abstracted into one
-> MU channel, totally 8 channels for data transfer).
->
-> SCU protocol is already designed to uses all data registers to send/receive
-> multi words according to MU hardware reference manual. So it must
-> use all channels in one MU instances with new binding.
->
-FYI, this is incorrect.
-The 16 channels are physical and not virtual. In fact, all this is to
-avoid virtual channels.
-The physical resources required by new bindings are exactly the same
-as by old bindings. Now you use 8 physical channels instead of 1
-virtual.
+Vabhav Sharma (4):
+  dt-bindings: arm64: add compatible for LX2160A
+  soc/fsl/guts: Add compatible string for LX2160A
+  arm64: dts: add QorIQ LX2160A SoC support
+  arm64: dts: add LX2160ARDB board support
+
+Yogesh Gaur (1):
+  drivers: clk-qoriq: Add clockgen support for lx2160a
+
+ Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
+ arch/arm64/boot/dts/freescale/Makefile            |   1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  95 ++++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 572 ++++++++++++++++++++++
+ drivers/clk/clk-qoriq.c                           |  14 +-
+ drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
+ drivers/soc/fsl/guts.c                            |   1 +
+ 7 files changed, 695 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+
+-- 
+2.7.4
