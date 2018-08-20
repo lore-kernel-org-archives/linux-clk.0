@@ -1,89 +1,27 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Aug 2018 14:48:01 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <narmstrong@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <yixun.lan@amlogic.com>,
-	Jianxin Pan <jianxin.pan@amlogic.com>, linux-clk@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clk: meson-g12a: Add G12A AO Clock
- Bindings
-Message-ID: <20180814204801.GA9362@rob-hp-laptop>
-References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
- <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:41364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726021AbeHTSlI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Aug 2018 14:41:08 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
+From: Stephen Boyd <sboyd@kernel.org>
+To: Jiecheng Wu <jasonwood2031@gmail.com>, linux-clk@vger.kernel.org
+References: <20180817081117.15256-1-jasonwood2031@gmail.com>
+In-Reply-To: <20180817081117.15256-1-jasonwood2031@gmail.com>
+Message-ID: <153477870280.28926.15382370236941900212@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk-wm831x.c: fix wrong return value when wm831x_reg_read() fails
+Date: Mon, 20 Aug 2018 08:25:02 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 10, 2018 at 05:54:27PM +0800, Jian Hu wrote:
-> Add new clock controller compatible and dt-bingdings headers
-> for the Always-On domain of the g12a SoC
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> ---
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  1 +
->  include/dt-bindings/clock/g12a-aoclkc.h            | 28 ++++++++++++++++++++++
->  2 files changed, 29 insertions(+)
->  create mode 100755 include/dt-bindings/clock/g12a-aoclkc.h
+Quoting Jiecheng Wu (2018-08-17 01:11:17)
+> Function wm831x_fll_is_prepared() defined in drivers/clk/clk-wm831x.c ret=
+urns true when function wm831x_reg_read() fails (should return false).
 
-checkpatch says wrong mode.
+Sorry, this is missing signed-off-by so I can't apply this.
 
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> index 3a88052..6f02288 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-> @@ -10,6 +10,7 @@ Required Properties:
->  	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
->  	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
->  	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
-> +	- G12A (S905D2, S905X2) : "amlogic,g12a-aoclkc"
->  	followed by the common "amlogic,meson-gx-aoclkc"
->  
->  - #clock-cells: should be 1.
-> diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
-> new file mode 100755
-> index 0000000..6b3f921
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/g12a-aoclkc.h
-> @@ -0,0 +1,28 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-> +/*
-> + * Copyright (c) 2016 BayLibre, SAS
-> + * Author: Neil Armstrong <narmstrong@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Jian Hu<jian.hu@amlogic.com>
-> + */
-> +
-> +#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-> +#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-> +
-> +#define CLKID_AO_AHB_BUS		0
-> +#define CLKID_AO_REMOTE			1
-> +#define CLKID_AO_I2C_MASTER		2
-> +#define CLKID_AO_I2C_SLAVE		3
-> +#define CLKID_AO_UART1			4
-> +#define CLKID_AO_PROD_I2C		5
-> +#define CLKID_AO_UART2			6
-> +#define CLKID_AO_IR_BLASTER		7
-> +#define CLKID_AO_SAR_ADC		8
-> +#define CLKID_AO_CLK81			9
-> +#define CLKID_AO_SAR_ADC_SEL		10
-> +#define CLKID_AO_SAR_ADC_DIV		11
-> +#define CLKID_AO_SAR_ADC_CLK		12
-> +#define CLKID_AO_ALT_XTAL		13
-> +
-> +#endif
-> -- 
-> 1.9.1
-> 
+Also, please wrap commit text at 78 characters and add a reason why you
+believe failure to read the register would mean it's not prepared. And
+also Cc people who worked on this driver to solicit their feedback on
+your change as well.
