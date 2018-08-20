@@ -1,297 +1,487 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 4/4] clk: Add Ingenic jz4725b CGU driver
-Date: Thu, 23 Aug 2018 15:17:44 +0200
-Message-Id: <20180823131744.744-4-paul@crapouillou.net>
-In-Reply-To: <20180823131744.744-1-paul@crapouillou.net>
-References: <20180823131744.744-1-paul@crapouillou.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:40384
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726030AbeHTKa7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Aug 2018 06:30:59 -0400
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>
+Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND v5 1/5] dt-bindings: add binding for i.MX8MQ CCM
+Date: Mon, 20 Aug 2018 10:16:03 +0300
+Message-Id: <1534749367-31085-2-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
+References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add support for the clocks provided by the CGU in the Ingenic JZ4725B
-SoC.
+From: Lucas Stach <l.stach@pengutronix.de>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+This adds the binding for the i.MX8MQ Clock Controller Module.
+
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+ .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
+ include/dt-bindings/clock/imx8mq-clock.h           | 410 +++++++++++++++++++++
+ 2 files changed, 430 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+ create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
 
-Notes:
-    No change
-
- drivers/clk/ingenic/Kconfig       |  10 ++
- drivers/clk/ingenic/Makefile      |   1 +
- drivers/clk/ingenic/jz4725b-cgu.c | 225 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 236 insertions(+)
- create mode 100644 drivers/clk/ingenic/jz4725b-cgu.c
-
-diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
-index 2445437f8286..34dc0da79c39 100644
---- a/drivers/clk/ingenic/Kconfig
-+++ b/drivers/clk/ingenic/Kconfig
-@@ -14,6 +14,16 @@ config INGENIC_CGU_JZ4740
- 
- 	  If building for a JZ4740 SoC, you want to say Y here.
- 
-+config INGENIC_CGU_JZ4725B
-+	bool "Ingenic JZ4725B CGU driver"
-+	default MACH_JZ4725B
-+	select INGENIC_CGU_COMMON
-+	help
-+	  Support the clocks provided by the CGU hardware on Ingenic JZ4725B
-+	  and compatible SoCs.
-+
-+	  If building for a JZ4725B SoC, you want to say Y here.
-+
- config INGENIC_CGU_JZ4770
- 	bool "Ingenic JZ4770 CGU driver"
- 	default MACH_JZ4770
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index 8b8dc79c7ce6..00a79b2fba10 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_INGENIC_CGU_COMMON)	+= cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4740)	+= jz4740-cgu.o
-+obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+= jz4725b-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
-diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
+diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
 new file mode 100644
-index 000000000000..584ff4ff81c7
+index 0000000..52de826
 --- /dev/null
-+++ b/drivers/clk/ingenic/jz4725b-cgu.c
-@@ -0,0 +1,225 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
+@@ -0,0 +1,20 @@
++* Clock bindings for NXP i.MX8M Quad
++
++Required properties:
++- compatible: Should be "fsl,imx8mq-ccm"
++- reg: Address and length of the register set
++- #clock-cells: Should be <1>
++- clocks: list of clock specifiers, must contain an entry for each required
++          entry in clock-names
++- clock-names: should include the following entries:
++    - "ckil"
++    - "osc_25m"
++    - "osc_27m"
++    - "clk_ext1"
++    - "clk_ext2"
++    - "clk_ext3"
++    - "clk_ext4"
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clock.h
++for the full list of i.MX8M Quad clock IDs.
+diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
+new file mode 100644
+index 0000000..0d19bd9
+--- /dev/null
++++ b/include/dt-bindings/clock/imx8mq-clock.h
+@@ -0,0 +1,410 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Ingenic JZ4725B SoC CGU driver
-+ *
-+ * Copyright (C) 2018 Paul Cercueil
-+ * Author: Paul Cercueil <paul@crapouillou.net>
++ * Copyright 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <dt-bindings/clock/jz4725b-cgu.h>
-+#include "cgu.h"
++#ifndef __DT_BINDINGS_CLOCK_IMX8MQ_H
++#define __DT_BINDINGS_CLOCK_IMX8MQ_H
 +
-+/* CGU register offsets */
-+#define CGU_REG_CPCCR		0x00
-+#define CGU_REG_LCR		0x04
-+#define CGU_REG_CPPCR		0x10
-+#define CGU_REG_CLKGR		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_I2SCDR		0x60
-+#define CGU_REG_LPCDR		0x64
-+#define CGU_REG_MSCCDR		0x68
-+#define CGU_REG_SSICDR		0x74
-+#define CGU_REG_CIMCDR		0x78
++#define IMX8MQ_CLK_DUMMY		0
++#define IMX8MQ_CLK_32K			1
++#define IMX8MQ_CLK_25M			2
++#define IMX8MQ_CLK_27M			3
++#define IMX8MQ_CLK_EXT1			4
++#define IMX8MQ_CLK_EXT2			5
++#define IMX8MQ_CLK_EXT3			6
++#define IMX8MQ_CLK_EXT4			7
 +
-+/* bits within the LCR register */
-+#define LCR_SLEEP		BIT(0)
++/* ANAMIX PLL clocks */
++/* FRAC PLLs */
++/* ARM PLL */
++#define IMX8MQ_ARM_PLL_REF_SEL		8
++#define IMX8MQ_ARM_PLL_REF_DIV		9
++#define IMX8MQ_ARM_PLL			10
++#define IMX8MQ_ARM_PLL_BYPASS		11
++#define IMX8MQ_ARM_PLL_OUT		12
 +
-+static struct ingenic_cgu *cgu;
++/* GPU PLL */
++#define IMX8MQ_GPU_PLL_REF_SEL		13
++#define IMX8MQ_GPU_PLL_REF_DIV		14
++#define IMX8MQ_GPU_PLL			15
++#define IMX8MQ_GPU_PLL_BYPASS		16
++#define IMX8MQ_GPU_PLL_OUT		17
 +
-+static const s8 pll_od_encoding[4] = {
-+	0x0, 0x1, -1, 0x3,
-+};
++/* VPU PLL */
++#define IMX8MQ_VPU_PLL_REF_SEL		18
++#define IMX8MQ_VPU_PLL_REF_DIV		19
++#define IMX8MQ_VPU_PLL			20
++#define IMX8MQ_VPU_PLL_BYPASS		21
++#define IMX8MQ_VPU_PLL_OUT		22
 +
-+static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
++/* AUDIO PLL1 */
++#define IMX8MQ_AUDIO_PLL1_REF_SEL	23
++#define IMX8MQ_AUDIO_PLL1_REF_DIV	24
++#define IMX8MQ_AUDIO_PLL1		25
++#define IMX8MQ_AUDIO_PLL1_BYPASS	26
++#define IMX8MQ_AUDIO_PLL1_OUT		27
 +
-+	/* External clocks */
++/* AUDIO PLL2 */
++#define IMX8MQ_AUDIO_PLL2_REF_SEL	28
++#define IMX8MQ_AUDIO_PLL2_REF_DIV	29
++#define IMX8MQ_AUDIO_PLL2		30
++#define IMX8MQ_AUDIO_PLL2_BYPASS	31
++#define IMX8MQ_AUDIO_PLL2_OUT		32
 +
-+	[JZ4725B_CLK_EXT] = { "ext", CGU_CLK_EXT },
-+	[JZ4725B_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
++/* VIDEO PLL1 */
++#define IMX8MQ_VIDEO_PLL1_REF_SEL	33
++#define IMX8MQ_VIDEO_PLL1_REF_DIV	34
++#define IMX8MQ_VIDEO_PLL1		35
++#define IMX8MQ_VIDEO_PLL1_BYPASS	36
++#define IMX8MQ_VIDEO_PLL1_OUT		37
 +
-+	[JZ4725B_CLK_PLL] = {
-+		"pll", CGU_CLK_PLL,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.pll = {
-+			.reg = CGU_REG_CPPCR,
-+			.m_shift = 23,
-+			.m_bits = 9,
-+			.m_offset = 2,
-+			.n_shift = 18,
-+			.n_bits = 5,
-+			.n_offset = 2,
-+			.od_shift = 16,
-+			.od_bits = 2,
-+			.od_max = 4,
-+			.od_encoding = pll_od_encoding,
-+			.stable_bit = 10,
-+			.bypass_bit = 9,
-+			.enable_bit = 8,
-+		},
-+	},
++/* SYS1 PLL */
++#define IMX8MQ_SYS1_PLL1_REF_SEL	38
++#define IMX8MQ_SYS1_PLL1_REF_DIV	39
++#define IMX8MQ_SYS1_PLL1		40
++#define IMX8MQ_SYS1_PLL1_OUT		41
++#define IMX8MQ_SYS1_PLL1_OUT_DIV	42
++#define IMX8MQ_SYS1_PLL2		43
++#define IMX8MQ_SYS1_PLL2_DIV		44
++#define IMX8MQ_SYS1_PLL2_OUT		45
 +
-+	/* Muxes & dividers */
++/* SYS2 PLL */
++#define IMX8MQ_SYS2_PLL1_REF_SEL	46
++#define IMX8MQ_SYS2_PLL1_REF_DIV	47
++#define IMX8MQ_SYS2_PLL1		48
++#define IMX8MQ_SYS2_PLL1_OUT		49
++#define IMX8MQ_SYS2_PLL1_OUT_DIV	50
++#define IMX8MQ_SYS2_PLL2		51
++#define IMX8MQ_SYS2_PLL2_DIV		52
++#define IMX8MQ_SYS2_PLL2_OUT		53
 +
-+	[JZ4725B_CLK_PLL_HALF] = {
-+		"pll half", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
-+	},
++/* SYS3 PLL */
++#define IMX8MQ_SYS3_PLL1_REF_SEL	54
++#define IMX8MQ_SYS3_PLL1_REF_DIV	55
++#define IMX8MQ_SYS3_PLL1		56
++#define IMX8MQ_SYS3_PLL1_OUT		57
++#define IMX8MQ_SYS3_PLL1_OUT_DIV	58
++#define IMX8MQ_SYS3_PLL2		59
++#define IMX8MQ_SYS3_PLL2_DIV		60
++#define IMX8MQ_SYS3_PLL2_OUT		61
 +
-+	[JZ4725B_CLK_CCLK] = {
-+		"cclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
-+	},
++/* DRAM PLL */
++#define IMX8MQ_DRAM_PLL1_REF_SEL	62
++#define IMX8MQ_DRAM_PLL1_REF_DIV	63
++#define IMX8MQ_DRAM_PLL1		64
++#define IMX8MQ_DRAM_PLL1_OUT		65
++#define IMX8MQ_DRAM_PLL1_OUT_DIV	66
++#define IMX8MQ_DRAM_PLL2		67
++#define IMX8MQ_DRAM_PLL2_DIV		68
++#define IMX8MQ_DRAM_PLL2_OUT		69
 +
-+	[JZ4725B_CLK_HCLK] = {
-+		"hclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
-+	},
++/* SYS PLL DIV */
++#define IMX8MQ_SYS1_PLL_40M		70
++#define IMX8MQ_SYS1_PLL_80M		71
++#define IMX8MQ_SYS1_PLL_100M		72
++#define IMX8MQ_SYS1_PLL_133M		73
++#define IMX8MQ_SYS1_PLL_160M		74
++#define IMX8MQ_SYS1_PLL_200M		75
++#define IMX8MQ_SYS1_PLL_266M		76
++#define IMX8MQ_SYS1_PLL_400M		77
++#define IMX8MQ_SYS1_PLL_800M		78
 +
-+	[JZ4725B_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1 },
-+	},
++#define IMX8MQ_SYS2_PLL_50M		79
++#define IMX8MQ_SYS2_PLL_100M		80
++#define IMX8MQ_SYS2_PLL_125M		81
++#define IMX8MQ_SYS2_PLL_166M		82
++#define IMX8MQ_SYS2_PLL_200M		83
++#define IMX8MQ_SYS2_PLL_250M		84
++#define IMX8MQ_SYS2_PLL_333M		85
++#define IMX8MQ_SYS2_PLL_500M		86
++#define IMX8MQ_SYS2_PLL_1000M		87
 +
-+	[JZ4725B_CLK_MCLK] = {
-+		"mclk", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1 },
-+	},
++/* CCM ROOT clocks */
++/* A53 */
++#define IMX8MQ_CLK_A53_SRC		88
++#define IMX8MQ_CLK_A53_CG		89
++#define IMX8MQ_CLK_A53_DIV		90
++/* M4 */
++#define IMX8MQ_CLK_M4_SRC		91
++#define IMX8MQ_CLK_M4_CG		92
++#define IMX8MQ_CLK_M4_DIV		93
++/* VPU */
++#define IMX8MQ_CLK_VPU_SRC		94
++#define IMX8MQ_CLK_VPU_CG		95
++#define IMX8MQ_CLK_VPU_DIV		96
++/* GPU CORE */
++#define IMX8MQ_CLK_GPU_CORE_SRC		97
++#define IMX8MQ_CLK_GPU_CORE_CG		98
++#define IMX8MQ_CLK_GPU_CORE_DIV		99
++/* GPU SHADER */
++#define IMX8MQ_CLK_GPU_SHADER_SRC	100
++#define IMX8MQ_CLK_GPU_SHADER_CG	101
++#define IMX8MQ_CLK_GPU_SHADER_DIV	102
 +
-+	[JZ4725B_CLK_IPU] = {
-+		"ipu", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 13 },
-+	},
++/* BUS TYPE */
++/* MAIN AXI */
++#define IMX8MQ_CLK_MAIN_AXI		103
++/* ENET AXI */
++#define IMX8MQ_CLK_ENET_AXI		104
++/* NAND_USDHC_BUS */
++#define IMX8MQ_CLK_NAND_USDHC_BUS	105
++/* VPU BUS */
++#define IMX8MQ_CLK_VPU_BUS		106
++/* DISP_AXI */
++#define IMX8MQ_CLK_DISP_AXI		107
++/* DISP APB */
++#define IMX8MQ_CLK_DISP_APB		108
++/* DISP RTRM */
++#define IMX8MQ_CLK_DISP_RTRM		109
++/* USB_BUS */
++#define IMX8MQ_CLK_USB_BUS		110
++/* GPU_AXI */
++#define IMX8MQ_CLK_GPU_AXI		111
++/* GPU_AHB */
++#define IMX8MQ_CLK_GPU_AHB		112
++/* NOC */
++#define IMX8MQ_CLK_NOC			113
++/* NOC_APB */
++#define IMX8MQ_CLK_NOC_APB		115
 +
-+	[JZ4725B_CLK_LCD] = {
-+		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
-+		.div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 9 },
-+	},
++/* AHB */
++#define IMX8MQ_CLK_AHB_SRC		116
++#define IMX8MQ_CLK_AHB_CG		117
++#define IMX8MQ_CLK_AHB_PRE_DIV		118
++#define IMX8MQ_CLK_AHB_DIV		119
++/* AUDIO AHB */
++#define IMX8MQ_CLK_AUDIO_AHB_SRC	120
++#define IMX8MQ_CLK_AUDIO_AHB_CG		121
++#define IMX8MQ_CLK_AUDIO_AHB_PRE_DIV	122
++#define IMX8MQ_CLK_AUDIO_AHB_DIV	123
 +
-+	[JZ4725B_CLK_I2S] = {
-+		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
-+		.mux = { CGU_REG_CPCCR, 31, 1 },
-+		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 6 },
-+	},
++/* DRAM_ALT */
++#define IMX8MQ_CLK_DRAM_ALT		124
++/* DRAM APB */
++#define IMX8MQ_CLK_DRAM_APB		125
++/* VPU_G1 */
++#define IMX8MQ_CLK_VPU_G1		126
++/* VPU_G2 */
++#define IMX8MQ_CLK_VPU_G2		127
++/* DISP_DTRC */
++#define IMX8MQ_CLK_DISP_DTRC		128
++/* DISP_DC8000 */
++#define IMX8MQ_CLK_DISP_DC8000		129
++/* PCIE_CTRL */
++#define IMX8MQ_CLK_PCIE1_CTRL		130
++/* PCIE_PHY */
++#define IMX8MQ_CLK_PCIE1_PHY		131
++/* PCIE_AUX */
++#define IMX8MQ_CLK_PCIE1_AUX		132
++/* DC_PIXEL */
++#define IMX8MQ_CLK_DC_PIXEL		133
++/* LCDIF_PIXEL */
++#define IMX8MQ_CLK_LCDIF_PIXEL		134
++/* SAI1~6 */
++#define IMX8MQ_CLK_SAI1			135
 +
-+	[JZ4725B_CLK_SPI] = {
-+		"spi", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL, -1, -1 },
-+		.mux = { CGU_REG_SSICDR, 31, 1 },
-+		.div = { CGU_REG_SSICDR, 0, 1, 4, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 4 },
-+	},
++#define IMX8MQ_CLK_SAI2			136
 +
-+	[JZ4725B_CLK_MMC_MUX] = {
-+		"mmc_mux", CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
-+		.div = { CGU_REG_MSCCDR, 0, 1, 5, -1, -1, -1 },
-+	},
++#define IMX8MQ_CLK_SAI3			137
 +
-+	[JZ4725B_CLK_UDC] = {
-+		"udc", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
-+		.mux = { CGU_REG_CPCCR, 29, 1 },
-+		.div = { CGU_REG_CPCCR, 23, 1, 6, -1, -1, -1 },
-+	},
++#define IMX8MQ_CLK_SAI4			138
 +
-+	/* Gate-only clocks */
++#define IMX8MQ_CLK_SAI5			139
 +
-+	[JZ4725B_CLK_UART] = {
-+		"uart", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 0 },
-+	},
++#define IMX8MQ_CLK_SAI6			140
++/* SPDIF1 */
++#define IMX8MQ_CLK_SPDIF1		127
++/* SPDIF2 */
++#define IMX8MQ_CLK_SPDIF2		131
++/* ENET_REF */
++#define IMX8MQ_CLK_ENET_REF		135
++/* ENET_TIMER */
++#define IMX8MQ_CLK_ENET_TIMER		139
++/* ENET_PHY */
++#define IMX8MQ_CLK_ENET_PHY_REF		143
++/* NAND */
++#define IMX8MQ_CLK_NAND			147
++/* QSPI */
++#define IMX8MQ_CLK_QSPI			148
++/* USDHC1 */
++#define IMX8MQ_CLK_USDHC1		149
++/* USDHC2 */
++#define IMX8MQ_CLK_USDHC2		150
++/* I2C1 */
++#define IMX8MQ_CLK_I2C1			151
++/* I2C2 */
++#define IMX8MQ_CLK_I2C2			152
++/* I2C3 */
++#define IMX8MQ_CLK_I2C3			153
++/* I2C4 */
++#define IMX8MQ_CLK_I2C4			154
++/* UART1 */
++#define IMX8MQ_CLK_UART1		155
++/* UART2 */
++#define IMX8MQ_CLK_UART2		156
++/* UART3 */
++#define IMX8MQ_CLK_UART3		157
++/* UART4 */
++#define IMX8MQ_CLK_UART4		158
++/* USB_CORE_REF */
++#define IMX8MQ_CLK_USB_CORE_REF		159
++/* USB_PHY_REF */
++#define IMX8MQ_CLK_USB_PHY_REF		160
++/* ECSPI1 */
++#define IMX8MQ_CLK_ECSPI1		161
++/* ECSPI2 */
++#define IMX8MQ_CLK_ECSPI2		162
++/* PWM1 */
++#define IMX8MQ_CLK_PWM1			163
++/* PWM2 */
++#define IMX8MQ_CLK_PWM2			164
++/* PWM3 */
++#define IMX8MQ_CLK_PWM3			165
++/* PWM4 */
++#define IMX8MQ_CLK_PWM4			166
++/* GPT1 */
++#define IMX8MQ_CLK_GPT1			167
++/* WDOG */
++#define IMX8MQ_CLK_WDOG			168
++/* WRCLK */
++#define IMX8MQ_CLK_WRCLK		169
++/* DSI_CORE */
++#define IMX8MQ_CLK_DSI_CORE		170
++/* DSI_PHY */
++#define IMX8MQ_CLK_DSI_PHY_REF		171
++/* DSI_DBI */
++#define IMX8MQ_CLK_DSI_DBI		172
++/*DSI_ESC */
++#define IMX8MQ_CLK_DSI_ESC		373
++/* CSI1_CORE */
++#define IMX8MQ_CLK_CSI1_CORE		374
++/* CSI1_PHY */
++#define IMX8MQ_CLK_CSI1_PHY_REF		375
++/* CSI_ESC */
++#define IMX8MQ_CLK_CSI1_ESC		376
++/* CSI2_CORE */
++#define IMX8MQ_CLK_CSI2_CORE		377
++/* CSI2_PHY */
++#define IMX8MQ_CLK_CSI2_PHY_REF		378
++/* CSI2_ESC */
++#define IMX8MQ_CLK_CSI2_ESC		379
++/* PCIE2_CTRL */
++#define IMX8MQ_CLK_PCIE2_CTRL		380
++/* PCIE2_PHY */
++#define IMX8MQ_CLK_PCIE2_PHY		381
++/* PCIE2_AUX */
++#define IMX8MQ_CLK_PCIE2_AUX		382
++/* ECSPI3 */
++#define IMX8MQ_CLK_ECSPI3		383
 +
-+	[JZ4725B_CLK_DMA] = {
-+		"dma", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_PCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 12 },
-+	},
++/* CCGR clocks */
++#define IMX8MQ_CLK_A53_ROOT			384
++#define IMX8MQ_CLK_DRAM_ROOT			385
++#define IMX8MQ_CLK_ECSPI1_ROOT			386
++#define IMX8MQ_CLK_ECSPI2_ROOT			387
++#define IMX8MQ_CLK_ECSPI3_ROOT			388
++#define IMX8MQ_CLK_ENET1_ROOT			389
++#define IMX8MQ_CLK_GPT1_ROOT			390
++#define IMX8MQ_CLK_I2C1_ROOT			391
++#define IMX8MQ_CLK_I2C2_ROOT			392
++#define IMX8MQ_CLK_I2C3_ROOT			393
++#define IMX8MQ_CLK_I2C4_ROOT			394
++#define IMX8MQ_CLK_M4_ROOT			395
++#define IMX8MQ_CLK_PCIE1_ROOT			396
++#define IMX8MQ_CLK_PCIE2_ROOT			397
++#define IMX8MQ_CLK_PWM1_ROOT			398
++#define IMX8MQ_CLK_PWM2_ROOT			399
++#define IMX8MQ_CLK_PWM3_ROOT			400
++#define IMX8MQ_CLK_PWM4_ROOT			401
++#define IMX8MQ_CLK_QSPI_ROOT			402
++#define IMX8MQ_CLK_SAI1_ROOT			403
++#define IMX8MQ_CLK_SAI2_ROOT			404
++#define IMX8MQ_CLK_SAI3_ROOT			405
++#define IMX8MQ_CLK_SAI4_ROOT			406
++#define IMX8MQ_CLK_SAI5_ROOT			407
++#define IMX8MQ_CLK_SAI6_ROOT			408
++#define IMX8MQ_CLK_UART1_ROOT			409
++#define IMX8MQ_CLK_UART2_ROOT			411
++#define IMX8MQ_CLK_UART3_ROOT			412
++#define IMX8MQ_CLK_UART4_ROOT			413
++#define IMX8MQ_CLK_USB1_CTRL_ROOT		414
++#define IMX8MQ_CLK_USB2_CTRL_ROOT		415
++#define IMX8MQ_CLK_USB1_PHY_ROOT		416
++#define IMX8MQ_CLK_USB2_PHY_ROOT		417
++#define IMX8MQ_CLK_USDHC1_ROOT			418
++#define IMX8MQ_CLK_USDHC2_ROOT			419
++#define IMX8MQ_CLK_WDOG1_ROOT			420
++#define IMX8MQ_CLK_WDOG2_ROOT			421
++#define IMX8MQ_CLK_WDOG3_ROOT			422
++#define IMX8MQ_CLK_GPU_ROOT			423
++#define IMX8MQ_CLK_HEVC_ROOT			424
++#define IMX8MQ_CLK_AVC_ROOT			425
++#define IMX8MQ_CLK_VP9_ROOT			426
++#define IMX8MQ_CLK_HEVC_INTER_ROOT		427
++#define IMX8MQ_CLK_DISP_ROOT			428
++#define IMX8MQ_CLK_HDMI_ROOT			429
++#define IMX8MQ_CLK_HDMI_PHY_ROOT		430
++#define IMX8MQ_CLK_VPU_DEC_ROOT			431
++#define IMX8MQ_CLK_CSI1_ROOT			432
++#define IMX8MQ_CLK_CSI2_ROOT			433
++#define IMX8MQ_CLK_RAWNAND_ROOT			434
++#define IMX8MQ_CLK_SDMA1_ROOT			435
++#define IMX8MQ_CLK_SDMA2_ROOT			436
++#define IMX8MQ_CLK_VPU_G1_ROOT			437
++#define IMX8MQ_CLK_VPU_G2_ROOT			438
 +
-+	[JZ4725B_CLK_ADC] = {
-+		"adc", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 7 },
-+	},
++/* SCCG PLL GATE */
++#define IMX8MQ_SYS1_PLL_OUT			439
++#define IMX8MQ_SYS2_PLL_OUT			440
++#define IMX8MQ_SYS3_PLL_OUT			441
++#define IMX8MQ_DRAM_PLL_OUT			442
 +
-+	[JZ4725B_CLK_I2C] = {
-+		"i2c", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 3 },
-+	},
++#define IMX8MQ_GPT_3M_CLK			443
 +
-+	[JZ4725B_CLK_AIC] = {
-+		"aic", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 5 },
-+	},
++#define IMX8MQ_CLK_IPG_ROOT			444
++#define IMX8MQ_CLK_IPG_AUDIO_ROOT		445
++#define IMX8MQ_CLK_SAI1_IPG			446
++#define IMX8MQ_CLK_SAI2_IPG			447
++#define IMX8MQ_CLK_SAI3_IPG			448
++#define IMX8MQ_CLK_SAI4_IPG			449
++#define IMX8MQ_CLK_SAI5_IPG			450
++#define IMX8MQ_CLK_SAI6_IPG			451
 +
-+	[JZ4725B_CLK_MMC0] = {
-+		"mmc0", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 6 },
-+	},
++/* DSI AHB/IPG clocks */
++/* rxesc clock */
++#define IMX8MQ_CLK_DSI_AHB			452
++/* txesc clock */
++#define IMX8MQ_CLK_DSI_IPG_DIV                  453
 +
-+	[JZ4725B_CLK_MMC1] = {
-+		"mmc1", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 16 },
-+	},
++/* VIDEO2 PLL */
++#define IMX8MQ_VIDEO2_PLL1_REF_SEL		454
++#define IMX8MQ_VIDEO2_PLL1_REF_DIV		455
++#define IMX8MQ_VIDEO2_PLL1			456
++#define IMX8MQ_VIDEO2_PLL1_OUT			457
++#define IMX8MQ_VIDEO2_PLL1_OUT_DIV		458
++#define IMX8MQ_VIDEO2_PLL2			459
++#define IMX8MQ_VIDEO2_PLL2_DIV			460
++#define IMX8MQ_VIDEO2_PLL2_OUT			461
++#define IMX8MQ_CLK_TMU_ROOT			462
 +
-+	[JZ4725B_CLK_BCH] = {
-+		"bch", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_MCLK/* not sure */, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 11 },
-+	},
++/* Display root clocks */
++#define IMX8MQ_CLK_DISP_AXI_ROOT		463
++#define IMX8MQ_CLK_DISP_APB_ROOT		464
++#define IMX8MQ_CLK_DISP_RTRM_ROOT		465
 +
-+	[JZ4725B_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4725B_CLK_EXT/* not sure */, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
++#define IMX8MQ_CLK_OCOTP_ROOT			476
 +
-+	[JZ4725B_CLK_EXT512] = {
-+		"ext/512", CGU_CLK_FIXDIV,
-+		.parents = { JZ4725B_CLK_EXT },
++#define IMX8MQ_CLK_DRAM_ALT_ROOT		477
++#define IMX8MQ_CLK_DRAM_CORE			478
 +
-+		/* Doc calls it EXT512, but it seems to be /256... */
-+		.fixdiv = { 256 },
-+	},
++#define IMX8MQ_CLK_MU_ROOT			479
++#define IMX8MQ_VIDEO2_PLL_OUT			480
 +
-+	[JZ4725B_CLK_RTC] = {
-+		"rtc", CGU_CLK_MUX,
-+		.parents = { JZ4725B_CLK_EXT512, JZ4725B_CLK_OSC32K, -1, -1 },
-+		.mux = { CGU_REG_OPCR, 2, 1},
-+	},
-+};
++#define IMX8MQ_CLK_CLKO2			481
 +
-+static void __init jz4725b_cgu_init(struct device_node *np)
-+{
-+	int retval;
++#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	482
 +
-+	cgu = ingenic_cgu_new(jz4725b_cgu_clocks,
-+			      ARRAY_SIZE(jz4725b_cgu_clocks), np);
-+	if (!cgu) {
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+		return;
-+	}
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval)
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+}
-+CLK_OF_DECLARE(jz4725b_cgu, "ingenic,jz4725b-cgu", jz4725b_cgu_init);
++#define IMX8MQ_CLK_END				483
++#endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
 -- 
-2.11.0
+2.7.4
