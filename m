@@ -1,153 +1,162 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
-Date: Mon, 13 Aug 2018 12:03:04 +0530
-Message-Id: <1534141987-29601-2-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
-References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>,
+	Priyanka Jain <priyanka.jain@nxp.com>,
+	Sriram Dash <sriram.dash@nxp.com>
+Subject: [PATCH 5/5] arm64: dts: add LX2160ARDB board support
+Date: Mon, 20 Aug 2018 12:17:16 +0530
+Message-Id: <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-For some of the GDSCs, there is a requirement to enable/disable the
-few clocks before turning on/off the gdsc power domain. Add support
-for the same by specifying a list of clk_hw pointers per gdsc and
-enable/disable them along with power domain on/off callbacks.
+LX2160A reference design board (RDB) is a high-performance
+computing, evaluation, and development platform with LX2160A
+SoC.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
 ---
- drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h |  5 +++++
- 2 files changed, 49 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile            |  1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 95 +++++++++++++++++++++++
+ 2 files changed, 96 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a077133..b6adca1 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -12,6 +12,8 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
-@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
- 			   GMEM_RESET_MASK, 0);
- }
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 86e18ad..445b72b 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+new file mode 100644
+index 0000000..70fad20
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+@@ -0,0 +1,95 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Device Tree file for LX2160ARDB
++//
++// Copyright 2018 NXP
 +
-+static int gdsc_clk_prepare_enable(struct gdsc *sc)
-+{
-+	int i, ret;
++/dts-v1/;
 +
-+	for (i = 0; i < sc->clk_count; i++) {
-+		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
-+		if (ret) {
-+			for (i--; i >= 0; i--)
-+				clk_disable_unprepare(sc->clk_hws[i]->clk);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
++#include "fsl-lx2160a.dtsi"
 +
-+static void gdsc_clk_disable_unprepare(struct gdsc *sc)
-+{
-+	int i;
++/ {
++	model = "NXP Layerscape LX2160ARDB";
++	compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
 +
-+	for (i = 0; i < sc->clk_count; i++)
-+		clk_disable_unprepare(sc->clk_hws[i]->clk);
-+}
++	aliases {
++		crypto = &crypto;
++		serial0 = &uart0;
++		serial1 = &uart1;
++		serial2 = &uart2;
++		serial3 = &uart3;
++	};
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
 +
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
++&uart0 {
++	status = "okay";
++};
 +
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
- 
-@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		udelay(1);
- 	}
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
++&uart1 {
++	status = "okay";
++};
 +
- 	return 0;
- }
- 
-@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
++&i2c0 {
++	status = "okay";
++	pca9547@77 {
++		compatible = "nxp,pca9547";
++		reg = <0x77>;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
-@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	if (sc->flags & CLAMP_IO)
- 		gdsc_assert_clamp_io(sc);
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x2>;
 +
- 	return 0;
- }
- 
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index bd1f2c7..59957d7 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/pm_domain.h>
- 
-+struct clk_hw;
- struct regmap;
- struct reset_controller_dev;
- 
-@@ -32,6 +33,8 @@
-  * @resets: ids of resets associated with this gdsc
-  * @reset_count: number of @resets
-  * @rcdev: reset controller
-+ * @clk_count: number of associated clocks
-+ * @clk_hws: clk_hw pointers for associated clocks with gdsc
-  */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-@@ -60,6 +63,8 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+	unsigned int			clk_count;
-+	struct clk_hw			*clk_hws[];
- };
- 
- struct gdsc_desc {
++			ina220@40 {
++				compatible = "ti,ina220";
++				reg = <0x40>;
++				shunt-resistor = <1000>;
++			};
++		};
++
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x3>;
++
++			sa56004@4c {
++				compatible = "nxp,sa56004";
++				reg = <0x4c>;
++			};
++
++			sa56004@4d {
++				compatible = "nxp,sa56004";
++				reg = <0x4d>;
++			};
++		};
++	};
++};
++
++&i2c4 {
++	status = "okay";
++
++	rtc@51 {
++		compatible = "nxp,pcf2129";
++		reg = <0x51>;
++		// IRQ10_B
++		interrupts = <0 150 0x4>;
++		};
++
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
++
++&crypto {
++	status = "okay";
++};
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
