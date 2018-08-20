@@ -1,135 +1,64 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Tue, 21 Aug 2018 08:58:30 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
-        linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RESEND v5 4/5] clk: imx: add imx composite clock
-Message-ID: <20180821065830.x5illrgyqct6h3nf@pengutronix.de>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
- <1534749367-31085-5-git-send-email-abel.vesa@nxp.com>
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH 1/5] dt-bindings: arm64: add compatible for LX2160A
+Date: Mon, 20 Aug 2018 12:17:12 +0530
+Message-Id: <1534747636-20064-2-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1534749367-31085-5-git-send-email-abel.vesa@nxp.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 20, 2018 at 10:16:06AM +0300, Abel Vesa wrote:
-> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
-> divider, the idea here is to combine all of those into one more complex
-> clock type, therefore moving the complexity inside the composite clock and
-> outside of the SoC specific clock driver.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/imx/Makefile        |   1 +
->  drivers/clk/imx/clk-composite.c | 126 ++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h           |   9 +++
->  3 files changed, 136 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-composite.c
-> 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index b87513c..4fabb0a 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -3,6 +3,7 @@
->  obj-y += \
->  	clk.o \
->  	clk-busy.o \
-> +	clk-composite.o \
->  	clk-cpu.o \
->  	clk-fixup-div.o \
->  	clk-fixup-mux.o \
-> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
-> new file mode 100644
-> index 0000000..717c6f1
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-composite.c
-> @@ -0,0 +1,126 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2018 NXP
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +
-> +#include "clk.h"
-> +
-> +#define PCG_PREDIV_SHIFT	16
-> +#define PCG_PREDIV_WIDTH	3
-> +
-> +#define PCG_DIV_SHIFT		0
-> +#define PCG_DIV_WIDTH		6
-> +
-> +#define PCG_PCS_SHIFT		24
-> +#define PCG_PCS_MASK		0x7
-> +
-> +#define PCG_CGC_SHIFT		28
-> +
-> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
-> +						unsigned long parent_rate)
-> +{
-> +	return clk_divider_ops.recalc_rate(hw, parent_rate);
-> +}
-> +
-> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
-> +						unsigned long rate,
-> +						unsigned long *prate)
-> +{
-> +	return clk_divider_ops.round_rate(hw, rate, prate);
-> +}
-> +
-> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-> +					unsigned long rate,
-> +					unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	int value;
-> +	unsigned long flags = 0;
-> +	u32 val;
-> +
-> +	value = divider_get_val(rate, parent_rate, NULL,
-> +				PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (value < 0)
-> +		return value;
-> +
-> +	spin_lock_irqsave(divider->lock, flags);
-> +
-> +	val = clk_readl(divider->reg);
-> +	val &= ~((clk_div_mask(divider->width) << divider->shift) |
-> +			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-> +
-> +	val |= (u32)value << divider->shift;
-> +	val |= (u32)value << PCG_DIV_SHIFT;
-> +	clk_writel(val, divider->reg);
-> +
-> +	spin_unlock_irqrestore(divider->lock, flags);
-> +
-> +	return 0;
-> +}
+Add compatible for LX2160A SoC,QDS and RDB board
 
-Have you tested this works? I thought those are two cascaded dividers
-and you program both to the same value. Normally you would have to
-calculate individual values for each divider which together give you the
-desired output rate.
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Sascha
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index cdb9dd7..76256bd 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -218,3 +218,15 @@ Required root node properties:
+ LS2088A ARMv8 based RDB Board
+ Required root node properties:
+     - compatible = "fsl,ls2088a-rdb", "fsl,ls2088a";
++
++LX2160A SoC
++Required root node properties:
++    - compatible = "fsl,lx2160a";
++
++LX2160A ARMv8 based QDS Board
++Required root node properties:
++    - compatible = "fsl,lx2160a-qds", "fsl,lx2160a";
++
++LX2160A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.7.4
