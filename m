@@ -1,62 +1,165 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40604 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbeHCHho (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Aug 2018 03:37:44 -0400
-Date: Fri, 3 Aug 2018 07:43:04 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
-Message-ID: <20180803054304.GA2214@kroah.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-9-songjun.wu@linux.intel.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180803030237.3366-9-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
+ <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
+ <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
+ <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
+Message-ID: <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
+Date: Tue, 21 Aug 2018 08:30:57 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 03, 2018 at 11:02:27AM +0800, Songjun Wu wrote:
-> Get serial id from dts.
-> 
-> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
-> macro is defined in lantiq_soc.h.
-> lantiq_soc.h is in arch path for legacy product support.
-> 
-> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
-> 
-> If "#ifdef preprocessor" is changed to
-> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
-> code using LTQ_EARLY_ASC is compiled.
-> Compilation will fail for no LTQ_EARLY_ASC defined.
-> 
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
-> 
-> Changes in v2: None
-> 
->  drivers/tty/serial/lantiq.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-> index 044128277248..836ca51460f2 100644
-> --- a/drivers/tty/serial/lantiq.c
-> +++ b/drivers/tty/serial/lantiq.c
-> @@ -6,6 +6,7 @@
->   * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
->   * Copyright (C) 2007 John Crispin <john@phrozen.org>
->   * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
-> + * Copyright (C) 2018 Intel Corporation.
+Quoting Taniya Das (2018-08-21 04:36:20)
+> On 8/18/2018 11:31 PM, Taniya Das wrote:
+> > Hello Stephen,
+> > =
 
-Your changes here do not warrent the addition of a copyright line, don't
-you agree?  If not, please get a signed-off-by from your corporate
-lawyer who does this this is warrented when you resend this patch.
+> > I will test these changes and get back.
+> > =
 
-thanks,
+> > On 8/18/2018 7:42 AM, Stephen Boyd wrote:
+> >> Quoting Taniya Das (2018-08-10 18:53:54)
+> >>> =C2=A0 [v4]
+> >>> =C2=A0=C2=A0 * Add recalc_clk_ops to calculate the clock frequency re=
+ading the =
 
-greg k-h
+> >>> current
+> >>> =C2=A0=C2=A0=C2=A0=C2=A0 perf state, also add CLK_GET_RATE_NOCACHE fl=
+ag.
+> >>> =C2=A0=C2=A0 * Cleanup 'goto' during mode check in 'clk_rcg2_calculat=
+e_freq'.
+> >>> =C2=A0=C2=A0 * cleanup return from function 'com_cc_register_rcg_dfs'.
+> >>
+> >> I want to squash this in. I have only compile tested it. Let me know
+> >> what you think.
+> >>
+> >> ----8<---
+> >> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> >> index e6300e05d5df..e5eca8a1abe4 100644
+> >> --- a/drivers/clk/qcom/clk-rcg.h
+> >> +++ b/drivers/clk/qcom/clk-rcg.h
+> >> @@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
+> >> =C2=A0 extern const struct clk_ops clk_gfx3d_ops;
+> >> =C2=A0 extern const struct clk_ops clk_rcg2_shared_ops;
+> >> +struct clk_rcg_dfs_data {
+> >> +=C2=A0=C2=A0=C2=A0 struct clk_rcg2 *rcg;
+> >> +=C2=A0=C2=A0=C2=A0 struct clk_init_data *init;
+> >> +};
+> >> +
+> >> +#define DEFINE_RCG_DFS(r) \
+> >> +=C2=A0=C2=A0=C2=A0 { .rcg =3D &r##_src, .init =3D &r##_init }
+> >> +
+> >> =C2=A0 extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_rcg2 **rcgs, int num_clks);
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct clk_rcg_dfs_data=
+ *rcgs,
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 size_t len);
+> >> =C2=A0 #endif
+> >> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> >> index 55a5b58cbb15..bbe2a1916296 100644
+> >> --- a/drivers/clk/qcom/clk-rcg2.c
+> >> +++ b/drivers/clk/qcom/clk-rcg2.c
+> >> @@ -1051,48 +1051,24 @@ static unsigned long
+> >> =C2=A0 clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long paren=
+t_rate)
+> >> =C2=A0 {
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk_rcg2 *rcg =3D to_clk_rcg2(hw=
+);
+> >> -=C2=A0=C2=A0=C2=A0 u32 cfg, hid_div, m =3D 0, n =3D 0, mode =3D 0, ma=
+sk, level;
+> >> -=C2=A0=C2=A0=C2=A0 int num_parents, i;
+> >> -=C2=A0=C2=A0=C2=A0 unsigned long prate;
+> >> -
+> >> -=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 SE_CMD_DFSR_OFFSET, &cfg);
+> >> -=C2=A0=C2=A0=C2=A0 level =3D (GENMASK(4, 1) & cfg) >> 1;
+> >> -
+> >> -=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 SE_PERF_DFSR(level), &cfg);
+> >> -=C2=A0=C2=A0=C2=A0 if (rcg->mnd_width) {
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mask =3D BIT(rcg->mnd_widt=
+h) - 1;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regm=
+ap, rcg->cmd_rcgr +
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 SE_PERF_M_DFSR(level), &m);
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 m &=3D mask;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regm=
+ap, rcg->cmd_rcgr +
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 SE_PERF_N_DFSR(level), &n);
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n =3D=C2=A0 ~n;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n &=3D mask;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n +=3D m;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mode =3D cfg & CFG_MODE_MA=
+SK;
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mode >>=3D CFG_MODE_SHIFT;
+> >> -=C2=A0=C2=A0=C2=A0 }
+> >> +=C2=A0=C2=A0=C2=A0 int ret;
+> >> +=C2=A0=C2=A0=C2=A0 u32 level;
+> >> -=C2=A0=C2=A0=C2=A0 mask =3D BIT(rcg->hid_width) - 1;
+> >> -=C2=A0=C2=A0=C2=A0 hid_div =3D cfg >> CFG_SRC_DIV_SHIFT;
+> >> -=C2=A0=C2=A0=C2=A0 hid_div &=3D mask;
+> >> -=C2=A0=C2=A0=C2=A0 cfg &=3D CFG_SRC_SEL_MASK;
+> >> -=C2=A0=C2=A0=C2=A0 cfg >>=3D CFG_SRC_SEL_SHIFT;
+> >> +=C2=A0=C2=A0=C2=A0 regmap_read(rcg->clkr.regmap,
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rc=
+g->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
+> >> +=C2=A0=C2=A0=C2=A0 level &=3D GENMASK(4, 1);
+> >> +=C2=A0=C2=A0=C2=A0 level >>=3D 1;
+> >> -=C2=A0=C2=A0=C2=A0 num_parents =3D clk_hw_get_num_parents(hw);
+> >> -=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < num_parents; i++) {
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cfg =3D=3D rcg->parent=
+_map[i].cfg) {
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr=
+ate =3D clk_hw_get_rate(
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if=
+ (parent_rate !=3D prate)
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 parent_rate =3D prate;
+> >> +=C2=A0=C2=A0=C2=A0 if (!rcg->freq_tbl) {
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_rcg2_dfs_popul=
+ate_freq_table(rcg);
+> =
+
+> This function would retrieve the parent_rate and if the parent_rate is =
+
+> not ready then it would fail to boot up.
+> =
+
+> So we have to make sure the parents are registered before these RCGs. =
+
+> That also was one reason for me to not populate the frequency table at =
+
+> recalc.
+> =
+
+> We would need this patch to make this work.
+
+Hmmmm. Ok. That won't work then. recalc_rate() better not try to
+populate the frequency table then or it will not work. So I suppose it
+needs to fallback to reading the registers and assuming the parent_rate
+coming in is the actual frequency of it's parent until the frequency
+table pointer is non-NULL. Would that work?
+
+BTW, does DFS switch parents without software knowing about it? What
+happens in that case? Does the QUP driver make sure that the new parent
+of this RCG is properly enabled so that it can switch to it when needed?
+I'm still trying to understand this whole design. Who takes care of the
+voltage requirements in this case? The QUP driver as well?
