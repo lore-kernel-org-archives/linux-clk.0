@@ -1,329 +1,485 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:10424 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeHXRJJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 13:09:09 -0400
-Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
- <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
- <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
-From: Jian Hu <jian.hu@amlogic.com>
-Message-ID: <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
-Date: Fri, 24 Aug 2018 21:34:26 +0800
-MIME-Version: 1.0
-In-Reply-To: <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Mon, 20 Aug 2018 22:20:20 -0500
+Message-Id: <20180821032020.81254-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi: Jerome
+Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+Standby.
 
-Please see my commits.
+The Module Standby HW in the RZ/A series is very close to R-Car HW, except
+for how the registers are laid out.
+The MSTP registers are only 8-bits wide, there is no status registers
+(MSTPST), and the register offsets are a little different. Since the RZ/A
+hardware manuals refer to these registers as the Standby Control Registers,
+we'll use that name to distinguish the RZ/A type for the R-Car type.
 
-On 2018/8/14 20:40, Jerome Brunet wrote:
-> On Fri, 2018-08-10 at 17:54 +0800, Jian Hu wrote:
->> Add a Clock driver for the ALways-On part
->> of the Amlogic Meson-G12A SoC.
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   drivers/clk/meson/Makefile     |   2 +-
->>   drivers/clk/meson/g12a-aoclk.c | 170 +++++++++++++++++++++++++++++++++++++++++
->>   drivers/clk/meson/g12a-aoclk.h |  36 +++++++++
->>   3 files changed, 207 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/clk/meson/g12a-aoclk.c
->>   create mode 100644 drivers/clk/meson/g12a-aoclk.h
->>
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index 2b1a562..d5c2dcd 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -9,5 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->>   obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->>   obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->>   obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
->> -obj-$(CONFIG_COMMON_CLK_G12A)	 += g12a.o
->> +obj-$(CONFIG_COMMON_CLK_G12A)	 += g12a.o g12a-aoclk.c
->>   obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
->> diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
->> new file mode 100644
->> index 0000000..a5cd95c
->> --- /dev/null
->> +++ b/drivers/clk/meson/g12a-aoclk.c
->> @@ -0,0 +1,170 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Amlogic Meson-G12A Clock Controller Driver
->> + *
->> + * Copyright (c) 2016 Baylibre SAS.
->> + * Author: Michael Turquette <mturquette@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Jian Hu <jian.hu@amlogic.com>
->> + */
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset-controller.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/init.h>
->> +#include "clkc.h"
->> +#include "g12a-aoclk.h"
->> +
->> +#define G12A_AO_GATE0(_name, _bit)					\
->> +static struct clk_regmap _name##_ao = {					\
->> +	.data = &(struct clk_regmap_gate_data) {			\
->> +		.offset = (AO_CLK_GATE0),			\
->> +		.bit_idx = (_bit),					\
->> +	},								\
->> +	.hw.init = &(struct clk_init_data) {				\
->> +		.name = #_name "_ao",					\
->> +		.ops = &clk_regmap_gate_ops,				\
->> +		.parent_names = (const char *[]){ "clk81" },		\
->> +		.num_parents = 1,					\
->> +	},								\
->> +}
->> +
->> +G12A_AO_GATE0(ahb_bus,		0);
->> +G12A_AO_GATE0(remote,		1);
->> +G12A_AO_GATE0(i2c_master,	2);
->> +G12A_AO_GATE0(i2c_slave,	3);
->> +G12A_AO_GATE0(uart1,		4);
->> +G12A_AO_GATE0(prod_i2c,		5);
->> +G12A_AO_GATE0(uart2,		6);
->> +G12A_AO_GATE0(ir_blaster,	7);
->> +G12A_AO_GATE0(saradc,		8);
->> +
->> +static struct clk_regmap ao_clk81 = {
->> +	.data = &(struct clk_regmap_mux_data) {
->> +		.offset = AO_RTI_PWR_CNTL_REG0,
->> +		.mask = 0x1,
->> +		.shift = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "ao_clk81",
->> +		.ops = &clk_regmap_mux_ro_ops,
->> +		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
-> 
-> I think it is time we stop taking clock input from nowhere.
-> With the addition of the axg audio clock controller, there is now an example of
-> how do so.
-> 
-> This clock controller apparently has 3 inputs:
-> * xtal
-> * ao_xtal
-> * clk_81
-> 
-> I'd like to see that appear this DT bindings and the probe function
-> 
-> Same goes for the EE controller which should only take the xtal.
-> 
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   3 +-
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             | 189 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  66 +++++--
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   6 +
+ include/dt-bindings/clock/r7s9210-cpg-mssr.h       |  21 +++
+ 7 files changed, 280 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/clk/renesas/r7s9210-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r7s9210-cpg-mssr.h
 
-I am confued about aoclk81's parent clocks.
-
-I can not get the example of axg audio clock driver, Could you provide 
-the link? Had it merged into clk-meson.git?
-
-my local latest commit is:
-
-commit cd2b3132bd7e84dc6a739fef73e5b5c3f2b3a0bb
-Author: Jerome Brunet <jbrunet@baylibre.com>
-Date:   Wed Aug 1 16:00:53 2018 +0200
-
-     clk: meson: clk-pll: drop hard-coded rates from pll tables
-
-     Putting hard-coded rates inside the parameter tables assumes that
-     the parent is known and will never change. That's a big assumption
-     we should not make.
-
-     We have everything we need to recalculate the output rate using
-     the parent rate and the rest of the parameters. Let's do so and
-     drop the rates from the tables.
-
-     Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-     Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-
->> +		.num_parents = 2,
->> +	},
->> +};
->> +
->> +static struct clk_regmap g12a_saradc_mux = {
->> +	.data = &(struct clk_regmap_mux_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.mask = 0x3,
->> +		.shift = 9,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "g12a_saradc_mux",
->> +		.ops = &clk_regmap_mux_ops,
->> +		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
->> +		.num_parents = 2,
->> +	},
->> +};
->> +
->> +static struct clk_regmap g12a_saradc_div = {
->> +	.data = &(struct clk_regmap_div_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.shift = 0,
->> +		.width = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "g12a_saradc_div",
->> +		.ops = &clk_regmap_divider_ops,
->> +		.parent_names = (const char *[]){ "g12a_saradc_mux" },
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static struct clk_regmap g12a_saradc_gate = {
->> +	.data = &(struct clk_regmap_gate_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.bit_idx = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "g12a_saradc_gate",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_names = (const char *[]){ "g12a_saradc_div" },
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static unsigned int g12a_aoclk_reset[] = {
->> +	[RESET_AO_REMOTE] =	16,
->> +	[RESET_AO_UART1] =	17,
->> +	[RESET_AO_I2C_MASTER] = 18,
->> +	[RESET_AO_I2C_SLAVE] =	19,
->> +	[RESET_AO_SARADC] =	20,
->> +	[RESET_AO_UART2] =	22,
->> +	[RESET_AO_IR_BLASTER] = 23,
->> +};
->> +
->> +static struct clk_regmap *g12a_aoclk_regmap[] = {
->> +	[CLKID_AO_AHB_BUS]	= &ahb_bus_ao,
->> +	[CLKID_AO_REMOTE]	= &remote_ao,
->> +	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
->> +	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
->> +	[CLKID_AO_UART1]	= &uart1_ao,
->> +	[CLKID_AO_PROD_I2C]	= &prod_i2c_ao,
->> +	[CLKID_AO_UART2]	= &uart2_ao,
->> +	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
->> +	[CLKID_AO_SAR_ADC]	= &saradc_ao,
->> +	[CLKID_AO_CLK81]	= &ao_clk81,
->> +	[CLKID_AO_SAR_ADC_SEL]	= &g12a_saradc_mux,
->> +	[CLKID_AO_SAR_ADC_DIV]	= &g12a_saradc_div,
->> +	[CLKID_AO_SAR_ADC_CLK]	= &g12a_saradc_gate,
-> 
-> Please be consistent while naming the clock, either prefix all with g12a, or
-> none.
-> 
-OK, I will add g12a prefix to be consistent with other clocks
->> +};
->> +
->> +static struct clk_hw_onecell_data g12a_aoclk_onecell_data = {
->> +	.hws = {
->> +		[CLKID_AO_AHB_BUS]	= &ahb_bus_ao.hw,
->> +		[CLKID_AO_REMOTE]	= &remote_ao.hw,
->> +		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
->> +		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
->> +		[CLKID_AO_UART1]	= &uart1_ao.hw,
->> +		[CLKID_AO_PROD_I2C]	= &prod_i2c_ao.hw,
->> +		[CLKID_AO_UART2]	= &uart2_ao.hw,
->> +		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
->> +		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
->> +		[CLKID_AO_CLK81]	= &ao_clk81.hw,
->> +		[CLKID_AO_SAR_ADC_SEL]	= &g12a_saradc_mux.hw,
->> +		[CLKID_AO_SAR_ADC_DIV]	= &g12a_saradc_div.hw,
->> +		[CLKID_AO_SAR_ADC_CLK]	= &g12a_saradc_gate.hw,
->> +	},
->> +	.num = NR_CLKS,
->> +};
->> +
->> +static struct meson_aoclk_data g12a_aoclkc_data = {
->> +	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
->> +	.num_reset	= ARRAY_SIZE(g12a_aoclk_reset),
->> +	.reset		= g12a_aoclk_reset,
->> +	.num_clks	= ARRAY_SIZE(g12a_aoclk_regmap),
->> +	.clks		= g12a_aoclk_regmap,
->> +	.hw_data	= &g12a_aoclk_onecell_data,
->> +};
->> +
->> +static const struct of_device_id g12a_aoclkc_match_table[] = {
->> +	{
->> +		.compatible	= "amlogic,g12a-aoclkc",
->> +		.data		= &g12a_aoclkc_data,
->> +	},
->> +	{ }
->> +};
->> +
->> +static struct platform_driver g12a_aoclkc_driver = {
->> +	.probe		= meson_aoclkc_probe,
->> +	.driver		= {
->> +		.name	= "g12a-aoclkc",
->> +		.of_match_table = g12a_aoclkc_match_table,
->> +	},
->> +};
->> +
->> +builtin_platform_driver(g12a_aoclkc_driver);
->> diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
->> new file mode 100644
->> index 0000000..007183e
->> --- /dev/null
->> +++ b/drivers/clk/meson/g12a-aoclk.h
->> @@ -0,0 +1,36 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2017 BayLibre, SAS
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Jian Hu <Jian.Hu@amlogic.com>
->> + */
->> +
->> +#ifndef __G12A_AOCLKC_H
->> +#define __G12A_AOCLKC_H
->> +
->> +//#include "meson-aoclk.h"
-> 
-> ??? Do you need this or not ?
-> It is useless,I will delete it, Thanks for review.
->> +
->> +#define NR_CLKS				14
->> +
->> +/* AO Configuration Clock registers offsets
->> + * Register offsets from the data sheet must be multiplied by 4.
->> + */
->> +#define AO_RTI_PWR_CNTL_REG0		0x10
->> +#define AO_RTI_GEN_CNTL_REG0		0x40
->> +#define AO_OSCIN_CNTL			0x58
->> +#define AO_CRT_CLK_CNTL1		0x68
->> +#define AO_SAR_CLK			0x90
->> +#define AO_RTC_ALT_CLK_CNTL0		0x94
->> +#define AO_RTC_ALT_CLK_CNTL1		0x98
->> +
->> +/*
->> + *AO CLK81 gate clocks
->> + */
->> +#define AO_CLK_GATE0			0x4c
->> +
->> +#include <dt-bindings/clock/g12a-aoclkc.h>
->> +#include <dt-bindings/reset/g12a-aoclkc.h>
->> +
->> +#endif /* __G12A_AOCLKC_H */
-> 
-> 
-> .
-> 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index db542abadb75..66ca973edd77 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -13,6 +13,7 @@ They provide the following functionalities:
+ 
+ Required Properties:
+   - compatible: Must be one of:
++      - "renesas,r7s9210-cpg-mssr" for the r7s9210 SoC (RZ/A2)
+       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
+       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
+@@ -37,7 +38,7 @@ Required Properties:
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7792,
+ 		 r8a7793, r8a7794, r8a7795, r8a7796, r8a77965, r8a77970,
+-		 r8a77980, r8a77990, r8a77995)
++		 r8a77980, r8a77990, r8a77995, r7s9210)
+       - "extalr" (r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
+       - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
+ 		     r8a7794)
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 9022bbe1297e..d8ccdaba5103 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -3,6 +3,7 @@ config CLK_RENESAS
+ 	default y if ARCH_RENESAS
+ 	select CLK_EMEV2 if ARCH_EMEV2
+ 	select CLK_RZA1 if ARCH_R7S72100
++	select CLK_R7S9210 if ARCH_R7S9210
+ 	select CLK_R8A73A4 if ARCH_R8A73A4
+ 	select CLK_R8A7740 if ARCH_R8A7740
+ 	select CLK_R8A7743 if ARCH_R8A7743
+@@ -45,6 +46,10 @@ config CLK_RZA1
+ 	bool "RZ/A1H clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+ 
++config CLK_R7S9210
++	bool "RZ/A2 clock support" if COMPILE_TEST
++	select CLK_RENESAS_CPG_MSSR
++
+ config CLK_R8A73A4
+ 	bool "R-Mobile APE6 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index e4aa3d6143d2..d95bfd758a14 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -2,6 +2,7 @@
+ # SoC
+ obj-$(CONFIG_CLK_EMEV2)			+= clk-emev2.o
+ obj-$(CONFIG_CLK_RZA1)			+= clk-rz.o
++obj-$(CONFIG_CLK_R7S9210)		+= r7s9210-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A73A4)		+= clk-r8a73a4.o
+ obj-$(CONFIG_CLK_R8A7740)		+= clk-r8a7740.o
+ obj-$(CONFIG_CLK_R8A7743)		+= r8a7743-cpg-mssr.o
+diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+new file mode 100644
+index 000000000000..8b4bdd0ec06a
+--- /dev/null
++++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+@@ -0,0 +1,189 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * r7s9210 Clock Pulse Generator / Module Standby and Software Reset
++ *
++ * Based on r8a7795-cpg-mssr.c
++ *
++ * Copyright (C) 2018 Chris Brandt
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ *
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <dt-bindings/clock/r7s9210-cpg-mssr.h>
++#include "renesas-cpg-mssr.h"
++
++#define CPG_FRQCR	0x00
++#define CPG_CKIOSEL	0xF0
++#define CPG_SCLKSEL	0xF4
++
++#define PORTL_PIDR	0xFCFFE074
++static u8 cpg_mode;
++
++/* Internal Clock ratio table */
++static const unsigned int ratio_tab[5][5] = {
++			/* I,  G,  B, P1, P0 */
++			{  2,  4,  8, 16, 32 },	/* FRQCR = 0x012 */
++			{  4,  4,  8, 16, 32 },	/* FRQCR = 0x112 */
++			{  8,  4,  8, 16, 32 },	/* FRQCR = 0x212 */
++			{ 16,  8, 16, 16, 32 },	/* FRQCR = 0x322 */
++			{ 16, 16, 32, 32, 32 },	/* FRQCR = 0x333 */
++			};
++
++enum rz_clk_types {
++	CLK_TYPE_RZA_MAIN = CLK_TYPE_CUSTOM,
++	CLK_TYPE_RZA_PLL,
++};
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK = R7S9210_CLK_P0,
++
++	/* External Input Clocks */
++	CLK_EXTAL,
++
++	/* Internal Core Clocks */
++	CLK_MAIN,
++	CLK_PLL,
++	CLK_I,
++	CLK_G,
++	CLK_B,
++	CLK_P1,
++	CLK_P1C,
++	CLK_P0,
++
++	/* Module Clocks */
++	MOD_CLK_BASE
++};
++
++static struct cpg_core_clk r7s9210_core_clks[] = {
++	/* External Clock Inputs */
++	DEF_INPUT("extal",     CLK_EXTAL),
++
++	/* Internal Core Clocks */
++	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
++	DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
++
++	/* Core Clock Outputs */
++	DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
++	DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
++	DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
++	DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
++	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
++	DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
++};
++
++static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
++	DEF_MOD("ostm0",	 306,	R7S9210_CLK_P1C),
++	DEF_MOD("ostm1",	 305,	R7S9210_CLK_P1C),
++	DEF_MOD("ostm2",	 304,	R7S9210_CLK_P1C),
++
++	DEF_MOD("scif0",	 407,	R7S9210_CLK_P1C),
++	DEF_MOD("scif1",	 406,	R7S9210_CLK_P1C),
++	DEF_MOD("scif2",	 405,	R7S9210_CLK_P1C),
++	DEF_MOD("scif3",	 404,	R7S9210_CLK_P1C),
++	DEF_MOD("scif4",	 403,	R7S9210_CLK_P1C),
++
++	DEF_MOD("i2c0",		 807,	R7S9210_CLK_P1),
++	DEF_MOD("i2c1",		 806,	R7S9210_CLK_P1),
++	DEF_MOD("i2c2",		 805,	R7S9210_CLK_P1),
++	DEF_MOD("i2c3",		 804,	R7S9210_CLK_P1),
++};
++
++struct clk * __init rza2_cpg_clk_register(struct device *dev,
++	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
++	struct clk **clks, void __iomem *base,
++	struct raw_notifier_head *notifiers)
++{
++	const struct clk *parent;
++	unsigned int mult = 1;
++	unsigned int div = 1;
++	u16 frqcr;
++	u8 index;
++	int i;
++
++	parent = clks[core->parent];
++	if (IS_ERR(parent))
++		return ERR_CAST(parent);
++
++	switch (core->id) {
++	case CLK_MAIN:
++		break;
++
++	case CLK_PLL:
++		if (cpg_mode)
++			mult = 44;	/* Divider 1 is 1/2 */
++		else
++			mult = 88;	/* Divider 1 is 1 */
++		break;
++
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	/* Adjust the dividers based on the current FRQCR setting */
++	if (core->id == CLK_MAIN) {
++
++		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
++		if (clk_get_rate((struct clk *)parent) > 12000000)
++			cpg_mode = 1;
++
++		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
++		if (frqcr == 0x012)
++			index = 0;
++		else if (frqcr == 0x112)
++			index = 1;
++		else if (frqcr == 0x212)
++			index = 2;
++		else if (frqcr == 0x322)
++			index = 3;
++		else if (frqcr == 0x333)
++			index = 4;
++		else
++			BUG_ON(1);	/* Illegal FRQCR value */
++
++		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
++			switch (r7s9210_core_clks[i].id) {
++			case R7S9210_CLK_I:
++				r7s9210_core_clks[i].div = ratio_tab[index][0];
++				break;
++			case R7S9210_CLK_G:
++				r7s9210_core_clks[i].div = ratio_tab[index][1];
++				break;
++			case R7S9210_CLK_B:
++				r7s9210_core_clks[i].div = ratio_tab[index][2];
++				break;
++			case R7S9210_CLK_P1:
++			case R7S9210_CLK_P1C:
++				r7s9210_core_clks[i].div = ratio_tab[index][3];
++				break;
++			case R7S9210_CLK_P0:
++				r7s9210_core_clks[i].div = ratio_tab[index][4];
++				break;
++			}
++		}
++	}
++
++	return clk_register_fixed_factor(NULL, core->name,
++					 __clk_get_name(parent), 0, mult, div);
++}
++
++const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
++	/* Core Clocks */
++	.core_clks = r7s9210_core_clks,
++	.num_core_clks = ARRAY_SIZE(r7s9210_core_clks),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks = r7s9210_mod_clks,
++	.num_mod_clks = ARRAY_SIZE(r7s9210_mod_clks),
++	.num_hw_mod_clks = 9 * 32, /* includes STBCR0/1/2 which don't exist */
++
++	/* Callbacks */
++	.cpg_clk_register = rza2_cpg_clk_register,
++
++	/* RZ/A2 has Standby Control Registers */
++	.stbyctrl = true,
++};
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index e04338932786..80882eadf95f 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -73,6 +73,17 @@ static const u16 smstpcr[] = {
+ 
+ #define	SMSTPCR(i)	smstpcr[i]
+ 
++/*
++ * Standby Control Register offsets (RZ/A)
++ * Base address is FRQCR register
++ */
++
++static const u16 stbcr[] = {
++	0x000, 0x000, 0x014, 0x410, 0x414, 0x418, 0x41C, 0x420,
++	0x424, 0x428, 0x42C, 0x430, 0x434, 0x460,
++};
++
++#define	STBCR(i)	stbcr[i]
+ 
+ /*
+  * Software Reset Register offsets
+@@ -110,6 +121,7 @@ static const u16 srcr[] = {
+  * @notifiers: Notifier chain to save/restore clock state for system resume
+  * @smstpcr_saved[].mask: Mask of SMSTPCR[] bits under our control
+  * @smstpcr_saved[].val: Saved values of SMSTPCR[]
++ * @stbyctrl: This device has Standby Control Registers
+  */
+ struct cpg_mssr_priv {
+ #ifdef CONFIG_RESET_CONTROLLER
+@@ -123,6 +135,7 @@ struct cpg_mssr_priv {
+ 	unsigned int num_core_clks;
+ 	unsigned int num_mod_clks;
+ 	unsigned int last_dt_core_clk;
++	bool stbyctrl;
+ 
+ 	struct raw_notifier_head notifiers;
+ 	struct {
+@@ -162,16 +175,29 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ 		enable ? "ON" : "OFF");
+ 	spin_lock_irqsave(&priv->rmw_lock, flags);
+ 
+-	value = readl(priv->base + SMSTPCR(reg));
+-	if (enable)
+-		value &= ~bitmask;
+-	else
+-		value |= bitmask;
+-	writel(value, priv->base + SMSTPCR(reg));
++	if (priv->stbyctrl) {
++		value = readb(priv->base + STBCR(reg));
++		if (enable)
++			value &= ~bitmask;
++		else
++			value |= bitmask;
++		writeb(value, priv->base + STBCR(reg));
++
++		/* dummy read to ensure write has completed */
++		readb(priv->base + STBCR(reg));
++		barrier_data(priv->base + STBCR(reg));
++	} else {
++		value = readl(priv->base + SMSTPCR(reg));
++		if (enable)
++			value &= ~bitmask;
++		else
++			value |= bitmask;
++		writel(value, priv->base + SMSTPCR(reg));
++	}
+ 
+ 	spin_unlock_irqrestore(&priv->rmw_lock, flags);
+ 
+-	if (!enable)
++	if (!enable || priv->stbyctrl)
+ 		return 0;
+ 
+ 	for (i = 1000; i > 0; --i) {
+@@ -205,7 +231,10 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
+ 	struct cpg_mssr_priv *priv = clock->priv;
+ 	u32 value;
+ 
+-	value = readl(priv->base + MSTPSR(clock->index / 32));
++	if (priv->stbyctrl)
++		value = readb(priv->base + STBCR(clock->index / 32));
++	else
++		value = readl(priv->base + MSTPSR(clock->index / 32));
+ 
+ 	return !(value & BIT(clock->index % 32));
+ }
+@@ -734,6 +763,12 @@ static const struct of_device_id cpg_mssr_match[] = {
+ 		.compatible = "renesas,r8a77995-cpg-mssr",
+ 		.data = &r8a77995_cpg_mssr_info,
+ 	},
++#endif
++#ifdef CONFIG_CLK_R7S9210
++	{
++		.compatible = "renesas,r7s9210-cpg-mssr",
++		.data = &r7s9210_cpg_mssr_info,
++	},
+ #endif
+ 	{ /* sentinel */ }
+ };
+@@ -785,13 +820,23 @@ static int cpg_mssr_resume_noirq(struct device *dev)
+ 		if (!mask)
+ 			continue;
+ 
+-		oldval = readl(priv->base + SMSTPCR(reg));
++		if (priv->stbyctrl)
++			oldval = readb(priv->base + STBCR(reg));
++		else
++			oldval = readl(priv->base + SMSTPCR(reg));
+ 		newval = oldval & ~mask;
+ 		newval |= priv->smstpcr_saved[reg].val & mask;
+ 		if (newval == oldval)
+ 			continue;
+ 
+-		writel(newval, priv->base + SMSTPCR(reg));
++		if (priv->stbyctrl) {
++			writeb(newval, priv->base + STBCR(reg));
++			/* dummy read to ensure write has completed */
++			readb(priv->base + STBCR(reg));
++			barrier_data(priv->base + STBCR(reg));
++			continue;
++		} else
++			writel(newval, priv->base + SMSTPCR(reg));
+ 
+ 		/* Wait until enabled clocks are really enabled */
+ 		mask &= ~priv->smstpcr_saved[reg].val;
+@@ -863,6 +908,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 	priv->num_mod_clks = info->num_hw_mod_clks;
+ 	priv->last_dt_core_clk = info->last_dt_core_clk;
+ 	RAW_INIT_NOTIFIER_HEAD(&priv->notifiers);
++	priv->stbyctrl = info->stbyctrl;
+ 
+ 	for (i = 0; i < nclks; i++)
+ 		clks[i] = ERR_PTR(-ENOENT);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 87bb8f368d4e..e65259ed4052 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -103,6 +103,10 @@ struct device_node;
+      *
+      * @init: Optional callback to perform SoC-specific initialization
+      * @cpg_clk_register: Optional callback to handle special Core Clock types
++     *
++     * @stbyctrl: This device has Standby Control Registers which are 8-bits
++     *            wide, no status registers (MSTPSR) and have different address
++     *            offsets.
+      */
+ 
+ struct cpg_mssr_info {
+@@ -111,6 +115,7 @@ struct cpg_mssr_info {
+ 	unsigned int num_core_clks;
+ 	unsigned int last_dt_core_clk;
+ 	unsigned int num_total_core_clks;
++	bool stbyctrl;
+ 
+ 	/* Module Clocks */
+ 	const struct mssr_mod_clk *mod_clks;
+@@ -148,6 +153,7 @@ extern const struct cpg_mssr_info r8a77970_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77990_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
++extern const struct cpg_mssr_info r7s9210_cpg_mssr_info;
+ 
+ 
+     /*
+diff --git a/include/dt-bindings/clock/r7s9210-cpg-mssr.h b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
+new file mode 100644
+index 000000000000..b124bb65e9fc
+--- /dev/null
++++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0+
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R7S9210 CPG Core Clocks */
++#define R7S9210_CLK_PLL			0
++#define R7S9210_CLK_I			1
++#define R7S9210_CLK_G			2
++#define R7S9210_CLK_B			3
++#define R7S9210_CLK_P1			4
++#define R7S9210_CLK_P1C			5
++#define R7S9210_CLK_P0			6
++
++#endif /* __DT_BINDINGS_CLOCK_R7S9210_CPG_MSSR_H__ */
+-- 
+2.16.1
