@@ -1,29 +1,28 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:58200 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727948AbeHUUiE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:04 -0400
 From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+To: Thomas Gleixner <tglx@linutronix.de>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 08/24] watchdog: jz4740: Use WDT clock provided by TCU driver
-Date: Thu,  9 Aug 2018 23:43:58 +0200
-Message-Id: <20180809214414.20905-9-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v7 08/24] watchdog: jz4740: Use WDT clock provided by TCU driver
+Date: Tue, 21 Aug 2018 19:16:19 +0200
+Message-Id: <20180821171635.22740-9-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 Instead of requesting the "ext" clock and handling the watchdog clock
@@ -43,16 +42,21 @@ kernel; so it's still time to push breaking changes, in order to get a
 clean devicetree that won't break once it musn't.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
+
+Notes:
+     v5: New patch
+    
+     v6: - Split regmap change to new patch 09/24
+         - The code now sets the WDT clock to the smallest rate possible and
+           calculates the maximum timeout from that
+    
+     v7: No change
+
  drivers/watchdog/Kconfig      |  2 +
  drivers/watchdog/jz4740_wdt.c | 86 +++++++++++++++++--------------------------
  2 files changed, 36 insertions(+), 52 deletions(-)
-
- v5: New patch
-
- v6: - Split regmap change to new patch 09/24
-     - The code now sets the WDT clock to the smallest rate possible and
-       calculates the maximum timeout from that
 
 diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
 index 9af07fd92763..834222abbbdb 100644
