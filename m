@@ -1,149 +1,37 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <khoroshilov@ispras.ru>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
 	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 06/14] clk: qcom: Add IPQ806X's HFPLLs
-Date: Mon, 13 Aug 2018 19:05:59 +0530
-Message-Id: <1534167367-17545-7-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+	linux-kernel@vger.kernel.org,
+	ldv-project@linuxtesting.org
+Subject: [PATCH] clk: cdce925: release child device nodes
+Date: Wed, 22 Aug 2018 00:05:32 +0300
+Message-Id: <1534885532-26558-1-git-send-email-khoroshilov@ispras.ru>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+of_get_child_by_name() returns device node with refcount incremented,
+but there is no decrement in cdce925_probe(). The patch adds one.
 
-Describe the HFPLLs present on IPQ806X devices.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 ---
- drivers/clk/qcom/gcc-ipq806x.c | 82 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+ drivers/clk/clk-cdce925.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 28eb200..d571cf8 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index 0a7e7d5a7506..e9c3ffad4ac3 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -703,6 +703,7 @@ static int cdce925_probe(struct i2c_client *client,
+ 				0x12 + (i*CDCE925_OFFSET_PLL),
+ 				0x07, value & 0x07);
+ 		}
++		of_node_put(np_output);
+ 	}
  
- static struct clk_pll pll0 = {
-@@ -113,6 +114,84 @@
- 	},
- };
- 
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
-+};
-+
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
-+
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -2800,6 +2879,9 @@ enum {
- 	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
- 	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
- 	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
+ 	/* Register output clock Y1 */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
