@@ -1,267 +1,76 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 05/14] clk: qcom: Add MSM8960/APQ8064's HFPLLs
-Date: Mon, 13 Aug 2018 19:05:58 +0530
-Message-Id: <1534167367-17545-6-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:33106 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbeHUUiU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:20 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 17/24] clk: jz4740: Add TCU clock
+Date: Tue, 21 Aug 2018 19:16:28 +0200
+Message-Id: <20180821171635.22740-18-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Add the missing TCU clock to the list of clocks supplied by the CGU for
+the JZ4740 SoC.
 
-Describe the HFPLLs present on MSM8960 and APQ8064 devices.
-
-Acked-by: Rob Herring <robh@kernel.org> (bindings)
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8960.c               | 172 +++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8960.h |   2 +
- 2 files changed, 174 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm8960.c
-index eb551c7..809f16a 100644
---- a/drivers/clk/qcom/gcc-msm8960.c
-+++ b/drivers/clk/qcom/gcc-msm8960.c
-@@ -30,6 +30,7 @@
- #include "clk-pll.h"
- #include "clk-rcg.h"
- #include "clk-branch.h"
-+#include "clk-hfpll.h"
- #include "reset.h"
- 
- static struct clk_pll pll3 = {
-@@ -86,6 +87,164 @@
+Notes:
+     v5: New patch
+    
+     v6: No change
+    
+     v7: No change
+
+ drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
+ include/dt-bindings/clock/jz4740-cgu.h | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 32fcc75f6f77..216ba051e743 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 5 },
  	},
++
++	[JZ4740_CLK_TCU] = {
++		"tcu", CGU_CLK_GATE,
++		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 1 },
++	},
  };
  
-+static struct hfpll_data hfpll0_data = {
-+	.mode_reg = 0x3200,
-+	.l_reg = 0x3208,
-+	.m_reg = 0x320c,
-+	.n_reg = 0x3210,
-+	.config_reg = 0x3204,
-+	.status_reg = 0x321c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3214,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll0 = {
-+	.d = &hfpll0_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll0",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll0.lock),
-+};
-+
-+static struct hfpll_data hfpll1_8064_data = {
-+	.mode_reg = 0x3240,
-+	.l_reg = 0x3248,
-+	.m_reg = 0x324c,
-+	.n_reg = 0x3250,
-+	.config_reg = 0x3244,
-+	.status_reg = 0x325c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3254,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct hfpll_data hfpll1_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll1 = {
-+	.d = &hfpll1_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll1",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll1.lock),
-+};
-+
-+static struct hfpll_data hfpll2_data = {
-+	.mode_reg = 0x3280,
-+	.l_reg = 0x3288,
-+	.m_reg = 0x328c,
-+	.n_reg = 0x3290,
-+	.config_reg = 0x3284,
-+	.status_reg = 0x329c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3294,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll2 = {
-+	.d = &hfpll2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll2.lock),
-+};
-+
-+static struct hfpll_data hfpll3_data = {
-+	.mode_reg = 0x32c0,
-+	.l_reg = 0x32c8,
-+	.m_reg = 0x32cc,
-+	.n_reg = 0x32d0,
-+	.config_reg = 0x32c4,
-+	.status_reg = 0x32dc,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x32d4,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll3 = {
-+	.d = &hfpll3_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll3",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll3.lock),
-+};
-+
-+static struct hfpll_data hfpll_l2_8064_data = {
-+	.mode_reg = 0x3300,
-+	.l_reg = 0x3308,
-+	.m_reg = 0x330c,
-+	.n_reg = 0x3310,
-+	.config_reg = 0x3304,
-+	.status_reg = 0x331c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3314,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct hfpll_data hfpll_l2_data = {
-+	.mode_reg = 0x3400,
-+	.l_reg = 0x3408,
-+	.m_reg = 0x340c,
-+	.n_reg = 0x3410,
-+	.config_reg = 0x3404,
-+	.status_reg = 0x341c,
-+	.config_val = 0x7845c665,
-+	.droop_reg = 0x3414,
-+	.droop_val = 0x0108c000,
-+	.min_rate = 600000000UL,
-+	.max_rate = 1800000000UL,
-+};
-+
-+static struct clk_hfpll hfpll_l2 = {
-+	.d = &hfpll_l2_data,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.parent_names = (const char *[]){ "pxo" },
-+		.num_parents = 1,
-+		.name = "hfpll_l2",
-+		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
-+	},
-+	.lock = __SPIN_LOCK_UNLOCKED(hfpll_l2.lock),
-+};
-+
- static struct clk_pll pll14 = {
- 	.l_reg = 0x31c4,
- 	.m_reg = 0x31c8,
-@@ -3112,6 +3271,9 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
- };
+ static void __init jz4740_cgu_init(struct device_node *np)
+diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
+index 6ed83f926ae7..e82d77028581 100644
+--- a/include/dt-bindings/clock/jz4740-cgu.h
++++ b/include/dt-bindings/clock/jz4740-cgu.h
+@@ -34,5 +34,6 @@
+ #define JZ4740_CLK_ADC		19
+ #define JZ4740_CLK_I2C		20
+ #define JZ4740_CLK_AIC		21
++#define JZ4740_CLK_TCU		22
  
- static const struct qcom_reset_map gcc_msm8960_resets[] = {
-@@ -3323,6 +3485,11 @@ enum {
- 	[PMIC_ARB1_H_CLK] = &pmic_arb1_h_clk.clkr,
- 	[PMIC_SSBI2_CLK] = &pmic_ssbi2_clk.clkr,
- 	[RPM_MSG_RAM_H_CLK] = &rpm_msg_ram_h_clk.clkr,
-+	[PLL9] = &hfpll0.clkr,
-+	[PLL10] = &hfpll1.clkr,
-+	[PLL12] = &hfpll_l2.clkr,
-+	[PLL16] = &hfpll2.clkr,
-+	[PLL17] = &hfpll3.clkr,
- };
- 
- static const struct qcom_reset_map gcc_apq8064_resets[] = {
-@@ -3482,6 +3649,11 @@ static int gcc_msm8960_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (match->data == &gcc_apq8064_desc) {
-+		hfpll1.d = &hfpll1_8064_data;
-+		hfpll_l2.d = &hfpll_l2_8064_data;
-+	}
-+
- 	tsens = platform_device_register_data(&pdev->dev, "qcom-tsens", -1,
- 					      NULL, 0);
- 	if (IS_ERR(tsens))
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8960.h b/include/dt-bindings/clock/qcom,gcc-msm8960.h
-index 7d20eed..e02742f 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8960.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8960.h
-@@ -319,5 +319,7 @@
- #define CE3_SRC					303
- #define CE3_CORE_CLK				304
- #define CE3_H_CLK				305
-+#define PLL16					306
-+#define PLL17					307
- 
- #endif
+ #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.11.0
