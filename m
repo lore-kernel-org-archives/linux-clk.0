@@ -1,138 +1,132 @@
-Return-Path: <joel.stan@gmail.com>
-MIME-Version: 1.0
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com> <1535576973-8067-3-git-send-email-eajames@linux.vnet.ibm.com>
-In-Reply-To: <1535576973-8067-3-git-send-email-eajames@linux.vnet.ibm.com>
-From: Joel Stanley <joel@jms.id.au>
-Date: Fri, 31 Aug 2018 14:33:22 -0700
-Message-ID: <CACPK8Xe+aSgFvysXFJaGdSMjG4CsEL6-iy5d79ou1+VFTV_aQw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clock: aspeed: Setup video engine clocking
-To: eajames <eajames@linux.vnet.ibm.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-	Andrew Jeffery <andrew@aj.id.au>, mchehab@kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>,
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 20/24] MIPS: qi_lb60: Move PWM devices to devicetree
+Date: Tue, 21 Aug 2018 19:16:31 +0200
+Message-Id: <20180821171635.22740-21-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 29 Aug 2018 at 14:09, Eddie James <eajames@linux.vnet.ibm.com> wrote:
->
-> Add the video engine reset bit. Add eclk mux and clock divider table.
->
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+Probe the few drivers using PWMs from devicetree, now that we have a
+devicetree node for the PWM driver.
 
-I'm travelling this week, so I'll be able to take a closer look next week.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-At a glance it looks okay.
+Notes:
+     v5: New patch
+    
+     v6: No change
+    
+     v7: No change
 
-Cheers,
+ arch/mips/boot/dts/ingenic/qi_lb60.dts | 14 ++++++++++++++
+ arch/mips/jz4740/board-qi_lb60.c       | 19 -------------------
+ 2 files changed, 14 insertions(+), 19 deletions(-)
 
-Joel
-
-> ---
->  drivers/clk/clk-aspeed.c | 41 +++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 39 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 5961367..f16ce7d 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -87,7 +87,7 @@ struct aspeed_clk_gate {
->  /* TODO: ask Aspeed about the actual parent data */
->  static const struct aspeed_gate_data aspeed_gates[] = {
->         /*                               clk rst   name                 parent  flags */
-> -       [ASPEED_CLK_GATE_ECLK] =        {  0, -1, "eclk-gate",          "eclk", 0 }, /* Video Engine */
-> +       [ASPEED_CLK_GATE_ECLK] =        {  0,  6, "eclk-gate",          "eclk", 0 }, /* Video Engine */
->         [ASPEED_CLK_GATE_GCLK] =        {  1,  7, "gclk-gate",          NULL,   0 }, /* 2D engine */
->         [ASPEED_CLK_GATE_MCLK] =        {  2, -1, "mclk-gate",          "mpll", CLK_IS_CRITICAL }, /* SDRAM */
->         [ASPEED_CLK_GATE_VCLK] =        {  3,  6, "vclk-gate",          NULL,   0 }, /* Video Capture */
-> @@ -113,6 +113,24 @@ struct aspeed_clk_gate {
->         [ASPEED_CLK_GATE_LHCCLK] =      { 28, -1, "lhclk-gate",         "lhclk", 0 }, /* LPC master/LPC+ */
->  };
->
-> +static const char * const eclk_parent_names[] = {
-> +       "mpll",
-> +       "hpll",
-> +       "dpll",
-> +};
-> +
-> +static const struct clk_div_table ast2500_eclk_div_table[] = {
-> +       { 0x0, 2 },
-> +       { 0x1, 2 },
-> +       { 0x2, 3 },
-> +       { 0x3, 4 },
-> +       { 0x4, 5 },
-> +       { 0x5, 6 },
-> +       { 0x6, 7 },
-> +       { 0x7, 8 },
-> +       { 0 }
-> +};
-> +
->  static const struct clk_div_table ast2500_mac_div_table[] = {
->         { 0x0, 4 }, /* Yep, really. Aspeed confirmed this is correct */
->         { 0x1, 4 },
-> @@ -192,18 +210,21 @@ static struct clk_hw *aspeed_ast2500_calc_pll(const char *name, u32 val)
->
->  struct aspeed_clk_soc_data {
->         const struct clk_div_table *div_table;
-> +       const struct clk_div_table *eclk_div_table;
->         const struct clk_div_table *mac_div_table;
->         struct clk_hw *(*calc_pll)(const char *name, u32 val);
->  };
->
->  static const struct aspeed_clk_soc_data ast2500_data = {
->         .div_table = ast2500_div_table,
-> +       .eclk_div_table = ast2500_eclk_div_table,
->         .mac_div_table = ast2500_mac_div_table,
->         .calc_pll = aspeed_ast2500_calc_pll,
->  };
->
->  static const struct aspeed_clk_soc_data ast2400_data = {
->         .div_table = ast2400_div_table,
-> +       .eclk_div_table = ast2400_div_table,
->         .mac_div_table = ast2400_div_table,
->         .calc_pll = aspeed_ast2400_calc_pll,
->  };
-> @@ -317,6 +338,7 @@ struct aspeed_reset {
->         [ASPEED_RESET_PECI]     = 10,
->         [ASPEED_RESET_I2C]      =  2,
->         [ASPEED_RESET_AHB]      =  1,
-> +       [ASPEED_RESET_VIDEO]    =  6,
->
->         /*
->          * SCUD4 resets start at an offset to separate them from
-> @@ -522,6 +544,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->                 return PTR_ERR(hw);
->         aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
->
-> +       hw = clk_hw_register_mux(dev, "eclk-mux", eclk_parent_names,
-> +                                ARRAY_SIZE(eclk_parent_names), 0,
-> +                                scu_base + ASPEED_CLK_SELECTION, 2, 0x3, 0,
-> +                                &aspeed_clk_lock);
-> +       if (IS_ERR(hw))
-> +               return PTR_ERR(hw);
-> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
-> +
-> +       hw = clk_hw_register_divider_table(dev, "eclk", "eclk-mux", 0,
-> +                                          scu_base + ASPEED_CLK_SELECTION, 28,
-> +                                          3, 0, soc_data->eclk_div_table,
-> +                                          &aspeed_clk_lock);
-> +       if (IS_ERR(hw))
-> +               return PTR_ERR(hw);
-> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
-> +
->         /*
->          * TODO: There are a number of clocks that not included in this driver
->          * as more information is required:
-> @@ -531,7 +569,6 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->          *   RGMII
->          *   RMII
->          *   UART[1..5] clock source mux
-> -        *   Video Engine (ECLK) mux and clock divider
->          */
->
->         for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
-> --
-> 1.8.3.1
->
+diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+index 76aaf8982554..85529a142409 100644
+--- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
++++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
+@@ -9,6 +9,14 @@
+ 	chosen {
+ 		stdout-path = &uart0;
+ 	};
++
++	beeper {
++		compatible = "pwm-beeper";
++		pwms = <&pwm 4 0 0>;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&pins_pwm4>;
++	};
+ };
+ 
+ &ext {
+@@ -30,4 +38,10 @@
+ 		groups = "uart0-data";
+ 		bias-disable;
+ 	};
++
++	pins_pwm4: pwm4 {
++		function = "pwm4";
++		groups = "pwm4";
++		bias-disable;
++	};
+ };
+diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
+index 60f0767507c6..2db32cb9ed47 100644
+--- a/arch/mips/jz4740/board-qi_lb60.c
++++ b/arch/mips/jz4740/board-qi_lb60.c
+@@ -27,7 +27,6 @@
+ #include <linux/power_supply.h>
+ #include <linux/power/jz4740-battery.h>
+ #include <linux/power/gpio-charger.h>
+-#include <linux/pwm.h>
+ 
+ #include <asm/mach-jz4740/gpio.h>
+ #include <asm/mach-jz4740/jz4740_fb.h>
+@@ -391,17 +390,6 @@ static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
+ 	.power_active_low	= 1,
+ };
+ 
+-/* beeper */
+-static struct pwm_lookup qi_lb60_pwm_lookup[] = {
+-	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
+-		   PWM_POLARITY_NORMAL),
+-};
+-
+-static struct platform_device qi_lb60_pwm_beeper = {
+-	.name = "pwm-beeper",
+-	.id = -1,
+-};
+-
+ /* charger */
+ static char *qi_lb60_batteries[] = {
+ 	"battery",
+@@ -450,10 +438,8 @@ static struct platform_device *jz_platform_devices[] __initdata = {
+ 	&jz4740_i2s_device,
+ 	&jz4740_codec_device,
+ 	&jz4740_adc_device,
+-	&jz4740_pwm_device,
+ 	&jz4740_dma_device,
+ 	&qi_lb60_gpio_keys,
+-	&qi_lb60_pwm_beeper,
+ 	&qi_lb60_charger_device,
+ 	&qi_lb60_audio_device,
+ };
+@@ -482,10 +468,6 @@ static struct pinctrl_map pin_map[] __initdata = {
+ 			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
+ 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
+ 			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
+-
+-	/* PWM pin configuration */
+-	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
+-			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
+ };
+ 
+ 
+@@ -503,7 +485,6 @@ static int __init qi_lb60_init_platform_devices(void)
+ 	spi_register_board_info(qi_lb60_spi_board_info,
+ 				ARRAY_SIZE(qi_lb60_spi_board_info));
+ 
+-	pwm_add_table(qi_lb60_pwm_lookup, ARRAY_SIZE(qi_lb60_pwm_lookup));
+ 	pinctrl_register_mappings(pin_map, ARRAY_SIZE(pin_map));
+ 
+ 	return platform_add_devices(jz_platform_devices,
+-- 
+2.11.0
