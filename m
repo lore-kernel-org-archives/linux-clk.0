@@ -9,11 +9,11 @@ Cc: od@zcrc.me,
 	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 3/4] dt-bindings: clock: Add jz4725b-cgu.h header
-Date: Thu, 23 Aug 2018 15:17:43 +0200
-Message-Id: <20180823131744.744-3-paul@crapouillou.net>
-In-Reply-To: <20180823131744.744-1-paul@crapouillou.net>
-References: <20180823131744.744-1-paul@crapouillou.net>
+Subject: [PATCH 2/3] dt-bindings: clock: Add jz4725b-cgu.h header
+Date: Tue, 21 Aug 2018 14:38:18 +0200
+Message-Id: <20180821123819.25020-2-paul@crapouillou.net>
+In-Reply-To: <20180821123819.25020-1-paul@crapouillou.net>
+References: <20180821123819.25020-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
 This will be used from the devicetree bindings to specify the clocks
@@ -21,11 +21,7 @@ that should be obtained from the jz4725b-cgu driver.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
-
-Notes:
-    No change
-
- include/dt-bindings/clock/jz4725b-cgu.h | 35 +++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/jz4725b-cgu.h | 35 +++++++++++++++++++++++++
  1 file changed, 35 insertions(+)
  create mode 100644 include/dt-bindings/clock/jz4725b-cgu.h
 
@@ -71,4 +67,4 @@ index 000000000000..460bbeff6ab8
 +
 +#endif /* __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__ */
 -- 
-2.11.0
+2.18.0
