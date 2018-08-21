@@ -1,51 +1,162 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37067 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbeH3P1t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 11:27:49 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180830112608euoutp016e7da4a8164cbe68482f545df053b34e~Ppd2Jr9pv0730107301euoutp01a
-        for <linux-clk@vger.kernel.org>; Thu, 30 Aug 2018 11:26:08 +0000 (GMT)
-Subject: Re: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
- handling suspend/resume
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
-        <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 30 Aug 2018 13:26:06 +0200
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPe9u8c_PLPYmtXJFfdCfVD-rwQsdi-8hbx2Q8mGvTvziw@mail.gmail.com>
-Message-Id: <20180830112607eucas1p2ed143a1726ec1745b354c37304f5a1b8~Ppd0g3ahg1307413074eucas1p21@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-References: <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
-        <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <20180829155046.29359-3-m.szyprowski@samsung.com>
-        <CAJKOXPe9u8c_PLPYmtXJFfdCfVD-rwQsdi-8hbx2Q8mGvTvziw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com> <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 21 Aug 2018 15:45:20 -0500
+Message-ID: <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: add LX2160ARDB board support
+To: vabhav.sharma@nxp.com
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-clk <linux-clk@vger.kernel.org>, "open list:THERMAL" <linux-pm@vger.kernel.org>,
+	linux-kernel-owner@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Kate Stewart <kstewart@linuxfoundation.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>, Russell King <linux@armlinux.org.uk>, V.Sethi@nxp.com,
+	Udit Kumar <udit.kumar@nxp.com>, Priyanka Jain <priyanka.jain@nxp.com>,
+	Sriram Dash <sriram.dash@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+On Mon, Aug 20, 2018 at 1:52 PM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
+>
+> LX2160A reference design board (RDB) is a high-performance
+> computing, evaluation, and development platform with LX2160A
+> SoC.
+>
+> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile            |  1 +
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 95 +++++++++++++++++++++++
+>  2 files changed, 96 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+>
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 86e18ad..445b72b 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
+> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> new file mode 100644
+> index 0000000..70fad20
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -0,0 +1,95 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Device Tree file for LX2160ARDB
+> +//
+> +// Copyright 2018 NXP
+> +
+> +/dts-v1/;
+> +
+> +#include "fsl-lx2160a.dtsi"
+> +
+> +/ {
+> +       model = "NXP Layerscape LX2160ARDB";
+> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+> +
+> +       aliases {
+> +               crypto = &crypto;
 
-On 2018-08-30 08:39, Krzysztof Kozlowski wrote:
-> On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> Replace common suspend/resume handling code by generic helper.
->> No functional change.
-> There is functional change in case alloc fails (kzalloc(),
-> samsung_clk_alloc_reg_dump()). Previously it would be warned and
-> ignored. Now it will panic. You could mention this but anyway the
-> change looks nice! Thanks!
+Drop this. Aliases should be numbered, and this is not a standard
+alias name either.
 
-No problem to replace panic() in samsung_clk_sleep_init() with a pair
-of warn and return error as this is probably now a preferred behavior.
-This is still truly hypothetical discussion because system, which
-fails to allocate memory at boot is useless anyway.
+> +               serial0 = &uart0;
+> +               serial1 = &uart1;
+> +               serial2 = &uart2;
+> +               serial3 = &uart3;
+> +       };
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       status = "okay";
+> +};
+> +
+> +&uart1 {
+> +       status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +       status = "okay";
+> +       pca9547@77 {
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+i2c-mux@77
+
+> +               compatible = "nxp,pca9547";
+> +               reg = <0x77>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               i2c@2 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x2>;
+> +
+> +                       ina220@40 {
+> +                               compatible = "ti,ina220";
+> +                               reg = <0x40>;
+> +                               shunt-resistor = <1000>;
+> +                       };
+> +               };
+> +
+> +               i2c@3 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x3>;
+> +
+> +                       sa56004@4c {
+
+temperature-sensor@4c
+
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4c>;
+> +                       };
+> +
+> +                       sa56004@4d {
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4d>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&i2c4 {
+> +       status = "okay";
+> +
+> +       rtc@51 {
+> +               compatible = "nxp,pcf2129";
+> +               reg = <0x51>;
+> +               // IRQ10_B
+> +               interrupts = <0 150 0x4>;
+> +               };
+> +
+> +};
+> +
+> +&usb0 {
+> +       status = "okay";
+> +};
+> +
+> +&usb1 {
+> +       status = "okay";
+> +};
+> +
+> +&crypto {
+> +       status = "okay";
+> +};
+> --
+> 2.7.4
+>
