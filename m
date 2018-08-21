@@ -1,35 +1,66 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:61959 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732738AbeHCJQs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 05:16:48 -0400
-Subject: Re: [PATCH v2 15/18] serial: intel: Support more platform
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-16-songjun.wu@linux.intel.com>
- <20180803055709.GB32226@kroah.com>
-From: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <2bd3f808-ed93-ac2c-a802-957a88129e67@linux.intel.com>
-Date: Fri, 3 Aug 2018 15:21:45 +0800
-MIME-Version: 1.0
-In-Reply-To: <20180803055709.GB32226@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 07/24] MAINTAINERS: Add myself as maintainer for Ingenic TCU drivers
+Date: Tue, 21 Aug 2018 19:16:18 +0200
+Message-Id: <20180821171635.22740-8-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add myself as maintainer for the ingenic-timer and ingenic-ost drivers.
 
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-On 8/3/2018 1:57 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 03, 2018 at 11:02:34AM +0800, Songjun Wu wrote:
->> Support more platform.
->>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
-> Your changelog text makes no sense, sorry.
-Thanks for your comment.
-I will describe it more clearly.
+Notes:
+     v2: No change
+    
+     v3: No change
+    
+     v4: No change
+    
+     v5: Update with new files
+    
+     v6: No change
+    
+     v7: No change
+
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 544cac829cf4..159246c3209a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7074,6 +7074,15 @@ L:	linux-mtd@lists.infradead.org
+ S:	Maintained
+ F:	drivers/mtd/nand/raw/jz4780_*
+ 
++INGENIC TCU driver
++M:	Paul Cercueil <paul@crapouillou.net>
++S:	Maintained
++F:	drivers/clocksource/ingenic-ost.c
++F:	drivers/clocksource/ingenic-timer.c
++F:	drivers/clocksource/ingenic-timer.h
++F:	include/linux/mfd/ingenic-tcu.h
++F:	include/dt-bindings/clock/ingenic,tcu.h
++
+ INOTIFY
+ M:	Jan Kara <jack@suse.cz>
+ R:	Amir Goldstein <amir73il@gmail.com>
+-- 
+2.11.0
