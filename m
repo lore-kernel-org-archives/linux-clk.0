@@ -1,57 +1,98 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 15/24] pwm: jz4740: Remove unused devicetree compatible strings
-Date: Thu,  9 Aug 2018 23:44:05 +0200
-Message-Id: <20180809214414.20905-16-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <festevam@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
+References: <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 21 Aug 2018 19:42:10 -0300
+Message-ID: <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
+Subject: Re: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
+To: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+	Liu Ying <victor.liu@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Anson Huang <Anson.Huang@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	DRI mailing list <dri-devel@lists.freedesktop.org>, NXP Linux Team <linux-imx@nxp.com>,
+	Sascha Hauer <kernel@pengutronix.de>, Fabio Estevam <fabio.estevam@nxp.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Right now none of the Ingenic-based boards probe this driver from
-devicetree. This driver defined three compatible strings for the exact
-same behaviour. Before these strings are used, we can remove two of
-them.
+Hi Leonard,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/pwm/pwm-jz4740.c | 2 --
- 1 file changed, 2 deletions(-)
+On Tue, Aug 21, 2018 at 4:34 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
 
- v5: New patch
+> More concretely on 6qp-sdb blanking the display happens like this:
+>  * imx_ldb_encoder_disable switches ipu1_di0_sel to ipu1_di0_pre from ldb_di1_podf
+>  * reparenting to ipu1_di0_pre enables it and its parents up to pll5
+>  * possibly glitchy muxing
+>  * ipu_di_disable disables ipu1_di0 (and parents, up to pll5)
 
- v6: No change
+Have you seen such glitch issue in practice with the LDB clocks?
 
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index d08274ec007f..5814825d9bed 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -235,8 +235,6 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
- #ifdef CONFIG_OF
- static const struct of_device_id jz4740_pwm_dt_ids[] = {
- 	{ .compatible = "ingenic,jz4740-pwm", },
--	{ .compatible = "ingenic,jz4770-pwm", },
--	{ .compatible = "ingenic,jz4780-pwm", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
--- 
-2.11.0
+We have already taken care of it in these commits:
+
+commit 5d283b083800867dc329e6433576664bf0fc18d5
+Author: Fabio Estevam <fabio.estevam@nxp.com>
+Date:   Mon Oct 17 22:29:14 2016 -0200
+
+    clk: imx6: Fix procedure to switch the parent of LDB_DI_CLK
+
+    Due to incorrect placement of the clock gate cell in the ldb_di[x]_clk
+    tree, the glitchy parent mux of ldb_di[x]_clk can cause a glitch to
+    enter the ldb_di_ipu_div divider. If the divider gets locked up, no
+    ldb_di[x]_clk is generated, and the LVDS display will hang when the
+    ipu_di_clk is sourced from ldb_di_clk.
+
+    To fix the problem, both the new and current parent of the ldb_di_clk
+    should be disabled before the switch. This patch ensures that correct
+    steps are followed when ldb_di_clk parent is switched in the beginning
+    of boot. The glitchy muxes are then registered as read-only. The clock
+    parent can be selected using the assigned-clocks and
+    assigned-clock-parents properties of the ccm device tree node:
+
+            &clks {
+                    assigned-clocks = <&clks IMX6QDL_CLK_LDB_DI0_SEL>,
+                                      <&clks IMX6QDL_CLK_LDB_DI1_SEL>;
+                    assigned-clock-parents = <&clks IMX6QDL_CLK_MMDC_CH1_AXI>,
+                                             <&clks IMX6QDL_CLK_PLL5_VIDEO_DIV>;
+            };
+
+    The issue is explained in detail in EB821 ("LDB Clock Switch Procedure &
+    i.MX6 Asynchronous Clock Switching Guidelines") [1].
+
+    [1] http://www.nxp.com/files/32bit/doc/eng_bulletin/EB821.pdf
+
+    Signed-off-by: Ranjani Vaidyanathan <Ranjani.Vaidyanathan@nxp.com>
+    Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+    Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+    Reviewed-by: Akshay Bhat <akshay.bhat@timesys.com>
+    Tested-by Joshua Clayton <stillcompiling@gmail.com>
+    Tested-by: Charles Kang <Charles.Kang@advantech.com.tw>
+    Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+
+commit 03d576f202e8cd40d500aa4f7594ad702d861096
+Author: Philipp Zabel <p.zabel@pengutronix.de>
+Date:   Mon Oct 17 22:29:13 2016 -0200
+
+    clk: imx6: Make the LDB_DI0 and LDB_DI1 clocks read-only
+
+    Due to incorrect placement of the clock gate cell in the ldb_di[x]_clk
+    tree, the glitchy parent mux of ldb_di[x]_clk can cause a glitch to
+    enter the ldb_di_ipu_div divider. If the divider gets locked up, no
+    ldb_di[x]_clk is generated, and the LVDS display will hang when the
+    ipu_di_clk is sourced from ldb_di_clk.
+
+    To fix the problem, both the new and current parent of the ldb_di_clk
+    should be disabled before the switch. As this can not be guaranteed by
+    the clock framework during runtime, make the ldb_di[x]_sel muxes read-only.
+    A workaround to set the muxes once during boot could be added to the
+    kernel or bootloader.
+
+    Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+    Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+    Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+
+,but I think we should also take care of the other glitchy muxes as
+you propose here.
