@@ -1,103 +1,213 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
+Return-Path: <leonard.crestez@nxp.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Liu Ying <victor.liu@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Anson Huang <Anson.Huang@nxp.com>,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 3/4] dt-bindings: clock: Introduce QCOM Graphics clock bindings
-Date: Mon, 13 Aug 2018 12:03:06 +0530
-Message-Id: <1534141987-29601-4-git-send-email-anischal@codeaurora.org>
-In-Reply-To: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
-References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
+Date: Tue, 21 Aug 2018 22:34:48 +0300
+Message-Id: <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: leonard.crestez@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for graphics clock controller for
-Qualcomm Technology Inc's SDM845 SoCs.
+With some exceptions clk muxes on imx6 are "glitchy": If the output
+is not gated before reparenting then high-frequency pulses can occur and
+cause unpredictable behavior. Only a very small subset of muxes are
+listed as "glitchless" in the reference manual.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Adapt to this by adding the CLK_SET_PARENT_GATE flag by default to
+imx_clk_mux. Add imx_clk_mux_glitchless for the muxes listed as
+glitchless and which don't already have have custom behavior.
+
+The CLK_SET_PARENT_GATE flags enables a small check inside the clk core
+which make clk_set_parent return -EBUSY if the clock is active. Ensuring
+outputs are gated prior to calling set_parent is up to the clk
+consumers.
+
+The effect of this patch is that drivers which perform unsafe operations
+which mostly work will receive errors instead, possibly breaking
+functionality.
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+
 ---
- .../devicetree/bindings/clock/qcom,gpucc.txt       | 18 ++++++++++
- include/dt-bindings/clock/qcom,gpucc-sdm845.h      | 38 ++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-new file mode 100644
-index 0000000..93752db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-@@ -0,0 +1,18 @@
-+Qualcomm Graphics Clock & Reset Controller Binding
-+--------------------------------------------------
+Unfortunately one of the misbehaving drivers is ldb for LVDS display and
+it seems to be a real issue: ldb enable/disable does reparenting on an
+active clk used by IPU.
+
+The imx_ldb_encoder_disable function will try to change the parent of
+clk_sel to what it was before enabling but at this point the crtc
+(inside ipu) is still active. With this patch it gets -EBUSY instead.
+
+This happens because the DRM core disables encoders before crtc (and
+backwards on enable). This assumption is reasonable, having an "encoder"
+feed a clk back into the "crtc" is odd and needs special handling by the
+driver.
+
+Perhaps ipu_di_enable/disable should be handled in atomic_commit_tail
+instead of at the crtc level?
+
+More concretely on 6qp-sdb blanking the display happens like this:
+ * imx_ldb_encoder_disable switches ipu1_di0_sel to ipu1_di0_pre from ldb_di1_podf
+ * reparenting to ipu1_di0_pre enables it and its parents up to pll5
+ * possibly glitchy muxing
+ * ipu_di_disable disables ipu1_di0 (and parents, up to pll5)
+
+---
+ drivers/clk/imx/clk-imx6q.c   |  4 ++--
+ drivers/clk/imx/clk-imx6sl.c  |  2 +-
+ drivers/clk/imx/clk-imx6sll.c |  2 +-
+ drivers/clk/imx/clk-imx6sx.c  |  2 +-
+ drivers/clk/imx/clk-imx6ul.c  |  2 +-
+ drivers/clk/imx/clk.h         | 16 ++++++++++++----
+ 6 files changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8c7c2fcb8d94..0434d943b1bc 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -547,16 +547,16 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
+ 	/*                                              name                reg       shift width parent_names     num_parents */
+ 	clk[IMX6QDL_CLK_STEP]             = imx_clk_mux("step",	            base + 0xc,  8,  1, step_sels,	   ARRAY_SIZE(step_sels));
+-	clk[IMX6QDL_CLK_PLL1_SW]          = imx_clk_mux("pll1_sw",	    base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
++	clk[IMX6QDL_CLK_PLL1_SW]          = imx_clk_mux_glitchless("pll1_sw",           base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
+ 	clk[IMX6QDL_CLK_PERIPH_PRE]       = imx_clk_mux("periph_pre",       base + 0x18, 18, 2, periph_pre_sels,   ARRAY_SIZE(periph_pre_sels));
+ 	clk[IMX6QDL_CLK_PERIPH2_PRE]      = imx_clk_mux("periph2_pre",      base + 0x18, 21, 2, periph_pre_sels,   ARRAY_SIZE(periph_pre_sels));
+ 	clk[IMX6QDL_CLK_PERIPH_CLK2_SEL]  = imx_clk_mux("periph_clk2_sel",  base + 0x18, 12, 2, periph_clk2_sels,  ARRAY_SIZE(periph_clk2_sels));
+ 	clk[IMX6QDL_CLK_PERIPH2_CLK2_SEL] = imx_clk_mux("periph2_clk2_sel", base + 0x18, 20, 1, periph2_clk2_sels, ARRAY_SIZE(periph2_clk2_sels));
+-	clk[IMX6QDL_CLK_AXI_SEL]          = imx_clk_mux("axi_sel",          base + 0x14, 6,  2, axi_sels,          ARRAY_SIZE(axi_sels));
++	clk[IMX6QDL_CLK_AXI_SEL]          = imx_clk_mux_glitchless("axi_sel",           base + 0x14, 6,  2, axi_sels,          ARRAY_SIZE(axi_sels));
+ 	clk[IMX6QDL_CLK_ESAI_SEL]         = imx_clk_mux("esai_sel",         base + 0x20, 19, 2, audio_sels,        ARRAY_SIZE(audio_sels));
+ 	clk[IMX6QDL_CLK_ASRC_SEL]         = imx_clk_mux("asrc_sel",         base + 0x30, 7,  2, audio_sels,        ARRAY_SIZE(audio_sels));
+ 	clk[IMX6QDL_CLK_SPDIF_SEL]        = imx_clk_mux("spdif_sel",        base + 0x30, 20, 2, audio_sels,        ARRAY_SIZE(audio_sels));
+ 	if (clk_on_imx6q()) {
+ 		clk[IMX6QDL_CLK_GPU2D_AXI]        = imx_clk_mux("gpu2d_axi",        base + 0x18, 0,  1, gpu_axi_sels,      ARRAY_SIZE(gpu_axi_sels));
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index eb6bcbf345a3..0d1aaaafd6f4 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -289,11 +289,11 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	WARN_ON(!base);
+ 	ccm_base = base;
+ 
+ 	/*                                              name                reg       shift width parent_names     num_parents */
+ 	clks[IMX6SL_CLK_STEP]             = imx_clk_mux("step",             base + 0xc,  8,  1, step_sels,         ARRAY_SIZE(step_sels));
+-	clks[IMX6SL_CLK_PLL1_SW]          = imx_clk_mux("pll1_sw",          base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
++	clks[IMX6SL_CLK_PLL1_SW]          = imx_clk_mux_glitchless("pll1_sw",           base + 0xc,  2,  1, pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
+ 	clks[IMX6SL_CLK_OCRAM_ALT_SEL]    = imx_clk_mux("ocram_alt_sel",    base + 0x14, 7,  1, ocram_alt_sels,    ARRAY_SIZE(ocram_alt_sels));
+ 	clks[IMX6SL_CLK_OCRAM_SEL]        = imx_clk_mux("ocram_sel",        base + 0x14, 6,  1, ocram_sels,        ARRAY_SIZE(ocram_sels));
+ 	clks[IMX6SL_CLK_PRE_PERIPH2_SEL]  = imx_clk_mux("pre_periph2_sel",  base + 0x18, 21, 2, pre_periph_sels,   ARRAY_SIZE(pre_periph_sels));
+ 	clks[IMX6SL_CLK_PRE_PERIPH_SEL]   = imx_clk_mux("pre_periph_sel",   base + 0x18, 18, 2, pre_periph_sels,   ARRAY_SIZE(pre_periph_sels));
+ 	clks[IMX6SL_CLK_PERIPH2_CLK2_SEL] = imx_clk_mux("periph2_clk2_sel", base + 0x18, 20, 1, periph2_clk2_sels, ARRAY_SIZE(periph2_clk2_sels));
+diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
+index 52379ee49aec..83bea3b1a416 100644
+--- a/drivers/clk/imx/clk-imx6sll.c
++++ b/drivers/clk/imx/clk-imx6sll.c
+@@ -182,11 +182,11 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
+ 	np = ccm_node;
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
+ 	clks[IMX6SLL_CLK_STEP] 	 	  = imx_clk_mux("step", base + 0x0c, 8, 1, step_sels, ARRAY_SIZE(step_sels));
+-	clks[IMX6SLL_CLK_PLL1_SW] 	  = imx_clk_mux_flags("pll1_sw",   base + 0x0c, 2,  1, pll1_sw_sels, ARRAY_SIZE(pll1_sw_sels), 0);
++	clks[IMX6SLL_CLK_PLL1_SW] 	  = imx_clk_mux_glitchless("pll1_sw",           base + 0x0c, 2,  1, pll1_sw_sels, ARRAY_SIZE(pll1_sw_sels));
+ 	clks[IMX6SLL_CLK_AXI_ALT_SEL]	  = imx_clk_mux("axi_alt_sel",	   base + 0x14, 7,  1, axi_alt_sels, ARRAY_SIZE(axi_alt_sels));
+ 	clks[IMX6SLL_CLK_AXI_SEL] 	  = imx_clk_mux_flags("axi_sel",   base + 0x14, 6,  1, axi_sels, ARRAY_SIZE(axi_sels), 0);
+ 	clks[IMX6SLL_CLK_PERIPH_PRE]	  = imx_clk_mux("periph_pre",      base + 0x18, 18, 2, periph_pre_sels, ARRAY_SIZE(periph_pre_sels));
+ 	clks[IMX6SLL_CLK_PERIPH2_PRE]	  = imx_clk_mux("periph2_pre",     base + 0x18, 21, 2, periph2_pre_sels, ARRAY_SIZE(periph2_pre_sels));
+ 	clks[IMX6SLL_CLK_PERIPH_CLK2_SEL]  = imx_clk_mux("periph_clk2_sel",  base + 0x18, 12, 2, periph_clk2_sels, ARRAY_SIZE(periph_clk2_sels));
+diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
+index d9f2890ffe62..c8f2d5aa8a74 100644
+--- a/drivers/clk/imx/clk-imx6sx.c
++++ b/drivers/clk/imx/clk-imx6sx.c
+@@ -265,11 +265,11 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
+ 	/*                                                name                reg           shift   width   parent_names       num_parents */
+ 	clks[IMX6SX_CLK_STEP]               = imx_clk_mux("step",             base + 0xc,   8,      1,      step_sels,         ARRAY_SIZE(step_sels));
+-	clks[IMX6SX_CLK_PLL1_SW]            = imx_clk_mux("pll1_sw",          base + 0xc,   2,      1,      pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
++	clks[IMX6SX_CLK_PLL1_SW]            = imx_clk_mux_glitchless("pll1_sw",             base + 0xc,   2,      1,      pll1_sw_sels,      ARRAY_SIZE(pll1_sw_sels));
+ 	clks[IMX6SX_CLK_OCRAM_SEL]          = imx_clk_mux("ocram_sel",        base + 0x14,  6,      2,      ocram_sels,        ARRAY_SIZE(ocram_sels));
+ 	clks[IMX6SX_CLK_PERIPH_PRE]         = imx_clk_mux("periph_pre",       base + 0x18,  18,     2,      periph_pre_sels,   ARRAY_SIZE(periph_pre_sels));
+ 	clks[IMX6SX_CLK_PERIPH2_PRE]        = imx_clk_mux("periph2_pre",      base + 0x18,  21,     2,      periph2_pre_sels,   ARRAY_SIZE(periph2_pre_sels));
+ 	clks[IMX6SX_CLK_PERIPH_CLK2_SEL]    = imx_clk_mux("periph_clk2_sel",  base + 0x18,  12,     2,      periph_clk2_sels,  ARRAY_SIZE(periph_clk2_sels));
+ 	clks[IMX6SX_CLK_PERIPH2_CLK2_SEL]   = imx_clk_mux("periph2_clk2_sel", base + 0x18,  20,     1,      periph2_clk2_sels, ARRAY_SIZE(periph2_clk2_sels));
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 361b43f9742e..085c35dfd262 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -234,11 +234,11 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
+ 	clks[IMX6UL_CA7_SECONDARY_SEL]	  = imx_clk_mux("ca7_secondary_sel", base + 0xc, 3, 1, ca7_secondary_sels, ARRAY_SIZE(ca7_secondary_sels));
+ 	clks[IMX6UL_CLK_STEP]		  = imx_clk_mux("step", base + 0x0c, 8, 1, step_sels, ARRAY_SIZE(step_sels));
+-	clks[IMX6UL_CLK_PLL1_SW]	  = imx_clk_mux_flags("pll1_sw",   base + 0x0c, 2,  1, pll1_sw_sels, ARRAY_SIZE(pll1_sw_sels), 0);
++	clks[IMX6UL_CLK_PLL1_SW]	  = imx_clk_mux_glitchless("pll1_sw",   base + 0x0c, 2,  1, pll1_sw_sels, ARRAY_SIZE(pll1_sw_sels));
+ 	clks[IMX6UL_CLK_AXI_ALT_SEL]	  = imx_clk_mux("axi_alt_sel",		base + 0x14, 7,  1, axi_alt_sels, ARRAY_SIZE(axi_alt_sels));
+ 	clks[IMX6UL_CLK_AXI_SEL]	  = imx_clk_mux_flags("axi_sel",	base + 0x14, 6,  1, axi_sels, ARRAY_SIZE(axi_sels), 0);
+ 	clks[IMX6UL_CLK_PERIPH_PRE]	  = imx_clk_mux("periph_pre",       base + 0x18, 18, 2, periph_pre_sels, ARRAY_SIZE(periph_pre_sels));
+ 	clks[IMX6UL_CLK_PERIPH2_PRE]	  = imx_clk_mux("periph2_pre",      base + 0x18, 21, 2, periph2_pre_sels, ARRAY_SIZE(periph2_pre_sels));
+ 	clks[IMX6UL_CLK_PERIPH_CLK2_SEL]  = imx_clk_mux("periph_clk2_sel",  base + 0x18, 12, 2, periph_clk2_sels, ARRAY_SIZE(periph_clk2_sels));
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec040f37..a28268e81824 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -193,12 +193,12 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+-			CLK_SET_RATE_NO_REPARENT, reg, shift,
+-			width, 0, &imx_ccm_lock);
++			CLK_SET_RATE_NO_REPARENT | CLK_SET_PARENT_GATE,
++			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ 		u8 shift, u8 width, const char **parents, int num_parents)
+ {
+@@ -210,12 +210,20 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+ 		void __iomem *reg, u8 shift, u8 width, const char **parents,
+ 		int num_parents, unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+-			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+-			&imx_ccm_lock);
++			flags | CLK_SET_RATE_NO_REPARENT | CLK_SET_PARENT_GATE,
++			reg, shift, width, 0, &imx_ccm_lock);
++}
 +
-+Required properties :
-+- compatible : shall contain "qcom,sdm845-gpucc".
-+- reg : shall contain base register location and length.
-+- #clock-cells : from common clock binding, shall contain 1.
-+- #reset-cells : from common reset binding, shall contain 1.
-+- #power-domain-cells : from generic power domain binding, shall contain 1.
-+
-+Example:
-+	gpucc: clock-controller@5090000 {
-+		compatible = "qcom,sdm845-gpucc";
-+		reg = <0x5090000 0x9000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sdm845.h b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
-new file mode 100644
-index 0000000..643b42a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
-+#define _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
-+
-+/* GPU_CC clock registers */
-+#define GPU_CC_CRC_AHB_CLK			0
-+#define GPU_CC_CX_APB_CLK			1
-+#define GPU_CC_CX_GFX3D_CLK			2
-+#define GPU_CC_CX_GFX3D_SLV_CLK			3
-+#define GPU_CC_CX_GMU_CLK			4
-+#define GPU_CC_CX_SNOC_DVM_CLK			5
-+#define GPU_CC_CXO_CLK				6
-+#define GPU_CC_GMU_CLK_SRC			7
-+#define GPU_CC_GX_GMU_CLK			8
-+#define GPU_CC_GX_GFX3D_CLK_SRC			9
-+#define GPU_CC_GX_GFX3D_CLK			10
-+#define GPU_CC_PLL0				11
-+#define GPU_CC_PLL0_OUT_EVEN			12
-+#define GPU_CC_PLL1				13
-+
-+/* GPU_CC Resets */
-+#define GPUCC_GPU_CC_ACD_BCR			0
-+#define GPUCC_GPU_CC_CX_BCR			1
-+#define GPUCC_GPU_CC_GFX3D_AON_BCR		2
-+#define GPUCC_GPU_CC_GMU_BCR			3
-+#define GPUCC_GPU_CC_GX_BCR			4
-+#define GPUCC_GPU_CC_SPDM_BCR			5
-+#define GPUCC_GPU_CC_XO_BCR			6
-+
-+/* GPU_CC GDSCRs */
-+#define GPU_CX_GDSC				0
-+#define GPU_GX_GDSC				1
-+
-+#endif
++static inline struct clk *imx_clk_mux_glitchless(const char *name, void __iomem *reg,
++		u8 shift, u8 width, const char **parents, int num_parents)
++{
++	return clk_register_mux(NULL, name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT,
++			reg, shift, width, 0, &imx_ccm_lock);
+ }
+ 
+ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.17.1
