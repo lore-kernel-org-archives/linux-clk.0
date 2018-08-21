@@ -1,58 +1,57 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 2 Aug 2018 11:44:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180802104443.GH9117@sirena.org.uk>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
-In-Reply-To: <20180802103425.3053-4-o.rempel@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:41146 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeHUUlL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:41:11 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 23/24] MIPS: CI20: defconfig: enable OST driver
+Date: Tue, 21 Aug 2018 19:20:04 +0200
+Message-Id: <20180821172004.23300-1-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+The OST driver provides a clocksource and sched_clock that are much more
+accurate than the default ones.
 
---2oox5VnwalALFvA7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-On Thu, Aug 02, 2018 at 12:34:22PM +0200, Oleksij Rempel wrote:
-> Export pm_power_off_prepare. It is needed to implement power off on
-> Freescale/NXP iMX6 based boards with external power management
-> integrated circuit (PMIC).
+Notes:
+     v5: New patch
+    
+     v6: No change
+    
+     v7: No change
 
-I thought we'd got an ack for this from Raphael on a previous version or
-am I mistaken?
+ arch/mips/configs/ci20_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---2oox5VnwalALFvA7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti4JoACgkQJNaLcl1U
-h9DRVggAgz0AKW33j9seRp5nJB5gGs1Gi5SjZMd7GKJLj7Fk6GOZEj4vBxZV+AWc
-9F3COPoOWo7sFq2OVhmDw2UgfGWLqI3atHUkkqmk31mrAsHcts6+6AIlGK0z2sii
-QrxzJoVm+7vn7ft6OcXu8Z73I5pWvzAHxOA16GNDoJDMxYgXFNjaetpntWq/z0XG
-AlgagvG+Tn3ibAP5UxWR2hbfNP9gVxOMz+W784ssF02puTjU/4oY+ZQkDJYuE+Km
-gbvLWq6E77+S6cF0CxuKYcqUVv4xcmMsHz0jRJWBSgJBuRG6jQiVCFxzGFy0TFx5
-BgMtR9r3+Fze77Wb4fjJURqe0dykNQ==
-=YEMF
------END PGP SIGNATURE-----
-
---2oox5VnwalALFvA7--
+diff --git a/arch/mips/configs/ci20_defconfig b/arch/mips/configs/ci20_defconfig
+index be23fd25eeaa..e56dc5c024b9 100644
+--- a/arch/mips/configs/ci20_defconfig
++++ b/arch/mips/configs/ci20_defconfig
+@@ -109,6 +109,7 @@ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_JZ4740=y
+ CONFIG_DMADEVICES=y
+ CONFIG_DMA_JZ4780=y
++CONFIG_INGENIC_OST=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_MEMORY=y
+ CONFIG_EXT4_FS=y
+-- 
+2.11.0
