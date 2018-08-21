@@ -1,77 +1,76 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	colin.didier@devialet.com,
-	clement.peron@devialet.com,
-	ping.bai@nxp.com,
-	aisheng.dong@nxp.com,
-	shengjiu.wang@nxp.com,
-	matteo.lisi@engicam.com,
-	michael@amarulasolutions.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH 1/7] ARM: imx: add mmdc ipg clock operation for mmdc
-Date: Fri, 31 Aug 2018 15:53:12 +0800
-Message-Id: <1535701998-20443-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
-References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+CC: Fabio Estevam <fabio.estevam@nxp.com>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "patchwork-lst@pengutronix.de"
+	<patchwork-lst@pengutronix.de>
+Subject: RE: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard
+ clock handles
+Date: Tue, 21 Aug 2018 08:56:09 +0000
+Message-ID: 
+ <AM0PR04MB4211DE29E5644C8C9A33278780310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20180731102009.6710-1-l.stach@pengutronix.de>
+ <20180731102009.6710-2-l.stach@pengutronix.de>
+In-Reply-To: <20180731102009.6710-2-l.stach@pengutronix.de>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6 SoCs have MMDC ipg clock for registers access, to make
-sure MMDC registers access successfully, add optional clock
-enable for MMDC driver.
+Hi Lucas,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/mach-imx/mmdc.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+> -----Original Message-----
+> From: Lucas Stach <l.stach@pengutronix.de>
+> Sent: Tuesday, July 31, 2018 6:20 PM
 
-diff --git a/arch/arm/mach-imx/mmdc.c b/arch/arm/mach-imx/mmdc.c
-index 04b3bf7..e49e068 100644
---- a/arch/arm/mach-imx/mmdc.c
-+++ b/arch/arm/mach-imx/mmdc.c
-@@ -11,6 +11,7 @@
-  * http://www.gnu.org/copyleft/gpl.html
-  */
- 
-+#include <linux/clk.h>
- #include <linux/hrtimer.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-@@ -546,7 +547,20 @@ static int imx_mmdc_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	void __iomem *mmdc_base, *reg;
-+	struct clk *mmdc_ipg_clk;
- 	u32 val;
-+	int err;
-+
-+	/* the ipg clock is optional */
-+	mmdc_ipg_clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(mmdc_ipg_clk))
-+		mmdc_ipg_clk = NULL;
-+
-+	err = clk_prepare_enable(mmdc_ipg_clk);
-+	if (err) {
-+		dev_err(&pdev->dev, "Unable to enable mmdc ipg clock.\n");
-+		return err;
-+	}
- 
- 	mmdc_base = of_iomap(np, 0);
- 	WARN_ON(!mmdc_base);
--- 
-2.7.4
+[...]
+
+> When specifying external clock inputs to the CCM the current code require=
+s
+> the clocks to be in a "clocks" child node of the DT root.
+> This is not really conformant with DT best practices.
+>=20
+> To avoid the need to deviate from those best practices, allow the clock i=
+nputs
+> to be specifies via standard clock handles. This is in line with how driv=
+ers of
+> the later CCM driver revisions on newer i.MX SoCs handle this.
+>=20
+> As we can't retroactively change the DT binding, allow this as an option =
+with a
+> fallback to the old way of how this has been handled.
+>=20
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> ---
+>  .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
+>  drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
+>  2 files changed, 22 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> index a45ca67a9d5f..ce6aa9920c05 100644
+> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> @@ -6,6 +6,11 @@ Required properties:
+>  - interrupts: Should contain CCM interrupt
+>  - #clock-cells: Should be <1>
+>=20
+> +Optional properties:
+> +- clocks: list of clock specifiers, must contain an entry for each entry
+> +          in clock-names
+> +- clock-names: valid names are "osc", "ckil", "ckil", "anaclk1" and "ana=
+clk2"
+
+A minor issue:=20
+The third name should be "ckih1".
+
+Otherwise:
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+Regards
+Dong Aisheng
