@@ -1,84 +1,136 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net,
- viresh.kumar@linaro.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org,  linux-kernel-owner@vger.kernel.org,
- catalin.marinas@arm.com, will.deacon@arm.com,  gregkh@linuxfoundation.org,
- arnd@arndb.de, kstewart@linuxfoundation.org,  yamada.masahiro@socionext.com
-Date: Tue, 28 Aug 2018 19:18:50 -0500
-In-Reply-To: <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
- <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-Mime-Version: 1.0
-Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>, Tang Yuantian <andy.tang@nxp.com>,
- linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:57628 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728050AbeHUUiH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:07 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 09/24] watchdog: jz4740: Use regmap provided by TCU driver
+Date: Tue, 21 Aug 2018 19:16:20 +0200
+Message-Id: <20180821171635.22740-10-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, 2018-08-20 at 12:17 +0530, Vabhav Sharma wrote:
-> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> 
-> Add clockgen support for lx2160a.
-> Added entry for compat 'fsl,lx2160a-clockgen'.
-> As LX2160A is 16 core, so modified value for NUM_CMUX
-> 
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> ---
->  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
->  drivers/cpufreq/qoriq-cpufreq.c |  1 +
->  2 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-> index 3a1812f..fc6e308 100644
-> --- a/drivers/clk/clk-qoriq.c
-> +++ b/drivers/clk/clk-qoriq.c
-> @@ -60,7 +60,7 @@ struct clockgen_muxinfo {
->  };
->  
->  #define NUM_HWACCEL	5
-> -#define NUM_CMUX	8
-> +#define NUM_CMUX	16
->  
->  struct clockgen;
->  
-> @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
->  		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
->  	},
->  	{
-> +		.compat = "fsl,lx2160a-clockgen",
-> +		.cmux_groups = {
-> +			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-> +		},
-> +		.cmux_to_group = {
-> +			0, 0, 0, 0, 1, 1, 1, 1, -1
-> +		},
-> +		.pll_mask = 0x37,
-> +		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-> +	},
+Since we broke the ABI by changing the clock, the driver was also
+updated to use the regmap provided by the TCU driver.
 
-Why are you increasing NUM_CMUX beyond 8 for a chip that only has 8 entries in
-cmux_to_group?
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
 
--Scott
+Notes:
+     v6: New patch
+    
+     v7: No change
 
+ drivers/watchdog/jz4740_wdt.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index 1d504ecf45e1..0f54306aee25 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -13,6 +13,7 @@
+  *
+  */
+ 
++#include <linux/mfd/ingenic-tcu.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/types.h>
+@@ -25,10 +26,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
+-
+-#define JZ_REG_WDT_TIMER_DATA     0x0
+-#define JZ_REG_WDT_COUNTER_ENABLE 0x4
+-#define JZ_REG_WDT_TIMER_COUNTER  0x8
++#include <linux/regmap.h>
+ 
+ #define DEFAULT_HEARTBEAT 5
+ #define MAX_HEARTBEAT     2048
+@@ -48,7 +46,7 @@ MODULE_PARM_DESC(heartbeat,
+ 
+ struct jz4740_wdt_drvdata {
+ 	struct watchdog_device wdt;
+-	void __iomem *base;
++	struct regmap *map;
+ 	struct clk *clk;
+ 	unsigned long clk_rate;
+ };
+@@ -57,7 +55,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+ 	return 0;
+ }
+ 
+@@ -67,12 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
+ 
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+ 
+-	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
++	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
+ 
+-	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
+ 
+ 	wdt_dev->timeout = new_timeout;
+ 	return 0;
+@@ -96,7 +94,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
+ 	clk_disable_unprepare(drvdata->clk);
+ 
+ 	return 0;
+@@ -138,7 +136,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct jz4740_wdt_drvdata *drvdata;
+ 	struct watchdog_device *jz4740_wdt;
+-	struct resource	*res;
+ 	long rate;
+ 	int ret;
+ 
+@@ -174,10 +171,11 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_nowayout(jz4740_wdt, nowayout);
+ 	watchdog_set_drvdata(jz4740_wdt, drvdata);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(drvdata->base))
+-		return PTR_ERR(drvdata->base);
++	drvdata->map = dev_get_regmap(dev->parent, NULL);
++	if (!drvdata->map) {
++		dev_err(dev, "regmap not found\n");
++		return -EINVAL;
++	}
+ 
+ 	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
+ 	if (ret < 0)
+-- 
+2.11.0
