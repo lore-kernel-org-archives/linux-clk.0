@@ -1,198 +1,169 @@
-Return-Path: <mturquette@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-From: Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <CAPDyKFr7xxUV0pmQCoM1T_fZdBifWqJF6QJgHQe2JGUU0a6MJg@mail.gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, grahamr@codeaurora.org,
- linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Amit Kucheria <amit.kucheria@linaro.org>
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180704065522.p4qpfnpayeobaok3@vireshk-i7>
- <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
- <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
- <CAPDyKFr7xxUV0pmQCoM1T_fZdBifWqJF6QJgHQe2JGUU0a6MJg@mail.gmail.com>
-Message-ID: <20180803211132.71539.18482@harbor.lan>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-Date: Fri, 03 Aug 2018 14:11:32 -0700
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from outils.crapouillou.net ([89.234.176.41]:57152 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727948AbeHUUh5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:37:57 -0400
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 03/24] doc: Add doc for the Ingenic TCU hardware
+Date: Tue, 21 Aug 2018 19:16:14 +0200
+Message-Id: <20180821171635.22740-4-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Ulf Hansson (2018-07-31 03:35:50)
-> [...]
-> =
+Add a documentation file about the Timer/Counter Unit (TCU) present in
+the Ingenic JZ47xx SoCs.
 
-> >>
-> >> Another option is to use the ->runtime_suspend|resume() callbacks at
-> >> the genpd level. In principle when the device enters runtime suspend,
-> >> genpd can decide to drop the votes for the device (if some exist). At
-> >> runtime resume, genpd then should re-store the votes for the device it
-> >> had before it became runtime suspended (or if the vote became updated
-> >> in-between).
-> >
-> > I'd prefer to see the genpd layer do it instead of OPP layer controlling
-> > the on/off state. Calling dev_pm_opp_set_rate(dev, 0) just looks very
-> > weird and conflates clk frequency with power domain state which isn't
-> > exactly what we want. We want it to be related to the frequency _and_
-> > the enabled state. Plus it's like saying clk_set_rate(clk, 0) should
-> > turn the clk off, which we've never done before.
-> =
+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
+hardware block. It features up to to eight channels, that can be used as
+counters, timers, or PWM.
 
-> Perhaps you misunderstood my suggestion!?
-> =
+- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
+  have eight channels.
 
-> Instead of having the driver to call dev_pm_opp_set_rate(dev, 0) from
-> their ->runtime_suspend() callbacks, my suggestion is to let genpd,
-> from its ->runtime_suspend() callback, temporarily drop the requested
-> performance level for the device. Hence genpd also needs to re-compute
-> and set a new aggregated performance value for the PM domain.
-> =
+- JZ4725B introduced a separate channel, called Operating System Timer
+  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
+  64-bit.
 
-> The purpose was to make it transparent for drivers, as all they need
-> do is whatever they did before.
-> =
+- Each one of the TCU channels has its own clock, which can be reparented
+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
+  their TCSR register.
+  * The watchdog and OST hardware blocks also feature a TCSR register with
+    the same format in their register space.
+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
+    and OST clocks.
 
-> >
-> > It would also be good to handle the on/off state in genpd because the
-> > genpd could have a governor attached to it that blocks on/off requests
-> > from drivers if the governor decides that the device is clk gating on
-> > and off quickly but it's not beneficial to change the voltage during the
-> > quick gating scenario because we spend more time changing voltage than
-> > clk gating. Connecting this all to genpd allows us to use the device
-> > power state as a signal to adjust the voltage, but leaves us flexibility
-> > to override it if it makes sense policy wise.
-> =
+- Each TCU channel works in one of two modes:
+  * mode TCU1: channels cannot work in sleep mode, but are easier to
+    operate.
+  * mode TCU2: channels can work in sleep mode, but the operation is a bit
+    more complicated than with TCU1 channels.
 
-> Well, genpd already manages the on/off state!?
-> =
+- The mode of each TCU channel depends on the SoC used:
+  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
+    TCU1 mode.
+  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
+  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
+    others operate as TCU1.
 
-> Of course, I fully agree to the above, which seems also to be a good
-> reason to why my suggestion makes sense. Or am I missing something
-> here?
-> =
+- Each channel can generate an interrupt. Some channels share an interrupt
+  line, some don't, and this changes between SoC versions:
+  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
+    own interrupt line; channels 2-7 share the last interrupt line.
+  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
+    interrupt line; the OST uses the last interrupt line.
+  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
+    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
+    the OST uses the last interrupt line.
 
-> >
-> > And please remember the other point here that many devices may all be
-> > sharing the same power domain and therefore the voltage that the domain
-> > runs at depends on many different clk frequencies for different devices
-> > and if those clks are enabled or not, aggregated into a single voltage
-> > requirement for the power domain.
-> =
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-> Right, the aggregation in genpd is done per device - not per clock. I
-> don't understand your concern, but again I may be missing something!?
+Notes:
+     v4: New patch in this series
+    
+     v5: Added information about number of channels, and improved
+         documentation about channel modes
+    
+     v6: Add info about OST (can be 32-bit on older SoCs)
+    
+     v7: No change
 
-I believe that this is an argument against using OPP as the performance
-selection mechanism for all SoCs. It's data structures, along with the
-fact that is seems to have no awareness of device idleness, means that
-it's not really sufficient for more complex SoCs.
+ Documentation/mips/00-INDEX        |  3 ++
+ Documentation/mips/ingenic-tcu.txt | 60 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 63 insertions(+)
+ create mode 100644 Documentation/mips/ingenic-tcu.txt
 
-> =
-
-> > The runtime suspend state might be
-> > part of that aggregation equation, so that if a device's clk is off and
-> > it's been suspended for some time the voltage requirement for that clk
-> > frequency could be dropped, but if the device is resumed and the clk is
-> > still off then the voltage requirement can be ignored. We only need to
-> > make sure the power domain is at a high enough voltage when the clk is
-> > actually enabled though, so tying the voltage requirement drop to
-> > runtime PM of the device is not exactly correct.
-> =
-
-> I see.
-> =
-
-> For my understanding; you are saying that there may be use-cases when
-> one want to keep the device runtime resumed, but without having its
-> clock ungated, right?
-> =
-
-> My guess is that this is a rather unusual case, no?
-
-This is a common case if I understand Stephen's example: Imagine a power
-island that scales voltage and may power clamp to zero. Now imagine that
-within that power island are a dozen separate functional devices, each
-consuming a dedicated functional clock input signal.
-
-It's possible to have the power island turned on so that one device can
-function, but the other 11 devices will remain clock gated.
-
-I assume the right way to handle this is to nest a dozen device-level
-genpd's within the power island-level genpd? That mirrors the topology I
-described above, and allows the lowest level genpds (functional
-device-level) to gate and ungate clocks, and the parent genpd (power
-island-level) will only be concerned with voltage control.
-
-> =
-
-> The point is, I think we can simply have the driver to call
-> dev_pm_opp_set_rate() to cover optimizations for these scenarios.
-> =
-
-> >
-> > It may be that a device is composed of multiple power domains and those
-> > power domains each have their own clks with voltage requirements too.
-> > In this scenario, connecting the voltage requirement of the genpd to the
-> > runtime PM state of the device doesn't make sense at all. We'll get into
-> > a situation where half the device is "off" because a power domain and
-> > the clk for that power domain are off but we can't drop the voltage
-> > requirement because the overall device isn't runtime suspended. It's
-> > like the single genpd per device problem all over again. Let's not do
-> > that.
-> =
-
-> I am *not* suggesting to remove the APIs in genpd for setting a
-> performance level. We can still do that and that should be sufficient
-> to cover any corner cases, don't you think?
-> =
-
-> My suggestion was only to allow genpd to drop the votes (temporarily)
-> for a device that becomes runtime suspended.
-> =
-
-> >
-> > So I'd rather see drivers calling some genpd API directly to indicate
-> > that the clk should turn off and the voltage domain constraint has gone
-> > away. We might want to transform OPP into a genpd of its own and then
-> > connect that OPP genpd to a clk domain genpd for some clk
-> > on/off/frequency part and a power domain for the voltage/corner scaling
-> > part. If we did that, then everything is a genpd that gets all
-> > aggregated in the genpd layer and drivers that only use OPP would be OK
-> > with their runtime PM state of their device affecting the OPP genpd's
-> > on/off state of clks and voltage requirements. Drivers that want finer
-> > control would be able to use some new genpd API to turn on and off the
-> > genpd when they want to.
-> =
-
-> Sound like we need a white-board. :-)
-
-We really do. Maybe I'll make the trip to Vancouver in September :-)
-
-I don't like the idea to "transform OPP into a genpd of its own", as
-suggested by Stephen above. But I think all he needs to solve this issue
-is nesting some functional clock-level genpds inside of a parent power
-island-level genpd. This is a repeat of the three paragraphs I've
-written above.
-
-This approach achieves the same effect as turning opp into a genpd, but
-I'm not inclined to try and change the OPP library to solve this
-problem.
-
-I think OPP is fine as-is: it makes it easy to handle the very simplest
-DVFS cases.  Stephen's requirements (and that of most mobile SoCs) goes
-beyond what the OPP library can and should offer.
-
-Regards,
-Mike
-
-> =
-
-> Anyway, I am reading the following replies in the thread to hopefully
-> understand your suggestions a bit better.
-> =
-
-> Kind regards
-> Uffe
+diff --git a/Documentation/mips/00-INDEX b/Documentation/mips/00-INDEX
+index 8ae9cffc2262..8ab8c3f83771 100644
+--- a/Documentation/mips/00-INDEX
++++ b/Documentation/mips/00-INDEX
+@@ -2,3 +2,6 @@
+ 	- this file.
+ AU1xxx_IDE.README
+ 	- README for MIPS AU1XXX IDE driver.
++ingenic-tcu.txt
++	- Information file about the Timer/Counter Unit present
++	  in Ingenic JZ47xx SoCs.
+diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+new file mode 100644
+index 000000000000..0ea35b2a46da
+--- /dev/null
++++ b/Documentation/mips/ingenic-tcu.txt
+@@ -0,0 +1,60 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit hardware
++-----------------------------------------------
++
++The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
++hardware block. It features up to to eight channels, that can be used as
++counters, timers, or PWM.
++
++- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
++  have eight channels.
++
++- JZ4725B introduced a separate channel, called Operating System Timer
++  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
++  64-bit.
++
++- Each one of the TCU channels has its own clock, which can be reparented
++  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
++  their TCSR register.
++  * The watchdog and OST hardware blocks also feature a TCSR register with
++    the same format in their register space.
++  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
++    and OST clocks.
++
++- Each TCU channel works in one of two modes:
++  * mode TCU1: channels cannot work in sleep mode, but are easier to
++    operate.
++  * mode TCU2: channels can work in sleep mode, but the operation is a bit
++    more complicated than with TCU1 channels.
++
++- The mode of each TCU channel depends on the SoC used:
++  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
++    TCU1 mode.
++  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
++  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
++    others operate as TCU1.
++
++- Each channel can generate an interrupt. Some channels share an interrupt
++  line, some don't, and this changes between SoC versions:
++  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
++    own interrupt line; channels 2-7 share the last interrupt line.
++  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
++    interrupt line; the OST uses the last interrupt line.
++  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
++    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
++    the OST uses the last interrupt line.
++
++Implementation
++--------------
++
++The functionalities of the TCU hardware are spread across multiple drivers:
++- clocks/irq/timer: drivers/clocksource/ingenic-timer.c
++- PWM:              drivers/pwm/pwm-jz4740.c
++- watchdog:         drivers/watchdog/jz4740_wdt.c
++- OST:              drivers/clocksource/ingenic-ost.c
++
++Because various functionalities of the TCU that belong to different drivers
++and frameworks can be controlled from the same registers, all of these
++drivers access their registers through the same regmap.
++
++For more information regarding the devicetree bindings of the TCU drivers,
++have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
+-- 
+2.11.0
