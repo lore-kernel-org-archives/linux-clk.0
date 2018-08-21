@@ -1,8 +1,8 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:36442 "EHLO
+Received: from outils.crapouillou.net ([89.234.176.41]:33106 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbeHUUiV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:21 -0400
+        with ESMTP id S1728050AbeHUUiK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:10 -0400
 From: Paul Cercueil <paul@crapouillou.net>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -17,19 +17,24 @@ Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 18/24] MIPS: Kconfig: Select TCU timer driver when MACH_INGENIC is set
-Date: Tue, 21 Aug 2018 19:16:29 +0200
-Message-Id: <20180821171635.22740-19-paul@crapouillou.net>
+Subject: [PATCH v7 11/24] watchdog: jz4740: Drop dependency on MACH_JZ47xx, use COMPILE_TEST
+Date: Tue, 21 Aug 2018 19:16:22 +0200
+Message-Id: <20180821171635.22740-12-paul@crapouillou.net>
 In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
 References: <20180821171635.22740-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We cannot boot to userspace (not even initramfs) if the timer driver is
-not present; so it makes sense to enable it unconditionally when
-MACH_INGENIC is set.
+Depending on MACH_JZ47xx prevent us from creating a generic kernel that
+works on more than one MIPS board. Instead, we just depend on MIPS being
+set.
+
+On other architectures, this driver can still be built, thanks to
+COMPILE_TEST. This is used by automated tools to find bugs, for
+instance.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
 
 Notes:
@@ -39,20 +44,21 @@ Notes:
     
      v7: No change
 
- arch/mips/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/watchdog/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 08c10c518f83..254dbf69a4ad 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -384,6 +384,7 @@ config MACH_INGENIC
- 	select BUILTIN_DTB
- 	select USE_OF
- 	select LIBFDT
-+	select INGENIC_TIMER
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 834222abbbdb..13a46cfa69b0 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -1475,7 +1475,7 @@ config INDYDOG
  
- config LANTIQ
- 	bool "Lantiq based platforms"
+ config JZ4740_WDT
+ 	tristate "Ingenic jz4740 SoC hardware watchdog"
+-	depends on MACH_JZ4740 || MACH_JZ4780
++	depends on MIPS || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	select WATCHDOG_CORE
+ 	select INGENIC_TIMER
 -- 
 2.11.0
