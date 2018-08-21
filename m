@@ -1,56 +1,75 @@
-Return-Path: <nm@ti.com>
-From: Nishanth Menon <nm@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <linux-clk@vger.kernel.org>,
-        Nishanth
- Menon <nm@ti.com>
-Subject: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
-Date: Mon, 27 Aug 2018 19:50:56 -0500
-Message-ID: <20180828005056.27326-1-nm@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v7 02/24] dt-bindings: ingenic: Add DT bindings for TCU clocks
+Date: Tue, 21 Aug 2018 19:16:13 +0200
+Message-Id: <20180821171635.22740-3-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-K3_ARCH uses TISCI for clocks as well. Enable the same
-for the driver support.
+This header provides clock numbers for the ingenic,tcu
+DT binding.
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Ref: https://patchwork.kernel.org/patch/10447677/
+Notes:
+     v2: Use SPDX identifier for the license
+    
+     v3: No change
+    
+     v4: No change
+    
+     v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
+    
+     v6: No change
+    
+     v7: No change
 
-Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
+ include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
 
- drivers/clk/Makefile         | 1 +
- drivers/clk/keystone/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a84c5573cabe..ed344eb717cc 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -73,6 +73,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
- obj-y					+= imgtec/
- obj-$(CONFIG_ARCH_MXC)			+= imx/
- obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
-+obj-$(CONFIG_ARCH_K3)			+= keystone/
- obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-y					+= mediatek/
-diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
-index 7e9f0176578a..b04927d06cd1 100644
---- a/drivers/clk/keystone/Kconfig
-+++ b/drivers/clk/keystone/Kconfig
-@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
- 
- config TI_SCI_CLK
- 	tristate "TI System Control Interface clock drivers"
--	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
-+	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
- 	depends on TI_SCI_PROTOCOL
- 	default ARCH_KEYSTONE
- 	---help---
+diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
+new file mode 100644
+index 000000000000..d569650a7945
+--- /dev/null
++++ b/include/dt-bindings/clock/ingenic,tcu.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,tcu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
++
++#define TCU_CLK_TIMER0	0
++#define TCU_CLK_TIMER1	1
++#define TCU_CLK_TIMER2	2
++#define TCU_CLK_TIMER3	3
++#define TCU_CLK_TIMER4	4
++#define TCU_CLK_TIMER5	5
++#define TCU_CLK_TIMER6	6
++#define TCU_CLK_TIMER7	7
++#define TCU_CLK_WDT	8
++#define TCU_CLK_OST	9
++
++#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
 -- 
-2.15.1
+2.11.0
