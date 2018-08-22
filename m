@@ -1,116 +1,29 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 4/9] dt-bindings: reset: Add binding constants for Actions Semi S900 RMU
-Date: Fri, 10 Aug 2018 15:21:08 +0530
-Message-Id: <20180810095113.25292-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:49371 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728171AbeHVMw0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Aug 2018 08:52:26 -0400
+Date: Wed, 22 Aug 2018 11:28:17 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas
+ drivers
+Message-ID: <20180822092817.3lfpvpri3pdvqdql@verge.net.au>
+References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com>
+ <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree binding constants for Actions Semi S900 SoC Reset
-Management Unit (RMU).
+On Wed, Aug 22, 2018 at 12:02:14AM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../dt-bindings/reset/actions,s900-reset.h    | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 include/dt-bindings/reset/actions,s900-reset.h
-
-diff --git a/include/dt-bindings/reset/actions,s900-reset.h b/include/dt-bindings/reset/actions,s900-reset.h
-new file mode 100644
-index 000000000000..42c19d02e43b
---- /dev/null
-+++ b/include/dt-bindings/reset/actions,s900-reset.h
-@@ -0,0 +1,65 @@
-+// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-+//
-+// Device Tree binding constants for Actions Semi S900 Reset Management Unit
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+
-+#ifndef __DT_BINDINGS_ACTIONS_S900_RESET_H
-+#define __DT_BINDINGS_ACTIONS_S900_RESET_H
-+
-+#define RESET_CHIPID				0
-+#define RESET_CPU_SCNT				1
-+#define RESET_SRAMI				2
-+#define RESET_DDR_CTL_PHY			3
-+#define RESET_DMAC				4
-+#define RESET_GPIO				5
-+#define RESET_BISP_AXI				6
-+#define RESET_CSI0				7
-+#define RESET_CSI1				8
-+#define RESET_DE				9
-+#define RESET_DSI				10
-+#define RESET_GPU3D_PA				11
-+#define RESET_GPU3D_PB				12
-+#define RESET_HDE				13
-+#define RESET_I2C0				14
-+#define RESET_I2C1				15
-+#define RESET_I2C2				16
-+#define RESET_I2C3				17
-+#define RESET_I2C4				18
-+#define RESET_I2C5				19
-+#define RESET_IMX				20
-+#define RESET_NANDC0				21
-+#define RESET_NANDC1				22
-+#define RESET_SD0				23
-+#define RESET_SD1				24
-+#define RESET_SD2				25
-+#define RESET_SD3				26
-+#define RESET_SPI0				27
-+#define RESET_SPI1				28
-+#define RESET_SPI2				29
-+#define RESET_SPI3				30
-+#define RESET_UART0				31
-+#define RESET_UART1				32
-+#define RESET_UART2				33
-+#define RESET_UART3				34
-+#define RESET_UART4				35
-+#define RESET_UART5				36
-+#define RESET_UART6				37
-+#define RESET_HDMI				38
-+#define RESET_LVDS				39
-+#define RESET_EDP				40
-+#define RESET_USB2HUB				41
-+#define RESET_USB2HSIC				42
-+#define RESET_USB3				43
-+#define RESET_PCM1				44
-+#define RESET_AUDIO				45
-+#define RESET_PCM0				46
-+#define RESET_SE				47
-+#define RESET_GIC				48
-+#define RESET_DDR_CTL_PHY_AXI			49
-+#define RESET_CMU_DDR				50
-+#define RESET_DMM				51
-+#define RESET_HDCP2TX				52
-+#define RESET_ETHERNET				53
-+
-+#endif /* __DT_BINDINGS_ACTIONS_S900_RESET_H */
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
