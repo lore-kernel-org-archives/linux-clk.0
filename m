@@ -1,40 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbeHaKlk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 31 Aug 2018 06:41:40 -0400
+Return-Path: <leonard.crestez@nxp.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
+To: "festevam@gmail.com" <festevam@gmail.com>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: dl-linux-imx <linux-imx@nxp.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, Fabio
+ Estevam <fabio.estevam@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Ying Liu <victor.liu@nxp.com>,
+	Anson Huang <anson.huang@nxp.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "l.stach@pengutronix.de"
+	<l.stach@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC] clk: imx6: Mark imx_clk_mux as glitchy by default
+Date: Wed, 22 Aug 2018 06:53:14 +0000
+Message-ID: <c0966648ef0a15672ddd617de87692f71a19bad4.camel@nxp.com>
+References: 
+ <e56c6f0acfe7afb885d2cb67e1e069f7edd0d2d7.1534879459.git.leonard.crestez@nxp.com>
+	 <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
+In-Reply-To: 
+ <CAOMZO5Dr9NUXuu+LECp2QHZLRhfbymHK23yCCFW-9jB=VXNn+A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CGME20180829155100eucas1p16cded24187167d4af4d43f64c7abd88b@eucas1p1.samsung.com>
- <20180829155046.29359-1-m.szyprowski@samsung.com> <20180829155046.29359-6-m.szyprowski@samsung.com>
-In-Reply-To: <20180829155046.29359-6-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 31 Aug 2018 08:35:32 +0200
-Message-ID: <CAJKOXPe3+8BriOi0d4OFvStK2gszdd=SabGB86FbjN60BRn3CA@mail.gmail.com>
-Subject: Re: [PATCH 05/10] clk: samsung: s3c64xx: Use generic helper for
- handling suspend/resume
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
-> Replace common suspend/resume handling code by generic helper.
-> No functional change.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s3c64xx.c | 66 +++----------------------------
->  1 file changed, 6 insertions(+), 60 deletions(-)
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+T24gVHVlLCAyMDE4LTA4LTIxIGF0IDE5OjQyIC0wMzAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
+PiBIaSBMZW9uYXJkLA0KPiANCj4gT24gVHVlLCBBdWcgMjEsIDIwMTggYXQgNDozNCBQTSwgTGVv
+bmFyZCBDcmVzdGV6DQo+IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4gd3JvdGU6DQo+IA0KPiA+
+IE1vcmUgY29uY3JldGVseSBvbiA2cXAtc2RiIGJsYW5raW5nIHRoZSBkaXNwbGF5IGhhcHBlbnMg
+bGlrZSB0aGlzOg0KPiA+ICAqIGlteF9sZGJfZW5jb2Rlcl9kaXNhYmxlIHN3aXRjaGVzIGlwdTFf
+ZGkwX3NlbCB0byBpcHUxX2RpMF9wcmUgZnJvbSBsZGJfZGkxX3BvZGYNCj4gPiAgKiByZXBhcmVu
+dGluZyB0byBpcHUxX2RpMF9wcmUgZW5hYmxlcyBpdCBhbmQgaXRzIHBhcmVudHMgdXAgdG8gcGxs
+NQ0KPiA+ICAqIHBvc3NpYmx5IGdsaXRjaHkgbXV4aW5nDQo+ID4gICogaXB1X2RpX2Rpc2FibGUg
+ZGlzYWJsZXMgaXB1MV9kaTAgKGFuZCBwYXJlbnRzLCB1cCB0byBwbGw1KQ0KDQo+IFdlIGhhdmUg
+YWxyZWFkeSB0YWtlbiBjYXJlIG9mIGl0IGluIHRoZXNlIGNvbW1pdHM6DQo+ICAgICBjbGs6IGlt
+eDY6IEZpeCBwcm9jZWR1cmUgdG8gc3dpdGNoIHRoZSBwYXJlbnQgb2YgTERCX0RJX0NMSw0KPiAg
+ICAgY2xrOiBpbXg2OiBNYWtlIHRoZSBMREJfREkwIGFuZCBMREJfREkxIGNsb2NrcyByZWFkLW9u
+bHkNCg0KVGhhdCdzIGZvciBsZGJfZGl7MCwxfV9zZWwsIHRoaXMgaXMgZm9yIGlwdXsxLDJ9X2Rp
+ezAsMX1fc2VsLg0KDQpPbiBpbXg2cSB0aGUgbGRiX2RpezAsMX1fc2VsIG11eCBoYXMgYW4gaW1w
+cm9wZXJseSBwbGFjZWQgZ2F0ZSBhbmQgYQ0Kc3BlY2lhbCBzd2l0Y2ggcHJvY2VkdXJlIG5lZWRz
+IHRvIGJlIHBlcmZvcm1lZCBhdCBib290IHRpbWUuIFRoaXMNCmRlc2lnbiB3YXMgZml4ZWQgb24g
+NnFwIGJ5IG1vdmluZyB0aGUgbGRiX2RpezAsMX0gZ2F0ZSBpbW1lZGlhdGVseQ0KYWZ0ZXIgdGhl
+IG11eC4gTXkgdGVzdHMgYXJlIG9uIDZxcC4NCg0KRm9yIGlwdXsxLDJ9X2RpezAsMX1fc2VsIHRo
+ZSBpcHV7MSwyfV9kaXswLDF9IGdhdGUgY2FuIGJlIHVzZWQgb24gYWxsDQpjaGlwcywgaXQncyBq
+dXN0IHRoYXQgdGhlIGRybSBkcml2ZXIgZG9lc24ndCBkbyB0aGlzLiBBZGRpbmcgdGhlDQpDTEtf
+U0VUX1JBVEVfUEFSRU5UIGZsYWcgZXhwb3NlcyB0aGUgaXNzdWUgYnkgcmV0dXJuaW5nIGVycm9y
+cy4NCg0KPiBJIHRoaW5rIHdlIHNob3VsZCBhbHNvIHRha2UgY2FyZSBvZiB0aGUgb3RoZXIgZ2xp
+dGNoeSBtdXhlcyBhcw0KPiB5b3UgcHJvcG9zZSBoZXJlLg0KPg0KPiBIYXZlIHlvdSBzZWVuIHN1
+Y2ggZ2xpdGNoIGlzc3VlIGluIHByYWN0aWNlIHdpdGggdGhlIExEQiBjbG9ja3M/DQoNCklmIEkg
+cnVuICJ3aGlsZSB0cnVlOyBkbyBydGN3YWtlIC1tIG1lbSAtcyA1OyBkb25lIiBpdCB3aWxsIGhh
+bmcgaW4gfjMwDQptaW51dGVzIGJlY2F1c2UgdGhlICJzdXNwZW5kIGRldmljZXMiIHRha2VzIHRv
+byBsb25nIGFuZCBSVEMgYWxhcm0NCmV4cGlyZXMuIEkgdHJhY2tlZCB0aGlzIGRvd24gdG8gdGhl
+IGNsa19zZXRfcGFyZW50IGNhbGwgaW5zaWRlDQppbXhfbGRiX2VuY29kZXJfZGlzYWJsZTogc29t
+ZXRpbWVzIHRoaXMgdGFrZXMgbWFueSBzZWNvbmRzLg0KDQpBcyBmYXIgYXMgSSBjYW4gdGVsbCB0
+aGlzIGxpdmUgcmVwYXJlbnRpbmcgaXMgdW5zYWZlIChSTSBjbGFpbXMNCmdsaXRjaGVzIGFyZSBw
+b3NzaWJsZSkgYW5kIG5vdCB1c2VmdWwgKHdlJ3JlIGRlYWN0aXZhdGluZyB0aGUgZGlzcGxheQ0K
+YW55d2F5KS4gSG93ZXZlciBJJ20gbm90IHN1cmUgdGhpcyBjYW4gYmUgYmxhbWVkIG9uIGEgImds
+aXRjaCIuDQoNCldoYXQgc2VlbXMgdG8gYmUgaGFwcGVuaW5nIGlzIHRoYXQgdGhpcyB0cmlnZ2Vy
+cyB0aGUgZW5hYmxpbmcgb2YgcGxsNQ0KKHllcywgb24gZGlzYWJsZSkgYW5kIHRoZSB1c2xlZXAg
+ZnJvbSBjbGtfcGxsdjNfd2FpdF9sb2NrIHRha2VzIGZhciB0b28NCm11Y2ggdGltZSB0byByZXR1
+cm4uIFRoaXMgbWlnaHQgYmUgYW4gdW5yZWxhdGVkIHRpbWVrZWVwaW5nIGlzc3VlLCBJJ2xsDQps
+b29rIGludG8gdGhpcyBmdXJ0aGVyLg0KDQpBY2NvcmRpbmcgdG8gdGhlIFJNIHRoaXMgcmVwYXJl
+bnRpbmcgaXMgdW5zYWZlIGFueXdheSBzbyB3ZSBzaG91bGQNCmF2b2lkIGl0LCBwcm9iYWJseSBi
+eSBkaXNhYmxpbmcgaXB1X2RpIHNvb25lci4NCg0KLS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
