@@ -1,68 +1,80 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:19289 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbeHCE6b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:31 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 13/18] serial: intel: Replace clk_enable/clk_disable with clk generic API
-Date: Fri,  3 Aug 2018 11:02:32 +0800
-Message-Id: <20180803030237.3366-14-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <keescook@chromium.org>
+Return-Path: <keescook@chromium.org>
+MIME-Version: 1.0
+In-Reply-To: <20180823230654.GA11576@embeddedor.com>
+References: <20180823230654.GA11576@embeddedor.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 23 Aug 2018 16:17:59 -0700
+Message-ID: <CAGXu5jK7VQSo=xsYVp5DPmUgULNt+wopyAXnK20z+LxZtyPfZA@mail.gmail.com>
+Subject: Re: [PATCH] clk: npcm7xx: fix memory allocation
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Brendan Higgins <brendanhiggins@google.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The clk driver has introduced new clock APIs that replace
-the existing clk_enable and clk_disable.
- -clk_enable() APIs is replaced with clk_prepare_enable().
- -clk_disable() API is replaced with clk_disable_unprepare().
+On Thu, Aug 23, 2018 at 4:06 PM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>         int stuff;
+>         void *entry[];
+> };
+>
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count,
+> GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> Notice that, currently, there is a bug during the allocation:
+>
+> sizeof(npcm7xx_clk_data) should be sizeof(*npcm7xx_clk_data)
+>
+> Fix this bug by using struct_size() in kzalloc()
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Changes in v2: None
+-Kees
 
- drivers/tty/serial/lantiq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> ---
+>  drivers/clk/clk-npcm7xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> index 740af90..c5edf8f 100644
+> --- a/drivers/clk/clk-npcm7xx.c
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -558,8 +558,8 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+>         if (!clk_base)
+>                 goto npcm7xx_init_error;
+>
+> -       npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+> -               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
+> +       npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
+> +                                  NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
+>         if (!npcm7xx_clk_data)
+>                 goto npcm7xx_init_np_err;
+>
+> --
+> 2.7.4
+>
 
-diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-index 28086d52e980..36479d66fb7c 100644
---- a/drivers/tty/serial/lantiq.c
-+++ b/drivers/tty/serial/lantiq.c
-@@ -309,7 +309,7 @@ lqasc_startup(struct uart_port *port)
- 	int retval;
- 
- 	if (!IS_ERR(ltq_port->clk))
--		clk_enable(ltq_port->clk);
-+		clk_prepare_enable(ltq_port->clk);
- 	port->uartclk = clk_get_rate(ltq_port->freqclk);
- 
- 	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
-@@ -377,7 +377,7 @@ lqasc_shutdown(struct uart_port *port)
- 	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
- 		port->membase + LTQ_ASC_TXFCON);
- 	if (!IS_ERR(ltq_port->clk))
--		clk_disable(ltq_port->clk);
-+		clk_disable_unprepare(ltq_port->clk);
- }
- 
- static void
-@@ -631,7 +631,7 @@ lqasc_console_setup(struct console *co, char *options)
- 	port = &ltq_port->port;
- 
- 	if (!IS_ERR(ltq_port->clk))
--		clk_enable(ltq_port->clk);
-+		clk_prepare_enable(ltq_port->clk);
- 
- 	port->uartclk = clk_get_rate(ltq_port->freqclk);
- 
+
+
 -- 
-2.11.0
-
+Kees Cook
+Pixel Security
