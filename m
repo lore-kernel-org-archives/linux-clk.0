@@ -1,487 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:40384
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726030AbeHTKa7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Aug 2018 06:30:59 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND v5 1/5] dt-bindings: add binding for i.MX8MQ CCM
-Date: Mon, 20 Aug 2018 10:16:03 +0300
-Message-Id: <1534749367-31085-2-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <83d6a10252e7238f326e378957f2ff70@codeaurora.org>
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+ <20180704065522.p4qpfnpayeobaok3@vireshk-i7> <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+ <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
+ <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com> <153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
+ <20180725054400.96956.13278@harbor.lan> <20180725112702.GN1636@tbergstrom-lnx.Nvidia.com>
+ <CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com> <83d6a10252e7238f326e378957f2ff70@codeaurora.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 23 Aug 2018 15:20:11 +0200
+Message-ID: <CAPDyKFrthH5djDN=Ves0VK4GpSVWQrerqc-JC6EAkJz4U_nGQw@mail.gmail.com>
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+To: grahamr@codeaurora.org
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+	Doug Anderson <dianders@chromium.org>, Taniya Das <tdas@codeaurora.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>, Amit Nischal <anischal@codeaurora.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>,
+	linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+On 31 July 2018 at 22:02,  <grahamr@codeaurora.org> wrote:
+> I have two significant concerns with using a wrapper framework to support
+> DVFS.  The first may be Qualcomm-specific, and more of a practical concern
+> rather than a principled one.  We (clock driver owners) get
+> voltage/frequency operating points from the clock controller designers in a
+> single data-set, it is not information that is provided to or coming from
+> the clock consumer hardware or software teams.  Tracking, updating, and
+> debugging frequency/voltage mismatches falls completely into the clock team,
+> so moving the responsibility of handling the relationship in code to the
+> consumer would be a disaster (SDM845 has almost 200 clock domains and over
+> 800 clock branches - not all controlled by Linux but a large proportion
+> are).  It would mean all clock consumers using any clk_set_rate or
+> clk_enable APIs would need to make the appropriate voltage requests as well
+> - and even if they could look up the required voltage based on frequency
+> from some central location (which I expect would be delivered and maintained
+> by the clock driver team) the chance that everyone would do that correctly
+> is, frankly, zero.  The types of problems that arise from under-volting a
+> clock generator or consumer are very hard to debug (since it can essentially
+> result in random behavior).
 
-This adds the binding for the i.MX8MQ Clock Controller Module.
+Okay, I see.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
- include/dt-bindings/clock/imx8mq-clock.h           | 410 +++++++++++++++++++++
- 2 files changed, 430 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+Wouldn't a nice script that does a search/replace work out? :-)
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-new file mode 100644
-index 0000000..52de826
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-@@ -0,0 +1,20 @@
-+* Clock bindings for NXP i.MX8M Quad
-+
-+Required properties:
-+- compatible: Should be "fsl,imx8mq-ccm"
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of clock specifiers, must contain an entry for each required
-+          entry in clock-names
-+- clock-names: should include the following entries:
-+    - "ckil"
-+    - "osc_25m"
-+    - "osc_27m"
-+    - "clk_ext1"
-+    - "clk_ext2"
-+    - "clk_ext3"
-+    - "clk_ext4"
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clock.h
-+for the full list of i.MX8M Quad clock IDs.
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-new file mode 100644
-index 0000000..0d19bd9
---- /dev/null
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -0,0 +1,410 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMX8MQ_H
-+#define __DT_BINDINGS_CLOCK_IMX8MQ_H
-+
-+#define IMX8MQ_CLK_DUMMY		0
-+#define IMX8MQ_CLK_32K			1
-+#define IMX8MQ_CLK_25M			2
-+#define IMX8MQ_CLK_27M			3
-+#define IMX8MQ_CLK_EXT1			4
-+#define IMX8MQ_CLK_EXT2			5
-+#define IMX8MQ_CLK_EXT3			6
-+#define IMX8MQ_CLK_EXT4			7
-+
-+/* ANAMIX PLL clocks */
-+/* FRAC PLLs */
-+/* ARM PLL */
-+#define IMX8MQ_ARM_PLL_REF_SEL		8
-+#define IMX8MQ_ARM_PLL_REF_DIV		9
-+#define IMX8MQ_ARM_PLL			10
-+#define IMX8MQ_ARM_PLL_BYPASS		11
-+#define IMX8MQ_ARM_PLL_OUT		12
-+
-+/* GPU PLL */
-+#define IMX8MQ_GPU_PLL_REF_SEL		13
-+#define IMX8MQ_GPU_PLL_REF_DIV		14
-+#define IMX8MQ_GPU_PLL			15
-+#define IMX8MQ_GPU_PLL_BYPASS		16
-+#define IMX8MQ_GPU_PLL_OUT		17
-+
-+/* VPU PLL */
-+#define IMX8MQ_VPU_PLL_REF_SEL		18
-+#define IMX8MQ_VPU_PLL_REF_DIV		19
-+#define IMX8MQ_VPU_PLL			20
-+#define IMX8MQ_VPU_PLL_BYPASS		21
-+#define IMX8MQ_VPU_PLL_OUT		22
-+
-+/* AUDIO PLL1 */
-+#define IMX8MQ_AUDIO_PLL1_REF_SEL	23
-+#define IMX8MQ_AUDIO_PLL1_REF_DIV	24
-+#define IMX8MQ_AUDIO_PLL1		25
-+#define IMX8MQ_AUDIO_PLL1_BYPASS	26
-+#define IMX8MQ_AUDIO_PLL1_OUT		27
-+
-+/* AUDIO PLL2 */
-+#define IMX8MQ_AUDIO_PLL2_REF_SEL	28
-+#define IMX8MQ_AUDIO_PLL2_REF_DIV	29
-+#define IMX8MQ_AUDIO_PLL2		30
-+#define IMX8MQ_AUDIO_PLL2_BYPASS	31
-+#define IMX8MQ_AUDIO_PLL2_OUT		32
-+
-+/* VIDEO PLL1 */
-+#define IMX8MQ_VIDEO_PLL1_REF_SEL	33
-+#define IMX8MQ_VIDEO_PLL1_REF_DIV	34
-+#define IMX8MQ_VIDEO_PLL1		35
-+#define IMX8MQ_VIDEO_PLL1_BYPASS	36
-+#define IMX8MQ_VIDEO_PLL1_OUT		37
-+
-+/* SYS1 PLL */
-+#define IMX8MQ_SYS1_PLL1_REF_SEL	38
-+#define IMX8MQ_SYS1_PLL1_REF_DIV	39
-+#define IMX8MQ_SYS1_PLL1		40
-+#define IMX8MQ_SYS1_PLL1_OUT		41
-+#define IMX8MQ_SYS1_PLL1_OUT_DIV	42
-+#define IMX8MQ_SYS1_PLL2		43
-+#define IMX8MQ_SYS1_PLL2_DIV		44
-+#define IMX8MQ_SYS1_PLL2_OUT		45
-+
-+/* SYS2 PLL */
-+#define IMX8MQ_SYS2_PLL1_REF_SEL	46
-+#define IMX8MQ_SYS2_PLL1_REF_DIV	47
-+#define IMX8MQ_SYS2_PLL1		48
-+#define IMX8MQ_SYS2_PLL1_OUT		49
-+#define IMX8MQ_SYS2_PLL1_OUT_DIV	50
-+#define IMX8MQ_SYS2_PLL2		51
-+#define IMX8MQ_SYS2_PLL2_DIV		52
-+#define IMX8MQ_SYS2_PLL2_OUT		53
-+
-+/* SYS3 PLL */
-+#define IMX8MQ_SYS3_PLL1_REF_SEL	54
-+#define IMX8MQ_SYS3_PLL1_REF_DIV	55
-+#define IMX8MQ_SYS3_PLL1		56
-+#define IMX8MQ_SYS3_PLL1_OUT		57
-+#define IMX8MQ_SYS3_PLL1_OUT_DIV	58
-+#define IMX8MQ_SYS3_PLL2		59
-+#define IMX8MQ_SYS3_PLL2_DIV		60
-+#define IMX8MQ_SYS3_PLL2_OUT		61
-+
-+/* DRAM PLL */
-+#define IMX8MQ_DRAM_PLL1_REF_SEL	62
-+#define IMX8MQ_DRAM_PLL1_REF_DIV	63
-+#define IMX8MQ_DRAM_PLL1		64
-+#define IMX8MQ_DRAM_PLL1_OUT		65
-+#define IMX8MQ_DRAM_PLL1_OUT_DIV	66
-+#define IMX8MQ_DRAM_PLL2		67
-+#define IMX8MQ_DRAM_PLL2_DIV		68
-+#define IMX8MQ_DRAM_PLL2_OUT		69
-+
-+/* SYS PLL DIV */
-+#define IMX8MQ_SYS1_PLL_40M		70
-+#define IMX8MQ_SYS1_PLL_80M		71
-+#define IMX8MQ_SYS1_PLL_100M		72
-+#define IMX8MQ_SYS1_PLL_133M		73
-+#define IMX8MQ_SYS1_PLL_160M		74
-+#define IMX8MQ_SYS1_PLL_200M		75
-+#define IMX8MQ_SYS1_PLL_266M		76
-+#define IMX8MQ_SYS1_PLL_400M		77
-+#define IMX8MQ_SYS1_PLL_800M		78
-+
-+#define IMX8MQ_SYS2_PLL_50M		79
-+#define IMX8MQ_SYS2_PLL_100M		80
-+#define IMX8MQ_SYS2_PLL_125M		81
-+#define IMX8MQ_SYS2_PLL_166M		82
-+#define IMX8MQ_SYS2_PLL_200M		83
-+#define IMX8MQ_SYS2_PLL_250M		84
-+#define IMX8MQ_SYS2_PLL_333M		85
-+#define IMX8MQ_SYS2_PLL_500M		86
-+#define IMX8MQ_SYS2_PLL_1000M		87
-+
-+/* CCM ROOT clocks */
-+/* A53 */
-+#define IMX8MQ_CLK_A53_SRC		88
-+#define IMX8MQ_CLK_A53_CG		89
-+#define IMX8MQ_CLK_A53_DIV		90
-+/* M4 */
-+#define IMX8MQ_CLK_M4_SRC		91
-+#define IMX8MQ_CLK_M4_CG		92
-+#define IMX8MQ_CLK_M4_DIV		93
-+/* VPU */
-+#define IMX8MQ_CLK_VPU_SRC		94
-+#define IMX8MQ_CLK_VPU_CG		95
-+#define IMX8MQ_CLK_VPU_DIV		96
-+/* GPU CORE */
-+#define IMX8MQ_CLK_GPU_CORE_SRC		97
-+#define IMX8MQ_CLK_GPU_CORE_CG		98
-+#define IMX8MQ_CLK_GPU_CORE_DIV		99
-+/* GPU SHADER */
-+#define IMX8MQ_CLK_GPU_SHADER_SRC	100
-+#define IMX8MQ_CLK_GPU_SHADER_CG	101
-+#define IMX8MQ_CLK_GPU_SHADER_DIV	102
-+
-+/* BUS TYPE */
-+/* MAIN AXI */
-+#define IMX8MQ_CLK_MAIN_AXI		103
-+/* ENET AXI */
-+#define IMX8MQ_CLK_ENET_AXI		104
-+/* NAND_USDHC_BUS */
-+#define IMX8MQ_CLK_NAND_USDHC_BUS	105
-+/* VPU BUS */
-+#define IMX8MQ_CLK_VPU_BUS		106
-+/* DISP_AXI */
-+#define IMX8MQ_CLK_DISP_AXI		107
-+/* DISP APB */
-+#define IMX8MQ_CLK_DISP_APB		108
-+/* DISP RTRM */
-+#define IMX8MQ_CLK_DISP_RTRM		109
-+/* USB_BUS */
-+#define IMX8MQ_CLK_USB_BUS		110
-+/* GPU_AXI */
-+#define IMX8MQ_CLK_GPU_AXI		111
-+/* GPU_AHB */
-+#define IMX8MQ_CLK_GPU_AHB		112
-+/* NOC */
-+#define IMX8MQ_CLK_NOC			113
-+/* NOC_APB */
-+#define IMX8MQ_CLK_NOC_APB		115
-+
-+/* AHB */
-+#define IMX8MQ_CLK_AHB_SRC		116
-+#define IMX8MQ_CLK_AHB_CG		117
-+#define IMX8MQ_CLK_AHB_PRE_DIV		118
-+#define IMX8MQ_CLK_AHB_DIV		119
-+/* AUDIO AHB */
-+#define IMX8MQ_CLK_AUDIO_AHB_SRC	120
-+#define IMX8MQ_CLK_AUDIO_AHB_CG		121
-+#define IMX8MQ_CLK_AUDIO_AHB_PRE_DIV	122
-+#define IMX8MQ_CLK_AUDIO_AHB_DIV	123
-+
-+/* DRAM_ALT */
-+#define IMX8MQ_CLK_DRAM_ALT		124
-+/* DRAM APB */
-+#define IMX8MQ_CLK_DRAM_APB		125
-+/* VPU_G1 */
-+#define IMX8MQ_CLK_VPU_G1		126
-+/* VPU_G2 */
-+#define IMX8MQ_CLK_VPU_G2		127
-+/* DISP_DTRC */
-+#define IMX8MQ_CLK_DISP_DTRC		128
-+/* DISP_DC8000 */
-+#define IMX8MQ_CLK_DISP_DC8000		129
-+/* PCIE_CTRL */
-+#define IMX8MQ_CLK_PCIE1_CTRL		130
-+/* PCIE_PHY */
-+#define IMX8MQ_CLK_PCIE1_PHY		131
-+/* PCIE_AUX */
-+#define IMX8MQ_CLK_PCIE1_AUX		132
-+/* DC_PIXEL */
-+#define IMX8MQ_CLK_DC_PIXEL		133
-+/* LCDIF_PIXEL */
-+#define IMX8MQ_CLK_LCDIF_PIXEL		134
-+/* SAI1~6 */
-+#define IMX8MQ_CLK_SAI1			135
-+
-+#define IMX8MQ_CLK_SAI2			136
-+
-+#define IMX8MQ_CLK_SAI3			137
-+
-+#define IMX8MQ_CLK_SAI4			138
-+
-+#define IMX8MQ_CLK_SAI5			139
-+
-+#define IMX8MQ_CLK_SAI6			140
-+/* SPDIF1 */
-+#define IMX8MQ_CLK_SPDIF1		127
-+/* SPDIF2 */
-+#define IMX8MQ_CLK_SPDIF2		131
-+/* ENET_REF */
-+#define IMX8MQ_CLK_ENET_REF		135
-+/* ENET_TIMER */
-+#define IMX8MQ_CLK_ENET_TIMER		139
-+/* ENET_PHY */
-+#define IMX8MQ_CLK_ENET_PHY_REF		143
-+/* NAND */
-+#define IMX8MQ_CLK_NAND			147
-+/* QSPI */
-+#define IMX8MQ_CLK_QSPI			148
-+/* USDHC1 */
-+#define IMX8MQ_CLK_USDHC1		149
-+/* USDHC2 */
-+#define IMX8MQ_CLK_USDHC2		150
-+/* I2C1 */
-+#define IMX8MQ_CLK_I2C1			151
-+/* I2C2 */
-+#define IMX8MQ_CLK_I2C2			152
-+/* I2C3 */
-+#define IMX8MQ_CLK_I2C3			153
-+/* I2C4 */
-+#define IMX8MQ_CLK_I2C4			154
-+/* UART1 */
-+#define IMX8MQ_CLK_UART1		155
-+/* UART2 */
-+#define IMX8MQ_CLK_UART2		156
-+/* UART3 */
-+#define IMX8MQ_CLK_UART3		157
-+/* UART4 */
-+#define IMX8MQ_CLK_UART4		158
-+/* USB_CORE_REF */
-+#define IMX8MQ_CLK_USB_CORE_REF		159
-+/* USB_PHY_REF */
-+#define IMX8MQ_CLK_USB_PHY_REF		160
-+/* ECSPI1 */
-+#define IMX8MQ_CLK_ECSPI1		161
-+/* ECSPI2 */
-+#define IMX8MQ_CLK_ECSPI2		162
-+/* PWM1 */
-+#define IMX8MQ_CLK_PWM1			163
-+/* PWM2 */
-+#define IMX8MQ_CLK_PWM2			164
-+/* PWM3 */
-+#define IMX8MQ_CLK_PWM3			165
-+/* PWM4 */
-+#define IMX8MQ_CLK_PWM4			166
-+/* GPT1 */
-+#define IMX8MQ_CLK_GPT1			167
-+/* WDOG */
-+#define IMX8MQ_CLK_WDOG			168
-+/* WRCLK */
-+#define IMX8MQ_CLK_WRCLK		169
-+/* DSI_CORE */
-+#define IMX8MQ_CLK_DSI_CORE		170
-+/* DSI_PHY */
-+#define IMX8MQ_CLK_DSI_PHY_REF		171
-+/* DSI_DBI */
-+#define IMX8MQ_CLK_DSI_DBI		172
-+/*DSI_ESC */
-+#define IMX8MQ_CLK_DSI_ESC		373
-+/* CSI1_CORE */
-+#define IMX8MQ_CLK_CSI1_CORE		374
-+/* CSI1_PHY */
-+#define IMX8MQ_CLK_CSI1_PHY_REF		375
-+/* CSI_ESC */
-+#define IMX8MQ_CLK_CSI1_ESC		376
-+/* CSI2_CORE */
-+#define IMX8MQ_CLK_CSI2_CORE		377
-+/* CSI2_PHY */
-+#define IMX8MQ_CLK_CSI2_PHY_REF		378
-+/* CSI2_ESC */
-+#define IMX8MQ_CLK_CSI2_ESC		379
-+/* PCIE2_CTRL */
-+#define IMX8MQ_CLK_PCIE2_CTRL		380
-+/* PCIE2_PHY */
-+#define IMX8MQ_CLK_PCIE2_PHY		381
-+/* PCIE2_AUX */
-+#define IMX8MQ_CLK_PCIE2_AUX		382
-+/* ECSPI3 */
-+#define IMX8MQ_CLK_ECSPI3		383
-+
-+/* CCGR clocks */
-+#define IMX8MQ_CLK_A53_ROOT			384
-+#define IMX8MQ_CLK_DRAM_ROOT			385
-+#define IMX8MQ_CLK_ECSPI1_ROOT			386
-+#define IMX8MQ_CLK_ECSPI2_ROOT			387
-+#define IMX8MQ_CLK_ECSPI3_ROOT			388
-+#define IMX8MQ_CLK_ENET1_ROOT			389
-+#define IMX8MQ_CLK_GPT1_ROOT			390
-+#define IMX8MQ_CLK_I2C1_ROOT			391
-+#define IMX8MQ_CLK_I2C2_ROOT			392
-+#define IMX8MQ_CLK_I2C3_ROOT			393
-+#define IMX8MQ_CLK_I2C4_ROOT			394
-+#define IMX8MQ_CLK_M4_ROOT			395
-+#define IMX8MQ_CLK_PCIE1_ROOT			396
-+#define IMX8MQ_CLK_PCIE2_ROOT			397
-+#define IMX8MQ_CLK_PWM1_ROOT			398
-+#define IMX8MQ_CLK_PWM2_ROOT			399
-+#define IMX8MQ_CLK_PWM3_ROOT			400
-+#define IMX8MQ_CLK_PWM4_ROOT			401
-+#define IMX8MQ_CLK_QSPI_ROOT			402
-+#define IMX8MQ_CLK_SAI1_ROOT			403
-+#define IMX8MQ_CLK_SAI2_ROOT			404
-+#define IMX8MQ_CLK_SAI3_ROOT			405
-+#define IMX8MQ_CLK_SAI4_ROOT			406
-+#define IMX8MQ_CLK_SAI5_ROOT			407
-+#define IMX8MQ_CLK_SAI6_ROOT			408
-+#define IMX8MQ_CLK_UART1_ROOT			409
-+#define IMX8MQ_CLK_UART2_ROOT			411
-+#define IMX8MQ_CLK_UART3_ROOT			412
-+#define IMX8MQ_CLK_UART4_ROOT			413
-+#define IMX8MQ_CLK_USB1_CTRL_ROOT		414
-+#define IMX8MQ_CLK_USB2_CTRL_ROOT		415
-+#define IMX8MQ_CLK_USB1_PHY_ROOT		416
-+#define IMX8MQ_CLK_USB2_PHY_ROOT		417
-+#define IMX8MQ_CLK_USDHC1_ROOT			418
-+#define IMX8MQ_CLK_USDHC2_ROOT			419
-+#define IMX8MQ_CLK_WDOG1_ROOT			420
-+#define IMX8MQ_CLK_WDOG2_ROOT			421
-+#define IMX8MQ_CLK_WDOG3_ROOT			422
-+#define IMX8MQ_CLK_GPU_ROOT			423
-+#define IMX8MQ_CLK_HEVC_ROOT			424
-+#define IMX8MQ_CLK_AVC_ROOT			425
-+#define IMX8MQ_CLK_VP9_ROOT			426
-+#define IMX8MQ_CLK_HEVC_INTER_ROOT		427
-+#define IMX8MQ_CLK_DISP_ROOT			428
-+#define IMX8MQ_CLK_HDMI_ROOT			429
-+#define IMX8MQ_CLK_HDMI_PHY_ROOT		430
-+#define IMX8MQ_CLK_VPU_DEC_ROOT			431
-+#define IMX8MQ_CLK_CSI1_ROOT			432
-+#define IMX8MQ_CLK_CSI2_ROOT			433
-+#define IMX8MQ_CLK_RAWNAND_ROOT			434
-+#define IMX8MQ_CLK_SDMA1_ROOT			435
-+#define IMX8MQ_CLK_SDMA2_ROOT			436
-+#define IMX8MQ_CLK_VPU_G1_ROOT			437
-+#define IMX8MQ_CLK_VPU_G2_ROOT			438
-+
-+/* SCCG PLL GATE */
-+#define IMX8MQ_SYS1_PLL_OUT			439
-+#define IMX8MQ_SYS2_PLL_OUT			440
-+#define IMX8MQ_SYS3_PLL_OUT			441
-+#define IMX8MQ_DRAM_PLL_OUT			442
-+
-+#define IMX8MQ_GPT_3M_CLK			443
-+
-+#define IMX8MQ_CLK_IPG_ROOT			444
-+#define IMX8MQ_CLK_IPG_AUDIO_ROOT		445
-+#define IMX8MQ_CLK_SAI1_IPG			446
-+#define IMX8MQ_CLK_SAI2_IPG			447
-+#define IMX8MQ_CLK_SAI3_IPG			448
-+#define IMX8MQ_CLK_SAI4_IPG			449
-+#define IMX8MQ_CLK_SAI5_IPG			450
-+#define IMX8MQ_CLK_SAI6_IPG			451
-+
-+/* DSI AHB/IPG clocks */
-+/* rxesc clock */
-+#define IMX8MQ_CLK_DSI_AHB			452
-+/* txesc clock */
-+#define IMX8MQ_CLK_DSI_IPG_DIV                  453
-+
-+/* VIDEO2 PLL */
-+#define IMX8MQ_VIDEO2_PLL1_REF_SEL		454
-+#define IMX8MQ_VIDEO2_PLL1_REF_DIV		455
-+#define IMX8MQ_VIDEO2_PLL1			456
-+#define IMX8MQ_VIDEO2_PLL1_OUT			457
-+#define IMX8MQ_VIDEO2_PLL1_OUT_DIV		458
-+#define IMX8MQ_VIDEO2_PLL2			459
-+#define IMX8MQ_VIDEO2_PLL2_DIV			460
-+#define IMX8MQ_VIDEO2_PLL2_OUT			461
-+#define IMX8MQ_CLK_TMU_ROOT			462
-+
-+/* Display root clocks */
-+#define IMX8MQ_CLK_DISP_AXI_ROOT		463
-+#define IMX8MQ_CLK_DISP_APB_ROOT		464
-+#define IMX8MQ_CLK_DISP_RTRM_ROOT		465
-+
-+#define IMX8MQ_CLK_OCOTP_ROOT			476
-+
-+#define IMX8MQ_CLK_DRAM_ALT_ROOT		477
-+#define IMX8MQ_CLK_DRAM_CORE			478
-+
-+#define IMX8MQ_CLK_MU_ROOT			479
-+#define IMX8MQ_VIDEO2_PLL_OUT			480
-+
-+#define IMX8MQ_CLK_CLKO2			481
-+
-+#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	482
-+
-+#define IMX8MQ_CLK_END				483
-+#endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
--- 
-2.7.4
+>
+> My second concern is that we do have voltage requirements coming from the
+> clock controller itself, not related to the clock consumer.  The clock
+> hardware components themselves (PLLs, muxes, etc) require voltage levels
+> that may differ from that of the final consumer of the output clock.  We
+> could hack all these requirements into the frequency/voltage tuple table
+> that consumers look up, but at that point we have diverged fairly
+> dramatically from Stephen's principle that the clock framework should not
+> directly require any voltage - fundamentally they do (at least ours do).
+
+This changes my view, as I didn't know about these kind of cases.
+
+First, it seems like you need to associate a struct device with the
+clock controller, such that it can be attached to its corresponding PM
+domain (genpd). Of course, then you also needs to deploy runtime PM
+support for the clock driver for this clock controller device. Do note
+that runtime PM is already supported by the clock core, so should be
+trivial. Why, because this is needed to properly allow genpd to
+aggregates the votes for the PM domain(s), in case there are other
+devices in the same PM domain (or if there are dependencies to
+subdomains).
+
+Also, if I am not mistaken, the runtime PM enablement is something
+that is already being used (or at least tried out) for some Exynos
+clock drivers. I recall there were some discussions around locking
+issues around the runtime PM support in the clock core. Let me see if
+can search the mail archive to see if I find out if/what went wrong, I
+will come back to this.
+
+Anyway, in regards to control the performance state for these clock
+controller devices, to me it seems like there are no other way, but
+explicitly allow clock drivers to call an "OPP API" to request a
+performance state. Simply, because it's the clock driver that needs
+the performance state for its device. Whether the "OPP API" is the
+new, dev_pm_genpd_set_performance_state() or something not even
+invented yet, is another question.
+
+My conclusion so far is, that we seems to fall back to a potential
+locking problem. In regards to that, I am wondering whether that is
+actually more of hypothetical problem than a real problem for your
+case.
+
+> Our most recent patch that Taniya posted has gone in the direction similar
+> to Tegra - instead of having the framework handle it, we use prepare and
+> set_rate hooks to implement voltage (corner) voting in the qcom drivers via
+> the new genpd.  This is not fully proven yet but is so far working well and
+> will likely be our internal solution going forward if the framework
+> consensus is to force consumers to manage their frequency-based voltage
+> requirements themselves - I just do not see that as a practical solution for
+> a complicated SoC with a large, highly distributed, clock tree.  That being
+> said I do see potential future deadlock race conditions between clk and
+> genpd which concern me - it remains a downside of that coupling.
+>
+> Would there be some way to prevent consumers from directly calling
+> clk_set_rate or clk_enable and force them to go via another framework for
+> these calls?  It would at least prevent people from using the "wrong"
+> interface and bypassing voltage requirements.  That of course means having
+> to mirror any of the clk APIs that update clock state into genpd/opp, which
+> Stephen finds distasteful (and I agree).
+
+I am not sure about this. Sound like an awful wrapper API.
+
+However, what Mike seems to express the need for, is a common consumer
+OPP API to set a performance state for a device, but also a way to to
+allow SoC specific performance state providers to manage the backend
+parts of actually changing the performance state.
+
+I am wondering whether this could be a way forward, maybe not exactly
+what you was looking for, but perhaps it can address your concerns?
+
+[...]
+
+Kind regards
+Uffe
