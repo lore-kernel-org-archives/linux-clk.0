@@ -1,47 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-7-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-7-songjun.wu@linux.intel.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 6 Aug 2018 09:14:54 -0600
-Message-ID: <CAL_JsqLyuFsfXsG7g10D5g1uLXrFHJ9rdHc97AP9G+pj88v+xg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/18] MIPS: dts: Change upper case to lower case
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin zhu <yixin.zhu@linux.intel.com>,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 3/4] dt-bindings: clock: Add jz4725b-cgu.h header
+Date: Thu, 23 Aug 2018 15:17:43 +0200
+Message-Id: <20180823131744.744-3-paul@crapouillou.net>
+In-Reply-To: <20180823131744.744-1-paul@crapouillou.net>
+References: <20180823131744.744-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
->
-> All the upper case in unit-address and hex constants are
-> changed to lower case according to the Linux conventions.
+This will be used from the devicetree bindings to specify the clocks
+that should be obtained from the jz4725b-cgu driver.
 
-It is DT conventions, not Linux.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-Otherwise,
+Notes:
+    No change
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ include/dt-bindings/clock/jz4725b-cgu.h | 35 +++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 include/dt-bindings/clock/jz4725b-cgu.h
 
->
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
->
-> Changes in v2: None
->
->  arch/mips/boot/dts/lantiq/danube.dtsi   | 42 ++++++++++++++++-----------------
->  arch/mips/boot/dts/lantiq/easy50712.dts | 14 +++++------
->  2 files changed, 28 insertions(+), 28 deletions(-)
+diff --git a/include/dt-bindings/clock/jz4725b-cgu.h b/include/dt-bindings/clock/jz4725b-cgu.h
+new file mode 100644
+index 000000000000..460bbeff6ab8
+--- /dev/null
++++ b/include/dt-bindings/clock/jz4725b-cgu.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides clock numbers for the ingenic,jz4725b-cgu DT binding.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__
++#define __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__
++
++#define JZ4725B_CLK_EXT		0
++#define JZ4725B_CLK_OSC32K	1
++#define JZ4725B_CLK_PLL		2
++#define JZ4725B_CLK_PLL_HALF	3
++#define JZ4725B_CLK_CCLK	4
++#define JZ4725B_CLK_HCLK	5
++#define JZ4725B_CLK_PCLK	6
++#define JZ4725B_CLK_MCLK	7
++#define JZ4725B_CLK_IPU		8
++#define JZ4725B_CLK_LCD		9
++#define JZ4725B_CLK_I2S		10
++#define JZ4725B_CLK_SPI		11
++#define JZ4725B_CLK_MMC_MUX	12
++#define JZ4725B_CLK_UDC		13
++#define JZ4725B_CLK_UART	14
++#define JZ4725B_CLK_DMA		15
++#define JZ4725B_CLK_ADC		16
++#define JZ4725B_CLK_I2C		17
++#define JZ4725B_CLK_AIC		18
++#define JZ4725B_CLK_MMC0	19
++#define JZ4725B_CLK_MMC1	20
++#define JZ4725B_CLK_BCH		21
++#define JZ4725B_CLK_TCU		22
++#define JZ4725B_CLK_EXT512	23
++#define JZ4725B_CLK_RTC		24
++
++#endif /* __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__ */
+-- 
+2.11.0
