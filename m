@@ -1,80 +1,297 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH 1/2] dt-bindings: clk: meson-g12a: Add G12A AO Clock Bindings
-Date: Fri, 10 Aug 2018 17:54:27 +0800
-Message-ID: <1533894868-85815-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
-References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v2 4/4] clk: Add Ingenic jz4725b CGU driver
+Date: Thu, 23 Aug 2018 15:17:44 +0200
+Message-Id: <20180823131744.744-4-paul@crapouillou.net>
+In-Reply-To: <20180823131744.744-1-paul@crapouillou.net>
+References: <20180823131744.744-1-paul@crapouillou.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new clock controller compatible and dt-bingdings headers
-for the Always-On domain of the g12a SoC
+Add support for the clocks provided by the CGU in the Ingenic JZ4725B
+SoC.
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- .../bindings/clock/amlogic,gxbb-aoclkc.txt         |  1 +
- include/dt-bindings/clock/g12a-aoclkc.h            | 28 ++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
- create mode 100755 include/dt-bindings/clock/g12a-aoclkc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-index 3a88052..6f02288 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt
-@@ -10,6 +10,7 @@ Required Properties:
- 	- GXL (S905X, S905D) : "amlogic,meson-gxl-aoclkc"
- 	- GXM (S912) : "amlogic,meson-gxm-aoclkc"
- 	- AXG (A113D, A113X) : "amlogic,meson-axg-aoclkc"
-+	- G12A (S905D2, S905X2) : "amlogic,g12a-aoclkc"
- 	followed by the common "amlogic,meson-gx-aoclkc"
+Notes:
+    No change
+
+ drivers/clk/ingenic/Kconfig       |  10 ++
+ drivers/clk/ingenic/Makefile      |   1 +
+ drivers/clk/ingenic/jz4725b-cgu.c | 225 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 236 insertions(+)
+ create mode 100644 drivers/clk/ingenic/jz4725b-cgu.c
+
+diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+index 2445437f8286..34dc0da79c39 100644
+--- a/drivers/clk/ingenic/Kconfig
++++ b/drivers/clk/ingenic/Kconfig
+@@ -14,6 +14,16 @@ config INGENIC_CGU_JZ4740
  
- - #clock-cells: should be 1.
-diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
-new file mode 100755
-index 0000000..6b3f921
+ 	  If building for a JZ4740 SoC, you want to say Y here.
+ 
++config INGENIC_CGU_JZ4725B
++	bool "Ingenic JZ4725B CGU driver"
++	default MACH_JZ4725B
++	select INGENIC_CGU_COMMON
++	help
++	  Support the clocks provided by the CGU hardware on Ingenic JZ4725B
++	  and compatible SoCs.
++
++	  If building for a JZ4725B SoC, you want to say Y here.
++
+ config INGENIC_CGU_JZ4770
+ 	bool "Ingenic JZ4770 CGU driver"
+ 	default MACH_JZ4770
+diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
+index 8b8dc79c7ce6..00a79b2fba10 100644
+--- a/drivers/clk/ingenic/Makefile
++++ b/drivers/clk/ingenic/Makefile
+@@ -1,4 +1,5 @@
+ obj-$(CONFIG_INGENIC_CGU_COMMON)	+= cgu.o
+ obj-$(CONFIG_INGENIC_CGU_JZ4740)	+= jz4740-cgu.o
++obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+= jz4725b-cgu.o
+ obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
+ obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
+diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
+new file mode 100644
+index 000000000000..584ff4ff81c7
 --- /dev/null
-+++ b/include/dt-bindings/clock/g12a-aoclkc.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
++++ b/drivers/clk/ingenic/jz4725b-cgu.c
+@@ -0,0 +1,225 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ * Ingenic JZ4725B SoC CGU driver
 + *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Jian Hu<jian.hu@amlogic.com>
++ * Copyright (C) 2018 Paul Cercueil
++ * Author: Paul Cercueil <paul@crapouillou.net>
 + */
 +
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_G12A_AOCLK
++#include <linux/clk-provider.h>
++#include <linux/delay.h>
++#include <linux/of.h>
++#include <dt-bindings/clock/jz4725b-cgu.h>
++#include "cgu.h"
 +
-+#define CLKID_AO_AHB_BUS		0
-+#define CLKID_AO_REMOTE			1
-+#define CLKID_AO_I2C_MASTER		2
-+#define CLKID_AO_I2C_SLAVE		3
-+#define CLKID_AO_UART1			4
-+#define CLKID_AO_PROD_I2C		5
-+#define CLKID_AO_UART2			6
-+#define CLKID_AO_IR_BLASTER		7
-+#define CLKID_AO_SAR_ADC		8
-+#define CLKID_AO_CLK81			9
-+#define CLKID_AO_SAR_ADC_SEL		10
-+#define CLKID_AO_SAR_ADC_DIV		11
-+#define CLKID_AO_SAR_ADC_CLK		12
-+#define CLKID_AO_ALT_XTAL		13
++/* CGU register offsets */
++#define CGU_REG_CPCCR		0x00
++#define CGU_REG_LCR		0x04
++#define CGU_REG_CPPCR		0x10
++#define CGU_REG_CLKGR		0x20
++#define CGU_REG_OPCR		0x24
++#define CGU_REG_I2SCDR		0x60
++#define CGU_REG_LPCDR		0x64
++#define CGU_REG_MSCCDR		0x68
++#define CGU_REG_SSICDR		0x74
++#define CGU_REG_CIMCDR		0x78
 +
-+#endif
++/* bits within the LCR register */
++#define LCR_SLEEP		BIT(0)
++
++static struct ingenic_cgu *cgu;
++
++static const s8 pll_od_encoding[4] = {
++	0x0, 0x1, -1, 0x3,
++};
++
++static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
++
++	/* External clocks */
++
++	[JZ4725B_CLK_EXT] = { "ext", CGU_CLK_EXT },
++	[JZ4725B_CLK_OSC32K] = { "osc32k", CGU_CLK_EXT },
++
++	[JZ4725B_CLK_PLL] = {
++		"pll", CGU_CLK_PLL,
++		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
++		.pll = {
++			.reg = CGU_REG_CPPCR,
++			.m_shift = 23,
++			.m_bits = 9,
++			.m_offset = 2,
++			.n_shift = 18,
++			.n_bits = 5,
++			.n_offset = 2,
++			.od_shift = 16,
++			.od_bits = 2,
++			.od_max = 4,
++			.od_encoding = pll_od_encoding,
++			.stable_bit = 10,
++			.bypass_bit = 9,
++			.enable_bit = 8,
++		},
++	},
++
++	/* Muxes & dividers */
++
++	[JZ4725B_CLK_PLL_HALF] = {
++		"pll half", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
++	},
++
++	[JZ4725B_CLK_CCLK] = {
++		"cclk", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
++	},
++
++	[JZ4725B_CLK_HCLK] = {
++		"hclk", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
++	},
++
++	[JZ4725B_CLK_PCLK] = {
++		"pclk", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 8, 1, 4, 22, -1, -1 },
++	},
++
++	[JZ4725B_CLK_MCLK] = {
++		"mclk", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 12, 1, 4, 22, -1, -1 },
++	},
++
++	[JZ4725B_CLK_IPU] = {
++		"ipu", CGU_CLK_DIV | CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_PLL, -1, -1, -1 },
++		.div = { CGU_REG_CPCCR, 16, 1, 4, 22, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 13 },
++	},
++
++	[JZ4725B_CLK_LCD] = {
++		"lcd", CGU_CLK_DIV | CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
++		.div = { CGU_REG_LPCDR, 0, 1, 11, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 9 },
++	},
++
++	[JZ4725B_CLK_I2S] = {
++		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
++		.mux = { CGU_REG_CPCCR, 31, 1 },
++		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 6 },
++	},
++
++	[JZ4725B_CLK_SPI] = {
++		"spi", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL, -1, -1 },
++		.mux = { CGU_REG_SSICDR, 31, 1 },
++		.div = { CGU_REG_SSICDR, 0, 1, 4, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 4 },
++	},
++
++	[JZ4725B_CLK_MMC_MUX] = {
++		"mmc_mux", CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_PLL_HALF, -1, -1, -1 },
++		.div = { CGU_REG_MSCCDR, 0, 1, 5, -1, -1, -1 },
++	},
++
++	[JZ4725B_CLK_UDC] = {
++		"udc", CGU_CLK_MUX | CGU_CLK_DIV,
++		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
++		.mux = { CGU_REG_CPCCR, 29, 1 },
++		.div = { CGU_REG_CPCCR, 23, 1, 6, -1, -1, -1 },
++	},
++
++	/* Gate-only clocks */
++
++	[JZ4725B_CLK_UART] = {
++		"uart", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 0 },
++	},
++
++	[JZ4725B_CLK_DMA] = {
++		"dma", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_PCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 12 },
++	},
++
++	[JZ4725B_CLK_ADC] = {
++		"adc", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 7 },
++	},
++
++	[JZ4725B_CLK_I2C] = {
++		"i2c", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 3 },
++	},
++
++	[JZ4725B_CLK_AIC] = {
++		"aic", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 5 },
++	},
++
++	[JZ4725B_CLK_MMC0] = {
++		"mmc0", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 6 },
++	},
++
++	[JZ4725B_CLK_MMC1] = {
++		"mmc1", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_MMC_MUX, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 16 },
++	},
++
++	[JZ4725B_CLK_BCH] = {
++		"bch", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_MCLK/* not sure */, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 11 },
++	},
++
++	[JZ4725B_CLK_TCU] = {
++		"tcu", CGU_CLK_GATE,
++		.parents = { JZ4725B_CLK_EXT/* not sure */, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 1 },
++	},
++
++	[JZ4725B_CLK_EXT512] = {
++		"ext/512", CGU_CLK_FIXDIV,
++		.parents = { JZ4725B_CLK_EXT },
++
++		/* Doc calls it EXT512, but it seems to be /256... */
++		.fixdiv = { 256 },
++	},
++
++	[JZ4725B_CLK_RTC] = {
++		"rtc", CGU_CLK_MUX,
++		.parents = { JZ4725B_CLK_EXT512, JZ4725B_CLK_OSC32K, -1, -1 },
++		.mux = { CGU_REG_OPCR, 2, 1},
++	},
++};
++
++static void __init jz4725b_cgu_init(struct device_node *np)
++{
++	int retval;
++
++	cgu = ingenic_cgu_new(jz4725b_cgu_clocks,
++			      ARRAY_SIZE(jz4725b_cgu_clocks), np);
++	if (!cgu) {
++		pr_err("%s: failed to initialise CGU\n", __func__);
++		return;
++	}
++
++	retval = ingenic_cgu_register_clocks(cgu);
++	if (retval)
++		pr_err("%s: failed to register CGU Clocks\n", __func__);
++}
++CLK_OF_DECLARE(jz4725b_cgu, "ingenic,jz4725b-cgu", jz4725b_cgu_init);
 -- 
-1.9.1
+2.11.0
