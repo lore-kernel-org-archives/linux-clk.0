@@ -1,77 +1,198 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:19194 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbeH1HY4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Aug 2018 03:24:56 -0400
-Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC: Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
- <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
- <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
- <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
- <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
-From: Jian Hu <jian.hu@amlogic.com>
-Message-ID: <977d8010-6d82-5eac-5da5-6dbe0f73971a@amlogic.com>
-Date: Tue, 28 Aug 2018 11:35:32 +0800
-MIME-Version: 1.0
-In-Reply-To: <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <l.stach@pengutronix.de>
+Message-ID: <1535028152.2724.3.camel@pengutronix.de>
+Subject: Re: [PATCH 3/3] clk: imx6q: handle ENET PLL bypass
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh+dt@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+ patchwork-lst@pengutronix.de, linux-imx@nxp.com, kernel@pengutronix.de,
+ Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Date: Thu, 23 Aug 2018 14:42:32 +0200
+In-Reply-To: <ef7724298192359d3332a1f6a7412f0d@agner.ch>
+References: <20180731102009.6710-1-l.stach@pengutronix.de>
+	 <20180731102009.6710-3-l.stach@pengutronix.de>
+	 <ef7724298192359d3332a1f6a7412f0d@agner.ch>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi: Jerome
+Am Freitag, den 10.08.2018, 09:45 +0200 schrieb Stefan Agner:
+> On 31.07.2018 12:20, Lucas Stach wrote:
+> > The ENET PLL is different from the other i.MX6 PLLs, as it has
+> > multiple outputs with different post-dividers, which are all
+> > bypassed if the single bypass bit is activated. The hardware setup
+> > looks something like this:
+> >                                 _
+> > refclk-o---PLL---o----DIV1-----| \
+> >        |         |             |M |----OUT1
+> >        o-----------------------|_/
+> >        |         |              _
+> >        |         o----DIV2-----| \
+> >        |         |             |M |----OUT2
+> >        o-----------------------|_/
+> >        |         |              _
+> >        |         `----DIV3-----| \
+> >        |                       |M |----OUT3
+> >        `-----------------------|_/
+> > 
+> > The bypass bit not only bypasses the PLL, but also the attached
+> > post-dividers. This would be reasonbly straight forward to model
+> > with a single output, or with different bypass bits for each output,
+> > but sadly the HW guys decided that it would be good to actuate all
+> > 3 muxes with a single bit.
+> 
+> So that bypass bit is set when using IMX6QDL_PLL6_BYPASS_SRC correct?
+> 
+> So what happens today when one is doing that? Clocks such as
+> IMX6QDL_CLK_ENET_REF get the clock rate wrong?
 
-On 2018/8/27 21:07, Jerome Brunet wrote:
-> On Fri, 2018-08-24 at 21:34 +0800, Jian Hu wrote:
->>>
->>
->> I am confued about aoclk81's parent clocks.
->>
->> I can not get the example of axg audio clock driver, Could you provide
->> the link? Had it merged into clk-meson.git?
-> 
-> Yes and mainline as well : drivers/clk/meson/axg-audio.c
-> 
-> Basically this driver is creating bypass input clocks (audio_pclk, mst_in[0-9],
-> etc...) .
-> 
-> This allows to collect input clocks from DT (like any consumer should) will
-> keeping constant in the controller clock tree.
-> 
->>From what I've seen of your controller drivers, the EE controller should have
-> one input, the AO should have 3.
-> 
-> 
-> 
-> .
-> 
-I still can not get the example meaning in axg audio driver.
+Yep, exactly.
+It's not a big deal for most systems, as most of them never want the
+ENET PLL bypassed, but for the case where we want to feed an external
+clock into the PCIe controller the only way to do this is through the
+PLL bypass (breaking SATA in the process if the external clock is not
+100MHz or SS and breaking ENET if the ref clock isn't generated by the
+PHY).
 
-In 26 page of A113D_Datasheet V0.7 20170725-Baylibre.pdf,We can see the 
-aoclk81 has two parents. clk81 and ao_slow_clk. I can not get 3 parents.
+> > 
+> > So the need to have the PLL bypassed for one of the outputs always
+> > affects 2 other (in our model) independent branches of the clock
+> > tree.
+> > 
+> > This means the decision to bypass this PLL is a system wide design
+> > choice and should not be changed on-the-fly, so we can treat any
+> > bapass configuration as static. As such we can just register the
+> 
+> s/bapass/bypass
+> 
+> > post-dividiers with a ratio that reflects the bypass status, which
+> > allows us to bypass the PLL without breaking our abstraction model
+> > and with it DT stability.
+> 
+> I am assuming that the bypass bit is set depending on device tree parent
+> setting.
+> 
+> So you basically parse the device tree again to infer what the code did
+> a bit further up?
+> 
+> Can we not just read the bit from hardware? We already access clock
+> registers directly why not this one...
 
-                          clk81|\
-                        -------| \        aoclk81
-src0 |\                       |  |-------------------
------| \     ao_slow_clk      |  |
-      |  |---------------------| /
------| /                      |/
-  src1|/
+The DT assigned-clock stuff gets applied by the clk core _after_ the
+clk controller is registered. What we are doing here is changing the
+clock tree setup before registering the controller.
 
+Regards,
+Lucas
 
-src0 is from xtal, if can generate 32k clock, but it is never used.
-src1 is from gpio clock, It is never used. If necessary， the ao_slow_clk 
-maybe described.
-
-So why aoclk81 has 3 parents?
+> --
+> Stefan
+> 
+> > 
+> > > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> >  drivers/clk/imx/clk-imx6q.c | 63 +++++++++++++++++++++++++++++++++----
+> >  1 file changed, 57 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> > index f64f0fe76658..c52294694273 100644
+> > --- a/drivers/clk/imx/clk-imx6q.c
+> > +++ b/drivers/clk/imx/clk-imx6q.c
+> > @@ -231,6 +231,41 @@ static void of_assigned_ldb_sels(struct device_node *node,
+> > > >  	}
+> >  }
+> >  
+> > +static bool pll6_bypassed(struct device_node *node)
+> > +{
+> > > > +	int index, ret, num_clocks;
+> > > > +	struct of_phandle_args clkspec;
+> > +
+> > > > +	num_clocks = of_count_phandle_with_args(node, "assigned-clocks",
+> > > > +						"#clock-cells");
+> > > > +	if (num_clocks < 0)
+> > > > +		return false;
+> > +
+> > > > +	for (index = 0; index < num_clocks; index++) {
+> > > > +		ret = of_parse_phandle_with_args(node, "assigned-clocks",
+> > > > +						 "#clock-cells", index,
+> > > > +						 &clkspec);
+> > > > +		if (ret < 0)
+> > > > +			return false;
+> > +
+> > > > +		if (clkspec.np == node &&
+> > > > +		    clkspec.args[0] == IMX6QDL_PLL6_BYPASS)
+> > > > +			break;
+> > > > +	}
+> > +
+> > > > +	/* PLL6 bypass is not part of the assigned clock list */
+> > > > +	if (index == num_clocks)
+> > > > +		return false;
+> > +
+> > > > +	ret = of_parse_phandle_with_args(node, "assigned-clock-parents",
+> > > > +					 "#clock-cells", index, &clkspec);
+> > +
+> > > > +	if (clkspec.args[0] != IMX6QDL_CLK_PLL6)
+> > > > +		return true;
+> > +
+> > > > +	return false;
+> > +}
+> > +
+> > > >  #define CCM_CCDR		0x04
+> > > >  #define CCM_CCSR		0x0c
+> > > >  #define CCM_CS2CDR		0x2c
+> > @@ -510,16 +545,32 @@ static void __init imx6q_clocks_init(struct
+> > device_node *ccm_node)
+> > > >  	clk[IMX6QDL_CLK_USBPHY1_GATE] = imx_clk_gate("usbphy1_gate",
+> > "dummy", base + 0x10, 6);
+> > > >  	clk[IMX6QDL_CLK_USBPHY2_GATE] = imx_clk_gate("usbphy2_gate",
+> > "dummy", base + 0x20, 6);
+> >  
+> > > > -	clk[IMX6QDL_CLK_SATA_REF] = imx_clk_fixed_factor("sata_ref",
+> > "pll6_enet", 1, 5);
+> > > > -	clk[IMX6QDL_CLK_PCIE_REF] = imx_clk_fixed_factor("pcie_ref",
+> > "pll6_enet", 1, 4);
+> > > > +	/*
+> > > > +	 * The ENET PLL is special in that is has multiple outputs with
+> > > > +	 * different post-dividers that are all affected by the single bypass
+> > > > +	 * bit, so a single mux bit affects 3 independent branches of the clock
+> > > > +	 * tree. There is no good way to model this in the clock framework and
+> > > > +	 * dynamically changing the bypass bit, will yield unexpected results.
+> > > > +	 * So we treat any configuration that bypasses the ENET PLL as
+> > > > +	 * essentially static with the divider ratios refelcting the bypass
+> > > > +	 * status.
+> > > > +	 *
+> > > > +	 */
+> > > > +	if (!pll6_bypassed(ccm_node)) {
+> > > > +		clk[IMX6QDL_CLK_SATA_REF] = imx_clk_fixed_factor("sata_ref",
+> > "pll6_enet", 1, 5);
+> > > > +		clk[IMX6QDL_CLK_PCIE_REF] = imx_clk_fixed_factor("pcie_ref",
+> > "pll6_enet", 1, 4);
+> > > > +		clk[IMX6QDL_CLK_ENET_REF] = clk_register_divider_table(NULL,
+> > "enet_ref", "pll6_enet", 0,
+> > > > +						base + 0xe0, 0, 2, 0, clk_enet_ref_table,
+> > > > +						&imx_ccm_lock);
+> > > > +	} else {
+> > > > +		clk[IMX6QDL_CLK_SATA_REF] = imx_clk_fixed_factor("sata_ref",
+> > "pll6_enet", 1, 1);
+> > > > +		clk[IMX6QDL_CLK_PCIE_REF] = imx_clk_fixed_factor("pcie_ref",
+> > "pll6_enet", 1, 1);
+> > > > +		clk[IMX6QDL_CLK_ENET_REF] = imx_clk_fixed_factor("enet_ref",
+> > "pll6_enet", 1, 1);
+> > > > +	}
+> >  
+> > > >  	clk[IMX6QDL_CLK_SATA_REF_100M] = imx_clk_gate("sata_ref_100m",
+> > "sata_ref", base + 0xe0, 20);
+> > > >  	clk[IMX6QDL_CLK_PCIE_REF_125M] = imx_clk_gate("pcie_ref_125m",
+> > "pcie_ref", base + 0xe0, 19);
+> >  
+> > > > -	clk[IMX6QDL_CLK_ENET_REF] = clk_register_divider_table(NULL,
+> > "enet_ref", "pll6_enet", 0,
+> > > > -			base + 0xe0, 0, 2, 0, clk_enet_ref_table,
+> > > > -			&imx_ccm_lock);
+> > -
+> > > >  	clk[IMX6QDL_CLK_LVDS1_SEL] = imx_clk_mux("lvds1_sel", base + 0x160,
+> > 0, 5, lvds_sels, ARRAY_SIZE(lvds_sels));
+> > > >  	clk[IMX6QDL_CLK_LVDS2_SEL] = imx_clk_mux("lvds2_sel", base + 0x160,
+> > 5, 5, lvds_sels, ARRAY_SIZE(lvds_sels));
