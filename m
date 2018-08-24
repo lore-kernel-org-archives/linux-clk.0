@@ -1,147 +1,72 @@
-Return-Path: <Jian.Hu@amlogic.com>
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, Carlo
- Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
-	<yixun.lan@amlogic.com>, Qiufang Dai <qiufang.dai@amlogic.com>, Bo.yang
-	<bo.yang@amlogic.com>, Xingyu.chen <xingyu.chen@amlogic.com>, "Qianggui,song"
-	<qianggui.song@amlogic.com>, Sunny.luo <sunny.luo@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH v3 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
-Date: Fri, 10 Aug 2018 16:47:37 +0800
-Message-ID: <1533890858-113020-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
-References: <1533890858-113020-1-git-send-email-jian.hu@amlogic.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:35296 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeHXNLA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 09:11:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: jian.hu@amlogic.com
+References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
+ <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com> <20180820181155.GA13901@bogus>
+ <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Fri, 24 Aug 2018 15:06:58 +0530
+Message-ID: <CABb+yY1+J+=nV2gNN30KLr2YQDy_g81-dJS1DJq8NgUv7Qqcog@mail.gmail.com>
+Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Rob Herring <robh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Dong Aisheng <dongas86@gmail.com>,
+        ", Sascha Hauer" <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, ulf.hansson@linaro.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add new clock controller compatible and dt-bingdings headers
-for the Everything-Else domain of the g12a SoC
+On Tue, Aug 21, 2018 at 8:30 AM A.s. Dong <aisheng.dong@nxp.com> wrote:
+>
+> > > +
+> > > +The System Controller Firmware (SCFW) is a low-level system function
+> > > +which runs on a dedicated Cortex-M core to provide power, clock, and
+> > > +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
+> > > +(QM, QP), and i.MX8QX (QXP, DX).
+> > > +
+> > > +The AP communicates with the SC using a multi-ported MU module found
+> > > +in the LSIO subsystem. The current definition of this MU module
+> > > +provides
+> > > +5 remote AP connections to the SC to support up to 5 execution
+> > > +environments (TZ, HV, standard Linux, etc.). The SC side of this MU
+> > > +module interfaces with the LSIO DSC IP bus. The SC firmware will
+> > > +communicate with this MU using the MSI bus.
+> >
+> > How are 5 users supported with only 4 channels defined below?
+>
+> There're 5 MU instances designed to be specifically communicate with
+> SCU Firmware on MX8 hardware.
+>
+This is correct.
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
- include/dt-bindings/clock/g12a-clkc.h              | 93 ++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
-
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index e950599..0833006 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 		"amlogic,gxbb-clkc" for GXBB SoC,
- 		"amlogic,gxl-clkc" for GXL and GXM SoC,
- 		"amlogic,axg-clkc" for AXG SoC.
-+		"amlogic,g12a-clkc" for G12A SoC.
- 
- - #clock-cells: should be 1.
- 
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-new file mode 100644
-index 0000000..b55e6e1
---- /dev/null
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Meson-G12A clock tree IDs
-+ *
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __G12A_CLKC_H
-+#define __G12A_CLKC_H
-+
-+#define CLKID_SYS_PLL				0
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				2
-+#define CLKID_FCLK_DIV3				3
-+#define CLKID_FCLK_DIV4				4
-+#define CLKID_FCLK_DIV5				5
-+#define CLKID_FCLK_DIV7				6
-+#define CLKID_GP0_PLL				7
-+#define CLKID_CLK81				10
-+#define CLKID_MPLL0				11
-+#define CLKID_MPLL1				12
-+#define CLKID_MPLL2				13
-+#define CLKID_MPLL3				14
-+#define CLKID_DDR				15
-+#define CLKID_DOS				16
-+#define CLKID_AUDIO_LOCKER			17
-+#define CLKID_MIPI_DSI_HOST			18
-+#define CLKID_ETH_PHY				19
-+#define CLKID_ISA				20
-+#define CLKID_PL301				21
-+#define CLKID_PERIPHS				22
-+#define CLKID_SPICC0				23
-+#define CLKID_I2C				24
-+#define CLKID_SANA				25
-+#define CLKID_SD				26
-+#define CLKID_RNG0				27
-+#define CLKID_UART0				28
-+#define CLKID_SPICC1				29
-+#define CLKID_HIU_IFACE				30
-+#define CLKID_MIPI_DSI_PHY			31
-+#define CLKID_ASSIST_MISC			32
-+#define CLKID_SD_EMMC_A				33
-+#define CLKID_SD_EMMC_B				34
-+#define CLKID_SD_EMMC_C				35
-+#define CLKID_AUDIO_CODEC			36
-+#define CLKID_AUDIO				37
-+#define CLKID_ETH				38
-+#define CLKID_DEMUX				39
-+#define CLKID_AUDIO_IFIFO			40
-+#define CLKID_ADC				41
-+#define CLKID_UART1				42
-+#define CLKID_G2D				43
-+#define CLKID_RESET				44
-+#define CLKID_PCIE_COMB				45
-+#define CLKID_PARSER				46
-+#define CLKID_USB				47
-+#define CLKID_PCIE_PHY				48
-+#define CLKID_AHB_ARB0				49
-+#define CLKID_AHB_DATA_BUS			50
-+#define CLKID_AHB_CTRL_BUS			51
-+#define CLKID_HTX_HDCP22			52
-+#define CLKID_HTX_PCLK				53
-+#define CLKID_BT656				54
-+#define CLKID_USB1_DDR_BRIDGE			55
-+#define CLKID_MMC_PCLK				56
-+#define CLKID_UART2				57
-+#define CLKID_VPU_INTR				58
-+#define CLKID_GIC				59
-+#define CLKID_SD_EMMC_B_CLK0			60
-+#define CLKID_SD_EMMC_C_CLK0			61
-+#define CLKID_HIFI_PLL				71
-+#define CLKID_VCLK2_VENCI0			77
-+#define CLKID_VCLK2_VENCI1			78
-+#define CLKID_VCLK2_VENCP0			79
-+#define CLKID_VCLK2_VENCP1			80
-+#define CLKID_VCLK2_VENCT0			81
-+#define CLKID_VCLK2_VENCT1			82
-+#define CLKID_VCLK2_OTHER			83
-+#define CLKID_VCLK2_ENCI			84
-+#define CLKID_VCLK2_ENCP			85
-+#define CLKID_DAC_CLK				86
-+#define CLKID_AOCLK				87
-+#define CLKID_IEC958				88
-+#define CLKID_ENC480P				89
-+#define CLKID_RNG1				90
-+#define CLKID_VCLK2_ENCT			91
-+#define CLKID_VCLK2_ENCL			92
-+#define CLKID_VCLK2_VENCLMMC			93
-+#define CLKID_VCLK2_VENCL			94
-+#define CLKID_VCLK2_OTHER1			95
-+#define CLKID_FCLK_DIV2P5			96
-+
-+#endif /* __G12A_CLKC_H */
--- 
-1.9.1
+> With the new generic mu binding [1], each MU instance is abstracted
+> Into 16 virtual MU channels. (4 Tx, 4 Rx, 4 Tx doorbell, 4 Rx doorbell).
+> (MU has 4 pair of Tx/Rx data register which can be used to send/receive
+> multi words. With new binding, each data register is abstracted into one
+> MU channel, totally 8 channels for data transfer).
+>
+> SCU protocol is already designed to uses all data registers to send/receive
+> multi words according to MU hardware reference manual. So it must
+> use all channels in one MU instances with new binding.
+>
+FYI, this is incorrect.
+The 16 channels are physical and not virtual. In fact, all this is to
+avoid virtual channels.
+The physical resources required by new bindings are exactly the same
+as by old bindings. Now you use 8 physical channels instead of 1
+virtual.
