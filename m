@@ -1,516 +1,76 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] clk: meson: clk-pll: drop hard-coded rates from pll tables
-Date: Wed,  1 Aug 2018 16:00:53 +0200
-Message-Id: <20180801140053.25899-5-jbrunet@baylibre.com>
-In-Reply-To: <20180801140053.25899-1-jbrunet@baylibre.com>
-References: <20180801140053.25899-1-jbrunet@baylibre.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-eopbgr70042.outbound.protection.outlook.com ([40.107.7.42]:35339
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726243AbeHXN0Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Aug 2018 09:26:25 -0400
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: Rob Herring <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Dong Aisheng <dongas86@gmail.com>,
+        ", Sascha Hauer" <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: RE: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
+Date: Fri, 24 Aug 2018 09:51:47 +0000
+Message-ID: <AM0PR04MB4211D1CB3DE05AF148E94AAD80360@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
+ <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
+ <20180820181155.GA13901@bogus>
+ <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <CABb+yY1+J+=nV2gNN30KLr2YQDy_g81-dJS1DJq8NgUv7Qqcog@mail.gmail.com>
+In-Reply-To: <CABb+yY1+J+=nV2gNN30KLr2YQDy_g81-dJS1DJq8NgUv7Qqcog@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Putting hard-coded rates inside the parameter tables assumes that
-the parent is known and will never change. That's a big assumption
-we should not make.
-
-We have everything we need to recalculate the output rate using
-the parent rate and the rest of the parameters. Let's do so and
-drop the rates from the tables.
-
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg.c     |  73 +++++++++++-----------
- drivers/clk/meson/clk-pll.c |  69 ++++++++++++++-------
- drivers/clk/meson/clkc.h    |   8 +--
- drivers/clk/meson/gxbb.c    | 120 ++++++++++++++++++------------------
- drivers/clk/meson/meson8b.c |  34 +++++-----
- 5 files changed, 162 insertions(+), 142 deletions(-)
-
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index a5e4f7b22f39..7511b3e26d40 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -134,36 +134,36 @@ static struct clk_regmap axg_sys_pll = {
- 	},
- };
- 
--static const struct pll_rate_table axg_gp0_pll_rate_table[] = {
--	PLL_RATE(960000000, 40, 1),
--	PLL_RATE(984000000, 41, 1),
--	PLL_RATE(1008000000, 42, 1),
--	PLL_RATE(1032000000, 43, 1),
--	PLL_RATE(1056000000, 44, 1),
--	PLL_RATE(1080000000, 45, 1),
--	PLL_RATE(1104000000, 46, 1),
--	PLL_RATE(1128000000, 47, 1),
--	PLL_RATE(1152000000, 48, 1),
--	PLL_RATE(1176000000, 49, 1),
--	PLL_RATE(1200000000, 50, 1),
--	PLL_RATE(1224000000, 51, 1),
--	PLL_RATE(1248000000, 52, 1),
--	PLL_RATE(1272000000, 53, 1),
--	PLL_RATE(1296000000, 54, 1),
--	PLL_RATE(1320000000, 55, 1),
--	PLL_RATE(1344000000, 56, 1),
--	PLL_RATE(1368000000, 57, 1),
--	PLL_RATE(1392000000, 58, 1),
--	PLL_RATE(1416000000, 59, 1),
--	PLL_RATE(1440000000, 60, 1),
--	PLL_RATE(1464000000, 61, 1),
--	PLL_RATE(1488000000, 62, 1),
--	PLL_RATE(1512000000, 63, 1),
--	PLL_RATE(1536000000, 64, 1),
--	PLL_RATE(1560000000, 65, 1),
--	PLL_RATE(1584000000, 66, 1),
--	PLL_RATE(1608000000, 67, 1),
--	PLL_RATE(1632000000, 68, 1),
-+static const struct pll_params_table axg_gp0_pll_params_table[] = {
-+	PLL_PARAMS(40, 1),
-+	PLL_PARAMS(41, 1),
-+	PLL_PARAMS(42, 1),
-+	PLL_PARAMS(43, 1),
-+	PLL_PARAMS(44, 1),
-+	PLL_PARAMS(45, 1),
-+	PLL_PARAMS(46, 1),
-+	PLL_PARAMS(47, 1),
-+	PLL_PARAMS(48, 1),
-+	PLL_PARAMS(49, 1),
-+	PLL_PARAMS(50, 1),
-+	PLL_PARAMS(51, 1),
-+	PLL_PARAMS(52, 1),
-+	PLL_PARAMS(53, 1),
-+	PLL_PARAMS(54, 1),
-+	PLL_PARAMS(55, 1),
-+	PLL_PARAMS(56, 1),
-+	PLL_PARAMS(57, 1),
-+	PLL_PARAMS(58, 1),
-+	PLL_PARAMS(59, 1),
-+	PLL_PARAMS(60, 1),
-+	PLL_PARAMS(61, 1),
-+	PLL_PARAMS(62, 1),
-+	PLL_PARAMS(63, 1),
-+	PLL_PARAMS(64, 1),
-+	PLL_PARAMS(65, 1),
-+	PLL_PARAMS(66, 1),
-+	PLL_PARAMS(67, 1),
-+	PLL_PARAMS(68, 1),
- 	{ /* sentinel */ },
- };
- 
-@@ -207,7 +207,7 @@ static struct clk_regmap axg_gp0_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = axg_gp0_pll_rate_table,
-+		.table = axg_gp0_pll_params_table,
- 		.init_regs = axg_gp0_init_regs,
- 		.init_count = ARRAY_SIZE(axg_gp0_init_regs),
- 	},
-@@ -275,7 +275,7 @@ static struct clk_regmap axg_hifi_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = axg_gp0_pll_rate_table,
-+		.table = axg_gp0_pll_params_table,
- 		.init_regs = axg_hifi_init_regs,
- 		.init_count = ARRAY_SIZE(axg_hifi_init_regs),
- 		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
-@@ -631,11 +631,10 @@ static struct clk_regmap axg_mpll3 = {
- 	},
- };
- 
--static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
-+static const struct pll_params_table axg_pcie_pll_params_table[] = {
- 	{
--		.rate	= 1600000000,
--		.m	= 200,
--		.n	= 3,
-+		.m = 200,
-+		.n = 3,
- 	},
- 	{ /* sentinel */ },
- };
-@@ -682,7 +681,7 @@ static struct clk_regmap axg_pcie_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = axg_pcie_pll_rate_table,
-+		.table = axg_pcie_pll_params_table,
- 		.init_regs = axg_pcie_init_regs,
- 		.init_count = ARRAY_SIZE(axg_pcie_init_regs),
- 	},
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 348a866f09eb..f5b5b3fabe3c 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -45,7 +45,7 @@ meson_clk_pll_data(struct clk_regmap *clk)
- }
- 
- static unsigned long __pll_params_to_rate(unsigned long parent_rate,
--					  const struct pll_rate_table *pllt,
-+					  const struct pll_params_table *pllt,
- 					  u16 frac,
- 					  struct meson_clk_pll_data *pll)
- {
-@@ -66,7 +66,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
--	struct pll_rate_table pllt;
-+	struct pll_params_table pllt;
- 	u16 frac;
- 
- 	pllt.n = meson_parm_read(clk->map, &pll->n);
-@@ -81,7 +81,7 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 
- static u16 __pll_params_with_frac(unsigned long rate,
- 				  unsigned long parent_rate,
--				  const struct pll_rate_table *pllt,
-+				  const struct pll_params_table *pllt,
- 				  struct meson_clk_pll_data *pll)
- {
- 	u16 frac_max = (1 << pll->frac.width);
-@@ -97,29 +97,50 @@ static u16 __pll_params_with_frac(unsigned long rate,
- 	return min((u16)val, (u16)(frac_max - 1));
- }
- 
--static const struct pll_rate_table *
-+static bool meson_clk_pll_is_better(unsigned long rate,
-+				    unsigned long best,
-+				    unsigned long now,
-+				    struct meson_clk_pll_data *pll)
-+{
-+	if (!(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
-+	    MESON_PARM_APPLICABLE(&pll->frac)) {
-+		/* Round down */
-+		if (now < rate && best < now)
-+			return true;
-+	} else {
-+		/* Round Closest */
-+		if (abs(now - rate) < abs(best - rate))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static const struct pll_params_table *
- meson_clk_get_pll_settings(unsigned long rate,
-+			   unsigned long parent_rate,
- 			   struct meson_clk_pll_data *pll)
- {
--	const struct pll_rate_table *table = pll->table;
--	unsigned int i = 0;
-+	const struct pll_params_table *table = pll->table;
-+	unsigned long best = 0, now = 0;
-+	unsigned int i, best_i = 0;
- 
- 	if (!table)
- 		return NULL;
- 
--	/* Find the first table element exceeding rate */
--	while (table[i].rate && table[i].rate <= rate)
--		i++;
-+	for (i = 0; table[i].n; i++) {
-+		now = __pll_params_to_rate(parent_rate, &table[i], 0, pll);
- 
--	if (i != 0) {
--		if (MESON_PARM_APPLICABLE(&pll->frac) ||
--		    !(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
--		    (abs(rate - table[i - 1].rate) <
--		     abs(rate - table[i].rate)))
--			i--;
-+		/* If we get an exact match, don't bother any further */
-+		if (now == rate) {
-+			return &table[i];
-+		} else if (meson_clk_pll_is_better(rate, best, now, pll)) {
-+			best = now;
-+			best_i = i;
-+		}
- 	}
- 
--	return (struct pll_rate_table *)&table[i];
-+	return (struct pll_params_table *)&table[best_i];
- }
- 
- static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -127,16 +148,18 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
--	const struct pll_rate_table *pllt =
--		meson_clk_get_pll_settings(rate, pll);
-+	const struct pll_params_table *pllt =
-+		meson_clk_get_pll_settings(rate, *parent_rate, pll);
-+	unsigned long round;
- 	u16 frac;
- 
- 	if (!pllt)
- 		return meson_clk_pll_recalc_rate(hw, *parent_rate);
- 
--	if (!MESON_PARM_APPLICABLE(&pll->frac)
--	    || rate == pllt->rate)
--		return pllt->rate;
-+	round = __pll_params_to_rate(*parent_rate, pllt, 0, pll);
-+
-+	if (!MESON_PARM_APPLICABLE(&pll->frac) || rate == round)
-+		return round;
- 
- 	/*
- 	 * The rate provided by the setting is not an exact match, let's
-@@ -214,7 +237,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
--	const struct pll_rate_table *pllt;
-+	const struct pll_params_table *pllt;
- 	unsigned int enabled;
- 	unsigned long old_rate;
- 	u16 frac = 0;
-@@ -224,7 +247,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	old_rate = rate;
- 
--	pllt = meson_clk_get_pll_settings(rate, pll);
-+	pllt = meson_clk_get_pll_settings(rate, parent_rate, pll);
- 	if (!pllt)
- 		return -EINVAL;
- 
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index a2245e857f70..6b96d55c047d 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -43,15 +43,13 @@ static inline void meson_parm_write(struct regmap *map, struct parm *p,
- }
- 
- 
--struct pll_rate_table {
--	unsigned long	rate;
-+struct pll_params_table {
- 	u16		m;
- 	u16		n;
- };
- 
--#define PLL_RATE(_r, _m, _n)						\
-+#define PLL_PARAMS(_m, _n)						\
- 	{								\
--		.rate		= (_r),					\
- 		.m		= (_m),					\
- 		.n		= (_n),					\
- 	}
-@@ -67,7 +65,7 @@ struct meson_clk_pll_data {
- 	struct parm rst;
- 	const struct reg_sequence *init_regs;
- 	unsigned int init_count;
--	const struct pll_rate_table *table;
-+	const struct pll_params_table *table;
- 	u8 flags;
- };
- 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index af59f2607dc1..9309cfaaa464 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -18,67 +18,67 @@
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
--static const struct pll_rate_table gxbb_gp0_pll_rate_table[] = {
--	PLL_RATE(768000000, 32, 1),
--	PLL_RATE(792000000, 33, 1),
--	PLL_RATE(816000000, 34, 1),
--	PLL_RATE(840000000, 35, 1),
--	PLL_RATE(864000000, 36, 1),
--	PLL_RATE(888000000, 37, 1),
--	PLL_RATE(912000000, 38, 1),
--	PLL_RATE(936000000, 39, 1),
--	PLL_RATE(960000000, 40, 1),
--	PLL_RATE(984000000, 41, 1),
--	PLL_RATE(1008000000, 42, 1),
--	PLL_RATE(1032000000, 43, 1),
--	PLL_RATE(1056000000, 44, 1),
--	PLL_RATE(1080000000, 45, 1),
--	PLL_RATE(1104000000, 46, 1),
--	PLL_RATE(1128000000, 47, 1),
--	PLL_RATE(1152000000, 48, 1),
--	PLL_RATE(1176000000, 49, 1),
--	PLL_RATE(1200000000, 50, 1),
--	PLL_RATE(1224000000, 51, 1),
--	PLL_RATE(1248000000, 52, 1),
--	PLL_RATE(1272000000, 53, 1),
--	PLL_RATE(1296000000, 54, 1),
--	PLL_RATE(1320000000, 55, 1),
--	PLL_RATE(1344000000, 56, 1),
--	PLL_RATE(1368000000, 57, 1),
--	PLL_RATE(1392000000, 58, 1),
--	PLL_RATE(1416000000, 59, 1),
--	PLL_RATE(1440000000, 60, 1),
--	PLL_RATE(1464000000, 61, 1),
--	PLL_RATE(1488000000, 62, 1),
-+static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
-+	PLL_PARAMS(32, 1),
-+	PLL_PARAMS(33, 1),
-+	PLL_PARAMS(34, 1),
-+	PLL_PARAMS(35, 1),
-+	PLL_PARAMS(36, 1),
-+	PLL_PARAMS(37, 1),
-+	PLL_PARAMS(38, 1),
-+	PLL_PARAMS(39, 1),
-+	PLL_PARAMS(40, 1),
-+	PLL_PARAMS(41, 1),
-+	PLL_PARAMS(42, 1),
-+	PLL_PARAMS(43, 1),
-+	PLL_PARAMS(44, 1),
-+	PLL_PARAMS(45, 1),
-+	PLL_PARAMS(46, 1),
-+	PLL_PARAMS(47, 1),
-+	PLL_PARAMS(48, 1),
-+	PLL_PARAMS(49, 1),
-+	PLL_PARAMS(50, 1),
-+	PLL_PARAMS(51, 1),
-+	PLL_PARAMS(52, 1),
-+	PLL_PARAMS(53, 1),
-+	PLL_PARAMS(54, 1),
-+	PLL_PARAMS(55, 1),
-+	PLL_PARAMS(56, 1),
-+	PLL_PARAMS(57, 1),
-+	PLL_PARAMS(58, 1),
-+	PLL_PARAMS(59, 1),
-+	PLL_PARAMS(60, 1),
-+	PLL_PARAMS(61, 1),
-+	PLL_PARAMS(62, 1),
- 	{ /* sentinel */ },
- };
- 
--static const struct pll_rate_table gxl_gp0_pll_rate_table[] = {
--	PLL_RATE(1008000000, 42, 1),
--	PLL_RATE(1032000000, 43, 1),
--	PLL_RATE(1056000000, 44, 1),
--	PLL_RATE(1080000000, 45, 1),
--	PLL_RATE(1104000000, 46, 1),
--	PLL_RATE(1128000000, 47, 1),
--	PLL_RATE(1152000000, 48, 1),
--	PLL_RATE(1176000000, 49, 1),
--	PLL_RATE(1200000000, 50, 1),
--	PLL_RATE(1224000000, 51, 1),
--	PLL_RATE(1248000000, 52, 1),
--	PLL_RATE(1272000000, 53, 1),
--	PLL_RATE(1296000000, 54, 1),
--	PLL_RATE(1320000000, 55, 1),
--	PLL_RATE(1344000000, 56, 1),
--	PLL_RATE(1368000000, 57, 1),
--	PLL_RATE(1392000000, 58, 1),
--	PLL_RATE(1416000000, 59, 1),
--	PLL_RATE(1440000000, 60, 1),
--	PLL_RATE(1464000000, 61, 1),
--	PLL_RATE(1488000000, 62, 1),
--	PLL_RATE(1512000000, 63, 1),
--	PLL_RATE(1536000000, 64, 1),
--	PLL_RATE(1560000000, 65, 1),
--	PLL_RATE(1584000000, 66, 1),
-+static const struct pll_params_table gxl_gp0_pll_params_table[] = {
-+	PLL_PARAMS(42, 1),
-+	PLL_PARAMS(43, 1),
-+	PLL_PARAMS(44, 1),
-+	PLL_PARAMS(45, 1),
-+	PLL_PARAMS(46, 1),
-+	PLL_PARAMS(47, 1),
-+	PLL_PARAMS(48, 1),
-+	PLL_PARAMS(49, 1),
-+	PLL_PARAMS(50, 1),
-+	PLL_PARAMS(51, 1),
-+	PLL_PARAMS(52, 1),
-+	PLL_PARAMS(53, 1),
-+	PLL_PARAMS(54, 1),
-+	PLL_PARAMS(55, 1),
-+	PLL_PARAMS(56, 1),
-+	PLL_PARAMS(57, 1),
-+	PLL_PARAMS(58, 1),
-+	PLL_PARAMS(59, 1),
-+	PLL_PARAMS(60, 1),
-+	PLL_PARAMS(61, 1),
-+	PLL_PARAMS(62, 1),
-+	PLL_PARAMS(63, 1),
-+	PLL_PARAMS(64, 1),
-+	PLL_PARAMS(65, 1),
-+	PLL_PARAMS(66, 1),
- 	{ /* sentinel */ },
- };
- 
-@@ -380,7 +380,7 @@ static struct clk_regmap gxbb_gp0_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = gxbb_gp0_pll_rate_table,
-+		.table = gxbb_gp0_pll_params_table,
- 		.init_regs = gxbb_gp0_init_regs,
- 		.init_count = ARRAY_SIZE(gxbb_gp0_init_regs),
- 	},
-@@ -432,7 +432,7 @@ static struct clk_regmap gxl_gp0_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = gxl_gp0_pll_rate_table,
-+		.table = gxl_gp0_pll_params_table,
- 		.init_regs = gxl_gp0_init_regs,
- 		.init_count = ARRAY_SIZE(gxl_gp0_init_regs),
- 	},
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 4c061c1d3683..978485146ec3 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -29,22 +29,22 @@ struct meson8b_clk_reset {
- 	void __iomem *base;
- };
- 
--static const struct pll_rate_table sys_pll_rate_table[] = {
--	PLL_RATE(1200000000, 50, 1),
--	PLL_RATE(1224000000, 51, 1),
--	PLL_RATE(1248000000, 52, 1),
--	PLL_RATE(1272000000, 53, 1),
--	PLL_RATE(1296000000, 54, 1),
--	PLL_RATE(1320000000, 55, 1),
--	PLL_RATE(1344000000, 56, 1),
--	PLL_RATE(1368000000, 57, 1),
--	PLL_RATE(1392000000, 58, 1),
--	PLL_RATE(1416000000, 59, 1),
--	PLL_RATE(1440000000, 60, 1),
--	PLL_RATE(1464000000, 61, 1),
--	PLL_RATE(1488000000, 62, 1),
--	PLL_RATE(1512000000, 63, 1),
--	PLL_RATE(1536000000, 64, 1),
-+static const struct pll_params_table sys_pll_params_table[] = {
-+	PLL_PARAMS(50, 1),
-+	PLL_PARAMS(51, 1),
-+	PLL_PARAMS(52, 1),
-+	PLL_PARAMS(53, 1),
-+	PLL_PARAMS(54, 1),
-+	PLL_PARAMS(55, 1),
-+	PLL_PARAMS(56, 1),
-+	PLL_PARAMS(57, 1),
-+	PLL_PARAMS(58, 1),
-+	PLL_PARAMS(59, 1),
-+	PLL_PARAMS(60, 1),
-+	PLL_PARAMS(61, 1),
-+	PLL_PARAMS(62, 1),
-+	PLL_PARAMS(63, 1),
-+	PLL_PARAMS(64, 1),
- 	{ /* sentinel */ },
- };
- 
-@@ -196,7 +196,7 @@ static struct clk_regmap meson8b_sys_pll_dco = {
- 			.shift   = 29,
- 			.width   = 1,
- 		},
--		.table = sys_pll_rate_table,
-+		.table = sys_pll_params_table,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll_dco",
--- 
-2.17.1
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKYXNzaSBCcmFyIFttYWlsdG86
+amFzc2lzaW5naGJyYXJAZ21haWwuY29tXQ0KPiBPbiBUdWUsIEF1ZyAyMSwgMjAxOCBhdCA4OjMw
+IEFNIEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiA+
+ICsNCj4gPiA+ID4gK1RoZSBTeXN0ZW0gQ29udHJvbGxlciBGaXJtd2FyZSAoU0NGVykgaXMgYSBs
+b3ctbGV2ZWwgc3lzdGVtDQo+ID4gPiA+ICtmdW5jdGlvbiB3aGljaCBydW5zIG9uIGEgZGVkaWNh
+dGVkIENvcnRleC1NIGNvcmUgdG8gcHJvdmlkZQ0KPiA+ID4gPiArcG93ZXIsIGNsb2NrLCBhbmQg
+cmVzb3VyY2UgbWFuYWdlbWVudC4gSXQgZXhpc3RzIG9uIHNvbWUgaS5NWDgNCj4gPiA+ID4gK3By
+b2Nlc3NvcnMuIGUuZy4gaS5NWDhRTSAoUU0sIFFQKSwgYW5kIGkuTVg4UVggKFFYUCwgRFgpLg0K
+PiA+ID4gPiArDQo+ID4gPiA+ICtUaGUgQVAgY29tbXVuaWNhdGVzIHdpdGggdGhlIFNDIHVzaW5n
+IGEgbXVsdGktcG9ydGVkIE1VIG1vZHVsZQ0KPiA+ID4gPiArZm91bmQgaW4gdGhlIExTSU8gc3Vi
+c3lzdGVtLiBUaGUgY3VycmVudCBkZWZpbml0aW9uIG9mIHRoaXMgTVUNCj4gPiA+ID4gK21vZHVs
+ZSBwcm92aWRlcw0KPiA+ID4gPiArNSByZW1vdGUgQVAgY29ubmVjdGlvbnMgdG8gdGhlIFNDIHRv
+IHN1cHBvcnQgdXAgdG8gNSBleGVjdXRpb24NCj4gPiA+ID4gK2Vudmlyb25tZW50cyAoVFosIEhW
+LCBzdGFuZGFyZCBMaW51eCwgZXRjLikuIFRoZSBTQyBzaWRlIG9mIHRoaXMNCj4gPiA+ID4gK01V
+IG1vZHVsZSBpbnRlcmZhY2VzIHdpdGggdGhlIExTSU8gRFNDIElQIGJ1cy4gVGhlIFNDIGZpcm13
+YXJlDQo+ID4gPiA+ICt3aWxsIGNvbW11bmljYXRlIHdpdGggdGhpcyBNVSB1c2luZyB0aGUgTVNJ
+IGJ1cy4NCj4gPiA+DQo+ID4gPiBIb3cgYXJlIDUgdXNlcnMgc3VwcG9ydGVkIHdpdGggb25seSA0
+IGNoYW5uZWxzIGRlZmluZWQgYmVsb3c/DQo+ID4NCj4gPiBUaGVyZSdyZSA1IE1VIGluc3RhbmNl
+cyBkZXNpZ25lZCB0byBiZSBzcGVjaWZpY2FsbHkgY29tbXVuaWNhdGUgd2l0aA0KPiA+IFNDVSBG
+aXJtd2FyZSBvbiBNWDggaGFyZHdhcmUuDQo+ID4NCj4gVGhpcyBpcyBjb3JyZWN0Lg0KPiANCj4g
+PiBXaXRoIHRoZSBuZXcgZ2VuZXJpYyBtdSBiaW5kaW5nIFsxXSwgZWFjaCBNVSBpbnN0YW5jZSBp
+cyBhYnN0cmFjdGVkDQo+ID4gSW50byAxNiB2aXJ0dWFsIE1VIGNoYW5uZWxzLiAoNCBUeCwgNCBS
+eCwgNCBUeCBkb29yYmVsbCwgNCBSeCBkb29yYmVsbCkuDQo+ID4gKE1VIGhhcyA0IHBhaXIgb2Yg
+VHgvUnggZGF0YSByZWdpc3RlciB3aGljaCBjYW4gYmUgdXNlZCB0bw0KPiA+IHNlbmQvcmVjZWl2
+ZSBtdWx0aSB3b3Jkcy4gV2l0aCBuZXcgYmluZGluZywgZWFjaCBkYXRhIHJlZ2lzdGVyIGlzDQo+
+ID4gYWJzdHJhY3RlZCBpbnRvIG9uZSBNVSBjaGFubmVsLCB0b3RhbGx5IDggY2hhbm5lbHMgZm9y
+IGRhdGEgdHJhbnNmZXIpLg0KPiA+DQo+ID4gU0NVIHByb3RvY29sIGlzIGFscmVhZHkgZGVzaWdu
+ZWQgdG8gdXNlcyBhbGwgZGF0YSByZWdpc3RlcnMgdG8NCj4gPiBzZW5kL3JlY2VpdmUgbXVsdGkg
+d29yZHMgYWNjb3JkaW5nIHRvIE1VIGhhcmR3YXJlIHJlZmVyZW5jZSBtYW51YWwuIFNvDQo+ID4g
+aXQgbXVzdCB1c2UgYWxsIGNoYW5uZWxzIGluIG9uZSBNVSBpbnN0YW5jZXMgd2l0aCBuZXcgYmlu
+ZGluZy4NCj4gPg0KPiBGWUksIHRoaXMgaXMgaW5jb3JyZWN0Lg0KPiBUaGUgMTYgY2hhbm5lbHMg
+YXJlIHBoeXNpY2FsIGFuZCBub3QgdmlydHVhbC4gSW4gZmFjdCwgYWxsIHRoaXMgaXMgdG8gYXZv
+aWQgdmlydHVhbA0KPiBjaGFubmVscy4NCj4gVGhlIHBoeXNpY2FsIHJlc291cmNlcyByZXF1aXJl
+ZCBieSBuZXcgYmluZGluZ3MgYXJlIGV4YWN0bHkgdGhlIHNhbWUgYXMgYnkgb2xkDQo+IGJpbmRp
+bmdzLiBOb3cgeW91IHVzZSA4IHBoeXNpY2FsIGNoYW5uZWxzIGluc3RlYWQgb2YgMSB2aXJ0dWFs
+Lg0KDQpPa2F5LCBnb3QgaXQuDQpJJ20gZmluZSB0byByZWZlciB0byB0aGVtIGFsbCBhcyBwaHlz
+aWNhbCBjaGFubmVscy4NClRoYW5rcw0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
