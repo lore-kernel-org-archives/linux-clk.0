@@ -1,131 +1,115 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "mark.rutland@arm.com"
- <mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
- <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
- "rjw@rjwysocki.net"
- <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
- "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
- <linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
- <linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
- <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
- "gregkh@linuxfoundation.org"
- <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>,
- "kstewart@linuxfoundation.org"
- <kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
- <yamada.masahiro@socionext.com>
-Date: Thu, 30 Aug 2018 12:42:41 -0500
-In-Reply-To: <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
- <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
- <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
- <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
- <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
-Mime-Version: 1.0
-Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
- Andy Tang <andy.tang@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
- Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <sha@pengutronix.de>
+Date: Fri, 24 Aug 2018 09:43:46 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Anson Huang <anson.huang@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
+	linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] clk: imx: add imx composite clock
+Message-ID: <20180824074346.crkb2qus76lwva5h@pengutronix.de>
+References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
+ <1534945703-4730-5-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1534945703-4730-5-git-send-email-abel.vesa@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 2018-08-30 at 12:39 -0500, Scott Wood wrote:
-> On Thu, 2018-08-30 at 07:36 +0000, Vabhav Sharma wrote:
-> > > -----Original Message-----
-> > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > > owner@vger.kernel.org> On Behalf Of Scott Wood
-> > > Sent: Wednesday, August 29, 2018 5:49 AM
-> > > To: Vabhav Sharma <vabhav.sharma@nxp.com>; linux-
-> > > kernel@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org;
-> > > mark.rutland@arm.com; linuxppc-dev@lists.ozlabs.org; linux-arm-
-> > > kernel@lists.infradead.org; mturquette@baylibre.com; sboyd@kernel.org;
-> > > rjw@rjwysocki.net; viresh.kumar@linaro.org; linux-clk@vger.kernel.org;
-> > > linux-pm@vger.kernel.org; linux-kernel-owner@vger.kernel.org;
-> > > catalin.marinas@arm.com; will.deacon@arm.com;
-> > > gregkh@linuxfoundation.org; arnd@arndb.de;
-> > > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
-> > > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Andy Tang
-> > > <andy.tang@nxp.com>; Udit Kumar <udit.kumar@nxp.com>;
-> > > linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com>
-> > > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
-> > > lx2160a
-> > > 
-> > > On Mon, 2018-08-20 at 12:17 +0530, Vabhav Sharma wrote:
-> > > > From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> > > > 
-> > > > Add clockgen support for lx2160a.
-> > > > Added entry for compat 'fsl,lx2160a-clockgen'.
-> > > > As LX2160A is 16 core, so modified value for NUM_CMUX
-> > > > 
-> > > > Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> > > > Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> > > > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> > > > ---
-> > > >  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
-> > > >  drivers/cpufreq/qoriq-cpufreq.c |  1 +
-> > > >  2 files changed, 14 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index
-> > > > 3a1812f..fc6e308 100644
-> > > > --- a/drivers/clk/clk-qoriq.c
-> > > > +++ b/drivers/clk/clk-qoriq.c
-> > > > @@ -60,7 +60,7 @@ struct clockgen_muxinfo {  };
-> > > > 
-> > > >  #define NUM_HWACCEL	5
-> > > > -#define NUM_CMUX	8
-> > > > +#define NUM_CMUX	16
-> > > > 
-> > > >  struct clockgen;
-> > > > 
-> > > > @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[]
-> > > > =
-> > > > {
-> > > >  		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-> > > >  	},
-> > > >  	{
-> > > > +		.compat = "fsl,lx2160a-clockgen",
-> > > > +		.cmux_groups = {
-> > > > +			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-> > > > +		},
-> > > > +		.cmux_to_group = {
-> > > > +			0, 0, 0, 0, 1, 1, 1, 1, -1
-> > > > +		},
-> > > > +		.pll_mask = 0x37,
-> > > > +		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-> > > > +	},
-> > > 
-> > > Why are you increasing NUM_CMUX beyond 8 for a chip that only has 8
-> > > entries in cmux_to_group?
-> > 
-> > Configuration is 16 cores,8 cluster with 2 cores in each cluster
+On Wed, Aug 22, 2018 at 04:48:22PM +0300, Abel Vesa wrote:
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one composite clock,
+> but we need to deal with both predivider and divider at the same time and
+> therefore we add the imx_clk_composite_divider_ops and register the composite
+> clock with those.
 > 
-> So?  This is about cmuxes, not cores.  You're increasing the array without
-> ever using the new size.
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 157 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |   9 +++
+>  3 files changed, 167 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+> 
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b87513c..4fabb0a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-y += \
+>  	clk.o \
+>  	clk-busy.o \
+> +	clk-composite.o \
+>  	clk-cpu.o \
+>  	clk-fixup-div.o \
+>  	clk-fixup-mux.o \
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+> new file mode 100644
+> index 0000000..a5c0080
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-composite.c
+> @@ -0,0 +1,157 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2018 NXP
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +
+> +#include "clk.h"
+> +
+> +#define PCG_PREDIV_SHIFT	16
+> +#define PCG_PREDIV_WIDTH	3
+> +
+> +#define PCG_DIV_SHIFT		0
+> +#define PCG_DIV_WIDTH		6
+> +
+> +#define PCG_PCS_SHIFT		24
+> +#define PCG_PCS_MASK		0x7
+> +
+> +#define PCG_CGC_SHIFT		28
+> +
+> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
+> +						unsigned long parent_rate)
+> +{
+> +	struct clk_divider *divider = to_clk_divider(hw);
+> +	unsigned long prediv_rate;
+> +	unsigned int prediv_value;
+> +	unsigned int div_value;
+> +
+> +	prediv_value = clk_readl(divider->reg) >> divider->shift;
+> +	prediv_value &= clk_div_mask(divider->width);
+> +
+> +	prediv_rate = divider_recalc_rate(hw, parent_rate, prediv_value,
+> +						divider->table, divider->flags,
+> +						divider->width);
+> +
+> +	div_value = clk_readl(divider->reg) >> PCG_DIV_SHIFT;
+> +	div_value &= clk_div_mask(PCG_DIV_WIDTH);
+> +
+> +	return divider_recalc_rate(hw, prediv_rate, div_value, divider->table,
+> +				   divider->flags, PCG_DIV_WIDTH);
 
-Oh, and you also broke p4080 which has 8 cmuxes but no -1 terminator, because
-the array was of length 8.  Probably the array should be changed to NUM_CMUX+1
-so every array can be -1 terminated.
+This is no table based divider, so divider->table is NULL, right? It's
+clearer to just write NULL here instead.
 
--Scott
+Otherwise this looks good for me now.
+
+Sascha
 
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
