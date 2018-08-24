@@ -1,89 +1,126 @@
-Return-Path: <robh+dt@kernel.org>
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-4-songjun.wu@linux.intel.com> <CAL_JsqKLa1e3X+ddAoVdEwBQFd6tsL=RjOLcTLdfoc6mpKuefQ@mail.gmail.com>
- <9c0cbdfa-8109-be0d-8e14-7d303c764f5c@linux.intel.com>
-In-Reply-To: <9c0cbdfa-8109-be0d-8e14-7d303c764f5c@linux.intel.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 8 Aug 2018 08:54:12 -0600
-Message-ID: <CAL_JsqL5=a9nhvaZOsuDZ7YFhvZs23QT-jbDd4m7wPFviGU1CQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/18] dt-bindings: clk: Add documentation of grx500
- clock controller
-To: yixin zhu <yixin.zhu@linux.intel.com>
-Cc: Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
-	chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-	Linux-MIPS <linux-mips@linux-mips.org>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.135]:42344 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbeHXHCk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 03:02:40 -0400
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v3 3/5] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+Date: Fri, 24 Aug 2018 11:30:39 +0800
+Message-Id: <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Aug 7, 2018 at 9:08 PM yixin zhu <yixin.zhu@linux.intel.com> wrote:
->
->
->
-> On 8/6/2018 11:18 PM, Rob Herring wrote:
-> > On Thu, Aug 2, 2018 at 9:03 PM Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> >> From: Yixin Zhu <yixin.zhu@linux.intel.com>
-> >>
-> >> This patch adds binding documentation for grx500 clock controller.
-> >>
-> >> Signed-off-by: YiXin Zhu <yixin.zhu@linux.intel.com>
-> >> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> >> ---
-> >>
-> >> Changes in v2:
-> >> - Rewrite clock driver's dt-binding document according to Rob Herring's
-> >>    comments.
-> >> - Simplify device tree docoment, remove some clock description.
-> >>
-> >>   .../devicetree/bindings/clock/intel,grx500-clk.txt | 39 ++++++++++++++++++++++
-> > Please match the compatible string: intel,grx500-cgu.txt
-> Will update to use same name.
->
-> >
-> >>   1 file changed, 39 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-> >> new file mode 100644
-> >> index 000000000000..e54e1dad9196
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-> >> @@ -0,0 +1,39 @@
-> >> +Device Tree Clock bindings for grx500 PLL controller.
-> >> +
-> >> +This binding uses the common clock binding:
-> >> +       Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >> +
-> >> +The grx500 clock controller supplies clock to various controllers within the
-> >> +SoC.
-> >> +
-> >> +Required properties for clock node
-> >> +- compatible: Should be "intel,grx500-cgu".
-> >> +- reg: physical base address of the controller and length of memory range.
-> >> +- #clock-cells: should be 1.
-> >> +
-> >> +Optional Propteries:
-> >> +- intel,osc-frequency: frequency of the osc clock.
-> >> +if missing, driver will use clock rate defined in the driver.
-> > This should use a fixed-clock node instead.
-> Yes, This is a fixed clock node registered in driver code.
-> The frequency of the fixed clock is designed to be overwritten by device
-> tree in case some one verify
-> clock driver in the emulation platform or in some cases frequency other
-> than driver defined one is preferred.
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
-Emulation platforms often need several hacks that shouldn't be upstream...
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+---
+ Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-> These kinds of cases are very rare. But I feel it would be better to
-> have a way to use customized frequency.
-> The frequency defined in device tree will overwritten driver defined
-> frequency before registering fixed-clock node.
-
-I don't think you understand what I meant. Add a DT node with
-"fixed-clock" compatible and have this node refer to it with "clocks"
-property. The frequency is still in DT, but uses the clock binding.
-
-Rob
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..c025a99 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
+ 
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,28 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
++Optional RK809 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK809 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK808 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2.
++
++Following regulators of the RK817 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- BOOST
++	- OTG_SWITCH
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +147,14 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
+ 
++There are three pins needed to config for each of RK809 and RK817,
++named "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
+-- 
+1.9.1
