@@ -1,180 +1,128 @@
-Return-Path: <Yixun.Lan@amlogic.com>
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong
-	<narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-	Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Liang Yang
-	<liang.yang@amlogic.com>, Jianxin Pan <jianxin.pan@amlogic.com>, Qiufang Dai
-	<qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-	<linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/3] clk: meson: add emmc sub clock phase delay driver
-Date: Thu, 9 Aug 2018 15:07:21 +0800
-Message-ID: <20180809070724.11935-2-yixun.lan@amlogic.com>
-In-Reply-To: <20180809070724.11935-1-yixun.lan@amlogic.com>
-References: <20180809070724.11935-1-yixun.lan@amlogic.com>
+Return-Path: <brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: yixun.lan@amlogic.com
+In-Reply-To: <20180827103353.GB13848@rapoport-lnx>
+References: <20180827082101.5036-1-brgl@bgdev.pl> <20180827103353.GB13848@rapoport-lnx>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 27 Aug 2018 16:28:55 +0200
+Message-ID: <CAMRc=MdZ_1Vk2c19L-spzOm=7UaDpaACriq4gzMxAvQz=noNgQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] devres: provide devm_kstrdup_const()
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>, Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Export the emmc sub clock phase delay ops which will be used
-by the emmc sub clock driver itself.
+2018-08-27 12:33 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
+> On Mon, Aug 27, 2018 at 10:21:00AM +0200, Bartosz Golaszewski wrote:
+>> Provide a resource managed version of kstrdup_const(). This variant
+>> internally calls devm_kstrdup() on pointers that are outside of
+>> .rodata section. Also provide a corresponding version of devm_kfree().
+>>
+>> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>> ---
+>>  include/linux/device.h |  2 ++
+>>  mm/util.c              | 35 +++++++++++++++++++++++++++++++++++
+>>  2 files changed, 37 insertions(+)
+>>
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index 8f882549edee..f8f5982d26b2 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -693,7 +693,9 @@ static inline void *devm_kcalloc(struct device *dev,
+>>       return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+>>  }
+>>  extern void devm_kfree(struct device *dev, void *p);
+>> +extern void devm_kfree_const(struct device *dev, void *p);
+>>  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+>> +extern char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+>>  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+>>                         gfp_t gfp);
+>>
+>> diff --git a/mm/util.c b/mm/util.c
+>> index d2890a407332..6d1f41b5775e 100644
+>> --- a/mm/util.c
+>> +++ b/mm/util.c
+>> @@ -39,6 +39,20 @@ void kfree_const(const void *x)
+>>  }
+>>  EXPORT_SYMBOL(kfree_const);
+>>
+>> +/**
+>> + * devm_kfree_const - Resource managed conditional kfree
+>> + * @dev: device this memory belongs to
+>> + * @p: memory to free
+>> + *
+>> + * Function calls devm_kfree only if @p is not in .rodata section.
+>> + */
+>> +void devm_kfree_const(struct device *dev, void *p)
+>> +{
+>> +     if (!is_kernel_rodata((unsigned long)p))
+>> +             devm_kfree(dev, p);
+>> +}
+>> +EXPORT_SYMBOL(devm_kfree_const);
+>> +
+>>  /**
+>>   * kstrdup - allocate space for and copy an existing string
+>>   * @s: the string to duplicate
+>> @@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
+>>  }
+>>  EXPORT_SYMBOL(kstrdup_const);
+>>
+>> +/**
+>> + * devm_kstrdup_const - resource managed conditional string duplication
+>> + * @dev: device for which to duplicate the string
+>> + * @s: the string to duplicate
+>> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+>> + *
+>> + * Function returns source string if it is in .rodata section otherwise it
+>> + * fallbacks to devm_kstrdup.
+>
+> Please make it proper "Returns:" description and move to the end of the
+> comment. See Documentation/doc-guide/kernel-doc.rst.
+>
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/Makefile          |  2 +-
- drivers/clk/meson/clk-phase-delay.c | 96 +++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h            | 13 ++++
- 3 files changed, 110 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/clk-phase-delay.c
+Sure.
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 72ec8c40d848..39ce5661b654 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Meson specific clk
- #
- 
--obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
-new file mode 100644
-index 000000000000..6f226814cfec
---- /dev/null
-+++ b/drivers/clk/meson/clk-phase-delay.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Amlogic Meson MMC Sub Clock Controller Driver
-+ *
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Yixun Lan <yixun.lan@amlogic.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc.h"
-+
-+#define SD_EMMC_CLOCK			0
-+
-+static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_delay_data *ph =
-+		meson_clk_get_phase_delay_data(clk);
-+	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
-+	unsigned long period_ps, p, d;
-+	int degrees;
-+	u32 val;
-+
-+	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
-+	p = (val & ph->phase_mask) >> __ffs(ph->phase_mask);
-+	degrees = p * 360 / phase_num;
-+
-+	if (ph->delay_mask) {
-+		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-+					 clk_hw_get_rate(hw));
-+		d = (val & ph->delay_mask) >> __ffs(ph->delay_mask);
-+		degrees += d * ph->delay_step_ps * 360 / period_ps;
-+		degrees %= 360;
-+	}
-+
-+	return degrees;
-+}
-+
-+static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
-+					unsigned int phase,
-+					unsigned int delay)
-+{
-+	struct meson_clk_phase_delay_data *ph = clk->data;
-+	u32 val;
-+
-+	regmap_read(clk->map, SD_EMMC_CLOCK, &val);
-+
-+	val &= ~ph->phase_mask;
-+	val |= phase << __ffs(ph->phase_mask);
-+
-+	if (ph->delay_mask) {
-+		val &= ~ph->delay_mask;
-+		val |= delay << __ffs(ph->delay_mask);
-+	}
-+
-+	regmap_write(clk->map, SD_EMMC_CLOCK, val);
-+}
-+
-+static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_delay_data *ph =
-+		meson_clk_get_phase_delay_data(clk);
-+	unsigned int phase_num = 1 <<  hweight_long(ph->phase_mask);
-+	unsigned long period_ps, d = 0, r;
-+	u64 p;
-+
-+	p = degrees % 360;
-+
-+	if (!ph->delay_mask) {
-+		p = DIV_ROUND_CLOSEST_ULL(p, 360 / phase_num);
-+	} else {
-+		period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-+					 clk_hw_get_rate(hw));
-+
-+		/* First compute the phase index (p), the remainder (r) is the
-+		 * part we'll try to acheive using the delays (d).
-+		 */
-+		r = do_div(p, 360 / phase_num);
-+		d = DIV_ROUND_CLOSEST(r * period_ps,
-+				      360 * ph->delay_step_ps);
-+		d = min(d, ph->delay_mask >> __ffs(ph->delay_mask));
-+	}
-+
-+	meson_clk_apply_phase_delay(clk, p, d);
-+	return 0;
-+}
-+
-+const struct clk_ops meson_clk_phase_delay_ops = {
-+	.get_phase = meson_clk_phase_delay_get_phase,
-+	.set_phase = meson_clk_phase_delay_set_phase,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 24cec16b6038..499834dd34f2 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -113,6 +113,18 @@ struct clk_regmap _name = {						\
- 	},								\
- };
- 
-+struct meson_clk_phase_delay_data {
-+	unsigned long			phase_mask;
-+	unsigned long			delay_mask;
-+	unsigned int			delay_step_ps;
-+};
-+
-+static inline struct meson_clk_phase_delay_data *
-+meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_phase_delay_data *)clk->data;
-+}
-+
- /* clk_ops */
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
-@@ -120,5 +132,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
- extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
-+extern const struct clk_ops meson_clk_phase_delay_ops;
- 
- #endif /* __CLKC_H */
--- 
-2.17.1
+>> + * Strings allocated by devm_kstrdup_const will be automatically freed when
+>> + * the associated device is detached.
+>> + */
+>> +char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
+>> +{
+>> +     if (is_kernel_rodata((unsigned long)s))
+>> +             return s;
+>> +
+>> +     return devm_kstrdup(dev, s, gfp);
+>> +}
+>> +EXPORT_SYMBOL(devm_kstrdup_const);
+>> +
+>
+> The devm_ variants seem to belong to drivers/base/devres.c rather than
+> mm/util.c
+>
+
+Not all devm_ variants live in drivers/base/devres.c, many subsystems
+implement them locally. In this case we need to choose between
+exporting is_kernel_rodata() and putting devm_kstrdup_const() in
+mm/util.c. I chose the latter, since it's cleaner.
+
+Bart
+
+>>  /**
+>>   * kstrndup - allocate space for and copy an existing string
+>>   * @s: the string to duplicate
+>> --
+>> 2.18.0
+>>
+>
+> --
+> Sincerely yours,
+> Mike.
+>
