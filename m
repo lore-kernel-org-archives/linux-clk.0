@@ -1,172 +1,66 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH v2 04/18] MIPS: dts: Add initial support for Intel MIPS SoCs
-Date: Fri,  3 Aug 2018 11:02:23 +0800
-Message-Id: <20180803030237.3366-5-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Irina Tirdea <irina.tirdea@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix suspend issues
+Date: Mon, 27 Aug 2018 16:31:56 +0200
+Message-Id: <20180827143200.8597-1-hdegoede@redhat.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Hua Ma <hua.ma@linux.intel.com>
+Hi All,
 
-Add dts files to support Intel MIPS SoCs:
-- xrx500.dtsi is the chip dts
-- easy350_anywan.dts is the board dts
+This series has as goal to revert commit d31fd43c0f9a ("clk: x86: Do not gate
+clocks enabled by the firmware"), because that commit causes almost all
+Cherry Trail devices to not use the S0i3 powerstate when suspending, leading
+to them quickly draining their battery when suspended.
 
-Signed-off-by: Hua Ma <hua.ma@linux.intel.com>
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+This commit was added to fix issues with the r8169 NIC on some Bay Trail
+devices, where the pmc_plt_clk_4 was used as clk for the r8169 chip.
 
-Changes in v2:
-- New patch split from previous patch
-- The memory address is changed to @20000000
-- Update to obj-$(CONFIG_BUILTIN_DTB) as per commit fca3aa166422
+This series fixes this properly, so that we can undo the trouble some
+commit.
 
- arch/mips/boot/dts/Makefile                      |  1 +
- arch/mips/boot/dts/intel-mips/Makefile           |  4 ++
- arch/mips/boot/dts/intel-mips/easy350_anywan.dts | 26 ++++++++++
- arch/mips/boot/dts/intel-mips/xrx500.dtsi        | 66 ++++++++++++++++++++++++
- 4 files changed, 97 insertions(+)
- create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
- create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
- create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+The first patch adds an "ether_clk" alias to the clk-pmc-atom driver so
+that the r8169 can pass "ether_clk" as generic id to clk_get instead of
+having to add x86 specific code to the r8169 driver.
 
-diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
-index 1e79cab8e269..05f52f279047 100644
---- a/arch/mips/boot/dts/Makefile
-+++ b/arch/mips/boot/dts/Makefile
-@@ -3,6 +3,7 @@ subdir-y	+= brcm
- subdir-y	+= cavium-octeon
- subdir-y	+= img
- subdir-y	+= ingenic
-+subdir-y	+= intel-mips
- subdir-y	+= lantiq
- subdir-y	+= mscc
- subdir-y	+= mti
-diff --git a/arch/mips/boot/dts/intel-mips/Makefile b/arch/mips/boot/dts/intel-mips/Makefile
-new file mode 100644
-index 000000000000..adfaabbbb07c
---- /dev/null
-+++ b/arch/mips/boot/dts/intel-mips/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_DTB_INTEL_MIPS_GRX500)	+= easy350_anywan.dtb
-+
-+obj-$(CONFIG_BUILTIN_DTB)		+= $(addsuffix .o, $(dtb-y))
-diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
-new file mode 100644
-index 000000000000..e5e95f90c5e7
---- /dev/null
-+++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include <dt-bindings/interrupt-controller/mips-gic.h>
-+#include <dt-bindings/clock/intel,grx500-clk.h>
-+
-+#include "xrx500.dtsi"
-+
-+/ {
-+	model = "EASY350 ANYWAN (GRX350) Main model";
-+	compatible = "intel,easy350-anywan";
-+
-+	aliases {
-+		serial0 = &asc0;
-+	};
-+
-+	chosen {
-+		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
-+		stdout-path = "serial0";
-+	};
-+
-+	memory@20000000 {
-+		device_type = "memory";
-+		reg = <0x20000000 0x0e000000>;
-+	};
-+};
-diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
-new file mode 100644
-index 000000000000..54c5f8f8b604
---- /dev/null
-+++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	compatible = "intel,xrx500";
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "mti,interaptiv";
-+			clocks = <&cgu CLK_CPU>;
-+			reg = <0>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "mti,interaptiv";
-+			reg = <1>;
-+		};
-+	};
-+
-+	cpu_intc: interrupt-controller {
-+		compatible = "mti,cpu-interrupt-controller";
-+
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+	};
-+
-+	gic: gic@12320000 {
-+		compatible = "mti,gic";
-+		reg = <0x12320000 0x20000>;
-+
-+		interrupt-controller;
-+		#interrupt-cells = <3>;
-+		/*
-+		 * Declare the interrupt-parent even though the mti,gic
-+		 * binding doesn't require it, such that the kernel can
-+		 * figure out that cpu_intc is the root interrupt
-+		 * controller & should be probed first.
-+		 */
-+		interrupt-parent = <&cpu_intc>;
-+		mti,reserved-ipi-vectors = <56 8>;
-+	};
-+
-+	cgu: cgu@16200000 {
-+		compatible = "intel,grx500-cgu", "syscon";
-+		reg = <0x16200000 0x200>;
-+		#clock-cells = <1>;
-+	};
-+
-+	asc0: serial@16600000 {
-+		compatible = "lantiq,asc";
-+		reg = <0x16600000 0x100000>;
-+
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
-+		clock-names = "freq", "asc";
-+	};
-+};
--- 
-2.11.0
+The second patch makes the r8169 driver do a clk_get for "ether_clk"
+(ignoring -ENOENT errors so this is optional) and if that succeeds then
+it enables the clock.
+
+The third patch effectively revert the troublesome commit.
+
+This series has been tested on a HP Stream x360 - 11-p000nd, which uses
+a Bay Trail SoC with a r8169 ethernet chip and I can confirm that the
+pmc_plt_clk_4 gets properly enabled, so this series should not cause any
+regressions wrt devices needing pmc_plt_clk_4 enabled (which is not the
+case on the Stream x360).
+
+To avoid regressions we need to have patches 1 and 2 merged before 3,
+so it is probably best if this entire series gets merged through a single
+tree. Given that clk-pmc-atom.c has not seen any changes for over a
+year I suggest that all 3 patches are merged through the netdev tree,
+with an ack from the clk maintainers. Assuming that is ok with the clk
+maintainers of course.
+
+Note there is a fourth patch in this series, this patch is necessary to
+reach S0i3 state on Bay Trail devices wich have a r8169 ethernet chip,
+since I do not have access to hardware where the r8169 actually needs
+the pmc_plt_clk_4 I have not been able to test this, hence it is marked
+as RFC for now.
+
+Carlos can you test the 4th patch (when you have time) and let us know if
+it works?
+
+Regards,
+
+Hans
