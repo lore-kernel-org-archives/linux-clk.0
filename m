@@ -1,99 +1,64 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sangbeom Kim <sbkim73@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Javier Martinez Canillas <javier@dowhile0.org>,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 1/3] clk: max77686: Add SPDX license identifiers
-Date: Tue,  7 Aug 2018 18:17:11 +0200
-Message-Id: <20180807161713.28073-1-krzk@kernel.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Message-ID: <e6592bd2f2505e30bb27e1cd4cbb031344cc3459.camel@baylibre.com>
+Subject: Re: [PATCH v2 0/4] clk: meson: clk-pll driver update
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khilman@baylibre.com
+Date: Mon, 27 Aug 2018 14:59:52 +0200
+In-Reply-To: <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
+References: <20180801140053.25899-1-jbrunet@baylibre.com>
+         <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace GPL v2.0 and v2.0+ license statements with SPDX license
-identifiers.
+On Sun, 2018-08-12 at 20:26 +0200, Martin Blumenstingl wrote:
+> Hi Jerome,
+> 
+> On Wed, Aug 1, 2018 at 4:00 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > 
+> > This patchset is yet another round of update to the amlogic pll driver.
+> > 
+> >  1) Enable bit is added so we don't rely on the bootloader or the init
+> >     value to enable to pll device.
+> >  2) Remove unnecessary CLK_GET_RATE_NOCACHE flags.
+> >  3) OD post dividers are removed from the pll driver. This simplify the
+> >     driver and let us provide the clocks which exist between those
+> >     dividers. Some device are actually using these clocks.
+> >  4) The rates hard coded in parameter tables are remove. Instead, we
+> >     only rely on the parent rate and the parameters to calculate the
+> >     output rate, which is a lot better.
+> > 
+> > This series has been tested on the gxl libretech cc and axg s400.
+> > I did not test it on meson8b yet.
+> > 
+> > Changes since v1: [0]
+> >  - improve commit description of patch 1
+> >  - remove unnecessary CLK_GET_RATE_NOCACHE flags.
+> >  - add missing CLK_SET_RATE_PARENT.
+> > 
+> > [0]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+> > 
+> > Jerome Brunet (4):
+> >   clk: meson: clk-pll: add enable bit
+> >   clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
+> >   clk: meson: clk-pll: remove od parameters
+> >   clk: meson: clk-pll: drop hard-coded rates from pll tables
+> 
+> for the whole series:
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> 
+> as well as:
+> Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> (tested on Meson8b / Odroid-C1, even CPU frequency scaling still works
+> with my out-of-tree patches)
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/clk-max77686.c                 | 27 ++++++---------------------
- include/dt-bindings/clock/maxim,max77686.h |  5 +----
- include/dt-bindings/clock/maxim,max77802.h |  5 +----
- 3 files changed, 8 insertions(+), 29 deletions(-)
+Collected tags, rebased and queued for 4.20
 
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index eb953d3b0b69..02551fe4b87c 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -1,24 +1,9 @@
--/*
-- * clk-max77686.c - Clock driver for Maxim 77686/MAX77802
-- *
-- * Copyright (C) 2012 Samsung Electornics
-- * Jonghwa Lee <jonghwa3.lee@samsung.com>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// clk-max77686.c - Clock driver for Maxim 77686/MAX77802
-+//
-+// Copyright (C) 2012 Samsung Electornics
-+// Jonghwa Lee <jonghwa3.lee@samsung.com>
- 
- #include <linux/kernel.h>
- #include <linux/slab.h>
-diff --git a/include/dt-bindings/clock/maxim,max77686.h b/include/dt-bindings/clock/maxim,max77686.h
-index 7b28b0905869..af8261dcace1 100644
---- a/include/dt-bindings/clock/maxim,max77686.h
-+++ b/include/dt-bindings/clock/maxim,max77686.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2014 Google, Inc
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clocks for the Maxim 77686 PMIC.
-  */
- 
-diff --git a/include/dt-bindings/clock/maxim,max77802.h b/include/dt-bindings/clock/maxim,max77802.h
-index 997312edcbb5..51adcbaed697 100644
---- a/include/dt-bindings/clock/maxim,max77802.h
-+++ b/include/dt-bindings/clock/maxim,max77802.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2014 Google, Inc
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clocks for the Maxim 77802 PMIC.
-  */
- 
--- 
-2.14.1
+> 
+> 
+> Regards
+> Martin
