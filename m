@@ -1,246 +1,150 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32822 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbeHCOs7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Aug 2018 10:48:59 -0400
-Subject: Re: [PATCH v4 03/10] arm64: dts: Add Mediatek SoC MT8183 and
- evaluation board dts and Makefile
-To: Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Ben Ho <Ben.Ho@mediatek.com>
-References: <1533015487-60189-1-git-send-email-erin.lo@mediatek.com>
- <1533015487-60189-4-git-send-email-erin.lo@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <6a73e655-66bd-5f4e-9c37-06d310c80b8c@gmail.com>
-Date: Fri, 3 Aug 2018 14:52:39 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1533015487-60189-4-git-send-email-erin.lo@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+To: Songjun Wu <songjun.wu@linux.intel.com>, chuanhua.lei@linux.intel.com,
+ hua.ma@linux.intel.com, qi-ming.wu@intel.com,
+ yixin zhu <yixin.zhu@linux.intel.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+Message-ID: <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+Date: Mon, 27 Aug 2018 12:09:39 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting yixin zhu (2018-08-08 01:52:20)
+> On 8/8/2018 1:50 PM, Stephen Boyd wrote:
+> > Quoting Songjun Wu (2018-08-02 20:02:21)
+> >> +       struct clk *clk;
+> >> +       int idx;
+> >> +
+> >> +       for (idx =3D 0; idx < nr_clks; idx++, osc++) {
+> >> +               if (!osc->dt_freq ||
+> >> +                   of_property_read_u32(ctx->np, osc->dt_freq, &freq))
+> >> +                       freq =3D osc->def_rate;
+> >> +
+> >> +               clk =3D clk_register_fixed_rate(NULL, osc->name, NULL,=
+ 0, freq);
+> > Should come from DT itself.
+> Yes. It can be defined as fixed-clock node in device tree.
+> Do you mean it should be defined in device tree and driver reference it =
+
+> via device tree?
+
+Yes the oscillator should be in DT and then the DT node here can call
+clk_get() or just hardcode the parent name to be what it knows it is.
+Eventually we'd like to be able to move away from string names for
+hierarchy descriptions but that's far off. To get there, we would need
+DT nodes for clock controllers to indicate their clk parents with the
+clocks and clock-names properties. So for the oscillator, DT would
+define it and then the driver would eventually have a way to specify
+that some parent is index 5 or clock name "foo" and then the clk core
+could figure out the linkage. I haven't written that code yet, but I'll
+probably do it soon if nobody beats me to it.
+
+> >> +/**
+> >> + * struct intel_clk_provider
+> >> + * @map: regmap type base address for register.
+> >> + * @np: device node
+> >> + * @clk_data: array of hw clocks and clk number.
+> >> + */
+> >> +struct intel_clk_provider {
+> >> +       struct regmap           *map;
+> >> +       struct device_node      *np;
+> >> +       struct clk_onecell_data clk_data;
+> > Please register clk_hw pointers instead of clk pointers with the of
+> > provider APIs.
+> Sorry.=C2=A0 I'm not sure I understand you correctly.
+> If only registering clk_hw pointer,=C2=A0 not registering of_provider API=
+, then
+> how to reference it in the user drivers ?
+> Could you please give me more hints ?
+
+Clk provider drivers shouldn't be using clk pointers directly. Usually
+when that happens something is wrong. So new clk drivers should register
+clk_hw pointers and pretty much only deal with clk_hw pointers instead
+of struct clk pointers. You still register an of_provider, but that
+provider hands out clk_hw pointers so that clk provider drivers aren't
+tempted to use struct clk pointers.
+
+> =
+
+> =
+
+> >
+> >> + */
+> >> +struct intel_pll_clk {
+> >> +       unsigned int            id;
+> >> +       const char              *name;
+> >> +       const char              *const *parent_names;
+> >> +       u8                      num_parents;
+> > Can the PLL have multiple parents?
+> Yes. But not in this platform.
+> The define here make it easy to expand to support new platform.
+> =
 
 
-On 31/07/18 07:38, Erin Lo wrote:
-> From: Ben Ho <Ben.Ho@mediatek.com>
-> 
-> Add basic chip support for Mediatek 8183
-> 
-> Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> ---
->  arch/arm64/boot/dts/mediatek/Makefile       |   1 +
->  arch/arm64/boot/dts/mediatek/mt8183-evb.dts |  23 +++++
->  arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 146 ++++++++++++++++++++++++++++
->  3 files changed, 170 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 7506b0d..a91d462 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -6,3 +6,4 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-evb.dtb
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-> new file mode 100644
-> index 0000000..2a3dd5a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-> @@ -0,0 +1,23 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Ben Ho <ben.ho@mediatek.com>
-> + *	   Erin Lo <erin.lo@mediatek.com>
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt8183.dtsi"
-> +
-> +/ {
-> +	model = "MediaTek MT8183 evaluation board";
-> +	compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +		reg = <0 0x40000000 0 0x80000000>;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:921600n8";
+Ok, so it has a mux inside.
 
-This should go into 10/10.
+> =
 
-Regards,
-Matthias
+> >> +       unsigned int                    id;
+> >> +       enum intel_clk_type             type;
+> >> +       const char                      *name;
+> >> +       const char                      *const *parent_names;
+> >> +       u8                              num_parents;
+> >> +       unsigned long                   flags;
+> >> +       unsigned int                    mux_off;
+> >> +       u8                              mux_shift;
+> >> +       u8                              mux_width;
+> >> +       unsigned long                   mux_flags;
+> >> +       unsigned int                    mux_val;
+> >> +       unsigned int                    div_off;
+> >> +       u8                              div_shift;
+> >> +       u8                              div_width;
+> >> +       unsigned long                   div_flags;
+> >> +       unsigned int                    div_val;
+> >> +       const struct clk_div_table      *div_table;
+> >> +       unsigned int                    gate_off;
+> >> +       u8                              gate_shift;
+> >> +       unsigned long                   gate_flags;
+> >> +       unsigned int                    gate_val;
+> >> +       unsigned int                    mult;
+> >> +       unsigned int                    div;
+> >> +};
+> >> +
+> >> +/* clock flags definition */
+> >> +#define CLOCK_FLAG_VAL_INIT    BIT(16)
+> >> +#define GATE_CLK_HW            BIT(17)
+> >> +#define GATE_CLK_SW            BIT(18)
+> >> +#define GATE_CLK_VT            BIT(19)
+> > What does VT mean? Virtual?
+> Yes. VT means virtual here.
+> Will change to GATE_CLK_VIRT.
+> =
 
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-> new file mode 100644
-> index 0000000..1553265
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Ben Ho <ben.ho@mediatek.com>
-> + *	   Erin Lo <erin.lo@mediatek.com>
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	compatible = "mediatek,mt8183";
-> +	interrupt-parent = <&sysirq>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu2>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu3>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&cpu4>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu5>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu6>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu7>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu0: cpu@000 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x000>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu1: cpu@001 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x001>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu2: cpu@002 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x002>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu3: cpu@003 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x003>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu4: cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x100>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu5: cpu@101 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x101>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu6: cpu@102 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x102>;
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu7: cpu@103 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x103>;
-> +			enable-method = "psci";
-> +		};
-> +	};
-> +
-> +	psci {
-> +		compatible      = "arm,psci-1.0";
-> +		method          = "smc";
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	gic: interrupt-controller@0c000000 {
-> +		compatible = "arm,gic-v3";
-> +		#interrupt-cells = <3>;
-> +		interrupt-parent = <&gic>;
-> +		interrupt-controller;
-> +		reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-> +		      <0 0x0c100000 0 0x200000>, /* GICR */
-> +		      <0 0x0c400000 0 0x2000>,   /* GICC */
-> +		      <0 0x0c410000 0 0x1000>,   /* GICH */
-> +		      <0 0x0c420000 0 0x2000>;   /* GICV */
-> +
-> +		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
-> +	sysirq: intpol-controller@0c530a80 {
-> +		compatible = "mediatek,mt8183-sysirq",
-> +			     "mediatek,mt6577-sysirq";
-> +		interrupt-controller;
-> +		#interrupt-cells = <3>;
-> +		interrupt-parent = <&gic>;
-> +		reg = <0 0x0c530a80 0 0x50>;
-> +	};
-> +};
-> 
+
+Is it a hardware concept? Or virtualization with hypervisor?
+
+> >
+> >> +}
+> >> +
+> >> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+> > Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+> It provides CPU clock which is used in early boot stage.
+> =
+
+
+Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+frequency? If the driver can be split into two pieces, one to handle the
+really early stuff that must be in place to get timers up and running
+and the other to register the rest of the clks that aren't critical from
+a regular platform driver it would be good. That's preferred model if
+something is super critical.
