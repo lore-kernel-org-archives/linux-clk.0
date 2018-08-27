@@ -1,135 +1,103 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35354 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729899AbeHBShV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 14:37:21 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o18-v6so3351185wmc.0
-        for <linux-clk@vger.kernel.org>; Thu, 02 Aug 2018 09:45:24 -0700 (PDT)
-References: <20180522145245.3143-1-rui.silva@linaro.org> <267173c9-7235-6008-7248-ee06c0db3780@xs4all.nl>
-From: Rui Miguel Silva <rui.silva@linaro.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ryan Harkin <ryan.harkin@linaro.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 00/13] media: staging/imx7: add i.MX7 media driver
-In-reply-to: <267173c9-7235-6008-7248-ee06c0db3780@xs4all.nl>
-Date: Thu, 02 Aug 2018 17:45:20 +0100
-Message-ID: <m3a7q4u38f.fsf@linaro.org>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Mon, 27 Aug 2018 16:58:57 +0000
+Message-ID: 
+ <TY1PR01MB1562C6473AC295F7F58AB2258A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180821032020.81254-1-chris.brandt@renesas.com>
+ <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Hans,
-On Thu 02 Aug 2018 at 13:37, Hans Verkuil wrote:
-> Hi Rui,
->
-> On 05/22/18 16:52, Rui Miguel Silva wrote:
->> Hi,
->> This series introduces the Media driver to work with the i.MX7 
->> SoC. it uses the
->> already existing imx media core drivers but since the i.MX7, 
->> contrary to
->> i.MX5/6, do not have an IPU and because of that some changes in 
->> the imx media
->> core are made along this series to make it support that case.
->> 
->> This patches adds CSI and MIPI-CSI2 drivers for i.MX7, along 
->> with several
->> configurations changes for this to work as a capture subsystem. 
->> Some bugs are
->> also fixed along the line. And necessary documentation.
->> 
->> For a more detailed view of the capture paths, pads links in 
->> the i.MX7 please
->> take a look at the documentation in PATCH 14.
->> 
->> The system used to test and develop this was the Warp7 board 
->> with an OV2680
->> sensor, which output format is 10-bit bayer. So, only MIPI 
->> interface was
->> tested, a scenario with an parallel input would nice to have.
->> 
->> *Important note*, this code depends on Steve Longerbeam series 
->> [0]:
->> [PATCH v4 00/13] media: imx: Switch to subdev notifiers
->> which the merging status is not clear to me, but the changes in 
->> there make
->> senses to this series
->> 
->> Bellow goes an example of the output of the pads and links and 
->> the output of
->> v4l2-compliance testing.
->> 
->> The v4l-utils version used is:
->> v4l2-compliance SHA   : 
->> 47d43b130dc6e9e0edc900759fb37649208371e4 from Apr 4th.
->> 
->> The Media Driver fail some tests but this failures are coming 
->> from code out of
->> scope of this series (video-mux, imx-capture), and some from 
->> the sensor OV2680
->> but that I think not related with the sensor driver but with 
->> the testing and
->> core.
->> 
->> The csi and mipi-csi entities pass all compliance tests.
->> 
->> Cheers,
->>     Rui
->> 
->> [0]: 
->> https://www.mail-archive.com/linux-media@vger.kernel.org/msg131186.html
->
-> This patch series was delayed quite a bit since the patch series 
-> above
-> it depends on is still not merged.
->
-> But the v6 version of that series will be merged once the 4.20 
-> cycle opens:
-> https://www.mail-archive.com/linux-media@vger.kernel.org/msg133391.html
-
-Good news.
-
->
-> Sakari has a branch with that series on top of the latest 
-> media_tree master:
-> https://git.linuxtv.org/sailus/media_tree.git/log/?h=v4l2-fwnode
->
-> Can you rebase this imx7 series on top of that? And test it 
-> again with the
-> *latest* v4l2-compliance? (I've added new checks recently, so 
-> you need to
-> update this utility)
->
-> Please post the output of the v4l2-compliance test (after fixing 
-> any issues
-> it raises of course), either as a reply to this post or in the 
-> cover letter
-> of a v7 version of this series if you had to make changes.
-
-Sure, I will rebase on top of Sakari tree and will update the 
-compliance
-tests and run them again.
-
->
-> This should expedite merging this series for 4.20.
->
-> Thanks!
->
-> 	Hans
-
-Ok, thanks for this. I will try to do it soon.
-
----
-Cheers,
-	Rui
-
-
+SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgaGF2aW5nIGEgbG9vayBhdCB0aGlzLg0KDQpPbiBN
+b25kYXksIEF1Z3VzdCAyNywgMjAxOCAxLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+IEdp
+dmVuIHRoZSBkaWZmZXJlbmNlcywgYW5kIHRoZSBsaW1pdGVkIGFtb3VudCBvZiBSQU0gb24gUlov
+QTIsIEkgdGhpbmsgeW91DQo+IHdvdWxkIGJlIGJldHRlciBvZmYgd2l0aCBhIHNlcGFyYXRlIHJl
+bmVzYXMtY3BnLXN0YmNyIGRyaXZlciwgYW5kIGFuDQo+IHI3czkyMTAtY3BnLXN0YmNyIGNvdW50
+ZXJwYXJ0Lg0KDQpJZiB5b3UgcmVhbGx5IHRoaW5rIHRoZXJlIHdpbGwgYmUgYSBsb3Qgb2Ygd2Fz
+dGVkIFJBTSwgdGhlbiBJIHdpbGwgbG9vayANCmludG8gaXQuDQoNClNvIGFyZSB5b3Ugc2F5aW5n
+IEkgc2hvdWxkIGZpcnN0IGNvcHkvcmVuYW1lIHJlbmVzYXMtY3BnLW1zc3IuYyB0byANCnJlbmVz
+YXMtY3BnLXN0YnIuYyBhbmQgdGhlbiBzdGFydCBoYWNraW5nIGF3YXkgYXQgaXQ/DQoNCg0KPiA0
+LiBZb3VyIG1vZHVsZSBjbG9ja3MgY2FuIHVzZSBlLmcuICIzNiIgaW5zdGVhZCBvZiAiMzA2IiAo
+YWxzbyBpbiB0aGUgRFRTKSwNCj4gICAgbWF0Y2hpbmcgdGhlIGRhdGFzaGVldC4NCg0KWWVzLCB0
+aGF0IHdvdWxkIGJlIG11Y2ggbmljZXIhDQoNCg0KSnVzdCBGWUksDQpJIGxpa2UgdGhpcyBuZXcg
+ZHJpdmVyIG1ldGhvZCwgYnV0IHRoZSBvbmUgZG93bmZhbGwgaXMgdGhhdCBJIGhhdmUgdG8gZ28N
+CmJhY2sgYW5kIGNoYW5nZSBteSB0aW1lciBkcml2ZXIgKHJlbmVzYXMtb3N0bS5jKS4gVGhlIGN1
+cnJlbnQgT1NUTSANCmRyaXZlciB1c2VzIFRJTUVSX09GX0RFQ0xBUkUoKS4gQnV0IHdoZW4geW91
+IHVzZSBUSU1FUl9PRl9ERUNMQVJFLCB5b3VyIA0KdGltZXIgZHJpdmVyIGdldHMgcHJvYmVkIFZF
+UlkgZWFybHkgaW4gYm9vdCwgYmVmb3JlIHN1YnN5c19pbml0Y2FsbCwgc28gbm9uZQ0Kb2YgeW91
+ciBjbG9ja3MgYXJlIHJlZ2lzdGVyZWQgeWV0IGFuZCB0aGUgcHJvYmUgZmFpbHMuDQoNCg0KQ2hy
+aXMNCg0KDQo+IA0KPiBUaGF0IG1lYW5zOg0KPiANCj4gPiAgLi4uL2RldmljZXRyZWUvYmluZGlu
+Z3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQgfCAgIDMgKy0NCj4gDQo+IDEuIEEgc2VwYXJh
+dGUgYmluZGluZyBkb2N1bWVudC4NCj4gDQo+ID4gIGRyaXZlcnMvY2xrL3JlbmVzYXMvS2NvbmZp
+ZyAgICAgICAgICAgICAgICAgICAgICAgIHwgICA1ICsNCj4gPiAgZHJpdmVycy9jbGsvcmVuZXNh
+cy9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKw0KPiA+ICBkcml2ZXJzL2Ns
+ay9yZW5lc2FzL3I3czkyMTAtY3BnLW1zc3IuYyAgICAgICAgICAgICB8IDE4OQ0KPiArKysrKysr
+KysrKysrKysrKysrKysNCj4gPiAgZHJpdmVycy9jbGsvcmVuZXNhcy9yZW5lc2FzLWNwZy1tc3Ny
+LmMgICAgICAgICAgICAgfCAgNjYgKysrKystLQ0KPiA+ICBkcml2ZXJzL2Nsay9yZW5lc2FzL3Jl
+bmVzYXMtY3BnLW1zc3IuaCAgICAgICAgICAgICB8ICAgNiArDQo+ID4gIGluY2x1ZGUvZHQtYmlu
+ZGluZ3MvY2xvY2svcjdzOTIxMC1jcGctbXNzci5oICAgICAgIHwgIDIxICsrKw0KPiA+ICA3IGZp
+bGVzIGNoYW5nZWQsIDI4MCBpbnNlcnRpb25zKCspLCAxMSBkZWxldGlvbnMoLSkNCj4gPiAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL3JlbmVzYXMvcjdzOTIxMC1jcGctbXNzci5jDQo+
+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3I3czkyMTAt
+Y3BnLW1zc3IuaA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9jbG9jay9yZW5lc2FzLGNwZy0NCj4gbXNzci50eHQgYi9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiBpbmRl
+eCBkYjU0MmFiYWRiNzUuLjY2Y2E5NzNlZGQ3NyAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxjcGctbXNzci50eHQNCj4gPiAr
+KysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxjcGct
+bXNzci50eHQNCj4gPiBAQCAtMTMsNiArMTMsNyBAQCBUaGV5IHByb3ZpZGUgdGhlIGZvbGxvd2lu
+ZyBmdW5jdGlvbmFsaXRpZXM6DQo+ID4NCj4gPiAgUmVxdWlyZWQgUHJvcGVydGllczoNCj4gPiAg
+ICAtIGNvbXBhdGlibGU6IE11c3QgYmUgb25lIG9mOg0KPiA+ICsgICAgICAtICJyZW5lc2FzLHI3
+czkyMTAtY3BnLW1zc3IiIGZvciB0aGUgcjdzOTIxMCBTb0MgKFJaL0EyKQ0KPiA+ICAgICAgICAt
+ICJyZW5lc2FzLHI4YTc3NDMtY3BnLW1zc3IiIGZvciB0aGUgcjhhNzc0MyBTb0MgKFJaL0cxTSkN
+Cj4gPiAgICAgICAgLSAicmVuZXNhcyxyOGE3NzQ1LWNwZy1tc3NyIiBmb3IgdGhlIHI4YTc3NDUg
+U29DIChSWi9HMUUpDQo+ID4gICAgICAgIC0gInJlbmVzYXMscjhhNzc0NzAtY3BnLW1zc3IiIGZv
+ciB0aGUgcjhhNzc0NzAgU29DIChSWi9HMUMpDQo+ID4gQEAgLTM3LDcgKzM4LDcgQEAgUmVxdWly
+ZWQgUHJvcGVydGllczoNCj4gPiAgICAtIGNsb2NrLW5hbWVzOiBMaXN0IG9mIGV4dGVybmFsIHBh
+cmVudCBjbG9jayBuYW1lcy4gVmFsaWQgbmFtZXMgYXJlOg0KPiA+ICAgICAgICAtICJleHRhbCIg
+KHI4YTc3NDMsIHI4YTc3NDUsIHI4YTc3NDcwLCByOGE3NzkwLCByOGE3NzkxLCByOGE3NzkyLA0K
+PiA+ICAgICAgICAgICAgICAgICAgcjhhNzc5MywgcjhhNzc5NCwgcjhhNzc5NSwgcjhhNzc5Niwg
+cjhhNzc5NjUsIHI4YTc3OTcwLA0KPiA+IC0gICAgICAgICAgICAgICAgcjhhNzc5ODAsIHI4YTc3
+OTkwLCByOGE3Nzk5NSkNCj4gPiArICAgICAgICAgICAgICAgIHI4YTc3OTgwLCByOGE3Nzk5MCwg
+cjhhNzc5OTUsIHI3czkyMTApDQo+ID4gICAgICAgIC0gImV4dGFsciIgKHI4YTc3OTUsIHI4YTc3
+OTYsIHI4YTc3OTY1LCByOGE3Nzk3MCwgcjhhNzc5ODApDQo+ID4gICAgICAgIC0gInVzYl9leHRh
+bCIgKHI4YTc3NDMsIHI4YTc3NDUsIHI4YTc3NDcwLCByOGE3NzkwLCByOGE3NzkxLA0KPiByOGE3
+NzkzLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgIHI4YTc3OTQpDQo+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvY2xrL3JlbmVzYXMvS2NvbmZpZyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvS2NvbmZp
+Zw0KPiA+IGluZGV4IDkwMjJiYmUxMjk3ZS4uZDhjY2RhYmE1MTAzIDEwMDY0NA0KPiA+IC0tLSBh
+L2RyaXZlcnMvY2xrL3JlbmVzYXMvS2NvbmZpZw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlbmVz
+YXMvS2NvbmZpZw0KPiANCj4gPiBAQCAtNDUsNiArNDYsMTAgQEAgY29uZmlnIENMS19SWkExDQo+
+ID4gICAgICAgICBib29sICJSWi9BMUggY2xvY2sgc3VwcG9ydCIgaWYgQ09NUElMRV9URVNUDQo+
+ID4gICAgICAgICBzZWxlY3QgQ0xLX1JFTkVTQVNfQ1BHX01TVFANCj4gPg0KPiA+ICtjb25maWcg
+Q0xLX1I3UzkyMTANCj4gPiArICAgICAgIGJvb2wgIlJaL0EyIGNsb2NrIHN1cHBvcnQiIGlmIENP
+TVBJTEVfVEVTVA0KPiA+ICsgICAgICAgc2VsZWN0IENMS19SRU5FU0FTX0NQR19NU1NSDQo+IA0K
+PiAyLiBhIHNlcGFyYXRlIENMS19SRU5FU0FTX0NQR19TVEJDUiBzeW1ib2wuDQo+IA0KPiA+IC0t
+LSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3I3czkyMTAtY3BnLW1z
+c3IuYw0KPiANCj4gMy4gQWxtb3N0IGFsbCBvZiB0aGlzIGNhbiBzdGF5IHRoZSBzYW1lLCBtb2R1
+bG8gc29tZSByZW5hbWVzLg0KPiANCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBtc3NyX21vZF9j
+bGsgcjdzOTIxMF9tb2RfY2xrc1tdIF9faW5pdGNvbnN0ID0gew0KPiA+ICsgICAgICAgREVGX01P
+RCgib3N0bTAiLCAgICAgICAgIDMwNiwgICBSN1M5MjEwX0NMS19QMUMpLA0KPiANCj4gNC4gWW91
+ciBtb2R1bGUgY2xvY2tzIGNhbiB1c2UgZS5nLiAiMzYiIGluc3RlYWQgb2YgIjMwNiIgKGFsc28g
+aW4gdGhlIERUUyksDQo+ICAgIG1hdGNoaW5nIHRoZSBkYXRhc2hlZXQuDQo+IA0KPiA+IC0tLSAv
+ZGV2L251bGwNCj4gPiArKysgYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3I3czkyMTAtY3Bn
+LW1zc3IuaA0KPiANCj4gNS4gQWxtb3N0IGFsbCBvZiB0aGlzIGNhbiBzdGF5IHRoZSBzYW1lLCBt
+b2R1bG8gc29tZSByZW5hbWVzLg0KPiANCj4gV2hhdCBkbyB5b3UgdGhpbms/DQo+IA0KPiBHcntv
+ZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0K
+PiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9u
+ZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29u
+dmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIu
+DQo+IEJ1dA0KPiB3aGVuIEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInBy
+b2dyYW1tZXIiIG9yIHNvbWV0aGluZyBsaWtlDQo+IHRoYXQuDQo+ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMNCg==
