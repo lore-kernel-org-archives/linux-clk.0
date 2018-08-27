@@ -1,105 +1,29 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:55540 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728427AbeHMQTp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 12:19:45 -0400
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
-        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, thierry.escande@linaro.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 04/14] dt-bindings: clock: Document qcom,hfpll
-Date: Mon, 13 Aug 2018 19:05:57 +0530
-Message-Id: <1534167367-17545-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+From: Stephen Boyd <sboyd@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Javier Martinez Canillas <javier@dowhile0.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Rob Herring <robh+dt@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20180807161713.28073-1-krzk@kernel.org>
+ <20180807161713.28073-2-krzk@kernel.org>
+In-Reply-To: <20180807161713.28073-2-krzk@kernel.org>
+Message-ID: <153540467962.129321.2485269464896438396@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/3] clk: s2mps11,s3c64xx: Add SPDX license identifiers
+Date: Mon, 27 Aug 2018 14:17:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Quoting Krzysztof Kozlowski (2018-08-07 09:17:12)
+> Replace GPL v2.0 and v2.0+ license statements with SPDX license
+> identifiers.
+> =
 
-Adds bindings document for qcom,hfpll instantiated within
-the Krait processor subsystem as separate register region.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,hfpll.txt       | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-new file mode 100644
-index 0000000..ec02a02
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
-@@ -0,0 +1,60 @@
-+High-Frequency PLL (HFPLL)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>:
-+		shall contain only one of the following. The generic
-+		compatible "qcom,hfpll" should be also included.
-+
-+                        "qcom,hfpll-ipq8064", "qcom,hfpll"
-+                        "qcom,hfpll-apq8064", "qcom,hfpll"
-+                        "qcom,hfpll-msm8974", "qcom,hfpll"
-+                        "qcom,hfpll-msm8960", "qcom,hfpll"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: address and size of HPLL registers. An optional second
-+		    element specifies the address and size of the alias
-+		    register region.
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the xo clock.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "xo".
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the PLL. Typically hfpllX where X is a CPU number
-+		    starting at 0. Otherwise hfpll_Y where Y is more specific
-+		    such as "l2".
-+
-+Example:
-+
-+1) An HFPLL for the L2 cache.
-+
-+	clock-controller@f9016000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf9016000 0x30>;
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+		clock-output-names = "hfpll_l2";
-+	};
-+
-+2) An HFPLL for CPU0. This HFPLL has the alias register region.
-+
-+	clock-controller@f908a000 {
-+		compatible = "qcom,hfpll-ipq8064", "qcom,hfpll";
-+		reg = <0xf908a000 0x30>, <0xf900a000 0x30>;
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+		clock-output-names = "hfpll0";
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Applied to clk-next
