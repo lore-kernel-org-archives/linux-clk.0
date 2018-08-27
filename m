@@ -1,51 +1,83 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 17 Aug 2018 09:09:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: mark.rutland@arm.com, robh@kernel.org, sudeep.holla@arm.com,
-        linux@arm.linux.org.uk, ctatlor97@gmail.com, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, thierry.escande@linaro.org,
-        linux-kernel@vger.kernel.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        niklas.cassel@linaro.org, sricharan@codeaurora.org
-Subject: Re: [PATCH v12 13/14] cpufreq: qcom: Re-organise kryo cpufreq to use
- it for other nvmem based qcom socs
-Message-ID: <20180817150902.GA19164@rob-hp-laptop>
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
- <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1534248753-2440-14-git-send-email-sricharan@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
+To: "David S . Miller" <davem@davemloft.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180827143200.8597-3-hdegoede@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, netdev@vger.kernel.org,
+ Johannes Stezenbach <js@sig21.net>, Carlo Caione <carlo@endlessm.com>,
+ linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-3-hdegoede@redhat.com>
+Message-ID: <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
+Date: Mon, 27 Aug 2018 11:47:34 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi, this email is from Rob's (experimental) review bot. I found a couple
-of common problems with your patch. Please see below.
+Quoting Hans de Goede (2018-08-27 07:31:58)
+> On some boards a platform clock is used as clock for the r8169 chip,
+> this commit adds support for getting and enabling this clock (assuming
+> it has an "ether_clk" alias set on it).
+> =
 
-On Tue, 14 Aug 2018 17:42:32 +0530, Sricharan R wrote:
-> The kryo cpufreq driver reads the nvmem cell and uses that data to
-> populate the opps. There are other qcom cpufreq socs like krait which
-> does similar thing. Except for the interpretation of the read data,
-> rest of the driver is same for both the cases. So pull the common things
-> out for reuse.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> This is related to commit d31fd43c0f9a ("clk: x86: Do not gate clocks
+> enabled by the firmware") which is a previous attempt to fix this for some
+> x86 boards, but this causes all Cherry Trail SoC using boards to not reach
+> there lowest power states when suspending.
+> =
 
-The preferred subject prefix is "dt-bindings: <binding dir>: ...".
+> This commit (together with an atom-pmc-clk driver commit adding the alias)
+> fixes things properly by making the r8169 get the clock and enable it when
+> it needs it.
+> =
 
-> ---
->  .../{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt}   |   6 +-
->  drivers/cpufreq/Kconfig.arm                        |   4 +-
->  drivers/cpufreq/Makefile                           |   2 +-
->  .../{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c}  | 124 ++++++++++++---------
->  4 files changed, 80 insertions(+), 56 deletions(-)
->  rename Documentation/devicetree/bindings/opp/{kryo-cpufreq.txt => qcom-nvmem-cpufreq.txt} (99%)
->  rename drivers/cpufreq/{qcom-cpufreq-kryo.c => qcom-cpufreq-nvmem.c} (65%)
-> 
+> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=3D193891#c102
+> Cc: Johannes Stezenbach <js@sig21.net>
+> Cc: Carlo Caione <carlo@endlessm.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-DT bindings (including binding headers) should be a separate patch. See
-Documentation/devicetree/bindings/submitting-patches.txt.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+> @@ -7614,6 +7616,11 @@ static void rtl_hw_initialize(struct rtl8169_priva=
+te *tp)
+>         }
+>  }
+>  =
+
+> +static void rtl_disable_clk(void *data)
+> +{
+> +       clk_disable_unprepare(data);
+> +}
+> +
+>  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id=
+ *ent)
+>  {
+>         const struct rtl_cfg_info *cfg =3D rtl_cfg_infos + ent->driver_da=
+ta;
+> @@ -7647,6 +7654,32 @@ static int rtl_init_one(struct pci_dev *pdev, cons=
+t struct pci_device_id *ent)
+>         mii->reg_num_mask =3D 0x1f;
+>         mii->supports_gmii =3D cfg->has_gmii;
+>  =
+
+> +       /* Get the *optional* external "ether_clk" used on some boards */
+> +       tp->clk =3D devm_clk_get(&pdev->dev, "ether_clk");
+
+An "optional" clk API is in flight, but it's easier to wait for that to
+merge and then this to be updated, so just take that as an FYI. It would
+be interesting to see how to support optional clks with clkdev lookups
+though, which would be needed in this case.
+
+How would you know that a clk device driver hasn't probed yet and isn't
+the driver that's actually providing the clk to this device on x86
+systems? With DT systems we can figure that out by looking at the DT and
+seeing if the device driver requesting the clk has the clocks property.
+On x86 systems it's all clkdev which doesn't really lend itself to
+solving this problem.
+
+> +       if (IS_ERR(tp->clk)) {
+> +               rc =3D PTR_ERR(tp->clk);
