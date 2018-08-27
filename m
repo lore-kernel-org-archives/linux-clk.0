@@ -1,44 +1,55 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 14 Aug 2018 10:08:57 -0600
-From: Rob Herring <robh@kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
-	linux-imx@nxp.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard
- clock handles
-Message-ID: <20180814160857.GA11979@rob-hp-laptop>
-References: <20180731102009.6710-1-l.stach@pengutronix.de>
- <20180731102009.6710-2-l.stach@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44722 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727128AbeH1DJe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Aug 2018 23:09:34 -0400
+Date: Tue, 28 Aug 2018 07:08:22 +0800
+In-Reply-To: <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
+References: <20180820134013.16527-1-icenowy@aosc.io> <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180731102009.6710-2-l.stach@pengutronix.de>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
+To: linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+CC: linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <D5B9F1CA-6108-41EB-9D6C-56883C79F361@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 31, 2018 at 12:20:08PM +0200, Lucas Stach wrote:
-> When specifying external clock inputs to the CCM the current code
-> requires the clocks to be in a "clocks" child node of the DT root.
-> This is not really conformant with DT best practices.
-> 
-> To avoid the need to deviate from those best practices, allow the
-> clock inputs to be specifies via standard clock handles. This is
-> in line with how drivers of the later CCM driver revisions on
-> newer i.MX SoCs handle this.
-> 
-> As we can't retroactively change the DT binding, allow this as an
-> option with a fallback to the old way of how this has been handled.
-> 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
 
-Ignoring what my bot said if there's no other changes needed,
 
-Acked-by: Rob Herring <robh@kernel.org>
+于 2018年8月28日 GMT+08:00 上午4:23:54, Stephen Boyd <sboyd@kernel.org> 写到:
+>Quoting Icenowy Zheng (2018-08-20 06:40:13)
+>> On the H6, the MMC module clocks are fixed in the new timing mode,
+>> i.e. they do not have a bit to select the mode. These clocks have
+>> a 2x divider somewhere between the clock and the MMC module.
+>> 
+>> To be consistent with other SoCs supporting the new timing mode,
+>> we model the 2x divider as a fixed post-divider on the MMC module
+>> clocks.
+>> 
+>> This patch adds the post-dividers to the MMC clocks, following the
+>> approach on A64.
+>> 
+>> Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6
+>CCU")
+>
+>This commit doesn't exist. Did you mean:
+>
+>524353ea48
+>
+>instead?
 
->  drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
->  2 files changed, 22 insertions(+), 5 deletions(-)
+Yes, it is.
+
+Thanks!
+
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
