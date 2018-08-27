@@ -1,62 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20400 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbeH3DUa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 23:20:30 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B872A66.1050403@samsung.com>
-Date: Thu, 30 Aug 2018 08:21:10 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks
- suspend/resume
-In-reply-to: <20180829160013.9447-2-m.szyprowski@samsung.com>
-References: <20180829160013.9447-1-m.szyprowski@samsung.com>
-        <CGME20180829160024eucas1p1049ff966800cdc44e876d546978df399@eucas1p1.samsung.com>
-        <20180829160013.9447-2-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jbrunet@baylibre.com>
+Return-Path: <jbrunet@baylibre.com>
+Message-ID: <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jian Hu <jian.hu@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+ Rob Herring <robh@kernel.org>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Yixun Lan
+ <yixun.lan@amlogic.com>,  Jianxin Pan <jianxin.pan@amlogic.com>,
+ linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Mon, 27 Aug 2018 15:07:46 +0200
+In-Reply-To: <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+	 <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
+	 <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
+	 <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-On 2018년 08월 30일 01:00, Marek Szyprowski wrote:
-> Clocks should be suspended as late as possible and resumed as early as
-> possible to let other drivers do their own suspend/resume tasks. NOIRQ
-> callbacks better suit this requirement.
+On Fri, 2018-08-24 at 21:34 +0800, Jian Hu wrote:
+> > 
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I am confued about aoclk81's parent clocks.
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 162de44df099..426980514e67 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -5630,7 +5630,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
->  static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
->  	SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
->  			   NULL)
-> -	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->  				     pm_runtime_force_resume)
->  };
->  
-> 
+> I can not get the example of axg audio clock driver, Could you provide 
+> the link? Had it merged into clk-meson.git?
 
-The suspend_noirq callback for devices are called right before
-entering the suspend and then resume_noirq callback for device
-are called right after wakeup from suspend.
+Yes and mainline as well : drivers/clk/meson/axg-audio.c
 
-Looks good to me.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Basically this driver is creating bypass input clocks (audio_pclk, mst_in[0-9],
+etc...) .
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+This allows to collect input clocks from DT (like any consumer should) will
+keeping constant in the controller clock tree.
+
+>From what I've seen of your controller drivers, the EE controller should have
+one input, the AO should have 3.
