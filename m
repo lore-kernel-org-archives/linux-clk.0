@@ -1,69 +1,55 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	colin.didier@devialet.com,
-	clement.peron@devialet.com,
-	ping.bai@nxp.com,
-	aisheng.dong@nxp.com,
-	shengjiu.wang@nxp.com,
-	matteo.lisi@engicam.com,
-	michael@amarulasolutions.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH 6/7] clk: imx6q: add mmdc0 ipg clock
-Date: Fri, 31 Aug 2018 15:53:17 +0800
-Message-Id: <1535701998-20443-7-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
-References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Alexandre Bailon <abailon@baylibre.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "sboyd@kernel.org" <sboyd@kernel.org>
+CC: Jacky Bai <ping.bai@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx
+	<linux-imx@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+Date: Mon, 27 Aug 2018 03:42:52 +0000
+Message-ID: 
+ <AM0PR04MB4211EB200D335FCEC382BD0E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <5a5950a4-e164-a604-ccb4-ae6d5bbe1708@baylibre.com>
+In-Reply-To: <5a5950a4-e164-a604-ccb4-ae6d5bbe1708@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6Q has MMDC0 ipg clock in CCM CCGR, add it into
-clock tree for clock management.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx6q.c               | 1 +
- include/dt-bindings/clock/imx6qdl-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8c7c2fc..bbe0c60 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -789,6 +789,7 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 		clk[IMX6QDL_CLK_MLB] = imx_clk_gate2("mlb",            "axi",               base + 0x74, 18);
- 	clk[IMX6QDL_CLK_MMDC_CH0_AXI] = imx_clk_gate2_flags("mmdc_ch0_axi",  "mmdc_ch0_axi_podf", base + 0x74, 20, CLK_IS_CRITICAL);
- 	clk[IMX6QDL_CLK_MMDC_CH1_AXI] = imx_clk_gate2("mmdc_ch1_axi",  "mmdc_ch1_axi_podf", base + 0x74, 22);
-+	clk[IMX6QDL_CLK_MMDC_P0_IPG]  = imx_clk_gate2_flags("mmdc_p0_ipg",   "ipg",         base + 0x74, 24, CLK_IS_CRITICAL);
- 	clk[IMX6QDL_CLK_OCRAM]        = imx_clk_gate2("ocram",         "ahb",               base + 0x74, 28);
- 	clk[IMX6QDL_CLK_OPENVG_AXI]   = imx_clk_gate2("openvg_axi",    "axi",               base + 0x74, 30);
- 	clk[IMX6QDL_CLK_PCIE_AXI]     = imx_clk_gate2("pcie_axi",      "pcie_axi_sel",      base + 0x78, 0);
-diff --git a/include/dt-bindings/clock/imx6qdl-clock.h b/include/dt-bindings/clock/imx6qdl-clock.h
-index 7ad171b..87b068f 100644
---- a/include/dt-bindings/clock/imx6qdl-clock.h
-+++ b/include/dt-bindings/clock/imx6qdl-clock.h
-@@ -273,6 +273,7 @@
- #define IMX6QDL_CLK_MLB_PODF			260
- #define IMX6QDL_CLK_EPIT1			261
- #define IMX6QDL_CLK_EPIT2			262
--#define IMX6QDL_CLK_END				263
-+#define IMX6QDL_CLK_MMDC_P0_IPG			263
-+#define IMX6QDL_CLK_END				264
- 
- #endif /* __DT_BINDINGS_CLOCK_IMX6QDL_H */
--- 
-2.7.4
+SGkgQWxleGFuZHJlLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFs
+ZXhhbmRyZSBCYWlsb24gW21haWx0bzphYmFpbG9uQGJheWxpYnJlLmNvbV0NCj4gU2VudDogV2Vk
+bmVzZGF5LCBBdWd1c3QgOCwgMjAxOCA2OjAxIFBNDQo+IFRvOiBBLnMuIERvbmcgPGFpc2hlbmcu
+ZG9uZ0BueHAuY29tPjsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gc2JveWRAa2VybmVs
+Lm9yZw0KPiBDYzogSmFja3kgQmFpIDxwaW5nLmJhaUBueHAuY29tPjsgQW5zb24gSHVhbmcgPGFu
+c29uLmh1YW5nQG54cC5jb20+Ow0KPiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgbGludXgta2Vy
+bmVsQHZnZXIua2VybmVsLm9yZzsgZGwtbGludXgtaW14DQo+IDxsaW51eC1pbXhAbnhwLmNvbT47
+IHNoYXduZ3VvQGtlcm5lbC5vcmc7DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFk
+Lm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY0IDAvOV0gY2xrOiBhZGQgaW14N3VscCBjbGsg
+c3VwcG9ydA0KPiANCj4gSGkgRG9uZyBBaXNoZW5nLA0KPiANCj4gT24gMDcvMjYvMjAxOCAwMzo1
+MCBBTSwgQS5zLiBEb25nIHdyb3RlOg0KPiA+IEhpIFN0ZXBoZW4sDQo+ID4NCj4gPiBEbyB5b3Ug
+aGF2ZSBhIGNoYW5jZSB0byBsb29rIGF0IGl0Pw0KPiA+IFRoaXMgcGF0Y2ggc2VyaWVzIGhhcyBi
+ZWVuIHBlbmRpbmcgZm9yIHF1aXRlIGEgbG9uZyB0aW1lIHdpdGhvdXQgbXVjaA0KPiBjb21tZW50
+cy4NCj4gSSdtIG5vdCBhIGtlcm5lbCBtYWludGFpbmVyIGJ1dCBJIHdvdWxkIG5vdCByZXZpZXcg
+YSBzZXJpZXMgdGhhdCBoYXMgY2hlY2twYXRjaA0KPiBlcnJvcnMuDQo+IFBsZWFzZSBydW4gY2hl
+Y2twYXRjaCwgZml4IHRoZSBlcnJvcnMgYW5kIHRoZSB3YXJuaW5ncywgYW5kIHRoZW4gcmVzdWJt
+aXQgYQ0KPiBzZXJpZXMuDQoNClllcywgSSBkaWQgaXQuIFRoZXJlJ3JlIHNvbWUgd2FybmluZ3Mu
+IEJ1dCB1bmxpa2UgZXJyb3JzLCBub3JtYWxseSB3YXJuaW5ncyBhcmUganVkZ2FibGUuDQpGb3Ig
+dGhpcyBwYXRjaCBzZXQsIGFsbCBrbm93biB3YXJuaW5ncyBzZWVtcyB0byBtZSBub3QgbmVlZCB0
+aGUgZml4LiANCkUuZy4gbGluZSBvdmVyIDgwIG9yIG1pc3NpbmcgbWFpbnRhaW5lciBmb3IgbmV3
+IGZpbGVzLi4uLg0KDQpCVFcgdGhlcmUncyBvbmUgc3BlY2lhbCB3YXJuaW5nIEkgZG9uJ3Qgc2Vl
+IGhvdyB0byBmaXgsIHNlZW1zIHJlcG9ydGVkIHdyb25nbHkuDQoNCjAwMDUtY2xrLWlteC1hZGQt
+Y29tcG9zaXRlLWNsay1zdXBwb3J0LnBhdGNoDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQ0KV0FSTklORzogYWRkZWQsIG1vdmVkIG9yIGRlbGV0ZWQgZmlsZShz
+KSwgZG9lcyBNQUlOVEFJTkVSUyBuZWVkIHVwZGF0aW5nPw0KIzQ3OiANCm5ldyBmaWxlIG1vZGUg
+MTAwNjQ0DQoNCldBUk5JTkc6IGZ1bmN0aW9uIGRlZmluaXRpb24gYXJndW1lbnQgJ2NvbnN0IGNo
+YXIgKiBjb25zdCcgc2hvdWxkIGFsc28gaGF2ZSBhbiBpZGVudGlmaWVyIG5hbWUNCiMxNDU6IEZJ
+TEU6IGRyaXZlcnMvY2xrL2lteC9jbGsuaDo3NDoNCitzdHJ1Y3QgY2xrX2h3ICppbXhfY2xrX2Nv
+bXBvc2l0ZShjb25zdCBjaGFyICpuYW1lLA0KDQp0b3RhbDogMCBlcnJvcnMsIDIgd2FybmluZ3Ms
+IDEwNCBsaW5lcyBjaGVja2VkDQoNCk5PVEU6IEZvciBzb21lIG9mIHRoZSByZXBvcnRlZCBkZWZl
+Y3RzLCBjaGVja3BhdGNoIG1heSBiZSBhYmxlIHRvDQogICAgICBtZWNoYW5pY2FsbHkgY29udmVy
+dCB0byB0aGUgdHlwaWNhbCBzdHlsZSB1c2luZyAtLWZpeCBvciAtLWZpeC1pbnBsYWNlLg0KDQpJ
+ZiB5b3UgaGF2ZSBiZXR0ZXIgc3VnZ2VzdGlvbnMgcGxlYXNlIGxldCBtZSBrbm93Lg0KDQpSZWdh
+cmRzDQpEb25nIEFpc2hlbmcNCg==
