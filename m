@@ -1,86 +1,85 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38656 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732805AbeHGJqx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Aug 2018 05:46:53 -0400
-MIME-Version: 1.0
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com> <20180803030237.3366-9-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-9-songjun.wu@linux.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Aug 2018 09:33:38 +0200
-Message-ID: <CAMuHMdXkGchPN337dXbBVOFsb1o-Tkh8S_z=uCm3Z0sDjPVMKA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
-To: songjun.wu@linux.intel.com
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Irina Tirdea <irina.tirdea@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/4] clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
+Date: Mon, 27 Aug 2018 16:31:57 +0200
+Message-Id: <20180827143200.8597-2-hdegoede@redhat.com>
+In-Reply-To: <20180827143200.8597-1-hdegoede@redhat.com>
+References: <20180827143200.8597-1-hdegoede@redhat.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Songjun,
+Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
+firmware") causes all unclaimed PMC clocks on Cherry Trail devices to be on
+all the time, resulting on the device not being able to reach S0i2 or S0i3
+when suspended.
 
-On Fri, Aug 3, 2018 at 5:04 AM Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> Get serial id from dts.
->
-> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
-> macro is defined in lantiq_soc.h.
-> lantiq_soc.h is in arch path for legacy product support.
->
-> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
->
-> If "#ifdef preprocessor" is changed to
-> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
-> code using LTQ_EARLY_ASC is compiled.
-> Compilation will fail for no LTQ_EARLY_ASC defined.
->
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+The reason for this commit is that on some Bay Trail / Cherry Trail devices
+the ethernet controller uses pmc_plt_clk_4. This commit adds an "ether_clk"
+alias, so that the relevant ethernet drivers can try to (optionally) use
+this, without needing X86 specific code / hacks, thus fixing ethernet on
+these devices without breaking S0i3 support.
 
-Thanks for your patch!
+This commit uses clkdev_hw_create() to create the alias, mirroring the code
+for the already existing "mclk" alias for pmc_plt_clk_3.
 
-> @@ -699,9 +700,19 @@ lqasc_probe(struct platform_device *pdev)
->                 return -ENODEV;
->         }
->
-> -       /* check if this is the console port */
-> -       if (mmres->start != CPHYSADDR(LTQ_EARLY_ASC))
-> -               line = 1;
-> +       /* get serial id */
-> +       line = of_alias_get_id(node, "serial");
-> +       if (line < 0) {
-> +#ifdef CONFIG_LANTIQ
-> +               if (mmres->start == CPHYSADDR(LTQ_EARLY_ASC))
-> +                       line = 0;
-> +               else
-> +                       line = 1;
-> +#else
-> +               dev_err(&pdev->dev, "failed to get alias id, errno %d\n", line);
-> +               return line;
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
+Cc: Johannes Stezenbach <js@sig21.net>
+Cc: Carlo Caione <carlo@endlessm.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/clk/x86/clk-pmc-atom.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Please note that not providing a fallback here makes life harder when using
-DT overlays.
-See the description of commit 7678f4c20fa7670f ("serial: sh-sci: Add support
-for dynamic instances") for background info.
-
-> +#endif
-> +       }
->
->         if (lqasc_port[line]) {
->                 dev_err(&pdev->dev, "port %d already allocated\n", line);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 08ef69945ffb..75151901ff7d 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -55,6 +55,7 @@ struct clk_plt_data {
+ 	u8 nparents;
+ 	struct clk_plt *clks[PMC_CLK_NUM];
+ 	struct clk_lookup *mclk_lookup;
++	struct clk_lookup *ether_clk_lookup;
+ };
+ 
+ /* Return an index in parent table */
+@@ -351,11 +352,20 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		goto err_unreg_clk_plt;
+ 	}
+ 
++	data->ether_clk_lookup = clkdev_hw_create(&data->clks[4]->hw,
++						  "ether_clk", NULL);
++	if (!data->ether_clk_lookup) {
++		err = -ENOMEM;
++		goto err_drop_mclk;
++	}
++
+ 	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
++err_drop_mclk:
++	clkdev_drop(data->mclk_lookup);
+ err_unreg_clk_plt:
+ 	plt_clk_unregister_loop(data, i);
+ 	plt_clk_unregister_parents(data);
+@@ -369,6 +379,7 @@ static int plt_clk_remove(struct platform_device *pdev)
+ 
+ 	data = platform_get_drvdata(pdev);
+ 
++	clkdev_drop(data->ether_clk_lookup);
+ 	clkdev_drop(data->mclk_lookup);
+ 	plt_clk_unregister_loop(data, PMC_CLK_NUM);
+ 	plt_clk_unregister_parents(data);
+-- 
+2.18.0
