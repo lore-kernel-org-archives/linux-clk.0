@@ -1,61 +1,49 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH 0/5] arm64: dts: NXP: add basic dts file for LX2160A SoC
-Date: Mon, 20 Aug 2018 12:17:11 +0530
-Message-Id: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+To: "David S . Miller" <davem@davemloft.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180827143200.8597-2-hdegoede@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, netdev@vger.kernel.org,
+ Johannes Stezenbach <js@sig21.net>, Carlo Caione <carlo@endlessm.com>,
+ linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-2-hdegoede@redhat.com>
+Message-ID: <153539541079.129321.16889319226246451527@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 1/4] clk: x86: add "ether_clk" alias for Bay Trail / Cherry Trail
+Date: Mon, 27 Aug 2018 11:43:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-- Add compatible string for LX2160A clockgen support
-- Add compatible string to initialize LX2160A guts driver
-- Add compatible string for LX2160A support in dt-bindings
-- Add dts file to enable support for LX2160A SoC and LX2160A RDB
-  (Reference design board)
+Quoting Hans de Goede (2018-08-27 07:31:57)
+> Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the
+> firmware") causes all unclaimed PMC clocks on Cherry Trail devices to be =
+on
+> all the time, resulting on the device not being able to reach S0i2 or S0i3
+> when suspended.
+> =
 
-Vabhav Sharma (4):
-  dt-bindings: arm64: add compatible for LX2160A
-  soc/fsl/guts: Add compatible string for LX2160A
-  arm64: dts: add QorIQ LX2160A SoC support
-  arm64: dts: add LX2160ARDB board support
+> The reason for this commit is that on some Bay Trail / Cherry Trail devic=
+es
+> the ethernet controller uses pmc_plt_clk_4. This commit adds an "ether_cl=
+k"
+> alias, so that the relevant ethernet drivers can try to (optionally) use
+> this, without needing X86 specific code / hacks, thus fixing ethernet on
+> these devices without breaking S0i3 support.
+> =
 
-Yogesh Gaur (1):
-  drivers: clk-qoriq: Add clockgen support for lx2160a
+> This commit uses clkdev_hw_create() to create the alias, mirroring the co=
+de
+> for the already existing "mclk" alias for pmc_plt_clk_3.
+> =
 
- Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
- arch/arm64/boot/dts/freescale/Makefile            |   1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  95 ++++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 572 ++++++++++++++++++++++
- drivers/clk/clk-qoriq.c                           |  14 +-
- drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
- drivers/soc/fsl/guts.c                            |   1 +
- 7 files changed, 695 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=3D193891#c102
+> Cc: Johannes Stezenbach <js@sig21.net>
+> Cc: Carlo Caione <carlo@endlessm.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
 
--- 
-2.7.4
+Acked-by: Stephen Boyd <sboyd@kernel.org>
