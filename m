@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Message-ID: <1534151523.17494.48.camel@mtkswgap22>
-Subject: Re: [PATCH v5 01/11] dt-bindings: clock: mediatek: document clk
- bindings for Mediatek MT6765 SoC
-From: Owen Chen <owen.chen@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
+Return-Path: <rppt@linux.vnet.ibm.com>
+Date: Mon, 27 Aug 2018 13:33:53 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Date: Mon, 13 Aug 2018 17:12:03 +0800
-In-Reply-To: <20180720174331.GA26945@rob-hp-laptop>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-         <1531817552-17221-2-git-send-email-mars.cheng@mediatek.com>
-         <20180720174331.GA26945@rob-hp-laptop>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] devres: provide devm_kstrdup_const()
+References: <20180827082101.5036-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180827082101.5036-1-brgl@bgdev.pl>
+Message-Id: <20180827103353.GB13848@rapoport-lnx>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-07-20 at 11:43 -0600, Rob Herring wrote:
-> On Tue, Jul 17, 2018 at 04:52:22PM +0800, Mars Cheng wrote:
-> > This patch adds the binding documentation for apmixedsys, audsys, camsys,
-> > imgsys, infracfg, mipi0a, topckgen, vcodecsys
-> > 
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
-> >  .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
-> >  .../bindings/arm/mediatek/mediatek,camsys.txt      |   27 ++++++++++++++++++++
-> >  .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
-> >  .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,mipi0a.txt      |   23 +++++++++++++++++
-> >  .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
-> >  .../bindings/arm/mediatek/mediatek,pericfg.txt     |    1 +
-> >  .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
-> >  .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |   22 ++++++++++++++++
-> >  10 files changed, 79 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > index b404d59..44eaeac 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-> > @@ -8,6 +8,7 @@ Required Properties:
-> >  - compatible: Should be one of:
-> >  	- "mediatek,mt2701-apmixedsys"
-> >  	- "mediatek,mt2712-apmixedsys", "syscon"
-> > +	- "mediatek,mt6765-apmixedsys", "syscon"
-> >  	- "mediatek,mt6797-apmixedsys"
-> >  	- "mediatek,mt7622-apmixedsys"
-> >  	- "mediatek,mt8135-apmixedsys"
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > index 34a69ba..9a8672a 100644
-> > --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-> > @@ -7,6 +7,7 @@ Required Properties:
-> >  
-> >  - compatible: Should be one of:
-> >  	- "mediatek,mt2701-audsys", "syscon"
-> > +	- "mediatek,mt6765-audsys", "syscon"
-> >  	- "mediatek,mt7622-audsys", "syscon"
-> >  - #clock-cells: Must be 1
-> >  
-> > diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> > new file mode 100644
-> > index 0000000..dc75783
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-> > @@ -0,0 +1,27 @@
-> > +MediaTek CAMSYS controller
-> > +============================
-> > +
-> > +The MediaTek CAMSYS controller provides various clocks to the system.
+On Mon, Aug 27, 2018 at 10:21:00AM +0200, Bartosz Golaszewski wrote:
+> Provide a resource managed version of kstrdup_const(). This variant
+> internally calls devm_kstrdup() on pointers that are outside of
+> .rodata section. Also provide a corresponding version of devm_kfree().
 > 
-> Only clocks? If so, then this should be moved to bindings/clocks/.
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  include/linux/device.h |  2 ++
+>  mm/util.c              | 35 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+> 
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 8f882549edee..f8f5982d26b2 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -693,7 +693,9 @@ static inline void *devm_kcalloc(struct device *dev,
+>  	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+>  }
+>  extern void devm_kfree(struct device *dev, void *p);
+> +extern void devm_kfree_const(struct device *dev, void *p);
+>  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+> +extern char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+>  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+>  			  gfp_t gfp);
+> 
+> diff --git a/mm/util.c b/mm/util.c
+> index d2890a407332..6d1f41b5775e 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -39,6 +39,20 @@ void kfree_const(const void *x)
+>  }
+>  EXPORT_SYMBOL(kfree_const);
+> 
+> +/**
+> + * devm_kfree_const - Resource managed conditional kfree
+> + * @dev: device this memory belongs to
+> + * @p: memory to free
+> + *
+> + * Function calls devm_kfree only if @p is not in .rodata section.
+> + */
+> +void devm_kfree_const(struct device *dev, void *p)
+> +{
+> +	if (!is_kernel_rodata((unsigned long)p))
+> +		devm_kfree(dev, p);
+> +}
+> +EXPORT_SYMBOL(devm_kfree_const);
+> +
+>  /**
+>   * kstrdup - allocate space for and copy an existing string
+>   * @s: the string to duplicate
+> @@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
+>  }
+>  EXPORT_SYMBOL(kstrdup_const);
+> 
+> +/**
+> + * devm_kstrdup_const - resource managed conditional string duplication
+> + * @dev: device for which to duplicate the string
+> + * @s: the string to duplicate
+> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> + *
+> + * Function returns source string if it is in .rodata section otherwise it
+> + * fallbacks to devm_kstrdup.
+
+Please make it proper "Returns:" description and move to the end of the
+comment. See Documentation/doc-guide/kernel-doc.rst.
+
+> + * Strings allocated by devm_kstrdup_const will be automatically freed when
+> + * the associated device is detached.
+> + */
+> +char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
+> +{
+> +	if (is_kernel_rodata((unsigned long)s))
+> +		return s;
+> +
+> +	return devm_kstrdup(dev, s, gfp);
+> +}
+> +EXPORT_SYMBOL(devm_kstrdup_const);
+> +
+
+The devm_ variants seem to belong to drivers/base/devres.c rather than
+mm/util.c
+
+>  /**
+>   * kstrndup - allocate space for and copy an existing string
+>   * @s: the string to duplicate
+> -- 
+> 2.18.0
 > 
 
-camsys conclude not only clks but also mtcmos, so it's better to put
-this node in this path.
-
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: Should be one of:
-> > +	- "mediatek,mt6765-camsys", "syscon"
-> > +- #clock-cells: Must be 1
-> > +
-> > +The AUDSYS controller uses the common clk binding from
-> > +Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-> > +
-> > +Required sub-nodes:
-> > +-------
-> > +For common binding part and usage, refer to
-> > +../sonud/mt2701-afe-pcm.txt.
-> > +
-> > +Example:
-> > +
-> > +camsys: camsys@1a000000  {
-> 
-> clock-controller@...
-> 
-> if the above answer is yes.
-> 
-> Same comments on the other docs.
+-- 
+Sincerely yours,
+Mike.
