@@ -1,76 +1,256 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 02/24] dt-bindings: ingenic: Add DT bindings for TCU clocks
-Date: Thu,  9 Aug 2018 23:43:52 +0200
-Message-Id: <20180809214414.20905-3-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:52790 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727408AbeH1BDO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Aug 2018 21:03:14 -0400
+Date: Mon, 27 Aug 2018 23:14:51 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v3 4/5] rtc: rk808: add RK809 and RK817 support.
+Message-ID: <20180827211451.GJ24549@piout.net>
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+ <1535081441-20718-5-git-send-email-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1535081441-20718-5-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This header provides clock numbers for the ingenic,tcu
-DT binding.
+On 24/08/2018 11:30:40+0800, Tony Xie wrote:
+> RK809 and RK817 are power management IC chips for multimedia products.
+> Most of their functions and registers are same, including the rtc.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/ingenic,tcu.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 include/dt-bindings/clock/ingenic,tcu.h
+> ---
+>  drivers/rtc/Kconfig     |  4 +--
+>  drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
+>  2 files changed, 56 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index a2ba5db..1aaf935 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
+>  	  will be called rtc-max77686.
+>  
+>  config RTC_DRV_RK808
+> -	tristate "Rockchip RK805/RK808/RK818 RTC"
+> +	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+>  	depends on MFD_RK808
+>  	help
+>  	  If you say yes here you will get support for the
+> -	  RTC of RK805, RK808 and RK818 PMIC.
+> +	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
+>  
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called rk808-rtc.
+> diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
+> index 739c0d4..5bacdaf 100644
+> --- a/drivers/rtc/rtc-rk808.c
+> +++ b/drivers/rtc/rtc-rk808.c
+> @@ -50,9 +50,18 @@
+>  #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
+>  #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
+>  
+> +struct rk_rtc_compat_reg {
+> +	unsigned int ctrl_reg;
+> +	unsigned int status_reg;
+> +	unsigned int alarm_seconds_reg;
+> +	unsigned int int_reg;
+> +	unsigned int seconds_reg;
+> +};
+> +
+>  struct rk808_rtc {
+>  	struct rk808 *rk808;
+>  	struct rtc_device *rtc;
+> +	struct rk_rtc_compat_reg *creg;
+>  	int irq;
+>  };
+>  
+> @@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	int ret;
+>  
+>  	/* Force an update of the shadowed registers right now */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
+>  	if (ret) {
+> @@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
+>  	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
+>  	 */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
+>  				 0);
+>  	if (ret) {
+> @@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  			       rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
+> @@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	rtc_data[6] = bin2bcd(tm->tm_wday);
+>  
+>  	/* Stop RTC while updating the RTC registers */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M);
+>  	if (ret) {
+> @@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
+>  				rtc_data, NUM_TIME_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
+>  		return ret;
+>  	}
+>  	/* Start RTC again */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to update RTC control: %d\n", ret);
+> @@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	uint32_t int_reg;
+>  	int ret;
+>  
+> -	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_read(rk808->regmap,
+> +			       rk808_rtc->creg->alarm_seconds_reg,
+>  			       alrm_data, NUM_ALARM_REGS);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
+> +		return ret;
+> +	}
+>  
+>  	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
+>  	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
+> @@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
+>  	rockchip_to_gregorian(&alrm->time);
+>  
+> -	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
+> +	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
+>  		return ret;
+> @@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
+>  
+>  	return ret;
+> @@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
+>  	struct rk808 *rk808 = rk808_rtc->rk808;
+>  	int ret;
+>  
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
+>  				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
+>  
+> @@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+>  	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
+>  	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
+>  
+> -	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
+> +	ret = regmap_bulk_write(rk808->regmap,
+> +				rk808_rtc->creg->alarm_seconds_reg,
+>  				alrm_data, NUM_ALARM_REGS);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to bulk write: %d\n", ret);
+> @@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
+>  	struct i2c_client *client = rk808->i2c;
+>  	int ret;
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&client->dev,
+> @@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
+>  	rk808_rtc_suspend, rk808_rtc_resume);
+>  
+> +static struct rk_rtc_compat_reg rk808_creg = {
+> +	.ctrl_reg = RK808_RTC_CTRL_REG,
+> +	.status_reg = RK808_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
+> +	.int_reg = RK808_RTC_INT_REG,
+> +	.seconds_reg = RK808_SECONDS_REG,
+> +};
+> +
+> +static struct rk_rtc_compat_reg rk817_creg = {
+> +	.ctrl_reg = RK817_RTC_CTRL_REG,
+> +	.status_reg = RK817_RTC_STATUS_REG,
+> +	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
+> +	.int_reg = RK817_RTC_INT_REG,
+> +	.seconds_reg = RK817_SECONDS_REG,
+> +};
+> +
+>  static int rk808_rtc_probe(struct platform_device *pdev)
+>  {
+>  	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+> @@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  	if (rk808_rtc == NULL)
+>  		return -ENOMEM;
+>  
+> +	switch (rk808->variant) {
+> +	case RK809_ID:
+> +	case RK817_ID:
+> +		rk808_rtc->creg = &rk817_creg;
+> +		break;
+> +	default:
+> +		rk808_rtc->creg = &rk808_creg;
+> +		break;
+> +	}
+>  	platform_set_drvdata(pdev, rk808_rtc);
+>  	rk808_rtc->rk808 = rk808;
+>  
+>  	/* start rtc running by default, and use shadowed timer. */
+> -	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
+> +	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
+>  				 BIT_RTC_CTRL_REG_STOP_RTC_M |
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
+>  				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
+> @@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
+> +	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
+>  			   RTC_STATUS_MASK);
+>  	if (ret) {
+>  		dev_err(&pdev->dev,
+> -- 
+> 1.9.1
+> 
+> 
 
- v2: Use SPDX identifier for the license
-
- v3: No change
-
- v4: No change
-
- v5: s/JZ47*_/TCU_/ and dropped *_CLK_LAST defines
-
- v6: No change
-
-diff --git a/include/dt-bindings/clock/ingenic,tcu.h b/include/dt-bindings/clock/ingenic,tcu.h
-new file mode 100644
-index 000000000000..d569650a7945
---- /dev/null
-+++ b/include/dt-bindings/clock/ingenic,tcu.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,tcu DT binding.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+#define __DT_BINDINGS_CLOCK_INGENIC_TCU_H__
-+
-+#define TCU_CLK_TIMER0	0
-+#define TCU_CLK_TIMER1	1
-+#define TCU_CLK_TIMER2	2
-+#define TCU_CLK_TIMER3	3
-+#define TCU_CLK_TIMER4	4
-+#define TCU_CLK_TIMER5	5
-+#define TCU_CLK_TIMER6	6
-+#define TCU_CLK_TIMER7	7
-+#define TCU_CLK_WDT	8
-+#define TCU_CLK_OST	9
-+
-+#endif /* __DT_BINDINGS_CLOCK_INGENIC_TCU_H__ */
 -- 
-2.11.0
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
