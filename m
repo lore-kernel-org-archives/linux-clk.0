@@ -1,66 +1,143 @@
-Return-Path: <hdegoede@redhat.com>
-From: Hans de Goede <hdegoede@redhat.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Irina Tirdea <irina.tirdea@intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	netdev@vger.kernel.org,
-	Johannes Stezenbach <js@sig21.net>,
-	Carlo Caione <carlo@endlessm.com>,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix suspend issues
-Date: Mon, 27 Aug 2018 16:31:56 +0200
-Message-Id: <20180827143200.8597-1-hdegoede@redhat.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, Anson Huang <anson.huang@nxp.com>, Jacky Bai
+	<ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+Date: Mon, 27 Aug 2018 03:45:51 +0000
+Message-ID: 
+ <AM0PR04MB421153E1441FBE356E1B859E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: 
+ <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi All,
+Kindly ping again...  This is really pending too long...
 
-This series has as goal to revert commit d31fd43c0f9a ("clk: x86: Do not gate
-clocks enabled by the firmware"), because that commit causes almost all
-Cherry Trail devices to not use the S0i3 powerstate when suspending, leading
-to them quickly draining their battery when suspended.
+Stephen & Shawn,
+Any suggestion on how to proceed this patch set?
 
-This commit was added to fix issues with the r8169 NIC on some Bay Trail
-devices, where the pmc_plt_clk_4 was used as clk for the r8169 chip.
+Regards
+Dong Aisheng
 
-This series fixes this properly, so that we can undo the trouble some
-commit.
-
-The first patch adds an "ether_clk" alias to the clk-pmc-atom driver so
-that the r8169 can pass "ether_clk" as generic id to clk_get instead of
-having to add x86 specific code to the r8169 driver.
-
-The second patch makes the r8169 driver do a clk_get for "ether_clk"
-(ignoring -ENOENT errors so this is optional) and if that succeeds then
-it enables the clock.
-
-The third patch effectively revert the troublesome commit.
-
-This series has been tested on a HP Stream x360 - 11-p000nd, which uses
-a Bay Trail SoC with a r8169 ethernet chip and I can confirm that the
-pmc_plt_clk_4 gets properly enabled, so this series should not cause any
-regressions wrt devices needing pmc_plt_clk_4 enabled (which is not the
-case on the Stream x360).
-
-To avoid regressions we need to have patches 1 and 2 merged before 3,
-so it is probably best if this entire series gets merged through a single
-tree. Given that clk-pmc-atom.c has not seen any changes for over a
-year I suggest that all 3 patches are merged through the netdev tree,
-with an ack from the clk maintainers. Assuming that is ok with the clk
-maintainers of course.
-
-Note there is a fourth patch in this series, this patch is necessary to
-reach S0i3 state on Bay Trail devices wich have a r8169 ethernet chip,
-since I do not have access to hardware where the r8169 actually needs
-the pmc_plt_clk_4 I have not been able to test this, hence it is marked
-as RFC for now.
-
-Carlos can you test the 4th patch (when you have time) and let us know if
-it works?
-
-Regards,
-
-Hans
+> -----Original Message-----
+> From: A.s. Dong
+> Sent: Thursday, July 26, 2018 9:51 AM
+> To: linux-clk@vger.kernel.org; sboyd@kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; shawnguo@kernel.org; Anson Huang
+> <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
+> <linux-imx@nxp.com>
+> Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+>=20
+> Hi Stephen,
+>=20
+> Do you have a chance to look at it?
+> This patch series has been pending for quite a long time without much
+> comments.
+>=20
+> Regards
+> Dong Aisheng
+>=20
+> > -----Original Message-----
+> > From: A.s. Dong
+> > Sent: Wednesday, July 18, 2018 9:37 PM
+> > To: linux-clk@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org;
+> > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> Anson
+> > Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
+> > linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+> > Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
+> >
+> > This is a rebased version of below patch series against latest clk tree=
+.
+> > [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
+> > https://lkml.org/lkml/2018/3/16/310
+> >
+> > This patch series intends to add imx7ulp clk support.
+> >
+> > i.MX7ULP Clock functions are under joint control of the System Clock
+> > Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
+> > Core Mode Controller (CMC)1 blocks
+> >
+> > The clocking scheme provides clear separation between M4 domain and A7
+> > domain. Except for a few clock sources shared between two domains,
+> > such as the System Oscillator clock, the Slow IRC (SIRC), and and the
+> > Fast IRC clock (FIRCLK), clock sources and clock management are
+> > separated and contained within each domain.
+> >
+> > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> >
+> > Note: this series only adds A7 clock domain support as M4 clock domain
+> > will be handled by M4 seperately.
+> >
+> > Change Log:
+> > v3->v4:
+> >  * rebased to latest kernel
+> >  * make scg and pcc separate nodes according to Rob's suggestion
+> >
+> > v2->v3:
+> >  * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible=
+ racy
+> >    Others no changes.
+> >
+> > v1->v2:
+> >  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+> >  * use clk_hw apis to register clocks
+> >  * use of_clk_add_hw_provider
+> >  * split the clocks register process into two parts: early part for pos=
+sible
+> >    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part
+> for
+> >    the left normal peripheral clocks registered by a platform driver.
+> >
+> > Dong Aisheng (9):
+> >   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+> >   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+> >   clk: imx: add pllv4 support
+> >   clk: imx: add pfdv2 support
+> >   clk: imx: add composite clk support
+> >   dt-bindings: clock: add imx7ulp clock binding doc
+> >   clk: imx: make mux parent strings const
+> >   clk: imx: implement new clk_hw based APIs
+> >   clk: imx: add imx7ulp clk driver
+> >
+> >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
+> >  drivers/clk/clk-divider.c                          | 152
+> +++++++++++++++
+> >  drivers/clk/clk-fractional-divider.c               |  10 +
+> >  drivers/clk/imx/Makefile                           |   6 +-
+> >  drivers/clk/imx/clk-busy.c                         |   2 +-
+> >  drivers/clk/imx/clk-composite.c                    |  85 +++++++++
+> >  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+> >  drivers/clk/imx/clk-imx7ulp.c                      | 209
+> +++++++++++++++++++++
+> >  drivers/clk/imx/clk-pfdv2.c                        | 201
+> ++++++++++++++++++++
+> >  drivers/clk/imx/clk-pllv4.c                        | 182
+> ++++++++++++++++++
+> >  drivers/clk/imx/clk.c                              |  22 +++
+> >  drivers/clk/imx/clk.h                              |  92 ++++++++-
+> >  include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++
+> >  include/linux/clk-provider.h                       |  17 ++
+> >  14 files changed, 1166 insertions(+), 10 deletions(-)  create mode
+> > 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> >  create mode 100644 drivers/clk/imx/clk-composite.c  create mode
+> > 100644 drivers/clk/imx/clk-imx7ulp.c  create mode 100644
+> > drivers/clk/imx/clk- pfdv2.c  create mode 100644
+> > drivers/clk/imx/clk-pllv4.c  create mode 100644
+> > include/dt-bindings/clock/imx7ulp-clock.h
+> >
+> > --
+> > 2.7.4
