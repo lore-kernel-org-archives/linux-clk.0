@@ -1,194 +1,109 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	afaerber@suse.de,
-	robh+dt@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	liuwei@actions-semi.com,
-	mp-cs@actions-semi.com,
-	96boards@ucrobotics.com,
-	devicetree@vger.kernel.org,
-	daniel.thompson@linaro.org,
-	amit.kucheria@linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	hzhang@ucrobotics.com,
-	bdong@ucrobotics.com,
-	manivannanece23@gmail.com,
-	thomas.liau@actions-semi.com,
-	jeff.chen@actions-semi.com,
-	pn@denx.de,
-	edgar.righi@lsitec.org.br,
-	sravanhome@gmail.com,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 7/9] clk: actions: Add Actions Semi Owl SoCs Reset Management Unit support
-Date: Fri, 10 Aug 2018 15:21:11 +0530
-Message-Id: <20180810095113.25292-8-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <hdegoede@redhat.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
+To: Stephen Boyd <sboyd@kernel.org>, "David S . Miller"
+ <davem@davemloft.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Irina Tirdea
+ <irina.tirdea@intel.com>, Michael Turquette <mturquette@baylibre.com>
+Cc: netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+ Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-3-hdegoede@redhat.com>
+ <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <0f52c05a-4f70-3022-3720-07c6bcf29ed8@redhat.com>
+Date: Mon, 27 Aug 2018 20:53:19 +0200
+MIME-Version: 1.0
+In-Reply-To: <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Add Reset Management Unit (RMU) support for Actions Semi Owl SoCs.
+Hi,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/actions/Kconfig      |  1 +
- drivers/clk/actions/Makefile     |  1 +
- drivers/clk/actions/owl-common.h |  2 +
- drivers/clk/actions/owl-reset.c  | 66 ++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-reset.h  | 31 +++++++++++++++
- 5 files changed, 101 insertions(+)
- create mode 100644 drivers/clk/actions/owl-reset.c
- create mode 100644 drivers/clk/actions/owl-reset.h
+On 27-08-18 20:47, Stephen Boyd wrote:
+> Quoting Hans de Goede (2018-08-27 07:31:58)
+>> On some boards a platform clock is used as clock for the r8169 chip,
+>> this commit adds support for getting and enabling this clock (assuming
+>> it has an "ether_clk" alias set on it).
+>>
+>> This is related to commit d31fd43c0f9a ("clk: x86: Do not gate clocks
+>> enabled by the firmware") which is a previous attempt to fix this for some
+>> x86 boards, but this causes all Cherry Trail SoC using boards to not reach
+>> there lowest power states when suspending.
+>>
+>> This commit (together with an atom-pmc-clk driver commit adding the alias)
+>> fixes things properly by making the r8169 get the clock and enable it when
+>> it needs it.
+>>
+>> Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
+>> Cc: Johannes Stezenbach <js@sig21.net>
+>> Cc: Carlo Caione <carlo@endlessm.com>
+>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
-index dc38c85a4833..04f0a6355726 100644
---- a/drivers/clk/actions/Kconfig
-+++ b/drivers/clk/actions/Kconfig
-@@ -2,6 +2,7 @@ config CLK_ACTIONS
- 	bool "Clock driver for Actions Semi SoCs"
- 	depends on ARCH_ACTIONS || COMPILE_TEST
- 	select REGMAP_MMIO
-+	select RESET_CONTROLLER
- 	default ARCH_ACTIONS
- 
- if CLK_ACTIONS
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 78c17d56f991..ccfdf9781cef 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -7,6 +7,7 @@ clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
- clk-owl-y			+= owl-composite.o
- clk-owl-y			+= owl-pll.o
-+clk-owl-y			+= owl-reset.o
- 
- # SoC support
- obj-$(CONFIG_CLK_OWL_S700)	+= owl-s700.o
-diff --git a/drivers/clk/actions/owl-common.h b/drivers/clk/actions/owl-common.h
-index 56f01f7774aa..5a866a8b913d 100644
---- a/drivers/clk/actions/owl-common.h
-+++ b/drivers/clk/actions/owl-common.h
-@@ -26,6 +26,8 @@ struct owl_clk_desc {
- 	struct owl_clk_common		**clks;
- 	unsigned long			num_clks;
- 	struct clk_hw_onecell_data	*hw_clks;
-+	const struct owl_reset_map	*resets;
-+	unsigned long			num_resets;
- 	struct regmap			*regmap;
- };
- 
-diff --git a/drivers/clk/actions/owl-reset.c b/drivers/clk/actions/owl-reset.c
-new file mode 100644
-index 000000000000..203f8f34a8d4
---- /dev/null
-+++ b/drivers/clk/actions/owl-reset.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Actions Semi Owl SoCs Reset Management Unit driver
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/delay.h>
-+#include <linux/regmap.h>
-+#include <linux/reset-controller.h>
-+
-+#include "owl-reset.h"
-+
-+static int owl_reset_assert(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	struct owl_reset *reset = to_owl_reset(rcdev);
-+	const struct owl_reset_map *map = &reset->reset_map[id];
-+
-+	return regmap_update_bits(reset->regmap, map->reg, map->bit, 0);
-+}
-+
-+static int owl_reset_deassert(struct reset_controller_dev *rcdev,
-+			      unsigned long id)
-+{
-+	struct owl_reset *reset = to_owl_reset(rcdev);
-+	const struct owl_reset_map *map = &reset->reset_map[id];
-+
-+	return regmap_update_bits(reset->regmap, map->reg, map->bit, map->bit);
-+}
-+
-+static int owl_reset_reset(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	owl_reset_assert(rcdev, id);
-+	udelay(1);
-+	owl_reset_deassert(rcdev, id);
-+
-+	return 0;
-+}
-+
-+static int owl_reset_status(struct reset_controller_dev *rcdev,
-+			    unsigned long id)
-+{
-+	struct owl_reset *reset = to_owl_reset(rcdev);
-+	const struct owl_reset_map *map = &reset->reset_map[id];
-+	u32 reg;
-+	int ret;
-+
-+	ret = regmap_read(reset->regmap, map->reg, &reg);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * The reset control API expects 0 if reset is not asserted,
-+	 * which is the opposite of what our hardware uses.
-+	 */
-+	return !(map->bit & reg);
-+}
-+
-+const struct reset_control_ops owl_reset_ops = {
-+	.assert		= owl_reset_assert,
-+	.deassert	= owl_reset_deassert,
-+	.reset		= owl_reset_reset,
-+	.status		= owl_reset_status,
-+};
-diff --git a/drivers/clk/actions/owl-reset.h b/drivers/clk/actions/owl-reset.h
-new file mode 100644
-index 000000000000..10f5774979a6
---- /dev/null
-+++ b/drivers/clk/actions/owl-reset.h
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Actions Semi Owl SoCs Reset Management Unit driver
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_RESET_H_
-+#define _OWL_RESET_H_
-+
-+#include <linux/reset-controller.h>
-+
-+struct owl_reset_map {
-+	u32	reg;
-+	u32	bit;
-+};
-+
-+struct owl_reset {
-+	struct reset_controller_dev	rcdev;
-+	const struct owl_reset_map	*reset_map;
-+	struct regmap			*regmap;
-+};
-+
-+static inline struct owl_reset *to_owl_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct owl_reset, rcdev);
-+}
-+
-+extern const struct reset_control_ops owl_reset_ops;
-+
-+#endif /* _OWL_RESET_H_ */
--- 
-2.17.1
+Thanks.
+
+>> @@ -7614,6 +7616,11 @@ static void rtl_hw_initialize(struct rtl8169_private *tp)
+>>          }
+>>   }
+>>   
+>> +static void rtl_disable_clk(void *data)
+>> +{
+>> +       clk_disable_unprepare(data);
+>> +}
+>> +
+>>   static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>>   {
+>>          const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
+>> @@ -7647,6 +7654,32 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>>          mii->reg_num_mask = 0x1f;
+>>          mii->supports_gmii = cfg->has_gmii;
+>>   
+>> +       /* Get the *optional* external "ether_clk" used on some boards */
+>> +       tp->clk = devm_clk_get(&pdev->dev, "ether_clk");
+> 
+> An "optional" clk API is in flight, but it's easier to wait for that to
+> merge and then this to be updated, so just take that as an FYI.
+
+That is good to know.
+
+> It would
+> be interesting to see how to support optional clks with clkdev lookup > though, which would be needed in this case.
+
+Ack.
+
+> How would you know that a clk device driver hasn't probed yet and isn't
+> the driver that's actually providing the clk to this device on x86
+> systems? With DT systems we can figure that out by looking at the DT and
+> seeing if the device driver requesting the clk has the clocks property.
+> On x86 systems it's all clkdev which doesn't really lend itself to
+> solving this problem.
+
+Right on x86 the assumption is that the clk driver will be builtin and
+will probe before the consumer. In this case that is true as the
+pmc-atom-clk driver can only be builtin and its platform device is
+instantiated from the acpi_lpss code and acpi init happens before
+the PCI bus is scanned.
+
+We have the same problem with ACPI OpRegions and drivers who have
+_PS0 / _PS3 methods using those OpRegions and the "solution" so far
+is the same, make sure all drivers providing OpRegion handlers are
+builtin.
+
+Basically we (x86) miss the nice dependency info and complete hw
+description devicetree gives, so we rely on initialization order
+for some of this. I added the -EPROBE_DEFER handling for completeness
+sake / for other platforms, as you point out it will never trigger
+on x86.
+
+Regards,
+
+Hans
+
+
+
+
+> 
+>> +       if (IS_ERR(tp->clk)) {
+>> +               rc = PTR_ERR(tp->clk);
