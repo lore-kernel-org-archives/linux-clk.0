@@ -1,41 +1,61 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28380 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725758AbeH3FSo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:18:44 -0400
-MIME-version: 1.0
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5B8745FF.8000905@samsung.com>
-Date: Thu, 30 Aug 2018 10:18:55 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 06/10] clk: samsung: s5pv210: Use generic helper for
- handling suspend/resume
-In-reply-to: <20180829155046.29359-7-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155101eucas1p2f6ecb6ad0eb37fa725ac950cad73c423@eucas1p2.samsung.com>
-        <20180829155046.29359-7-m.szyprowski@samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "David S . Miller" <davem@davemloft.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <0f52c05a-4f70-3022-3720-07c6bcf29ed8@redhat.com>
+Cc: netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+ Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-3-hdegoede@redhat.com>
+ <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+ <0f52c05a-4f70-3022-3720-07c6bcf29ed8@redhat.com>
+Message-ID: <153539729389.129321.804899531283282568@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
+Date: Mon, 27 Aug 2018 12:14:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
-> Replace common suspend/resume handling code by generic helper.
-> No functional change.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-s5pv210.c | 41 ++-----------------------------
->  1 file changed, 2 insertions(+), 39 deletions(-)
+Quoting Hans de Goede (2018-08-27 11:53:19)
+> On 27-08-18 20:47, Stephen Boyd wrote:
+> > How would you know that a clk device driver hasn't probed yet and isn't
+> > the driver that's actually providing the clk to this device on x86
+> > systems? With DT systems we can figure that out by looking at the DT and
+> > seeing if the device driver requesting the clk has the clocks property.
+> > On x86 systems it's all clkdev which doesn't really lend itself to
+> > solving this problem.
+> =
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Right on x86 the assumption is that the clk driver will be builtin and
+> will probe before the consumer. In this case that is true as the
+> pmc-atom-clk driver can only be builtin and its platform device is
+> instantiated from the acpi_lpss code and acpi init happens before
+> the PCI bus is scanned.
 
-(snip)
+If we can go with this assumption then we can make the optional clk API
+work even on clkdev based systems. Maybe if x86 had some way of
+indicating that all builtin clks are registered? That might work but
+it's not very clean. Or if we could check to see if we're running on an
+ACPI based system in clkdev we could use that to assume that clk_get()
+will only be called after all providers have registered their lookups.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> =
+
+> We have the same problem with ACPI OpRegions and drivers who have
+> _PS0 / _PS3 methods using those OpRegions and the "solution" so far
+> is the same, make sure all drivers providing OpRegion handlers are
+> builtin.
+> =
+
+> Basically we (x86) miss the nice dependency info and complete hw
+> description devicetree gives, so we rely on initialization order
+> for some of this. I added the -EPROBE_DEFER handling for completeness
+> sake / for other platforms, as you point out it will never trigger
+> on x86.
+> =
+
+
+Thanks for the info!
