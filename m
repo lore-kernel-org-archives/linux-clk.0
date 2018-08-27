@@ -1,79 +1,105 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38930 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728713AbeH3QwO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 12:52:14 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180830125013euoutp01fde74f0980349267ee6401d5e85133da~PqnQAA-wD1931619316euoutp010
-        for <linux-clk@vger.kernel.org>; Thu, 30 Aug 2018 12:50:13 +0000 (GMT)
-Subject: Re: [PATCH 03/10] clk: samsung: s3c2412: Use generic helper for
- handling suspend/resume
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
-        <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 30 Aug 2018 14:50:11 +0200
-MIME-Version: 1.0
-In-Reply-To: <CAJKOXPfP5zshtEsk81-0bM97jLYrDiW2BNg58Uf9pBz55bHZXQ@mail.gmail.com>
-Message-Id: <20180830125011eucas1p2ac6ec1898971927237cc3cb0580255b3~PqnOf7I2C1196311963eucas1p2x@eucas1p2.samsung.com>
+Return-Path: <sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-References: <CGME20180829155059eucas1p16fecde00348e0a2e6707aaf2a76320be@eucas1p1.samsung.com>
-        <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <20180829155046.29359-4-m.szyprowski@samsung.com>
-        <CAJKOXPfP5zshtEsk81-0bM97jLYrDiW2BNg58Uf9pBz55bHZXQ@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1533298874-22863-2-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org,
+ Taniya Das <tdas@codeaurora.org>
+References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
+ <1533298874-22863-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <153540448713.129321.8622050618939041593@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
+Date: Mon, 27 Aug 2018 14:14:47 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Krzysztof,
+Quoting Taniya Das (2018-08-03 05:21:13)
+> Add device tree bindings for Low Power Audio subsystem clock controller f=
+or
+> Qualcomm Technology Inc's SDM845 SoCs.
+> =
 
-On 2018-08-30 08:42, Krzysztof Kozlowski wrote:
-> On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> Replace common suspend/resume handling code by generic helper.
->> No functional change.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/clk/samsung/clk-s3c2412.c | 43 ++-----------------------------
->>   1 file changed, 2 insertions(+), 41 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
->> index 6bc94d3aff78..dd1159050a5a 100644
->> --- a/drivers/clk/samsung/clk-s3c2412.c
->> +++ b/drivers/clk/samsung/clk-s3c2412.c
->> @@ -11,7 +11,6 @@
->>   #include <linux/clk-provider.h>
->>   #include <linux/of.h>
->>   #include <linux/of_address.h>
->> -#include <linux/syscore_ops.h>
->>   #include <linux/reboot.h>
->>
->>   #include <dt-bindings/clock/s3c2412.h>
->> @@ -29,9 +28,6 @@
->>
->>   static void __iomem *reg_base;
->>
->> -#ifdef CONFIG_PM_SLEEP
->> -static struct samsung_clk_reg_dump *s3c2412_save;
->> -
->>   /*
->>    * list of controller registers to be saved and restored during a
->>    * suspend/resume cycle.
->> @@ -45,42 +41,6 @@ static unsigned long s3c2412_clk_regs[] __initdata = {
->>          CLKSRC,
-> Did you try building without PM_SLEEP? Now this will be included
-> always so you might have to mark it __maybe_unused.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
+>  .../devicetree/bindings/clock/qcom,lpasscc.txt     | 33 ++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+>  include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
+>  4 files changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.=
+txt
+>  create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+> =
 
-Nope, there is no such need, because *_regs arrays are passed to a
-samsung_clk_sleep_init() noop function not a noop marco.
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Docum=
+entation/devicetree/bindings/clock/qcom,gcc.txt
+> index 664ea1f..e452abc 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also =
+be
+>  part of the GCC/clock-controller node.
+>  For more details on the TSENS properties please refer
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +- qcom,lpass-protected : Indicate GCC to be able to access the
+> +                       lpass gcc clock branches.
 
- > ...
+This doesn't parse well for me. Maybe something like:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+'Indicate that the LPASS clock branches within GCC are unusable due to
+firmware access control restrictions'?
+
+> =
+
+>  Example:
+>         clock-controller@900000 {
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/D=
+ocumentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> new file mode 100644
+> index 0000000..062e413
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> @@ -0,0 +1,33 @@
+> +Qualcomm LPASS Clock Controller Binding
+> +-----------------------------------------------
+> +
+> +Required properties :
+> +- compatible           : shall contain "qcom,sdm845-lpasscc"
+> +- #clock-cells         : from common clock binding, shall contain 1.
+> +- reg                  : shall contain base register address and size,
+> +                         in the order
+> +                       Index-0 maps to LPASS_CC register region
+> +                       Index-1 maps to LPASS_QDSP6SS register region
+> +- qcom,lpass-protected : Boolean property to indicate to GCC clock contr=
+oller
+> +                        for the lpass GCC clocks.
+
+Why is this here?
+
+> +
+> +Optional properties :
+> +- reg-names    : register names of LPASS domain
+> +                "lpass_cc", "lpass_qdsp6ss".
+> +
+> +Example:
+> +
+> +The below node has to be defined in the cases where the LPASS peripheral=
+ loader
+> +would bring the subsystem out of reset.
+> +
+> +       lpasscc: clock-controller {
+> +               compatible =3D "qcom,sdm845-lpasscc";
+> +               reg =3D <0x17014000 0x1f004>, <0x17300000 0x200>;
+> +               reg-names =3D "lpass_cc", "lpass_qdsp6ss";
+> +               #clock-cells =3D <1>;
+> +       };
+> +
+> +       gcc: clock-controller@100000 {
+> +               compatible =3D "qcom,gcc-sdm845";
+> +               qcom,lpass-protected;
+> +       };
