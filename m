@@ -1,92 +1,53 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.20
-Date: Fri, 31 Aug 2018 15:09:58 +0200
-Message-Id: <20180831130958.6744-1-geert+renesas@glider.be>
+Return-Path: <hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Irina Tirdea <irina.tirdea@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 4/4] RFC: r8169: Disable clk during suspend / resume
+Date: Mon, 27 Aug 2018 16:32:00 +0200
+Message-Id: <20180827143200.8597-5-hdegoede@redhat.com>
+In-Reply-To: <20180827143200.8597-1-hdegoede@redhat.com>
+References: <20180827143200.8597-1-hdegoede@redhat.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-	Hi Mike, Stephen,
+Disable the clk during suspend to save power. Note that tp->clk may be
+NULL, the clk core functions handle this without problems.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/net/ethernet/realtek/r8169.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.20-tag1
-
-for you to fetch changes up to b30c862f2a72002c06df23d05c2ca6b49148c4d4:
-
-  clk: renesas: r8a77990: Add missing I2C7 clock (2018-08-31 10:33:59 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v4.20
-
-  - Improve OSC and RCLK (watchdog) handling on R-Car Gen3 SoCs,
-  - Add support for SATA and Fine Display Processor (FDP) clocks on
-    R-Car M3-N,
-  - Add support for the new RZ/G2M (r8a774a1) SoC,
-  - Small fixes and clean ups.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (2):
-      clk: renesas: Add r8a774a1 CPG Core Clock Definitions
-      clk: renesas: cpg-mssr: Add r8a774a1 support
-
-Geert Uytterhoeven (13):
-      clk: renesas: rcar-gen3: Rename rint to .r
-      clk: renesas: rcar-gen3: Add support for OSC EXTAL predivider
-      clk: renesas: r8a7795: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a7796: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a77965: Add OSC EXTAL predivider configuration
-      clk: renesas: r8a77980: Add OSC predivider configuration and clock
-      clk: renesas: cpg-mssr: Add support for fixed rate clocks
-      clk: renesas: rcar-gen3: Add support for RCKSEL clock selection
-      clk: renesas: r8a77990: Correct RCLK handling
-      clk: renesas: r8a77995: Correct RCLK handling
-      clk: renesas: rcar-gen3: Add support for mode pin clock selection
-      clk: renesas: r8a77980: Add RCLK for watchdog timer
-      clk: renesas: r8a77990: Add missing I2C7 clock
-
-Hoan Nguyen An (1):
-      clk: renesas: r8a77965: Add FDP clock
-
-Takeshi Kihara (1):
-      clk: renesas: r8a77965: Add SATA clock
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   9 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774a1-cpg-mssr.c            | 323 +++++++++++++++++++++
- drivers/clk/renesas/r8a7795-cpg-mssr.c             |  67 ++---
- drivers/clk/renesas/r8a7796-cpg-mssr.c             |  67 ++---
- drivers/clk/renesas/r8a77965-cpg-mssr.c            |  69 ++---
- drivers/clk/renesas/r8a77980-cpg-mssr.c            |  28 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c            |  13 +-
- drivers/clk/renesas/r8a77995-cpg-mssr.c            |  12 +-
- drivers/clk/renesas/rcar-gen3-cpg.c                |  40 ++-
- drivers/clk/renesas/rcar-gen3-cpg.h                |  24 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |  11 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   4 +
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h      |  58 ++++
- 15 files changed, 599 insertions(+), 132 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774a1-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a774a1-cpg-mssr.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 779b02979493..aebc90158bd9 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -7312,8 +7312,10 @@ static int rtl8169_suspend(struct device *device)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(device);
+ 	struct net_device *dev = pci_get_drvdata(pdev);
++	struct rtl8169_private *tp = netdev_priv(dev);
+ 
+ 	rtl8169_net_suspend(dev);
++	clk_disable_unprepare(tp->clk);
+ 
+ 	return 0;
+ }
+@@ -7340,6 +7342,7 @@ static int rtl8169_resume(struct device *device)
+ 	struct net_device *dev = pci_get_drvdata(pdev);
+ 	struct rtl8169_private *tp = netdev_priv(dev);
+ 
++	clk_prepare_enable(tp->clk);
+ 	rtl8169_init_phy(dev, tp);
+ 
+ 	if (netif_running(dev))
+-- 
+2.18.0
