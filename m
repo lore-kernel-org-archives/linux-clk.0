@@ -1,93 +1,50 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: "sboyd@kernel.org" <sboyd@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>, "thor.thayer@linux.intel.com"
-	<thor.thayer@linux.intel.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
-Date: Fri, 17 Aug 2018 02:33:52 +0000
-Message-ID: 
- <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: 
- <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <shawnguo@kernel.org>
+Date: Mon, 27 Aug 2018 09:48:16 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180827014815.GD29208@dragon>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180802113552.GJ9117@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+On Thu, Aug 02, 2018 at 12:35:52PM +0100, Mark Brown wrote:
+> On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
+> > On 02.08.2018 12:44, Mark Brown wrote:
+> 
+> > > I thought we'd got an ack for this from Raphael on a previous version or
+> > > am I mistaken?
+> 
+> > No, we got an:
+> > "Anyway, I have no particular problems with exporting
+> > pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+> 
+> > Should i see it as ACK?
 
-Do you want me to resend this series for review?
-It seems have been pending for quite a long time.
+Mark,
 
-Thor just pinged me for its status as he wants to use it.
+Can you ACK on those two regulator patches, so that I can queue this
+series up on IMX tree?
 
-Regards
-Dong Aisheng
-
-> -----Original Message-----
-> From: A.s. Dong
-> Sent: Wednesday, June 20, 2018 10:54 AM
-> To: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
-> linux-imx <linux-imx@nxp.com>
-> Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
->=20
-> Ping....
->=20
-> > -----Original Message-----
-> > From: A.s. Dong
-> > Sent: Friday, May 25, 2018 6:37 PM
-> > To: linux-clk@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
-> > linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
-> > Subject: [PATCH V3 0/4] clk: new APIs to handle all available clocks
-> >
-> > This patch series is a continue of discussion from here,
-> > https://patchwork.kernel.org/patch/9986293/
-> > that some users may want to handle all available clocks from device
-> > tree without need to know the detailed clock information likes clock
-> > numbers and names. This is useful in writing some generic drivers to ha=
-ndle
-> clock part.
-> >
-> > Note:
-> > This patch series is tested on MX6Q SDB cpufreq driver with a minor
-> > change to switch to use clk_bulk_get_all.
-> > But patch 4 only test compiling. Hopefully someone could help test the
-> > function.
-> >
-> > v2->v3:
-> >  * address all comments from Stephen
-> >  * fix build warnings on other architectures.
-> > v1->v2:
-> >  * add clk_bulk_{get|put}_all() which only supports DT platform
-> > currently
-> >  * remove _all variants and the wrapper struct clk_bulk
-> >  * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
-> >    proves they need it because they don't have a struct device pointer.
-> >
-> > Dong Aisheng (4):
-> >   clk: bulk: add of_clk_bulk_get()
-> >   clk: add new APIs to operate on all available clocks
-> >   clk: add managed version of clk_bulk_get_all
-> >   video: simplefb: switch to use clk_bulk API to simplify clock
-> >     operations
-> >
-> >  drivers/clk/clk-bulk.c         | 80
-> > ++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/clk-devres.c       | 24 +++++++++++++
-> >  drivers/video/fbdev/simplefb.c | 66 +++++++---------------------------
-> >  include/linux/clk.h            | 65 +++++++++++++++++++++++++++++++++-
-> >  4 files changed, 180 insertions(+), 55 deletions(-)
-> >
-> > --
-> > 2.7.4
+Shawn
