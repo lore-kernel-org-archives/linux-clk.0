@@ -1,72 +1,111 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 30 Aug 2018 15:13:57 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
-	linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
-	sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
-	matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 0/2] clk: Support ROHM BD71837 (BD71847)
-Message-ID: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 1/2] devres: provide devm_kstrdup_const()
+Date: Mon, 27 Aug 2018 10:21:00 +0200
+Message-Id: <20180827082101.5036-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch series adds support for clk gate included in ROHM BD71837
-(and BD71847) Power Management ICs. Additionally patch series adds support
-for new managed interfaces for clkdev lookup and parent_of_provider
-registrations.
+Provide a resource managed version of kstrdup_const(). This variant
+internally calls devm_kstrdup() on pointers that are outside of
+.rodata section. Also provide a corresponding version of devm_kfree().
 
-Please note that the patch has not been tested on BD71847 - I will
-verify the BD71847 part and do appropriate documentation/naming changes
-after verification. Hence only BD71837 support is announced here even
-though the BD71847 should be identical what comes to clk registers.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ include/linux/device.h |  2 ++
+ mm/util.c              | 35 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
 
-BD71837 driver in the patch series depends on defines submitted as part of
-this patch set:
-https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com/
-
-The managed interfaces are continuation of discussion started here:
-https://lore.kernel.org/lkml/20180730125550.GD8862@localhost.localdomain/
-Difference to previous patch:
- - dropped devm_clk_register_clkdev
- - added new interfaces to Documentation/driver-model/devres.txt
- - did not rename __clk_register_clkdev
- - simplified IS_ERR - checks/code dublication by dropping checks from
-   devm_clk_hw_register_clkdev.
-   As negative point is this causes devres_alloc to be done before checking
-   for IS_ERR(hw) inside do_clk_register_clkdev.
-
-and BD71837 driver is continuation for patch discussion started here:
-https://lore.kernel.org/lkml/d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com/
-Difference to previous patch:
- - Simply fail out if no parent clock is found from DT. This simplifies
-   driver a lot and encourages proper clk tree modelling in DT.
-
-patch series is based on linux-next tag next-20180823
-
-Patch 1:
-	Add new managed interfaces
-Patch 2:
-	Support BD71837
-
-Matti Vaittinen (2):
-  clk: clkdev/of_clk - add managed lookup and provider registrations
-  clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
-
- Documentation/driver-model/devres.txt |   3 +
- drivers/clk/Kconfig                   |   6 ++
- drivers/clk/Makefile                  |   1 +
- drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
- drivers/clk/clk.c                     |  28 ++++++--
- drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
- include/linux/clk-provider.h          |   4 ++
- include/linux/clkdev.h                |   4 ++
- 8 files changed, 267 insertions(+), 32 deletions(-)
- create mode 100644 drivers/clk/clk-bd718x7.c
-
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8f882549edee..f8f5982d26b2 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -693,7 +693,9 @@ static inline void *devm_kcalloc(struct device *dev,
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
+ extern void devm_kfree(struct device *dev, void *p);
++extern void devm_kfree_const(struct device *dev, void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
++extern char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+ extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+ 			  gfp_t gfp);
+ 
+diff --git a/mm/util.c b/mm/util.c
+index d2890a407332..6d1f41b5775e 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -39,6 +39,20 @@ void kfree_const(const void *x)
+ }
+ EXPORT_SYMBOL(kfree_const);
+ 
++/**
++ * devm_kfree_const - Resource managed conditional kfree
++ * @dev: device this memory belongs to
++ * @p: memory to free
++ *
++ * Function calls devm_kfree only if @p is not in .rodata section.
++ */
++void devm_kfree_const(struct device *dev, void *p)
++{
++	if (!is_kernel_rodata((unsigned long)p))
++		devm_kfree(dev, p);
++}
++EXPORT_SYMBOL(devm_kfree_const);
++
+ /**
+  * kstrdup - allocate space for and copy an existing string
+  * @s: the string to duplicate
+@@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
+ }
+ EXPORT_SYMBOL(kstrdup_const);
+ 
++/**
++ * devm_kstrdup_const - resource managed conditional string duplication
++ * @dev: device for which to duplicate the string
++ * @s: the string to duplicate
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Function returns source string if it is in .rodata section otherwise it
++ * fallbacks to devm_kstrdup.
++ *
++ * Strings allocated by devm_kstrdup_const will be automatically freed when
++ * the associated device is detached.
++ */
++char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
++{
++	if (is_kernel_rodata((unsigned long)s))
++		return s;
++
++	return devm_kstrdup(dev, s, gfp);
++}
++EXPORT_SYMBOL(devm_kstrdup_const);
++
+ /**
+  * kstrndup - allocate space for and copy an existing string
+  * @s: the string to duplicate
 -- 
-2.14.3
+2.18.0
