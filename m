@@ -1,104 +1,77 @@
-Return-Path: <sha@pengutronix.de>
-Date: Fri, 24 Aug 2018 09:40:11 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org, Abel Vesa <abelvesa@linux.com>,
-	linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH v6 3/5] clk: imx: add SCCG PLL type
-Message-ID: <20180824074011.lufm653imkf6fyd3@pengutronix.de>
-References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
- <1534945703-4730-4-git-send-email-abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:19194 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeH1HY4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Aug 2018 03:24:56 -0400
+Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC: Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+ <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
+ <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
+ <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
+ <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+From: Jian Hu <jian.hu@amlogic.com>
+Message-ID: <977d8010-6d82-5eac-5da5-6dbe0f73971a@amlogic.com>
+Date: Tue, 28 Aug 2018 11:35:32 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1534945703-4730-4-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-+Cc Andrey Smirnov who made me aware of this issue.
+Hi: Jerome
 
-On Wed, Aug 22, 2018 at 04:48:21PM +0300, Abel Vesa wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
+On 2018/8/27 21:07, Jerome Brunet wrote:
+> On Fri, 2018-08-24 at 21:34 +0800, Jian Hu wrote:
+>>>
+>>
+>> I am confued about aoclk81's parent clocks.
+>>
+>> I can not get the example of axg audio clock driver, Could you provide
+>> the link? Had it merged into clk-meson.git?
 > 
-> The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-> The driver currently misses the PLL lock check, as the preliminary
-> documentation mentions lock configurations, but is quiet about where
-> to find the actual lock status signal.
+> Yes and mainline as well : drivers/clk/meson/axg-audio.c
 > 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
-> +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-> +			    unsigned long parent_rate)
-> +{
-> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-> +	u32 val;
-> +	u32 divf;
-> +
-> +	divf = rate / (parent_rate * 2);
-> +
-> +	val = readl_relaxed(pll->base + PLL_CFG2);
-> +	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
-> +	val |= (divf - 1) << PLL_DIVF1_SHIFT;
-> +	writel_relaxed(val, pll->base + PLL_CFG2);
-> +
-> +	/* FIXME: PLL lock check */
+> Basically this driver is creating bypass input clocks (audio_pclk, mst_in[0-9],
+> etc...) .
+> 
+> This allows to collect input clocks from DT (like any consumer should) will
+> keeping constant in the controller clock tree.
+> 
+>>From what I've seen of your controller drivers, the EE controller should have
+> one input, the AO should have 3.
+> 
+> 
+> 
+> .
+> 
+I still can not get the example meaning in axg audio driver.
 
-Shouldn't be too hard to add, no?
+In 26 page of A113D_Datasheet V0.7 20170725-Baylibre.pdf,We can see the 
+aoclk81 has two parents. clk81 and ao_slow_clk. I can not get 3 parents.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_pll1_prepare(struct clk_hw *hw)
-> +{
-> +	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-> +	u32 val;
-> +
-> +	val = readl_relaxed(pll->base);
-> +	val &= ~(1 << PLL_PD);
-> +	writel_relaxed(val, pll->base);
+                          clk81|\
+                        -------| \        aoclk81
+src0 |\                       |  |-------------------
+-----| \     ao_slow_clk      |  |
+      |  |---------------------| /
+-----| /                      |/
+  src1|/
 
-pll->base + PLL_CFG0 please.
 
-> +static const struct clk_ops clk_sccg_pll1_ops = {
-> +	.is_prepared	= clk_pll1_is_prepared,
-> +	.recalc_rate	= clk_pll1_recalc_rate,
-> +	.round_rate	= clk_pll1_round_rate,
-> +	.set_rate	= clk_pll1_set_rate,
-> +};
-> +
-> +static const struct clk_ops clk_sccg_pll2_ops = {
-> +	.prepare	= clk_pll1_prepare,
-> +	.unprepare	= clk_pll1_unprepare,
-> +	.recalc_rate	= clk_pll2_recalc_rate,
-> +	.round_rate	= clk_pll2_round_rate,
-> +	.set_rate	= clk_pll2_set_rate,
-> +};
+src0 is from xtal, if can generate 32k clock, but it is never used.
+src1 is from gpio clock, It is never used. If necessary， the ao_slow_clk 
+maybe described.
 
-So these are two PLLs that share the same enable register. Doing the
-prepare/unprepare for only one PLL can lead to all kinds of trouble.
-Finding a good abstraction the properly handles this case with the
-clock framework is probably also not easy.
-
-I could imagine we'll need to track the enable state on both PLLs and
-only if both are disabled we disable it in hardware.
-
-With the current code we disable the PLLs when all consumers are
-reparented to pll1, which probably has bad effects.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+So why aoclk81 has 3 parents?
