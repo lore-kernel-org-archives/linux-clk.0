@@ -1,85 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39258 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728104AbeHJQHe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 12:07:34 -0400
-Date: Fri, 10 Aug 2018 06:37:35 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 10/24] watchdog: jz4740: Avoid starting watchdog in
- set_timeout
-Message-ID: <20180810133735.GC29028@roeck-us.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
- <20180809214414.20905-11-paul@crapouillou.net>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Tue, 28 Aug 2018 18:04:55 +0000
+Message-ID: 
+ <TY1PR01MB15620BFB056C2EAB29C928E98A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180821032020.81254-1-chris.brandt@renesas.com>
+ <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
+ <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVd7wT5vPrHFAgHYqNWtJNjbSG7GaaPaMVD12cfkg8E2A@mail.gmail.com>
+ <TY1PR01MB1562485EE3C0F9C5A3827CDD8A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVBcKP_RTw1B4fty5u5OhStZPydigKVob+7+uc4YWFzDg@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdVBcKP_RTw1B4fty5u5OhStZPydigKVob+7+uc4YWFzDg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180809214414.20905-11-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 09, 2018 at 11:44:00PM +0200, Paul Cercueil wrote:
-> Previously the jz4740_wdt_set_timeout() function was starting the timer
-> unconditionally, even if it was stopped when that function was entered.
-> 
-> Now, the timer will be restarted only if it was already running before
-> this function is called.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->  drivers/watchdog/jz4740_wdt.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
->  v6: New patch
-> 
-> diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-> index 0f54306aee25..45d9495170e5 100644
-> --- a/drivers/watchdog/jz4740_wdt.c
-> +++ b/drivers/watchdog/jz4740_wdt.c
-> @@ -64,13 +64,15 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
->  {
->  	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
->  	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
-> +	u32 tcer;
->  
-> +	regmap_read(drvdata->map, TCU_REG_WDT_TCER, &tcer);
->  	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
->  
->  	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
->  	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
->  
-> -	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
-> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, tcer & TCU_WDT_TCER_TCEN);
->  
->  	wdt_dev->timeout = new_timeout;
->  	return 0;
-> @@ -86,6 +88,7 @@ static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
->  		return ret;
->  
->  	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
-> +	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
->  
->  	return 0;
->  }
-> -- 
-> 2.11.0
-> 
+SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIEF1Z3VzdCAyOCwgMjAxOCwgR2VlcnQgVXl0dGVyaG9l
+dmVuIHdyb3RlOg0KPiBTZXJpb3VzbHksIHlvdSBkbyBoYXZlIHRvIHByZXZlbnQgcmVnaXN0ZXJp
+bmcgdGhlIHJlc2V0IGNvbnRyb2xsZXIgd2hlbg0KPiBydW5uaW5nIG9uIFJaL0EyIChiYXNlZCBv
+biBjcGdfbXNzcl9pbmZvLnN0YnljdHJsIG9yIHNvbWUgb3RoZXIgaW5kaWNhdG9yKS4NCg0KT0su
+IFNpbmNlIHRoZSByZXNldCBjb250cm9sbGVyIHJlZ2lzdHJhdGlvbiBpcyB0aGUgbGFzdCB0aGlu
+ZyBkb25lIA0KY3BnX21zc3JfcHJvYmUsIEknbGwganVzdCByZXR1cm4uDQoNCisJaWYgKGluZm8t
+PnN0YnljdHJsKQ0KKwkJcmV0dXJuIDA7DQorDQoJZXJyb3IgPSBjcGdfbXNzcl9yZXNldF9jb250
+cm9sbGVyX3JlZ2lzdGVyKHByaXYpOw0KCWlmIChlcnJvcikNCgkJcmV0dXJuIGVycm9yOw0KDQoJ
+cmV0dXJuIDA7DQp9DQoNCg0KPiBXaGVuIHJ1bm5pbmcgb24gUlovQTIsIEknZCB1c2UgYSBkaWZm
+ZXJlbnQgcGFjayBmdW5jdGlvbiBpbg0KPiBjcGdfbXNzcl9jbGtfc3JjX3R3b2NlbGxfZ2V0KCkg
+aW5zdGVhZCwgc28geW91IGNhbiBqdXN0IHdyaXRlOg0KPiANCj4gICAgIGNsb2NrID0gPCZjcGcg
+Q1BHX01PRCAzNj47DQo+IA0KPiA+IHI3czkyMTAtY3BnLW1zc3IuYzoNCj4gPiAtLS0tLS0tLS0t
+LS0tLS0tLS0tLQ0KPiA+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbXNzcl9tb2RfY2xrIHI3czkyMTBf
+bW9kX2Nsa3NbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgICAgICAgIERFRl9NT0QoIm9zdG0wIiwg
+ICAgICAgIFNUQkNSX0lEKDM2KSwgICBSN1M5MjEwX0NMS19QMUMpLA0KPiA+ICAgICAgICAgREVG
+X01PRCgib3N0bTEiLCAgICAgICAgU1RCQ1JfSUQoMzUpLCAgIFI3UzkyMTBfQ0xLX1AxQyksDQo+
+ID4gICAgICAgICBERUZfTU9EKCJvc3RtMiIsICAgICAgICBTVEJDUl9JRCgzNCksICAgUjdTOTIx
+MF9DTEtfUDFDKSwNCj4gDQo+IC4uLiBhbmQgYSBkaWZmZXJlbnQgREVGX01PRCgpIG1hY3JvIGhl
+cmUsIHNvIHlvdSBjYW4ganVzdCB3cml0ZToNCj4gDQo+ICAgICBERUZfTU9EKCJvc3RtMCIsICAg
+ICAgICAzNiwgICBSN1M5MjEwX0NMS19QMUMpLA0KDQpPSy4gSSB3aWxsIGRvIHRoYXQgaW5zdGVh
+ZC4NCg0KDQpUaGFuayB5b3UsDQpDaHJpcw0KDQo=
