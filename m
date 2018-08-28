@@ -1,85 +1,91 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH 11/14] dt-bindings: clock: Document qcom,krait-cc
-Date: Mon, 13 Aug 2018 19:06:04 +0530
-Message-Id: <1534167367-17545-12-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
-References: <1534167367-17545-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-cys01nam02on0121.outbound.protection.outlook.com ([104.47.37.121]:51168
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726961AbeH1VPu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Aug 2018 17:15:50 -0400
+Date: Tue, 28 Aug 2018 10:23:05 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
+Message-ID: <20180828172305.bohg6cggnzm3wsuj@pburton-laptop>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+ <20180821171635.22740-6-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180821171635.22740-6-paul@crapouillou.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+Hi Daniel & Thomas,
 
-The Krait clock controller controls the krait CPU and the L2 clocks
-consisting a primary mux and secondary mux. Add document for that.
+On Tue, Aug 21, 2018 at 07:16:16PM +0200, Paul Cercueil wrote:
+> This driver handles the TCU (Timer Counter Unit) present on the Ingenic
+> JZ47xx SoCs, and provides the kernel with a system timer, and optionally
+> with a clocksource and a sched_clock.
+> 
+> It also provides clocks and interrupt handling to client drivers.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>      v2: Use SPDX identifier for the license
+>     
+>      v3: - Move documentation to its own patch
+>          - Search the devicetree for PWM clients, and use all the TCU
+>     	   channels that won't be used for PWM
+>     
+>      v4: - Add documentation about why we search for PWM clients
+>          - Verify that the PWM clients are for the TCU PWM driver
+>     
+>      v5: Major overhaul. Too many changes to list. Consider it's a new
+>          patch.
+>     
+>      v6: - Add two API functions ingenic_tcu_request_channel and
+>            ingenic_tcu_release_channel. To be used by the PWM driver to
+>            request the use of a TCU channel. The driver will now dynamically
+>            move away the system timer or clocksource to a new TCU channel.
+>          - The system timer now defaults to channel 0, the clocksource now
+>            defaults to channel 1 and is no more optional. The
+>            ingenic,timer-channel and ingenic,clocksource-channel devicetree
+>            properties are now gone.
+>          - Fix round_rate / set_rate not calculating the prescale divider
+>            the same way. This caused problems when (parent_rate / div) would
+>            give a non-integer result. The behaviour is correct now.
+>          - The clocksource clock is turned off on suspend now.
+>     
+>      v7: Fix section mismatch by using builtin_platform_driver_probe()
+> 
+>  drivers/clocksource/Kconfig         |   10 +
+>  drivers/clocksource/Makefile        |    1 +
+>  drivers/clocksource/ingenic-timer.c | 1124 +++++++++++++++++++++++++++++++++++
+>  drivers/clocksource/ingenic-timer.h |   15 +
+>  include/linux/mfd/ingenic-tcu.h     |    3 +
+>  5 files changed, 1153 insertions(+)
+>  create mode 100644 drivers/clocksource/ingenic-timer.c
+>  create mode 100644 drivers/clocksource/ingenic-timer.h
+>%
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,krait-cc.txt    | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
+How is this & patch 6 of the series looking to you from a
+drivers/clocksource perspective?
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-new file mode 100644
-index 0000000..030ba60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-@@ -0,0 +1,34 @@
-+Krait Clock Controller
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+			"qcom,krait-cc-v1"
-+			"qcom,krait-cc-v2"
-+
-+- #clock-cells:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: must be 1
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the clock parents of hfpll, secondary muxes.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
-+
-+Example:
-+
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
-+		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
-+		#clock-cells = <1>;
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+If you're happy with them it'd be great to get an ack so I can take this
+through the MIPS tree with the rest of the series. The alternative would
+be to get the drivers in first then the MIPS bits in the next release
+cycle.
+
+Thanks,
+    Paul
