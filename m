@@ -1,77 +1,98 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:60464 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeHJAMG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 20:12:06 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 17/24] clk: jz4740: Add TCU clock
-Date: Thu,  9 Aug 2018 23:44:07 +0200
-Message-Id: <20180809214414.20905-18-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <rppt@linux.vnet.ibm.com>
+Date: Tue, 28 Aug 2018 09:32:50 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] devres: provide devm_kstrdup_const()
+References: <20180827082101.5036-1-brgl@bgdev.pl>
+ <20180827103353.GB13848@rapoport-lnx>
+ <CAMRc=MdZ_1Vk2c19L-spzOm=7UaDpaACriq4gzMxAvQz=noNgQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CAMRc=MdZ_1Vk2c19L-spzOm=7UaDpaACriq4gzMxAvQz=noNgQ@mail.gmail.com>
+Message-Id: <20180828063250.GB25317@rapoport-lnx>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the missing TCU clock to the list of clocks supplied by the CGU for
-the JZ4740 SoC.
+On Mon, Aug 27, 2018 at 04:28:55PM +0200, Bartosz Golaszewski wrote:
+> 2018-08-27 12:33 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
+> > On Mon, Aug 27, 2018 at 10:21:00AM +0200, Bartosz Golaszewski wrote:
+> >> Provide a resource managed version of kstrdup_const(). This variant
+> >> internally calls devm_kstrdup() on pointers that are outside of
+> >> .rodata section. Also provide a corresponding version of devm_kfree().
+> >>
+> >> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> >> ---
+> >>  include/linux/device.h |  2 ++
+> >>  mm/util.c              | 35 +++++++++++++++++++++++++++++++++++
+> >>  2 files changed, 37 insertions(+)
+> >>
+> >> diff --git a/include/linux/device.h b/include/linux/device.h
+> >> index 8f882549edee..f8f5982d26b2 100644
+> >> --- a/include/linux/device.h
+> >> +++ b/include/linux/device.h
+> >> @@ -693,7 +693,9 @@ static inline void *devm_kcalloc(struct device *dev,
+> >>       return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+> >>  }
+> >>  extern void devm_kfree(struct device *dev, void *p);
+> >> +extern void devm_kfree_const(struct device *dev, void *p);
+> >>  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+> >> +extern char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
+> >>  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+> >>                         gfp_t gfp);
+> >>
+> >> diff --git a/mm/util.c b/mm/util.c
+> >> index d2890a407332..6d1f41b5775e 100644
+> >> --- a/mm/util.c
+> >> +++ b/mm/util.c
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
- include/dt-bindings/clock/jz4740-cgu.h | 1 +
- 2 files changed, 7 insertions(+)
+[ ... ]
 
- v5: New patch
+> >> + * Strings allocated by devm_kstrdup_const will be automatically freed when
+> >> + * the associated device is detached.
+> >> + */
+> >> +char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
+> >> +{
+> >> +     if (is_kernel_rodata((unsigned long)s))
+> >> +             return s;
+> >> +
+> >> +     return devm_kstrdup(dev, s, gfp);
+> >> +}
+> >> +EXPORT_SYMBOL(devm_kstrdup_const);
+> >> +
+> >
+> > The devm_ variants seem to belong to drivers/base/devres.c rather than
+> > mm/util.c
+> >
+> 
+> Not all devm_ variants live in drivers/base/devres.c, many subsystems
+> implement them locally. In this case we need to choose between
+> exporting is_kernel_rodata() and putting devm_kstrdup_const() in
+> mm/util.c. I chose the latter, since it's cleaner.
 
- v6: No change
-
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 32fcc75f6f77..216ba051e743 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 5 },
- 	},
-+
-+	[JZ4740_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
- };
+I rather think that moving is_kernel_rodata() to
+include/asm-generic/sections.h and having devm_kstrdup_const() next to
+devm_kstrdup() would be cleaner.
  
- static void __init jz4740_cgu_init(struct device_node *np)
-diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
-index 6ed83f926ae7..e82d77028581 100644
---- a/include/dt-bindings/clock/jz4740-cgu.h
-+++ b/include/dt-bindings/clock/jz4740-cgu.h
-@@ -34,5 +34,6 @@
- #define JZ4740_CLK_ADC		19
- #define JZ4740_CLK_I2C		20
- #define JZ4740_CLK_AIC		21
-+#define JZ4740_CLK_TCU		22
- 
- #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
+> Bart
+> 
+
 -- 
-2.11.0
+Sincerely yours,
+Mike.
