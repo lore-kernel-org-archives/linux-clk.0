@@ -1,49 +1,124 @@
-Return-Path: <colin.king@canonical.com>
-From: Colin King <colin.king@canonical.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mediatek: remove unused array audio_parents
-Date: Mon,  6 Aug 2018 14:44:02 +0100
-Message-Id: <20180806134402.1055-1-colin.king@canonical.com>
+Return-Path: <andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Type: text/plain; charset="utf-8"
+References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
+ <1534945703-4730-4-git-send-email-abel.vesa@nxp.com> <20180824074011.lufm653imkf6fyd3@pengutronix.de>
+ <20180828105821.gbd7tba7uvmeeqcx@fsr-ub1664-175>
+In-Reply-To: <20180828105821.gbd7tba7uvmeeqcx@fsr-ub1664-175>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Tue, 28 Aug 2018 12:11:13 -0700
+Message-ID: <CAHQ1cqEsHoF0ZFY5+CpQFJ+b3sKd3yJPvmRZMAbaa9+Xzhe3=g@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] clk: imx: add SCCG PLL type
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, Lucas Stach <l.stach@pengutronix.de>,
+	Sascha Hauer <kernel@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, sboyd@kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
+	abelvesa@linux.com, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Aug 28, 2018 at 3:58 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> On Fri, Aug 24, 2018 at 09:40:11AM +0200, Sascha Hauer wrote:
+> > +Cc Andrey Smirnov who made me aware of this issue.
+> >
+> > On Wed, Aug 22, 2018 at 04:48:21PM +0300, Abel Vesa wrote:
+> > > From: Lucas Stach <l.stach@pengutronix.de>
+> > >
+> > > The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+> > > The driver currently misses the PLL lock check, as the preliminary
+> > > documentation mentions lock configurations, but is quiet about where
+> > > to find the actual lock status signal.
+> > >
+> > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > > ---
+> > > +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > +                       unsigned long parent_rate)
+> > > +{
+> > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > > +   u32 val;
+> > > +   u32 divf;
+> > > +
+> > > +   divf = rate / (parent_rate * 2);
+> > > +
+> > > +   val = readl_relaxed(pll->base + PLL_CFG2);
+> > > +   val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
+> > > +   val |= (divf - 1) << PLL_DIVF1_SHIFT;
+> > > +   writel_relaxed(val, pll->base + PLL_CFG2);
+> > > +
+> > > +   /* FIXME: PLL lock check */
+> >
+> > Shouldn't be too hard to add, no?
+>
+> Added to the next version which I intend to send today.
+>
+> >
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > > +static int clk_pll1_prepare(struct clk_hw *hw)
+> > > +{
+> > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > > +   u32 val;
+> > > +
+> > > +   val = readl_relaxed(pll->base);
+> > > +   val &= ~(1 << PLL_PD);
+> > > +   writel_relaxed(val, pll->base);
+> >
+> > pll->base + PLL_CFG0 please.
+>
+> Same as above.
+>
+> >
+> > > +static const struct clk_ops clk_sccg_pll1_ops = {
+> > > +   .is_prepared    = clk_pll1_is_prepared,
+> > > +   .recalc_rate    = clk_pll1_recalc_rate,
+> > > +   .round_rate     = clk_pll1_round_rate,
+> > > +   .set_rate       = clk_pll1_set_rate,
+> > > +};
+> > > +
+> > > +static const struct clk_ops clk_sccg_pll2_ops = {
+> > > +   .prepare        = clk_pll1_prepare,
+> > > +   .unprepare      = clk_pll1_unprepare,
+> > > +   .recalc_rate    = clk_pll2_recalc_rate,
+> > > +   .round_rate     = clk_pll2_round_rate,
+> > > +   .set_rate       = clk_pll2_set_rate,
+> > > +};
+> >
+> > So these are two PLLs that share the same enable register. Doing the
+> > prepare/unprepare for only one PLL can lead to all kinds of trouble.
+> > Finding a good abstraction the properly handles this case with the
+> > clock framework is probably also not easy.
+> >
+> > I could imagine we'll need to track the enable state on both PLLs and
+> > only if both are disabled we disable it in hardware.
+> >
+> > With the current code we disable the PLLs when all consumers are
+> > reparented to pll1, which probably has bad effects.
+> >
+>
+> So it took me a while to understand exactly why this needs to stay like it is.
+>
 
-Array audio_parents is declared but never used, hence it is redundant
-and can be removed.
+IMHO this means that, if nothing else, all of the below should be
+documented in code as a comment, otherwise simpletons like me are
+going to continue stumbling over it and wondering what's going on.
 
-Cleans up clang warning:
-warning: 'audio_parents' defined but not used [-Wunused-const-variable=]
+> The PLL1 is never used by any device, instead it is used as a source for PLL2.
+>
+> But because the interlink between the two of them is too complicated,
+> the PLLs 1 and 2 need to be separate clocks.
+>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/mediatek/clk-mt2701.c | 5 -----
- 1 file changed, 5 deletions(-)
+Can you go a little bit more into detail as for why PLL1 needs to be
+exposed in the first place and can't just be dealt with behind the
+scenes as a part of PLL2 abstraction? Are there use-cases where the
+rates of the two are going to be adjusted individually in Linux?
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index 4dda8988b2f0..ab6ab07f53e6 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -249,11 +249,6 @@ static const char * const msdc30_parents[] = {
- 	"univpll2_d4"
- };
- 
--static const char * const audio_parents[] = {
--	"clk26m",
--	"syspll1_d16"
--};
--
- static const char * const aud_intbus_parents[] = {
- 	"clk26m",
- 	"syspll1_d4",
--- 
-2.17.1
+Thanks,
+Andrey Smirnov
