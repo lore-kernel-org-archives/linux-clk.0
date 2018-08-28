@@ -1,110 +1,78 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
-Date: Mon, 27 Aug 2018 10:21:01 +0200
-Message-Id: <20180827082101.5036-2-brgl@bgdev.pl>
-In-Reply-To: <20180827082101.5036-1-brgl@bgdev.pl>
-References: <20180827082101.5036-1-brgl@bgdev.pl>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <20180821032020.81254-1-chris.brandt@renesas.com>
+ <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
+ <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVd7wT5vPrHFAgHYqNWtJNjbSG7GaaPaMVD12cfkg8E2A@mail.gmail.com> <TY1PR01MB1562485EE3C0F9C5A3827CDD8A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562485EE3C0F9C5A3827CDD8A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Aug 2018 19:35:41 +0200
+Message-ID: <CAMuHMdVBcKP_RTw1B4fty5u5OhStZPydigKVob+7+uc4YWFzDg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-an example of how to use this new routine to shrink driver code.
+Hi Chris,
 
-While we're at it: replace a call to kcalloc() with devm_kcalloc().
+On Tue, Aug 28, 2018 at 7:18 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> Since my config for RZ/A2 does not set CONFIG_RESET_CONTROLLER, none of
+> the reset code is built and cpg_mssr_reset_controller_register() just
+> ends up being an empty function.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+Let's try shmobile_defconfig instead :-)
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index 08ef69945ffb..daa2192e6568 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
- 		plt_clk_unregister_fixed_rate(data->parents[i]);
- }
- 
--static void plt_clk_free_parent_names_loop(const char **parent_names,
--					   unsigned int i)
--{
--	while (i--)
--		kfree_const(parent_names[i]);
--	kfree(parent_names);
--}
--
- static void plt_clk_unregister_loop(struct clk_plt_data *data,
- 				    unsigned int i)
- {
-@@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 	if (!data->parents)
- 		return ERR_PTR(-ENOMEM);
- 
--	parent_names = kcalloc(nparents, sizeof(*parent_names),
--			       GFP_KERNEL);
-+	parent_names = devm_kcalloc(&pdev->dev, nparents,
-+				    sizeof(*parent_names), GFP_KERNEL);
- 	if (!parent_names)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 			err = PTR_ERR(data->parents[i]);
- 			goto err_unreg;
- 		}
--		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-+		parent_names[i] = devm_kstrdup_const(&pdev->dev,
-+						     clks[i].name, GFP_KERNEL);
- 	}
- 
- 	data->nparents = nparents;
-@@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 
- err_unreg:
- 	plt_clk_unregister_fixed_rate_loop(data, i);
--	plt_clk_free_parent_names_loop(parent_names, i);
- 	return ERR_PTR(err);
- }
- 
-@@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
- 		goto err_unreg_clk_plt;
- 	}
- 
--	plt_clk_free_parent_names_loop(parent_names, data->nparents);
--
- 	platform_set_drvdata(pdev, data);
- 	return 0;
- 
- err_unreg_clk_plt:
- 	plt_clk_unregister_loop(data, i);
- 	plt_clk_unregister_parents(data);
--	plt_clk_free_parent_names_loop(parent_names, data->nparents);
- 	return err;
- }
- 
+Seriously, you do have to prevent registering the reset controller when
+running on RZ/A2 (based on cpg_mssr_info.stbyctrl or some other indicator).
+
+> So basically my only change at this point is to make DTS and the module
+> clock table use "36" instead of "306".
+>
+> Are you OK with the idea of adding a macro ("STBCR_ID") in
+> include/dt-bindings/clock/renesas-cpg-mssr.h?
+>
+>
+> DTS:
+> --------------------
+>         ostm0: timer@e803b000 {
+>                 compatible = "renesas,r7s9210-ostm", "renesas,ostm";
+>                 reg = <0xe803b000 0x30>;
+>                 interrupts = <GIC_SPI 56 IRQ_TYPE_EDGE_RISING>;
+>                 clocks = <&cpg CPG_MOD STBCR_ID(36)>;
+>                 clock-names = "ostm0";
+>                 power-domains = <&cpg>;
+>                 status = "disabled";
+>         };
+
+When running on RZ/A2, I'd use a different pack function in
+cpg_mssr_clk_src_twocell_get() instead, so you can just write:
+
+    clock = <&cpg CPG_MOD 36>;
+
+> r7s9210-cpg-mssr.c:
+> --------------------
+> static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+>         DEF_MOD("ostm0",        STBCR_ID(36),   R7S9210_CLK_P1C),
+>         DEF_MOD("ostm1",        STBCR_ID(35),   R7S9210_CLK_P1C),
+>         DEF_MOD("ostm2",        STBCR_ID(34),   R7S9210_CLK_P1C),
+
+... and a different DEF_MOD() macro here, so you can just write:
+
+    DEF_MOD("ostm0",        36,   R7S9210_CLK_P1C),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.18.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
