@@ -1,74 +1,62 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga18.intel.com ([134.134.136.126]:35622 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbeHCE6m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:42 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 16/18] serial: intel: Reorder the head files
-Date: Fri,  3 Aug 2018 11:02:35 +0800
-Message-Id: <20180803030237.3366-17-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <20180821032020.81254-1-chris.brandt@renesas.com>
+ <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com> <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Aug 2018 09:10:37 +0200
+Message-ID: <CAMuHMdVd7wT5vPrHFAgHYqNWtJNjbSG7GaaPaMVD12cfkg8E2A@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Reorder the head files according to the coding style.
+Hi Chris,
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
+On Tue, Aug 28, 2018 at 12:13 AM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Monday, August 27, 2018 1, Geert Uytterhoeven wrote:
+> > Given the differences, and the limited amount of RAM on RZ/A2, I think you
+> > would be better off with a separate renesas-cpg-stbcr driver, and an
+> > r7s9210-cpg-stbcr counterpart.
+>
+> I went and measured the amount of RAM being used by the driver
+> (allocated during boot when the driver is loaded and probed), and it's only 8KB.
+> That's not really much compared to other drivers and subsystems being
+> loaded in the system. Of course RZ/A tries to be RAM sensitive...but 8KB
+> for a clock driver is not my biggest concern.
+>
+> So with that said, I could add in a driver option to not register the
+> reset controller. And, also make a macro so users can specify "36" instead
+> of "306" in the DT.
+> And then, I no longer have to worry about duplicate code (2 drivers do
+> almost the same thing).
+>
+> What do you think?
 
-Changes in v2:
-- New patch to reorder the head files according to the coding style.
+OK for me.
 
- drivers/tty/serial/lantiq.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Changing the print format in the debug prints is probably too much work,
+but those matter less than the clock numbers in the DTS.
 
-diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-index 35518ab3a80d..804aad60ed80 100644
---- a/drivers/tty/serial/lantiq.c
-+++ b/drivers/tty/serial/lantiq.c
-@@ -9,22 +9,22 @@
-  * Copyright (C) 2018 Intel Corporation.
-  */
- 
--#include <linux/slab.h>
--#include <linux/ioport.h>
--#include <linux/init.h>
-+#include <linux/clk.h>
- #include <linux/console.h>
--#include <linux/sysrq.h>
- #include <linux/device.h>
--#include <linux/tty.h>
--#include <linux/tty_flip.h>
--#include <linux/serial_core.h>
--#include <linux/serial.h>
--#include <linux/of_platform.h>
-+#include <linux/gpio.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/ioport.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
--#include <linux/io.h>
--#include <linux/clk.h>
--#include <linux/gpio.h>
-+#include <linux/of_platform.h>
-+#include <linux/serial.h>
-+#include <linux/serial_core.h>
-+#include <linux/slab.h>
-+#include <linux/sysrq.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
- 
- #ifdef CONFIG_LANTIQ
- #include <lantiq_soc.h>
+> Were you expecting the driver to allocate more than 8K of RAM on boot?
+
+I was thinking mainly about code size. But you're right, (a) you use XIP
+(with plenty of FLASH?), and (b) RAM size should be similar for a combined
+and a separate driver.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
