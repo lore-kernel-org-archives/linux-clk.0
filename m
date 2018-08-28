@@ -1,56 +1,36 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	linux-imx@nxp.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v3 0/4] Add i.MX8MQ clock driver
-Date: Thu,  9 Aug 2018 17:45:37 +0300
-Message-Id: <1533825941-17224-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbeH2Cwh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Aug 2018 22:52:37 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+To: Douglas Anderson <dianders@chromium.org>, andy.gross@linaro.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180724174513.174018-2-dianders@chromium.org>
+Cc: tdas@codeaurora.org, girishm@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
+        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-2-dianders@chromium.org>
+Message-ID: <153549712610.129321.16004641950033414292@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for sdm845
+ to header
+Date: Tue, 28 Aug 2018 15:58:46 -0700
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This is basically just a resend of the following patchset:
+Quoting Douglas Anderson (2018-07-24 10:45:12)
+> These clocks will need to be defined in the clock driver and
+> referenced in device tree files.
+> =
 
-https://www.spinics.net/lists/linux-clk/msg23141.html
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
 
-I've just updated the patchset and implemented Shawn's
-and Aisheng's comments.
-
-I hope I haven't missed any of their comments.
-
-Lucas Stach (4):
-  dt-bindings: add binding for i.MX8MQ CCM
-  clk: imx: add fractional PLL output clock
-  clk: imx: add SCCG PLL type
-  clk: imx: add clock driver for i.MX8MQ CCM
-
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
- drivers/clk/imx/Makefile                           |   5 +-
- drivers/clk/imx/clk-frac-pll.c                     | 230 ++++++
- drivers/clk/imx/clk-imx8mq.c                       | 856 +++++++++++++++++++++
- drivers/clk/imx/clk-sccg-pll.c                     | 231 ++++++
- drivers/clk/imx/clk.h                              |  48 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 629 +++++++++++++++
- 7 files changed, 2018 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
- create mode 100644 drivers/clk/imx/clk-imx8mq.c
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
-
--- 
-2.7.4
+Applied to clk-next
