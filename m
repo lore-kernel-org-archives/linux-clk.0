@@ -1,51 +1,30 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53062 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbeHMSIz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Aug 2018 14:08:55 -0400
-Subject: Re: [PATCH v3 0/4] clk: clk: Add functions to save/restore clock
- context en-masse
-To: Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>
-CC: <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
- <20180710055605.GF99251@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <ff0fdd50-a674-9475-290a-053ebf415ff8@ti.com>
-Date: Mon, 13 Aug 2018 18:25:30 +0300
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180710055605.GF99251@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+To: Douglas Anderson <dianders@chromium.org>, andy.gross@linaro.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180724174513.174018-3-dianders@chromium.org>
+Cc: tdas@codeaurora.org, girishm@codeaurora.org, linux-arm-msm@vger.kernel.org,
+ anischal@codeaurora.org, bjorn.andersson@linaro.org, grahamr@codeaurora.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ Douglas Anderson <dianders@chromium.org>,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ David Brown <david.brown@linaro.org>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-3-dianders@chromium.org>
+Message-ID: <153549712900.129321.5184166575110028723@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
+Date: Tue, 28 Aug 2018 15:58:49 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On 10/07/18 08:56, Tony Lindgren wrote:
-> * Keerthy <j-keerthy@ti.com> [180621 01:18]:
->> Deep enough power saving mode can result into losing context of the clock
->> registers also, and they need to be restored once coming back from the power
->> saving mode. Hence add functions to save/restore clock context.
-> 
-> Patches 1 to 3 look good to me:
-> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> 
-> Stephen, if no more comments, can you please set up an immutable
-> branch for me as otherwise the last patch might cause merge
-> conflicts?
-> 
-> Regards,
-> 
-> Tony
-> 
+Quoting Douglas Anderson (2018-07-24 10:45:13)
+> Add both the interface and core clock.
+> =
 
-Stephen, Mike,
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> (am from https://lore.kernel.org/patchwork/patch/966680/mbox)
+> =
 
-Any concerns about this series? This series touches core clock APIs 
-slightly, but from my side these look fine. Do you want to pick #1-#3 up 
-yourself or do you want me to setup a pull-req? Patch #4 seems like 
-should go in via Tony's tree.
+> ---
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Applied to clk-next
