@@ -1,119 +1,111 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:56162 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbeHUUhy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:37:54 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 01/24] mfd: Add ingenic-tcu.h header
-Date: Tue, 21 Aug 2018 19:16:12 +0200
-Message-Id: <20180821171635.22740-2-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Date: Tue, 28 Aug 2018 11:33:32 +0200
+Message-Id: <20180828093332.20674-5-brgl@bgdev.pl>
+In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-This header contains macros for the registers that are present in the
-regmap shared by all the drivers related to the TCU (Timer Counter Unit)
-of the Ingenic JZ47xx SoCs.
+Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+While we're at it: replace a call to kcalloc() with devm_kcalloc().
+
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-Notes:
-     v2: Use SPDX identifier for the license
-    
-     v3: - Use macros instead of enum
-         - Add 'TCU_' at the beginning of each macro
-    	 - Remove useless include <linux/regmap.h>
-    
-     v4: No change
-    
-     v5: No change
-    
-     v6: Rename barrier macro from __LINUX_CLK_INGENIC_TCU_H__ to
-         __LINUX_MFD_INGENIC_TCU_H__
-    
-     v7: No change
-
- include/linux/mfd/ingenic-tcu.h | 56 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 include/linux/mfd/ingenic-tcu.h
-
-diff --git a/include/linux/mfd/ingenic-tcu.h b/include/linux/mfd/ingenic-tcu.h
-new file mode 100644
-index 000000000000..ab16ad283def
---- /dev/null
-+++ b/include/linux/mfd/ingenic-tcu.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Header file for the Ingenic JZ47xx TCU driver
-+ */
-+#ifndef __LINUX_MFD_INGENIC_TCU_H_
-+#define __LINUX_MFD_INGENIC_TCU_H_
-+
-+#include <linux/bitops.h>
-+
-+#define TCU_REG_WDT_TDR		0x00
-+#define TCU_REG_WDT_TCER	0x04
-+#define TCU_REG_WDT_TCNT	0x08
-+#define TCU_REG_WDT_TCSR	0x0c
-+#define TCU_REG_TER		0x10
-+#define TCU_REG_TESR		0x14
-+#define TCU_REG_TECR		0x18
-+#define TCU_REG_TSR		0x1c
-+#define TCU_REG_TFR		0x20
-+#define TCU_REG_TFSR		0x24
-+#define TCU_REG_TFCR		0x28
-+#define TCU_REG_TSSR		0x2c
-+#define TCU_REG_TMR		0x30
-+#define TCU_REG_TMSR		0x34
-+#define TCU_REG_TMCR		0x38
-+#define TCU_REG_TSCR		0x3c
-+#define TCU_REG_TDFR0		0x40
-+#define TCU_REG_TDHR0		0x44
-+#define TCU_REG_TCNT0		0x48
-+#define TCU_REG_TCSR0		0x4c
-+#define TCU_REG_OST_DR		0xe0
-+#define TCU_REG_OST_CNTL	0xe4
-+#define TCU_REG_OST_CNTH	0xe8
-+#define TCU_REG_OST_TCSR	0xec
-+#define TCU_REG_TSTR		0xf0
-+#define TCU_REG_TSTSR		0xf4
-+#define TCU_REG_TSTCR		0xf8
-+#define TCU_REG_OST_CNTHBUF	0xfc
-+
-+#define TCU_TCSR_RESERVED_BITS		0x3f
-+#define TCU_TCSR_PARENT_CLOCK_MASK	0x07
-+#define TCU_TCSR_PRESCALE_LSB		3
-+#define TCU_TCSR_PRESCALE_MASK		0x38
-+
-+#define TCU_TCSR_PWM_SD		BIT(9)	/* 0: Shutdown abruptly 1: gracefully */
-+#define TCU_TCSR_PWM_INITL_HIGH	BIT(8)	/* Sets the initial output level */
-+#define TCU_TCSR_PWM_EN		BIT(7)	/* PWM pin output enable */
-+
-+#define TCU_WDT_TCER_TCEN	BIT(0)	/* Watchdog timer enable */
-+
-+#define TCU_CHANNEL_STRIDE	0x10
-+#define TCU_REG_TDFRc(c)	(TCU_REG_TDFR0 + ((c) * TCU_CHANNEL_STRIDE))
-+#define TCU_REG_TDHRc(c)	(TCU_REG_TDHR0 + ((c) * TCU_CHANNEL_STRIDE))
-+#define TCU_REG_TCNTc(c)	(TCU_REG_TCNT0 + ((c) * TCU_CHANNEL_STRIDE))
-+#define TCU_REG_TCSRc(c)	(TCU_REG_TCSR0 + ((c) * TCU_CHANNEL_STRIDE))
-+
-+#endif /* __LINUX_MFD_INGENIC_TCU_H_ */
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 08ef69945ffb..daa2192e6568 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+ 		plt_clk_unregister_fixed_rate(data->parents[i]);
+ }
+ 
+-static void plt_clk_free_parent_names_loop(const char **parent_names,
+-					   unsigned int i)
+-{
+-	while (i--)
+-		kfree_const(parent_names[i]);
+-	kfree(parent_names);
+-}
+-
+ static void plt_clk_unregister_loop(struct clk_plt_data *data,
+ 				    unsigned int i)
+ {
+@@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 	if (!data->parents)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	parent_names = kcalloc(nparents, sizeof(*parent_names),
+-			       GFP_KERNEL);
++	parent_names = devm_kcalloc(&pdev->dev, nparents,
++				    sizeof(*parent_names), GFP_KERNEL);
+ 	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 			err = PTR_ERR(data->parents[i]);
+ 			goto err_unreg;
+ 		}
+-		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
++		parent_names[i] = devm_kstrdup_const(&pdev->dev,
++						     clks[i].name, GFP_KERNEL);
+ 	}
+ 
+ 	data->nparents = nparents;
+@@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 
+ err_unreg:
+ 	plt_clk_unregister_fixed_rate_loop(data, i);
+-	plt_clk_free_parent_names_loop(parent_names, i);
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		goto err_unreg_clk_plt;
+ 	}
+ 
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+-
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
+ err_unreg_clk_plt:
+ 	plt_clk_unregister_loop(data, i);
+ 	plt_clk_unregister_parents(data);
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 	return err;
+ }
+ 
 -- 
-2.11.0
+2.18.0
