@@ -1,50 +1,63 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Thu, 2 Aug 2018 10:33:18 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>,
-	Krummsdorf Michael <Michael.Krummsdorf@tq-group.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: mxs: ensure that i.MX28's ref_io clks are not
- operated too fast
-Message-ID: <20180802083318.qzsqchrf46oh2ne3@pengutronix.de>
-References: <20170503185625.10297-1-u.kleine-koenig@pengutronix.de>
- <20180726143232.ds22exgxiv6zlsn5@pengutronix.de>
- <10f5e651-caf4-3fe0-87c0-fe42ccdc6349@i2se.com>
- <CAOMZO5Cgf6aeNKWn5CnV8X-+bo20M00efoAxv51GPDE45Pg4yg@mail.gmail.com>
- <20180801093113.wnjeg5a3rjbh7yc4@pengutronix.de>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 28 Aug 2018 10:30:54 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 12/24] pwm: jz4740: Use regmap and clocks from TCU
+ driver
+Message-ID: <20180828173054.jlzczfxwjipdwntt@pburton-laptop>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+ <20180821171635.22740-13-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-In-Reply-To: <20180801093113.wnjeg5a3rjbh7yc4@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180821171635.22740-13-paul@crapouillou.net>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+Hi Thierry,
 
-On Wed, Aug 01, 2018 at 11:31:13AM +0200, Uwe Kleine-König wrote:
-> On Thu, Jul 26, 2018 at 12:02:42PM -0300, Fabio Estevam wrote:
-> > On Thu, Jul 26, 2018 at 11:50 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > 
-> > > I only want to note that we are using this ugly hack for Duckbill to avoid
-> > > this issue:
-> > >
-> > > https://github.com/I2SE/linux/commit/e457d5e0309c07e30e8dd8b17c32f7b3cbdd9547
-> > 
-> > Do you see the problem on TQMa28L with Stefan's hack applied?
+On Tue, Aug 21, 2018 at 07:16:23PM +0200, Paul Cercueil wrote:
+> The ingenic-timer "TCU" driver provides us with a regmap, that we can
+> use to safely access the TCU registers.
 > 
-> With this change by Stefan the bug is not reproducible. Your change to
-> set the bypass bits only later doesn't help though.
+> It also provides us with clocks, that can be (un)gated, reparented or
+> reclocked from devicetree, instead of having these settings hardcoded in
+> this driver.
+> 
+> While this driver is devicetree-compatible, it is never (as of now)
+> probed from devicetree, so this change does not introduce a ABI problem
+> with current devicetree files.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>      v5: New patch
+>     
+>      v6: Drop requirement of probing from devicetree
+>     
+>      v7: No change
+> 
+>  drivers/pwm/Kconfig      |   2 +
+>  drivers/pwm/pwm-jz4740.c | 124 +++++++++++++++++++++++++++++++----------------
+>  2 files changed, 83 insertions(+), 43 deletions(-)
 
-I wanted to try without DMA (by just removing dem dma properties in the
-mmc node) but this makes the driver fail to probe :-|
+How do patches 12-16 of this series look to you from a drivers/pwm
+perspective?
 
-Best regards
-Uwe
+If you're happy with them it'd be great to get an ack so I can take this
+through the MIPS tree along with the rest of the series.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks,
+    Paul
