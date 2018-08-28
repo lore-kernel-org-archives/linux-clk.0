@@ -1,73 +1,33 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33402 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727767AbeHJQIt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Aug 2018 12:08:49 -0400
-Date: Fri, 10 Aug 2018 06:38:50 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 11/24] watchdog: jz4740: Drop dependency on
- MACH_JZ47xx, use COMPILE_TEST
-Message-ID: <20180810133850.GD29028@roeck-us.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
- <20180809214414.20905-12-paul@crapouillou.net>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180809214414.20905-12-paul@crapouillou.net>
-Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180828154433.5693-3-robh@kernel.org>
+Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20180828154433.5693-1-robh@kernel.org>
+ <20180828154433.5693-3-robh@kernel.org>
+Message-ID: <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
+Date: Tue, 28 Aug 2018 15:15:55 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 09, 2018 at 11:44:01PM +0200, Paul Cercueil wrote:
-> Depending on MACH_JZ47xx prevent us from creating a generic kernel that
-> works on more than one MIPS board. Instead, we just depend on MIPS being
-> set.
-> 
-> On other architectures, this driver can still be built, thanks to
-> COMPILE_TEST. This is used by automated tools to find bugs, for
-> instance.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Quoting Rob Herring (2018-08-28 08:44:29)
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+> =
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/watchdog/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
->  v5: New patch
-> 
->  v6: No change
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 834222abbbdb..13a46cfa69b0 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -1475,7 +1475,7 @@ config INDYDOG
->  
->  config JZ4740_WDT
->  	tristate "Ingenic jz4740 SoC hardware watchdog"
-> -	depends on MACH_JZ4740 || MACH_JZ4780
-> +	depends on MIPS || COMPILE_TEST
->  	depends on COMMON_CLK
->  	select WATCHDOG_CORE
->  	select INGENIC_TIMER
-> -- 
-> 2.11.0
-> 
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
