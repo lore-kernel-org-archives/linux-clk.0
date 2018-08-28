@@ -1,160 +1,127 @@
-Return-Path: <hdegoede@redhat.com>
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [PATCH V4 4/4] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
- thor.thayer@linux.intel.com, linux-imx@nxp.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-fbdev@vger.kernel.org, Masahiro Yamada
- <yamada.masahiro@socionext.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1535547100-25634-1-git-send-email-aisheng.dong@nxp.com>
- <1535547100-25634-5-git-send-email-aisheng.dong@nxp.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <66eb6870-3674-0fdb-f5fb-4915a76191f6@redhat.com>
-Date: Wed, 29 Aug 2018 15:00:39 +0200
-MIME-Version: 1.0
-In-Reply-To: <1535547100-25634-5-git-send-email-aisheng.dong@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 3/4] devres: provide devm_kstrdup_const()
+Date: Tue, 28 Aug 2018 11:33:31 +0200
+Message-Id: <20180828093332.20674-4-brgl@bgdev.pl>
+In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Provide a resource managed version of kstrdup_const(). This variant
+internally calls devm_kstrdup() on pointers that are outside of
+.rodata section and returns the string as is otherwise.
 
-On 29-08-18 14:51, Dong Aisheng wrote:
-> Switching to use clk_bulk API to simplify clock operations.
-> 
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> v3->v4:
->   * no changes
-> v2->v3:
->   * fix a build warning on x86 platform due to a wrong
->     of the prototype of simplefb_clocks_enable
-> v1->v2:
->   * switch to clk_bulk_get_all from of_clk_bulk_get_all
-> ---
->   drivers/video/fbdev/simplefb.c | 66 ++++++++----------------------------------
->   1 file changed, 12 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-> index 9a9d748..ed9a4c8 100644
-> --- a/drivers/video/fbdev/simplefb.c
-> +++ b/drivers/video/fbdev/simplefb.c
-> @@ -182,7 +182,7 @@ struct simplefb_par {
->   #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
->   	bool clks_enabled;
->   	unsigned int clk_count;
-> -	struct clk **clks;
-> +	struct clk_bulk_data *clks;
->   #endif
->   #if defined CONFIG_OF && defined CONFIG_REGULATOR
->   	bool regulators_enabled;
-> @@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   			       struct platform_device *pdev)
->   {
->   	struct device_node *np = pdev->dev.of_node;
-> -	struct clk *clock;
-> -	int i;
->   
->   	if (dev_get_platdata(&pdev->dev) || !np)
->   		return 0;
->   
-> -	par->clk_count = of_clk_get_parent_count(np);
-> -	if (!par->clk_count)
-> -		return 0;
-> -
-> -	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
-> -	if (!par->clks)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		clock = of_clk_get(np, i);
-> -		if (IS_ERR(clock)) {
-> -			if (PTR_ERR(clock) == -EPROBE_DEFER) {
-> -				while (--i >= 0) {
-> -					if (par->clks[i])
-> -						clk_put(par->clks[i]);
-> -				}
-> -				kfree(par->clks);
-> -				return -EPROBE_DEFER;
-> -			}
-> -			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
-> -				__func__, i, PTR_ERR(clock));
-> -			continue;
-> -		}
-> -		par->clks[i] = clock;
-> -	}
-> +	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
-> +	if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
-> +		return -EPROBE_DEFER;
->   
->   	return 0;
->   }
-> @@ -252,39 +228,21 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   static void simplefb_clocks_enable(struct simplefb_par *par,
->   				   struct platform_device *pdev)
->   {
-> -	int i, ret;
-> +	int ret;
-> +
-> +	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
-> +	if (ret)
-> +		dev_warn(&pdev->dev, "failed to enable clocks\n");
+Also provide a corresponding version of devm_kfree().
 
-If clk_bulk_prepare_enable() fails, it leaves all clocks disabled,
-so you should not set par->clks_enabled = true; then.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/device.h |  3 +++
+ 2 files changed, 41 insertions(+)
 
-Otherwise this patch looks good.
-
-Regards,
-
-Hans
-
-
-
->   
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			ret = clk_prepare_enable(par->clks[i]);
-> -			if (ret) {
-> -				dev_err(&pdev->dev,
-> -					"%s: failed to enable clock %d: %d\n",
-> -					__func__, i, ret);
-> -				clk_put(par->clks[i]);
-> -				par->clks[i] = NULL;
-> -			}
-> -		}
-> -	}
->   	par->clks_enabled = true;
->   }
->   
->   static void simplefb_clocks_destroy(struct simplefb_par *par)
->   {
-> -	int i;
-> -
-> -	if (!par->clks)
-> -		return;
-> -
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			if (par->clks_enabled)
-> -				clk_disable_unprepare(par->clks[i]);
-> -			clk_put(par->clks[i]);
-> -		}
-> -	}
-> +	if (par->clks_enabled)
-> +		clk_bulk_disable_unprepare(par->clk_count, par->clks);
->   
-> -	kfree(par->clks);
-> +	clk_bulk_put_all(par->clk_count, par->clks);
->   }
->   #else
->   static int simplefb_clocks_get(struct simplefb_par *par,
-> 
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 438c91a43508..48185d57bc5b 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -11,6 +11,8 @@
+ #include <linux/slab.h>
+ #include <linux/percpu.h>
+ 
++#include <asm/sections.h>
++
+ #include "base.h"
+ 
+ struct devres_node {
+@@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+ }
+ EXPORT_SYMBOL_GPL(devm_kstrdup);
+ 
++/**
++ * devm_kstrdup_const - resource managed conditional string duplication
++ * @dev: device for which to duplicate the string
++ * @s: the string to duplicate
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Strings allocated by devm_kstrdup_const will be automatically freed when
++ * the associated device is detached.
++ *
++ * RETURNS:
++ * Source string if it is in .rodata section otherwise it falls back to
++ * devm_kstrdup.
++ */
++const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
++{
++	if (is_kernel_rodata((unsigned long)s))
++		return s;
++
++	return devm_kstrdup(dev, s, gfp);
++}
++EXPORT_SYMBOL(devm_kstrdup_const);
++
+ /**
+  * devm_kvasprintf - Allocate resource managed space and format a string
+  *		     into that.
+@@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
+ }
+ EXPORT_SYMBOL_GPL(devm_kfree);
+ 
++/**
++ * devm_kfree_const - Resource managed conditional kfree
++ * @dev: device this memory belongs to
++ * @p: memory to free
++ *
++ * Function calls devm_kfree only if @p is not in .rodata section.
++ */
++void devm_kfree_const(struct device *dev, const void *p)
++{
++	if (!is_kernel_rodata((unsigned long)p))
++		devm_kfree(dev, p);
++}
++EXPORT_SYMBOL(devm_kfree_const);
++
+ /**
+  * devm_kmemdup - Resource-managed kmemdup
+  * @dev: Device this memory belongs to
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 33f7cb271fbb..79ccc6eb0975 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
+ extern void devm_kfree(struct device *dev, const void *p);
++extern void devm_kfree_const(struct device *dev, const void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
++extern const char *devm_kstrdup_const(struct device *dev,
++				      const char *s, gfp_t gfp);
+ extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+ 			  gfp_t gfp);
+ 
+-- 
+2.18.0
