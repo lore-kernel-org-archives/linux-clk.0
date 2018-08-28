@@ -1,66 +1,91 @@
-Return-Path: <gustavo@embeddedor.com>
-Date: Thu, 23 Aug 2018 18:06:54 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: npcm7xx: fix memory allocation
-Message-ID: <20180823230654.GA11576@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
+Date: Tue, 28 Aug 2018 11:33:30 +0200
+Message-Id: <20180828093332.20674-3-brgl@bgdev.pl>
+In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Export this routine so that we can use it later in devm_kstrdup_const()
+and devm_kfree_const().
 
-struct foo {
-	int stuff;
-        void *entry[];
-};
-
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count,
-GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-Notice that, currently, there is a bug during the allocation:
-	
-sizeof(npcm7xx_clk_data) should be sizeof(*npcm7xx_clk_data)
-
-Fix this bug by using struct_size() in kzalloc()
-
-This issue was detected with the help of Coccinelle.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- drivers/clk/clk-npcm7xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/asm-generic/sections.h | 14 ++++++++++++++
+ mm/util.c                      |  7 -------
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index 740af90..c5edf8f 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -558,8 +558,8 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	if (!clk_base)
- 		goto npcm7xx_init_error;
+diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+index 849cd8eb5ca0..d79abca81a52 100644
+--- a/include/asm-generic/sections.h
++++ b/include/asm-generic/sections.h
+@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
+ 	return memory_intersects(__init_begin, __init_end, virt, size);
+ }
  
--	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
--		NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
-+	npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
-+				   NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
- 	if (!npcm7xx_clk_data)
- 		goto npcm7xx_init_np_err;
++/**
++ * is_kernel_rodata - checks if the pointer address is located in the
++ *                    .rodata section
++ *
++ * @addr: address to check
++ *
++ * Returns: true if the address is located in .rodata, false otherwise.
++ */
++static inline bool is_kernel_rodata(unsigned long addr)
++{
++	return addr >= (unsigned long)__start_rodata &&
++	       addr < (unsigned long)__end_rodata;
++}
++
+ #endif /* _ASM_GENERIC_SECTIONS_H_ */
+diff --git a/mm/util.c b/mm/util.c
+index d2890a407332..41e9892a50ce 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -15,17 +15,10 @@
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
  
+-#include <asm/sections.h>
+ #include <linux/uaccess.h>
+ 
+ #include "internal.h"
+ 
+-static inline int is_kernel_rodata(unsigned long addr)
+-{
+-	return addr >= (unsigned long)__start_rodata &&
+-		addr < (unsigned long)__end_rodata;
+-}
+-
+ /**
+  * kfree_const - conditionally free memory
+  * @x: pointer to the memory
 -- 
-2.7.4
+2.18.0
