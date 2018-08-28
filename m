@@ -1,70 +1,56 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <nm@ti.com>
+From: Nishanth Menon <nm@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <t-kristo@ti.com>, <tony@atomide.com>, <linux-clk@vger.kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>
+Subject: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
+Date: Mon, 27 Aug 2018 19:50:56 -0500
+Message-ID: <20180828005056.27326-1-nm@ti.com>
 MIME-Version: 1.0
-References: <20180827162139.76196-1-chris.brandt@renesas.com>
- <20180829005228.GA5407@bogus> <CAMuHMdWcvWDeSpewRDG=vAV+zsTO48a6kXTCL+34H_+Rnt0ung@mail.gmail.com>
- <CAL_JsqLF76sX=uhvBDOGTHRgZoqXWyUrnPGNmL6heUJmQBF8dA@mail.gmail.com>
-In-Reply-To: <CAL_JsqLF76sX=uhvBDOGTHRgZoqXWyUrnPGNmL6heUJmQBF8dA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 30 Aug 2018 16:49:55 +0200
-Message-ID: <CAMuHMdUP=-EDJEk3wN9uVQHjRkimfwxvayV82gDT-XchYzrUNg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add R7S9210 support
-To: Rob Herring <robh@kernel.org>
-Cc: Chris Brandt <chris.brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+K3_ARCH uses TISCI for clocks as well. Enable the same
+for the driver support.
 
-On Thu, Aug 30, 2018 at 3:49 PM Rob Herring <robh@kernel.org> wrote:
-> On Thu, Aug 30, 2018 at 3:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Wed, Aug 29, 2018 at 2:52 AM Rob Herring <robh@kernel.org> wrote:
-> > > On Mon, Aug 27, 2018 at 11:21:39AM -0500, Chris Brandt wrote:
-> > > > Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> > > > Standby.
-> > > >
-> > > > The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-> > > > for how the registers are laid out.
-> > > > The MSTP registers are only 8-bits wide, there is no status registers
-> > > > (MSTPST), and the register offsets are a little different. Since the RZ/A
-> > > > hardware manuals refer to these registers as the Standby Control Registers,
-> > > > we'll use that name to distinguish the RZ/A type for the R-Car type.
-> > > >
-> > > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> > > > ---
-> > >
-> > > > +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-> > > > @@ -0,0 +1,192 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0+
-> > > > +/*
-> > >
-> > >
-> > > > +++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
-> > > > @@ -0,0 +1,21 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0+
-> > >
-> > > The proper identifier is GPL-2.0-or-later
-> >
-> > Documentation/process/license-rules.rst disagrees.
->
-> Indeed, but: https://spdx.org/licenses/GPL-2.0+.html
->
-> I think this changed about the time the kernel adopted SPDX. I guess
-> it is fine as-is until we change the documentation.
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
 
-Unlikely to happen, cfr.
-https://lore.kernel.org/lkml/20180822194613.GB3457@kroah.com/
-Gr{oetje,eeting}s,
+Ref: https://patchwork.kernel.org/patch/10447677/
 
-                        Geert
+Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
 
+ drivers/clk/Makefile         | 1 +
+ drivers/clk/keystone/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index a84c5573cabe..ed344eb717cc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -73,6 +73,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+ obj-$(CONFIG_ARCH_MXC)			+= imx/
+ obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
++obj-$(CONFIG_ARCH_K3)			+= keystone/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+ obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+ obj-y					+= mediatek/
+diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
+index 7e9f0176578a..b04927d06cd1 100644
+--- a/drivers/clk/keystone/Kconfig
++++ b/drivers/clk/keystone/Kconfig
+@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
+ 
+ config TI_SCI_CLK
+ 	tristate "TI System Control Interface clock drivers"
+-	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
++	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
+ 	depends on TI_SCI_PROTOCOL
+ 	default ARCH_KEYSTONE
+ 	---help---
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.15.1
