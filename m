@@ -1,131 +1,132 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47316 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbeHUNgv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Aug 2018 09:36:51 -0400
-Date: Tue, 21 Aug 2018 11:17:02 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
-        linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 4/5] arm64: dts: add QorIQ LX2160A SoC support
-Message-ID: <20180821101652.GA18139@e107155-lin>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
- <1534747636-20064-5-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1534747636-20064-5-git-send-email-vabhav.sharma@nxp.com>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35935 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbeH2Tsi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:38 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 08/10] clk: samsung: Add support for setting registers state
+ before suspend
+Date: Wed, 29 Aug 2018 17:50:44 +0200
+Message-id: <20180829155046.29359-9-m.szyprowski@samsung.com>
+In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155102eucas1p1ca7a26c10847dcb585f01b54657e29cb@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Aug 20, 2018 at 12:17:15PM +0530, Vabhav Sharma wrote:
-> LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
-> 
-> LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
-> in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
-> controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
-> UARTs etc.
-> 
-> Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
-> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 572 +++++++++++++++++++++++++
->  1 file changed, 572 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> new file mode 100644
-> index 0000000..e35e494
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> @@ -0,0 +1,572 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +//
-> +// Device Tree Include file for Layerscape-LX2160A family SoC.
-> +//
-> +// Copyright 2018 NXP
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/memreserve/ 0x80000000 0x00010000;
-> +
-> +/ {
-> +	compatible = "fsl,lx2160a";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		// 8 clusters having 2 Cortex-A72 cores each
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a72";
-> +			reg = <0x0>;
-> +			clocks = <&clockgen 1 0>;
-> +			next-level-cache = <&cluster0_l2>;
+Some registers of clock controller have to be set to certain values before
+entering system suspend state. Till now drivers did that on their own,
+but it will be easier to handle it by generic code and let drivers simply
+to provide the list of registers and their state.
 
-If you expect to get cache properties in sysfs entries, you need to populate
-them here and for each L2 cache.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk.c | 23 +++++++++++++----------
+ drivers/clk/samsung/clk.h | 18 ++++++++++++++++--
+ 2 files changed, 29 insertions(+), 12 deletions(-)
 
-[...]
-
-> +
-> +	rstcr: syscon@1e60000 {
-> +		compatible = "syscon";
-> +		reg = <0x0 0x1e60000 0x0 0x4>;
-> +	};
-> +
-> +	reboot {
-> +		compatible ="syscon-reboot";
-> +		regmap = <&rstcr>;
-> +		offset = <0x0>;
-> +		mask = <0x2>;
-
-Is this disabled in bootloader ? With PSCI, it's preferred to use
-SYSTEM_RESET/OFF. EL3 f/w may need to do some housekeeping on poweroff.
-
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <1 13 4>, // Physical Secure PPI, active-low
-
-The comment says active low but the value 4 indicates it's HIGH from
-"include/dt-bindings/interrupt-controller/irq.h"
-
-> +			     <1 14 4>, // Physical Non-Secure PPI, active-low
-> +			     <1 11 4>, // Virtual PPI, active-low
-> +			     <1 10 4>; // Hypervisor PPI, active-low
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,armv8-pmuv3";
-
-More specific compatible preferably "arm,cortex-a72-pmu" ?
-
---
-Regards,
-Sudeep
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 8634884aa11c..ab467a7f973a 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -290,9 +290,12 @@ static int samsung_clk_suspend(void)
+ {
+ 	struct samsung_clock_reg_cache *reg_cache;
+ 
+-	list_for_each_entry(reg_cache, &clock_reg_cache_list, node)
++	list_for_each_entry(reg_cache, &clock_reg_cache_list, node) {
+ 		samsung_clk_save(reg_cache->reg_base, reg_cache->rdump,
+ 				reg_cache->rd_num);
++		samsung_clk_restore(reg_cache->reg_base, reg_cache->rsuspend,
++				reg_cache->rsuspend_num);
++	}
+ 	return 0;
+ }
+ 
+@@ -310,9 +313,11 @@ static struct syscore_ops samsung_clk_syscore_ops = {
+ 	.resume = samsung_clk_resume,
+ };
+ 
+-void samsung_clk_sleep_init(void __iomem *reg_base,
++void samsung_clk_sleep_init2(void __iomem *reg_base,
+ 			const unsigned long *rdump,
+-			unsigned long nr_rdump)
++			unsigned long nr_rdump,
++			const struct samsung_clk_reg_dump *rsuspend,
++			unsigned long nr_rsuspend)
+ {
+ 	struct samsung_clock_reg_cache *reg_cache;
+ 
+@@ -330,13 +335,10 @@ void samsung_clk_sleep_init(void __iomem *reg_base,
+ 
+ 	reg_cache->reg_base = reg_base;
+ 	reg_cache->rd_num = nr_rdump;
++	reg_cache->rsuspend = rsuspend;
++	reg_cache->rsuspend_num = nr_rsuspend;
+ 	list_add_tail(&reg_cache->node, &clock_reg_cache_list);
+ }
+-
+-#else
+-void samsung_clk_sleep_init(void __iomem *reg_base,
+-			const unsigned long *rdump,
+-			unsigned long nr_rdump) {}
+ #endif
+ 
+ /*
+@@ -380,8 +382,9 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+ 		samsung_clk_register_fixed_factor(ctx, cmu->fixed_factor_clks,
+ 			cmu->nr_fixed_factor_clks);
+ 	if (cmu->clk_regs)
+-		samsung_clk_sleep_init(reg_base, cmu->clk_regs,
+-			cmu->nr_clk_regs);
++		samsung_clk_sleep_init2(reg_base,
++				       cmu->clk_regs, cmu->nr_clk_regs,
++				       cmu->suspend_regs, cmu->nr_suspend_regs);
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 3880d2f9d582..854d0b52ef5f 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -279,6 +279,8 @@ struct samsung_clock_reg_cache {
+ 	void __iomem *reg_base;
+ 	struct samsung_clk_reg_dump *rdump;
+ 	unsigned int rd_num;
++	const struct samsung_clk_reg_dump *rsuspend;
++	unsigned int rsuspend_num;
+ };
+ 
+ struct samsung_cmu_info {
+@@ -358,9 +360,21 @@ extern struct samsung_clk_provider __init *samsung_cmu_register_one(
+ 
+ extern unsigned long _get_rate(const char *clk_name);
+ 
+-extern void samsung_clk_sleep_init(void __iomem *reg_base,
++#ifdef CONFIG_PM_SLEEP
++extern void samsung_clk_sleep_init2(void __iomem *reg_base,
+ 			const unsigned long *rdump,
+-			unsigned long nr_rdump);
++			unsigned long nr_rdump,
++			const struct samsung_clk_reg_dump *rsuspend,
++			unsigned long nr_rsuspend);
++#else
++void samsung_clk_sleep_init2(void __iomem *reg_base,
++			const unsigned long *rdump,
++			unsigned long nr_rdump,
++			const struct samsung_clk_reg_dump *rsuspend,
++			unsigned long nr_rsuspend) {}
++#endif
++#define samsung_clk_sleep_init(reg_base, rdump, nr_rdump) \
++	samsung_clk_sleep_init2(reg_base, rdump, nr_rdump, NULL, 0)
+ 
+ extern void samsung_clk_save(void __iomem *base,
+ 			struct samsung_clk_reg_dump *rd,
+-- 
+2.17.1
