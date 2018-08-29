@@ -1,91 +1,107 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-cys01nam02on0121.outbound.protection.outlook.com ([104.47.37.121]:51168
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbeH1VPu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:15:50 -0400
-Date: Tue, 28 Aug 2018 10:23:05 -0700
-From: Paul Burton <paul.burton@mips.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-Message-ID: <20180828172305.bohg6cggnzm3wsuj@pburton-laptop>
-References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-6-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180821171635.22740-6-paul@crapouillou.net>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55846 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbeH2Tsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:36 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 04/10] clk: samsung: s3c2443: Use generic helper for
+ handling suspend/resume
+Date: Wed, 29 Aug 2018 17:50:40 +0200
+Message-id: <20180829155046.29359-5-m.szyprowski@samsung.com>
+In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155100eucas1p1ba8149066e026fc15f82091968b78a08@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Daniel & Thomas,
+Replace common suspend/resume handling code by generic helper.
+No functional change.
 
-On Tue, Aug 21, 2018 at 07:16:16PM +0200, Paul Cercueil wrote:
-> This driver handles the TCU (Timer Counter Unit) present on the Ingenic
-> JZ47xx SoCs, and provides the kernel with a system timer, and optionally
-> with a clocksource and a sched_clock.
-> 
-> It also provides clocks and interrupt handling to client drivers.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->      v2: Use SPDX identifier for the license
->     
->      v3: - Move documentation to its own patch
->          - Search the devicetree for PWM clients, and use all the TCU
->     	   channels that won't be used for PWM
->     
->      v4: - Add documentation about why we search for PWM clients
->          - Verify that the PWM clients are for the TCU PWM driver
->     
->      v5: Major overhaul. Too many changes to list. Consider it's a new
->          patch.
->     
->      v6: - Add two API functions ingenic_tcu_request_channel and
->            ingenic_tcu_release_channel. To be used by the PWM driver to
->            request the use of a TCU channel. The driver will now dynamically
->            move away the system timer or clocksource to a new TCU channel.
->          - The system timer now defaults to channel 0, the clocksource now
->            defaults to channel 1 and is no more optional. The
->            ingenic,timer-channel and ingenic,clocksource-channel devicetree
->            properties are now gone.
->          - Fix round_rate / set_rate not calculating the prescale divider
->            the same way. This caused problems when (parent_rate / div) would
->            give a non-integer result. The behaviour is correct now.
->          - The clocksource clock is turned off on suspend now.
->     
->      v7: Fix section mismatch by using builtin_platform_driver_probe()
-> 
->  drivers/clocksource/Kconfig         |   10 +
->  drivers/clocksource/Makefile        |    1 +
->  drivers/clocksource/ingenic-timer.c | 1124 +++++++++++++++++++++++++++++++++++
->  drivers/clocksource/ingenic-timer.h |   15 +
->  include/linux/mfd/ingenic-tcu.h     |    3 +
->  5 files changed, 1153 insertions(+)
->  create mode 100644 drivers/clocksource/ingenic-timer.c
->  create mode 100644 drivers/clocksource/ingenic-timer.h
->%
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-s3c2443.c | 43 ++-----------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
 
-How is this & patch 6 of the series looking to you from a
-drivers/clocksource perspective?
-
-If you're happy with them it'd be great to get an ack so I can take this
-through the MIPS tree with the rest of the series. The alternative would
-be to get the drivers in first then the MIPS bits in the next release
-cycle.
-
-Thanks,
-    Paul
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index c46e6d5bc9bc..884067e4f1a1 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
+ #include <linux/reboot.h>
+ 
+ #include <dt-bindings/clock/s3c2443.h>
+@@ -43,9 +42,6 @@ enum supported_socs {
+ 
+ static void __iomem *reg_base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s3c2443_save;
+-
+ /*
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
+@@ -65,42 +61,6 @@ static unsigned long s3c2443_clk_regs[] __initdata = {
+ 	SCLKCON,
+ };
+ 
+-static int s3c2443_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s3c2443_save,
+-				ARRAY_SIZE(s3c2443_clk_regs));
+-
+-	return 0;
+-}
+-
+-static void s3c2443_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s3c2443_save,
+-				ARRAY_SIZE(s3c2443_clk_regs));
+-}
+-
+-static struct syscore_ops s3c2443_clk_syscore_ops = {
+-	.suspend = s3c2443_clk_suspend,
+-	.resume = s3c2443_clk_resume,
+-};
+-
+-static void __init s3c2443_clk_sleep_init(void)
+-{
+-	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
+-						ARRAY_SIZE(s3c2443_clk_regs));
+-	if (!s3c2443_save) {
+-		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+-			__func__);
+-		return;
+-	}
+-
+-	register_syscore_ops(&s3c2443_clk_syscore_ops);
+-	return;
+-}
+-#else
+-static void __init s3c2443_clk_sleep_init(void) {}
+-#endif
+-
+ PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
+ PNAME(esysclk_p) = { "epllref", "epll" };
+ PNAME(mpllref_p) = { "xti", "mdivclk" };
+@@ -450,7 +410,8 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 		break;
+ 	}
+ 
+-	s3c2443_clk_sleep_init();
++	samsung_clk_sleep_init(reg_base, s3c2443_clk_regs,
++			       ARRAY_SIZE(s3c2443_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+-- 
+2.17.1
