@@ -1,61 +1,107 @@
-Return-Path: <anischal@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Date: Mon, 06 Aug 2018 14:37:18 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Andy Gross
- <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rajendra
- Nayak <rnayak@codeaurora.org>, Odelu Kukatla <okukatla@codeaurora.org>,
- Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-In-Reply-To: <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
-References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
- <1528285308-25477-3-git-send-email-anischal@codeaurora.org>
- <153111693472.143105.11303543263643845656@swboyd.mtv.corp.google.com>
- <1e6d9fc284c3c118203728867f504ec6@codeaurora.org>
- <153250192252.48062.9210075387954345932@swboyd.mtv.corp.google.com>
- <07e0321116993d27d6585bd1a186328d@codeaurora.org>
- <153324986956.10763.5124619734269160725@swboyd.mtv.corp.google.com>
-Message-ID: <ee2113c9dd6a44e9669e60f760c76409@codeaurora.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35923 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729200AbeH2Tsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:36 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 03/10] clk: samsung: s3c2412: Use generic helper for
+ handling suspend/resume
+Date: Wed, 29 Aug 2018 17:50:39 +0200
+Message-id: <20180829155046.29359-4-m.szyprowski@samsung.com>
+In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155059eucas1p16fecde00348e0a2e6707aaf2a76320be@eucas1p1.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 2018-08-03 04:14, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-07-30 04:28:56)
->> On 2018-07-25 12:28, Stephen Boyd wrote:
->> >
->> > Ok. Sounds good! Is the rate range call really needed? It can't be
->> > determined in the PLL code with some table or avoided by making sure
->> > GPU
->> > uses OPP table with only approved frequencies?
->> >
->> 
->> Currently fabia PLL code does not have any table to check this and
->> intention
->> was to avoid relying on the client to call set_rate with only approved
->> frequencies so we have added the set_rate_range() call in the GPUCC
->> driver
->> in order to set the rate range.
->> 
-> 
-> But GPU will use OPP so it doesn't seem like it really buys us anything
-> here. And it really doesn't matter when the clk driver implementation
-> doesn't use the min/max to clamp the values of the round_rate() call. 
-> Is
-> that being done here? I need to double check. I would be more convinced
-> if the implementation was looking at min/max to constrain the rate
-> requested.
-> 
+Replace common suspend/resume handling code by generic helper.
+No functional change.
 
-So our understanding is that GPU(client) driver will always call the
-set_rate with approved frequencies only and we can completely rely on 
-the
-client. Is our understanding is correct?
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-s3c2412.c | 43 ++-----------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+index 6bc94d3aff78..dd1159050a5a 100644
+--- a/drivers/clk/samsung/clk-s3c2412.c
++++ b/drivers/clk/samsung/clk-s3c2412.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
+ #include <linux/reboot.h>
+ 
+ #include <dt-bindings/clock/s3c2412.h>
+@@ -29,9 +28,6 @@
+ 
+ static void __iomem *reg_base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s3c2412_save;
+-
+ /*
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
+@@ -45,42 +41,6 @@ static unsigned long s3c2412_clk_regs[] __initdata = {
+ 	CLKSRC,
+ };
+ 
+-static int s3c2412_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s3c2412_save,
+-				ARRAY_SIZE(s3c2412_clk_regs));
+-
+-	return 0;
+-}
+-
+-static void s3c2412_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s3c2412_save,
+-				ARRAY_SIZE(s3c2412_clk_regs));
+-}
+-
+-static struct syscore_ops s3c2412_clk_syscore_ops = {
+-	.suspend = s3c2412_clk_suspend,
+-	.resume = s3c2412_clk_resume,
+-};
+-
+-static void __init s3c2412_clk_sleep_init(void)
+-{
+-	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
+-						ARRAY_SIZE(s3c2412_clk_regs));
+-	if (!s3c2412_save) {
+-		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+-			__func__);
+-		return;
+-	}
+-
+-	register_syscore_ops(&s3c2412_clk_syscore_ops);
+-	return;
+-}
+-#else
+-static void __init s3c2412_clk_sleep_init(void) {}
+-#endif
+-
+ static struct clk_div_table divxti_d[] = {
+ 	{ .val = 0, .div = 1 },
+ 	{ .val = 1, .div = 2 },
+@@ -278,7 +238,8 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 	samsung_clk_register_alias(ctx, s3c2412_aliases,
+ 				   ARRAY_SIZE(s3c2412_aliases));
+ 
+-	s3c2412_clk_sleep_init();
++	samsung_clk_sleep_init(reg_base, s3c2412_clk_regs,
++			       ARRAY_SIZE(s3c2412_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+-- 
+2.17.1
