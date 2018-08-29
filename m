@@ -1,67 +1,166 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Thu, 2 Aug 2018 12:35:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180802113552.GJ9117@sirena.org.uk>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga06.intel.com ([134.134.136.31]:49454 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbeH2Kvv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Aug 2018 06:51:51 -0400
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Stephen Boyd <sboyd@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com,
+        qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+From: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <75f8313b-42e6-e741-196d-af27ad1e4f9b@linux.intel.com>
+Date: Wed, 29 Aug 2018 14:56:22 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
-In-Reply-To: <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+In-Reply-To: <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---72k7VsmfIboquFwl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 8/28/2018 3:09 AM, Stephen Boyd wrote:
+> Quoting yixin zhu (2018-08-08 01:52:20)
+>> On 8/8/2018 1:50 PM, Stephen Boyd wrote:
+>>> Quoting Songjun Wu (2018-08-02 20:02:21)
+>>>> +       struct clk *clk;
+>>>> +       int idx;
+>>>> +
+>>>> +       for (idx = 0; idx < nr_clks; idx++, osc++) {
+>>>> +               if (!osc->dt_freq ||
+>>>> +                   of_property_read_u32(ctx->np, osc->dt_freq, &freq))
+>>>> +                       freq = osc->def_rate;
+>>>> +
+>>>> +               clk = clk_register_fixed_rate(NULL, osc->name, NULL, 0, freq);
+>>> Should come from DT itself.
+>> Yes. It can be defined as fixed-clock node in device tree.
+>> Do you mean it should be defined in device tree and driver reference it
+>> via device tree?
+> Yes the oscillator should be in DT and then the DT node here can call
+> clk_get() or just hardcode the parent name to be what it knows it is.
+> Eventually we'd like to be able to move away from string names for
+> hierarchy descriptions but that's far off. To get there, we would need
+> DT nodes for clock controllers to indicate their clk parents with the
+> clocks and clock-names properties. So for the oscillator, DT would
+> define it and then the driver would eventually have a way to specify
+> that some parent is index 5 or clock name "foo" and then the clk core
+> could figure out the linkage. I haven't written that code yet, but I'll
+> probably do it soon if nobody beats me to it.
 
-On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
-> On 02.08.2018 12:44, Mark Brown wrote:
+Thanks.  Will update.
 
-> > I thought we'd got an ack for this from Raphael on a previous version or
-> > am I mistaken?
 
-> No, we got an:
-> "Anyway, I have no particular problems with exporting
-> pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+>
+>>>> +/**
+>>>> + * struct intel_clk_provider
+>>>> + * @map: regmap type base address for register.
+>>>> + * @np: device node
+>>>> + * @clk_data: array of hw clocks and clk number.
+>>>> + */
+>>>> +struct intel_clk_provider {
+>>>> +       struct regmap           *map;
+>>>> +       struct device_node      *np;
+>>>> +       struct clk_onecell_data clk_data;
+>>> Please register clk_hw pointers instead of clk pointers with the of
+>>> provider APIs.
+>> Sorry.  I'm not sure I understand you correctly.
+>> If only registering clk_hw pointer,  not registering of_provider API, then
+>> how to reference it in the user drivers ?
+>> Could you please give me more hints ?
+> Clk provider drivers shouldn't be using clk pointers directly. Usually
+> when that happens something is wrong. So new clk drivers should register
+> clk_hw pointers and pretty much only deal with clk_hw pointers instead
+> of struct clk pointers. You still register an of_provider, but that
+> provider hands out clk_hw pointers so that clk provider drivers aren't
+> tempted to use struct clk pointers.
 
-> Should i see it as ACK?
+Understood.  Will update to use clk_hw_onecell_data and change the 
+registration accordingly.
 
-It's probably good enough. =20
 
---72k7VsmfIboquFwl
-Content-Type: application/pgp-signature; name="signature.asc"
+>>
+>>>> + */
+>>>> +struct intel_pll_clk {
+>>>> +       unsigned int            id;
+>>>> +       const char              *name;
+>>>> +       const char              *const *parent_names;
+>>>> +       u8                      num_parents;
+>>> Can the PLL have multiple parents?
+>> Yes. But not in this platform.
+>> The define here make it easy to expand to support new platform.
+>>
+> Ok, so it has a mux inside.
+>
+>>>> +       unsigned int                    id;
+>>>> +       enum intel_clk_type             type;
+>>>> +       const char                      *name;
+>>>> +       const char                      *const *parent_names;
+>>>> +       u8                              num_parents;
+>>>> +       unsigned long                   flags;
+>>>> +       unsigned int                    mux_off;
+>>>> +       u8                              mux_shift;
+>>>> +       u8                              mux_width;
+>>>> +       unsigned long                   mux_flags;
+>>>> +       unsigned int                    mux_val;
+>>>> +       unsigned int                    div_off;
+>>>> +       u8                              div_shift;
+>>>> +       u8                              div_width;
+>>>> +       unsigned long                   div_flags;
+>>>> +       unsigned int                    div_val;
+>>>> +       const struct clk_div_table      *div_table;
+>>>> +       unsigned int                    gate_off;
+>>>> +       u8                              gate_shift;
+>>>> +       unsigned long                   gate_flags;
+>>>> +       unsigned int                    gate_val;
+>>>> +       unsigned int                    mult;
+>>>> +       unsigned int                    div;
+>>>> +};
+>>>> +
+>>>> +/* clock flags definition */
+>>>> +#define CLOCK_FLAG_VAL_INIT    BIT(16)
+>>>> +#define GATE_CLK_HW            BIT(17)
+>>>> +#define GATE_CLK_SW            BIT(18)
+>>>> +#define GATE_CLK_VT            BIT(19)
+>>> What does VT mean? Virtual?
+>> Yes. VT means virtual here.
+>> Will change to GATE_CLK_VIRT.
+>>
+> Is it a hardware concept? Or virtualization with hypervisor?
 
------BEGIN PGP SIGNATURE-----
+Some peripheral drivers want to use same code cross platforms.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlti7JgACgkQJNaLcl1U
-h9AhdAf/TbZVRZ28YFMBoAatxLryUYP178QUB6AlI/U68p5IlMOnGK/xFGaPJ7G7
-bSyJWiVfHFTB2nKwoltQy219TQuUwr0c3RJ3t2kpFm06L5a/f9YyEZCndUxFOrgy
-dMSAeU5QaiOmQvGcWNrCmoIJ3K38xDm03FOLnzjUZ2Mk0WIyCuZkuacRDqHPRkgX
-t4WI4xTsEHJWybjs8fcfjmnyp8GAwAilOTGT0AeyuXJvTp4s629YzI7njDbcSqxS
-GLaE1Lrat9D/H6exC9UqfOSvP4OCjWCXYeSUPUUCgoMlWjYNtT0QVyM60tfizgtE
-4vMkCluS9U/eszAJV2Vchh0RIFiw/Q==
-=2d1o
------END PGP SIGNATURE-----
+But not all platforms provide HW gate clock.  So in this case, clock 
+driver creates
 
---72k7VsmfIboquFwl--
+a virtual gate clock to make it work if no HW gate clock in the SoC.
+
+
+>
+>>>> +}
+>>>> +
+>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>> It provides CPU clock which is used in early boot stage.
+>>
+> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+> frequency? If the driver can be split into two pieces, one to handle the
+> really early stuff that must be in place to get timers up and running
+> and the other to register the rest of the clks that aren't critical from
+> a regular platform driver it would be good. That's preferred model if
+> something is super critical.
+
+Yes, CPU clock is providing CPU frequency in the early boot stage.
+
+Will put the non-critical clocks in the platform driver.
+
+
+>
