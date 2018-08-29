@@ -1,63 +1,45 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga17.intel.com ([192.55.52.151]:48975 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726413AbeHCE6u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Aug 2018 00:58:50 -0400
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 18/18] dt-bindings: serial: lantiq: Add optional properties for CCF
-Date: Fri,  3 Aug 2018 11:02:37 +0800
-Message-Id: <20180803030237.3366-19-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Hans de Goede <hdegoede@redhat.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "thor.thayer@linux.intel.com"
+	<thor.thayer@linux.intel.com>, dl-linux-imx <linux-imx@nxp.com>, Bartlomiej
+ Zolnierkiewicz <b.zolnierkie@samsung.com>, "linux-fbdev@vger.kernel.org"
+	<linux-fbdev@vger.kernel.org>, Masahiro Yamada
+	<yamada.masahiro@socionext.com>, Stephen Boyd <sboyd@codeaurora.org>
+Subject: RE: [PATCH V4 4/4] video: simplefb: switch to use clk_bulk API to
+ simplify clock operations
+Date: Wed, 29 Aug 2018 13:15:50 +0000
+Message-ID: 
+ <AM0PR04MB4211E934272EE1A212711FAE80090@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535547100-25634-1-git-send-email-aisheng.dong@nxp.com>
+ <1535547100-25634-5-git-send-email-aisheng.dong@nxp.com>
+ <66eb6870-3674-0fdb-f5fb-4915a76191f6@redhat.com>
+In-Reply-To: <66eb6870-3674-0fdb-f5fb-4915a76191f6@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Clocks and clock-names are updated in device tree binding.
-
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
-
-Changes in v2: None
-
- Documentation/devicetree/bindings/serial/lantiq_asc.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serial/lantiq_asc.txt b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-index 3acbd309ab9d..40e81a5818f6 100644
---- a/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-+++ b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
-@@ -6,8 +6,23 @@ Required properties:
- - interrupts: the 3 (tx rx err) interrupt numbers. The interrupt specifier
-   depends on the interrupt-parent interrupt controller.
- 
-+Optional properties:
-+- clocks: Should contain frequency clock and gate clock
-+- clock-names: Should be "freq" and "asc"
-+
- Example:
- 
-+asc0: serial@16600000 {
-+	compatible = "lantiq,asc";
-+	reg = <0x16600000 0x100000>;
-+	interrupt-parent = <&gic>;
-+	interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
-+		<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
-+	clocks = <&cgu CLK_SSX4>, <&cgu GCLK_UART>;
-+	clock-names = "freq", "asc";
-+};
-+
- asc1: serial@e100c00 {
- 	compatible = "lantiq,asc";
- 	reg = <0xE100C00 0x400>;
--- 
-2.11.0
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBIYW5zIGRlIEdvZWRlIFttYWls
+dG86aGRlZ29lZGVAcmVkaGF0LmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBBdWd1c3QgMjksIDIw
+MTggOTowMSBQTQ0KDQpbLi4uXQ0KDQo+ID4gQEAgLTI1MiwzOSArMjI4LDIxIEBAIHN0YXRpYyBp
+bnQgc2ltcGxlZmJfY2xvY2tzX2dldChzdHJ1Y3Qgc2ltcGxlZmJfcGFyDQo+ICpwYXIsDQo+ID4g
+ICBzdGF0aWMgdm9pZCBzaW1wbGVmYl9jbG9ja3NfZW5hYmxlKHN0cnVjdCBzaW1wbGVmYl9wYXIg
+KnBhciwNCj4gPiAgIAkJCQkgICBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAg
+ew0KPiA+IC0JaW50IGksIHJldDsNCj4gPiArCWludCByZXQ7DQo+ID4gKw0KPiA+ICsJcmV0ID0g
+Y2xrX2J1bGtfcHJlcGFyZV9lbmFibGUocGFyLT5jbGtfY291bnQsIHBhci0+Y2xrcyk7DQo+ID4g
+KwlpZiAocmV0KQ0KPiA+ICsJCWRldl93YXJuKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZW5hYmxl
+IGNsb2Nrc1xuIik7DQo+IA0KPiBJZiBjbGtfYnVsa19wcmVwYXJlX2VuYWJsZSgpIGZhaWxzLCBp
+dCBsZWF2ZXMgYWxsIGNsb2NrcyBkaXNhYmxlZCwgc28geW91IHNob3VsZA0KPiBub3Qgc2V0IHBh
+ci0+Y2xrc19lbmFibGVkID0gdHJ1ZTsgdGhlbi4NCj4gDQoNClRoYW5rcyBmb3Igc3BvdHRpbmcg
+dGhpcy4NClRoZSBvcmlnaW5hbCBjb2RlIHdhbnRlZCB0byBrZWVwIHRoZSBiZWhhdmlvciBhcyBi
+ZWZvcmUuDQpCdXQgYSBiaXQgbW9yZSB0aGlua2luZyB0aGF0IHVubGlrZSB0aGUgZXhpc3QgY29k
+ZSwgY2xrX2J1bGtfcHJlcGFyZV9lbmFibGUgd2lsbA0KYXV0b21hdGljYWxseSBkbyByZXZlcnNl
+IGNsZWFuIHVwIG9uY2UgaXQgZmFpbHMuDQpTbyBubyBuZWVkIHRvIHNldCBwYXItPmNsa3NfZW5h
+YmxlZCA9IHRydWUgYW55bW9yZS4NCg0KV2lsbCBmaXggaXQgYW5kIHJlc2VuZC4NCg0KUmVnYXJk
+cw0KRG9uZyBBaXNoZW5nDQoNCj4gT3RoZXJ3aXNlIHRoaXMgcGF0Y2ggbG9va3MgZ29vZC4NCj4g
+DQo+IFJlZ2FyZHMsDQo+IA0KPiBIYW5zDQo=
