@@ -1,361 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-he1eur01on0064.outbound.protection.outlook.com ([104.47.0.64]:55648
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725732AbeHUGSw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Aug 2018 02:18:52 -0400
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: Rob Herring <robh@kernel.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
-Date: Tue, 21 Aug 2018 03:00:34 +0000
-Message-ID: <AM0PR04MB4211B9113831B292110C709280310@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1534781305-4770-1-git-send-email-aisheng.dong@nxp.com>
- <1534781305-4770-2-git-send-email-aisheng.dong@nxp.com>
- <20180820181155.GA13901@bogus>
-In-Reply-To: <20180820181155.GA13901@bogus>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <hdegoede@redhat.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix
+ suspend issues
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Irina Tirdea <irina.tirdea@intel.com>,
+ netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+ Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180829163141.GB8462@smile.fi.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e3be83dc-67c7-fdaa-1dd9-0a4aa3d10584@redhat.com>
+Date: Wed, 29 Aug 2018 19:06:09 +0200
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180829163141.GB8462@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Rob,
+Hi,
 
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Tuesday, August 21, 2018 2:12 AM
-> To: A.s. Dong <aisheng.dong@nxp.com>
-> Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com;
-> kernel@pengutronix.de; shawnguo@kernel.org; Fabio Estevam
-> <fabio.estevam@nxp.com>; dl-linux-imx <linux-imx@nxp.com>; Mark
-> Rutland <mark.rutland@arm.com>; Jassi Brar <jassisinghbrar@gmail.com>;
-> Linus Walleij <linus.walleij@linaro.org>; Stephen Boyd <sboyd@kernel.org>=
-;
-> Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf Hansson
-> <ulf.hansson@linaro.org>; devicetree@vger.kernel.org; linux-
-> clk@vger.kernel.org; linux-gpio@vger.kernel.org; linux-pm@vger.kernel.org
-> Subject: Re: [PATCH V5 1/5] dt-bindings: arm: fsl: add scu binding doc
->=20
-> On Tue, Aug 21, 2018 at 12:08:21AM +0800, Dong Aisheng wrote:
-> > The System Controller Firmware (SCFW) is a low-level system function
-> > which runs on a dedicated Cortex-M core to provide power, clock, and
-> > resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
-> > (QM, QP), and i.MX8QX (QXP, DX).
-> >
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Sascha Hauer <kernel@pengutronix.de>
-> > Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-gpio@vger.kernel.org
-> > Cc: linux-pm@vger.kernel.org
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> > v4->v5:
-> >  * scu node should be under firmware node
-> >  * add pd/clk/pinctrl binding as well according to Rob's suggestion
-> >  * switch to new generic MU binding
-> >    Use 8 separate mu channels in one MU instance for SCU communication
-> > v3->v4:
-> >  * fully change to mailbox binding
-> >  * add child node description
-> > v2->v3:
-> >  * update a bit to mailbox binding
-> > v1->v2:
-> >  * remove status
-> >  * changed to mu1
-> > ---
-> >  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 179
-> > +++++++++++++++++++++
-> >  1 file changed, 179 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > new file mode 100644
-> > index 0000000..2cd7e4a
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-> > @@ -0,0 +1,179 @@
-> > +NXP i.MX System Controller Firmware (SCFW)
-> > +--------------------------------------------------------------------
->=20
-> Think you wanted a newline here              ^?
+On 29-08-18 18:31, Andy Shevchenko wrote:
+> On Mon, Aug 27, 2018 at 04:31:56PM +0200, Hans de Goede wrote:
+>> Hi All,
+>>
+>> This series has as goal to revert commit d31fd43c0f9a ("clk: x86: Do not gate
+>> clocks enabled by the firmware"), because that commit causes almost all
+>> Cherry Trail devices to not use the S0i3 powerstate when suspending, leading
+>> to them quickly draining their battery when suspended.
+>>
+>> This commit was added to fix issues with the r8169 NIC on some Bay Trail
+>> devices, where the pmc_plt_clk_4 was used as clk for the r8169 chip.
+>>
+>> This series fixes this properly, so that we can undo the trouble some
+>> commit.
+>>
+>> The first patch adds an "ether_clk" alias to the clk-pmc-atom driver so
+>> that the r8169 can pass "ether_clk" as generic id to clk_get instead of
+>> having to add x86 specific code to the r8169 driver.
+>>
+>> The second patch makes the r8169 driver do a clk_get for "ether_clk"
+>> (ignoring -ENOENT errors so this is optional) and if that succeeds then
+>> it enables the clock.
+>>
+>> The third patch effectively revert the troublesome commit.
+>>
+>> This series has been tested on a HP Stream x360 - 11-p000nd, which uses
+>> a Bay Trail SoC with a r8169 ethernet chip and I can confirm that the
+>> pmc_plt_clk_4 gets properly enabled, so this series should not cause any
+>> regressions wrt devices needing pmc_plt_clk_4 enabled (which is not the
+>> case on the Stream x360).
+>>
+>> To avoid regressions we need to have patches 1 and 2 merged before 3,
+>> so it is probably best if this entire series gets merged through a single
+>> tree. Given that clk-pmc-atom.c has not seen any changes for over a
+>> year I suggest that all 3 patches are merged through the netdev tree,
+>> with an ack from the clk maintainers. Assuming that is ok with the clk
+>> maintainers of course.
+>>
+>> Note there is a fourth patch in this series, this patch is necessary to
+>> reach S0i3 state on Bay Trail devices wich have a r8169 ethernet chip,
+>> since I do not have access to hardware where the r8169 actually needs
+>> the pmc_plt_clk_4 I have not been able to test this, hence it is marked
+>> as RFC for now.
+>>
+> 
+> What a nice stuff, thanks!
+> 
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Yes, of course.
-It seems to be introduced by mistake.
-Thanks for reminder.
+Thank you (and also thank you for the other reviews)
 
->=20
-> > +
-> > +The System Controller Firmware (SCFW) is a low-level system function
-> > +which runs on a dedicated Cortex-M core to provide power, clock, and
-> > +resource management. It exists on some i.MX8 processors. e.g. i.MX8QM
-> > +(QM, QP), and i.MX8QX (QXP, DX).
-> > +
-> > +The AP communicates with the SC using a multi-ported MU module found
-> > +in the LSIO subsystem. The current definition of this MU module
-> > +provides
-> > +5 remote AP connections to the SC to support up to 5 execution
-> > +environments (TZ, HV, standard Linux, etc.). The SC side of this MU
-> > +module interfaces with the LSIO DSC IP bus. The SC firmware will
-> > +communicate with this MU using the MSI bus.
->=20
-> How are 5 users supported with only 4 channels defined below?
+> Btw, you probably better to refer to
+> https://bugzilla.kernel.org/show_bug.cgi?id=196861 which is dedicated for S0ix
+> issue.
 
-There're 5 MU instances designed to be specifically communicate with
-SCU Firmware on MX8 hardware.
+Ok, I've added a link to that. I've also added:
 
-With the new generic mu binding [1], each MU instance is abstracted
-Into 16 virtual MU channels. (4 Tx, 4 Rx, 4 Tx doorbell, 4 Rx doorbell).
-(MU has 4 pair of Tx/Rx data register which can be used to send/receive
-multi words. With new binding, each data register is abstracted into one
-MU channel, totally 8 channels for data transfer).
+Reported-by: Johannes Stezenbach <js@sig21.net>
 
-SCU protocol is already designed to uses all data registers to send/receive
-multi words according to MU hardware reference manual. So it must
-use all channels in one MU instances with new binding.
+To honor Johannes for figuring out that leaving the clocks enabled
+was a problem in the first place.
 
-On MX8, it can be one of LSIO MU0~M4.
-=20
-[1] https://patchwork.kernel.org/patch/10554565/
+This will all be included in v2 of the series when I send it out.
 
->=20
-> > +
-> > +System Controller Device Node:
-> >
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D
-> > +
-> > +The scu node with the following properties shall be under the /firmwar=
-e/
-> node.
-> > +
-> > +Required properties:
-> > +-------------------
-> > +- compatible:	should be "fsl,imx-scu".
-> > +- mbox-names:	should include "tx0", "tx1", "tx2", "tx3",
-> > +			       "rx0", "rx1", "rx2", "rx3".
-> > +- mboxes:	List of phandle of 4 MU channels for tx and 4 MU channels
-> > +		for rx. All 8 MU channels must be in the same MU instance.
-> > +		Cross instances are not allowed. The MU instance can only
-> > +		be one of LSIO MU0~M4 for imx8qxp and imx8qm. Users
-> need
-> > +		to make sure use the one which is not conflict with other
-> > +		execution environments. e.g. ATF.
->=20
-> How is one supposed to know what channels are in use already?
->=20
+> Another thing, clk_prepare_enable() can fail, I dunno what you can do at
+> ->resume() stage with it failed.
 
-Currently it's simply predefined.
-E.g. ATF uses MU0 and u-Boot & Kernel uses MU1.
+Right, I know that it can fail, but in practice it never fails unless
+things are seriously foo-barred already and there is not much we can
+do when it fails, so I decided to just ignore the return code.
 
-> IMO, ATF should remove the channel it uses before passing the DT to the
-> next stage.=20
+Regards,
 
-Sounds like a good idea.
-To be more specific, you mean simply marking the MU node status used in ATF
-to be "disabled" before passing to the next stage, am I understand correct?
-
-> That doesn't help if later stages get a different DT though.
-
-Doesn't help? Sorry a bit confusing...
-
->=20
-> > +		Note:
-> > +		Channel 0 must be "tx0" or "rx0".
-> > +		Channel 1 must be "tx1" or "rx1".
-> > +		Channel 2 must be "tx2" or "rx2".
-> > +		Channel 3 must be "tx3" or "rx3".
-> > +		e.g.
-> > +		mboxes =3D <&lsio_mu1 0 0
-> > +			  &lsio_mu1 0 1
-> > +			  &lsio_mu1 0 2
-> > +			  &lsio_mu1 0 3
-> > +			  &lsio_mu1 1 0
-> > +			  &lsio_mu1 1 1
-> > +			  &lsio_mu1 1 2
-> > +			  &lsio_mu1 1 3>;
-> > +		See Documentation/devicetree/bindings/mailbox/fsl,mu.txt
-> > +		for detailed mailbox binding.
-> > +
-> > +i.MX SCU Client Device Node:
-> >
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> =3D=3D=3D
-> > +
-> > +Client nodes are maintained as children of the relevant IMX-SCU device
-> node.
-> > +
-> > +Power domain bindings based on SCU Message Protocol
-> > +------------------------------------------------------------
-> > +
-> > +This binding for the SCU power domain providers uses the generic
-> > +power domain binding[2].
-> > +
-> > +Required properties:
-> > +- compatible:		Should be "fsl,scu-pd".
-> > +- #address-cells:	Should be 1.
-> > +- #size-cells:		Should be 0.
-> > +
-> > +Required properties for power domain sub nodes:
-> > +- #power-domain-cells:	Must be 0.
-> > +
-> > +Optional Properties:
-> > +- reg:			Resource ID of this power domain.
-> > +			No exist means uncontrollable by user.
-> > +			See detailed Resource ID list from:
-> > +			include/dt-bindings/power/imx-rsrc.h
-> > +- power-domains:	phandle pointing to the parent power domain.
-> > +
-> > +Clock bindings based on SCU Message Protocol
-> > +------------------------------------------------------------
-> > +
-> > +This binding uses the common clock binding[1].
-> > +
-> > +Required properties:
-> > +- compatible:		Should be "fsl,imx8qxp-clock".
-> > +- #clock-cells:		Should be 1. Contains the Clock ID value.
->=20
-> There was a recent patch adding input clocks to other i.MX CCM bindings.
-> Is that needed here?
->=20
-
-Will double check it, thanks for reminder.
-
-Regards
-Dong Aisheng
-
-> > +
-> > +The clock consumer should specify the desired clock by having the
-> > +clock ID in its "clocks" phandle cell.
-> > +
-> > +See the full list of clock IDs from:
-> > +include/dt-bindings/clock/imx8qxp-clock.h
-> > +
-> > +Pinctrl bindings based on SCU Message Protocol
-> > +------------------------------------------------------------
-> > +
-> > +This binding uses the i.MX common pinctrl binding[3].
-> > +
-> > +Required properties:
-> > +- compatible:		Should be "fsl,imx8qxp-iomuxc".
-> > +
-> > +Required properties for Pinctrl sub nodes:
-> > +- fsl,pins:		Each entry consists of 3 integers which represents
-> > +			the mux and config setting for one pin. The first 2
-> > +			integers <pin_id mux_mode> are specified using a
-> > +			PIN_FUNC_ID macro, which can be found in
-> > +			<dt-bindings/pinctrl/pads-imx8qxp.h>.
-> > +			The last integer CONFIG is the pad setting value like
-> > +			pull-up on this pin.
-> > +
-> > +			Please refer to i.MX8QXP Reference Manual for
-> detailed
-> > +			CONFIG settings.
-> > +
-> > +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +[2] Documentation/devicetree/bindings/power/power_domain.txt
-> > +[3] Documentation/devicetree/bindings/pinctrl/fsl,imx-pinctrl.txt
-> > +
-> > +Example (imx8qxp):
-> > +-------------
-> > +lsio_mu1: mailbox@5d1c0000 {
-> > +	...
-> > +	#mbox-cells =3D <2>;
-> > +};
-> > +
-> > +firmware {
-> > +	scu {
-> > +		compatible =3D "fsl,imx-scu";
-> > +		mbox-names =3D "tx0", "tx1", "tx2", "tx3",
-> > +			     "rx0", "rx1", "rx2", "rx3";
-> > +		mboxes =3D <&lsio_mu1 0 0
-> > +			  &lsio_mu1 0 1
-> > +			  &lsio_mu1 0 2
-> > +			  &lsio_mu1 0 3
-> > +			  &lsio_mu1 1 0
-> > +			  &lsio_mu1 1 1
-> > +			  &lsio_mu1 1 2
-> > +			  &lsio_mu1 1 3>;
-> > +
-> > +		clk: clk {
-> > +			compatible =3D "fsl,imx8qxp-clk";
-> > +			#clock-cells =3D <1>;
-> > +		};
-> > +
-> > +		iomuxc {
-> > +			compatible =3D "fsl,imx8qxp-iomuxc";
-> > +
-> > +			pinctrl_lpuart0: lpuart0grp {
-> > +				fsl,pins =3D <
-> > +					SC_P_UART0_RX_ADMA_UART0_RX
-> 	0x06000020
-> > +					SC_P_UART0_TX_ADMA_UART0_TX
-> 	0x06000020
-> > +				>;
-> > +			};
-> > +			...
-> > +		};
-> > +
-> > +		imx8qx-pm {
-> > +			compatible =3D "fsl,scu-pd";
-> > +			#address-cells =3D <1>;
-> > +			#size-cells =3D <0>;
-> > +
-> > +			pd_dma: dma-power-domain {
-> > +				#power-domain-cells =3D <0>;
-> > +
-> > +				pd_dma_lpuart0: dma-lpuart0@57 {
-> > +					reg =3D <SC_R_UART_0>;
-> > +					#power-domain-cells =3D <0>;
-> > +					power-domains =3D <&pd_dma>;
-> > +				};
-> > +				...
-> > +			};
-> > +			...
-> > +		};
-> > +	};
-> > +};
-> > +
-> > +serial@5a060000 {
-> > +	...
-> > +	pinctrl-names =3D "default";
-> > +	pinctrl-0 =3D <&pinctrl_lpuart0>;
-> > +	clocks =3D <&clk IMX8QXP_UART0_CLK>,
-> > +		 <&clk IMX8QXP_UART0_IPG_CLK>;
-> > +	clock-names =3D "per", "ipg";
-> > +	power-domains =3D <&pd_dma_lpuart0>;
-> > +};
-> > --
-> > 2.7.4
-> >
+Hans
