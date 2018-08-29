@@ -1,72 +1,68 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v2 14/18] serial: intel: Add CCF support
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-15-songjun.wu@linux.intel.com>
- <20180803055640.GA32226@kroah.com>
-From: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <763bba56-3701-7fe9-9b31-4710594b40d5@linux.intel.com>
-Date: Fri, 3 Aug 2018 15:33:38 +0800
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180803055640.GA32226@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-kernel-owner@vger.kernel.org
+To: "A.s. Dong" <aisheng.dong@nxp.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>,
+ "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
+Date: Tue, 28 Aug 2018 20:08:38 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting A.s. Dong (2018-08-16 19:33:52)
+> Hi Stephen,
+> =
+
+> Do you want me to resend this series for review?
+> It seems have been pending for quite a long time.
+> =
+
+> Thor just pinged me for its status as he wants to use it.
+> =
 
 
-On 8/3/2018 1:56 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 03, 2018 at 11:02:33AM +0800, Songjun Wu wrote:
->> Previous implementation uses platform-dependent API to get the clock.
->> Those functions are not available for other SoC which uses the same IP.
->> The CCF (Common Clock Framework) have an abstraction based APIs for
->> clock. In future, the platform specific code will be removed when the
->> legacy soc use CCF as well.
->> Change to use CCF APIs to get clock and rate. So that different SoCs
->> can use the same driver.
->>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->> Changes in v2: None
->>
->>   drivers/tty/serial/lantiq.c | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
->> index 36479d66fb7c..35518ab3a80d 100644
->> --- a/drivers/tty/serial/lantiq.c
->> +++ b/drivers/tty/serial/lantiq.c
->> @@ -26,7 +26,9 @@
->>   #include <linux/clk.h>
->>   #include <linux/gpio.h>
->>   
->> +#ifdef CONFIG_LANTIQ
->>   #include <lantiq_soc.h>
->> +#endif
-> That is never how you do this in Linux, you know better.
->
-> Please go and get this patchset reviewed and signed-off-by from other
-> internal Intel kernel developers before resending it next time.  It is
-> their job to find and fix your basic errors like this, not ours.
-Thank you for your comment.
-Actually, we have discussed this issue internally.
-We put the reason why we use "#ifdef CONFIG_LANTIQ" preprocessor in commit
-message in "[PATCH v2 08/18] serial: intel: Get serial id from dts".
-Please refer the commit message below.
+I was waiting for someone to try them out or review them. Good that it
+happened!
 
-"#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
-macro is defined in lantiq_soc.h.
-lantiq_soc.h is in arch path for legacy product support.
+I've taken a look at the patches and I'm slightly annoyed with the API
+that passes in a double pointer to clk_bulk_data and returns a count of
+the number of clks found. I guess it's ok though. It's really just this
+line:
 
-arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
+	devres->clks =3D *clks;
 
-If "#ifdef preprocessor" is changed to
-"if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
-code using LTQ_EARLY_ASC is compiled.
-Compilation will fail for no LTQ_EARLY_ASC defined.
+which makes my brain all confused and go think about what's being
+assigned and if it's a struct copy or not.
+
+Maybe this on top would make it easier to take? I'll think about it
+tonight.
+
+---8<---
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 6d3ca5ec5de8..12c87457eca1 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -81,9 +81,9 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 	if (!devres)
+ 		return -ENOMEM;
+ =
+
+-	ret =3D clk_bulk_get_all(dev, clks);
++	ret =3D clk_bulk_get_all(dev, &devres->clks);
+ 	if (ret > 0) {
+-		devres->clks =3D *clks;
++		*clks =3D devres->clks;
+ 		devres->num_clks =3D ret;
+ 		devres_add(dev, devres);
+ 	} else {
