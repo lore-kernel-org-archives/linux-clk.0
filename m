@@ -1,130 +1,80 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] clk: qcom: Add qspi (Quad SPI) clocks for sdm845
-To: Douglas Anderson <dianders@chromium.org>, sboyd@kernel.org,
- andy.gross@linaro.org
-Cc: girishm@codeaurora.org, linux-arm-msm@vger.kernel.org,
- anischal@codeaurora.org, bjorn.andersson@linaro.org, grahamr@codeaurora.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+Return-Path: <yixin.zhu@linux.intel.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Stephen Boyd <sboyd@kernel.org>, Songjun Wu <songjun.wu@linux.intel.com>,
+ chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
  Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- David Brown <david.brown@linaro.org>
-References: <20180724174513.174018-1-dianders@chromium.org>
- <20180724174513.174018-3-dianders@chromium.org>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <7f2ac80d-d4b8-ce46-0f1f-8e62f8868a61@codeaurora.org>
-Date: Fri, 10 Aug 2018 13:39:21 +0530
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+From: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
+Date: Wed, 29 Aug 2018 18:34:26 +0800
 MIME-Version: 1.0
-In-Reply-To: <20180724174513.174018-3-dianders@chromium.org>
+In-Reply-To: <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+>>>> +}
+>>>> +
+>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>> It provides CPU clock which is used in early boot stage.
+>>
+> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+> frequency? If the driver can be split into two pieces, one to handle the
+> really early stuff that must be in place to get timers up and running
+> and the other to register the rest of the clks that aren't critical from
+> a regular platform driver it would be good. That's preferred model if
+> something is super critical.
+>
+Just to make sure my approach is same as you think.
 
+In the driver, there's two clock registrations.
 
-On 7/24/2018 11:15 PM, Douglas Anderson wrote:
-> Add both the interface and core clock.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> (am from https://lore.kernel.org/patchwork/patch/966680/mbox)
-> 
-> ---
-> 
-> Changes in v3:
-> - Removed gcc_parent_names_9 which I had left in (doh!).
-> 
-> Changes in v2:
-> - Only 19.2, 100, 150, and 300 MHz now.
-> - All clocks come from MAIN rather than EVEN.
-> - Use parent map 0 instead of new parent map 9.
-> 
->   drivers/clk/qcom/gcc-sdm845.c | 56 +++++++++++++++++++++++++++++++++++
->   1 file changed, 56 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index 0f694ed4238a..fc1c6658ad82 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -358,6 +358,28 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
->   	},
->   };
->   
-> +static const struct freq_tbl ftbl_gcc_qspi_core_clk_src[] = {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> +	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-> +	F(300000000, P_GPLL0_OUT_MAIN, 2, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_qspi_core_clk_src = {
-> +	.cmd_rcgr = 0x4b008,
-> +	.mnd_width = 0,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_parent_map_0,
-> +	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
-> +	.clkr.hw.init = &(struct clk_init_data){
-> +		.name = "gcc_qspi_core_clk_src",
-> +		.parent_names = gcc_parent_names_0,
-> +		.num_parents = 4,
-> +		.ops = &clk_rcg2_floor_ops,
-> +	},
-> +};
-> +
->   static const struct freq_tbl ftbl_gcc_pdm2_clk_src[] = {
->   	F(9600000, P_BI_TCXO, 2, 0, 0),
->   	F(19200000, P_BI_TCXO, 1, 0, 0),
-> @@ -1935,6 +1957,37 @@ static struct clk_branch gcc_qmip_video_ahb_clk = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_qspi_cnoc_periph_ahb_clk = {
-> +	.halt_reg = 0x4b000,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x4b000,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qspi_cnoc_periph_ahb_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_qspi_core_clk = {
-> +	.halt_reg = 0x4b004,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x4b004,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_qspi_core_clk",
-> +			.parent_names = (const char *[]){
-> +				"gcc_qspi_core_clk_src",
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_qupv3_wrap0_s0_clk = {
->   	.halt_reg = 0x17030,
->   	.halt_check = BRANCH_HALT_VOTED,
-> @@ -3383,6 +3436,9 @@ static struct clk_regmap *gcc_sdm845_clocks[] = {
->   	[GPLL4] = &gpll4.clkr,
->   	[GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
->   	[GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
-> +	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
-> +	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
-> +	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
->   };
->   
->   static const struct qcom_reset_map gcc_sdm845_resets[] = {
-> 
+- One through CLK_OF_DECLARE for early stage clocks.
 
-Reviewed-by: Taniya Das <tdas@codeaurora.org>
+- The other via platform driver for the non-critical clocks.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+In the device tree,  two clock device nodes are required.
 
---
+e.g. device tree:
+
+cgu: cgu@16200000 {
+                 compatible = "intel,grx500-clk", "syscon";
+                 reg = <0x16200000 0x200>;
+                 #clock-cells = <1>;
+};
+
+clk: clk {
+                 compatible = "intel,grx500-cgu";
+                 #clock-cells = <1>;
+                 intel,cgu-syscon = <&cgu>;
+};
+
+source code:
+
+CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+
+static const struct of_device_id of_intel_grx500_cgu_match[] = {
+         { .compatible = "intel,grx500-clk" },
+         {}
+};
+
+static struct platform_driver intel_grx500_clk_driver = {
+         .probe  = intel_grx500_clk_probe,
+         .driver = {
+                 .name = "grx500-cgu",
+                 .of_match_table = of_match_ptr(of_intel_grx500_cgu_match),
+         },
+};
+
+static int __init intel_grx500_cgu_init(void)
+{
+         return platform_driver_register(&intel_grx500_clk_driver);
+}
+arch_initcall(intel_grx500_cgu_init);
