@@ -1,97 +1,86 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	jernej.skrabec@siol.net
-Subject: [PATCH 1/5] clk: sunxi-ng: Add maximum rate constraint to NM PLLs
-Date: Thu,  9 Aug 2018 18:52:13 +0200
-Message-Id: <20180809165217.30680-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
-References: <20180809165217.30680-1-jernej.skrabec@siol.net>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Date: Wed, 29 Aug 2018 19:31:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Irina Tirdea <irina.tirdea@intel.com>, netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix
+ suspend issues
+Message-ID: <20180829163141.GB8462@smile.fi.intel.com>
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180827143200.8597-1-hdegoede@redhat.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On some NM PLLs, frequency can be set above PLL working range.
+On Mon, Aug 27, 2018 at 04:31:56PM +0200, Hans de Goede wrote:
+> Hi All,
+> 
+> This series has as goal to revert commit d31fd43c0f9a ("clk: x86: Do not gate
+> clocks enabled by the firmware"), because that commit causes almost all
+> Cherry Trail devices to not use the S0i3 powerstate when suspending, leading
+> to them quickly draining their battery when suspended.
+> 
+> This commit was added to fix issues with the r8169 NIC on some Bay Trail
+> devices, where the pmc_plt_clk_4 was used as clk for the r8169 chip.
+> 
+> This series fixes this properly, so that we can undo the trouble some
+> commit.
+> 
+> The first patch adds an "ether_clk" alias to the clk-pmc-atom driver so
+> that the r8169 can pass "ether_clk" as generic id to clk_get instead of
+> having to add x86 specific code to the r8169 driver.
+> 
+> The second patch makes the r8169 driver do a clk_get for "ether_clk"
+> (ignoring -ENOENT errors so this is optional) and if that succeeds then
+> it enables the clock.
+> 
+> The third patch effectively revert the troublesome commit.
+> 
+> This series has been tested on a HP Stream x360 - 11-p000nd, which uses
+> a Bay Trail SoC with a r8169 ethernet chip and I can confirm that the
+> pmc_plt_clk_4 gets properly enabled, so this series should not cause any
+> regressions wrt devices needing pmc_plt_clk_4 enabled (which is not the
+> case on the Stream x360).
+> 
+> To avoid regressions we need to have patches 1 and 2 merged before 3,
+> so it is probably best if this entire series gets merged through a single
+> tree. Given that clk-pmc-atom.c has not seen any changes for over a
+> year I suggest that all 3 patches are merged through the netdev tree,
+> with an ack from the clk maintainers. Assuming that is ok with the clk
+> maintainers of course.
+> 
+> Note there is a fourth patch in this series, this patch is necessary to
+> reach S0i3 state on Bay Trail devices wich have a r8169 ethernet chip,
+> since I do not have access to hardware where the r8169 actually needs
+> the pmc_plt_clk_4 I have not been able to test this, hence it is marked
+> as RFC for now.
+> 
 
-Add a constraint for maximum supported rate. This way, drivers can
-specify which is maximum allowed rate for PLL.
+What a nice stuff, thanks!
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu_nm.c |  7 +++++++
- drivers/clk/sunxi-ng/ccu_nm.h | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 4e2073307f34..6fe3c14f7b2d 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -124,6 +124,13 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 		return rate;
- 	}
- 
-+	if (nm->max_rate && rate > nm->max_rate) {
-+		rate = nm->max_rate;
-+		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+			rate /= nm->fixed_post_div;
-+		return rate;
-+	}
-+
- 	if (ccu_frac_helper_has_rate(&nm->common, &nm->frac, rate)) {
- 		if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 			rate /= nm->fixed_post_div;
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
-index 1d8b459c50b7..de232f2199a6 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nm.h
-@@ -38,6 +38,7 @@ struct ccu_nm {
- 
- 	unsigned int		fixed_post_div;
- 	unsigned int		min_rate;
-+	unsigned int		max_rate;
- 
- 	struct ccu_common	common;
- };
-@@ -115,6 +116,35 @@ struct ccu_nm {
- 		},							\
- 	}
- 
-+#define SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(_struct, _name,	\
-+						 _parent, _reg,		\
-+						 _min_rate, _max_rate,	\
-+						 _nshift, _nwidth,	\
-+						 _mshift, _mwidth,	\
-+						 _frac_en, _frac_sel,	\
-+						 _frac_rate_0,		\
-+						 _frac_rate_1,		\
-+						 _gate, _lock, _flags)	\
-+	struct ccu_nm _struct = {					\
-+		.enable		= _gate,				\
-+		.lock		= _lock,				\
-+		.n		= _SUNXI_CCU_MULT(_nshift, _nwidth),	\
-+		.m		= _SUNXI_CCU_DIV(_mshift, _mwidth),	\
-+		.frac		= _SUNXI_CCU_FRAC(_frac_en, _frac_sel,	\
-+						  _frac_rate_0,		\
-+						  _frac_rate_1),	\
-+		.min_rate	= _min_rate,				\
-+		.max_rate	= _max_rate,				\
-+		.common		= {					\
-+			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FRACTIONAL,	\
-+			.hw.init	= CLK_HW_INIT(_name,		\
-+						      _parent,		\
-+						      &ccu_nm_ops,	\
-+						      _flags),		\
-+		},							\
-+	}
-+
- #define SUNXI_CCU_NM_WITH_GATE_LOCK(_struct, _name, _parent, _reg,	\
- 				    _nshift, _nwidth,			\
- 				    _mshift, _mwidth,			\
+Btw, you probably better to refer to
+https://bugzilla.kernel.org/show_bug.cgi?id=196861 which is dedicated for S0ix
+issue.
+
+Another thing, clk_prepare_enable() can fail, I dunno what you can do at
+->resume() stage with it failed.
+
+> Carlos can you test the 4th patch (when you have time) and let us know if
+> it works?
+> 
+> Regards,
+> 
+> Hans
+> 
+
 -- 
-2.18.0
+With Best Regards,
+Andy Shevchenko
