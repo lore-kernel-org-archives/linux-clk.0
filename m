@@ -1,65 +1,63 @@
-Return-Path: <krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Stefan Agner <stefan@agner.ch>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 0/6] crypto: vf-crc - Add new driver (and required clk, DTS...)
-Date: Thu, 30 Aug 2018 19:15:33 +0200
-Message-Id: <20180830171539.20008-1-krzk@kernel.org>
+Return-Path: <hdegoede@redhat.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
+To: Stephen Boyd <sboyd@kernel.org>, "David S . Miller"
+ <davem@davemloft.net>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Irina Tirdea
+ <irina.tirdea@intel.com>, Michael Turquette <mturquette@baylibre.com>
+Cc: netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+ Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-3-hdegoede@redhat.com>
+ <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+ <0f52c05a-4f70-3022-3720-07c6bcf29ed8@redhat.com>
+ <153539729389.129321.804899531283282568@swboyd.mtv.corp.google.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <8a424470-9c57-9b95-9d41-3ea51d3f2629@redhat.com>
+Date: Wed, 29 Aug 2018 19:09:57 +0200
+MIME-Version: 1.0
+In-Reply-To: <153539729389.129321.804899531283282568@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
 
-Add new driver for Freescale/NXP Vybrid CRC HW accelerator along with
-prerequisities:
-1. Clock,
-2. Bindings,
-3. CRC16 test tables for testing.
+On 27-08-18 21:14, Stephen Boyd wrote:
+> Quoting Hans de Goede (2018-08-27 11:53:19)
+>> On 27-08-18 20:47, Stephen Boyd wrote:
+>>> How would you know that a clk device driver hasn't probed yet and isn't
+>>> the driver that's actually providing the clk to this device on x86
+>>> systems? With DT systems we can figure that out by looking at the DT and
+>>> seeing if the device driver requesting the clk has the clocks property.
+>>> On x86 systems it's all clkdev which doesn't really lend itself to
+>>> solving this problem.
+>>
+>> Right on x86 the assumption is that the clk driver will be builtin and
+>> will probe before the consumer. In this case that is true as the
+>> pmc-atom-clk driver can only be builtin and its platform device is
+>> instantiated from the acpi_lpss code and acpi init happens before
+>> the PCI bus is scanned.
+> 
+> If we can go with this assumption then we can make the optional clk API
+> work even on clkdev based systems. Maybe if x86 had some way of
+> indicating that all builtin clks are registered?
 
-Patch 3/6 (ARM: dts: vfxxx: Add node for CRC hardware block) depends on patch
-2/6 (clk) so it should go in following cycle (after clk change hits mainline).
+Unfortunately there is no such thing I'm afraid.
 
-Best regards,
-Krzysztof
+> That might work but
+> it's not very clean. Or if we could check to see if we're running on an
+> ACPI based system in clkdev we could use that to assume that clk_get()
+> will only be called after all providers have registered their lookups.
 
+Yes some check for x86 + ACPI (ARM also uses ACPI, but there we
+should no do this AFAICT) is probably best. That or not use the
+new optional clk API on x86, but that means that any cross platform
+driver cannot use it, which would be a pain.
 
-Krzysztof Kozlowski (6):
-  dt-bindings: crypto: Add Freescale Vybrid CRC
-  clk: imx: vf610: Add CRC clock
-  ARM: dts: vfxxx: Add node for CRC hardware block
-  crypto: testmgr - Add CRC16 test tables
-  crypto - Group Freescale/NXP ARM architecture Kconfig entires together
-  crypto: vf-crc - Add new driver for Freescale Vybrid CRC
+BTW does your Acked-by indicate you are ok with merging this series
+through the netdev tree as I suggested in the cover-letter? If so
+can I also add your Acked-by to the 3th patch ?
 
- .../devicetree/bindings/crypto/fsl-vf610-crc.txt   |  16 +
- MAINTAINERS                                        |   7 +
- arch/arm/boot/dts/vfxxx.dtsi                       |   7 +
- crypto/testmgr.c                                   |   6 +
- crypto/testmgr.h                                   | 386 ++++++++++++++++++++
- drivers/clk/imx/clk-vf610.c                        |   1 +
- drivers/crypto/Kconfig                             |  42 ++-
- drivers/crypto/Makefile                            |   1 +
- drivers/crypto/vf-crc.c                            | 387 +++++++++++++++++++++
- include/dt-bindings/clock/vf610-clock.h            |   3 +-
- include/linux/crc32poly.h                          |   7 +
- 11 files changed, 846 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt
- create mode 100644 drivers/crypto/vf-crc.c
+Regards,
 
--- 
-2.14.1
+Hans
