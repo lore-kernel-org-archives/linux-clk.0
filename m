@@ -1,61 +1,107 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	jernej.skrabec@siol.net
-Subject: [PATCH 4/5] clk: sunxi-ng: nkmp: Add constraint for maximum rate
-Date: Thu,  9 Aug 2018 18:52:16 +0200
-Message-Id: <20180809165217.30680-5-jernej.skrabec@siol.net>
-In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
-References: <20180809165217.30680-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55844 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbeH2Tsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:36 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
+ handling suspend/resume
+Date: Wed, 29 Aug 2018 17:50:38 +0200
+Message-id: <20180829155046.29359-3-m.szyprowski@samsung.com>
+In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Some, if not most, NKMP PLLs can be set to higher rate that is really
-supported by HW.
+Replace common suspend/resume handling code by generic helper.
+No functional change.
 
-Implement support for maximum frequency constrain for NKMP PLLs.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/sunxi-ng/ccu_nkmp.c | 7 +++++++
- drivers/clk/sunxi-ng/ccu_nkmp.h | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/clk/samsung/clk-s3c2410.c | 43 ++-----------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.c b/drivers/clk/sunxi-ng/ccu_nkmp.c
-index ebd9436d2c7c..9b49adb20d07 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.c
-@@ -137,6 +137,13 @@ static long ccu_nkmp_round_rate(struct clk_hw *hw, unsigned long rate,
- 	if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nkmp->fixed_post_div;
+diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+index a9c887475054..8cb868f06257 100644
+--- a/drivers/clk/samsung/clk-s3c2410.c
++++ b/drivers/clk/samsung/clk-s3c2410.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
  
-+	if (nkmp->max_rate && rate > nkmp->max_rate) {
-+		rate = nkmp->max_rate;
-+		if (nkmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-+			rate /= nkmp->fixed_post_div;
-+		return rate;
-+	}
-+
- 	_nkmp.min_n = nkmp->n.min ?: 1;
- 	_nkmp.max_n = nkmp->n.max ?: 1 << nkmp->n.width;
- 	_nkmp.min_k = nkmp->k.min ?: 1;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkmp.h b/drivers/clk/sunxi-ng/ccu_nkmp.h
-index 6940503e7fc4..a9f8c116a745 100644
---- a/drivers/clk/sunxi-ng/ccu_nkmp.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkmp.h
-@@ -35,6 +35,7 @@ struct ccu_nkmp {
- 	struct ccu_div_internal		p;
+ #include <dt-bindings/clock/s3c2410.h>
  
- 	unsigned int		fixed_post_div;
-+	unsigned int		max_rate;
+@@ -40,9 +39,6 @@ enum s3c2410_plls {
  
- 	struct ccu_common	common;
+ static void __iomem *reg_base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s3c2410_save;
+-
+ /*
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
+@@ -57,42 +53,6 @@ static unsigned long s3c2410_clk_regs[] __initdata = {
+ 	CAMDIVN,
  };
+ 
+-static int s3c2410_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s3c2410_save,
+-				ARRAY_SIZE(s3c2410_clk_regs));
+-
+-	return 0;
+-}
+-
+-static void s3c2410_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s3c2410_save,
+-				ARRAY_SIZE(s3c2410_clk_regs));
+-}
+-
+-static struct syscore_ops s3c2410_clk_syscore_ops = {
+-	.suspend = s3c2410_clk_suspend,
+-	.resume = s3c2410_clk_resume,
+-};
+-
+-static void __init s3c2410_clk_sleep_init(void)
+-{
+-	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
+-						ARRAY_SIZE(s3c2410_clk_regs));
+-	if (!s3c2410_save) {
+-		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+-			__func__);
+-		return;
+-	}
+-
+-	register_syscore_ops(&s3c2410_clk_syscore_ops);
+-	return;
+-}
+-#else
+-static void __init s3c2410_clk_sleep_init(void) {}
+-#endif
+-
+ PNAME(fclk_p) = { "mpll", "div_slow" };
+ 
+ static struct samsung_mux_clock s3c2410_common_muxes[] __initdata = {
+@@ -461,7 +421,8 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 			ARRAY_SIZE(s3c244x_common_aliases));
+ 	}
+ 
+-	s3c2410_clk_sleep_init();
++	samsung_clk_sleep_init(reg_base, s3c2410_clk_regs,
++			       ARRAY_SIZE(s3c2410_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ }
 -- 
-2.18.0
+2.17.1
