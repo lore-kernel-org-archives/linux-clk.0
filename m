@@ -1,86 +1,59 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
- <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
- <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
- <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
- <4cda3c7e-3ac3-af97-6d9f-24dd5a4efa28@codeaurora.org>
- <153504874119.28926.4197673432816461627@swboyd.mtv.corp.google.com>
- <153540388675.129321.14679244317392825384@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <531a5894-da72-fb38-dece-87a06c4ff7d6@codeaurora.org>
-Date: Tue, 28 Aug 2018 14:36:35 +0530
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>, "thor.thayer@linux.intel.com"
+	<thor.thayer@linux.intel.com>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
+Date: Wed, 29 Aug 2018 12:26:04 +0000
+Message-ID: 
+ <AM0PR04MB421119CF9432C8D87DFC226080090@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <153551211897.129321.14630649454821319736@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <153540388675.129321.14679244317392825384@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 8/28/2018 2:34 AM, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2018-08-23 11:25:41)
->> Quoting Taniya Das (2018-08-22 03:28:31)
->>>
->>>>
->>>> Hmmmm. Ok. That won't work then. recalc_rate() better not try to
->>>> populate the frequency table then or it will not work. So I suppose it
->>>> needs to fallback to reading the registers and assuming the parent_rate
->>>> coming in is the actual frequency of it's parent until the frequency
->>>> table pointer is non-NULL. Would that work?
->>>>
->>> Yes that would work.
->>
->> Ok.
->>
->>>
->>>> BTW, does DFS switch parents without software knowing about it?
->>> DFS would not switch until a HW request is sent, but SW would be unware
->>> of the switch except the current_perf_state being updated with the
->>> requested level.
->>>
->>> What
->>>> happens in that case? Does the QUP driver make sure that the new parent
->>>> of this RCG is properly enabled so that it can switch to it when needed?
->>>
->>> I am not sure if they poll for any of their QUP HW state to make sure
->>> the switch is complete.
->>>
->>>> I'm still trying to understand this whole design. Who takes care of the
->>>> voltage requirements in this case? The QUP driver as well?
->>>>
->>>
->>> When the QUP driver requires to switch to new performance level, the
->>> first request would be to set_rate()(QUP driver would get the list of
->>> supported frequencies using the clk_round_rate()) which in QCOM clock
->>> driver would take care of setting the required voltage for the new
->>> parent switch.
->>
->> It would also make sure that the new parent is enabled if the QUP clk is
->> enabled. That's another concern. Does the PLL turn on automatically when
->> the RCG switches to it?
->>
->>> Then the QUP driver would request the HW for a new perf switch which
->>> would result to a DFS switch for the QUP clocks.
->>
->> It sounds like the QUP driver does half of the work via the clk APIs and
->> then the other half through the DFS register. Maybe the QUP driver
->> should be registering a clk as well for its DFS register so it can all
->> be clk API calls here. Something to consider. Anyway, that's not
->> important to this patch so here's the updated patch.
-> 
-> I've squashed this in and applied the patches.
-> 
-Thanks Stephen.
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
+bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIEF1Z3VzdCAyOSwgMjAxOCAx
+MTowOSBBTQ0KPiBUbzogQS5zLiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gQ2M6IGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFk
+ZWFkLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNoYXduZ3VvQGtlcm5lbC5vcmc7
+IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyB0aG9yLnRoYXllckBsaW51eC5p
+bnRlbC5jb207IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogUkU6IFtQQVRD
+SCBWMyAwLzRdIGNsazogbmV3IEFQSXMgdG8gaGFuZGxlIGFsbCBhdmFpbGFibGUgY2xvY2tzDQo+
+IA0KPiBRdW90aW5nIEEucy4gRG9uZyAoMjAxOC0wOC0xNiAxOTozMzo1MikNCj4gPiBIaSBTdGVw
+aGVuLA0KPiA+DQo+ID4gRG8geW91IHdhbnQgbWUgdG8gcmVzZW5kIHRoaXMgc2VyaWVzIGZvciBy
+ZXZpZXc/DQo+ID4gSXQgc2VlbXMgaGF2ZSBiZWVuIHBlbmRpbmcgZm9yIHF1aXRlIGEgbG9uZyB0
+aW1lLg0KPiA+DQo+ID4gVGhvciBqdXN0IHBpbmdlZCBtZSBmb3IgaXRzIHN0YXR1cyBhcyBoZSB3
+YW50cyB0byB1c2UgaXQuDQo+ID4NCj4gDQo+IEkgd2FzIHdhaXRpbmcgZm9yIHNvbWVvbmUgdG8g
+dHJ5IHRoZW0gb3V0IG9yIHJldmlldyB0aGVtLiBHb29kIHRoYXQgaXQNCj4gaGFwcGVuZWQhDQo+
+IA0KPiBJJ3ZlIHRha2VuIGEgbG9vayBhdCB0aGUgcGF0Y2hlcyBhbmQgSSdtIHNsaWdodGx5IGFu
+bm95ZWQgd2l0aCB0aGUgQVBJIHRoYXQNCj4gcGFzc2VzIGluIGEgZG91YmxlIHBvaW50ZXIgdG8g
+Y2xrX2J1bGtfZGF0YSBhbmQgcmV0dXJucyBhIGNvdW50IG9mIHRoZSBudW1iZXINCj4gb2YgY2xr
+cyBmb3VuZC4gSSBndWVzcyBpdCdzIG9rIHRob3VnaC4gSXQncyByZWFsbHkganVzdCB0aGlzDQo+
+IGxpbmU6DQo+IA0KPiAJZGV2cmVzLT5jbGtzID0gKmNsa3M7DQo+IA0KPiB3aGljaCBtYWtlcyBt
+eSBicmFpbiBhbGwgY29uZnVzZWQgYW5kIGdvIHRoaW5rIGFib3V0IHdoYXQncyBiZWluZyBhc3Np
+Z25lZA0KPiBhbmQgaWYgaXQncyBhIHN0cnVjdCBjb3B5IG9yIG5vdC4NCj4gDQo+IE1heWJlIHRo
+aXMgb24gdG9wIHdvdWxkIG1ha2UgaXQgZWFzaWVyIHRvIHRha2U/IEknbGwgdGhpbmsgYWJvdXQg
+aXQgdG9uaWdodC4NCj4gDQoNCkxvb2tzIGxpa2UgYSBnb29kIGlkZWEgdG8gbWUuDQpXaWxsIHVw
+ZGF0ZSBhbmQgcmVzZW5kLg0KVGhhbmtzIGZvciB0aGUgc3VnZ2VzdGlvbi4NCg0KUmVnYXJkcw0K
+RG9uZyBBaXNoZW5nDQoNCj4gLS0tODwtLS0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Ns
+ay1kZXZyZXMuYyBiL2RyaXZlcnMvY2xrL2Nsay1kZXZyZXMuYyBpbmRleA0KPiA2ZDNjYTVlYzVk
+ZTguLjEyYzg3NDU3ZWNhMSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLWRldnJlcy5j
+DQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1kZXZyZXMuYw0KPiBAQCAtODEsOSArODEsOSBAQCBp
+bnQgX19tdXN0X2NoZWNrIGRldm1fY2xrX2J1bGtfZ2V0X2FsbChzdHJ1Y3QgZGV2aWNlDQo+ICpk
+ZXYsDQo+ICAJaWYgKCFkZXZyZXMpDQo+ICAJCXJldHVybiAtRU5PTUVNOw0KPiANCj4gLQlyZXQg
+PSBjbGtfYnVsa19nZXRfYWxsKGRldiwgY2xrcyk7DQo+ICsJcmV0ID0gY2xrX2J1bGtfZ2V0X2Fs
+bChkZXYsICZkZXZyZXMtPmNsa3MpOw0KPiAgCWlmIChyZXQgPiAwKSB7DQo+IC0JCWRldnJlcy0+
+Y2xrcyA9ICpjbGtzOw0KPiArCQkqY2xrcyA9IGRldnJlcy0+Y2xrczsNCj4gIAkJZGV2cmVzLT5u
+dW1fY2xrcyA9IHJldDsNCj4gIAkJZGV2cmVzX2FkZChkZXYsIGRldnJlcyk7DQo+ICAJfSBlbHNl
+IHsNCg==
