@@ -1,44 +1,39 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37907 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbeH2T6A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:58:00 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 0/2] Prepare Exynos5433 clocks driver for system
- suspend/resume
-Date: Wed, 29 Aug 2018 18:00:11 +0200
-Message-id: <20180829160013.9447-1-m.szyprowski@samsung.com>
-References: <CGME20180829160021eucas1p10f21691116ac17ed9d226afe72b7de0b@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jhovold@gmail.com>
+Return-Path: <jhovold@gmail.com>
+Sender: Johan Hovold <jhovold@gmail.com>
+Date: Wed, 29 Aug 2018 09:50:07 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
+Message-ID: <20180829075007.GC28861@localhost>
+References: <20180822090319.29167-1-johan@kernel.org>
+ <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All
+On Tue, Aug 28, 2018 at 03:32:03PM -0700, Stephen Boyd wrote:
+> Quoting Johan Hovold (2018-08-22 02:03:19)
+> > Fix child-node lookup which by using the wrong OF helper was searching
+> > the whole tree depth-first, something which could end up matching an
+> > unrelated node.
+> > 
+> > Also fix the related node-reference leaks.
+> > 
+> > Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+> 
+> Found by inspection? Or it's actively causing problems? I'm thinking
+> it's the former so this can bake in clk-next for a while.
 
-This patchset adds remaining bits to Exynos5433 clocks driver needed
-to make system suspend/resume working without marking dozen of clocks as
-'critical'. It must be applied on top of 'Cleanup suspend/resume code in
-Samsung clock drivers' patchset sent a few minutes ago, otherwise
-CLK_OF_DECLARE part of the clocks driver will not handle
-samsung_cmu_info->suspend_regs entries.
+Right, through inspection. I fixed up most of these last year, but this
+one managed to sneak in since then.
 
-Best regards
-Marek Szyprowski
+clk-next should be fine.
 
-
-Patch summary:
-
-Marek Szyprowski (2):
-  clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
-  clk: samsung: exynos5433: Add suspend state for TOP, CPIF & PERIC CMUs
-
- drivers/clk/samsung/clk-exynos5433.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
--- 
-2.17.1
+Thanks,
+Johan
