@@ -1,70 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:40384
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725944AbeHTKaz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Aug 2018 06:30:55 -0400
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND v5 0/5] Add i.MX8MQ clock driver
-Date: Mon, 20 Aug 2018 10:16:02 +0300
-Message-Id: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+References: <20180827162139.76196-1-chris.brandt@renesas.com>
+ <20180829005228.GA5407@bogus> <CAMuHMdWcvWDeSpewRDG=vAV+zsTO48a6kXTCL+34H_+Rnt0ung@mail.gmail.com>
+ <CAL_JsqLF76sX=uhvBDOGTHRgZoqXWyUrnPGNmL6heUJmQBF8dA@mail.gmail.com>
+In-Reply-To: <CAL_JsqLF76sX=uhvBDOGTHRgZoqXWyUrnPGNmL6heUJmQBF8dA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Aug 2018 16:49:55 +0200
+Message-ID: <CAMuHMdUP=-EDJEk3wN9uVQHjRkimfwxvayV82gDT-XchYzrUNg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Rob Herring <robh@kernel.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Resent this time on the right list (linux-clk instead of linux-gpio).
+Hi Rob,
 
-Fourth version can be found here:
+On Thu, Aug 30, 2018 at 3:49 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Aug 30, 2018 at 3:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, Aug 29, 2018 at 2:52 AM Rob Herring <robh@kernel.org> wrote:
+> > > On Mon, Aug 27, 2018 at 11:21:39AM -0500, Chris Brandt wrote:
+> > > > Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+> > > > Standby.
+> > > >
+> > > > The Module Standby HW in the RZ/A series is very close to R-Car HW, except
+> > > > for how the registers are laid out.
+> > > > The MSTP registers are only 8-bits wide, there is no status registers
+> > > > (MSTPST), and the register offsets are a little different. Since the RZ/A
+> > > > hardware manuals refer to these registers as the Standby Control Registers,
+> > > > we'll use that name to distinguish the RZ/A type for the R-Car type.
+> > > >
+> > > > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> > > > ---
+> > >
+> > > > +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> > > > @@ -0,0 +1,192 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0+
+> > > > +/*
+> > >
+> > >
+> > > > +++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
+> > > > @@ -0,0 +1,21 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0+
+> > >
+> > > The proper identifier is GPL-2.0-or-later
+> >
+> > Documentation/process/license-rules.rst disagrees.
+>
+> Indeed, but: https://spdx.org/licenses/GPL-2.0+.html
+>
+> I think this changed about the time the kernel adopted SPDX. I guess
+> it is fine as-is until we change the documentation.
 
-https://lore.kernel.org/patchwork/cover/974998/
+Unlikely to happen, cfr.
+https://lore.kernel.org/lkml/20180822194613.GB3457@kroah.com/
+Gr{oetje,eeting}s,
 
-Changes since v4:
- * Implemented divider ops and used clk-composite as suggested
-   by Sascha Hauer.
-
-Changes since v3:
- * Added a composite clock type to get rid of some complexity
-   from clk-imx8mq. This new composite clock type will also be
-   used by all the imx8 socs that will follow.
- * Added back the reviewed-by tag.
-
-Abel Vesa (1):
-  clk: imx: add imx composite clock
-
-Lucas Stach (4):
-  dt-bindings: add binding for i.MX8MQ CCM
-  clk: imx: add fractional PLL output clock
-  clk: imx: add SCCG PLL type
-  clk: imx: add clock driver for i.MX8MQ CCM
-
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 +
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-composite.c                    | 126 ++++
- drivers/clk/imx/clk-frac-pll.c                     | 230 ++++++++
- drivers/clk/imx/clk-imx8mq.c                       | 631 +++++++++++++++++++++
- drivers/clk/imx/clk-sccg-pll.c                     | 231 ++++++++
- drivers/clk/imx/clk.h                              |  57 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 410 +++++++++++++
- 8 files changed, 1710 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
- create mode 100644 drivers/clk/imx/clk-composite.c
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
- create mode 100644 drivers/clk/imx/clk-imx8mq.c
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+                        Geert
 
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
