@@ -1,67 +1,131 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
-To: Sekhar Nori <nsekhar@ti.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
- Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180628095748.4462-1-brgl@bgdev.pl>
- <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
- <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
- <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
- <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
- <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <4154b955-4f89-035a-8a02-a3e8bd8d9ede@lechnology.com>
-Date: Mon, 6 Aug 2018 11:35:16 -0500
-MIME-Version: 1.0
-In-Reply-To: <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "mark.rutland@arm.com"
+ <mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+ <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+ "rjw@rjwysocki.net"
+ <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+ "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
+ <linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
+ <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+ "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "kstewart@linuxfoundation.org"
+ <kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
+ <yamada.masahiro@socionext.com>
+Date: Thu, 30 Aug 2018 12:42:41 -0500
+In-Reply-To: <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+ <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+ <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+ <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+ <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+Mime-Version: 1.0
+Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+ Andy Tang <andy.tang@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 07/10/2018 05:19 AM, Sekhar Nori wrote:
-> On Friday 06 July 2018 11:09 PM, David Lechner wrote:
->> On 07/04/2018 01:35 AM, Sekhar Nori wrote:
->>> Hi David,
->>>
->>> On Monday 02 July 2018 09:02 PM, David Lechner wrote:
->>>> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
->>>>> Hi David, Stephen,
->>>>>
->>>>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
->>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>>
->>>>>> This series moves all aemif/nand users to using the ti-aemif platform
->>>>>> driver located in drivers/memory instead of the older API located in
->>>>>> mach-davinci.
->>>>>>
->>>>>> First five patches add necessary changes to the clock driver. Next
->>>>>> seven convert the board files to using the ti-aemif driver. Last patch
->>>>>> removes now dead code.
->>>>>
->>>>> How do you want to handle this series? I can apply the series and
->>>>> provide you an immutable branch on v4.18-rc1 with the clock patches
->>>>> applied if that can work.
->>>>
->>>> Sounds good to me. But I'm new to this maintainer thing, so maybe
->>>> there is something to consider that I haven't thought of?
->>>
->>> I don't think there is more to it. Ultimately there should not be two
->>> commits for the same patch. Either you can apply and share the commit to
->>> use or I can do that as well. I am equally fine either way.
->>>
->>> Regards,
->>> Sekhar
->>>
->>
->> I've created a branch for-sekhar at https://github.com/dlech/linux.git
->> with the clk commits.
+On Thu, 2018-08-30 at 12:39 -0500, Scott Wood wrote:
+> On Thu, 2018-08-30 at 07:36 +0000, Vabhav Sharma wrote:
+> > > -----Original Message-----
+> > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> > > owner@vger.kernel.org> On Behalf Of Scott Wood
+> > > Sent: Wednesday, August 29, 2018 5:49 AM
+> > > To: Vabhav Sharma <vabhav.sharma@nxp.com>; linux-
+> > > kernel@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org;
+> > > mark.rutland@arm.com; linuxppc-dev@lists.ozlabs.org; linux-arm-
+> > > kernel@lists.infradead.org; mturquette@baylibre.com; sboyd@kernel.org;
+> > > rjw@rjwysocki.net; viresh.kumar@linaro.org; linux-clk@vger.kernel.org;
+> > > linux-pm@vger.kernel.org; linux-kernel-owner@vger.kernel.org;
+> > > catalin.marinas@arm.com; will.deacon@arm.com;
+> > > gregkh@linuxfoundation.org; arnd@arndb.de;
+> > > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
+> > > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Andy Tang
+> > > <andy.tang@nxp.com>; Udit Kumar <udit.kumar@nxp.com>;
+> > > linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com>
+> > > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+> > > lx2160a
+> > > 
+> > > On Mon, 2018-08-20 at 12:17 +0530, Vabhav Sharma wrote:
+> > > > From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > > 
+> > > > Add clockgen support for lx2160a.
+> > > > Added entry for compat 'fsl,lx2160a-clockgen'.
+> > > > As LX2160A is 16 core, so modified value for NUM_CMUX
+> > > > 
+> > > > Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> > > > Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> > > > ---
+> > > >  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
+> > > >  drivers/cpufreq/qoriq-cpufreq.c |  1 +
+> > > >  2 files changed, 14 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index
+> > > > 3a1812f..fc6e308 100644
+> > > > --- a/drivers/clk/clk-qoriq.c
+> > > > +++ b/drivers/clk/clk-qoriq.c
+> > > > @@ -60,7 +60,7 @@ struct clockgen_muxinfo {  };
+> > > > 
+> > > >  #define NUM_HWACCEL	5
+> > > > -#define NUM_CMUX	8
+> > > > +#define NUM_CMUX	16
+> > > > 
+> > > >  struct clockgen;
+> > > > 
+> > > > @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[]
+> > > > =
+> > > > {
+> > > >  		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > > >  	},
+> > > >  	{
+> > > > +		.compat = "fsl,lx2160a-clockgen",
+> > > > +		.cmux_groups = {
+> > > > +			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+> > > > +		},
+> > > > +		.cmux_to_group = {
+> > > > +			0, 0, 0, 0, 1, 1, 1, 1, -1
+> > > > +		},
+> > > > +		.pll_mask = 0x37,
+> > > > +		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > > > +	},
+> > > 
+> > > Why are you increasing NUM_CMUX beyond 8 for a chip that only has 8
+> > > entries in cmux_to_group?
+> > 
+> > Configuration is 16 cores,8 cluster with 2 cores in each cluster
 > 
-> Thanks. I merged commit f917ff75ac55b6d829c9d1142e83913064565d5b (top of
-> that branch) to my v4.19/soc branch. Please do let Stephen and Mike know
-> about this then when you send your stuff for v4.19.
-> 
+> So?  This is about cmuxes, not cores.  You're increasing the array without
+> ever using the new size.
 
-Since there have been no more clk-davinci patches for v4.19, I assume that
-it is OK to just let this go through the ARM tree via Sekhar?
+Oh, and you also broke p4080 which has 8 cmuxes but no -1 terminator, because
+the array was of length 8.  Probably the array should be changed to NUM_CMUX+1
+so every array can be -1 terminated.
+
+-Scott
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
