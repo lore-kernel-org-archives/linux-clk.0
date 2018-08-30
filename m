@@ -1,126 +1,121 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.135]:42344 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbeHXHCk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 03:02:40 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v3 3/5] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-Date: Fri, 24 Aug 2018 11:30:39 +0800
-Message-Id: <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
-References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:29318 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeH3FKD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:10:03 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5B8743F9.8010908@samsung.com>
+Date: Thu, 30 Aug 2018 10:10:17 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
+ handling suspend/resume
+In-reply-to: <20180829155046.29359-3-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
+        <20180829155046.29359-3-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+Hi Marek,
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
+> Replace common suspend/resume handling code by generic helper.
+> No functional change.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2410.c | 43 ++-----------------------------
+>  1 file changed, 2 insertions(+), 41 deletions(-)
+> 
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 91b6522..c025a99 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
- 
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
-@@ -46,6 +50,28 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
-+Optional RK809 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK809 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK808 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2.
-+
-+Following regulators of the RK817 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- BOOST
-+	- OTG_SWITCH
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -99,6 +147,14 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
- 
-+There are three pins needed to config for each of RK809 and RK817,
-+named "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
+Looks good to me.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+> diff --git a/drivers/clk/samsung/clk-s3c2410.c b/drivers/clk/samsung/clk-s3c2410.c
+> index a9c887475054..8cb868f06257 100644
+> --- a/drivers/clk/samsung/clk-s3c2410.c
+> +++ b/drivers/clk/samsung/clk-s3c2410.c
+> @@ -11,7 +11,6 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/syscore_ops.h>
+>  
+>  #include <dt-bindings/clock/s3c2410.h>
+>  
+> @@ -40,9 +39,6 @@ enum s3c2410_plls {
+>  
+>  static void __iomem *reg_base;
+>  
+> -#ifdef CONFIG_PM_SLEEP
+> -static struct samsung_clk_reg_dump *s3c2410_save;
+> -
+>  /*
+>   * list of controller registers to be saved and restored during a
+>   * suspend/resume cycle.
+> @@ -57,42 +53,6 @@ static unsigned long s3c2410_clk_regs[] __initdata = {
+>  	CAMDIVN,
+>  };
+>  
+> -static int s3c2410_clk_suspend(void)
+> -{
+> -	samsung_clk_save(reg_base, s3c2410_save,
+> -				ARRAY_SIZE(s3c2410_clk_regs));
+> -
+> -	return 0;
+> -}
+> -
+> -static void s3c2410_clk_resume(void)
+> -{
+> -	samsung_clk_restore(reg_base, s3c2410_save,
+> -				ARRAY_SIZE(s3c2410_clk_regs));
+> -}
+> -
+> -static struct syscore_ops s3c2410_clk_syscore_ops = {
+> -	.suspend = s3c2410_clk_suspend,
+> -	.resume = s3c2410_clk_resume,
+> -};
+> -
+> -static void __init s3c2410_clk_sleep_init(void)
+> -{
+> -	s3c2410_save = samsung_clk_alloc_reg_dump(s3c2410_clk_regs,
+> -						ARRAY_SIZE(s3c2410_clk_regs));
+> -	if (!s3c2410_save) {
+> -		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+> -			__func__);
+> -		return;
+> -	}
+> -
+> -	register_syscore_ops(&s3c2410_clk_syscore_ops);
+> -	return;
+> -}
+> -#else
+> -static void __init s3c2410_clk_sleep_init(void) {}
+> -#endif
+> -
+>  PNAME(fclk_p) = { "mpll", "div_slow" };
+>  
+>  static struct samsung_mux_clock s3c2410_common_muxes[] __initdata = {
+> @@ -461,7 +421,8 @@ void __init s3c2410_common_clk_init(struct device_node *np, unsigned long xti_f,
+>  			ARRAY_SIZE(s3c244x_common_aliases));
+>  	}
+>  
+> -	s3c2410_clk_sleep_init();
+> +	samsung_clk_sleep_init(reg_base, s3c2410_clk_regs,
+> +			       ARRAY_SIZE(s3c2410_clk_regs));
+>  
+>  	samsung_clk_of_add_provider(np, ctx);
+>  }
+> 
+
 -- 
-1.9.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
