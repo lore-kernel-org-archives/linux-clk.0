@@ -1,100 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:52548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727200AbeHaKob (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 31 Aug 2018 06:44:31 -0400
+Return-Path: <ezequiel@vanguardiasur.com.ar>
 MIME-Version: 1.0
-References: <CGME20180829160024eucas1p19b9912baece05c529f6bcf64b986bba9@eucas1p1.samsung.com>
- <20180829160013.9447-1-m.szyprowski@samsung.com> <20180829160013.9447-3-m.szyprowski@samsung.com>
-In-Reply-To: <20180829160013.9447-3-m.szyprowski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 31 Aug 2018 08:38:22 +0200
-Message-ID: <CAJKOXPdw=WzHauLFjnrLrCRT==wRxe=r4Kg7EMaMKnVsCCXN7w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: samsung: exynos5433: Add suspend state for TOP,
- CPIF & PERIC CMUs
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>
+In-Reply-To: <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com> <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
+From: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date: Wed, 29 Aug 2018 21:52:57 -0300
+Message-ID: <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
+Subject: Re: [PATCH 4/4] media: platform: Add Aspeed Video Engine driver
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, andrew@aj.id.au,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, joel@jms.id.au, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 29 Aug 2018 at 18:00, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+Hi Eddie,
+
+On 29 August 2018 at 18:09, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting a service processor, the Video Engine can capture
+> the host processor graphics output.
 >
-> Before entering system suspend, one has to ensure that all TOP ACLK clocks
-> are enabled, so do this by storing 0x67ECFFED value to ENABLE_ACLK_TOP
-> register. In case of PERIC CMU, keep all UART PCLK and SCLK clocks as well
-> as all GPIO PCLK clocks enabled.
+> Add a V4L2 driver to capture video data and compress it to JPEG images,
+> making the data available through a standard read interface.
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 > ---
->  drivers/clk/samsung/clk-exynos5433.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+>  drivers/media/platform/Kconfig        |    8 +
+>  drivers/media/platform/Makefile       |    1 +
+>  drivers/media/platform/aspeed-video.c | 1307 +++++++++++++++++++++++++++++++++
+>  3 files changed, 1316 insertions(+)
+>  create mode 100644 drivers/media/platform/aspeed-video.c
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 426980514e67..d34e645aba49 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -177,6 +177,12 @@ static const unsigned long top_clk_regs[] __initconst = {
->         ENABLE_CMU_TOP_DIV_STAT,
->  };
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> index 94c1fe0..e599245 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -32,6 +32,14 @@ source "drivers/media/platform/davinci/Kconfig"
 >
-> +static const struct samsung_clk_reg_dump top_suspend_regs[] = {
-> +       { ENABLE_ACLK_TOP, 0x67ECFFED }, /* all clocks enabled */
-> +       { ISP_PLL_CON0, 0x85CC0502 },   /* reset value + ENABLE bit */
-> +       { AUD_PLL_CON0, 0x84830202 },   /* reset value + ENABLE bit */
-> +};
-> +
->  /* list of all parent clock list */
->  PNAME(mout_aud_pll_p)          = { "oscclk", "fout_aud_pll", };
->  PNAME(mout_isp_pll_p)          = { "oscclk", "fout_isp_pll", };
-> @@ -792,6 +798,8 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
->         .nr_clk_ids             = TOP_NR_CLK,
->         .clk_regs               = top_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(top_clk_regs),
-> +       .suspend_regs           = top_suspend_regs,
-> +       .nr_suspend_regs        = ARRAY_SIZE(top_suspend_regs),
->  };
+>  source "drivers/media/platform/omap/Kconfig"
 >
->  static void __init exynos5433_cmu_top_init(struct device_node *np)
-> @@ -822,6 +830,11 @@ static const unsigned long cpif_clk_regs[] __initconst = {
->         ENABLE_SCLK_CPIF,
->  };
->
-> +static const struct samsung_clk_reg_dump cpif_suspend_regs[] = {
-> +       { ENABLE_SCLK_CPIF, 0x3FF },    /* all clocks enabled */
-> +       { MPHY_PLL_CON0, 0x81C70601 },  /* reset value + ENABLE bit */
-> +};
-> +
->  /* list of all parent clock list */
->  PNAME(mout_mphy_pll_p)         = { "oscclk", "fout_mphy_pll", };
->
-> @@ -862,6 +875,8 @@ static const struct samsung_cmu_info cpif_cmu_info __initconst = {
->         .nr_clk_ids             = CPIF_NR_CLK,
->         .clk_regs               = cpif_clk_regs,
->         .nr_clk_regs            = ARRAY_SIZE(cpif_clk_regs),
-> +       .suspend_regs           = cpif_suspend_regs,
-> +       .nr_suspend_regs        = ARRAY_SIZE(cpif_suspend_regs),
->  };
->
->  static void __init exynos5433_cmu_cpif_init(struct device_node *np)
-> @@ -1547,6 +1562,11 @@ static const unsigned long peric_clk_regs[] __initconst = {
->         ENABLE_IP_PERIC2,
->  };
->
-> +static const struct samsung_clk_reg_dump peric_suspend_regs[] = {
-> +       { ENABLE_PCLK_PERIC0, 0xE00FF000 },
-> +       { ENABLE_SCLK_PERIC, 0x7 },
+> +config VIDEO_ASPEED
+> +       tristate "Aspeed AST2400 and AST2500 Video Engine driver"
+> +       depends on VIDEO_V4L2
 
-It would be nice to see comment about values here as well.
+It seems you are not using videobuf2. I think it should simplify the read
+I/O part and at the same time expose the other capture methods.
 
-With that change:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+There are plenty of examples to follow.
 
-Best regards,
-Krzysztof
+Regards,
+Eze
