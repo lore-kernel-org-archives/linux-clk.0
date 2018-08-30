@@ -1,49 +1,55 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mga05.intel.com ([192.55.52.43]:62303 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727238AbeH3MpD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Aug 2018 08:45:03 -0400
+Date: Thu, 30 Aug 2018 11:43:56 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Irina Tirdea <irina.tirdea@intel.com>, netdev@vger.kernel.org,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk-pmc-atom + r8169: Add ether_clk handling to fix
+ suspend issues
+Message-ID: <20180830084356.GH11447@smile.fi.intel.com>
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180829163141.GB8462@smile.fi.intel.com>
+ <e3be83dc-67c7-fdaa-1dd9-0a4aa3d10584@redhat.com>
 MIME-Version: 1.0
-References: <20180821220233.9202-1-wsa+renesas@sang-engineering.com> <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20180821220233.9202-2-wsa+renesas@sang-engineering.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 28 Aug 2018 11:24:09 +0200
-Message-ID: <CAMuHMdWcrpzit40X_z_hJrCSgupnnucPF0nciPiAiJP8EOX+TA@mail.gmail.com>
-Subject: Re: [PATCH 01/11] clk: renesas: use SPDX identifier for Renesas drivers
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <e3be83dc-67c7-fdaa-1dd9-0a4aa3d10584@redhat.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Wolfram,
+On Wed, Aug 29, 2018 at 07:06:09PM +0200, Hans de Goede wrote:
 
-On Wed, Aug 22, 2018 at 12:02 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > What a nice stuff, thanks!
+> > 
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Thank you (and also thank you for the other reviews)
+> 
+> > Btw, you probably better to refer to
+> > https://bugzilla.kernel.org/show_bug.cgi?id=196861 which is dedicated for S0ix
+> > issue.
+> 
+> Ok, I've added a link to that. I've also added:
+> 
+> Reported-by: Johannes Stezenbach <js@sig21.net>
+> 
+> To honor Johannes for figuring out that leaving the clocks enabled
+> was a problem in the first place.
+> 
+> This will all be included in v2 of the series when I send it out.
 
-Thanks for your patch!
+Forgot to mention, instead of Irina, which is not longer working for Intel for
+more than a year, put Pierre's address there.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
->  drivers/clk/renesas/clk-div6.c            | 5 +----
->  drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
->  drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
->  drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
->  8 files changed, 8 insertions(+), 32 deletions(-)
-
-Any specific reason you skipped all other files in that directory?
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+With Best Regards,
+Andy Shevchenko
