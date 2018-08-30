@@ -1,132 +1,80 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-To: mark.rutland@arm.com,
-	robh@kernel.org,
-	sudeep.holla@arm.com,
-	linux@arm.linux.org.uk,
-	ctatlor97@gmail.com,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	mturquette@baylibre.com,
-	linux-pm@vger.kernel.org,
-	sboyd@codeaurora.org,
-	linux@armlinux.org.uk,
-	thierry.escande@linaro.org,
-	linux-kernel@vger.kernel.org,
-	david.brown@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	andy.gross@linaro.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	niklas.cassel@linaro.org
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v12 09/14] dt-bindings: arm: Document qcom,kpss-gcc
-Date: Tue, 14 Aug 2018 17:42:28 +0530
-Message-Id: <1534248753-2440-10-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
+Return-Path: <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH 4/4] media: platform: Add Aspeed Video Engine driver
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        andrew@aj.id.au, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        joel@jms.id.au, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
+ <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Thu, 30 Aug 2018 10:40:21 -0500
+MIME-Version: 1.0
+In-Reply-To: <CAAEAJfBpmFPLTMAr+Azc-53JXHPkCU4bjtwqE6nDWUvm=J_x-A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <7cb0c2f0-cc12-81a6-a858-40776ec5904c@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Stephen Boyd <sboyd@codeaurora.org>
 
-The ACC and GCC regions present in KPSSv1 contain registers to
-control clocks and power to each Krait CPU and L2. Documenting
-the bindings here.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- .../devicetree/bindings/arm/msm/qcom,kpss-acc.txt  | 19 ++++++++++
- .../devicetree/bindings/arm/msm/qcom,kpss-gcc.txt  | 44 ++++++++++++++++++++++
- 2 files changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+On 08/29/2018 07:52 PM, Ezequiel Garcia wrote:
+> Hi Eddie,
+>
+> On 29 August 2018 at 18:09, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting a service processor, the Video Engine can capture
+>> the host processor graphics output.
+>>
+>> Add a V4L2 driver to capture video data and compress it to JPEG images,
+>> making the data available through a standard read interface.
+>>
+>> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+>> ---
+>>   drivers/media/platform/Kconfig        |    8 +
+>>   drivers/media/platform/Makefile       |    1 +
+>>   drivers/media/platform/aspeed-video.c | 1307 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 1316 insertions(+)
+>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>
+>> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+>> index 94c1fe0..e599245 100644
+>> --- a/drivers/media/platform/Kconfig
+>> +++ b/drivers/media/platform/Kconfig
+>> @@ -32,6 +32,14 @@ source "drivers/media/platform/davinci/Kconfig"
+>>
+>>   source "drivers/media/platform/omap/Kconfig"
+>>
+>> +config VIDEO_ASPEED
+>> +       tristate "Aspeed AST2400 and AST2500 Video Engine driver"
+>> +       depends on VIDEO_V4L2
+> It seems you are not using videobuf2. I think it should simplify the read
+> I/O part and at the same time expose the other capture methods.
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-index 1333db9..7f69636 100644
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-@@ -21,10 +21,29 @@ PROPERTIES
- 		    the register region. An optional second element specifies
- 		    the base address and size of the alias register region.
- 
-+- clocks:
-+        Usage: required
-+        Value type: <prop-encoded-array>
-+        Definition: reference to the pll parents.
-+
-+- clock-names:
-+        Usage: required
-+        Value type: <stringlist>
-+        Definition: must be "pll8_vote", "pxo".
-+
-+- clock-output-names:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpuX_aux where X is a
-+		    CPU number starting at 0.
-+
- Example:
- 
- 	clock-controller@2088000 {
- 		compatible = "qcom,kpss-acc-v2";
- 		reg = <0x02088000 0x1000>,
- 		      <0x02008000 0x1000>;
-+		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
-+		clock-names = "pll8_vote", "pxo";
-+		clock-output-names = "acpu0_aux";
- 	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-new file mode 100644
-index 0000000..e628758
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-@@ -0,0 +1,44 @@
-+Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+PROPERTIES
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: should be one of the following. The generic compatible
-+			"qcom,kpss-gcc" should also be included.
-+			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
-+			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: base address and size of the register region
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the pll parents.
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "pll8_vote", "pxo".
-+
-+- clock-output-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Name of the output clock. Typically acpu_l2_aux indicating
-+		    an L2 cache auxiliary clock.
-+
-+Example:
-+
-+	l2cc: clock-controller@2011000 {
-+		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-+		reg = <0x2011000 0x1000>;
-+		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
-+		clock-names = "pll8_vote", "pxo";
-+		clock-output-names = "acpu_l2_aux";
-+	};
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Hi,
+
+Well I'm not sure it would simplify the read interface; it's quite 
+simple as it is, both in the driver and to set up in user-space.
+
+I did get streaming I/O working but found the performance significantly 
+worse than simple read calls, and therefore not worth the additional 
+complexity.
+
+Is it required that I support streaming?
+
+Thanks,
+Eddie
+
+>
+> There are plenty of examples to follow.
+>
+> Regards,
+> Eze
+>
