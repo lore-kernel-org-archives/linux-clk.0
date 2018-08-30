@@ -1,42 +1,57 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
-To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180822090319.29167-1-johan@kernel.org>
- <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
- <20180829075007.GC28861@localhost>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <4fbdbb5d-6b56-37e2-08e1-27f71cb6de22@ti.com>
-Date: Thu, 30 Aug 2018 10:28:28 +0300
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728138AbeH3O1U (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:27:20 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180829075007.GC28861@localhost>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+References: <CGME20180829160024eucas1p1049ff966800cdc44e876d546978df399@eucas1p1.samsung.com>
+ <20180829160013.9447-1-m.szyprowski@samsung.com> <20180829160013.9447-2-m.szyprowski@samsung.com>
+ <CAJKOXPeHkbYA6hE+YfgdogiH48zXpFrqauhgmGCDYQs=Dt-iyQ@mail.gmail.com> <20180830095909eucas1p1be50efaae96040be0663e9997d0d607c~PoR5Ollhd2533325333eucas1p1G@eucas1p1.samsung.com>
+In-Reply-To: <20180830095909eucas1p1be50efaae96040be0663e9997d0d607c~PoR5Ollhd2533325333eucas1p1G@eucas1p1.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 30 Aug 2018 12:25:40 +0200
+Message-ID: <CAJKOXPeVKwA8xOuW_qEPWjqwrgFogNwD8dcqxz+_Bn6W3AC=8A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 29/08/18 10:50, Johan Hovold wrote:
-> On Tue, Aug 28, 2018 at 03:32:03PM -0700, Stephen Boyd wrote:
->> Quoting Johan Hovold (2018-08-22 02:03:19)
->>> Fix child-node lookup which by using the wrong OF helper was searching
->>> the whole tree depth-first, something which could end up matching an
->>> unrelated node.
->>>
->>> Also fix the related node-reference leaks.
->>>
->>> Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
->>
->> Found by inspection? Or it's actively causing problems? I'm thinking
->> it's the former so this can bake in clk-next for a while.
-> 
-> Right, through inspection. I fixed up most of these last year, but this
-> one managed to sneak in since then.
-> 
-> clk-next should be fine.
+On Thu, 30 Aug 2018 at 11:59, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi Krzysztof,
+>
+> On 2018-08-30 08:29, Krzysztof Kozlowski wrote:
+> > On Wed, 29 Aug 2018 at 18:00, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >> Clocks should be suspended as late as possible and resumed as early as
+> >> possible to let other drivers do their own suspend/resume tasks. NOIRQ
+> >> callbacks better suit this requirement.
+> > I think that's not a good reason to use the noirq versions. These are
+> > to solve the races with interrupt handlers, not to manually order
+> > callbacks.
+>
+> Then please tell me which other solution should I use to make clock
+> available
+> on Exynos5433 during NOIRQ suspend/resume phase. dw-mmc driver requires to
+> access its clocks in NOIRQ resume.
 
-The patch looks fine to me also, just had to test this out with my 
-latest development branch as it conflicts with that one a bit.
+Indeed I found the usage of noirq in the dw-mmc driver which made me
+wondering why it is there... and if you look at explanation, the noirq
+is only for the purpose of clearing wakeup interrupt in CLKSEL
+register.
 
-Acked-by: Tero Kristo <t-kristo@ti.com>
+Further code refactoring moved more and more code to suspend_noirq,
+including the runtime PM part. This probably should not be part of
+suspend_noirq but regular suspend. Then all the need of manual
+ordering would go away. So the answer to your question - try fixing
+buggy dw-mmc driver. :)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Best regards,
+Krzysztof
