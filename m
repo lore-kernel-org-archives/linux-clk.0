@@ -1,68 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:40159 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727510AbeHFLk4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Aug 2018 07:40:56 -0400
-Subject: Re: [PATCH v2 08/18] serial: intel: Get serial id from dts
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-9-songjun.wu@linux.intel.com>
- <20180803054304.GA2214@kroah.com>
-From: "Wu, Songjun" <songjun.wu@linux.intel.com>
-Message-ID: <198e6e8a-cb42-f6b5-b1c0-e3f0bfd3124a@linux.intel.com>
-Date: Mon, 6 Aug 2018 17:32:39 +0800
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
+To: Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180822090319.29167-1-johan@kernel.org>
+ <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
+ <20180829075007.GC28861@localhost>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <4fbdbb5d-6b56-37e2-08e1-27f71cb6de22@ti.com>
+Date: Thu, 30 Aug 2018 10:28:28 +0300
 MIME-Version: 1.0
-In-Reply-To: <20180803054304.GA2214@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180829075007.GC28861@localhost>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+On 29/08/18 10:50, Johan Hovold wrote:
+> On Tue, Aug 28, 2018 at 03:32:03PM -0700, Stephen Boyd wrote:
+>> Quoting Johan Hovold (2018-08-22 02:03:19)
+>>> Fix child-node lookup which by using the wrong OF helper was searching
+>>> the whole tree depth-first, something which could end up matching an
+>>> unrelated node.
+>>>
+>>> Also fix the related node-reference leaks.
+>>>
+>>> Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+>>
+>> Found by inspection? Or it's actively causing problems? I'm thinking
+>> it's the former so this can bake in clk-next for a while.
+> 
+> Right, through inspection. I fixed up most of these last year, but this
+> one managed to sneak in since then.
+> 
+> clk-next should be fine.
 
+The patch looks fine to me also, just had to test this out with my 
+latest development branch as it conflicts with that one a bit.
 
-On 8/3/2018 1:43 PM, Greg Kroah-Hartman wrote:
-> On Fri, Aug 03, 2018 at 11:02:27AM +0800, Songjun Wu wrote:
->> Get serial id from dts.
->>
->> "#ifdef CONFIG_LANTIQ" preprocessor is used because LTQ_EARLY_ASC
->> macro is defined in lantiq_soc.h.
->> lantiq_soc.h is in arch path for legacy product support.
->>
->> arch/mips/include/asm/mach-lantiq/xway/lantiq_soc.h
->>
->> If "#ifdef preprocessor" is changed to
->> "if (IS_ENABLED(CONFIG_LANTIQ))", when CONFIG_LANTIQ is not enabled,
->> code using LTQ_EARLY_ASC is compiled.
->> Compilation will fail for no LTQ_EARLY_ASC defined.
->>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->> Changes in v2: None
->>
->>   drivers/tty/serial/lantiq.c | 19 +++++++++++++++----
->>   1 file changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
->> index 044128277248..836ca51460f2 100644
->> --- a/drivers/tty/serial/lantiq.c
->> +++ b/drivers/tty/serial/lantiq.c
->> @@ -6,6 +6,7 @@
->>    * Copyright (C) 2007 Felix Fietkau <nbd@openwrt.org>
->>    * Copyright (C) 2007 John Crispin <john@phrozen.org>
->>    * Copyright (C) 2010 Thomas Langer, <thomas.langer@lantiq.com>
->> + * Copyright (C) 2018 Intel Corporation.
-> Your changes here do not warrent the addition of a copyright line, don't
-> you agree?  If not, please get a signed-off-by from your corporate
-> lawyer who does this this is warrented when you resend this patch.
->
-> thanks,
->
-> greg k-h
->
-Thanks.
-The copyright line will be removed when we resend this patch.
+Acked-by: Tero Kristo <t-kristo@ti.com>
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
