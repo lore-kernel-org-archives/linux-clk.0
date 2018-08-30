@@ -1,66 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:46540 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbeHXHCQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Aug 2018 03:02:16 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v3 0/5] support a new type of PMIC,including two chips(rk817 and rk809)
-Date: Fri, 24 Aug 2018 11:30:36 +0800
-Message-Id: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/6] dt-bindings: crypto: Add Freescale Vybrid CRC
+Date: Thu, 30 Aug 2018 19:15:34 +0200
+Message-Id: <20180830171539.20008-2-krzk@kernel.org>
+In-Reply-To: <20180830171539.20008-1-krzk@kernel.org>
+References: <20180830171539.20008-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Most of functions and registers of the rk817 and rk808 are the same,
-so they can share allmost all codes.
+Add bindings for Freescale/NXP Vybrid CRC HW accelerator.
 
-Their specifications are as follows：
-  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same registers
-     for these components except dcdc5.
-  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
-  3) The RK817 has one switch but The Rk809 has two.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../devicetree/bindings/crypto/fsl-vf610-crc.txt         | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt
 
-Changes in V2:
-1. initialize the pm_pwroff_fn to NULL. 
-2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
-3. change patch 2/3/4/5 subjects. 
-
-Changes in V3：
-1. change patch 4 subjects
-2. replace pr_ with dev_ for printing in patch 2
-3. modify switch1 and switch2 configs in patch 2
-4. explain gpio information for rk809 and rk817 in patch 4
-
-Tony Xie (5):
-  mfd: rk808: Add RK817 and RK809 support
-  regulator: rk808: add RK809 and RK817 support.
-  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-  rtc: rk808: add RK809 and RK817 support.
-  clk: RK808: add RK809 and RK817 support.
-
- Documentation/devicetree/bindings/mfd/rk808.txt |  56 +++
- drivers/clk/Kconfig                             |   9 +-
- drivers/clk/clk-rk808.c                         |  62 ++-
- drivers/mfd/Kconfig                             |   6 +-
- drivers/mfd/rk808.c                             | 218 +++++++-
- drivers/regulator/Kconfig                       |   4 +-
- drivers/regulator/rk808-regulator.c             | 639 +++++++++++++++++++++++-
- drivers/rtc/Kconfig                             |   4 +-
- drivers/rtc/rtc-rk808.c                         |  68 ++-
- include/linux/mfd/rk808.h                       | 175 +++++++
- kernel/reboot.c                                 |   1 +
- 11 files changed, 1209 insertions(+), 33 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt b/Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt
+new file mode 100644
+index 000000000000..cdd7e26baeac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt
+@@ -0,0 +1,16 @@
++Freescale/NXP Vybrid VF500/VF610 CRC HW accelerator
++
++Required properties:
++- compatible : Should be "fsl,vf610-crc"
++- reg : Should contain register location and length.
++- clocks : Should contain the clock driving the CRC block.
++- clock-names : Should be set to "crc".
++
++Example:
++
++crc@40033000 {
++	compatible = "fsl,vf610-crc";
++	reg = <0x40033000 0x10>;
++	clocks = <&clks VF610_CLK_CRC>;
++	clock-names = "crc";
++};
 -- 
-1.9.1
+2.14.1
