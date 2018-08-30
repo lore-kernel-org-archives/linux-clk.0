@@ -1,107 +1,59 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55846 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbeH2Tsg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:36 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 04/10] clk: samsung: s3c2443: Use generic helper for
- handling suspend/resume
-Date: Wed, 29 Aug 2018 17:50:40 +0200
-Message-id: <20180829155046.29359-5-m.szyprowski@samsung.com>
-In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155100eucas1p1ba8149066e026fc15f82091968b78a08@eucas1p1.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <20180827162139.76196-1-chris.brandt@renesas.com> <20180829005228.GA5407@bogus>
+In-Reply-To: <20180829005228.GA5407@bogus>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 Aug 2018 10:05:40 +0200
+Message-ID: <CAMuHMdWcvWDeSpewRDG=vAV+zsTO48a6kXTCL+34H_+Rnt0ung@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Rob Herring <robh@kernel.org>
+Cc: Chris Brandt <chris.brandt@renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-No functional change.
+Hi Rob,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-s3c2443.c | 43 ++-----------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
+On Wed, Aug 29, 2018 at 2:52 AM Rob Herring <robh@kernel.org> wrote:
+> On Mon, Aug 27, 2018 at 11:21:39AM -0500, Chris Brandt wrote:
+> > Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+> > Standby.
+> >
+> > The Module Standby HW in the RZ/A series is very close to R-Car HW, except
+> > for how the registers are laid out.
+> > The MSTP registers are only 8-bits wide, there is no status registers
+> > (MSTPST), and the register offsets are a little different. Since the RZ/A
+> > hardware manuals refer to these registers as the Standby Control Registers,
+> > we'll use that name to distinguish the RZ/A type for the R-Car type.
+> >
+> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> > ---
+>
+> > +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> > @@ -0,0 +1,192 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+>
+>
+> > +++ b/include/dt-bindings/clock/r7s9210-cpg-mssr.h
+> > @@ -0,0 +1,21 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+
+>
+> The proper identifier is GPL-2.0-or-later
 
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index c46e6d5bc9bc..884067e4f1a1 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -11,7 +11,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- #include <linux/reboot.h>
- 
- #include <dt-bindings/clock/s3c2443.h>
-@@ -43,9 +42,6 @@ enum supported_socs {
- 
- static void __iomem *reg_base;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *s3c2443_save;
--
- /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -65,42 +61,6 @@ static unsigned long s3c2443_clk_regs[] __initdata = {
- 	SCLKCON,
- };
- 
--static int s3c2443_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, s3c2443_save,
--				ARRAY_SIZE(s3c2443_clk_regs));
--
--	return 0;
--}
--
--static void s3c2443_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, s3c2443_save,
--				ARRAY_SIZE(s3c2443_clk_regs));
--}
--
--static struct syscore_ops s3c2443_clk_syscore_ops = {
--	.suspend = s3c2443_clk_suspend,
--	.resume = s3c2443_clk_resume,
--};
--
--static void __init s3c2443_clk_sleep_init(void)
--{
--	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
--						ARRAY_SIZE(s3c2443_clk_regs));
--	if (!s3c2443_save) {
--		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--			__func__);
--		return;
--	}
--
--	register_syscore_ops(&s3c2443_clk_syscore_ops);
--	return;
--}
--#else
--static void __init s3c2443_clk_sleep_init(void) {}
--#endif
--
- PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
- PNAME(esysclk_p) = { "epllref", "epll" };
- PNAME(mpllref_p) = { "xti", "mdivclk" };
-@@ -450,7 +410,8 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 		break;
- 	}
- 
--	s3c2443_clk_sleep_init();
-+	samsung_clk_sleep_init(reg_base, s3c2443_clk_regs,
-+			       ARRAY_SIZE(s3c2443_clk_regs));
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
+Documentation/process/license-rules.rst disagrees.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
