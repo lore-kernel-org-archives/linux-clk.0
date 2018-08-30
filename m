@@ -1,170 +1,81 @@
-Return-Path: <hdegoede@redhat.com>
-Return-Path: <hdegoede@redhat.com>
-Subject: Re: [PATCH V6 4/4] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
- thor.thayer@linux.intel.com, linux-imx@nxp.com,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-fbdev@vger.kernel.org, Masahiro Yamada
- <yamada.masahiro@socionext.com>, Stephen Boyd <sboyd@codeaurora.org>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
- <1535690756-22234-5-git-send-email-aisheng.dong@nxp.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b4f91f96-3387-d24e-e2d1-1fe2e9230417@redhat.com>
-Date: Fri, 31 Aug 2018 12:09:25 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1535690756-22234-5-git-send-email-aisheng.dong@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: "David S . Miller" <davem@davemloft.net>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Irina Tirdea <irina.tirdea@intel.com>,
+ Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <8a424470-9c57-9b95-9d41-3ea51d3f2629@redhat.com>
+Cc: netdev@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+ Carlo Caione <carlo@endlessm.com>, linux-clk@vger.kernel.org
+References: <20180827143200.8597-1-hdegoede@redhat.com>
+ <20180827143200.8597-3-hdegoede@redhat.com>
+ <153539565488.129321.2586881199420174235@swboyd.mtv.corp.google.com>
+ <0f52c05a-4f70-3022-3720-07c6bcf29ed8@redhat.com>
+ <153539729389.129321.804899531283282568@swboyd.mtv.corp.google.com>
+ <8a424470-9c57-9b95-9d41-3ea51d3f2629@redhat.com>
+Message-ID: <153564773956.129321.17270185092582725063@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/4] r8169: Get and enable optional ether_clk clock
+Date: Thu, 30 Aug 2018 09:48:59 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Quoting Hans de Goede (2018-08-29 10:09:57)
+> Hi,
+> =
 
-On 31-08-18 06:45, Dong Aisheng wrote:
-> Switching to use clk_bulk API to simplify clock operations.
-> 
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> v5->v6:
->   * address Hans's comments
+> On 27-08-18 21:14, Stephen Boyd wrote:
+> > Quoting Hans de Goede (2018-08-27 11:53:19)
+> >> On 27-08-18 20:47, Stephen Boyd wrote:
+> >>> How would you know that a clk device driver hasn't probed yet and isn=
+'t
+> >>> the driver that's actually providing the clk to this device on x86
+> >>> systems? With DT systems we can figure that out by looking at the DT =
+and
+> >>> seeing if the device driver requesting the clk has the clocks propert=
+y.
+> >>> On x86 systems it's all clkdev which doesn't really lend itself to
+> >>> solving this problem.
+> >>
+> >> Right on x86 the assumption is that the clk driver will be builtin and
+> >> will probe before the consumer. In this case that is true as the
+> >> pmc-atom-clk driver can only be builtin and its platform device is
+> >> instantiated from the acpi_lpss code and acpi init happens before
+> >> the PCI bus is scanned.
+> > =
 
-v6 looks good to me:
+> > If we can go with this assumption then we can make the optional clk API
+> > work even on clkdev based systems. Maybe if x86 had some way of
+> > indicating that all builtin clks are registered?
+> =
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Unfortunately there is no such thing I'm afraid.
 
-Regards,
+Ugh!
 
-Hans
+> =
+
+> > That might work but
+> > it's not very clean. Or if we could check to see if we're running on an
+> > ACPI based system in clkdev we could use that to assume that clk_get()
+> > will only be called after all providers have registered their lookups.
+> =
+
+> Yes some check for x86 + ACPI (ARM also uses ACPI, but there we
+> should no do this AFAICT) is probably best. That or not use the
+> new optional clk API on x86, but that means that any cross platform
+> driver cannot use it, which would be a pain.
+
+Right. The optional clk API will be not so great until we can get ACPI
+to move way from clkdev.
+
+> =
+
+> BTW does your Acked-by indicate you are ok with merging this series
+> through the netdev tree as I suggested in the cover-letter? If so
+> can I also add your Acked-by to the 3th patch ?
+> =
 
 
-
-> v4->v5:
->   * fix wrong setting of par->clks_enabled
-> v3->v4:
->   * no changes
-> v2->v3:
->   * fix a build warning on x86 platform due to a wrong
->     of the prototype of simplefb_clocks_enable
-> v1->v2:
->   * switch to clk_bulk_get_all from of_clk_bulk_get_all
-> ---
->   drivers/video/fbdev/simplefb.c | 72 +++++++++++-------------------------------
->   1 file changed, 18 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-> index 9a9d748..89fb1e7 100644
-> --- a/drivers/video/fbdev/simplefb.c
-> +++ b/drivers/video/fbdev/simplefb.c
-> @@ -181,8 +181,8 @@ struct simplefb_par {
->   	u32 palette[PSEUDO_PALETTE_SIZE];
->   #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
->   	bool clks_enabled;
-> -	unsigned int clk_count;
-> -	struct clk **clks;
-> +	int clk_count;
-> +	struct clk_bulk_data *clks;
->   #endif
->   #if defined CONFIG_OF && defined CONFIG_REGULATOR
->   	bool regulators_enabled;
-> @@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   			       struct platform_device *pdev)
->   {
->   	struct device_node *np = pdev->dev.of_node;
-> -	struct clk *clock;
-> -	int i;
->   
->   	if (dev_get_platdata(&pdev->dev) || !np)
->   		return 0;
->   
-> -	par->clk_count = of_clk_get_parent_count(np);
-> -	if (!par->clk_count)
-> -		return 0;
-> -
-> -	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
-> -	if (!par->clks)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		clock = of_clk_get(np, i);
-> -		if (IS_ERR(clock)) {
-> -			if (PTR_ERR(clock) == -EPROBE_DEFER) {
-> -				while (--i >= 0) {
-> -					if (par->clks[i])
-> -						clk_put(par->clks[i]);
-> -				}
-> -				kfree(par->clks);
-> -				return -EPROBE_DEFER;
-> -			}
-> -			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
-> -				__func__, i, PTR_ERR(clock));
-> -			continue;
-> -		}
-> -		par->clks[i] = clock;
-> -	}
-> +	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
-> +	if (par->clk_count == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
->   
->   	return 0;
->   }
-> @@ -252,39 +228,27 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   static void simplefb_clocks_enable(struct simplefb_par *par,
->   				   struct platform_device *pdev)
->   {
-> -	int i, ret;
-> +	int ret;
->   
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			ret = clk_prepare_enable(par->clks[i]);
-> -			if (ret) {
-> -				dev_err(&pdev->dev,
-> -					"%s: failed to enable clock %d: %d\n",
-> -					__func__, i, ret);
-> -				clk_put(par->clks[i]);
-> -				par->clks[i] = NULL;
-> -			}
-> -		}
-> -	}
-> -	par->clks_enabled = true;
-> +	if (par->clk_count <= 0)
-> +		return;
-> +
-> +	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
-> +	if (ret)
-> +		dev_warn(&pdev->dev, "failed to enable clocks\n");
-> +	else
-> +		par->clks_enabled = true;
->   }
->   
->   static void simplefb_clocks_destroy(struct simplefb_par *par)
->   {
-> -	int i;
-> -
-> -	if (!par->clks)
-> +	if (par->clk_count <= 0)
->   		return;
->   
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			if (par->clks_enabled)
-> -				clk_disable_unprepare(par->clks[i]);
-> -			clk_put(par->clks[i]);
-> -		}
-> -	}
-> +	if (par->clks_enabled)
-> +		clk_bulk_disable_unprepare(par->clk_count, par->clks);
->   
-> -	kfree(par->clks);
-> +	clk_bulk_put_all(par->clk_count, par->clks);
->   }
->   #else
->   static int simplefb_clocks_get(struct simplefb_par *par,
-> 
+Yep, I thought I did that but now I've really done it.
