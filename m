@@ -1,136 +1,121 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from outils.crapouillou.net ([89.234.176.41]:57628 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728050AbeHUUiH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Aug 2018 16:38:07 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: od@zcrc.me, Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v7 09/24] watchdog: jz4740: Use regmap provided by TCU driver
-Date: Tue, 21 Aug 2018 19:16:20 +0200
-Message-Id: <20180821171635.22740-10-paul@crapouillou.net>
-In-Reply-To: <20180821171635.22740-1-paul@crapouillou.net>
-References: <20180821171635.22740-1-paul@crapouillou.net>
+Received: from mail.kernel.org ([198.145.29.99]:33322 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727331AbeH3Km7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:42:59 -0400
+MIME-Version: 1.0
+References: <CGME20180829155059eucas1p16fecde00348e0a2e6707aaf2a76320be@eucas1p1.samsung.com>
+ <20180829155046.29359-1-m.szyprowski@samsung.com> <20180829155046.29359-4-m.szyprowski@samsung.com>
+In-Reply-To: <20180829155046.29359-4-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 30 Aug 2018 08:42:08 +0200
+Message-ID: <CAJKOXPfP5zshtEsk81-0bM97jLYrDiW2BNg58Uf9pBz55bHZXQ@mail.gmail.com>
+Subject: Re: [PATCH 03/10] clk: samsung: s3c2412: Use generic helper for
+ handling suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Since we broke the ABI by changing the clock, the driver was also
-updated to use the regmap provided by the TCU driver.
+On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Replace common suspend/resume handling code by generic helper.
+> No functional change.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s3c2412.c | 43 ++-----------------------------
+>  1 file changed, 2 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
+> index 6bc94d3aff78..dd1159050a5a 100644
+> --- a/drivers/clk/samsung/clk-s3c2412.c
+> +++ b/drivers/clk/samsung/clk-s3c2412.c
+> @@ -11,7 +11,6 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> -#include <linux/syscore_ops.h>
+>  #include <linux/reboot.h>
+>
+>  #include <dt-bindings/clock/s3c2412.h>
+> @@ -29,9 +28,6 @@
+>
+>  static void __iomem *reg_base;
+>
+> -#ifdef CONFIG_PM_SLEEP
+> -static struct samsung_clk_reg_dump *s3c2412_save;
+> -
+>  /*
+>   * list of controller registers to be saved and restored during a
+>   * suspend/resume cycle.
+> @@ -45,42 +41,6 @@ static unsigned long s3c2412_clk_regs[] __initdata = {
+>         CLKSRC,
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
+Did you try building without PM_SLEEP? Now this will be included
+always so you might have to mark it __maybe_unused.
 
-Notes:
-     v6: New patch
-    
-     v7: No change
+Best regards,
+Krzysztof
 
- drivers/watchdog/jz4740_wdt.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 1d504ecf45e1..0f54306aee25 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -13,6 +13,7 @@
-  *
-  */
- 
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/types.h>
-@@ -25,10 +26,7 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
--
--#define JZ_REG_WDT_TIMER_DATA     0x0
--#define JZ_REG_WDT_COUNTER_ENABLE 0x4
--#define JZ_REG_WDT_TIMER_COUNTER  0x8
-+#include <linux/regmap.h>
- 
- #define DEFAULT_HEARTBEAT 5
- #define MAX_HEARTBEAT     2048
-@@ -48,7 +46,7 @@ MODULE_PARM_DESC(heartbeat,
- 
- struct jz4740_wdt_drvdata {
- 	struct watchdog_device wdt;
--	void __iomem *base;
-+	struct regmap *map;
- 	struct clk *clk;
- 	unsigned long clk_rate;
- };
-@@ -57,7 +55,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 	return 0;
- }
- 
-@@ -67,12 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 
--	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -96,7 +94,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 	clk_disable_unprepare(drvdata->clk);
- 
- 	return 0;
-@@ -138,7 +136,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct jz4740_wdt_drvdata *drvdata;
- 	struct watchdog_device *jz4740_wdt;
--	struct resource	*res;
- 	long rate;
- 	int ret;
- 
-@@ -174,10 +171,11 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	watchdog_set_nowayout(jz4740_wdt, nowayout);
- 	watchdog_set_drvdata(jz4740_wdt, drvdata);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(drvdata->base))
--		return PTR_ERR(drvdata->base);
-+	drvdata->map = dev_get_regmap(dev->parent, NULL);
-+	if (!drvdata->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
-+	}
- 
- 	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
- 	if (ret < 0)
--- 
-2.11.0
+>  };
+>
+> -static int s3c2412_clk_suspend(void)
+> -{
+> -       samsung_clk_save(reg_base, s3c2412_save,
+> -                               ARRAY_SIZE(s3c2412_clk_regs));
+> -
+> -       return 0;
+> -}
+> -
+> -static void s3c2412_clk_resume(void)
+> -{
+> -       samsung_clk_restore(reg_base, s3c2412_save,
+> -                               ARRAY_SIZE(s3c2412_clk_regs));
+> -}
+> -
+> -static struct syscore_ops s3c2412_clk_syscore_ops = {
+> -       .suspend = s3c2412_clk_suspend,
+> -       .resume = s3c2412_clk_resume,
+> -};
+> -
+> -static void __init s3c2412_clk_sleep_init(void)
+> -{
+> -       s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
+> -                                               ARRAY_SIZE(s3c2412_clk_regs));
+> -       if (!s3c2412_save) {
+> -               pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+> -                       __func__);
+> -               return;
+> -       }
+> -
+> -       register_syscore_ops(&s3c2412_clk_syscore_ops);
+> -       return;
+> -}
+> -#else
+> -static void __init s3c2412_clk_sleep_init(void) {}
+> -#endif
+> -
+>  static struct clk_div_table divxti_d[] = {
+>         { .val = 0, .div = 1 },
+>         { .val = 1, .div = 2 },
+> @@ -278,7 +238,8 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
+>         samsung_clk_register_alias(ctx, s3c2412_aliases,
+>                                    ARRAY_SIZE(s3c2412_aliases));
+>
+> -       s3c2412_clk_sleep_init();
+> +       samsung_clk_sleep_init(reg_base, s3c2412_clk_regs,
+> +                              ARRAY_SIZE(s3c2412_clk_regs));
+>
+>         samsung_clk_of_add_provider(np, ctx);
+>
+> --
+> 2.17.1
+>
