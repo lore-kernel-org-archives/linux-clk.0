@@ -1,110 +1,96 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Stephen Boyd <sboyd@kernel.org>, "ard.biesheuvel@linaro.org"
-	<ard.biesheuvel@linaro.org>, "dmitry.torokhov@gmail.com"
-	<dmitry.torokhov@gmail.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"keescook@chromium.org" <keescook@chromium.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "mingo@kernel.org"
-	<mingo@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>, "sboyd@codeaurora.org"
-	<sboyd@codeaurora.org>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>, Michal
- Simek <michals@xilinx.com>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tejas Patel
-	<TEJASP@xilinx.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>, Shubhrajyoti
- Datta <shubhraj@xilinx.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v9 10/10] drivers: clk: Add ZynqMP clock driver
-Date: Fri, 3 Aug 2018 17:57:49 +0000
-Message-ID: 
- <CY1PR02MB2138E8037930136463F8555FB8230@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
- <1529516435-7315-11-git-send-email-jollys@xilinx.com>
- <153111401693.143105.16925315512459949259@swboyd.mtv.corp.google.com>
- <SN1PR02MB37589FF7DBAFBD0C070F690EB85C0@SN1PR02MB3758.namprd02.prod.outlook.com>
- <153254813376.48062.5902552373363371978@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <153254813376.48062.5902552373363371978@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39332 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728261AbeH3POE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 11:14:04 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180830111225euoutp028df782cd769abe98e0dbceba0fbb6387~PpR3rCv-l2069620696euoutp02A
+        for <linux-clk@vger.kernel.org>; Thu, 30 Aug 2018 11:12:25 +0000 (GMT)
+Subject: Re: [PATCH 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks
+ suspend/resume
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?Q?Bart=c5=82omiej_=c5=bbo=c5=82nierkiewicz?=
+        <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Date: Thu, 30 Aug 2018 13:12:23 +0200
 MIME-Version: 1.0
+In-Reply-To: <CAJKOXPeKEBZ8u9h2=bKtk6GhVVbsV719qGS_5oyy98B+qZQx9g@mail.gmail.com>
+Message-Id: <20180830111224eucas1p13ce54ae974ddfaada05e265bba926f0b~PpR2FY2zD2568825688eucas1p1D@eucas1p1.samsung.com>
+Content-Type: text/plain; charset="utf-8"
+References: <CGME20180829160024eucas1p1049ff966800cdc44e876d546978df399@eucas1p1.samsung.com>
+        <20180829160013.9447-1-m.szyprowski@samsung.com>
+        <20180829160013.9447-2-m.szyprowski@samsung.com>
+        <CAJKOXPeHkbYA6hE+YfgdogiH48zXpFrqauhgmGCDYQs=Dt-iyQ@mail.gmail.com>
+        <20180830095909eucas1p1be50efaae96040be0663e9997d0d607c~PoR5Ollhd2533325333eucas1p1G@eucas1p1.samsung.com>
+        <CAJKOXPeVKwA8xOuW_qEPWjqwrgFogNwD8dcqxz+_Bn6W3AC=8A@mail.gmail.com>
+        <20180830103424eucas1p2163c9fd7ec7cf08fccc3ee22ad4ddc74~Powq6EK521806518065eucas1p2R@eucas1p2.samsung.com>
+        <CAJKOXPeKEBZ8u9h2=bKtk6GhVVbsV719qGS_5oyy98B+qZQx9g@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVw
-aGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1
-bHkgMjUsIDIwMTggMTI6NDkgUE0NCj4gVG86IGFyZC5iaWVzaGV1dmVsQGxpbmFyby5vcmc7IGRt
-aXRyeS50b3Jva2hvdkBnbWFpbC5jb207DQo+IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBo
-a2FsbHdlaXQxQGdtYWlsLmNvbTsNCj4ga2Vlc2Nvb2tAY2hyb21pdW0ub3JnOyBsaW51eC1jbGtA
-dmdlci5rZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbWF0dEBjb2RlYmx1ZXBy
-aW50LmNvLnVrOyBtaW5nb0BrZXJuZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4g
-cm9iaCtkdEBrZXJuZWwub3JnOyBzYm95ZEBjb2RlYXVyb3JhLm9yZzsgc3VkZWVwLmhvbGxhQGFy
-bS5jb207IEpvbGx5DQo+IFNoYWggPEpPTExZU0B4aWxpbnguY29tPjsgTWljaGFsIFNpbWVrIDxt
-aWNoYWxzQHhpbGlueC5jb20+DQo+IENjOiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgVGVq
-YXMgUGF0ZWwgPFRFSkFTUEB4aWxpbnguY29tPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IFJhamFuIFZhamEgPFJBSkFOVkB4aWxpbnguY29tPjsgU2h1YmhyYWp5b3RpIERhdHRh
-DQo+IDxzaHViaHJhakB4aWxpbnguY29tPjsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggdjkgMTAvMTBdIGRyaXZlcnM6IGNsazogQWRk
-IFp5bnFNUCBjbG9jayBkcml2ZXINCj4gDQo+IFF1b3RpbmcgSm9sbHkgU2hhaCAoMjAxOC0wNy0x
-NyAxMzowOTowMSkNCj4gPiBIaSBTdGVwaGVuLA0KPiA+DQo+ID4gVGhhbmtzIGZvciB0aGUgcmV2
-aWV3LA0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTog
-U3RlcGhlbiBCb3lkIFttYWlsdG86c2JveWRAa2VybmVsLm9yZ10NCj4gPiA+IFNlbnQ6IFN1bmRh
-eSwgSnVseSAwOCwgMjAxOCAxMDoyNyBQTQ0KPiA+ID4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4
-aWxpbnguY29tPjsgYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsNCj4gPiA+IGRtaXRyeS50b3Jv
-a2hvdkBnbWFpbC5jb207IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOw0KPiA+ID4gaGthbGx3
-ZWl0MUBnbWFpbC5jb207IGtlZXNjb29rQGNocm9taXVtLm9yZzsNCj4gPiA+IGxpbnV4LWNsa0B2
-Z2VyLmtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOw0KPiA+ID4gbWF0dEBjb2RlYmx1
-ZXByaW50LmNvLnVrOyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+ID4gPiBt
-aW5nb0BrZXJuZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4gPiA+IHJvYmgrZHRA
-a2VybmVsLm9yZzsgc2JveWRAY29kZWF1cm9yYS5vcmc7IHN1ZGVlcC5ob2xsYUBhcm0uY29tDQo+
-ID4gPiBDYzogUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5jb20+Ow0KPiA+ID4gbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiA+ID4gbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IEpvbGx5IFNoYWgNCj4gPiA+IDxK
-T0xMWVNAeGlsaW54LmNvbT47IFRlamFzIFBhdGVsIDxURUpBU1BAeGlsaW54LmNvbT47IFNodWJo
-cmFqeW90aQ0KPiA+ID4gRGF0dGEgPHNodWJocmFqQHhpbGlueC5jb20+OyBKb2xseSBTaGFoIDxK
-T0xMWVNAeGlsaW54LmNvbT4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjkgMTAvMTBdIGRy
-aXZlcnM6IGNsazogQWRkIFp5bnFNUCBjbG9jayBkcml2ZXINCj4gPiA+DQo+ID4gPiA+ICsvKioN
-Cj4gPiA+ID4gKyAqIHp5bnFtcF9wbV9jbG9ja19nZXRfcGFyZW50cygpIC0gR2V0IHRoZSBmaXJz
-dCAzIHBhcmVudHMgb2YNCj4gPiA+ID4gK2Nsb2NrIGZvciBnaXZlbg0KPiA+ID4gaWQNCj4gPiA+
-ID4gKyAqIEBjbG9ja19pZDogIENsb2NrIElEDQo+ID4gPiA+ICsgKiBAaW5kZXg6ICAgICBQYXJl
-bnQgaW5kZXgNCj4gPiA+ID4gKyAqIEBwYXJlbnRzOiAgIDMgcGFyZW50cyBvZiB0aGUgZ2l2ZW4g
-Y2xvY2sNCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBUaGlzIGZ1bmN0aW9uIGlzIHVzZWQgdG8g
-Z2V0IDMgcGFyZW50cyBmb3IgdGhlIGNsb2NrIHNwZWNpZmllZA0KPiA+ID4gPiArYnkNCj4gPiA+
-ID4gKyAqIGdpdmVuIGNsb2NrIElELg0KPiA+ID4gPiArICoNCj4gPiA+ID4gKyAqIFRoaXMgQVBJ
-IHdpbGwgcmV0dXJuIDMgcGFyZW50cyB3aXRoIGEgc2luZ2xlIHJlc3BvbnNlLiBUbyBnZXQNCj4g
-PiA+ID4gKyAqIG90aGVyIHBhcmVudHMsIG1hc3RlciBzaG91bGQgY2FsbCBzYW1lIEFQSSBpbiBs
-b29wIHdpdGggbmV3DQo+ID4gPiA+ICsgKiBwYXJlbnQgaW5kZXggdGlsbCBlcnJvciBpcyByZXR1
-cm5lZC4gRS5nIEZpcnN0IGNhbGwgc2hvdWxkDQo+ID4gPiA+ICtoYXZlDQo+ID4gPiA+ICsgKiBp
-bmRleCAwIHdoaWNoIHdpbGwgcmV0dXJuIHBhcmVudHMgMCwxIGFuZCAyLiBOZXh0IGNhbGwsIGlu
-ZGV4DQo+ID4gPiA+ICsgKiBzaG91bGQgYmUgMyB3aGljaCB3aWxsIHJldHVybiBwYXJlbnQgMyw0
-IGFuZCA1IGFuZCBzbyBvbi4NCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBSZXR1cm46IFJldHVy
-bnMgc3RhdHVzLCBlaXRoZXIgc3VjY2VzcyBvciBlcnJvcityZWFzb24gICovDQo+ID4gPiA+ICtz
-dGF0aWMgaW50IHp5bnFtcF9wbV9jbG9ja19nZXRfcGFyZW50cyh1MzIgY2xvY2tfaWQsIHUzMiBp
-bmRleCwNCj4gPiA+ID4gK3UzMg0KPiA+ID4gKnBhcmVudHMpDQo+ID4gPiA+ICt7DQo+ID4gPiA+
-ICsgICAgICAgc3RydWN0IHp5bnFtcF9wbV9xdWVyeV9kYXRhIHFkYXRhID0gezB9Ow0KPiA+ID4g
-PiArICAgICAgIHUzMiByZXRfcGF5bG9hZFtQQVlMT0FEX0FSR19DTlRdOw0KPiA+ID4NCj4gPiA+
-IFdoYXQncyB0aGUgZW5kaWFubmVzcyBvZiB0aGlzIHBheWxvYWQ/IElzIGl0IGxpdHRsZSBlbmRp
-YW4/IE9yIGRvDQo+ID4gPiB0aGUgZWVtaV9vcHMgY29udmVydCB0byBDUFUgbmF0aXZlIGVuZGlh
-bm5lc3M/DQo+ID4NCj4gPiBJdHMgbGl0dGxlIGVuZGlhbg0KPiANCj4gSXMgaXQgQ1BVIG5hdGl2
-ZT8gVGhpcyBtaWdodCBuZWVkIHRvIGJlIG1hcmtlZCBhcyBfX2xlMzIgZm9yIHByb3BlciBlbmRp
-YW5lc3MNCj4gY29kZS4NCj4gDQoNCkZpeGVkIGluIHYxMSBzZXJpZXMocG9zdGVkIHRvZGF5KS4N
-Cg0KPiA+DQo+ID4gPiA+ICsNCj4gPiA+ID4gKy8qKg0KPiA+ID4gPiArICogenlucW1wX2Nsb2Nr
-X2luaXQoKSAtIEluaXRpYWxpemUgenlucW1wIGNsb2Nrcw0KPiA+ID4gPiArICoNCj4gPiA+ID4g
-KyAqIFJldHVybjogMCBvbiBzdWNjZXNzIGVsc2UgZXJyb3IgY29kZSAgKi8gc3RhdGljIGludCBf
-X2luaXQNCj4gPiA+ID4gK3p5bnFtcF9jbG9ja19pbml0KHZvaWQpIHsNCj4gPiA+ID4gKyAgICAg
-ICBpbnQgcmV0Ow0KPiA+ID4gPiArICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnA7DQo+ID4g
-PiA+ICsNCj4gPiA+ID4gKyAgICAgICBucCA9IG9mX2ZpbmRfY29tcGF0aWJsZV9ub2RlKE5VTEws
-IE5VTEwsICJ4bG54LHp5bnFtcCIpOw0KPiA+ID4gPiArICAgICAgIGlmICghbnApDQo+ID4gPiA+
-ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0VOVDsNCj4gPiA+ID4gKyAgICAgICBvZl9ub2Rl
-X3B1dChucCk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgICAgICBucCA9IG9mX2ZpbmRfY29tcGF0
-aWJsZV9ub2RlKE5VTEwsIE5VTEwsDQo+ID4gPiA+ICsgInhsbngsenlucW1wLWNsayIpOw0KPiA+
-ID4NCj4gPiA+IFdoeSBjYW4ndCB0aGlzIGJlIGEgcGxhdGZvcm0gZGV2aWNlIGRyaXZlcj8NCj4g
-Pg0KPiA+IFBsYXRmb3JtIGRyaXZlciBtYXkgcHJvYmUgbGF0ZXIoYW4gYWN0dWFsbHkgcHJvYmlu
-ZyBsYXRlciBpbiBvdXIgY2FzZSkuIFRoaXMgd2lsbA0KPiByZXN1bHRzIGluIGNsb2NrIGdldCBm
-YWlsdXJlIGluIGNsb2NrIGNvbnN1bWVyIHBlcmlwaGVyYWxzLiBTbyBjbG9jayByZWdpc3RyYXRp
-b24NCj4gbmVlZHMgdG8gYmUgZG9uZSBlYXJsaWVyLg0KPiANCj4gVGhhdCdzIGZpbmUgdGhvdWdo
-PyBJZiBhIGNsa19nZXQoKSBmYWlscyBiZWNhdXNlIHRoZSBwcm92aWRlciBpc24ndCByZWdpc3Rl
-cmVkIHlldA0KPiB0aGUgY29uc3VtZXIgd2lsbCBzZWUgLUVQUk9CRV9ERUZFUiBhbmQgdHJ5IGFn
-YWluIGxhdGVyLg0KDQpZb3UgYXJlIHJpZ2h0LiBSZXBsYWNlZCBpbml0IHdpdGggcGxhdGZvcm0g
-ZHJpdmVyIHByb2JlIGluIHYxMSBzZXJpZXMocG9zdGVkIHRvZGF5KS4NCg0KVGhhbmtzLA0KSm9s
-bHkgU2hhaA0KDQoNCg==
+
+
+On 2018-08-30 12:45, Krzysztof Kozlowski wrote:
+> On Thu, 30 Aug 2018 at 12:34, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>> Hi Krzysztof,
+>>
+>> On 2018-08-30 12:25, Krzysztof Kozlowski wrote:
+>>> On Thu, 30 Aug 2018 at 11:59, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>>> On 2018-08-30 08:29, Krzysztof Kozlowski wrote:
+>>>>> On Wed, 29 Aug 2018 at 18:00, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>>>>>> Clocks should be suspended as late as possible and resumed as early as
+>>>>>> possible to let other drivers do their own suspend/resume tasks. NOIRQ
+>>>>>> callbacks better suit this requirement.
+>>>>> I think that's not a good reason to use the noirq versions. These are
+>>>>> to solve the races with interrupt handlers, not to manually order
+>>>>> callbacks.
+>>>> Then please tell me which other solution should I use to make clock
+>>>> available
+>>>> on Exynos5433 during NOIRQ suspend/resume phase. dw-mmc driver requires to
+>>>> access its clocks in NOIRQ resume.
+>>> Indeed I found the usage of noirq in the dw-mmc driver which made me
+>>> wondering why it is there... and if you look at explanation, the noirq
+>>> is only for the purpose of clearing wakeup interrupt in CLKSEL
+>>> register.
+>>>
+>>> Further code refactoring moved more and more code to suspend_noirq,
+>>> including the runtime PM part. This probably should not be part of
+>>> suspend_noirq but regular suspend. Then all the need of manual
+>>> ordering would go away. So the answer to your question - try fixing
+>>> buggy dw-mmc driver. :)
+>> It is not the bug in dw-mmc driver. It clearly needs to access some its
+>> registers during NOIRQ phase. However accessing registers requires to
+>> have clocks enabled, which is being handled by runtime PM. There is
+>> nothing broken here.
+> Ah I missed that point and I see you fixed that case in "mmc:
+> dw_mmc-exynos: fix potential external abort in resume_noirq()". The
+> true reasoning for this patch is that soc clk driver should suspend
+> after every other suspend callback which is using clocks... It would
+> be nice to explain this particular scenario in commit msg.
+>
+> However both dw-mmc and clk will be now in suspend noirq phase so do
+> you have any guarantees that dw-mmc will be suspended after clk?
+
+Frankly speaking this works now, because the devices are populated in
+the order of their presence in device-tree. When the order would be
+reverse, dw-mmc driver will defer probe until clocks are registered.
+This would be enough to ensure proper suspend/resume order, because all
+deferred devices are moved to the end of dpm_list (the list of device
+used for system suspend/resume calls), see deferred_probe_work_func()
+and comments there.
+
+This is however still not fully resolved problem that has to be
+addressed one day. Andrzej Hajda will have a speech on this topic at
+Open Source Summit:
+
+https://osseu18.sched.com/event/FxYd/deferred-problem-issues-with-complex-dependencies-between-devices-in-linux-kernel-andrzej-hajda-samsung
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
