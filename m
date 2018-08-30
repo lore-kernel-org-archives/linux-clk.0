@@ -1,40 +1,289 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms+renesas@verge.net.au>
-Subject: RE: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Mon, 27 Aug 2018 22:13:01 +0000
-Message-ID: 
- <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180821032020.81254-1-chris.brandt@renesas.com>
- <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
-In-Reply-To: 
- <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 30 Aug 2018 15:14:56 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
+	linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
+	sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
+	matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH 1/2] clk: clkdev/of_clk - add managed lookup and provider
+ registrations
+Message-ID: <c066e49c13eff1405d142b100da6dcd1ae09530a.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgQXVndXN0IDI3LCAyMDE4IDEsIEdlZXJ0IFV5dHRlcmhv
-ZXZlbiB3cm90ZToNCj4gR2l2ZW4gdGhlIGRpZmZlcmVuY2VzLCBhbmQgdGhlIGxpbWl0ZWQgYW1v
-dW50IG9mIFJBTSBvbiBSWi9BMiwgSSB0aGluayB5b3UNCj4gd291bGQgYmUgYmV0dGVyIG9mZiB3
-aXRoIGEgc2VwYXJhdGUgcmVuZXNhcy1jcGctc3RiY3IgZHJpdmVyLCBhbmQgYW4NCj4gcjdzOTIx
-MC1jcGctc3RiY3IgY291bnRlcnBhcnQuDQoNCkkgd2VudCBhbmQgbWVhc3VyZWQgdGhlIGFtb3Vu
-dCBvZiBSQU0gYmVpbmcgdXNlZCBieSB0aGUgZHJpdmVyIA0KKGFsbG9jYXRlZCBkdXJpbmcgYm9v
-dCB3aGVuIHRoZSBkcml2ZXIgaXMgbG9hZGVkIGFuZCBwcm9iZWQpLCBhbmQgaXQncyBvbmx5IDhL
-Qi4gDQpUaGF0J3Mgbm90IHJlYWxseSBtdWNoIGNvbXBhcmVkIHRvIG90aGVyIGRyaXZlcnMgYW5k
-IHN1YnN5c3RlbXMgYmVpbmcgDQpsb2FkZWQgaW4gdGhlIHN5c3RlbS4gT2YgY291cnNlIFJaL0Eg
-dHJpZXMgdG8gYmUgUkFNIHNlbnNpdGl2ZS4uLmJ1dCA4S0IgDQpmb3IgYSBjbG9jayBkcml2ZXIg
-aXMgbm90IG15IGJpZ2dlc3QgY29uY2Vybi4NCg0KU28gd2l0aCB0aGF0IHNhaWQsIEkgY291bGQg
-YWRkIGluIGEgZHJpdmVyIG9wdGlvbiB0byBub3QgcmVnaXN0ZXIgdGhlIA0KcmVzZXQgY29udHJv
-bGxlci4gQW5kLCBhbHNvIG1ha2UgYSBtYWNybyBzbyB1c2VycyBjYW4gc3BlY2lmeSAiMzYiIGlu
-c3RlYWQNCm9mICIzMDYiIGluIHRoZSBEVC4NCkFuZCB0aGVuLCBJIG5vIGxvbmdlciBoYXZlIHRv
-IHdvcnJ5IGFib3V0IGR1cGxpY2F0ZSBjb2RlICgyIGRyaXZlcnMgZG8gDQphbG1vc3QgdGhlIHNh
-bWUgdGhpbmcpLg0KDQpXaGF0IGRvIHlvdSB0aGluaz8NCldlcmUgeW91IGV4cGVjdGluZyB0aGUg
-ZHJpdmVyIHRvIGFsbG9jYXRlIG1vcmUgdGhhbiA4SyBvZiBSQU0gb24gYm9vdD8NCg0KVGhhbmtz
-LA0KQ2hyaXMNCg0K
+With MFD devices the clk properties may be contained in MFD (parent) node.
+Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD subdevice
+not to MFD device (parent). Add devm_of_clk_add_hw_provider_parent to tackle
+this issue.
+
+Also clkdev registration lacks of managed registration functions and it seems
+quite many drivers do not drop clkdev lookups at exit. Add
+devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
+releasing at exit.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ Documentation/driver-model/devres.txt |   3 +
+ drivers/clk/clk.c                     |  28 ++++++--
+ drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++++--------
+ include/linux/clk-provider.h          |   4 ++
+ include/linux/clkdev.h                |   4 ++
+ 5 files changed, 129 insertions(+), 32 deletions(-)
+
+diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
+index 15720cd17958..20dac9ffd3e0 100644
+--- a/Documentation/driver-model/devres.txt
++++ b/Documentation/driver-model/devres.txt
+@@ -238,6 +238,9 @@ CLOCK
+   devm_clk_put()
+   devm_clk_hw_register()
+   devm_of_clk_add_hw_provider()
++  devm_of_clk_add_parent_hw_provider()
++  devm_clk_hw_register_clkdev()
++  devm_clk_release_clkdev()
+ 
+ DMA
+   dmaenginem_async_device_register()
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d31055ae6ec6..fd0bc6421269 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3798,12 +3798,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+ 	of_clk_del_provider(*(struct device_node **)res);
+ }
+ 
+-int devm_of_clk_add_hw_provider(struct device *dev,
++static int __devm_of_clk_add_hw_provider(struct device *dev,
+ 			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 					      void *data),
+-			void *data)
++			struct device_node *of_node, void *data)
+ {
+-	struct device_node **ptr, *np;
++	struct device_node **ptr;
+ 	int ret;
+ 
+ 	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
+@@ -3811,10 +3811,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 	if (!ptr)
+ 		return -ENOMEM;
+ 
+-	np = dev->of_node;
+-	ret = of_clk_add_hw_provider(np, get, data);
++	*ptr = of_node;
++	ret = of_clk_add_hw_provider(of_node, get, data);
+ 	if (!ret) {
+-		*ptr = np;
+ 		devres_add(dev, ptr);
+ 	} else {
+ 		devres_free(ptr);
+@@ -3822,8 +3821,25 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 
+ 	return ret;
+ }
++int devm_of_clk_add_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
++}
+ EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+ 
++int devm_of_clk_add_parent_hw_provider(struct device *dev,
++			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++					      void *data),
++			void *data)
++{
++	return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
++					     data);
++}
++EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
++
+ /**
+  * of_clk_del_provider() - Remove a previously registered clock provider
+  * @np: Device node pointer associated with clock provider
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 9ab3db8b3988..f6100b6e06fd 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -401,6 +401,25 @@ static struct clk_lookup *__clk_register_clkdev(struct clk_hw *hw,
+ 	return cl;
+ }
+ 
++static int do_clk_register_clkdev(struct clk_hw *hw,
++	struct clk_lookup **cl, const char *con_id, const char *dev_id)
++{
++
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++	/*
++	 * Since dev_id can be NULL, and NULL is handled specially, we must
++	 * pass it as either a NULL format string, or with "%s".
++	 */
++	if (dev_id)
++		*cl = __clk_register_clkdev(hw, con_id, "%s",
++					   dev_id);
++	else
++		*cl = __clk_register_clkdev(hw, con_id, NULL);
++
++	return *cl ? 0 : -ENOMEM;
++}
++
+ /**
+  * clk_register_clkdev - register one clock lookup for a struct clk
+  * @clk: struct clk to associate with all clk_lookups
+@@ -420,20 +439,10 @@ int clk_register_clkdev(struct clk *clk, const char *con_id,
+ {
+ 	struct clk_lookup *cl;
+ 
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
+-
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, "%s",
+-					   dev_id);
+-	else
+-		cl = __clk_register_clkdev(__clk_get_hw(clk), con_id, NULL);
+-
+-	return cl ? 0 : -ENOMEM;
++	if (!IS_ERR(clk))
++		return do_clk_register_clkdev(__clk_get_hw(clk), &cl, con_id,
++					      dev_id);
++	return PTR_ERR(clk);
+ }
+ EXPORT_SYMBOL(clk_register_clkdev);
+ 
+@@ -456,18 +465,79 @@ int clk_hw_register_clkdev(struct clk_hw *hw, const char *con_id,
+ {
+ 	struct clk_lookup *cl;
+ 
+-	if (IS_ERR(hw))
+-		return PTR_ERR(hw);
++	return do_clk_register_clkdev(hw, &cl, con_id, dev_id);
++}
++EXPORT_SYMBOL(clk_hw_register_clkdev);
+ 
+-	/*
+-	 * Since dev_id can be NULL, and NULL is handled specially, we must
+-	 * pass it as either a NULL format string, or with "%s".
+-	 */
+-	if (dev_id)
+-		cl = __clk_register_clkdev(hw, con_id, "%s", dev_id);
+-	else
+-		cl = __clk_register_clkdev(hw, con_id, NULL);
++static void devm_clkdev_release(struct device *dev, void *res)
++{
++	clkdev_drop(*(struct clk_lookup **)res);
++}
+ 
+-	return cl ? 0 : -ENOMEM;
++static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
++{
++	struct clk_lookup **l = res;
++
++	if (!l || !*l) {
++		WARN_ON(!l || !*l);
++		return 0;
++	}
++	return *l == data;
+ }
+-EXPORT_SYMBOL(clk_hw_register_clkdev);
++
++/**
++ * devm_clk_release_clkdev - Resource managed clkdev lookup release
++ * @dev: device this lookup is bound
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * Drop the clkdev lookup created with devm_clk_hw_register_clkdev.
++ * Normally this function will not need to be called and the resource
++ * management code will ensure that the resource is freed.
++ */
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id)
++{
++	struct clk_lookup *cl;
++	int rval;
++
++	cl = clk_find(dev_id, con_id);
++	WARN_ON(!cl);
++	rval = devres_release(dev, devm_clkdev_release,
++			      &devm_clk_match_clkdev, cl);
++	WARN_ON(rval);
++}
++EXPORT_SYMBOL(devm_clk_release_clkdev);
++
++/**
++ * devm_clk_hw_register_clkdev - managed clk lookup registration for clk_hw
++ * @dev: device this lookup is bound
++ * @hw: struct clk_hw to associate with all clk_lookups
++ * @con_id: connection ID string on device
++ * @dev_id: format string describing device name
++ *
++ * con_id or dev_id may be NULL as a wildcard, just as in the rest of
++ * clkdev.
++ *
++ * To make things easier for mass registration, we detect error clk_hws
++ * from a previous clk_hw_register_*() call, and return the error code for
++ * those.  This is to permit this function to be called immediately
++ * after clk_hw_register_*().
++ */
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id)
++{
++	int rval = -ENOMEM;
++	struct clk_lookup **cl;
++
++	cl = devres_alloc(devm_clkdev_release, sizeof(*cl), GFP_KERNEL);
++	if (cl) {
++		rval = do_clk_register_clkdev(hw, cl, con_id, dev_id);
++		if (!rval)
++			devres_add(dev, cl);
++		else
++			devres_free(cl);
++	}
++	return rval;
++}
++EXPORT_SYMBOL(devm_clk_hw_register_clkdev);
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 08b1aa70a38d..94f9bae6490a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -909,6 +909,10 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
+ 			   void *data);
++int devm_of_clk_add_parent_hw_provider(struct device *dev,
++			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
++						 void *data),
++			   void *data);
+ void of_clk_del_provider(struct device_node *np);
+ void devm_of_clk_del_provider(struct device *dev);
+ struct clk *of_clk_src_simple_get(struct of_phandle_args *clkspec,
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index 4890ff033220..ccb32af5848b 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -52,4 +52,8 @@ int clk_add_alias(const char *, const char *, const char *, struct device *);
+ int clk_register_clkdev(struct clk *, const char *, const char *);
+ int clk_hw_register_clkdev(struct clk_hw *, const char *, const char *);
+ 
++int devm_clk_hw_register_clkdev(struct device *dev, struct clk_hw *hw,
++				const char *con_id, const char *dev_id);
++void devm_clk_release_clkdev(struct device *dev, const char *con_id,
++			     const char *dev_id);
+ #endif
+-- 
+2.14.3
