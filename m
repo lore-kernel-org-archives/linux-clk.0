@@ -1,77 +1,159 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:41353 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbeHTQwk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Aug 2018 12:52:40 -0400
-Date: Mon, 20 Aug 2018 15:36:47 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/5] Set max rate for video PLLs
-Message-ID: <20180820133647.vpj7p36ir334g4am@flea>
-References: <20180809165217.30680-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zyn3xcoio4kmfyvv"
-In-Reply-To: <20180809165217.30680-1-jernej.skrabec@siol.net>
+Received: from mailout2.samsung.com ([203.254.224.25]:31869 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeH3Fft (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:35:49 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5B874A01.3020401@samsung.com>
+Date: Thu, 30 Aug 2018 10:36:01 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 08/10] clk: samsung: Add support for setting registers
+ state before suspend
+In-reply-to: <20180829155046.29359-9-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155102eucas1p1ca7a26c10847dcb585f01b54657e29cb@eucas1p1.samsung.com>
+        <20180829155046.29359-9-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Marek,
 
---zyn3xcoio4kmfyvv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I don't have any object of this patch.
 
-On Thu, Aug 09, 2018 at 06:52:12PM +0200, Jernej Skrabec wrote:
-> This patch series implement maximum rate constraint for video PLLs,
-> because it is possible to set higher PLL rate that is actually
-> supported in HW.
->=20
-> Issue became apparent when user reported non-working monitor connected
-> to board with H5 SoC. Native monitor resolution in this case was
-> 2560x1080, with 185580 kHz pixel clock. Clock subsystem found out that
-> best matching pixel clock can be generated if video PLL is set to 2040
-> MHz, which is way out of specs for PLL. With this patch series applied,
-> everything worked just fine, with slightly higher rate error, but within
-> working limits for PLL and HDMI.
->=20
-> I'm not sure if "Fixes" tag should be added. It solves real world
-> problem, but there was nothing wrongly implemented, just upper limit
-> is missing.
->=20
-> While user reported that these patches solve the issue on H5, I added
-> similar fixes for other SoCs too. Since I don't have such monitor,
-> I only tested if board boots up and if HDMI works (H3, R40 and A83T).
+But, I think that it is not good to make the separate function as following:
+- void samsung_clk_sleep_init(...)
+- void samsung_clk_sleep_init2(...)
 
-Queued for 4.20, thanks!
-Maxime
+Instead, how about adding new structure like 'struct samsung_cmu_info' as following:?
+If we use the structure, we can support it by using only one function.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+struct samsung_clk_sleep_info {
+	const unsigned long *rdump;
+	unsigned long nr_rdump;
+	unsigned long nr_rdump;
+	const struct samsung_clk_reg_dump *rsuspendl;
+	unsigned long nr_rsuspend;
+};
 
---zyn3xcoio4kmfyvv
-Content-Type: application/pgp-signature; name="signature.asc"
+void samsung_clk_sleep_init(void __iomem *reg_base,
+	const struct samsung_clk_sleep_info *info)
 
------BEGIN PGP SIGNATURE-----
+Regards,
+Chanwoo Choi
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlt6w+4ACgkQ0rTAlCFN
-r3T9Qg/7B308BYfOx10shjSayQgyDKLjhhnbpIJAaqCNvFpJws2N45+3A6zndjH9
-03XaTrno1MyG39ZvZpI4ugacHPLaqvfC2JkbyIPI8YDSvyGKFIxtsN98dnhtG+UO
-T5osMUT6DeX9W4dGZCyP15Ml0kBLEifIMx+6aQRwrOIk1+OfdHwHw7gvXqiPqsDy
-7vnNOYbPO7YuFt6g+uGDtXiPjIoOYCumltr9ZMspPwNY63RQDUoZxvmosHyIoTCB
-7AQZMqD8kw0dw/ahmftAjZIco0F1WzkEk0mxYb8E9x9Ppf8GQqaS7XfpL3EYF1TZ
-2p8OhObhL61IR8CnX6tJ+QZnfnk4uaKfC9MxHYEGFXzC7MU7hSXcHZyILCLymEBX
-gwqz7whcm6dXyYh7pI32WM/adAkal0GUpsdpvPbPzK8cVqFuk9uUqQedZMMHZ4Lv
-GKaeQ3420Yb284CGBIf+cZueU6SmuRQ6fAZnjTPeLoieZv8NJq5Iz3wnSQdWt4pO
-6vQwgFpZpYto4Z158bk1wip6vK2EWDwxDEnja1bQStmx7c4SEjvtmi4XirUorn1N
-bJGiMuc/MXBIbDXmzswQz1wkBxHPSTvWz8vFuyjVOZGm2GxHMuXUocTePMytpfu3
-zcJSwu82chOTFR2lSv92Xpb/wOonToKnOKPFopqzrS95/UdtK/U=
-=/uUV
------END PGP SIGNATURE-----
-
---zyn3xcoio4kmfyvv--
+On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
+> Some registers of clock controller have to be set to certain values before
+> entering system suspend state. Till now drivers did that on their own,
+> but it will be easier to handle it by generic code and let drivers simply
+> to provide the list of registers and their state.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk.c | 23 +++++++++++++----------
+>  drivers/clk/samsung/clk.h | 18 ++++++++++++++++--
+>  2 files changed, 29 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index 8634884aa11c..ab467a7f973a 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -290,9 +290,12 @@ static int samsung_clk_suspend(void)
+>  {
+>  	struct samsung_clock_reg_cache *reg_cache;
+>  
+> -	list_for_each_entry(reg_cache, &clock_reg_cache_list, node)
+> +	list_for_each_entry(reg_cache, &clock_reg_cache_list, node) {
+>  		samsung_clk_save(reg_cache->reg_base, reg_cache->rdump,
+>  				reg_cache->rd_num);
+> +		samsung_clk_restore(reg_cache->reg_base, reg_cache->rsuspend,
+> +				reg_cache->rsuspend_num);
+> +	}
+>  	return 0;
+>  }
+>  
+> @@ -310,9 +313,11 @@ static struct syscore_ops samsung_clk_syscore_ops = {
+>  	.resume = samsung_clk_resume,
+>  };
+>  
+> -void samsung_clk_sleep_init(void __iomem *reg_base,
+> +void samsung_clk_sleep_init2(void __iomem *reg_base,
+>  			const unsigned long *rdump,
+> -			unsigned long nr_rdump)
+> +			unsigned long nr_rdump,
+> +			const struct samsung_clk_reg_dump *rsuspend,
+> +			unsigned long nr_rsuspend)
+>  {
+>  	struct samsung_clock_reg_cache *reg_cache;
+>  
+> @@ -330,13 +335,10 @@ void samsung_clk_sleep_init(void __iomem *reg_base,
+>  
+>  	reg_cache->reg_base = reg_base;
+>  	reg_cache->rd_num = nr_rdump;
+> +	reg_cache->rsuspend = rsuspend;
+> +	reg_cache->rsuspend_num = nr_rsuspend;
+>  	list_add_tail(&reg_cache->node, &clock_reg_cache_list);
+>  }
+> -
+> -#else
+> -void samsung_clk_sleep_init(void __iomem *reg_base,
+> -			const unsigned long *rdump,
+> -			unsigned long nr_rdump) {}
+>  #endif
+>  
+>  /*
+> @@ -380,8 +382,9 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+>  		samsung_clk_register_fixed_factor(ctx, cmu->fixed_factor_clks,
+>  			cmu->nr_fixed_factor_clks);
+>  	if (cmu->clk_regs)
+> -		samsung_clk_sleep_init(reg_base, cmu->clk_regs,
+> -			cmu->nr_clk_regs);
+> +		samsung_clk_sleep_init2(reg_base,
+> +				       cmu->clk_regs, cmu->nr_clk_regs,
+> +				       cmu->suspend_regs, cmu->nr_suspend_regs);
+>  
+>  	samsung_clk_of_add_provider(np, ctx);
+>  
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index 3880d2f9d582..854d0b52ef5f 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -279,6 +279,8 @@ struct samsung_clock_reg_cache {
+>  	void __iomem *reg_base;
+>  	struct samsung_clk_reg_dump *rdump;
+>  	unsigned int rd_num;
+> +	const struct samsung_clk_reg_dump *rsuspend;
+> +	unsigned int rsuspend_num;
+>  };
+>  
+>  struct samsung_cmu_info {
+> @@ -358,9 +360,21 @@ extern struct samsung_clk_provider __init *samsung_cmu_register_one(
+>  
+>  extern unsigned long _get_rate(const char *clk_name);
+>  
+> -extern void samsung_clk_sleep_init(void __iomem *reg_base,
+> +#ifdef CONFIG_PM_SLEEP
+> +extern void samsung_clk_sleep_init2(void __iomem *reg_base,
+>  			const unsigned long *rdump,
+> -			unsigned long nr_rdump);
+> +			unsigned long nr_rdump,
+> +			const struct samsung_clk_reg_dump *rsuspend,
+> +			unsigned long nr_rsuspend);
+> +#else
+> +void samsung_clk_sleep_init2(void __iomem *reg_base,
+> +			const unsigned long *rdump,
+> +			unsigned long nr_rdump,
+> +			const struct samsung_clk_reg_dump *rsuspend,
+> +			unsigned long nr_rsuspend) {}
+> +#endif
+> +#define samsung_clk_sleep_init(reg_base, rdump, nr_rdump) \
+> +	samsung_clk_sleep_init2(reg_base, rdump, nr_rdump, NULL, 0)
+>  
+>  extern void samsung_clk_save(void __iomem *base,
+>  			struct samsung_clk_reg_dump *rd,
+> 
