@@ -1,60 +1,41 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC, use COMPILE_TEST
-Date: Thu,  9 Aug 2018 23:44:04 +0200
-Message-Id: <20180809214414.20905-15-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-1-paul@crapouillou.net>
-References: <20180809214414.20905-1-paul@crapouillou.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:28380 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeH3FSo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Aug 2018 01:18:44 -0400
+MIME-version: 1.0
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5B8745FF.8000905@samsung.com>
+Date: Thu, 30 Aug 2018 10:18:55 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 06/10] clk: samsung: s5pv210: Use generic helper for
+ handling suspend/resume
+In-reply-to: <20180829155046.29359-7-m.szyprowski@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+        <CGME20180829155101eucas1p2f6ecb6ad0eb37fa725ac950cad73c423@eucas1p2.samsung.com>
+        <20180829155046.29359-7-m.szyprowski@samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Depending on MACH_INGENIC prevent us from creating a generic kernel that
-works on more than one MIPS board. Instead, we just depend on MIPS being
-set.
+On 2018년 08월 30일 00:50, Marek Szyprowski wrote:
+> Replace common suspend/resume handling code by generic helper.
+> No functional change.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-s5pv210.c | 41 ++-----------------------------
+>  1 file changed, 2 insertions(+), 39 deletions(-)
 
-On other architectures, this driver can still be built, thanks to
-COMPILE_TEST. This is used by automated tools to find bugs, for
-instance.
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/pwm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(snip)
 
- v5: New patch
-
- v6: No change
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 58359bf22b96..e53ad662ef87 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -201,7 +201,7 @@ config PWM_IMX
- 
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
--	depends on MACH_INGENIC
-+	depends on MIPS || COMPILE_TEST
- 	depends on COMMON_CLK
- 	select INGENIC_TIMER
- 	help
 -- 
-2.11.0
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
