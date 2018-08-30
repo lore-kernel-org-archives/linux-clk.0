@@ -1,92 +1,72 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36411 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbeHBMZG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 08:25:06 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 2/6] ARM: imx6: register pm_power_off handler if "fsl,pmic-stby-poweroff" is set
-Date: Thu,  2 Aug 2018 12:34:21 +0200
-Message-Id: <20180802103425.3053-3-o.rempel@pengutronix.de>
-In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Thu, 30 Aug 2018 15:13:57 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
+	linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
+	sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
+	matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH 0/2] clk: Support ROHM BD71837 (BD71847)
+Message-ID: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 List-ID: <linux-clk.vger.kernel.org>
 
-One of the Freescale recommended sequences for power off with external
-PMIC is the following:
-...
-3.  SoC is programming PMIC for power off when standby is asserted.
-4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+This patch series adds support for clk gate included in ROHM BD71837
+(and BD71847) Power Management ICs. Additionally patch series adds support
+for new managed interfaces for clkdev lookup and parent_of_provider
+registrations.
 
-See:
-http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-page 5083
+Please note that the patch has not been tested on BD71847 - I will
+verify the BD71847 part and do appropriate documentation/naming changes
+after verification. Hence only BD71837 support is announced here even
+though the BD71847 should be identical what comes to clk registers.
 
-This patch implements step 4. of this sequence.
+BD71837 driver in the patch series depends on defines submitted as part of
+this patch set:
+https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com/
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+The managed interfaces are continuation of discussion started here:
+https://lore.kernel.org/lkml/20180730125550.GD8862@localhost.localdomain/
+Difference to previous patch:
+ - dropped devm_clk_register_clkdev
+ - added new interfaces to Documentation/driver-model/devres.txt
+ - did not rename __clk_register_clkdev
+ - simplified IS_ERR - checks/code dublication by dropping checks from
+   devm_clk_hw_register_clkdev.
+   As negative point is this causes devres_alloc to be done before checking
+   for IS_ERR(hw) inside do_clk_register_clkdev.
 
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 017539dd712b..2f5c643f62fb 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -601,6 +601,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
- 				   IMX6Q_GPR1_GINT);
- }
- 
-+static void imx6_pm_stby_poweroff(void)
-+{
-+	imx6_set_lpm(STOP_POWER_OFF);
-+	imx6q_suspend_finish(0);
-+
-+	mdelay(1000);
-+
-+	pr_emerg("Unable to poweroff system\n");
-+}
-+
-+static int imx6_pm_stby_poweroff_probe(void)
-+{
-+	if (pm_power_off) {
-+		pr_warn("%s: pm_power_off already claimed  %p %pf!\n",
-+			__func__, pm_power_off, pm_power_off);
-+		return -EBUSY;
-+	}
-+
-+	pm_power_off = imx6_pm_stby_poweroff;
-+	return 0;
-+}
-+
- void __init imx6_pm_ccm_init(const char *ccm_compat)
- {
- 	struct device_node *np;
-@@ -617,6 +639,9 @@ void __init imx6_pm_ccm_init(const char *ccm_compat)
- 	val = readl_relaxed(ccm_base + CLPCR);
- 	val &= ~BM_CLPCR_LPM;
- 	writel_relaxed(val, ccm_base + CLPCR);
-+
-+	if (of_property_read_bool(np, "fsl,pmic-stby-poweroff"))
-+		imx6_pm_stby_poweroff_probe();
- }
- 
- void __init imx6q_pm_init(void)
+and BD71837 driver is continuation for patch discussion started here:
+https://lore.kernel.org/lkml/d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com/
+Difference to previous patch:
+ - Simply fail out if no parent clock is found from DT. This simplifies
+   driver a lot and encourages proper clk tree modelling in DT.
+
+patch series is based on linux-next tag next-20180823
+
+Patch 1:
+	Add new managed interfaces
+Patch 2:
+	Support BD71837
+
+Matti Vaittinen (2):
+  clk: clkdev/of_clk - add managed lookup and provider registrations
+  clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
+
+ Documentation/driver-model/devres.txt |   3 +
+ drivers/clk/Kconfig                   |   6 ++
+ drivers/clk/Makefile                  |   1 +
+ drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
+ drivers/clk/clk.c                     |  28 ++++++--
+ drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
+ include/linux/clk-provider.h          |   4 ++
+ include/linux/clkdev.h                |   4 ++
+ 8 files changed, 267 insertions(+), 32 deletions(-)
+ create mode 100644 drivers/clk/clk-bd718x7.c
+
 -- 
-2.18.0
-
+2.14.3
