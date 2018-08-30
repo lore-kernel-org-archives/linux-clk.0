@@ -1,105 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35929 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729202AbeH2Tsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Aug 2018 15:48:37 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 06/10] clk: samsung: s5pv210: Use generic helper for
- handling suspend/resume
-Date: Wed, 29 Aug 2018 17:50:42 +0200
-Message-id: <20180829155046.29359-7-m.szyprowski@samsung.com>
-In-reply-to: <20180829155046.29359-1-m.szyprowski@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
-        <CGME20180829155101eucas1p2f6ecb6ad0eb37fa725ac950cad73c423@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 0/6] crypto: vf-crc - Add new driver (and required clk, DTS...)
+Date: Thu, 30 Aug 2018 19:15:33 +0200
+Message-Id: <20180830171539.20008-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-No functional change.
+Hi,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-s5pv210.c | 41 ++-----------------------------
- 1 file changed, 2 insertions(+), 39 deletions(-)
+Add new driver for Freescale/NXP Vybrid CRC HW accelerator along with
+prerequisities:
+1. Clock,
+2. Bindings,
+3. CRC16 test tables for testing.
 
-diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
-index fd2725710a6f..41d2337fe030 100644
---- a/drivers/clk/samsung/clk-s5pv210.c
-+++ b/drivers/clk/samsung/clk-s5pv210.c
-@@ -14,7 +14,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- 
- #include "clk.h"
- #include "clk-pll.h"
-@@ -83,9 +82,6 @@ enum {
- 
- static void __iomem *reg_base;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *s5pv210_clk_dump;
--
- /* List of registers that need to be preserved across suspend/resume. */
- static unsigned long s5pv210_clk_regs[] __initdata = {
- 	CLK_SRC0,
-@@ -132,40 +128,6 @@ static unsigned long s5pv210_clk_regs[] __initdata = {
- 	CLK_OUT,
- };
- 
--static int s5pv210_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, s5pv210_clk_dump,
--				ARRAY_SIZE(s5pv210_clk_regs));
--	return 0;
--}
--
--static void s5pv210_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, s5pv210_clk_dump,
--				ARRAY_SIZE(s5pv210_clk_regs));
--}
--
--static struct syscore_ops s5pv210_clk_syscore_ops = {
--	.suspend = s5pv210_clk_suspend,
--	.resume = s5pv210_clk_resume,
--};
--
--static void s5pv210_clk_sleep_init(void)
--{
--	s5pv210_clk_dump =
--		samsung_clk_alloc_reg_dump(s5pv210_clk_regs,
--					   ARRAY_SIZE(s5pv210_clk_regs));
--	if (!s5pv210_clk_dump) {
--		pr_warn("%s: Failed to allocate sleep save data\n", __func__);
--		return;
--	}
--
--	register_syscore_ops(&s5pv210_clk_syscore_ops);
--}
--#else
--static inline void s5pv210_clk_sleep_init(void) { }
--#endif
--
- /* Mux parent lists. */
- static const char *const fin_pll_p[] __initconst = {
- 	"xxti",
-@@ -822,7 +784,8 @@ static void __init __s5pv210_clk_init(struct device_node *np,
- 	samsung_clk_register_alias(ctx, s5pv210_aliases,
- 						ARRAY_SIZE(s5pv210_aliases));
- 
--	s5pv210_clk_sleep_init();
-+	samsung_clk_sleep_init(reg_base, s5pv210_clk_regs,
-+			       ARRAY_SIZE(s5pv210_clk_regs));
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
+Patch 3/6 (ARM: dts: vfxxx: Add node for CRC hardware block) depends on patch
+2/6 (clk) so it should go in following cycle (after clk change hits mainline).
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (6):
+  dt-bindings: crypto: Add Freescale Vybrid CRC
+  clk: imx: vf610: Add CRC clock
+  ARM: dts: vfxxx: Add node for CRC hardware block
+  crypto: testmgr - Add CRC16 test tables
+  crypto - Group Freescale/NXP ARM architecture Kconfig entires together
+  crypto: vf-crc - Add new driver for Freescale Vybrid CRC
+
+ .../devicetree/bindings/crypto/fsl-vf610-crc.txt   |  16 +
+ MAINTAINERS                                        |   7 +
+ arch/arm/boot/dts/vfxxx.dtsi                       |   7 +
+ crypto/testmgr.c                                   |   6 +
+ crypto/testmgr.h                                   | 386 ++++++++++++++++++++
+ drivers/clk/imx/clk-vf610.c                        |   1 +
+ drivers/crypto/Kconfig                             |  42 ++-
+ drivers/crypto/Makefile                            |   1 +
+ drivers/crypto/vf-crc.c                            | 387 +++++++++++++++++++++
+ include/dt-bindings/clock/vf610-clock.h            |   3 +-
+ include/linux/crc32poly.h                          |   7 +
+ 11 files changed, 846 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/fsl-vf610-crc.txt
+ create mode 100644 drivers/crypto/vf-crc.c
+
 -- 
-2.17.1
+2.14.1
