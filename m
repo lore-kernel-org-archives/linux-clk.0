@@ -1,103 +1,40 @@
-Return-Path: <thor.thayer@linux.intel.com>
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH V3 0/4] clk: new APIs to handle all available clocks
-To: "A.s. Dong" <aisheng.dong@nxp.com>, "sboyd@kernel.org"
- <sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>, dl-linux-imx
- <linux-imx@nxp.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <1527244643-10736-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421114F8AFAE56B6D7C2D1E480770@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From: Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <ed7573b6-b8bf-9625-7c8f-7ee47a7be106@linux.intel.com>
-Date: Mon, 20 Aug 2018 11:32:15 -0500
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:59862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727423AbeH3KkD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Aug 2018 06:40:03 -0400
 MIME-Version: 1.0
-In-Reply-To: <AM0PR04MB4211368561A415B255782CBE803D0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+References: <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
+ <20180829155046.29359-1-m.szyprowski@samsung.com> <20180829155046.29359-3-m.szyprowski@samsung.com>
+In-Reply-To: <20180829155046.29359-3-m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 30 Aug 2018 08:39:13 +0200
+Message-ID: <CAJKOXPe9u8c_PLPYmtXJFfdCfVD-rwQsdi-8hbx2Q8mGvTvziw@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
+ handling suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Replace common suspend/resume handling code by generic helper.
+> No functional change.
 
-On 08/16/2018 09:33 PM, A.s. Dong wrote:
-> Hi Stephen,
-> 
-> Do you want me to resend this series for review?
-> It seems have been pending for quite a long time.
-> 
-> Thor just pinged me for its status as he wants to use it.
-> 
-> Regards
-> Dong Aisheng
-> 
->> -----Original Message-----
->> From: A.s. Dong
->> Sent: Wednesday, June 20, 2018 10:54 AM
->> To: linux-clk@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
->> linux-imx <linux-imx@nxp.com>
->> Subject: RE: [PATCH V3 0/4] clk: new APIs to handle all available clocks
->>
->> Ping....
->>
->>> -----Original Message-----
->>> From: A.s. Dong
->>> Sent: Friday, May 25, 2018 6:37 PM
->>> To: linux-clk@vger.kernel.org
->>> Cc: linux-kernel@vger.kernel.org;
->>> linux-arm-kernel@lists.infradead.org;
->>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; dl-
->>> linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
->>> Subject: [PATCH V3 0/4] clk: new APIs to handle all available clocks
->>>
->>> This patch series is a continue of discussion from here,
->>> https://patchwork.kernel.org/patch/9986293/
->>> that some users may want to handle all available clocks from device
->>> tree without need to know the detailed clock information likes clock
->>> numbers and names. This is useful in writing some generic drivers to handle
->> clock part.
->>>
->>> Note:
->>> This patch series is tested on MX6Q SDB cpufreq driver with a minor
->>> change to switch to use clk_bulk_get_all.
->>> But patch 4 only test compiling. Hopefully someone could help test the
->>> function.
->>>
->>> v2->v3:
->>>   * address all comments from Stephen
->>>   * fix build warnings on other architectures.
->>> v1->v2:
->>>   * add clk_bulk_{get|put}_all() which only supports DT platform
->>> currently
->>>   * remove _all variants and the wrapper struct clk_bulk
->>>   * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
->>>     proves they need it because they don't have a struct device pointer.
->>>
->>> Dong Aisheng (4):
->>>    clk: bulk: add of_clk_bulk_get()
->>>    clk: add new APIs to operate on all available clocks
->>>    clk: add managed version of clk_bulk_get_all
->>>    video: simplefb: switch to use clk_bulk API to simplify clock
->>>      operations
->>>
->>>   drivers/clk/clk-bulk.c         | 80
->>> ++++++++++++++++++++++++++++++++++++++++++
->>>   drivers/clk/clk-devres.c       | 24 +++++++++++++
->>>   drivers/video/fbdev/simplefb.c | 66 +++++++---------------------------
->>>   include/linux/clk.h            | 65 +++++++++++++++++++++++++++++++++-
->>>   4 files changed, 180 insertions(+), 55 deletions(-)
->>>
->>> --
->>> 2.7.4
-> 
-> 
+There is functional change in case alloc fails (kzalloc(),
+samsung_clk_alloc_reg_dump()). Previously it would be warned and
+ignored. Now it will panic. You could mention this but anyway the
+change looks nice! Thanks!
 
-Nice patchset!
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-FWIW, I've tested patches 1-3 on Stratix10 SOCFPGA for a SMMU driver I'm 
-working on.
-
-Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
+Best regards,
+Krzysztof
