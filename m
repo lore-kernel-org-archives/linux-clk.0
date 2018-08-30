@@ -1,93 +1,124 @@
-Return-Path: <anischal@codeaurora.org>
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	Odelu Kukatla <okukatla@codeaurora.org>,
-	Taniya Das <tdas@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v3 0/4] Add QCOM graphics clock controller driver for SDM845
-Date: Mon, 13 Aug 2018 12:03:03 +0530
-Message-Id: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "mark.rutland@arm.com"
+ <mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+ <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+ "rjw@rjwysocki.net"
+ <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+ "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
+ <linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
+ <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+ "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "kstewart@linuxfoundation.org"
+ <kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
+ <yamada.masahiro@socionext.com>
+Date: Thu, 30 Aug 2018 12:39:44 -0500
+In-Reply-To: <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+ <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+ <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+ <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+Mime-Version: 1.0
+Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+ Andy Tang <andy.tang@nxp.com>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes in v3:
-* Modified the determine_rate() op to use the min/max rate range
-  to round the requested rate within the set_rate range. With this,
-  requested set rate will always stay within the limits.
+On Thu, 2018-08-30 at 07:36 +0000, Vabhav Sharma wrote:
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> > owner@vger.kernel.org> On Behalf Of Scott Wood
+> > Sent: Wednesday, August 29, 2018 5:49 AM
+> > To: Vabhav Sharma <vabhav.sharma@nxp.com>; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; robh+dt@kernel.org;
+> > mark.rutland@arm.com; linuxppc-dev@lists.ozlabs.org; linux-arm-
+> > kernel@lists.infradead.org; mturquette@baylibre.com; sboyd@kernel.org;
+> > rjw@rjwysocki.net; viresh.kumar@linaro.org; linux-clk@vger.kernel.org;
+> > linux-pm@vger.kernel.org; linux-kernel-owner@vger.kernel.org;
+> > catalin.marinas@arm.com; will.deacon@arm.com;
+> > gregkh@linuxfoundation.org; arnd@arndb.de;
+> > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
+> > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Andy Tang
+> > <andy.tang@nxp.com>; Udit Kumar <udit.kumar@nxp.com>;
+> > linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com>
+> > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+> > lx2160a
+> > 
+> > On Mon, 2018-08-20 at 12:17 +0530, Vabhav Sharma wrote:
+> > > From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > 
+> > > Add clockgen support for lx2160a.
+> > > Added entry for compat 'fsl,lx2160a-clockgen'.
+> > > As LX2160A is 16 core, so modified value for NUM_CMUX
+> > > 
+> > > Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> > > Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> > > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> > > ---
+> > >  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
+> > >  drivers/cpufreq/qoriq-cpufreq.c |  1 +
+> > >  2 files changed, 14 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index
+> > > 3a1812f..fc6e308 100644
+> > > --- a/drivers/clk/clk-qoriq.c
+> > > +++ b/drivers/clk/clk-qoriq.c
+> > > @@ -60,7 +60,7 @@ struct clockgen_muxinfo {  };
+> > > 
+> > >  #define NUM_HWACCEL	5
+> > > -#define NUM_CMUX	8
+> > > +#define NUM_CMUX	16
+> > > 
+> > >  struct clockgen;
+> > > 
+> > > @@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] =
+> > > {
+> > >  		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > >  	},
+> > >  	{
+> > > +		.compat = "fsl,lx2160a-clockgen",
+> > > +		.cmux_groups = {
+> > > +			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
+> > > +		},
+> > > +		.cmux_to_group = {
+> > > +			0, 0, 0, 0, 1, 1, 1, 1, -1
+> > > +		},
+> > > +		.pll_mask = 0x37,
+> > > +		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+> > > +	},
+> > 
+> > Why are you increasing NUM_CMUX beyond 8 for a chip that only has 8
+> > entries in cmux_to_group?
+> 
+> Configuration is 16 cores,8 cluster with 2 cores in each cluster
 
-Changes in v2:
-Addressed review comments given by Stephen: https://lkml.org/lkml/2018/6/6/294
-* Introduce clk_rcg2_gfx3d_determine_rate ops to return the best parent
-  as 'gpucc_pll0_even' and best parent rate as twice of the requested rate
-  always. This will eliminate the need of frequency table as source and
-  div-2 are fixed for gfx3d_clk_src.
-  Also modified the clk_rcg2_set_rate ops to configure the fixed source and
-  div.
-* Add support to check if requested rate falls within allowed set_rate range.
-  This will not let the source gpucc_pll0 to go out of the supported range
-  and also client can request the rate within the range.
-* Fixed comment text in probe function and added module description for GPUCC
-  driver.
+So?  This is about cmuxes, not cores.  You're increasing the array without
+ever using the new size.
 
-The graphics clock driver depends upon the below change.
-	https://lkml.org/lkml/2018/6/23/108
+-Scott
 
-Changes in v1:
-This patch series adds support for graphics clock controller for SDM845.
-Below is the brief description for each change:
 
-1. For some of the GDSCs, there is requirement to enable/disable the
-   few clocks before turning on/off the gdsc power domain. This patch
-   will add support to enable/disable the clock associated with the
-   gdsc along with power domain on/off callbacks.
-
-2. To turn on the gpu_gx_gdsc, there is a hardware requirement to
-   turn on the root clock (GFX3D RCG) first which would be the turn
-   on signal for the gdsc along with the SW_COLLAPSE. As per the
-   current implementation of clk_rcg2_shared_ops, it clears the
-   root_enable bit in the enable() clock ops. But due to the above
-   said requirement for GFX3D shared RCG, root_enable bit would be
-   already set by gdsc driver and rcg2_shared_ops should not clear
-   the root unless the disable() is called.
-
-   This patch add support for the same by reusing the existing
-   clk_rcg2_shared_ops and deriving "clk_rcg2_gfx3d_ops" clk_ops
-   for GFX3D clock to take care of the root set/clear requirement.
-
-3. Add device tree bindings for graphics clock controller for SDM845.
-
-4. Add graphics clock controller (GPUCC) driver for SDM845.
-
-[v1] : https://lore.kernel.org/patchwork/project/lkml/list/?series=348697
-[v2] : https://lore.kernel.org/patchwork/project/lkml/list/?series=359012
-
-Amit Nischal (4):
-  clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
-  clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-  dt-bindings: clock: Introduce QCOM Graphics clock bindings
-  clk: qcom: Add graphics clock controller driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gpucc.txt       |  18 +
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-rcg.h                         |   1 +
- drivers/clk/qcom/clk-rcg2.c                        |  86 +++-
- drivers/clk/qcom/gdsc.c                            |  44 +++
- drivers/clk/qcom/gdsc.h                            |   5 +
- drivers/clk/qcom/gpucc-sdm845.c                    | 438 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gpucc-sdm845.h      |  38 ++
- 9 files changed, 638 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
- create mode 100644 drivers/clk/qcom/gpucc-sdm845.c
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
-
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
