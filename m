@@ -1,28 +1,149 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 3 Aug 2018 07:57:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Songjun Wu <songjun.wu@linux.intel.com>
-Cc: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH v2 15/18] serial: intel: Support more platform
-Message-ID: <20180803055709.GB32226@kroah.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-16-songjun.wu@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180803030237.3366-16-songjun.wu@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: tegra: Don't enable already enabled PLLs
+Date: Thu, 30 Aug 2018 21:42:09 +0300
+Message-Id: <20180830184210.5369-1-digetx@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 03, 2018 at 11:02:34AM +0800, Songjun Wu wrote:
-> Support more platform.
-> 
-> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
+Initially Common Clock Framework isn't aware of the clock-enable status,
+this results in enabling of clocks that were enabled by bootloader. This
+is not a big deal for a regular clock-gates, but for PLL's it may have
+some unpleasant consequences. Thus re-enabling PLLX (the main CPU parent
+clock) may result in extra long period of PLL re-locking.
 
-Your changelog text makes no sense, sorry.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-greg k-h
+Changelog:
+
+v2:	No change.
+
+ drivers/clk/tegra/clk-pll.c | 50 +++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 830d1c87fa7c..ddb431247f08 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -444,6 +444,9 @@ static int clk_pll_enable(struct clk_hw *hw)
+ 	unsigned long flags = 0;
+ 	int ret;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -939,11 +942,16 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
+ static int clk_plle_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	struct tegra_clk_pll_freq_table sel;
++	unsigned long input_rate;
+ 	u32 val;
+ 	int err;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+ 
+@@ -1354,6 +1362,9 @@ static int clk_pllc_enable(struct clk_hw *hw)
+ 	int ret;
+ 	unsigned long flags = 0;
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
+@@ -1566,7 +1577,12 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -1703,6 +1719,9 @@ static int clk_pllu_tegra114_enable(struct clk_hw *hw)
+ 		return -EINVAL;
+ 	}
+ 
++	if (clk_pll_is_enabled(hw))
++		return 0;
++
+ 	input_rate = clk_hw_get_rate(__clk_get_hw(osc));
+ 
+ 	if (pll->lock)
+@@ -2378,6 +2397,16 @@ struct clk *tegra_clk_register_pllre_tegra210(const char *name,
+ 	return clk;
+ }
+ 
++static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	u32 val;
++
++	val = pll_readl_base(pll);
++
++	return val & PLLE_BASE_ENABLE ? 1 : 0;
++}
++
+ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+@@ -2385,7 +2414,12 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	u32 val;
+ 	int ret = 0;
+ 	unsigned long flags = 0;
+-	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
++	unsigned long input_rate;
++
++	if (clk_plle_tegra210_is_enabled(hw))
++		return 0;
++
++	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 
+ 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
+ 		return -EINVAL;
+@@ -2496,16 +2530,6 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
+ 
+-static int clk_plle_tegra210_is_enabled(struct clk_hw *hw)
+-{
+-	struct tegra_clk_pll *pll = to_clk_pll(hw);
+-	u32 val;
+-
+-	val = pll_readl_base(pll);
+-
+-	return val & PLLE_BASE_ENABLE ? 1 : 0;
+-}
+-
+ static const struct clk_ops tegra_clk_plle_tegra210_ops = {
+ 	.is_enabled =  clk_plle_tegra210_is_enabled,
+ 	.enable = clk_plle_tegra210_enable,
+-- 
+2.18.0
