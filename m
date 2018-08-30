@@ -1,120 +1,42 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42861 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387396AbeHBKBp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 06:01:45 -0400
-Subject: Re: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-To: Mark Brown <broonie@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-6-o.rempel@pengutronix.de>
- <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <06313062-70db-9c10-048e-78ca267da959@pengutronix.de>
- <20180730102452.GH5789@sirena.org.uk>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <d76f7acb-b221-8c4f-1dc9-c1244e7b9f49@pengutronix.de>
-Date: Thu, 2 Aug 2018 10:11:36 +0200
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180730102452.GH5789@sirena.org.uk>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="zEkRnkqXSaGdvvXRCInmGVrLExVFxgGVY"
-Sender: linux-clk-owner@vger.kernel.org
+To: "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>,
+ Arend van Spriel <aspriel@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Huang Ying <ying.huang@intel.com>, Joe Perches <joe@perches.com>,
+ Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
+ Michael Turquette <mturquette@baylibre.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@linux.vnet.ibm.com>, Robin Murphy <robin.murphy@arm.com>,
+ Roman Gushchin <guro@fb.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180828093332.20674-5-brgl@bgdev.pl>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20180828093332.20674-1-brgl@bgdev.pl> <20180828093332.20674-5-brgl@bgdev.pl>
+Message-ID: <153566598892.129321.11102576282589539273@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Date: Thu, 30 Aug 2018 14:53:08 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---zEkRnkqXSaGdvvXRCInmGVrLExVFxgGVY
-Content-Type: multipart/mixed; boundary="mTbZiom1wH9cEZZgNRQSokrSLBJlrtbwB";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Leonard Crestez <leonard.crestez@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Stephen Boyd <sboyd@codeaurora.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- dl-linux-imx <linux-imx@nxp.com>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "A.s. Dong" <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>,
- Andrew Morton <akpm@linux-foundation.org>, Robin Gong <yibin.gong@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Message-ID: <d76f7acb-b221-8c4f-1dc9-c1244e7b9f49@pengutronix.de>
-Subject: Re: [PATCH v8 5/6] regulator: pfuze100-regulator: provide
- pm_power_off_prepare handler
-References: <20180726092220.17250-1-o.rempel@pengutronix.de>
- <20180726092220.17250-6-o.rempel@pengutronix.de>
- <DB6PR04MB32233832762D02F1023861A1892A0@DB6PR04MB3223.eurprd04.prod.outlook.com>
- <06313062-70db-9c10-048e-78ca267da959@pengutronix.de>
- <20180730102452.GH5789@sirena.org.uk>
-In-Reply-To: <20180730102452.GH5789@sirena.org.uk>
+Quoting Bartosz Golaszewski (2018-08-28 02:33:32)
+> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> an example of how to use this new routine to shrink driver code.
+> =
 
---mTbZiom1wH9cEZZgNRQSokrSLBJlrtbwB
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+> While we're at it: replace a call to kcalloc() with devm_kcalloc().
+> =
 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
 
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-On 30.07.2018 12:24, Mark Brown wrote:
-> On Mon, Jul 30, 2018 at 09:50:55AM +0200, Oleksij Rempel wrote:
->> On 27.07.2018 11:32, Robin Gong wrote:
->=20
->>>>  #include <linux/slab.h>
->>>> +#include <linux/kallsyms.h>
->=20
->>> Is it necessary?
->=20
->> yes, for pm_power_off_prepare
->=20
-> That's a *weird* header to have to use for that symbol, are you sure
-> there isn't something more specific - if there isn't there should be.
-
-Hm... you right. Removed.
-
-
---mTbZiom1wH9cEZZgNRQSokrSLBJlrtbwB--
-
---zEkRnkqXSaGdvvXRCInmGVrLExVFxgGVY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAltivLgACgkQdQOiSHVI
-77TnNQf+MM0ChHX/2Q58uX/+l764in4NhvoSOm0l+PlXqs+73JQUtyAShGxvNasZ
-iTy8/vZlIf82z9uSyjJ3DKAqNkxK9Qu74w4HE02Yje6+kcknh+PBPf+MI0ICpzq4
-UUdJXrLMoE4zKEqi550BNP4ExuRSja5wKIwuQ4ikvQL93Icrm1+oTX9np7UiZpfG
-u31TPYE8HdAjGrWg4Q3gtlJ1/u+J+TZpa0wlHLYpY4/Q88DEt82mQhqwsP1jVREN
-xm8GK3od4TRC8ytdQakBS5BWhdwtJH7MJVLinAdWLyPOjthAGr2VoYdcTvD9mWjp
-zuLVg1Y6+hGIzcPdm+CufuTs/i6Yww==
-=s2Qt
------END PGP SIGNATURE-----
-
---zEkRnkqXSaGdvvXRCInmGVrLExVFxgGVY--
+If you want this example to be merged through the clk tree please resend
+after the other patches merge.
