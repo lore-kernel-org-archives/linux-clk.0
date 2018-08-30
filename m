@@ -1,162 +1,73 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v4 0/2] clk: qcom: Add support for RCG to register for DFS
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1533952436-17221-1-git-send-email-tdas@codeaurora.org>
- <153455835372.28926.7641705907931269497@swboyd.mtv.corp.google.com>
- <693d9cf4-4a6f-feb5-0c3f-ded842bbdf0a@codeaurora.org>
- <2db97037-b5f1-9234-862c-fa483b8aeb62@codeaurora.org>
- <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <4cda3c7e-3ac3-af97-6d9f-24dd5a4efa28@codeaurora.org>
-Date: Wed, 22 Aug 2018 15:58:31 +0530
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728318AbeH3OrS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Aug 2018 10:47:18 -0400
 MIME-Version: 1.0
-In-Reply-To: <153486545785.28926.5289007760649251969@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+References: <CGME20180829160024eucas1p1049ff966800cdc44e876d546978df399@eucas1p1.samsung.com>
+ <20180829160013.9447-1-m.szyprowski@samsung.com> <20180829160013.9447-2-m.szyprowski@samsung.com>
+ <CAJKOXPeHkbYA6hE+YfgdogiH48zXpFrqauhgmGCDYQs=Dt-iyQ@mail.gmail.com>
+ <20180830095909eucas1p1be50efaae96040be0663e9997d0d607c~PoR5Ollhd2533325333eucas1p1G@eucas1p1.samsung.com>
+ <CAJKOXPeVKwA8xOuW_qEPWjqwrgFogNwD8dcqxz+_Bn6W3AC=8A@mail.gmail.com> <20180830103424eucas1p2163c9fd7ec7cf08fccc3ee22ad4ddc74~Powq6EK521806518065eucas1p2R@eucas1p2.samsung.com>
+In-Reply-To: <20180830103424eucas1p2163c9fd7ec7cf08fccc3ee22ad4ddc74~Powq6EK521806518065eucas1p2R@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 30 Aug 2018 12:45:33 +0200
+Message-ID: <CAJKOXPeKEBZ8u9h2=bKtk6GhVVbsV719qGS_5oyy98B+qZQx9g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+On Thu, 30 Aug 2018 at 12:34, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi Krzysztof,
+>
+> On 2018-08-30 12:25, Krzysztof Kozlowski wrote:
+> > On Thu, 30 Aug 2018 at 11:59, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >> On 2018-08-30 08:29, Krzysztof Kozlowski wrote:
+> >>> On Wed, 29 Aug 2018 at 18:00, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >>>> Clocks should be suspended as late as possible and resumed as early as
+> >>>> possible to let other drivers do their own suspend/resume tasks. NOIRQ
+> >>>> callbacks better suit this requirement.
+> >>> I think that's not a good reason to use the noirq versions. These are
+> >>> to solve the races with interrupt handlers, not to manually order
+> >>> callbacks.
+> >> Then please tell me which other solution should I use to make clock
+> >> available
+> >> on Exynos5433 during NOIRQ suspend/resume phase. dw-mmc driver requires to
+> >> access its clocks in NOIRQ resume.
+> > Indeed I found the usage of noirq in the dw-mmc driver which made me
+> > wondering why it is there... and if you look at explanation, the noirq
+> > is only for the purpose of clearing wakeup interrupt in CLKSEL
+> > register.
+> >
+> > Further code refactoring moved more and more code to suspend_noirq,
+> > including the runtime PM part. This probably should not be part of
+> > suspend_noirq but regular suspend. Then all the need of manual
+> > ordering would go away. So the answer to your question - try fixing
+> > buggy dw-mmc driver. :)
+>
+> It is not the bug in dw-mmc driver. It clearly needs to access some its
+> registers during NOIRQ phase. However accessing registers requires to
+> have clocks enabled, which is being handled by runtime PM. There is
+> nothing broken here.
 
+Ah I missed that point and I see you fixed that case in "mmc:
+dw_mmc-exynos: fix potential external abort in resume_noirq()". The
+true reasoning for this patch is that soc clk driver should suspend
+after every other suspend callback which is using clocks... It would
+be nice to explain this particular scenario in commit msg.
 
-On 8/21/2018 9:00 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-08-21 04:36:20)
->> On 8/18/2018 11:31 PM, Taniya Das wrote:
->>> Hello Stephen,
->>>
->>> I will test these changes and get back.
->>>
->>> On 8/18/2018 7:42 AM, Stephen Boyd wrote:
->>>> Quoting Taniya Das (2018-08-10 18:53:54)
->>>>>    [v4]
->>>>>     * Add recalc_clk_ops to calculate the clock frequency reading the
->>>>> current
->>>>>       perf state, also add CLK_GET_RATE_NOCACHE flag.
->>>>>     * Cleanup 'goto' during mode check in 'clk_rcg2_calculate_freq'.
->>>>>     * cleanup return from function 'com_cc_register_rcg_dfs'.
->>>>
->>>> I want to squash this in. I have only compile tested it. Let me know
->>>> what you think.
->>>>
->>>> ----8<---
->>>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
->>>> index e6300e05d5df..e5eca8a1abe4 100644
->>>> --- a/drivers/clk/qcom/clk-rcg.h
->>>> +++ b/drivers/clk/qcom/clk-rcg.h
->>>> @@ -163,6 +163,15 @@ extern const struct clk_ops clk_pixel_ops;
->>>>    extern const struct clk_ops clk_gfx3d_ops;
->>>>    extern const struct clk_ops clk_rcg2_shared_ops;
->>>> +struct clk_rcg_dfs_data {
->>>> +    struct clk_rcg2 *rcg;
->>>> +    struct clk_init_data *init;
->>>> +};
->>>> +
->>>> +#define DEFINE_RCG_DFS(r) \
->>>> +    { .rcg = &r##_src, .init = &r##_init }
->>>> +
->>>>    extern int qcom_cc_register_rcg_dfs(struct regmap *regmap,
->>>> -                 struct clk_rcg2 **rcgs, int num_clks);
->>>> +                    const struct clk_rcg_dfs_data *rcgs,
->>>> +                    size_t len);
->>>>    #endif
->>>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->>>> index 55a5b58cbb15..bbe2a1916296 100644
->>>> --- a/drivers/clk/qcom/clk-rcg2.c
->>>> +++ b/drivers/clk/qcom/clk-rcg2.c
->>>> @@ -1051,48 +1051,24 @@ static unsigned long
->>>>    clk_rcg2_dfs_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->>>>    {
->>>>        struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->>>> -    u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask, level;
->>>> -    int num_parents, i;
->>>> -    unsigned long prate;
->>>> -
->>>> -    regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
->>>> -                SE_CMD_DFSR_OFFSET, &cfg);
->>>> -    level = (GENMASK(4, 1) & cfg) >> 1;
->>>> -
->>>> -    regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
->>>> -                SE_PERF_DFSR(level), &cfg);
->>>> -    if (rcg->mnd_width) {
->>>> -        mask = BIT(rcg->mnd_width) - 1;
->>>> -        regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
->>>> -                SE_PERF_M_DFSR(level), &m);
->>>> -        m &= mask;
->>>> -        regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr +
->>>> -                SE_PERF_N_DFSR(level), &n);
->>>> -        n =  ~n;
->>>> -        n &= mask;
->>>> -        n += m;
->>>> -        mode = cfg & CFG_MODE_MASK;
->>>> -        mode >>= CFG_MODE_SHIFT;
->>>> -    }
->>>> +    int ret;
->>>> +    u32 level;
->>>> -    mask = BIT(rcg->hid_width) - 1;
->>>> -    hid_div = cfg >> CFG_SRC_DIV_SHIFT;
->>>> -    hid_div &= mask;
->>>> -    cfg &= CFG_SRC_SEL_MASK;
->>>> -    cfg >>= CFG_SRC_SEL_SHIFT;
->>>> +    regmap_read(rcg->clkr.regmap,
->>>> +            rcg->cmd_rcgr + SE_CMD_DFSR_OFFSET, &level);
->>>> +    level &= GENMASK(4, 1);
->>>> +    level >>= 1;
->>>> -    num_parents = clk_hw_get_num_parents(hw);
->>>> -    for (i = 0; i < num_parents; i++) {
->>>> -        if (cfg == rcg->parent_map[i].cfg) {
->>>> -            prate = clk_hw_get_rate(
->>>> -                clk_hw_get_parent_by_index(&rcg->clkr.hw, i));
->>>> -            if (parent_rate != prate)
->>>> -                parent_rate = prate;
->>>> +    if (!rcg->freq_tbl) {
->>>> +        ret = clk_rcg2_dfs_populate_freq_table(rcg);
->>
->> This function would retrieve the parent_rate and if the parent_rate is
->> not ready then it would fail to boot up.
->>
->> So we have to make sure the parents are registered before these RCGs.
->> That also was one reason for me to not populate the frequency table at
->> recalc.
->>
->> We would need this patch to make this work.
-> 
-> Hmmmm. Ok. That won't work then. recalc_rate() better not try to
-> populate the frequency table then or it will not work. So I suppose it
-> needs to fallback to reading the registers and assuming the parent_rate
-> coming in is the actual frequency of it's parent until the frequency
-> table pointer is non-NULL. Would that work?
-> 
-Yes that would work.
+However both dw-mmc and clk will be now in suspend noirq phase so do
+you have any guarantees that dw-mmc will be suspended after clk?
 
-> BTW, does DFS switch parents without software knowing about it? 
-DFS would not switch until a HW request is sent, but SW would be unware 
-of the switch except the current_perf_state being updated with the 
-requested level.
-
-What
-> happens in that case? Does the QUP driver make sure that the new parent
-> of this RCG is properly enabled so that it can switch to it when needed?
-
-I am not sure if they poll for any of their QUP HW state to make sure 
-the switch is complete.
-
-> I'm still trying to understand this whole design. Who takes care of the
-> voltage requirements in this case? The QUP driver as well?
-> 
-
-When the QUP driver requires to switch to new performance level, the 
-first request would be to set_rate()(QUP driver would get the list of 
-supported frequencies using the clk_round_rate()) which in QCOM clock 
-driver would take care of setting the required voltage for the new 
-parent switch.
-Then the QUP driver would request the HW for a new perf switch which 
-would result to a DFS switch for the QUP clocks.
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Best regards,
+Krzysztof
