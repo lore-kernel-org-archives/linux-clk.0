@@ -1,70 +1,87 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+Return-Path: <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
 	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Stefan Agner <stefan@agner.ch>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-crypto@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 2/3] dt-bindings: clock: Add jz4725b-cgu.h header
-Date: Tue, 21 Aug 2018 14:38:18 +0200
-Message-Id: <20180821123819.25020-2-paul@crapouillou.net>
-In-Reply-To: <20180821123819.25020-1-paul@crapouillou.net>
-References: <20180821123819.25020-1-paul@crapouillou.net>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 5/6] crypto - Group Freescale/NXP ARM architecture Kconfig entires together
+Date: Thu, 30 Aug 2018 19:15:38 +0200
+Message-Id: <20180830171539.20008-6-krzk@kernel.org>
+In-Reply-To: <20180830171539.20008-1-krzk@kernel.org>
+References: <20180830171539.20008-1-krzk@kernel.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This will be used from the devicetree bindings to specify the clocks
-that should be obtained from the jz4725b-cgu driver.
+Group Freescale/NXP Kconfig entires for ARM architecture CPUs/SoCs
+together to make it more consistent and easy to read.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/dt-bindings/clock/jz4725b-cgu.h | 35 +++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 include/dt-bindings/clock/jz4725b-cgu.h
+ drivers/crypto/Kconfig | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/include/dt-bindings/clock/jz4725b-cgu.h b/include/dt-bindings/clock/jz4725b-cgu.h
-new file mode 100644
-index 000000000000..460bbeff6ab8
---- /dev/null
-+++ b/include/dt-bindings/clock/jz4725b-cgu.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,jz4725b-cgu DT binding.
-+ */
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index a8c4ce07fc9d..20314d7a7b58 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -402,6 +402,22 @@ config CRYPTO_DEV_MXC_SCC
+ 	  This option enables support for the Security Controller (SCC)
+ 	  found in Freescale i.MX25 chips.
+ 
++config CRYPTO_DEV_MXS_DCP
++	tristate "Support for Freescale MXS DCP"
++	depends on (ARCH_MXS || ARCH_MXC)
++	select STMP_DEVICE
++	select CRYPTO_CBC
++	select CRYPTO_ECB
++	select CRYPTO_AES
++	select CRYPTO_BLKCIPHER
++	select CRYPTO_HASH
++	help
++	  The Freescale i.MX23/i.MX28 has SHA1/SHA256 and AES128 CBC/ECB
++	  co-processor on the die.
 +
-+#ifndef __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__
-+#define __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__
++	  To compile this driver as a module, choose M here: the module
++	  will be called mxs-dcp.
 +
-+#define JZ4725B_CLK_EXT		0
-+#define JZ4725B_CLK_OSC32K	1
-+#define JZ4725B_CLK_PLL		2
-+#define JZ4725B_CLK_PLL_HALF	3
-+#define JZ4725B_CLK_CCLK	4
-+#define JZ4725B_CLK_HCLK	5
-+#define JZ4725B_CLK_PCLK	6
-+#define JZ4725B_CLK_MCLK	7
-+#define JZ4725B_CLK_IPU		8
-+#define JZ4725B_CLK_LCD		9
-+#define JZ4725B_CLK_I2S		10
-+#define JZ4725B_CLK_SPI		11
-+#define JZ4725B_CLK_MMC_MUX	12
-+#define JZ4725B_CLK_UDC		13
-+#define JZ4725B_CLK_UART	14
-+#define JZ4725B_CLK_DMA		15
-+#define JZ4725B_CLK_ADC		16
-+#define JZ4725B_CLK_I2C		17
-+#define JZ4725B_CLK_AIC		18
-+#define JZ4725B_CLK_MMC0	19
-+#define JZ4725B_CLK_MMC1	20
-+#define JZ4725B_CLK_BCH		21
-+#define JZ4725B_CLK_TCU		22
-+#define JZ4725B_CLK_EXT512	23
-+#define JZ4725B_CLK_RTC		24
-+
-+#endif /* __DT_BINDINGS_CLOCK_JZ4725B_CGU_H__ */
+ config CRYPTO_DEV_EXYNOS_RNG
+ 	tristate "EXYNOS HW pseudo random number generator support"
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
+@@ -542,22 +558,6 @@ if CRYPTO_DEV_CCP
+ 	source "drivers/crypto/ccp/Kconfig"
+ endif
+ 
+-config CRYPTO_DEV_MXS_DCP
+-	tristate "Support for Freescale MXS DCP"
+-	depends on (ARCH_MXS || ARCH_MXC)
+-	select STMP_DEVICE
+-	select CRYPTO_CBC
+-	select CRYPTO_ECB
+-	select CRYPTO_AES
+-	select CRYPTO_BLKCIPHER
+-	select CRYPTO_HASH
+-	help
+-	  The Freescale i.MX23/i.MX28 has SHA1/SHA256 and AES128 CBC/ECB
+-	  co-processor on the die.
+-
+-	  To compile this driver as a module, choose M here: the module
+-	  will be called mxs-dcp.
+-
+ source "drivers/crypto/qat/Kconfig"
+ source "drivers/crypto/cavium/cpt/Kconfig"
+ source "drivers/crypto/cavium/nitrox/Kconfig"
 -- 
-2.18.0
+2.14.1
