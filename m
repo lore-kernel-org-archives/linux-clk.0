@@ -1,336 +1,188 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add lpass clock controller driver for
- SDM845
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, rohitkr@codeaurora.org
-References: <1530773721-14668-1-git-send-email-tdas@codeaurora.org>
- <1530773721-14668-3-git-send-email-tdas@codeaurora.org>
- <153092037708.143105.10977459810239534218@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <6ef09f88-b497-79ec-cdac-b6440abe017d@codeaurora.org>
-Date: Fri, 3 Aug 2018 17:49:28 +0530
-MIME-Version: 1.0
-In-Reply-To: <153092037708.143105.10977459810239534218@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v5 2/2] clk: Add functions to get optional clocks
+Date: Fri, 31 Aug 2018 15:07:23 +0100
+Message-Id: <1535724443-21150-3-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
+References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Behaves the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+v5:
+ - No changes.
+v4:
+ - No changes.
+v3:
+ - No changes.
+---
+ drivers/clk/clk-devres.c | 18 ++++++++++++++++--
+ drivers/clk/clkdev.c     | 17 +++++++++++++++--
+ include/linux/clk.h      | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 4 deletions(-)
 
-On 7/7/2018 5:09 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-07-04 23:55:21)
->> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
->> new file mode 100644
->> index 0000000..5285b26
->> --- /dev/null
->> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
->> @@ -0,0 +1,243 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/err.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,lpass-sdm845.h>
->> +
->> +#include "clk-regmap.h"
->> +#include "clk-branch.h"
->> +#include "common.h"
->> +
->> +static struct clk_branch gcc_lpass_q6_axi_clk = {
->> +       .halt_reg = 0x0,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x0,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_q6_axi_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch gcc_lpass_sway_clk = {
->> +       .halt_reg = 0x8,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x8,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_sway_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
-
-Moved the above clocks to GCC driver.
-
->> +static struct clk_branch lpass_audio_wrapper_aon_clk = {
->> +       .halt_reg = 0x098,
->> +       .halt_check = BRANCH_VOTED,
->> +       .clkr = {
->> +               .enable_reg = 0x098,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_audio_wrapper_aon_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
->> +       .halt_reg = 0x12000,
->> +       .halt_check = BRANCH_VOTED,
-> 
-> I'll take your word for it.
-> 
->> +       .clkr = {
->> +               .enable_reg = 0x12000,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_q6ss_ahbm_aon_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
->> +       .halt_reg = 0x1f000,
->> +       .halt_check = BRANCH_VOTED,
->> +       .clkr = {
->> +               .enable_reg = 0x1f000,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_q6ss_ahbs_aon_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch lpass_qdsp6ss_xo_clk = {
->> +       .halt_reg = 0x18,
->> +       .halt_check = BRANCH_HALT_SKIP,
-> 
-> Why? Hint, add a comment.
-> 
-
-Added a comment in the next patch.
-
->> +       .clkr = {
->> +               .enable_reg = 0x18,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_qdsp6ss_xo_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch lpass_qdsp6ss_sleep_clk = {
->> +       .halt_reg = 0x1c,
->> +       .halt_check = BRANCH_HALT_SKIP,
-> 
-> Why? Hint, add a comment.
-
-Added a comment in the next patch.
-
-> 
->> +       .clkr = {
->> +               .enable_reg = 0x1c,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_qdsp6ss_sleep_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch lpass_qdsp6ss_core_clk = {
->> +       .halt_reg = 0x0,
->> +       .halt_check = BRANCH_HALT_SKIP,
-> 
-> Again.
-> 
-
-Added a comment in the next patch.
-
->> +       .clkr = {
->> +               .enable_reg = 0x0,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_qdsp6ss_core_clk",
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct regmap_config lpass_regmap_config = {
->> +       .reg_bits       = 32,
->> +       .reg_stride     = 4,
->> +       .val_bits       = 32,
->> +       .fast_io        = true,
->> +};
->> +
->> +static struct clk_regmap *lpass_gcc_sdm845_clocks[] = {
->> +       [GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
->> +       [GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
->> +};
->> +
->> +static const struct qcom_cc_desc lpass_gcc_sdm845_desc = {
->> +       .config = &lpass_regmap_config,
->> +       .clks = lpass_gcc_sdm845_clocks,
->> +       .num_clks = ARRAY_SIZE(lpass_gcc_sdm845_clocks),
->> +};
->> +
->> +static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
->> +       [LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
->> +       [LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
->> +       [LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
-> 
-> So it's kinda sad that these lists have holes in them and we just waste
-> space forever the more we add. How about using the same linear array,
-> but indexing into the array with different offsets based on the start of
-> the numberspace for those clks? It would mean that adding new clks
-> wouldn't work, so add all the clks now instead of later.
-> 
-
-There are no more clocks from these CCs which would be required to be 
-controlled. These are only required for the Low Pass Audio subsystem to 
-be brought out of reset.
-
-> Otherwise, maybe we need to add support for qcom_cc_desc having two
-> cells and then indicating which first cell to map into? So the binding
-> would look like:
-> 
-> 	<&lpasscc 0 GCC_LPASS_Q6_AXI_CLK>
-> 
-> 	<&lpasscc 1 LPASS_Q6SS_AHBM_AON_CLK>
-> 
-> and our lookup function would need to be different for the multi-cell
-> thing, but otherwise works and avoids the hole and adding numbers later
-> problem.
-> 
->> +};
->> +
->> +static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
->> +       .config = &lpass_regmap_config,
->> +       .clks = lpass_cc_sdm845_clocks,
->> +       .num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
->> +};
->> +
->> +static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
->> +       [LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
->> +       [LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
->> +       [LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
->> +};
->> +
->> +static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
->> +       .config = &lpass_regmap_config,
->> +       .clks = lpass_qdsp6ss_sdm845_clocks,
->> +       .num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
->> +};
->> +
->> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
->> +                                    const struct qcom_cc_desc *desc)
->> +{
->> +       struct device_node *np = pdev->dev.of_node;
->> +       struct regmap *regmap;
->> +       struct resource res;
->> +       void __iomem *base;
->> +
->> +       if (of_address_to_resource(np, index, &res))
-> 
-> Just use platform device APIs instead please.
-> 
-
-I have moved to use the platform device APIs.
-
->> +               return -ENOMEM;
->> +
->> +       base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
-> 
-> And devm_ioremap_resource().
-
-Use the above API to map.
-
-> 
->> +       if (IS_ERR(base))
->> +               return -ENOMEM;
->> +
->> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
->> +       if (IS_ERR(regmap))
->> +               return PTR_ERR(regmap);
->> +
->> +       return qcom_cc_really_probe(pdev, desc, regmap);
->> +}
->> +
->> +/* LPASS CC clock controller */
->> +static const struct of_device_id lpass_cc_sdm845_match_table[] = {
->> +       { .compatible = "qcom,sdm845-lpasscc" },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
->> +
->> +static int lpass_cc_sdm845_probe(struct platform_device *pdev)
->> +{
->> +       const struct qcom_cc_desc *desc;
->> +       struct device_node *np;
->> +       int ret, index;
->> +
->> +       np = pdev->dev.of_node;
->> +
->> +       lpass_regmap_config.name = "lpass_gcc";
->> +       desc = &lpass_gcc_sdm845_desc;
->> +       index = of_property_match_string(np, "reg-names", "lpass_gcc");
->> +
->> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       lpass_regmap_config.name = "lpass_cc";
->> +       desc = &lpass_cc_sdm845_desc;
->> +       index = of_property_match_string(np, "reg-names", "lpass_cc");
->> +
->> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       lpass_regmap_config.name = "lpass_qdsp6ss";
->> +       desc = &lpass_qdsp6ss_sdm845_desc;
->> +       index = of_property_match_string(np, "reg-names", "lpass_qdsp6ss");
-> 
-> We shouldn't need to do this. Just index them by number and specify that
-> the order has to be exactly that order. reg-names is supposed to be
-> optional.
-> 
-
-Have fixed the index in the next patch.
-
->> +
->> +       ret = lpass_clocks_sdm845_probe(pdev, index, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       return 0;
-> 
-> Just 'return lpass_clocks_sdm845_probe()'.
-> 
-
-removed the check for ret.
-
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..a2bb01a 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
+ 	clk_put(*(struct clk **)res);
+ }
+ 
+-struct clk *devm_clk_get(struct device *dev, const char *id)
++static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
+ {
+ 	struct clk **ptr, *clk;
+ 
+@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk = clk_get(dev, id);
++	if (!optional)
++		clk = clk_get(dev, id);
++	else
++		clk = clk_get_optional(dev, id);
+ 	if (!IS_ERR(clk)) {
+ 		*ptr = clk;
+ 		devres_add(dev, ptr);
+@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ 
+ 	return clk;
+ }
++
++struct clk *devm_clk_get(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, false);
++}
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	return __devm_clk_get(dev, id, true);
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 4adb99e..6355573 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -222,21 +222,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ }
+ EXPORT_SYMBOL(clk_get_sys);
+ 
+-struct clk *clk_get(struct device *dev, const char *con_id)
++static struct clk *internal_clk_get(struct device *dev, const char *con_id,
++				    bool optional)
+ {
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+ 	struct clk *clk;
+ 
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
++					   optional);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
+ 	}
+ 
+ 	return clk_get_sys(dev_id, con_id);
+ }
++
++struct clk *clk_get(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, false);
++}
+ EXPORT_SYMBOL(clk_get);
+ 
++struct clk *clk_get_optional(struct device *dev, const char *con_id)
++{
++	return internal_clk_get(dev, con_id, true);
++}
++EXPORT_SYMBOL(clk_get_optional);
++
+ void clk_put(struct clk *clk)
+ {
+ 	__clk_put(clk);
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index de0e5e0..58ec7bc 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -291,6 +291,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
+ struct clk *clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * clk_get_optional - lookup and obtain a reference to optional clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as clk_get except where there is no clock producer. In this
++ * case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * clk_bulk_get - lookup and obtain a number of references to clock producer.
+  * @dev: device for clock "consumer"
+  * @num_clks: the number of clk_bulk_data
+@@ -349,6 +359,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
+ /**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
++/**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+  * @dev: device for clock "consumer"
+@@ -636,6 +654,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 					    struct clk_bulk_data *clks)
+ {
+@@ -647,6 +670,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.7.4
