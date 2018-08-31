@@ -1,332 +1,102 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37326 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeHNM3X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Aug 2018 08:29:23 -0400
-MIME-Version: 1.0
-References: <20180809214414.20905-1-paul@crapouillou.net> <20180809214414.20905-7-paul@crapouillou.net>
-In-Reply-To: <20180809214414.20905-7-paul@crapouillou.net>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 14 Aug 2018 11:42:47 +0200
-Message-ID: <CA+7wUsxKtiJZD35dvT7UrmWYXcDdpmRq3NVM25=dX=4qQ_ewuw@mail.gmail.com>
-Subject: Re: [PATCH v6 06/24] clocksource: Add driver for the Ingenic JZ47xx OST
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, thierry.reding@gmail.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, wim@linux-watchdog.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Maarten ter Huurne <maarten@treewalker.org>
+Return-Path: <oss@buserror.net>
+Message-ID: <f6707cb54c3e6da1b50f45f915c996dfccfeacda.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Andy Tang <andy.tang@nxp.com>, Vabhav Sharma <vabhav.sharma@nxp.com>,
+	"linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"mark.rutland@arm.com"
+	 <mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
+	 <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+	 <linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	 <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"rjw@rjwysocki.net"
+	 <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+	"linux-clk@vger.kernel.org"
+	 <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	 <linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
+	 <linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
+	 <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+	"gregkh@linuxfoundation.org"
+	 <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"kstewart@linuxfoundation.org"
+	 <kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
+	 <yamada.masahiro@socionext.com>
+Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Varun Sethi
+ <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>
+Date: Fri, 31 Aug 2018 15:28:44 -0500
+In-Reply-To: <DB5PR0401MB22130C025AA4CCAD0221781DF30F0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+	 <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+	 <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+	 <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+	 <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+	 <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
+	 <DB5PR0401MB22130C025AA4CCAD0221781DF30F0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Mime-Version: 1.0
+Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 9, 2018 at 11:44 PM Paul Cercueil <paul@crapouillou.net> wrote:
->
-> From: Maarten ter Huurne <maarten@treewalker.org>
->
-> OST is the OS Timer, a 64-bit timer/counter with buffered reading.
->
-> SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770 and
-> JZ4780 have a 64-bit OST.
->
-> This driver will register both a clocksource and a sched_clock to the
-> system.
+On Fri, 2018-08-31 at 06:12 +0000, Andy Tang wrote:
+> Hi Scott,
+> 
+> Please see my replay inline.
+> 
+> > -----Original Message-----
+> > From: linux-arm-kernel <linux-arm-kernel-bounces@lists.infradead.org>
+> > On Behalf Of Scott Wood
+> > Sent: 2018年8月31日 1:43
+> > To: Vabhav Sharma <vabhav.sharma@nxp.com>;
+> > linux-kernel@vger.kernel.org; devicetree@vger.kernel.org;
+> > robh+dt@kernel.org; mark.rutland@arm.com;
+> > linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
+> > mturquette@baylibre.com; sboyd@kernel.org; rjw@rjwysocki.net;
+> > viresh.kumar@linaro.org; linux-clk@vger.kernel.org;
+> > linux-pm@vger.kernel.org; linux-kernel-owner@vger.kernel.org;
+> > catalin.marinas@arm.com; will.deacon@arm.com;
+> > gregkh@linuxfoundation.org; arnd@arndb.de;
+> > kstewart@linuxfoundation.org; yamada.masahiro@socionext.com
+> > Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Andy Tang
+> > <andy.tang@nxp.com>; linux@armlinux.org.uk; Varun Sethi
+> > <V.Sethi@nxp.com>; Udit Kumar <udit.kumar@nxp.com>
+> > Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+> > lx2160a
+> > 
+> > On Thu, 2018-08-30 at 12:39 -0500, Scott Wood wrote:
+> > > On Thu, 2018-08-30 at 07:36 +0000, Vabhav Sharma wrote:
+> > > > > 
+> > > > > Why are you increasing NUM_CMUX beyond 8 for a chip that only
+> > 
+> > has
+> > > > > 8 entries in cmux_to_group?
+> > > > 
+> > > > Configuration is 16 cores,8 cluster with 2 cores in each cluster
+> > > 
+> > > So?  This is about cmuxes, not cores.  You're increasing the array
+> > > without ever using the new size.
+> > 
+> > Oh, and you also broke p4080 which has 8 cmuxes but no -1 terminator,
+> > because the array was of length 8.  Probably the array should be changed
+> > to NUM_CMUX+1 so every array can be -1 terminated.
+> > 
+> 
+> [Andy] How about we add -1 terminator to p4080 and increase NUM_CMUX to 16?
 
-With CONFIG_DEBUG_SECTION_MISMATCH=y here is what I see:
+Why 16?  What does such a change have to do with this chip, which according to
+the rest of the patch has 8 cmuxes?
 
-  MODPOST vmlinux.o
-WARNING: vmlinux.o(.data+0x26600): Section mismatch in reference from
-the variable ingenic_ost_driver to the function
-.init.text:ingenic_ost_probe()
-The variable ingenic_ost_driver references
-the function __init ingenic_ost_probe()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+> We don't want to increase NUM_CMUX each time new soc with more cmuxes added.
 
-WARNING: vmlinux.o(.data+0x26660): Section mismatch in reference from
-the variable ingenic_tcu_driver to the function
-.init.text:ingenic_tcu_probe()
-The variable ingenic_tcu_driver references
-the function __init ingenic_tcu_probe()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+You don't want to have to make a trivial change each time you exceed a limit
+that has yet to be exceeded once since NUM_CMUX was added?  This isn't ABI or
+in any other way hard to change.  It's right in the same file as the chip
+description you'd be adding.
 
-Thanks
+And even if a chip did come along with 16 cmuxes, you'd then need to increase
+the array to 17 to hold the -1 if you don't want to leave a situation like the
+p4080 is in now, where a chip's cmux array could be broken by increasing
+NUM_CMUX further.
 
-> Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/clocksource/Kconfig       |   8 ++
->  drivers/clocksource/Makefile      |   1 +
->  drivers/clocksource/ingenic-ost.c | 208 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 217 insertions(+)
->  create mode 100644 drivers/clocksource/ingenic-ost.c
->
->  v5: New patch
->
->  v6: - Get rid of SoC IDs; pass pointer to ingenic_ost_soc_info as
->        devicetree match data instead.
->      - Use device_get_match_data() instead of the of_* variant
->      - Handle error of dev_get_regmap() properly
->
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 98f708208a8d..e855938c69f1 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -619,4 +619,12 @@ config INGENIC_TIMER
->         help
->           Support for the timer/counter unit of the Ingenic JZ SoCs.
->
-> +config INGENIC_OST
-> +       bool "Ingenic JZ47xx Operating System Timer"
-> +       depends on MIPS || COMPILE_TEST
-> +       depends on COMMON_CLK
-> +       select INGENIC_TIMER
-> +       help
-> +         Support for the OS Timer of the Ingenic JZ4770 or similar SoC.
-> +
->  endmenu
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-> index 26877505d400..56ce37252944 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -75,6 +75,7 @@ obj-$(CONFIG_ASM9260_TIMER)           += asm9260_timer.o
->  obj-$(CONFIG_H8300_TMR8)               += h8300_timer8.o
->  obj-$(CONFIG_H8300_TMR16)              += h8300_timer16.o
->  obj-$(CONFIG_H8300_TPU)                        += h8300_tpu.o
-> +obj-$(CONFIG_INGENIC_OST)              += ingenic-ost.o
->  obj-$(CONFIG_INGENIC_TIMER)            += ingenic-timer.o
->  obj-$(CONFIG_CLKSRC_ST_LPC)            += clksrc_st_lpc.o
->  obj-$(CONFIG_X86_NUMACHIP)             += numachip.o
-> diff --git a/drivers/clocksource/ingenic-ost.c b/drivers/clocksource/ingenic-ost.c
-> new file mode 100644
-> index 000000000000..400d30656790
-> --- /dev/null
-> +++ b/drivers/clocksource/ingenic-ost.c
-> @@ -0,0 +1,208 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * JZ47xx SoCs TCU Operating System Timer driver
-> + *
-> + * Copyright (C) 2016 Maarten ter Huurne <maarten@treewalker.org>
-> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clocksource.h>
-> +#include <linux/mfd/ingenic-tcu.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/sched_clock.h>
-> +
-> +#include "ingenic-timer.h"
-> +
-> +#define TCU_OST_TCSR_MASK      0xc0
-> +#define TCU_OST_TCSR_CNT_MD    BIT(15)
-> +
-> +#define TCU_OST_CHANNEL                15
-> +
-> +struct ingenic_ost_soc_info {
-> +       bool is64bit;
-> +};
-> +
-> +struct ingenic_ost {
-> +       struct regmap *map;
-> +       struct clk *clk;
-> +
-> +       struct clocksource cs;
-> +};
-> +
-> +static u64 notrace ingenic_ost_read_cntl(void)
-> +{
-> +       /* Bypass the regmap here as we must return as soon as possible */
-> +       return readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
-> +}
-> +
-> +static u64 notrace ingenic_ost_read_cnth(void)
-> +{
-> +       /* Bypass the regmap here as we must return as soon as possible */
-> +       return readl(ingenic_tcu_base + TCU_REG_OST_CNTH);
-> +}
-> +
-> +static u64 notrace ingenic_ost_clocksource_read(struct clocksource *cs)
-> +{
-> +       u32 val1, val2;
-> +       u64 count, recount;
-> +       s64 diff;
-> +
-> +       /*
-> +        * The buffering of the upper 32 bits of the timer prevents wrong
-> +        * results from the bottom 32 bits overflowing due to the timer ticking
-> +        * along. However, it does not prevent wrong results from simultaneous
-> +        * reads of the timer, which could reset the buffer mid-read.
-> +        * Since this kind of wrong read can happen only when the bottom bits
-> +        * overflow, there will be minutes between wrong reads, so if we read
-> +        * twice in succession, at least one of the reads will be correct.
-> +        */
-> +
-> +       /* Bypass the regmap here as we must return as soon as possible */
-> +       val1 = readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
-> +       val2 = readl(ingenic_tcu_base + TCU_REG_OST_CNTHBUF);
-> +       count = (u64)val1 | (u64)val2 << 32;
-> +
-> +       val1 = readl(ingenic_tcu_base + TCU_REG_OST_CNTL);
-> +       val2 = readl(ingenic_tcu_base + TCU_REG_OST_CNTHBUF);
-> +       recount = (u64)val1 | (u64)val2 << 32;
-> +
-> +       /*
-> +        * A wrong read will produce a result that is 1<<32 too high: the bottom
-> +        * part from before overflow and the upper part from after overflow.
-> +        * Therefore, the lower value of the two reads is the correct value.
-> +        */
-> +
-> +       diff = (s64)(recount - count);
-> +       if (unlikely(diff < 0))
-> +               count = recount;
-> +
-> +       return count;
-> +}
-> +
-> +static int __init ingenic_ost_probe(struct platform_device *pdev)
-> +{
-> +       const struct ingenic_ost_soc_info *soc_info;
-> +       struct device *dev = &pdev->dev;
-> +       struct ingenic_ost *ost;
-> +       struct clocksource *cs;
-> +       unsigned long rate, flags;
-> +       int err;
-> +
-> +       soc_info = device_get_match_data(dev);
-> +       if (!soc_info)
-> +               return -EINVAL;
-> +
-> +       ost = devm_kzalloc(dev, sizeof(*ost), GFP_KERNEL);
-> +       if (!ost)
-> +               return -ENOMEM;
-> +
-> +       ost->map = dev_get_regmap(dev->parent, NULL);
-> +       if (!ost->map) {
-> +               dev_err(dev, "regmap not found\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       ost->clk = devm_clk_get(dev, "ost");
-> +       if (IS_ERR(ost->clk))
-> +               return PTR_ERR(ost->clk);
-> +
-> +       err = clk_prepare_enable(ost->clk);
-> +       if (err)
-> +               return err;
-> +
-> +       /* Clear counter high/low registers */
-> +       if (soc_info->is64bit)
-> +               regmap_write(ost->map, TCU_REG_OST_CNTL, 0);
-> +       regmap_write(ost->map, TCU_REG_OST_CNTH, 0);
-> +
-> +       /* Don't reset counter at compare value. */
-> +       regmap_update_bits(ost->map, TCU_REG_OST_TCSR,
-> +                          TCU_OST_TCSR_MASK, TCU_OST_TCSR_CNT_MD);
-> +
-> +       rate = clk_get_rate(ost->clk);
-> +
-> +       /* Enable OST TCU channel */
-> +       regmap_write(ost->map, TCU_REG_TESR, BIT(TCU_OST_CHANNEL));
-> +
-> +       cs = &ost->cs;
-> +       cs->name        = "ingenic-ost";
-> +       cs->rating      = 320;
-> +       cs->flags       = CLOCK_SOURCE_IS_CONTINUOUS;
-> +
-> +       if (soc_info->is64bit) {
-> +               cs->mask = CLOCKSOURCE_MASK(64);
-> +               cs->read = ingenic_ost_clocksource_read;
-> +       } else {
-> +               cs->mask = CLOCKSOURCE_MASK(32);
-> +               cs->read = (u64 (*)(struct clocksource *))ingenic_ost_read_cnth;
-> +       }
-> +
-> +       err = clocksource_register_hz(cs, rate);
-> +       if (err) {
-> +               dev_err(dev, "clocksource registration failed: %d\n", err);
-> +               clk_disable_unprepare(ost->clk);
-> +               return err;
-> +       }
-> +
-> +       /* Cannot register a sched_clock with interrupts on */
-> +       local_irq_save(flags);
-> +       if (soc_info->is64bit)
-> +               sched_clock_register(ingenic_ost_read_cntl, 32, rate);
-> +       else
-> +               sched_clock_register(ingenic_ost_read_cnth, 32, rate);
-> +       local_irq_restore(flags);
-> +
-> +       return 0;
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int ingenic_ost_suspend(struct device *dev)
-> +{
-> +       struct ingenic_ost *ost = dev_get_drvdata(dev);
-> +
-> +       clk_disable(ost->clk);
-> +       return 0;
-> +}
-> +
-> +static int ingenic_ost_resume(struct device *dev)
-> +{
-> +       struct ingenic_ost *ost = dev_get_drvdata(dev);
-> +
-> +       return clk_enable(ost->clk);
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(ingenic_ost_pm_ops, ingenic_ost_suspend,
-> +                        ingenic_ost_resume);
-> +#define INGENIC_OST_PM_OPS (&ingenic_ost_pm_ops)
-> +#else
-> +#define INGENIC_OST_PM_OPS NULL
-> +#endif /* CONFIG_PM_SUSPEND */
-> +
-> +static const struct ingenic_ost_soc_info jz4725b_ost_soc_info = {
-> +       .is64bit = false,
-> +};
-> +
-> +static const struct ingenic_ost_soc_info jz4770_ost_soc_info = {
-> +       .is64bit = true,
-> +};
-> +
-> +static const struct of_device_id ingenic_ost_of_match[] = {
-> +       { .compatible = "ingenic,jz4725b-ost", .data = &jz4725b_ost_soc_info, },
-> +       { .compatible = "ingenic,jz4770-ost",  .data = &jz4770_ost_soc_info,  },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, ingenic_ost_of_match);
-> +
-> +static struct platform_driver ingenic_ost_driver = {
-> +       .probe = ingenic_ost_probe,
-> +       .driver = {
-> +               .name   = "ingenic-ost",
-> +               .pm     = INGENIC_OST_PM_OPS,
-> +               .of_match_table = ingenic_ost_of_match,
-> +       },
-> +};
-> +module_platform_driver(ingenic_ost_driver);
-> --
-> 2.11.0
->
+-Scott
