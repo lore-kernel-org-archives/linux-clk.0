@@ -1,79 +1,29 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:46844 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbeHIJbw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Aug 2018 05:31:52 -0400
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC: Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v4 0/3] clk: meson: add a sub EMMC clock controller support
-Date: Thu, 9 Aug 2018 15:07:20 +0800
-Message-ID: <20180809070724.11935-1-yixun.lan@amlogic.com>
+Return-Path: <gustavo@embeddedor.com>
+Subject: Re: [PATCH v2] reset: hisilicon: fix potential NULL pointer
+ dereference
+To: Stephen Boyd <sboyd@kernel.org>,
+ Jiancheng Xue <xuejiancheng@hisilicon.com>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180726004719.GA9896@embeddedor.com>
+ <153573701576.93865.614018614668737096@swboyd.mtv.corp.google.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <3688625a-f37b-d1f3-1577-909723aa9ae5@embeddedor.com>
+Date: Fri, 31 Aug 2018 13:06:46 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <153573701576.93865.614018614668737096@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-This driver will add a MMC clock controller driver support.
-The original idea about adding a clock controller is during the
-discussion in the NAND driver mainline effort[1].
 
-This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-Changes since v3 [4]:
- - separate clk-phase-delay driver
- - replace clk_get_rate() with clk_hw_get_rate()
- - collect Rob's R-Y
- - drop 'meson-' prefix from compatible string
+On 8/31/18 12:36 PM, Stephen Boyd wrote:
+> 
+> Nobody has reviewed, so I guess applied to clk-next unless someone
+> complains.
+> 
 
-Changes since v2 [3]:
- - squash dt-binding clock-id patch
- - update license
- - fix alignment
- - construct a clk register helper() function
+Thanks, Stephen.
 
-Changes since v1 [2]:
- - implement phase clock
- - update compatible name
- - adjust file name
- - divider probe() into small functions, and re-use them
-
-[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
-[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
-[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
-
-Yixun Lan (3):
-  clk: meson: add emmc sub clock phase delay driver
-  clk: meson: add DT documentation for emmc clock controller
-  clk: meson: add sub MMC clock controller driver
-
- .../bindings/clock/amlogic,mmc-clkc.txt       |  31 ++
- drivers/clk/meson/Kconfig                     |  10 +
- drivers/clk/meson/Makefile                    |   3 +-
- drivers/clk/meson/clk-phase-delay.c           |  96 ++++++
- drivers/clk/meson/clkc.h                      |  13 +
- drivers/clk/meson/mmc-clkc.c                  | 275 ++++++++++++++++++
- include/dt-bindings/clock/amlogic,mmc-clkc.h  |  17 ++
- 7 files changed, 444 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
- create mode 100644 drivers/clk/meson/clk-phase-delay.c
- create mode 100644 drivers/clk/meson/mmc-clkc.c
- create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
-
--- 
-2.17.1
-
+--
+Gustavo
