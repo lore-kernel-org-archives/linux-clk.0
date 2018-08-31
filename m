@@ -1,53 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54411 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731070AbeHBMZH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Aug 2018 08:25:07 -0400
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-        yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Thu,  2 Aug 2018 12:34:22 +0200
-Message-Id: <20180802103425.3053-4-o.rempel@pengutronix.de>
-In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+To: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
+        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Fri, 31 Aug 2018 14:30:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Export pm_power_off_prepare. It is needed to implement power off on
-Freescale/NXP iMX6 based boards with external power management
-integrated circuit (PMIC).
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- kernel/reboot.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index e4ced883d8de..83810d726f3e 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -49,6 +49,7 @@ int reboot_force;
-  */
- 
- void (*pm_power_off_prepare)(void);
-+EXPORT_SYMBOL_GPL(pm_power_off_prepare);
- 
- /**
-  *	emergency_restart - reboot the system
--- 
-2.18.0
+On 08/31/2018 12:56 PM, Stephen Boyd wrote:
+> Quoting Eddie James (2018-08-29 14:09:29)
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting as a service processor, the Video Engine can
+>> capture the host processor graphics output.
+>>
+>> This series adds a V4L2 driver for the VE, providing a read() interface
+>> only. The driver triggers the hardware to capture the host graphics output
+>> and compress it to JPEG format.
+>>
+>> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
+>> was significantly slower than the simple read() interface, so I have not
+>> included the streaming part.
+>>
+>> It's also possible to use an automatic mode for the VE such that
+>> re-triggering the HW every frame isn't necessary. However this wasn't
+>> reliable on the AST2400, and probably used more CPU anyway due to excessive
+>> interrupts. It was approximately 15% faster.
+>>
+>> The series also adds the necessary parent clock definitions to the Aspeed
+>> clock driver, with both a mux and clock divider.
+> Please let me know your merge strategy here. I can ack the clk patches
+> because they look fine from high-level clk driver perspective (maybe
+> Joel can take a closer look) or I can merge the patches into clk-next
+> and get them into next release while the video driver gets reviewed.
 
+Thanks for taking a look! Probably preferable to get the clk patches 
+into clk-next first (though Joel reviewing would be great). I just put 
+everything in the same set for the sake of explaining the necessity of 
+the clk changes.
+
+Thanks,
+Eddie
+
+>
