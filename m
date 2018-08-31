@@ -1,47 +1,119 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms+renesas@verge.net.au>
-Subject: RE: [PATCH] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Tue, 28 Aug 2018 18:04:55 +0000
-Message-ID: 
- <TY1PR01MB15620BFB056C2EAB29C928E98A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180821032020.81254-1-chris.brandt@renesas.com>
- <CAMuHMdUVfMgUYat8TR__hiOQEWHXL1EYMN11iMc5TGnhnZALLQ@mail.gmail.com>
- <TY1PR01MB15620184F9EA4E62E21D1D688A0B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdVd7wT5vPrHFAgHYqNWtJNjbSG7GaaPaMVD12cfkg8E2A@mail.gmail.com>
- <TY1PR01MB1562485EE3C0F9C5A3827CDD8A0A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdVBcKP_RTw1B4fty5u5OhStZPydigKVob+7+uc4YWFzDg@mail.gmail.com>
-In-Reply-To: 
- <CAMuHMdVBcKP_RTw1B4fty5u5OhStZPydigKVob+7+uc4YWFzDg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	thor.thayer@linux.intel.com,
+	linux-imx@nxp.com,
+	hdegoede@redhat.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH V6 3/4] clk: add managed version of clk_bulk_get_all
+Date: Fri, 31 Aug 2018 12:45:55 +0800
+Message-Id: <1535690756-22234-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIEF1Z3VzdCAyOCwgMjAxOCwgR2VlcnQgVXl0dGVyaG9l
-dmVuIHdyb3RlOg0KPiBTZXJpb3VzbHksIHlvdSBkbyBoYXZlIHRvIHByZXZlbnQgcmVnaXN0ZXJp
-bmcgdGhlIHJlc2V0IGNvbnRyb2xsZXIgd2hlbg0KPiBydW5uaW5nIG9uIFJaL0EyIChiYXNlZCBv
-biBjcGdfbXNzcl9pbmZvLnN0YnljdHJsIG9yIHNvbWUgb3RoZXIgaW5kaWNhdG9yKS4NCg0KT0su
-IFNpbmNlIHRoZSByZXNldCBjb250cm9sbGVyIHJlZ2lzdHJhdGlvbiBpcyB0aGUgbGFzdCB0aGlu
-ZyBkb25lIA0KY3BnX21zc3JfcHJvYmUsIEknbGwganVzdCByZXR1cm4uDQoNCisJaWYgKGluZm8t
-PnN0YnljdHJsKQ0KKwkJcmV0dXJuIDA7DQorDQoJZXJyb3IgPSBjcGdfbXNzcl9yZXNldF9jb250
-cm9sbGVyX3JlZ2lzdGVyKHByaXYpOw0KCWlmIChlcnJvcikNCgkJcmV0dXJuIGVycm9yOw0KDQoJ
-cmV0dXJuIDA7DQp9DQoNCg0KPiBXaGVuIHJ1bm5pbmcgb24gUlovQTIsIEknZCB1c2UgYSBkaWZm
-ZXJlbnQgcGFjayBmdW5jdGlvbiBpbg0KPiBjcGdfbXNzcl9jbGtfc3JjX3R3b2NlbGxfZ2V0KCkg
-aW5zdGVhZCwgc28geW91IGNhbiBqdXN0IHdyaXRlOg0KPiANCj4gICAgIGNsb2NrID0gPCZjcGcg
-Q1BHX01PRCAzNj47DQo+IA0KPiA+IHI3czkyMTAtY3BnLW1zc3IuYzoNCj4gPiAtLS0tLS0tLS0t
-LS0tLS0tLS0tLQ0KPiA+IHN0YXRpYyBjb25zdCBzdHJ1Y3QgbXNzcl9tb2RfY2xrIHI3czkyMTBf
-bW9kX2Nsa3NbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgICAgICAgIERFRl9NT0QoIm9zdG0wIiwg
-ICAgICAgIFNUQkNSX0lEKDM2KSwgICBSN1M5MjEwX0NMS19QMUMpLA0KPiA+ICAgICAgICAgREVG
-X01PRCgib3N0bTEiLCAgICAgICAgU1RCQ1JfSUQoMzUpLCAgIFI3UzkyMTBfQ0xLX1AxQyksDQo+
-ID4gICAgICAgICBERUZfTU9EKCJvc3RtMiIsICAgICAgICBTVEJDUl9JRCgzNCksICAgUjdTOTIx
-MF9DTEtfUDFDKSwNCj4gDQo+IC4uLiBhbmQgYSBkaWZmZXJlbnQgREVGX01PRCgpIG1hY3JvIGhl
-cmUsIHNvIHlvdSBjYW4ganVzdCB3cml0ZToNCj4gDQo+ICAgICBERUZfTU9EKCJvc3RtMCIsICAg
-ICAgICAzNiwgICBSN1M5MjEwX0NMS19QMUMpLA0KDQpPSy4gSSB3aWxsIGRvIHRoYXQgaW5zdGVh
-ZC4NCg0KDQpUaGFuayB5b3UsDQpDaHJpcw0KDQo=
+This patch introduces the managed version of clk_bulk_get_all.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+v3->v4:
+ * improve 'devres->clks = *clks' according to Stephen's suggestion
+v2->v3:
+ * a minor fix of build warning on PowerPC platform.
+v1->v2:
+ * new patch
+---
+ drivers/clk/clk-devres.c | 24 ++++++++++++++++++++++++
+ include/linux/clk.h      | 23 +++++++++++++++++++++++
+ 2 files changed, 47 insertions(+)
+
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index d854e26..12c8745 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -70,6 +70,30 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get);
+ 
++int __must_check devm_clk_bulk_get_all(struct device *dev,
++				       struct clk_bulk_data **clks)
++{
++	struct clk_bulk_devres *devres;
++	int ret;
++
++	devres = devres_alloc(devm_clk_bulk_release,
++			      sizeof(*devres), GFP_KERNEL);
++	if (!devres)
++		return -ENOMEM;
++
++	ret = clk_bulk_get_all(dev, &devres->clks);
++	if (ret > 0) {
++		*clks = devres->clks;
++		devres->num_clks = ret;
++		devres_add(dev, devres);
++	} else {
++		devres_free(devres);
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
++
+ static int devm_clk_match(struct device *dev, void *res, void *data)
+ {
+ 	struct clk **c = res;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index e9433c7..c705271 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -346,6 +346,22 @@ int __must_check clk_bulk_get_all(struct device *dev,
+  */
+ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 				   struct clk_bulk_data *clks);
++/**
++ * devm_clk_bulk_get_all - managed get multiple clk consumers
++ * @dev: device for clock "consumer"
++ * @clks: pointer to the clk_bulk_data table of consumer
++ *
++ * Returns a positive value for the number of clocks obtained while the
++ * clock references are stored in the clk_bulk_data table in @clks field.
++ * Returns 0 if there're none and a negative value if something failed.
++ *
++ * This helper function allows drivers to get several clk
++ * consumers in one operation with management, the clks will
++ * automatically be freed when the device is unbound.
++ */
++
++int __must_check devm_clk_bulk_get_all(struct device *dev,
++				       struct clk_bulk_data **clks);
+ 
+ /**
+  * devm_clk_get - lookup and obtain a managed reference to a clock producer.
+@@ -691,6 +707,13 @@ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clk
+ 	return 0;
+ }
+ 
++static inline int __must_check devm_clk_bulk_get_all(struct device *dev,
++						     struct clk_bulk_data **clks)
++{
++
++	return 0;
++}
++
+ static inline struct clk *devm_get_clk_from_child(struct device *dev,
+ 				struct device_node *np, const char *con_id)
+ {
+-- 
+2.7.4
