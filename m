@@ -1,88 +1,107 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	colin.didier@devialet.com,
+	clement.peron@devialet.com,
+	ping.bai@nxp.com,
+	aisheng.dong@nxp.com,
+	shengjiu.wang@nxp.com,
+	matteo.lisi@engicam.com,
+	michael@amarulasolutions.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 7/7] ARM: dts: imx6: add mmdc ipg clock
+Date: Fri, 31 Aug 2018 15:53:18 +0800
+Message-Id: <1535701998-20443-8-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-References: <1531924476-23261-1-git-send-email-phil.edworthy@renesas.com>
- <CAMuHMdVEgj7kJFxNuR8w468FoGRaP_mEDv6JqB_7deuQjsed_Q@mail.gmail.com>
- <TY1PR01MB1769588F9C53755C0FD56D98F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdWqdg9KV4h_U-VZGVdOL6upUpDgqO7kwQh8tFQjDFh-Ug@mail.gmail.com>
- <TY1PR01MB17697FBCBDC6296E7B2589C9F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdVMGWWcFZvjgBWZAabxWXdtBeH4XLYaXZVkQ=rOaeCH0g@mail.gmail.com> <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB176963BDA18D948161AAD264F5510@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 1 Aug 2018 14:35:19 +0200
-Message-ID: <CAMuHMdX4tyo5VyZ+-P-+os91-WR67wen=eoL1XAGdCe=KPEjNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Avoid needless probe deferring
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Phil,
+i.MX6 SoCs has MMDC clock gates in CCM CCGR, add
+clock property for MMDC driver's clock operation.
 
-CC Jacopo
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/imx6qdl.dtsi | 1 +
+ arch/arm/boot/dts/imx6sl.dtsi  | 1 +
+ arch/arm/boot/dts/imx6sll.dtsi | 1 +
+ arch/arm/boot/dts/imx6sx.dtsi  | 1 +
+ arch/arm/boot/dts/imx6ul.dtsi  | 1 +
+ 5 files changed, 5 insertions(+)
 
-On Fri, Jul 20, 2018 at 3:57 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 20 July 2018 13:41, Geert Uytterhoeven wrote:
-> > On Fri, Jul 20, 2018 at 2:26 PM Phil Edworthy wrote:
-> > > On 20 July 2018 13:12, Geert Uytterhoeven wrote:
-> > > > On Fri, Jul 20, 2018 at 2:06 PM Phil Edworthy  wrote:
-> > > > > On 20 July 2018 12:21, Geert Uytterhoeven wrote:
-> > > > > > On Wed, Jul 18, 2018 at 4:34 PM Phil Edworthy wrote:
-> > > > > > > To avoid all SoC peripheral drivers deferring their probes,
-> > > > > > > both clock and pinctrl drivers should already be probed. Since
-> > > > > > > the pinctrl driver requires a clock to access the registers,
-> > > > > > > the clock driver should be probed before the pinctrl driver.
-> > > > > > >
-> > > > > > > Therefore, move the clock driver from subsys_initcall to
-> > core_initcall.
-> > > > > > >
-> > > > > > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > > > > >
-> > > > > > Thanks for your patch!
-> > > > > Thanks for your review!
-> > > > >
-> > > > > > The (not yet upstreamed) pinctrl driver uses postcore_initcall(), right?
-> > > > > No, the pinctrl driver uses subsys_initcall, but postcore_initcall
-> > > > > or arch_initcall may be better to make it clear about the dependencies.
-> > > >
-> > > > if the pinctrl driver uses subsys_initcall(), ...
-> >
-> > > > > > > -subsys_initcall(r9a06g032_clocks_init);
-> > > > > > > +core_initcall(r9a06g032_clocks_init);
-> > > >
-> > > > ... using postcore_initcall() or arch_initcall() here, should work
-> > > > with platform_driver_probe()?
-> > > Nope, you have to use platform_driver_register() for DT based drivers.
-> > > subsys_initcall is the earliest you can use platform_driver_probe().
-> >
-> > So drivers/misc/atmel_tclib.c and drivers/pinctrl/pinctrl-coh901.c, which use
-> > arch_initcall(), cannot work?
-> How those drivers work I do not know. However, I tried with the rzn1 clock
-> driver and it does not work.
->
-> > If that is really true, you can still use subsys_initcall() in the clock driver, and
-> > subsys_initcall_sync() in the pinctrl driver.
-> True, I'm not sure how people decide which initcall to use and whether the
-> _sync variants of the initcalls have a special meaning or intention. As far as
-> I know they were introduced for threaded probes, so are we supposed to
-> use them for driver dependencies like this?
->
-> Do you know why the rza1 pinctrl driver is running from core_initcall()?
-
-Probably because it can?
-Note that drivers/clk/renesas/clk-rz.c uses CLK_OF_DECLARE().
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
+index 61d2d26..5d33729 100644
+--- a/arch/arm/boot/dts/imx6qdl.dtsi
++++ b/arch/arm/boot/dts/imx6qdl.dtsi
+@@ -1115,6 +1115,7 @@
+ 			mmdc0: mmdc@21b0000 { /* MMDC0 */
+ 				compatible = "fsl,imx6q-mmdc";
+ 				reg = <0x021b0000 0x4000>;
++				clocks = <&clks IMX6QDL_CLK_MMDC_P0_IPG>;
+ 			};
+ 
+ 			mmdc1: mmdc@21b4000 { /* MMDC1 */
+diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
+index 7a4f5da..63a18e1 100644
+--- a/arch/arm/boot/dts/imx6sl.dtsi
++++ b/arch/arm/boot/dts/imx6sl.dtsi
+@@ -921,6 +921,7 @@
+ 			mmdc: mmdc@21b0000 {
+ 				compatible = "fsl,imx6sl-mmdc", "fsl,imx6q-mmdc";
+ 				reg = <0x021b0000 0x4000>;
++				clocks = <&clks IMX6SL_CLK_MMDC_P0_IPG>;
+ 			};
+ 
+ 			rngb: rngb@21b4000 {
+diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
+index ed9a980..e462f76 100644
+--- a/arch/arm/boot/dts/imx6sll.dtsi
++++ b/arch/arm/boot/dts/imx6sll.dtsi
+@@ -770,6 +770,7 @@
+ 			mmdc: memory-controller@21b0000 {
+ 				compatible = "fsl,imx6sll-mmdc", "fsl,imx6q-mmdc";
+ 				reg = <0x021b0000 0x4000>;
++				clocks = <&clks IMX6SLL_CLK_MMDC_P0_IPG>;
+ 			};
+ 
+ 			ocotp: ocotp-ctrl@21bc000 {
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 844caa3..ba4ab79 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -1002,6 +1002,7 @@
+ 			mmdc: mmdc@21b0000 {
+ 				compatible = "fsl,imx6sx-mmdc", "fsl,imx6q-mmdc";
+ 				reg = <0x021b0000 0x4000>;
++				clocks = <&clks IMX6SX_CLK_MMDC_P0_IPG>;
+ 			};
+ 
+ 			fec2: ethernet@21b4000 {
+diff --git a/arch/arm/boot/dts/imx6ul.dtsi b/arch/arm/boot/dts/imx6ul.dtsi
+index 448d765..2019ad5 100644
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@ -916,6 +916,7 @@
+ 			mmdc: mmdc@21b0000 {
+ 				compatible = "fsl,imx6ul-mmdc", "fsl,imx6q-mmdc";
+ 				reg = <0x021b0000 0x4000>;
++				clocks = <&clks IMX6UL_CLK_MMDC_P0_IPG>;
+ 			};
+ 
+ 			weim: weim@21b8000 {
+-- 
+2.7.4
