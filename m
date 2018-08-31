@@ -1,59 +1,53 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- Avi Fishman <avifishman70@gmail.com>,
- Brendan Higgins <brendanhiggins@google.com>,
- Michael Turquette <mturquette@baylibre.com>, Nancy Yuen <yuenn@google.com>,
- Patrick Venture <venture@google.com>, Tomer Maimon <tmaimon77@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180823230654.GA11576@embeddedor.com>
-Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
- "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-References: <20180823230654.GA11576@embeddedor.com>
-Message-ID: <153549440786.129321.7169734992268309360@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: npcm7xx: fix memory allocation
-Date: Tue, 28 Aug 2018 15:13:27 -0700
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH] clk: renesas: r9a06g032: Fix UART34567 clock rate
+Date: Fri, 31 Aug 2018 12:26:36 +0100
+Message-Id: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Gustavo A. R. Silva (2018-08-23 16:06:54)
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> =
+The clock for UARTs 0 through 2 is UART012, the clock for UARTs 3 through
+7 is UART34567.
+For UART012, we stop the clock driver from changing the clock rate. This
+is because the Synopsys UART driver simply sets the reference clock to 16x
+the baud rate, but doesn't check if the actual rate is within the required
+tolerance. The RZ/N1 clock divider can't provide this (we have to rely on
+the UART's internal divider to set the correct clock rate), so you end up
+with a clock rate that is way off what you wanted.
 
-> struct foo {
->         int stuff;
->         void *entry[];
-> };
-> =
+In addition, since the clock is shared between multiple UARTs, you don't
+want the driver trying to change the clock rate as it may affect the other
+UARTs (which may not have been configured yet, so you don't know what baud
+rate they will use). Normally, the clock rate is set early on before Linux
+to some very high rate that supports all of the clock rates you want.
 
-> instance =3D kzalloc(sizeof(struct foo) + sizeof(void *) * count,
-> GFP_KERNEL);
-> =
+This change stops the UART34567 clock rate from changing for the same
+reasons.
 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> =
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> instance =3D kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> =
-
-> Notice that, currently, there is a bug during the allocation:
->         =
-
-> sizeof(npcm7xx_clk_data) should be sizeof(*npcm7xx_clk_data)
-> =
-
-> Fix this bug by using struct_size() in kzalloc()
-> =
-
-> This issue was detected with the help of Coccinelle.
-> =
-
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
-
-Applied to clk-fixes
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index a0b6ecd..6d2b568 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -539,7 +539,8 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
+ 	 * several uarts attached to this divider, and changing this impacts
+ 	 * everyone.
+ 	 */
+-	if (clk->index == R9A06G032_DIV_UART) {
++	if (clk->index == R9A06G032_DIV_UART ||
++	    clk->index == R9A06G032_DIV_P2_PG) {
+ 		pr_devel("%s div uart hack!\n", __func__);
+ 		return clk_get_rate(hw->clk);
+ 	}
+-- 
+2.7.4
