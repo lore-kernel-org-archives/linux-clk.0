@@ -1,57 +1,52 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/4] devres: provide and use devm_kstrdup_const()
-Date: Tue, 28 Aug 2018 11:33:28 +0200
-Message-Id: <20180828093332.20674-1-brgl@bgdev.pl>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>,
+ Songjun Wu <songjun.wu@linux.intel.com>, chuanhua.lei@linux.intel.com,
+ hua.ma@linux.intel.com, qi-ming.wu@intel.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+ <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
+Message-ID: <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+Date: Fri, 31 Aug 2018 10:13:05 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-This series implements devm_kstrdup_const() together with some
-prerequisite changes and uses it in pmc-atom driver.
+Quoting Zhu, Yi Xin (2018-08-29 03:34:26)
+> >>>> +}
+> >>>> +
+> >>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_ini=
+t);
+> >>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE(=
+)?
+> >> It provides CPU clock which is used in early boot stage.
+> >>
+> > Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+> > frequency? If the driver can be split into two pieces, one to handle the
+> > really early stuff that must be in place to get timers up and running
+> > and the other to register the rest of the clks that aren't critical from
+> > a regular platform driver it would be good. That's preferred model if
+> > something is super critical.
+> >
+> Just to make sure my approach is same as you think.
+> =
 
-v1 -> v2:
-- fixed the changelog in the patch implementing devm_kstrdup_const()
-- fixed the kernel doc
-- moved is_kernel_rodata() to asm-generic/sections.h
-- fixed constness
+> In the driver, there's two clock registrations.
+> =
 
-Bartosz Golaszewski (4):
-  devres: constify p in devm_kfree()
-  mm: move is_kernel_rodata() to asm-generic/sections.h
-  devres: provide devm_kstrdup_const()
-  clk: pmc-atom: use devm_kstrdup_const()
+> - One through CLK_OF_DECLARE for early stage clocks.
+> =
 
- drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
- drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
- include/asm-generic/sections.h | 14 +++++++++++
- include/linux/device.h         |  5 +++-
- mm/util.c                      |  7 ------
- 5 files changed, 63 insertions(+), 25 deletions(-)
+> - The other via platform driver for the non-critical clocks.
 
--- 
-2.18.0
+You can use the same DT node for both parts, no need to split the node
+into two and use syscon here.
