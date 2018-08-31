@@ -1,320 +1,190 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>
-Cc: linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND v5 3/5] clk: imx: add SCCG PLL type
-Date: Mon, 20 Aug 2018 10:16:05 +0300
-Message-Id: <1534749367-31085-4-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
-References: <1534749367-31085-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
+Date: Fri, 31 Aug 2018 15:07:22 +0100
+Message-Id: <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
+References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Quite a few drivers get an optional clock, e.g. a clock required
+to access peripheral's registers that is always enabled on some
+devices.
 
-The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-The driver currently misses the PLL lock check, as the preliminary
-documentation mentions lock configurations, but is quiet about where
-to find the actual lock status signal.
+This function behaves the same as of_clk_get_by_name() except that
+it will return NULL instead of -ENOENT.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
- drivers/clk/imx/Makefile       |   3 +-
- drivers/clk/imx/clk-sccg-pll.c | 231 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   9 ++
- 3 files changed, 242 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+v5:
+ - Simplified the code by handling all the error conditions on exit
+v4:
+ - For optional named clocks of_property_match_string() will return
+   -EINVAL if the "clock-names" property is missing, or -ENODATA if
+   the specified clock name in the "clock-names" property is missing.
+   If we then call __of_clk_get() with these errors as the index, we
+   get clk = -EINVAL. This is then filtered later on so users don't
+   see it. However, if the clock is not named, __of_clk_get() will
+   return -ENOENT is the clock provide is not there.
+   So for optional named clocks, use index to determine if the clock
+   provider is there or not, and for unnamed clocks, simply check if
+   __of_clk_get() returns -ENOENT.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4893c1f..b87513c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-sccg-pll.o
+v3:
+ - Fix check for clock not present. __of_clk_get() returns -EINVAL
+   if it's not there. Cover case of when there is no clock name.
+ - of_clk_get_by_name_optional() should return NULL if !np.
+ - Add dummy version of of_clk_get_by_name_optional() for the
+   !OF || !COMMON_CLK case.
+---
+ drivers/clk/clkdev.c | 59 +++++++++++++++++++++++++++++++++++++++-------------
+ include/linux/clk.h  |  6 ++++++
+ 2 files changed, 51 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 9ab3db8..4adb99e 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -54,30 +54,29 @@ EXPORT_SYMBOL(of_clk_get);
  
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-new file mode 100644
-index 0000000..886ae03
---- /dev/null
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2018 NXP.
+ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 					const char *dev_id,
+-					const char *name)
++					const char *name,
++					bool optional)
+ {
+ 	struct clk *clk = ERR_PTR(-ENOENT);
++	struct device_node *child = np;
++	int index = 0;
+ 
+ 	/* Walk up the tree of devices looking for a clock that matches */
+ 	while (np) {
+-		int index = 0;
+ 
+ 		/*
+ 		 * For named clocks, first look up the name in the
+ 		 * "clock-names" property.  If it cannot be found, then
+-		 * index will be an error code, and of_clk_get() will fail.
++		 * index will be an error code.
+ 		 */
+ 		if (name)
+ 			index = of_property_match_string(np, "clock-names", name);
+-		clk = __of_clk_get(np, index, dev_id, name);
+-		if (!IS_ERR(clk)) {
+-			break;
+-		} else if (name && index >= 0) {
+-			if (PTR_ERR(clk) != -EPROBE_DEFER)
+-				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
+-					np, name ? name : "", index);
++		if (index >= 0)
++			clk = __of_clk_get(np, index, dev_id, name);
++		if (!IS_ERR(clk))
+ 			return clk;
+-		}
++		if (name && index >= 0)
++			break;
+ 
+ 		/*
+ 		 * No matching clock found on this node.  If the parent node
+@@ -89,6 +88,16 @@ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 			break;
+ 	}
+ 
++	/* The clock is not valid, but it could be optional or deferred */
++	if (optional && PTR_ERR(clk) == -ENOENT) {
++		clk = NULL;
++		pr_info("no optional clock %pOF:%s\n", child,
++			name ? name : "");
++	} else if (name && index >= 0 && PTR_ERR(clk) != -EPROBE_DEFER) {
++		pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
++			child, name, index);
++	}
++
+ 	return clk;
+ }
+ 
+@@ -106,15 +115,37 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
+ 	if (!np)
+ 		return ERR_PTR(-ENOENT);
+ 
+-	return __of_clk_get_by_name(np, np->full_name, name);
++	return __of_clk_get_by_name(np, np->full_name, name, false);
+ }
+ EXPORT_SYMBOL(of_clk_get_by_name);
+ 
++/**
++ * of_clk_get_by_name_optional() - Parse and lookup an optional clock referenced
++ * by a device node
++ * @np: pointer to clock consumer node
++ * @name: name of consumer's clock input, or NULL for the first clock reference
++ *
++ * This function parses the clocks and clock-names properties, and uses them to
++ * look up the struct clk from the registered list of clock providers.
++ * It behaves the same as of_clk_get_by_name(), except when np is NULL or no
++ * clock provider is found, when it then returns NULL.
 + */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+
-+#include "clk.h"
-+
-+/* PLL CFGs */
-+#define PLL_CFG0	0x0
-+#define PLL_CFG1	0x4
-+#define PLL_CFG2	0x8
-+
-+#define PLL_DIVF1_SHIFT	13
-+#define PLL_DIVF2_SHIFT	7
-+#define PLL_DIVF_MASK	0x3f
-+
-+#define PLL_DIVR1_SHIFT	25
-+#define PLL_DIVR2_SHIFT	19
-+#define PLL_DIVR1_MASK	0x3
-+#define PLL_DIVR2_MASK	0x3f
-+#define PLL_REF_SHIFT	0
-+#define PLL_REF_MASK	0x3
-+
-+#define PLL_LOCK	31
-+#define PLL_PD		7
-+
-+#define OSC_25M		25000000
-+#define OSC_27M		27000000
-+
-+struct clk_sccg_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-+
-+static int clk_pll1_is_prepared(struct clk_hw *hw)
++struct clk *of_clk_get_by_name_optional(struct device_node *np,
++					const char *name)
 +{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
++	if (!np)
++		return NULL;
 +
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & (1 << PLL_PD)) ? 0 : 1;
++	return __of_clk_get_by_name(np, np->full_name, name, true);
 +}
++EXPORT_SYMBOL(of_clk_get_by_name_optional);
 +
-+static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, divf;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divf = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
-+
-+	return parent_rate * 2 * (divf + 1);
-+}
-+
-+static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 div;
-+
-+	div = rate / (parent_rate * 2);
-+
-+	return parent_rate * div * 2;
-+}
-+
-+static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+	u32 divf;
-+
-+	divf = rate / (parent_rate * 2);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
-+	val |= (divf - 1) << PLL_DIVF1_SHIFT;
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static int clk_pll1_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base);
-+	val &= ~(1 << PLL_PD);
-+	writel_relaxed(val, pll->base);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static void clk_pll1_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base);
-+	val |= (1 << PLL_PD);
-+	writel_relaxed(val, pll->base);
-+}
-+
-+static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, ref, divr1, divf1, divr2, divf2;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	switch ((val >> PLL_REF_SHIFT) & PLL_REF_MASK) {
-+	case 0:
-+		ref = OSC_25M;
-+		break;
-+	case 1:
-+		ref = OSC_27M;
-+		break;
-+	default:
-+		ref = OSC_25M;
-+		break;
-+	}
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divr1 = (val >> PLL_DIVR1_SHIFT) & PLL_DIVR1_MASK;
-+	divr2 = (val >> PLL_DIVR2_SHIFT) & PLL_DIVR2_MASK;
-+	divf1 = (val >> PLL_DIVF1_SHIFT) & PLL_DIVF_MASK;
-+	divf2 = (val >> PLL_DIVF2_SHIFT) & PLL_DIVF_MASK;
-+
-+	temp64 = ref * 2;
-+	temp64 *= (divf1 + 1) * (divf2 + 1);
-+
-+	do_div(temp64, (divr1 + 1) * (divr2 + 1));
-+
-+	return (unsigned long)temp64;
-+}
-+
-+static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u32 div;
-+	unsigned long parent_rate = *prate;
-+
-+	div = rate / (parent_rate);
-+
-+	return parent_rate * div;
-+}
-+
-+static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	u32 val;
-+	u32 divf;
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+
-+	divf = rate / (parent_rate);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~(PLL_DIVF_MASK << PLL_DIVF2_SHIFT);
-+	val |= (divf - 1) << PLL_DIVF2_SHIFT;
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	/* FIXME: PLL lock check */
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_sccg_pll1_ops = {
-+	.is_prepared	= clk_pll1_is_prepared,
-+	.recalc_rate	= clk_pll1_recalc_rate,
-+	.round_rate	= clk_pll1_round_rate,
-+	.set_rate	= clk_pll1_set_rate,
-+};
-+
-+static const struct clk_ops clk_sccg_pll2_ops = {
-+	.prepare	= clk_pll1_prepare,
-+	.unprepare	= clk_pll1_unprepare,
-+	.recalc_rate	= clk_pll2_recalc_rate,
-+	.round_rate	= clk_pll2_round_rate,
-+	.set_rate	= clk_pll2_set_rate,
-+};
-+
-+struct clk *imx_clk_sccg_pll(const char *name,
-+				const char *parent_name,
-+				void __iomem *base,
-+				enum imx_sccg_pll_type pll_type)
-+{
-+	struct clk_sccg_pll *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	switch (pll_type) {
-+	case SCCG_PLL1:
-+		init.ops = &clk_sccg_pll1_ops;
-+		break;
-+	case SCCG_PLL2:
-+		init.ops = &clk_sccg_pll2_ops;
-+		break;
-+	}
-+
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 13daf1c..12b3fd6 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -21,6 +21,11 @@ enum imx_pllv1_type {
- 	IMX_PLLV1_IMX35,
- };
+ #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
  
-+enum imx_sccg_pll_type {
-+	SCCG_PLL1,
-+	SCCG_PLL2,
-+};
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
+ static struct clk *__of_clk_get_by_name(struct device_node *np,
+ 					const char *dev_id,
+-					const char *name)
++					const char *name,
++					bool optional)
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
+@@ -197,7 +228,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+ 	struct clk *clk;
  
-@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
- struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
- 			     void __iomem *base);
- 
-+struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
-+			     void __iomem *base,
-+			     enum imx_sccg_pll_type pll_type);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
+ 	if (dev && dev->of_node) {
+-		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
++		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
+ 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
+ 			return clk;
+ 	}
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4f750c4..de0e5e0 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -777,6 +777,7 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
++struct clk *of_clk_get_by_name_optional(struct device_node *np, const char *name);
+ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec);
+ #else
+ static inline struct clk *of_clk_get(struct device_node *np, int index)
+@@ -788,6 +789,11 @@ static inline struct clk *of_clk_get_by_name(struct device_node *np,
+ {
+ 	return ERR_PTR(-ENOENT);
+ }
++static inline struct clk *of_clk_get_by_name_optional(struct device_node *np,
++						      const char *name)
++{
++	return NULL;
++}
+ static inline struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+ {
+ 	return ERR_PTR(-ENOENT);
 -- 
 2.7.4
