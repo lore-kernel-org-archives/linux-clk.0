@@ -1,56 +1,51 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727272AbeHaKkt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 31 Aug 2018 06:40:49 -0400
 MIME-Version: 1.0
-To: Marek Vasut <marek.vasut@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Steve Longerbeam <slongerbeam@gmail.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <9b8f68f6-dd88-cc1a-6f13-b4d2fedadead@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steve Longerbeam <steve_longerbeam@mentor.com>
-References: <1527818357-8154-1-git-send-email-steve_longerbeam@mentor.com>
- <153090140728.143105.7720351459587498082@swboyd.mtv.corp.google.com>
- <9b8f68f6-dd88-cc1a-6f13-b4d2fedadead@gmail.com>
-Message-ID: <153324317799.10763.16530922080427544645@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH] clk: vc5: Avoid divide by zero when rounding or setting rates
-Date: Thu, 02 Aug 2018 13:52:57 -0700
+References: <CGME20180829155059eucas1p26a0ea66a0fc96c73cdd60648b82bd23e@eucas1p2.samsung.com>
+ <20180829155046.29359-1-m.szyprowski@samsung.com> <20180829155046.29359-3-m.szyprowski@samsung.com>
+ <CAJKOXPe9u8c_PLPYmtXJFfdCfVD-rwQsdi-8hbx2Q8mGvTvziw@mail.gmail.com> <20180830112607eucas1p2ed143a1726ec1745b354c37304f5a1b8~Ppd0g3ahg1307413074eucas1p21@eucas1p2.samsung.com>
+In-Reply-To: <20180830112607eucas1p2ed143a1726ec1745b354c37304f5a1b8~Ppd0g3ahg1307413074eucas1p21@eucas1p2.samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Fri, 31 Aug 2018 08:34:40 +0200
+Message-ID: <CAJKOXPcjR27dBZwrJfWmb++7kp2LRM3HC-qyf_Jq1f4K5UpQqA@mail.gmail.com>
+Subject: Re: [PATCH 02/10] clk: samsung: s3c2410: Use generic helper for
+ handling suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Steve Longerbeam (2018-07-18 10:56:51)
-> =
+On Thu, 30 Aug 2018 at 13:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Hi Krzysztof,
+>
+> On 2018-08-30 08:39, Krzysztof Kozlowski wrote:
+> > On Wed, 29 Aug 2018 at 17:51, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> >> Replace common suspend/resume handling code by generic helper.
+> >> No functional change.
+> > There is functional change in case alloc fails (kzalloc(),
+> > samsung_clk_alloc_reg_dump()). Previously it would be warned and
+> > ignored. Now it will panic. You could mention this but anyway the
+> > change looks nice! Thanks!
+>
+> No problem to replace panic() in samsung_clk_sleep_init() with a pair
+> of warn and return error as this is probably now a preferred behavior.
+> This is still truly hypothetical discussion because system, which
+> fails to allocate memory at boot is useless anyway.
 
-> =
+I do not mind keeping this as is with small notice in commit msg about
+change in case of error path. Indeed it is truly hypothetical case so
+there is no point to rewrite samsung_clk_sleep_init for this.
 
-> On 07/06/2018 11:23 AM, Stephen Boyd wrote:
-> > Quoting Steve Longerbeam (2018-05-31 18:59:17)
-> >> Add checks in the .round_rate and .set_rate ops for zero requested
-> >> rate or zero parent rate. If either are zero in .round_rate, just
-> >> return zero. If either are zero in .set_rate, return -EINVAL.
-> > Are you seeing problems when the clk is unparented and we're trying to
-> > recalculate the rate or change rates, and thus the parent frequency
-> > looks like 0?
-> =
-
-> The problem appeared when suspending the rcar-du driver.
-> The kernel tested is a Renesas BSP release (3.6.2), and in the
-> version of the rcar-du driver from that release, the driver calls
-> clk_set_rate() with a rate of zero in its suspend PM op. This is
-> fixed in mainline kernel. So the divide-by-zero in vc5 clock driver
-> probably will not show up in mainline.
-
-Ok so then this patch shouldn't be applied on mainline?
-
-> =
-
-> >   Should this get a Fixes: tag so that it goes back to
-> > stable kernels?
-> >
-> =
-
-> Zero rates are not checked beginning with the initial commit
-> 3e1aec4e2c ("clk: vc5: Add support for IDT VersaClock 5P49V5923 and =
-
-> 5P49V5933").
-> so that would have to be the Fixes: tag.
-
-Thanks!
+Best regards,
+Krzysztof
