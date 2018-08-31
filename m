@@ -1,50 +1,117 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Mon, 27 Aug 2018 09:48:16 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180827014815.GD29208@dragon>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Fri, 31 Aug 2018 12:29:48 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Message-ID: <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+ <20180830184210.5369-2-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180802113552.GJ9117@sirena.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180830184210.5369-2-digetx@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 02, 2018 at 12:35:52PM +0100, Mark Brown wrote:
-> On Thu, Aug 02, 2018 at 12:47:27PM +0200, Oleksij Rempel wrote:
-> > On 02.08.2018 12:44, Mark Brown wrote:
+On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+> a lock-status bit. The lock-status polling was disabled ~7 years ago
+> because PLLE was failing to lock and was a suspicion that other PLLs
+> might be faulty too. Other PLLs are okay, hence enable the lock-status
+> polling for them. This reduces delay of any operation that require PLL
+> to lock.
 > 
-> > > I thought we'd got an ack for this from Raphael on a previous version or
-> > > am I mistaken?
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 > 
-> > No, we got an:
-> > "Anyway, I have no particular problems with exporting
-> > pm_power_off_prepare via EXPORT_SYMBOL_GPL()."
+> Changelog:
 > 
-> > Should i see it as ACK?
+> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+> 
 
-Mark,
+This isn't correct. The lock bit of PLLE can declare lock too early, but the
+PLL itself does lock.
 
-Can you ACK on those two regulator patches, so that I can queue this
-series up on IMX tree?
-
-Shawn
+>  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index cc857d4d4a86..cfde3745a0db 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -298,7 +298,8 @@ static struct tegra_clk_pll_params pll_c_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_c_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_m_params = {
+> @@ -314,7 +315,8 @@ static struct tegra_clk_pll_params pll_m_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_m_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_p_params = {
+> @@ -331,7 +333,7 @@ static struct tegra_clk_pll_params pll_p_params = {
+>  	.lock_delay = 300,
+>  	.freq_table = pll_p_freq_table,
+>  	.flags = TEGRA_PLL_FIXED | TEGRA_PLL_HAS_CPCON |
+> -		 TEGRA_PLL_HAS_LOCK_ENABLE,
+> +		 TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK,
+>  	.fixed_rate =  216000000,
+>  };
+>  
+> @@ -348,7 +350,8 @@ static struct tegra_clk_pll_params pll_a_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_a_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_d_params = {
+> @@ -364,7 +367,8 @@ static struct tegra_clk_pll_params pll_d_params = {
+>  	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+>  	.lock_delay = 1000,
+>  	.freq_table = pll_d_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static const struct pdiv_map pllu_p[] = {
+> @@ -387,7 +391,8 @@ static struct tegra_clk_pll_params pll_u_params = {
+>  	.lock_delay = 1000,
+>  	.pdiv_tohw = pllu_p,
+>  	.freq_table = pll_u_freq_table,
+> -	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLLU | TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_x_params = {
+> @@ -403,7 +408,8 @@ static struct tegra_clk_pll_params pll_x_params = {
+>  	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+>  	.lock_delay = 300,
+>  	.freq_table = pll_x_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_HAS_LOCK_ENABLE |
+> +		 TEGRA_PLL_USE_LOCK,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_e_params = {
+> -- 
+> 2.18.0
+> 
