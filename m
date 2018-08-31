@@ -1,67 +1,31 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-imx@nxp.com,
-	yibin.gong@nxp.com,
-	"A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH v9 6/6] ARM: dts: imx6: RIoTboard provide standby on power off option
-Date: Thu,  2 Aug 2018 12:34:25 +0200
-Message-Id: <20180802103425.3053-7-o.rempel@pengutronix.de>
-In-Reply-To: <20180802103425.3053-1-o.rempel@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+Return-Path: <horms@verge.net.au>
+Date: Fri, 31 Aug 2018 15:41:27 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r8a77990: Add missing I2C7 clock
+Message-ID: <20180831134126.dbk5uyjswvbm77ux@verge.net.au>
+References: <20180830152813.20883-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180830152813.20883-1-geert+renesas@glider.be>
 List-ID: <linux-clk.vger.kernel.org>
 
-This board, as well as some other boards with i.MX6 and a PMIC, uses a
-"PMIC_STBY_REQ" line to notify the PMIC about a state change.
-The PMIC is programmed for a specific state change before triggering the
-line.
-In this case, PMIC_STBY_REQ can be used for stand by, sleep
-and power off modes.
+On Thu, Aug 30, 2018 at 05:28:13PM +0200, Geert Uytterhoeven wrote:
+> When trying to use I2C7 on R-Car E3:
+> 
+>     renesas-cpg-mssr e6150000.clock-controller: Cannot get module clock 1003: -2
+>     i2c-rcar e6690000.i2c: failed to add to PM domain always-on: -2
+>     i2c-rcar: probe of e6690000.i2c failed with error -2
+> 
+> Unlike other R-Car Gen3 SoCs, R-Car E3 has more than 7 I2C bus
+> interfaces.  Add the forgotten module clock for the 8th instance to fix
+> this.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- arch/arm/boot/dts/imx6dl-riotboard.dts | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm/boot/dts/imx6dl-riotboard.dts b/arch/arm/boot/dts/imx6dl-riotboard.dts
-index 2e98c92adff7..a0e9753ee767 100644
---- a/arch/arm/boot/dts/imx6dl-riotboard.dts
-+++ b/arch/arm/boot/dts/imx6dl-riotboard.dts
-@@ -90,6 +90,10 @@
- 	status = "okay";
- };
- 
-+&clks {
-+	fsl,pmic-stby-poweroff;
-+};
-+
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
-@@ -170,6 +174,7 @@
- 		reg = <0x08>;
- 		interrupt-parent = <&gpio5>;
- 		interrupts = <16 8>;
-+		fsl,pmic-stby-poweroff;
- 
- 		regulators {
- 			reg_vddcore: sw1ab {				/* VDDARM_IN */
--- 
-2.18.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
