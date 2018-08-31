@@ -1,57 +1,203 @@
-Return-Path: <stefan@agner.ch>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	thor.thayer@linux.intel.com,
+	linux-imx@nxp.com,
+	hdegoede@redhat.com,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH V6 2/4] clk: add new APIs to operate on all available clocks
+Date: Fri, 31 Aug 2018 12:45:54 +0800
+Message-Id: <1535690756-22234-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Sat, 18 Aug 2018 14:45:47 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Boyd
- <sboyd@kernel.org>, Peter Geis <pgwipeout@gmail.com>, Marcel Ziswiler
- <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>, Peter De Schrijver
- <pdeschrijver@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2] clk: tegra: probe deferral error reporting
-In-Reply-To: <20180814091805.1363-1-marcel@ziswiler.com>
-References: <20180814091805.1363-1-marcel@ziswiler.com>
-Message-ID: <bd9a8bb8c140fab18f88d383a0b7d5f1@agner.ch>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 14.08.2018 11:18, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> 
-> Actually report the error code from devm_regulator_get() which may as
-> well just be a probe deferral.
-> 
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+This patch introduces of_clk_bulk_get_all and clk_bulk_x_all APIs
+to users who just want to handle all available clocks from device tree
+without need to know the detailed clock information likes clock numbers
+and names. This is useful in writing some generic drivers to handle clock
+part.
 
-Reviewed-by: Stefan Agner <stefan@agner.ch>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+v3->v4:
+ * no changes
+v2->v3:
+ * remove #if define condition
+ * use kmalloc_array
+v1->v2:
+ * make of_clk_bulk_get_all private
+ * add clk_bulk_get/put_all
+---
+ drivers/clk/clk-bulk.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk.h    | 42 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 92 insertions(+), 1 deletion(-)
 
-> 
-> ---
-> 
-> Changes in v2:
-> - Silence probe deferral as discussed between Peter, Stefan and Stephen.
-> - Fix line over 80 characters as reported by checkpatch.
-> 
->  drivers/clk/tegra/clk-dfll.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index 48ee43734e05..ebb0e1b6bf01 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1609,8 +1609,12 @@ int tegra_dfll_register(struct platform_device *pdev,
->  
->  	td->vdd_reg = devm_regulator_get(td->dev, "vdd-cpu");
->  	if (IS_ERR(td->vdd_reg)) {
-> -		dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
-> -		return PTR_ERR(td->vdd_reg);
-> +		ret = PTR_ERR(td->vdd_reg);
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
-> +				ret);
-> +
-> +		return ret;
->  	}
->  
->  	td->dvco_rst = devm_reset_control_get(td->dev, "dvco");
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 4460ac5..6a7118d 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -17,9 +17,11 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/export.h>
+ #include <linux/of.h>
++#include <linux/slab.h>
+ 
+ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+ 					struct clk_bulk_data *clks)
+@@ -49,6 +51,32 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+ 	return ret;
+ }
+ 
++static int __must_check of_clk_bulk_get_all(struct device_node *np,
++					    struct clk_bulk_data **clks)
++{
++	struct clk_bulk_data *clk_bulk;
++	int num_clks;
++	int ret;
++
++	num_clks = of_clk_get_parent_count(np);
++	if (!num_clks)
++		return 0;
++
++	clk_bulk = kmalloc_array(num_clks, sizeof(*clk_bulk), GFP_KERNEL);
++	if (!clk_bulk)
++		return -ENOMEM;
++
++	ret = of_clk_bulk_get(np, num_clks, clk_bulk);
++	if (ret) {
++		kfree(clk_bulk);
++		return ret;
++	}
++
++	*clks = clk_bulk;
++
++	return num_clks;
++}
++
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks)
+ {
+ 	while (--num_clks >= 0) {
+@@ -88,6 +116,29 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ }
+ EXPORT_SYMBOL(clk_bulk_get);
+ 
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks)
++{
++	if (IS_ERR_OR_NULL(clks))
++		return;
++
++	clk_bulk_put(num_clks, clks);
++
++	kfree(clks);
++}
++EXPORT_SYMBOL(clk_bulk_put_all);
++
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks)
++{
++	struct device_node *np = dev_of_node(dev);
++
++	if (!np)
++		return 0;
++
++	return of_clk_bulk_get_all(np, clks);
++}
++EXPORT_SYMBOL(clk_bulk_get_all);
++
+ #ifdef CONFIG_HAVE_CLK_PREPARE
+ 
+ /**
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4f750c4..e9433c7 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -312,7 +312,26 @@ struct clk *clk_get(struct device *dev, const char *id);
+  */
+ int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 			      struct clk_bulk_data *clks);
+-
++/**
++ * clk_bulk_get_all - lookup and obtain all available references to clock
++ *		      producer.
++ * @dev: device for clock "consumer"
++ * @clks: pointer to the clk_bulk_data table of consumer
++ *
++ * This helper function allows drivers to get all clk consumers in one
++ * operation. If any of the clk cannot be acquired then any clks
++ * that were obtained will be freed before returning to the caller.
++ *
++ * Returns a positive value for the number of clocks obtained while the
++ * clock references are stored in the clk_bulk_data table in @clks field.
++ * Returns 0 if there're none and a negative value if something failed.
++ *
++ * Drivers must assume that the clock source is not enabled.
++ *
++ * clk_bulk_get should not be called from within interrupt context.
++ */
++int __must_check clk_bulk_get_all(struct device *dev,
++				  struct clk_bulk_data **clks);
+ /**
+  * devm_clk_bulk_get - managed get multiple clk consumers
+  * @dev: device for clock "consumer"
+@@ -488,6 +507,19 @@ void clk_put(struct clk *clk);
+ void clk_bulk_put(int num_clks, struct clk_bulk_data *clks);
+ 
+ /**
++ * clk_bulk_put_all - "free" all the clock source
++ * @num_clks: the number of clk_bulk_data
++ * @clks: the clk_bulk_data table of consumer
++ *
++ * Note: drivers must ensure that all clk_bulk_enable calls made on this
++ * clock source are balanced by clk_bulk_disable calls prior to calling
++ * this function.
++ *
++ * clk_bulk_put_all should not be called from within interrupt context.
++ */
++void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks);
++
++/**
+  * devm_clk_put	- "free" a managed clock source
+  * @dev: device used to acquire the clock
+  * @clk: clock source acquired with devm_clk_get()
+@@ -642,6 +674,12 @@ static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
+ 	return 0;
+ }
+ 
++static inline int __must_check clk_bulk_get_all(struct device *dev,
++					 struct clk_bulk_data **clks)
++{
++	return 0;
++}
++
+ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+ 	return NULL;
+@@ -663,6 +701,8 @@ static inline void clk_put(struct clk *clk) {}
+ 
+ static inline void clk_bulk_put(int num_clks, struct clk_bulk_data *clks) {}
+ 
++static inline void clk_bulk_put_all(int num_clks, struct clk_bulk_data *clks) {}
++
+ static inline void devm_clk_put(struct device *dev, struct clk *clk) {}
+ 
+ 
+-- 
+2.7.4
