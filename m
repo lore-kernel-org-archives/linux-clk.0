@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Songjun Wu <songjun.wu@linux.intel.com>
-To: hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Songjun Wu <songjun.wu@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v2 09/18] serial: intel: Change ltq_w32_mask to asc_update_bits
-Date: Fri,  3 Aug 2018 11:02:28 +0800
-Message-Id: <20180803030237.3366-10-songjun.wu@linux.intel.com>
-In-Reply-To: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jerome.forissier@linaro.org>
+Return-Path: <jerome.forissier@linaro.org>
+Subject: Re: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+To: Stephen Boyd <sboyd@kernel.org>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
+Cc: dl-linux-imx <linux-imx@nxp.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
+From: Jerome Forissier <jerome.forissier@linaro.org>
+Message-ID: <a6489bda-703f-207c-0b24-60f4044fe89f@linaro.org>
+Date: Fri, 31 Aug 2018 10:01:44 +0200
+MIME-Version: 1.0
+In-Reply-To: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-ltq prefix is platform specific function, asc prefix
-is more generic.
 
-Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
----
 
-Changes in v2: None
+On 08/31/2018 03:29 AM, Stephen Boyd wrote:
+> Quoting Peng Fan (2018-08-12 18:15:41)
+>> Hi Anson,
+>>
+>>>>> -----Original Message-----
+>>>>> From: Anson Huang
+>>>>> Sent: 2018年8月8日 12:39
+>>>>> To: shawnguo@kernel.org; s.hauer@pengutronix.de;
+>>>>> kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
+>>>>> mturquette@baylibre.com; sboyd@kernel.org;
+>>>>> linux-arm-kernel@lists.infradead.org;
+>>>>> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
+>>>>> Cc: dl-linux-imx <linux-imx@nxp.com>
+>>>>> Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+>>>>>
+>>>>> Clock framework will enable those clocks registered with
+>>>>> CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
+>>>>> clock
+>>>> initialization now.
+>>>>
+>>>> Will it be more flexible to parse dts saying "critical-clocks = <xxx>"
+>>>> or "init-on-arrary=<xxx>"
+>>>> and enable those clocks?
+>>>
+>>> Parsing the clocks arrays from dtb is another way of enabling critical clocks, but
+>>> for current i.MX6/7 platforms, we implement it in same way as most of other
+>>> SoCs, currently I did NOT see any necessity of putting them in dtb, just adding
+>>> flag during clock registering is more simple, if there is any special requirement
+>>> for different clocks set to be enabled, then we can add support to enable the
+>>> method of parsing critical-clocks from dtb. Just my two cents.
+>>
+>> Thinking about OP-TEE want to use one device, but it's clocks are registered
+>> by Linux, because there is no module in Linux side use it, it will shutdown the clock,
+>> which cause OP-TEE could not access the device.
+>>
+>> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make sure
+>> the clocks are not shutdown by Linux.
+>>
+>> However adding a new property in clk node and let driver code parse the dts,
+>> there is no need to modify clk driver code when OP-TEE needs another device clock.
+>>
+> 
+> If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
+> in Linux probe, acquire clocks, and keep the clks enabled forever?
 
- drivers/tty/serial/lantiq.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+Sounds reasonable, but how could this be done without introducing
+platform-specific stuff in the OP-TEE driver?
 
-diff --git a/drivers/tty/serial/lantiq.c b/drivers/tty/serial/lantiq.c
-index 836ca51460f2..e36e6a267e7a 100644
---- a/drivers/tty/serial/lantiq.c
-+++ b/drivers/tty/serial/lantiq.c
-@@ -114,6 +114,13 @@ struct ltq_uart_port {
- 	unsigned int		err_irq;
- };
- 
-+static inline void asc_update_bits(u32 clear, u32 set, void __iomem *reg)
-+{
-+	u32 tmp = readl(reg);
-+
-+	writel((tmp & ~clear) | set, reg);
-+}
-+
- static inline struct
- ltq_uart_port *to_ltq_uart_port(struct uart_port *port)
- {
-@@ -164,16 +171,16 @@ lqasc_rx_chars(struct uart_port *port)
- 		if (rsr & ASCSTATE_ANY) {
- 			if (rsr & ASCSTATE_PE) {
- 				port->icount.parity++;
--				ltq_w32_mask(0, ASCWHBSTATE_CLRPE,
-+				asc_update_bits(0, ASCWHBSTATE_CLRPE,
- 					port->membase + LTQ_ASC_WHBSTATE);
- 			} else if (rsr & ASCSTATE_FE) {
- 				port->icount.frame++;
--				ltq_w32_mask(0, ASCWHBSTATE_CLRFE,
-+				asc_update_bits(0, ASCWHBSTATE_CLRFE,
- 					port->membase + LTQ_ASC_WHBSTATE);
- 			}
- 			if (rsr & ASCSTATE_ROE) {
- 				port->icount.overrun++;
--				ltq_w32_mask(0, ASCWHBSTATE_CLRROE,
-+				asc_update_bits(0, ASCWHBSTATE_CLRROE,
- 					port->membase + LTQ_ASC_WHBSTATE);
- 			}
- 
-@@ -253,7 +260,7 @@ lqasc_err_int(int irq, void *_port)
- 	struct uart_port *port = (struct uart_port *)_port;
- 	spin_lock_irqsave(&ltq_asc_lock, flags);
- 	/* clear any pending interrupts */
--	ltq_w32_mask(0, ASCWHBSTATE_CLRPE | ASCWHBSTATE_CLRFE |
-+	asc_update_bits(0, ASCWHBSTATE_CLRPE | ASCWHBSTATE_CLRFE |
- 		ASCWHBSTATE_CLRROE, port->membase + LTQ_ASC_WHBSTATE);
- 	spin_unlock_irqrestore(&ltq_asc_lock, flags);
- 	return IRQ_HANDLED;
-@@ -305,7 +312,7 @@ lqasc_startup(struct uart_port *port)
- 		clk_enable(ltq_port->clk);
- 	port->uartclk = clk_get_rate(ltq_port->fpiclk);
- 
--	ltq_w32_mask(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
-+	asc_update_bits(ASCCLC_DISS | ASCCLC_RMCMASK, (1 << ASCCLC_RMCOFFSET),
- 		port->membase + LTQ_ASC_CLC);
- 
- 	ltq_w32(0, port->membase + LTQ_ASC_PISEL);
-@@ -321,7 +328,7 @@ lqasc_startup(struct uart_port *port)
- 	 * setting enable bits
- 	 */
- 	wmb();
--	ltq_w32_mask(0, ASCCON_M_8ASYNC | ASCCON_FEN | ASCCON_TOEN |
-+	asc_update_bits(0, ASCCON_M_8ASYNC | ASCCON_FEN | ASCCON_TOEN |
- 		ASCCON_ROEN, port->membase + LTQ_ASC_CON);
- 
- 	retval = request_irq(ltq_port->tx_irq, lqasc_tx_int,
-@@ -365,9 +372,9 @@ lqasc_shutdown(struct uart_port *port)
- 	free_irq(ltq_port->err_irq, port);
- 
- 	ltq_w32(0, port->membase + LTQ_ASC_CON);
--	ltq_w32_mask(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
-+	asc_update_bits(ASCRXFCON_RXFEN, ASCRXFCON_RXFFLU,
- 		port->membase + LTQ_ASC_RXFCON);
--	ltq_w32_mask(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
-+	asc_update_bits(ASCTXFCON_TXFEN, ASCTXFCON_TXFFLU,
- 		port->membase + LTQ_ASC_TXFCON);
- 	if (!IS_ERR(ltq_port->clk))
- 		clk_disable(ltq_port->clk);
-@@ -439,7 +446,7 @@ lqasc_set_termios(struct uart_port *port,
- 	spin_lock_irqsave(&ltq_asc_lock, flags);
- 
- 	/* set up CON */
--	ltq_w32_mask(0, con, port->membase + LTQ_ASC_CON);
-+	asc_update_bits(0, con, port->membase + LTQ_ASC_CON);
- 
- 	/* Set baud rate - take a divider of 2 into account */
- 	baud = uart_get_baud_rate(port, new, old, 0, port->uartclk / 16);
-@@ -447,19 +454,19 @@ lqasc_set_termios(struct uart_port *port,
- 	divisor = divisor / 2 - 1;
- 
- 	/* disable the baudrate generator */
--	ltq_w32_mask(ASCCON_R, 0, port->membase + LTQ_ASC_CON);
-+	asc_update_bits(ASCCON_R, 0, port->membase + LTQ_ASC_CON);
- 
- 	/* make sure the fractional divider is off */
--	ltq_w32_mask(ASCCON_FDE, 0, port->membase + LTQ_ASC_CON);
-+	asc_update_bits(ASCCON_FDE, 0, port->membase + LTQ_ASC_CON);
- 
- 	/* set up to use divisor of 2 */
--	ltq_w32_mask(ASCCON_BRS, 0, port->membase + LTQ_ASC_CON);
-+	asc_update_bits(ASCCON_BRS, 0, port->membase + LTQ_ASC_CON);
- 
- 	/* now we can write the new baudrate into the register */
- 	ltq_w32(divisor, port->membase + LTQ_ASC_BG);
- 
- 	/* turn the baudrate generator back on */
--	ltq_w32_mask(0, ASCCON_R, port->membase + LTQ_ASC_CON);
-+	asc_update_bits(0, ASCCON_R, port->membase + LTQ_ASC_CON);
- 
- 	/* enable rx */
- 	ltq_w32(ASCWHBSTATE_SETREN, port->membase + LTQ_ASC_WHBSTATE);
--- 
-2.11.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
