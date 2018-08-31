@@ -1,57 +1,70 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-To: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
-        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
- <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-Date: Fri, 31 Aug 2018 14:30:02 -0500
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	colin.didier@devialet.com,
+	clement.peron@devialet.com,
+	ping.bai@nxp.com,
+	aisheng.dong@nxp.com,
+	shengjiu.wang@nxp.com,
+	matteo.lisi@engicam.com,
+	michael@amarulasolutions.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 2/7] clk: imx6ul: add mmdc1 ipg clock
+Date: Fri, 31 Aug 2018 15:53:13 +0800
+Message-Id: <1535701998-20443-3-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <153573819126.93865.1884182656081956202@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <a959a032-6817-dcb4-2c5f-b4bd17fc1c8b@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
+i.MX6UL has MMDC1 ipg clock in CCM CCGR, add it into
+clock tree for clock management.
 
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6ul.c             | 1 +
+ include/dt-bindings/clock/imx6ul-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-On 08/31/2018 12:56 PM, Stephen Boyd wrote:
-> Quoting Eddie James (2018-08-29 14:09:29)
->> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->> can capture and compress video data from digital or analog sources. With
->> the Aspeed chip acting as a service processor, the Video Engine can
->> capture the host processor graphics output.
->>
->> This series adds a V4L2 driver for the VE, providing a read() interface
->> only. The driver triggers the hardware to capture the host graphics output
->> and compress it to JPEG format.
->>
->> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
->> was significantly slower than the simple read() interface, so I have not
->> included the streaming part.
->>
->> It's also possible to use an automatic mode for the VE such that
->> re-triggering the HW every frame isn't necessary. However this wasn't
->> reliable on the AST2400, and probably used more CPU anyway due to excessive
->> interrupts. It was approximately 15% faster.
->>
->> The series also adds the necessary parent clock definitions to the Aspeed
->> clock driver, with both a mux and clock divider.
-> Please let me know your merge strategy here. I can ack the clk patches
-> because they look fine from high-level clk driver perspective (maybe
-> Joel can take a closer look) or I can merge the patches into clk-next
-> and get them into next release while the video driver gets reviewed.
-
-Thanks for taking a look! Probably preferable to get the clk patches 
-into clk-next first (though Joel reviewing would be great). I just put 
-everything in the same set for the sake of explaining the necessity of 
-the clk changes.
-
-Thanks,
-Eddie
-
->
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 361b43f..fd60d15 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -408,6 +408,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_WDOG1]		= imx_clk_gate2("wdog1",	"ipg",		base + 0x74,	16);
+ 	clks[IMX6UL_CLK_MMDC_P0_FAST]	= imx_clk_gate_flags("mmdc_p0_fast", "mmdc_podf", base + 0x74,	20, CLK_IS_CRITICAL);
+ 	clks[IMX6UL_CLK_MMDC_P0_IPG]	= imx_clk_gate2_flags("mmdc_p0_ipg",	"ipg",		base + 0x74,	24, CLK_IS_CRITICAL);
++	clks[IMX6UL_CLK_MMDC_P1_IPG]	= imx_clk_gate2("mmdc_p1_ipg",	"ipg",		base + 0x74,	26);
+ 	clks[IMX6UL_CLK_AXI]		= imx_clk_gate_flags("axi",	"axi_podf",	base + 0x74,	28, CLK_IS_CRITICAL);
+ 
+ 	/* CCGR4 */
+diff --git a/include/dt-bindings/clock/imx6ul-clock.h b/include/dt-bindings/clock/imx6ul-clock.h
+index f8e0476..f718aac 100644
+--- a/include/dt-bindings/clock/imx6ul-clock.h
++++ b/include/dt-bindings/clock/imx6ul-clock.h
+@@ -259,7 +259,8 @@
+ #define IMX6UL_CLK_GPIO3		246
+ #define IMX6UL_CLK_GPIO4		247
+ #define IMX6UL_CLK_GPIO5		248
++#define IMX6UL_CLK_MMDC_P1_IPG		249
+ 
+-#define IMX6UL_CLK_END			249
++#define IMX6UL_CLK_END			250
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6UL_H */
+-- 
+2.7.4
