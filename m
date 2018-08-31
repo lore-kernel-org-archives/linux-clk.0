@@ -1,200 +1,86 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Thu, 30 Aug 2018 15:15:32 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
-	linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
-	sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
-	matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 2/2] clk: bd718x7: Initial support for ROHM bd71837/bd71847
- PMIC clock
-Message-ID: <0e6f19f99a4321d37472635c9210f6c13ac53147.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+To: "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ Anson Huang <anson.huang@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Cc: dl-linux-imx <linux-imx@nxp.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Message-ID: <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date: Thu, 30 Aug 2018 18:29:07 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-ROHM bd71837 and bd71847 contain 32768Hz clock gate. Support the clock
-using generic clock framework. Note, only bd71837 is tested but bd71847
-should be identical what comes to clk parts.
+Quoting Peng Fan (2018-08-12 18:15:41)
+> Hi Anson,
+> =
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |   6 +++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd718x7.c | 131 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 138 insertions(+)
- create mode 100644 drivers/clk/clk-bd718x7.c
+> > > > -----Original Message-----
+> > > > From: Anson Huang
+> > > > Sent: 2018=E5=B9=B48=E6=9C=888=E6=97=A5 12:39
+> > > > To: shawnguo@kernel.org; s.hauer@pengutronix.de;
+> > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
+> > > > mturquette@baylibre.com; sboyd@kernel.org;
+> > > > linux-arm-kernel@lists.infradead.org;
+> > > > linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > > Cc: dl-linux-imx <linux-imx@nxp.com>
+> > > > Subject: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+> > > >
+> > > > Clock framework will enable those clocks registered with
+> > > > CLK_IS_CRITICAL flag, so no need to have clks_init_on array during
+> > > > clock
+> > > initialization now.
+> > >
+> > > Will it be more flexible to parse dts saying "critical-clocks =3D <xx=
+x>"
+> > > or "init-on-arrary=3D<xxx>"
+> > > and enable those clocks?
+> > =
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 292056bbb30e..b2aee8fa4445 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -283,6 +283,12 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD718XX
-+	tristate "Clock driver for ROHM BD71837 PMIC MFD"
-+	depends on MFD_ROHM_BD718XX
-+	help
-+	  This driver supports ROHM BD71837 PMIC clock.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a84c5573cabe..886dce9f9bec 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-new file mode 100644
-index 000000000000..df5f1068ce8e
---- /dev/null
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c  -- ROHM BD71837MWV clock driver
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/regmap.h>
-+
-+struct bd718xx_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	struct platform_device *pdev;
-+	struct bd718xx *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	int rval;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+
-+	if (rval)
-+		return rval;
-+
-+	return enabled & c->mask;
-+}
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd718xx_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd718xx *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd718xx-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	init.num_parents = 1;
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (!parent_clk) {
-+		dev_err(&pdev->dev, "No parent clk found\n");
-+		return -EINVAL;
-+	}
-+
-+	c->reg = BD718XX_REG_OUT32K;
-+	c->mask = BD718XX_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+				      "clock-output-names", 0, &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (!rval) {
-+		rval = devm_clk_hw_register_clkdev(&pdev->dev,
-+						   &c->hw, init.name, NULL);
-+		if (rval)
-+			dev_warn(&pdev->dev, "Failed to register clkdev\n");
-+		if (parent->of_node) {
-+			rval = devm_of_clk_add_parent_hw_provider(&pdev->dev,
-+					     of_clk_hw_simple_get, &c->hw);
-+			if (rval)
-+				dev_err(&pdev->dev,
-+					"adding clk provider failed\n");
-+		}
-+	} else {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+	}
-+
-+	return rval;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd718xx-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+> > Parsing the clocks arrays from dtb is another way of enabling critical =
+clocks, but
+> > for current i.MX6/7 platforms, we implement it in same way as most of o=
+ther
+> > SoCs, currently I did NOT see any necessity of putting them in dtb, jus=
+t adding
+> > flag during clock registering is more simple, if there is any special r=
+equirement
+> > for different clocks set to be enabled, then we can add support to enab=
+le the
+> > method of parsing critical-clocks from dtb. Just my two cents.
+> =
+
+> Thinking about OP-TEE want to use one device, but it's clocks are registe=
+red
+> by Linux, because there is no module in Linux side use it, it will shutdo=
+wn the clock,
+> which cause OP-TEE could not access the device.
+> =
+
+> Then people have to modify clk code to add CLK_IS_CRITICAL flag to make s=
+ure
+> the clocks are not shutdown by Linux.
+> =
+
+> However adding a new property in clk node and let driver code parse the d=
+ts,
+> there is no need to modify clk driver code when OP-TEE needs another devi=
+ce clock.
+> =
+
+
+If OP-TEE needs linux to keep things on then why can't the OP-TEE driver
+in Linux probe, acquire clocks, and keep the clks enabled forever?
