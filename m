@@ -1,33 +1,71 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-To: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC: <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 00/11] clk: ti: clkctrl data split based on clkdm boundaries
-Date: Fri, 31 Aug 2018 18:06:56 +0300
-Message-ID: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	colin.didier@devialet.com,
+	clement.peron@devialet.com,
+	ping.bai@nxp.com,
+	aisheng.dong@nxp.com,
+	shengjiu.wang@nxp.com,
+	matteo.lisi@engicam.com,
+	michael@amarulasolutions.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 5/7] clk: imx6sl: add mmdc ipg clocks
+Date: Fri, 31 Aug 2018 15:53:16 +0800
+Message-Id: <1535701998-20443-6-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+i.MX6SL has MMDC0 and MMDC1 ipg clock in CCM CCGR, add them into
+clock tree for clock management.
 
-This series splits up the clkctrl data for TI SoCs based on clockdomain
-boundaries, instead of the current CM boundaries. For rest of the SoCs,
-the CM boundaries are actually the same as clockdomains, only am3/am4/dra7
-are mutants.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx6sl.c             | 2 ++
+ include/dt-bindings/clock/imx6sl-clock.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-This is done in preparation for better supporting Tony's upcoming
-interconnect driver data introduction for these SoCs.
-
-One thing to note is that we maintain backwards compatibility with this
-series, the compat data is introduced temporarily for this purpose. The
-compat data can be ditched after couple of release cycles when nobody
-needs it anymore.
-
-The series can be applied independently, as the compat data support
-makes care that the switch is only done once DT changes are in place.
-
--Tero
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index eb6bcbf..6fcfbbd 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -386,6 +386,8 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_LCDIF_AXI]    = imx_clk_gate2("lcdif_axi",    "lcdif_axi_podf",    base + 0x74, 6);
+ 	clks[IMX6SL_CLK_LCDIF_PIX]    = imx_clk_gate2("lcdif_pix",    "lcdif_pix_podf",    base + 0x74, 8);
+ 	clks[IMX6SL_CLK_EPDC_PIX]     = imx_clk_gate2("epdc_pix",     "epdc_pix_podf",     base + 0x74, 10);
++	clks[IMX6SL_CLK_MMDC_P0_IPG]  = imx_clk_gate2_flags("mmdc_p0_ipg",  "ipg",         base + 0x74,	24, CLK_IS_CRITICAL);
++	clks[IMX6SL_CLK_MMDC_P1_IPG]  = imx_clk_gate2("mmdc_p1_ipg",  "ipg",	  	   base + 0x74,	26);
+ 	clks[IMX6SL_CLK_OCRAM]        = imx_clk_gate2("ocram",        "ocram_podf",        base + 0x74, 28);
+ 	clks[IMX6SL_CLK_PWM1]         = imx_clk_gate2("pwm1",         "perclk",            base + 0x78, 16);
+ 	clks[IMX6SL_CLK_PWM2]         = imx_clk_gate2("pwm2",         "perclk",            base + 0x78, 18);
+diff --git a/include/dt-bindings/clock/imx6sl-clock.h b/include/dt-bindings/clock/imx6sl-clock.h
+index e14573e..cfbfc39 100644
+--- a/include/dt-bindings/clock/imx6sl-clock.h
++++ b/include/dt-bindings/clock/imx6sl-clock.h
+@@ -175,6 +175,8 @@
+ #define IMX6SL_CLK_SSI2_IPG		162
+ #define IMX6SL_CLK_SSI3_IPG		163
+ #define IMX6SL_CLK_SPDIF_GCLK		164
+-#define IMX6SL_CLK_END			165
++#define IMX6SL_CLK_MMDC_P0_IPG		165
++#define IMX6SL_CLK_MMDC_P1_IPG		166
++#define IMX6SL_CLK_END			167
+ 
+ #endif /* __DT_BINDINGS_CLOCK_IMX6SL_H */
+-- 
+2.7.4
