@@ -1,67 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbeH3RDc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Aug 2018 13:03:32 -0400
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CGME20180829160024eucas1p1049ff966800cdc44e876d546978df399@eucas1p1.samsung.com>
- <20180829160013.9447-1-m.szyprowski@samsung.com> <20180829160013.9447-2-m.szyprowski@samsung.com>
- <CAJKOXPeHkbYA6hE+YfgdogiH48zXpFrqauhgmGCDYQs=Dt-iyQ@mail.gmail.com>
- <20180830095909eucas1p1be50efaae96040be0663e9997d0d607c~PoR5Ollhd2533325333eucas1p1G@eucas1p1.samsung.com>
- <CAJKOXPeVKwA8xOuW_qEPWjqwrgFogNwD8dcqxz+_Bn6W3AC=8A@mail.gmail.com>
- <20180830103424eucas1p2163c9fd7ec7cf08fccc3ee22ad4ddc74~Powq6EK521806518065eucas1p2R@eucas1p2.samsung.com>
- <CAJKOXPeKEBZ8u9h2=bKtk6GhVVbsV719qGS_5oyy98B+qZQx9g@mail.gmail.com> <20180830111224eucas1p13ce54ae974ddfaada05e265bba926f0b~PpR2FY2zD2568825688eucas1p1D@eucas1p1.samsung.com>
-In-Reply-To: <20180830111224eucas1p13ce54ae974ddfaada05e265bba926f0b~PpR2FY2zD2568825688eucas1p1D@eucas1p1.samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 30 Aug 2018 15:01:16 +0200
-Message-ID: <CAJKOXPcu3Appad=GHAtug-sD0DJ+fBibuVMue9w==TJT3M2Uaw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?=
-        <b.zolnierkie@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180816114755.GH21707@piout.net>
+Cc: devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
+ <153271100280.48062.2538655794734424353@swboyd.mtv.corp.google.com>
+ <20180816114755.GH21707@piout.net>
+Message-ID: <153573753043.93865.2420370848457480370@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 00/16] clk: at91: Rework DT bindings
+Date: Fri, 31 Aug 2018 10:45:30 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, 30 Aug 2018 at 13:12, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
->
->
-> On 2018-08-30 12:45, Krzysztof Kozlowski wrote:
-> > Ah I missed that point and I see you fixed that case in "mmc:
-> > dw_mmc-exynos: fix potential external abort in resume_noirq()". The
-> > true reasoning for this patch is that soc clk driver should suspend
-> > after every other suspend callback which is using clocks... It would
-> > be nice to explain this particular scenario in commit msg.
-> >
-> > However both dw-mmc and clk will be now in suspend noirq phase so do
-> > you have any guarantees that dw-mmc will be suspended after clk?
->
-> Frankly speaking this works now, because the devices are populated in
-> the order of their presence in device-tree. When the order would be
-> reverse, dw-mmc driver will defer probe until clocks are registered.
-> This would be enough to ensure proper suspend/resume order, because all
-> deferred devices are moved to the end of dpm_list (the list of device
-> used for system suspend/resume calls), see deferred_probe_work_func()
-> and comments there.
+Quoting Alexandre Belloni (2018-08-16 04:47:55)
+> On 27/07/2018 10:03:22-0700, Stephen Boyd wrote:
+> > Quoting Alexandre Belloni (2018-07-17 15:27:41)
+> > > This is the promised rework of the at91 PMC clocks driver. It is main=
+ly
+> > > necessary to remove the DTC warnings but it also complies with the CCF
+> > > rule that there should be one node per controller instead of one node
+> > > per clock.
+> > > =
 
-Looks quite fragile... but I understand now that your patch is a
-logical solution for existing infrastructure with existing dw-mmc
-behavior during suspend.
+> > > This only handles the PMC, I'm planning to also rework the SCKC bindi=
+ngs
+> > > later (without breaking the DT ABI).
+> > > =
 
-I wonder whether the device links should be used here (in case of
-dw-mmc and clk drivers) and in all clk consumers in general. Something
-similar to regulators_get().
+> > > The series is based on top of clk-next plus at91-dt so I don't think =
+it
+> > > is convenient to have it this cycle. However, I would really like to
+> > > ensure we agree on the new bindings this cycle before converting all =
+the
+> > > other platforms as this is a bit tedious.
+> > > =
 
-Can you extend the commit msg with this clk--dw_mmc scenario?
+> > > The first two patches are actually fixes and may be considered for th=
+is
+> > > cycle.
+> > > =
 
-With that change:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > One nice note:
+> > > at91-sama5d2_xplained.dtb goes from 29351 bytes to 22082 bytes
+> > =
 
-Best regards,
-Krzysztof
+> > Patches look mostly good. Rob is happy with the bindings and so am I.
+> > =
+
+> > One general question is why the drivers can't be moved to real platform
+> > drivers instead of using OF_CLK_DECLARE?
+> > =
+
+> =
+
+> I tried, this makes the clocksource drivers fail with -EPROBE_DEFER and
+> so the kernel just stops there.
+> =
+
+
+Ok. We have CLK_OF_DECLARE_DRIVER for that. Can you use that?
