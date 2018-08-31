@@ -1,58 +1,75 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	colin.didier@devialet.com,
+	clement.peron@devialet.com,
+	ping.bai@nxp.com,
+	aisheng.dong@nxp.com,
+	shengjiu.wang@nxp.com,
+	matteo.lisi@engicam.com,
+	michael@amarulasolutions.com,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 0/7] Add i.MX6 SoCs mmdc ipg clocks management
+Date: Fri, 31 Aug 2018 15:53:11 +0800
+Message-Id: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
- Michael Turquette <mturquette@baylibre.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Odelu Kukatla <okukatla@codeaurora.org>, Taniya Das <tdas@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Amit Nischal <anischal@codeaurora.org>
-References: <1532942540-2814-1-git-send-email-anischal@codeaurora.org>
- <1532942540-2814-2-git-send-email-anischal@codeaurora.org>
-Message-ID: <153322925025.10763.7919558124009549240@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v2] clk: qcom: Add camera clock controller driver for SDM845
-Date: Thu, 02 Aug 2018 10:00:50 -0700
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Amit Nischal (2018-07-30 02:22:20)
-> diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm=
-845.c
-> new file mode 100644
-> index 0000000..702ca66
-> --- /dev/null
-> +++ b/drivers/clk/qcom/camcc-sdm845.c
-> @@ -0,0 +1,1744 @@
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] =3D {
-> +       F(19200000, P_BI_TCXO, 1, 0, 0),
-> +       F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
-> +       F(200000000, P_CAM_CC_PLL0_OUT_EVEN, 3, 0, 0),
-> +       F(404000000, P_CAM_CC_PLL1_OUT_EVEN, 2, 0, 0),
-> +       F(480000000, P_CAM_CC_PLL2_OUT_EVEN, 1, 0, 0),
-> +       F(600000000, P_CAM_CC_PLL0_OUT_EVEN, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +/*
-> + * As per HW design, some of the CAMCC RCGs needs to
-> + * move to XO clock during their clock disable so using
+i.MX6 SoCs have MMDC driver which will access MMDC registers, and the
+register access need to have MMDC IPG clocks enabled, current MMDC
+driver does NOT handle the MMDC IPG clocks at all, most of the i.MX6
+SoCs clock tree have MMDC0 IPG clock registered and have flag
+CLK_IS_CRITICAL set, but some i.MX6 SoCs does NOT register the MMDC IPG
+clock at all, it depends on default HW status which is NOT reliable.
 
-Per hw design sure, but what about hw design is causing this?
+To make it more formal, this patch set add all available MMDC IPG clocks
+into clock tree, and add optional clocks enable operation in MMDC driver
+to make sure IPG clock is enabled before accessing registers, and passing
+MMDC IPG clock info from device tree MMDC node.
 
-> + * clk_rcg2_shared_ops for such RCGs.
-> + * Also, use CLK_SET_RATE_PARENT flag for the RCGs which
-> + * have non-fixed PLL as parent source and requires
+In order to NOT break old device tree, this patch set does NOT remove
+the CLK_IS_CRITIAL flag for MMDC0 IPG clock.
 
-Mention the PLL that isn't fixed?
+Anson Huang (7):
+  ARM: imx: add mmdc ipg clock operation for mmdc
+  clk: imx6ul: add mmdc1 ipg clock
+  clk: imx6sx: add mmdc1 ipg clock
+  clk: imx6sll: add mmdc1 ipg clock
+  clk: imx6sl: add mmdc ipg clocks
+  clk: imx6q: add mmdc0 ipg clock
+  ARM: dts: imx6: add mmdc ipg clock
 
-> + * reconfiguration of the PLL frequency.
-> + */
-> +static struct clk_rcg2 cam_cc_bps_clk_src =3D {
-> +       .cmd_rcgr =3D 0x600c,
-> +       .mnd_width =3D 0,
+ arch/arm/boot/dts/imx6qdl.dtsi            |  1 +
+ arch/arm/boot/dts/imx6sl.dtsi             |  1 +
+ arch/arm/boot/dts/imx6sll.dtsi            |  1 +
+ arch/arm/boot/dts/imx6sx.dtsi             |  1 +
+ arch/arm/boot/dts/imx6ul.dtsi             |  1 +
+ arch/arm/mach-imx/mmdc.c                  | 14 ++++++++++++++
+ drivers/clk/imx/clk-imx6q.c               |  1 +
+ drivers/clk/imx/clk-imx6sl.c              |  2 ++
+ drivers/clk/imx/clk-imx6sll.c             |  1 +
+ drivers/clk/imx/clk-imx6sx.c              |  1 +
+ drivers/clk/imx/clk-imx6ul.c              |  1 +
+ include/dt-bindings/clock/imx6qdl-clock.h |  3 ++-
+ include/dt-bindings/clock/imx6sl-clock.h  |  4 +++-
+ include/dt-bindings/clock/imx6sll-clock.h |  3 ++-
+ include/dt-bindings/clock/imx6sx-clock.h  |  3 ++-
+ include/dt-bindings/clock/imx6ul-clock.h  |  3 ++-
+ 16 files changed, 36 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
