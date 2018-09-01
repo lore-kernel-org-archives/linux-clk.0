@@ -1,52 +1,66 @@
-Return-Path: <yixin.zhu@linux.intel.com>
-Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
-To: Stephen Boyd <sboyd@kernel.org>, Songjun Wu <songjun.wu@linux.intel.com>,
- chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com, qi-ming.wu@intel.com
-Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
- <20180803030237.3366-3-songjun.wu@linux.intel.com>
- <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
- <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
- <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
- <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
- <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
-From: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
-Message-ID: <3fcc4615-eea8-8cb7-987f-c58ab9683e0c@linux.intel.com>
-Date: Mon, 3 Sep 2018 18:52:21 +0800
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ kbuild test robot <lkp@intel.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180831102123.GA2472@localhost.localdomain>
+Cc: kbuild-all@01.org, corbet@lwn.net, mturquette@baylibre.com,
+ linux@armlinux.org.uk, andrew.smirnov@gmail.com, robh@kernel.org,
+ sre@kernel.org, linux@roeck-us.net, sjhuang@iluvatar.ai,
+ mazziesaccount@gmail.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, heikki.haikola@fi.rohmeurope.com,
+ mikko.mutanen@fi.rohmeurope.com
+References: <0e6f19f99a4321d37472635c9210f6c13ac53147.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
+ <201808310820.GfPfChXp%fengguang.wu@intel.com>
+ <20180831102123.GA2472@localhost.localdomain>
+Message-ID: <153582920636.19113.4389105687778850598@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 2/2] clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC
+ clock
+Date: Sat, 01 Sep 2018 12:13:26 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
+Quoting Matti Vaittinen (2018-08-31 03:21:23)
+> Hello All,
+> =
 
-On 9/1/2018 1:13 AM, Stephen Boyd wrote:
-> Quoting Zhu, Yi Xin (2018-08-29 03:34:26)
->>>>>> +}
->>>>>> +
->>>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
->>>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
->>>> It provides CPU clock which is used in early boot stage.
->>>>
->>> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
->>> frequency? If the driver can be split into two pieces, one to handle the
->>> really early stuff that must be in place to get timers up and running
->>> and the other to register the rest of the clks that aren't critical from
->>> a regular platform driver it would be good. That's preferred model if
->>> something is super critical.
->>>
->> Just to make sure my approach is same as you think.
->>
->> In the driver, there's two clock registrations.
->>
->> - One through CLK_OF_DECLARE for early stage clocks.
->>
->> - The other via platform driver for the non-critical clocks.
-> You can use the same DT node for both parts, no need to split the node
-> into two and use syscon here.
->
-Thank you.
+> Just wanted to point out for the reviewers that this patch depends on
+> not yet accepted MFD/regulator patch. (struct/defines in
+> include/linux/mfd/rohm-bd718x7.h were changed)
+> https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohm=
+europe.com/
+> =
 
-Will use CLK_OF_DECLARE_DRIVER to use the same DT node.
+> On Fri, Aug 31, 2018 at 09:18:19AM +0800, kbuild test robot wrote:
+> > Hi Matti,
+> > =
+
+> > Thank you for the patch! Yet something to improve:
+> > =
+
+> > [auto build test ERROR on clk/clk-next]
+> > [also build test ERROR on v4.19-rc1 next-20180830]
+> > [if your patch is applied to the wrong git tree, please drop us a note =
+to help improve the system]
+> =
+
+> Thus this error was expected. What is the generally best way to work
+> when there is changes to more than one subsystem? With this approach
+> the patch set here won't compile until MFD part gets applied. But if
+> I use old definitions/structs here, then clk tree gets broken when
+> MFD/regulator part changes defines. I see only bad and worse options =3D)
+> Anyways, I guess sending this patch with new defines (and applying it
+> only after MFD) is still better than applying this with old defines and
+> breaking it when MFD changes. (Assuming all of the patches get applied
+> at some point).
+> =
+
+
+Does anything besides the clk driver need the defines that are in the
+header which are used in this file? If not, then it's better to put
+those defines in the C file for the clk driver so we don't have to hop
+between files and have merge dependencies. Also, the regmap could
+possibly by grabbed from the dev->parent pointer instead of passing it
+down through an mfd structure, allowing this driver to be more generic
+assuming it is always a child of some mfd device that has a regmap.
