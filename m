@@ -1,93 +1,45 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Fri, 3 Aug 2018 11:09:14 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, broonie@kernel.org,
-	lee.jones@linaro.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-	mturquette@baylibre.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v5 4/4] clk: bd71837: Add driver for BD71837 PMIC clock
-Message-ID: <20180803080914.GA20907@localhost.localdomain>
-References: <cover.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com>
- <152878945117.16708.12422348324182290971@swboyd.mtv.corp.google.com>
- <20180612082354.GG20078@localhost.localdomain>
- <152997029783.143105.16692843405899913246@swboyd.mtv.corp.google.com>
- <20180626081319.GA2118@localhost.localdomain>
- <20180731073023.GA2956@localhost.localdomain>
+Return-Path: <sboyd@kernel.org>
+From: sboyd@kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.19-rc1
+Date: Fri, 31 Aug 2018 19:29:07 -0700
+Message-Id: <20180901022907.195811-1-sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180731073023.GA2956@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Jul 31, 2018 at 11:28:58AM +0300, Matti Vaittinen wrote:
-> On Tue, Jun 26, 2018 at 11:13:19AM +0300, Matti Vaittinen wrote:
-> > On Mon, Jun 25, 2018 at 04:44:57PM -0700, Stephen Boyd wrote:
-> > > Quoting Matti Vaittinen (2018-06-12 01:23:54)
-> > > > On Tue, Jun 12, 2018 at 12:44:11AM -0700, Stephen Boyd wrote:
-> > > > > Quoting Matti Vaittinen (2018-06-04 06:19:13)
+From: Stephen Boyd <sboyd@kernel.org>
 
-[snip]
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-> 
-> > 3. Create devm_of_clk_add_hw_provider_w_node() which does something
-> 
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-After giving this second thought - I think there is limited amount of
-use cases where other than own or parent nodes should be used. Actually,
-the MFD node being parent is pretty much only use case I can think of
-where something else but own node should be used. Hence function like
-suggested devm_of_clk_add_hw_provider_w_node might invite thinking of
-clever hacks... So, perhaps introducing
-devm_of_clk_add_hw_provider_parent() (see idea below) would be option to
-consider? I feel the bd71837 driver is not only case where MFD is being
-parent which has the clock stuff in DT.
+are available in the Git repository at:
 
-static int __devm_of_clk_add_hw_provider(struct device *dev,
-	struct clk_hw *(*get)(struct of_phandle_args *clkspec, void *data),
-	struct device_node *of_node, void *data)
-{
-	struct device_node **ptr;
-	int ret;
-	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
-			   GFP_KERNEL);
-	if (!ptr)
-		return -ENOMEM;
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-	*ptr = of_node;
-	ret = of_clk_add_hw_provider(of_node, get, data);
-	if (!ret)
-		devres_add(dev, ptr);
-	else
-		devres_free(ptr);
-	return ret;
-}
+for you to fetch changes up to bded6c03e398dc6e862dc8301fb9a60175740653:
 
-int devm_of_clk_add_hw_provider(struct device *dev,
-	struct clk_hw *(*get)(struct of_phandle_args *clkspec, void *data),
-	void *data)
-{
-	return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
-}
-EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
+  clk: x86: Set default parent to 48Mhz (2018-08-30 14:47:41 -0700)
 
-int devm_of_clk_add_hw_provider_parent(struct device *dev,
-	struct clk_hw *(*get)(struct of_phandle_args *clkspec, void *data),
-	void *data)
-{
-	return __devm_of_clk_add_hw_provider(*dev, get, dev->parent->of_node,
-					     data);
-}
-EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider_parent);
+----------------------------------------------------------------
+Two small fixes, one for the x86 Stoney SoC to get a more accurate clk
+frequency and the other to fix a bad allocation in the Nuvoton NPCM7XX
+driver.
 
-> just a friendly reminder, what's your opinion on adding this kind of
-> function (devm_of_clk_add_hw_provider_w_node)? or solutions 1/2? And are
-> these options safe what comes to reference counting of of_nodes?
+----------------------------------------------------------------
+Akshu Agrawal (1):
+      clk: x86: Set default parent to 48Mhz
 
-I thik the reference counting should not be a problem when use is
-limited to (MFD) parent device nodes, right?
+Gustavo A. R. Silva (1):
+      clk: npcm7xx: fix memory allocation
 
-Best regards
-    Matti Vaittinen
+ drivers/clk/clk-npcm7xx.c | 4 ++--
+ drivers/clk/x86/clk-st.c  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+-- 
+Sent by a computer through tubes
