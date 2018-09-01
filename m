@@ -1,111 +1,177 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45081 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbeIDJF4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:05:56 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 10/11] drm/sun4i: Add support for HDMI voltage regulator
-Date: Tue,  4 Sep 2018 12:40:52 +0800
-Message-Id: <20180904044053.15425-11-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 1/2] clk: meson: meson8b: register the clock controller early
+Date: Sat,  1 Sep 2018 18:21:45 +0200
+Message-Id: <20180901162146.5656-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
+References: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+Until now only the reset controller (part of the clock controller
+register space) was registered early in the boot process, while the
+clock controller itself was registered later on.
+However, some parts of the SoC are initialized early in the boot process,
+such as the SRAM and the TWD timer. The bootloader already enables these
+clocks so we didn't see any issues so far.
 
-Some boards have HDMI VCC pin connected to voltage regulator which may
-not be turned on by default.
+Register the clock controller early so other drivers (such as the SRAM
+and TWD timer) can use the clocks early in the boot process. Now that we
+don't have a "split" initialization process anymore we can also switch
+from CLK_OF_DECLARE_DRIVER (which allows registering a part of the clock
+controller early, an another part as platform device) to CLK_OF_DECLARE
+(which only supports early initialization).
 
-Add support for such boards by adding voltage regulator handling code to
-HDMI driver.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-[Icenowy: change supply name to "hvcc"]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
-Changes in v4:
-- Rename the supply name to "hvcc".
-Changes in v3.1:
-- New patch. (Replaced "drm: sun4i: add support for HVCC regulator
-  for DWC HDMI glue" by Icenowy.)
+ drivers/clk/meson/meson8b.c | 97 +++++++++++++------------------------
+ 1 file changed, 34 insertions(+), 63 deletions(-)
 
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 17 ++++++++++++++++-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
- 2 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 31875b636434..ed2983770e9c 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -125,10 +125,22 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 		return PTR_ERR(hdmi->clk_tmds);
- 	}
- 
-+	hdmi->regulator = devm_regulator_get(dev, "hvcc");
-+	if (IS_ERR(hdmi->regulator)) {
-+		dev_err(dev, "Couldn't get regulator\n");
-+		return PTR_ERR(hdmi->regulator);
-+	}
-+
-+	ret = regulator_enable(hdmi->regulator);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable regulator\n");
-+		return ret;
-+	}
-+
- 	ret = reset_control_deassert(hdmi->rst_ctrl);
- 	if (ret) {
- 		dev_err(dev, "Could not deassert ctrl reset control\n");
--		return ret;
-+		goto err_disable_regulator;
- 	}
- 
- 	ret = clk_prepare_enable(hdmi->clk_tmds);
-@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	clk_disable_unprepare(hdmi->clk_tmds);
- err_assert_ctrl_reset:
- 	reset_control_assert(hdmi->rst_ctrl);
-+err_disable_regulator:
-+	regulator_disable(hdmi->regulator);
- 
- 	return ret;
- }
-@@ -196,6 +210,7 @@ static void sun8i_dw_hdmi_unbind(struct device *dev, struct device *master,
- 	sun8i_hdmi_phy_remove(hdmi);
- 	clk_disable_unprepare(hdmi->clk_tmds);
- 	reset_control_assert(hdmi->rst_ctrl);
-+	regulator_disable(hdmi->regulator);
- }
- 
- static const struct component_ops sun8i_dw_hdmi_ops = {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index aadbe0a10b0c..7fdc1ecd2892 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -10,6 +10,7 @@
- #include <drm/drm_encoder.h>
- #include <linux/clk.h>
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 045d72e408f8..abdcfe54f6a0 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/init.h>
+ #include <linux/of_address.h>
+-#include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
  #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/reset.h>
+@@ -22,8 +21,6 @@
  
- #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
-@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
- 	struct drm_encoder		encoder;
- 	struct sun8i_hdmi_phy		*phy;
- 	struct dw_hdmi_plat_data	plat_data;
-+	struct regulator		*regulator;
- 	struct reset_control		*rst_ctrl;
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+-static void __iomem *clk_base;
+-
+ struct meson8b_clk_reset {
+ 	struct reset_controller_dev reset;
+ 	void __iomem *base;
+@@ -1123,62 +1120,12 @@ static const struct regmap_config clkc_regmap_config = {
+ 	.reg_stride     = 4,
  };
  
+-static int meson8b_clkc_probe(struct platform_device *pdev)
+-{
+-	int ret, i;
+-	struct device *dev = &pdev->dev;
+-	struct regmap *map;
+-
+-	if (!clk_base)
+-		return -ENXIO;
+-
+-	map = devm_regmap_init_mmio(dev, clk_base, &clkc_regmap_config);
+-	if (IS_ERR(map))
+-		return PTR_ERR(map);
+-
+-	/* Populate regmap for the regmap backed clocks */
+-	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
+-		meson8b_clk_regmaps[i]->map = map;
+-
+-	/*
+-	 * register all clks
+-	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
+-	 */
+-	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
+-		/* array might be sparse */
+-		if (!meson8b_hw_onecell_data.hws[i])
+-			continue;
+-
+-		ret = devm_clk_hw_register(dev, meson8b_hw_onecell_data.hws[i]);
+-		if (ret)
+-			return ret;
+-	}
+-
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-					   &meson8b_hw_onecell_data);
+-}
+-
+-static const struct of_device_id meson8b_clkc_match_table[] = {
+-	{ .compatible = "amlogic,meson8-clkc" },
+-	{ .compatible = "amlogic,meson8b-clkc" },
+-	{ .compatible = "amlogic,meson8m2-clkc" },
+-	{ }
+-};
+-
+-static struct platform_driver meson8b_driver = {
+-	.probe		= meson8b_clkc_probe,
+-	.driver		= {
+-		.name	= "meson8b-clkc",
+-		.of_match_table = meson8b_clkc_match_table,
+-	},
+-};
+-
+-builtin_platform_driver(meson8b_driver);
+-
+-static void __init meson8b_clkc_reset_init(struct device_node *np)
++static void __init meson8b_clkc_init(struct device_node *np)
+ {
+ 	struct meson8b_clk_reset *rstc;
+-	int ret;
++	void __iomem *clk_base;
++	struct regmap *map;
++	int i, ret;
+ 
+ 	/* Generic clocks, PLLs and some of the reset-bits */
+ 	clk_base = of_iomap(np, 1);
+@@ -1187,6 +1134,10 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
+ 		return;
+ 	}
+ 
++	map = regmap_init_mmio(NULL, clk_base, &clkc_regmap_config);
++	if (IS_ERR(map))
++		return;
++
+ 	rstc = kzalloc(sizeof(*rstc), GFP_KERNEL);
+ 	if (!rstc)
+ 		return;
+@@ -1202,11 +1153,31 @@ static void __init meson8b_clkc_reset_init(struct device_node *np)
+ 		       __func__, ret);
+ 		return;
+ 	}
++
++	/* Populate regmap for the regmap backed clocks */
++	for (i = 0; i < ARRAY_SIZE(meson8b_clk_regmaps); i++)
++		meson8b_clk_regmaps[i]->map = map;
++
++	/*
++	 * register all clks
++	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
++	 */
++	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
++		/* array might be sparse */
++		if (!meson8b_hw_onecell_data.hws[i])
++			continue;
++
++		ret = clk_hw_register(NULL, meson8b_hw_onecell_data.hws[i]);
++		if (ret)
++			return;
++	}
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
++				     &meson8b_hw_onecell_data);
++	if (ret)
++		pr_err("%s: failed to register clock provider\n", __func__);
+ }
+ 
+-CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
+-		      meson8b_clkc_reset_init);
+-CLK_OF_DECLARE_DRIVER(meson8b_clkc, "amlogic,meson8b-clkc",
+-		      meson8b_clkc_reset_init);
+-CLK_OF_DECLARE_DRIVER(meson8m2_clkc, "amlogic,meson8m2-clkc",
+-		      meson8b_clkc_reset_init);
++CLK_OF_DECLARE(meson8_clkc, "amlogic,meson8-clkc", meson8b_clkc_init);
++CLK_OF_DECLARE(meson8b_clkc, "amlogic,meson8b-clkc", meson8b_clkc_init);
++CLK_OF_DECLARE(meson8m2_clkc, "amlogic,meson8m2-clkc", meson8b_clkc_init);
 -- 
 2.18.0
