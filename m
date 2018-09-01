@@ -1,74 +1,65 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:34760 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeIELtn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:49:43 -0400
-Date: Wed, 5 Sep 2018 09:20:51 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 03/11] dt-bindings: display: Add compatible for A64
- DE2 display pipeline
-Message-ID: <20180905072051.ac7nfa4f65gcqaf7@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-4-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="77l3kc73q5njcdnm"
-In-Reply-To: <20180904044053.15425-4-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/2] meson8b: register the clock controller early
+Date: Sat,  1 Sep 2018 18:21:44 +0200
+Message-Id: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Some parts of the SoC are initialized early in the boot process, such
+as the SRAM and the TWD timer. This means that the corresponding
+drivers need to access the clock controller early as well.
 
---77l3kc73q5njcdnm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Before this series the clock controller was registered as platform
+driver, which is too late for the TWD timer (just as an example).
+The reset controller (built into the clock controller driver) was
+already registered early, basically for the same reason (the reset
+lines are used to start the secondary CPUs, which is done very early
+in the boot process).
 
-On Tue, Sep 04, 2018 at 12:40:45PM +0800, Icenowy Zheng wrote:
-> From: Jagan Teki <jagan@amarulasolutions.com>
->=20
-> Allwinner A64 has a DE2 display pipeline. The TCONs are similar to the
-> ones in A83T, but the mixers are new (similar to the later R40 SoC).
->=20
-> This patch adds dt-binding documentation for A64 DE2 display pipeline.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> [Icenowy: Refactor and also cover TCON1]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Register the clock controller early enough so we're able to use the
+TWD timer (as we need to pass a clock which is provided by this
+clock controller) in a second step.
 
-Applied, thanks!
-Maxime
+NOTE: Neil suggested in v1 to switch to one of core_initcall,
+postcore_initcall, subsys_initcall but I couldn't find any driver
+that I could use as "reference" which registers it's clock controller
+before the device model (platform_device) is ready. this is why I'm
+still using CLK_OF_DECLARE - but I'm open to suggestions.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The second patch simplifies the reset controller (built into the clock
+controller driver) because the regmap is already available early and
+thus can be used by the reset controller driver as well.
 
---77l3kc73q5njcdnm
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Changes since v1 at [0]:
+- switch from CLK_OF_DECLARE_DRIVER to CLK_OF_DECLARE because with
+  this series there is only one initialization function for the clock
+  controller driver (unlike before: where the reset controller was
+  registered early and the clock controller was registered as platform
+  device)
+- rebased on top of clk-meson, commit:
+  684b97b13b175a ("clk: meson-axg: pcie: drop the mpll3 clock parent")
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg9IACgkQ0rTAlCFN
-r3Sagg/9G1DUgxGja5yNzn7SLh5g9IwVFLOHdtsfx1EYCGhYnh6yLMa+W4wU9OqK
-d9VoyRBU99RYbLFpj7ngYfdVHZ8Zh5ybr51WzLq2Jk51YkG1kt3cxC4GIJClUnMn
-auNj8fiFcCtIisaEcUatbD8Bv0QK4GWHdMM95U/p5D/0SUKHxeowvYxZvQ9OjOEm
-aVci6TVa85IWb2vn8oDcZLjRHVUnghYtS1UpkOfjcckpuk54+1dcy7FySRKOQ/Js
-jzTKEhbp5VqfYU/ErViab+ITJKh+IdIc2ebYBOKmt0CfUjCrUPIiBs2Qq1Lu3cKA
-7NHj+Y8Ayc99gi8C2QGyZnliC3SRsKzSuO6ThoADKzZHXRieXAZJYPJ9nrNeXe+o
-441fWgqaes+WZC4Ahxm/IBxAnk1IUhWDt2TpLsNfdMqcqv1TsS6UwC4MsSoqzJpz
-e7cPMP7IX1uhAjM3TGYsllqnQghmZ8dZgt84Ih4taQto7f9gG64fHoCpdl16u2BL
-gb5KEQWRqJBaOMMKuz+gPclfona4iEmEmwZKHS1iBPXDoGGBc3Nt2kMa2dMJhESt
-cGnHUXCw7nX2RlIGUfLHvcblKlKm+hRI3T50ajp/jsZcLH2JVV7LXLbCwM2QnJkD
-EKivM1K0dIP5QyIh9PdaJEGd891Ky+jdNowvVGTlM1lI3fqd7uQ=
-=1Ecl
------END PGP SIGNATURE-----
 
---77l3kc73q5njcdnm--
+[0] https://patchwork.kernel.org/cover/10538971/
+
+
+Martin Blumenstingl (2):
+  clk: meson: meson8b: register the clock controller early
+  clk: meson: meson8b: use the regmap in the internal reset controller
+
+ drivers/clk/meson/meson8b.c | 110 +++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 70 deletions(-)
+
+-- 
+2.18.0
