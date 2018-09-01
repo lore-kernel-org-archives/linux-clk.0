@@ -1,40 +1,79 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 12 Sep 2018 09:11:19 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 6/6] ARM: dts: imx6: RIoTboard provide standby on
- power off option
-Message-ID: <20180912011118.GC28469@dragon>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-7-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180802103425.3053-7-o.rempel@pengutronix.de>
+Return-Path: <martin.blumenstingl@googlemail.com>
+Return-Path: <martin.blumenstingl@googlemail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: narmstrong@baylibre.com,
+	jbrunet@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	carlo@caione.org,
+	khilman@baylibre.com,
+	linux-clk@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 2/2] clk: meson: meson8b: use the regmap in the internal reset controller
+Date: Sat,  1 Sep 2018 18:21:46 +0200
+Message-Id: <20180901162146.5656-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
+References: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 02, 2018 at 12:34:25PM +0200, Oleksij Rempel wrote:
-> This board, as well as some other boards with i.MX6 and a PMIC, uses a
-> "PMIC_STBY_REQ" line to notify the PMIC about a state change.
-> The PMIC is programmed for a specific state change before triggering the
-> line.
-> In this case, PMIC_STBY_REQ can be used for stand by, sleep
-> and power off modes.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+For now the reset controller was using raw register access because the
+early init did not initialize the regmap. However, now that clocks are
+initialized early we can simply use the regmap also for the reset
+controller.
+No functional changes.
 
-Applied, thanks.
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index abdcfe54f6a0..ed1de34fee0e 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -23,7 +23,7 @@ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+ struct meson8b_clk_reset {
+ 	struct reset_controller_dev reset;
+-	void __iomem *base;
++	struct regmap *regmap;
+ };
+ 
+ static const struct pll_params_table sys_pll_params_table[] = {
+@@ -1076,7 +1076,6 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
+ 		container_of(rcdev, struct meson8b_clk_reset, reset);
+ 	unsigned long flags;
+ 	const struct meson8b_clk_reset_line *reset;
+-	u32 val;
+ 
+ 	if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
+ 		return -EINVAL;
+@@ -1085,12 +1084,12 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
+ 
+ 	spin_lock_irqsave(&meson_clk_lock, flags);
+ 
+-	val = readl(meson8b_clk_reset->base + reset->reg);
+ 	if (assert)
+-		val |= BIT(reset->bit_idx);
++		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
++				   BIT(reset->bit_idx), BIT(reset->bit_idx));
+ 	else
+-		val &= ~BIT(reset->bit_idx);
+-	writel(val, meson8b_clk_reset->base + reset->reg);
++		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
++				   BIT(reset->bit_idx), 0);
+ 
+ 	spin_unlock_irqrestore(&meson_clk_lock, flags);
+ 
+@@ -1143,7 +1142,7 @@ static void __init meson8b_clkc_init(struct device_node *np)
+ 		return;
+ 
+ 	/* Reset Controller */
+-	rstc->base = clk_base;
++	rstc->regmap = map;
+ 	rstc->reset.ops = &meson8b_clk_reset_ops;
+ 	rstc->reset.nr_resets = ARRAY_SIZE(meson8b_clk_reset_bits);
+ 	rstc->reset.of_node = np;
+-- 
+2.18.0
