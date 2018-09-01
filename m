@@ -1,267 +1,177 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <lkp@intel.com>
+Date: Sat, 1 Sep 2018 19:43:15 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: kbuild-all@01.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Simon Horman <horms@verge.net.au>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Phil Edworthy <phil.edworthy@renesas.com>
+Subject: Re: [PATCH v5 2/2] clk: Add functions to get optional clocks
+Message-ID: <201809011734.dCcCNJQY%fengguang.wu@intel.com>
+References: <1535724443-21150-3-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-References: <20180921152054.117774-1-chris.brandt@renesas.com> <20180921152054.117774-2-chris.brandt@renesas.com>
-In-Reply-To: <20180921152054.117774-2-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Sep 2018 11:05:40 +0200
-Message-ID: <CAMuHMdUWFp9nBR8EQtADHePPqGQZ-3bHrANQULz-QnXJLQy2fA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="45Z9DzgjV8m4Oswq"
+In-Reply-To: <1535724443-21150-3-git-send-email-phil.edworthy@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
 
-On Fri, Sep 21, 2018 at 5:21 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add support for SoCs that need to register core and module clocks early in
-> order to use OF drivers that exclusively use macros such as
-> TIMER_OF_DECLARE.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for your patch!
+Hi Phil,
 
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -127,6 +127,7 @@ struct cpg_mssr_priv {
->         struct device *dev;
->         void __iomem *base;
->         spinlock_t rmw_lock;
-> +       struct device_node *np;
->
->         struct clk **clks;
->         unsigned int num_core_clks;
-> @@ -141,6 +142,7 @@ struct cpg_mssr_priv {
->         } smstpcr_saved[ARRAY_SIZE(smstpcr)];
->  };
->
-> +struct cpg_mssr_priv *early_priv;
+Thank you for the patch! Yet something to improve:
 
-static
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on v4.19-rc1 next-20180831]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Just call the pointer cpg_mssr_priv, as you're gonna need it in both cases
-(see below)?
+url:    https://github.com/0day-ci/linux/commits/Phil-Edworthy/clk-Add-functions-to-get-optional-clocks/20180901-154009
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: m68k-m5475evb_defconfig (attached as .config)
+compiler: m68k-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=7.2.0 make.cross ARCH=m68k 
 
->
->  /**
->   * struct mstp_clock - MSTP gating clock
-> @@ -316,7 +318,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
->
->         switch (core->type) {
->         case CLK_TYPE_IN:
-> -               clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-> +               clk = of_clk_get_by_name(priv->np, core->name);
->                 break;
->
->         case CLK_TYPE_FF:
-> @@ -877,42 +879,49 @@ static const struct dev_pm_ops cpg_mssr_pm = {
->  #define DEV_PM_OPS     NULL
->  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
->
-> -static int __init cpg_mssr_probe(struct platform_device *pdev)
-> +static int cpg_mssr_common_init(struct device *dev, struct device_node *np,
+All errors (new ones prefixed by >>):
 
-__init
+   drivers/clk/clk-devres.o: In function `__devm_clk_get':
+>> clk-devres.c:(.text+0xb6): undefined reference to `clk_get_optional'
 
-> +                               const struct cpg_mssr_info *info)
->  {
-> -       struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
-> -       const struct cpg_mssr_info *info;
->         struct cpg_mssr_priv *priv;
->         unsigned int nclks, i;
-> -       struct resource *res;
-> -       struct clk **clks;
-> +       struct clk **clks = NULL;
->         int error;
-> +       bool early_init = dev ? false : true;
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-I think this flag can be removed (see below).
+--45Z9DzgjV8m4Oswq
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
->
-> -       info = of_device_get_match_data(dev);
->         if (info->init) {
->                 error = info->init(dev);
->                 if (error)
->                         return error;
->         }
->
-> -       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
->
-> +       /* np is saved because dev->of_node doesn't exists during early init */
+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
 
-I don't think this comment is needed...
-
-> +       priv->np = np;
-> +
-
-... nor this blank line.
-
->         priv->dev = dev;
->         spin_lock_init(&priv->rmw_lock);
->
-> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       priv->base = devm_ioremap_resource(dev, res);
-> -       if (IS_ERR(priv->base))
-> -               return PTR_ERR(priv->base);
-> +       priv->base = of_iomap(np, 0);
-> +       if (IS_ERR(priv->base)) {
-
-of_iomap() returns NULL on failure, not an error code.
-
-> +               error = PTR_ERR(priv->base);
-
-error = -ENOMEM;
-
-> +               goto out_err;
-> +       }
->
->         nclks = info->num_total_core_clks + info->num_hw_mod_clks;
-> -       clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
-> -       if (!clks)
-> -               return -ENOMEM;
-> +       clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
-> +       if (!clks) {
-> +               error = -ENOMEM;
-> +               goto out_err;
-> +       }
-> +
-> +       if (early_init)
-> +               early_priv = priv;
-
-cpg_mssr_probe() needs access to the pointer, too, so you should always
-save it.
-
-> +       else
-> +               dev_set_drvdata(dev, priv);
-
-dev_set_drvdata() should be called on SoCs with early clocks, too, so that
-should be done in cpg_mssr_probe() instead.
-
->
-> -       dev_set_drvdata(dev, priv);
->         priv->clks = clks;
->         priv->num_core_clks = info->num_total_core_clks;
->         priv->num_mod_clks = info->num_hw_mod_clks;
-> @@ -923,16 +932,71 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
->         for (i = 0; i < nclks; i++)
->                 clks[i] = ERR_PTR(-ENOENT);
->
-> +       error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
-> +       if (error)
-> +               goto out_err;
-> +
-> +       return 0;
-> +
-> +out_err:
-> +       kfree(clks);
-> +       if (priv->base)
-> +               iounmap(priv->base);
-> +       kfree(priv);
-> +
-> +       return error;
-> +}
-> +
-> +void __init cpg_mssr_early_init(struct device_node *np,
-> +                               const struct cpg_mssr_info *info)
-> +{
-> +       int error;
-> +       int i;
-> +
-> +       error = cpg_mssr_common_init(NULL, np, info);
-> +       if (error)
-> +               return;
-> +
-> +       for (i = 0; i < info->num_early_core_clks; i++)
-> +               cpg_mssr_register_core_clk(&info->early_core_clks[i], info,
-> +                                          early_priv);
-> +
-> +       for (i = 0; i < info->num_early_mod_clks; i++)
-> +               cpg_mssr_register_mod_clk(&info->early_mod_clks[i], info,
-> +                                         early_priv);
-> +
-> +}
-> +
-> +static int __init cpg_mssr_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       const struct cpg_mssr_info *info;
-> +       struct cpg_mssr_priv *priv;
-> +       unsigned int i;
-> +       int error;
-> +
-> +       info = of_device_get_match_data(dev);
-> +
-> +       if (early_priv) {
-> +               priv = early_priv;
-> +               priv->dev = &pdev->dev;
-> +       } else {
-> +               error = cpg_mssr_common_init(dev, dev->of_node, info);
-
-Oops, priv is not set => BOOM.
-I guess you have no other hardware using the renesas-cpg-mssr driver?
-You can probably still test this case on RZ/A2 without patch 2 (or with the
-OF_CLK_DECLARE_DRIVER() line commented out), and with the OSTM timer hack
-you posted before.
-
-> +       }
-> +
-> +       if (error)
-> +               return error;
-> +
-> +       if (!early_priv)
-> +               dev_set_drvdata(dev, priv);
-
-This should be done regardless.
-
-For now it's fine to not move the call to cpg_mssr_add_clk_domain() from
-cpg_mssr_probe() to cpg_mssr_common_init().  If/when the timer subsystem
-receives some early platform_device support, this may have to be revisited.
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -119,12 +119,16 @@ struct cpg_mssr_info {
->         unsigned int num_core_clks;
->         unsigned int last_dt_core_clk;
->         unsigned int num_total_core_clks;
-> +       const struct cpg_core_clk *early_core_clks;
-> +       unsigned int num_early_core_clks;
-
-I'd put the early clocks first.
-Or perhaps a separate /* Early Clocks */ block for both early core and
-early module clocks at the top of struct cpg_mssr_info, so it's very clear
-what applies to early clocks?
-
->         bool stbyctrl;
->
->         /* Module Clocks */
->         const struct mssr_mod_clk *mod_clks;
->         unsigned int num_mod_clks;
->         unsigned int num_hw_mod_clks;
-> +       const struct mssr_mod_clk *early_mod_clks;
-> +       unsigned int num_early_mod_clks;
-
-Likewise.
-
->
->         /* Critical Module Clocks that should not be disabled */
->         const unsigned int *crit_mod_clks;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--45Z9DzgjV8m4Oswq--
