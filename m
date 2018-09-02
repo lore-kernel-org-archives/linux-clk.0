@@ -1,65 +1,70 @@
-Return-Path: <lkundrak@v3.sk>
-From: Lubomir Rintel <lkundrak@v3.sk>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
 	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 4/8] clk: mmp2: add SP clock
-Date: Mon, 10 Sep 2018 13:26:50 +0200
-Message-Id: <20180910112654.42061-5-lkundrak@v3.sk>
-In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 09/27] dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
+Date: Sun,  2 Sep 2018 09:26:25 +0200
+Message-Id: <20180902072643.4917-10-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-The "security processor", sometimes referred to as "wireless trusted
-module" or "generic encrypt unit" is a low-power core present on MMP2,
-that has nothing to do with security, wireless, trust or encryption.
+This commit adds compatibles used in H6 display pipeline, namely for
+display engine, mixer and TV TCON.
 
-On an OLPC machine it runs CForth and serves as a keyboard controller:
-http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.fth
+H6 display engine is somewhat similar to R40, just less TCONs and
+mixer support more features.
 
-The register address was obtained from the OLPC kernel, since the
-datasheet seems to be the Marvell's most important business secret.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 0fc75c395957..1da50f827a15 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -53,6 +53,7 @@
- #define APMU_DISP1	0x110
- #define APMU_CCIC0	0x50
- #define APMU_CCIC1	0xf4
-+#define APMU_SP		0x68
- #define MPMU_UART_PLL	0x14
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index f8773ecb7525..dec2f8a6da9c 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -151,6 +151,7 @@ Required properties:
+    * allwinner,sun8i-v3s-tcon
+    * allwinner,sun9i-a80-tcon-lcd
+    * allwinner,sun9i-a80-tcon-tv
++   * allwinner,sun50i-h6-tcon-tv, allwinner,sun8i-r40-tcon-tv
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON.
+@@ -370,6 +371,7 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
++    * allwinner,sun50i-h6-de3-mixer-0
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
+@@ -403,9 +405,10 @@ Required properties:
+     * allwinner,sun8i-r40-display-engine
+     * allwinner,sun8i-v3s-display-engine
+     * allwinner,sun9i-a80-display-engine
++    * allwinner,sun50i-h6-display-engine
  
- struct mmp2_clk_unit {
-@@ -209,6 +210,8 @@ static struct mmp_clk_mix_config ccic1_mix_config = {
- 	.reg_info = DEFINE_MIX_REG_INFO(4, 16, 2, 6, 32),
- };
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends (DE 1.0) or mixers (DE 2.0) available.
++    frontends (DE 1.0) or mixers (DE 2.0/3.0) available.
  
-+static DEFINE_SPINLOCK(sp_lock);
-+
- static struct mmp_param_mux_clk apmu_mux_clks[] = {
- 	{MMP2_CLK_DISP0_MUX, "disp0_mux", disp_parent_names, ARRAY_SIZE(disp_parent_names), CLK_SET_RATE_PARENT, APMU_DISP0, 6, 2, 0, &disp0_lock},
- 	{MMP2_CLK_DISP1_MUX, "disp1_mux", disp_parent_names, ARRAY_SIZE(disp_parent_names), CLK_SET_RATE_PARENT, APMU_DISP1, 6, 2, 0, &disp1_lock},
-@@ -239,6 +242,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
- 	{MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
- 	{MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
- 	{MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
-+	{MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
- };
+ Example:
  
- static void mmp2_axi_periph_clk_init(struct mmp2_clk_unit *pxa_unit)
 -- 
-2.17.1
+2.18.0
