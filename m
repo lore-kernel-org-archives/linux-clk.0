@@ -1,45 +1,125 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH 5/6] arm64: marvell: enable the  Armada 7K/8K CPU clk driver
-Date: Sat, 22 Sep 2018 20:17:08 +0200
-Message-Id: <20180922181709.13007-6-gregory.clement@bootlin.com>
-In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
-MIME-Version: 1.0
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 04/27] clk: sunxi-ng: Adjust MP clock parent rate when allowed
+Date: Sun,  2 Sep 2018 09:26:20 +0200
+Message-Id: <20180902072643.4917-5-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit makes sure the driver for the Armada 7K/8K CPU clock is
-enabled.
+Currently MP clocks don't consider adjusting parent rate even if they
+are allowed to do so. Such behaviour considerably lowers amount of
+possible rates, which is very inconvenient when such clock is used for
+pixel clock, for example.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+In order to improve the situation, adjusting parent rate is considered
+when allowed.
+
+This code is inspired by clk_divider_bestdiv() function, which does
+basically the same thing for different clock type.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu_mp.c | 64 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 393d2b524284..cf6888ecd9f4 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -119,6 +119,7 @@ config ARCH_MESON
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
+index 5d0af4051737..0357349eb767 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -40,6 +40,61 @@ static void ccu_mp_find_best(unsigned long parent, unsigned long rate,
+ 	*p = best_p;
+ }
  
- config ARCH_MVEBU
- 	bool "Marvell EBU SoC Family"
-+	select ARMADA_AP_CPU_CLK
- 	select ARMADA_AP806_SYSCON
- 	select ARMADA_CP110_SYSCON
- 	select ARMADA_37XX_CLK
++static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw *hw,
++						      unsigned long *parent,
++						      unsigned long rate,
++						      unsigned int max_m,
++						      unsigned int max_p)
++{
++	unsigned long parent_rate_saved;
++	unsigned long parent_rate, now;
++	unsigned long best_rate = 0;
++	unsigned int _m, _p, div;
++	unsigned long maxdiv;
++
++	parent_rate_saved = *parent;
++
++	/*
++	 * The maximum divider we can use without overflowing
++	 * unsigned long in rate * m * p below
++	 */
++	maxdiv = max_m * max_p;
++	maxdiv = min(ULONG_MAX / rate, maxdiv);
++
++	for (_p = 1; _p <= max_p; _p <<= 1) {
++		for (_m = 1; _m <= max_m; _m++) {
++			div = _m * _p;
++
++			if (div > maxdiv)
++				break;
++
++			if (rate * div == parent_rate_saved) {
++				/*
++				 * It's the most ideal case if the requested
++				 * rate can be divided from parent clock without
++				 * needing to change parent rate, so return the
++				 * divider immediately.
++				 */
++				*parent = parent_rate_saved;
++				return rate;
++			}
++
++			parent_rate = clk_hw_round_rate(hw, rate * div);
++			now = parent_rate / div;
++
++			if (now <= rate && now > best_rate) {
++				best_rate = now;
++				*parent = parent_rate;
++
++				if (now == rate)
++					return rate;
++			}
++		}
++	}
++
++	return best_rate;
++}
++
+ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 				       struct clk_hw *hw,
+ 				       unsigned long *parent_rate,
+@@ -56,8 +111,13 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 	max_m = cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+ 
+-	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
+-	rate = *parent_rate / p / m;
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
++		rate = *parent_rate / p / m;
++	} else {
++		rate = ccu_mp_find_best_with_parent_adj(hw, parent_rate, rate,
++							max_m, max_p);
++	}
+ 
+ 	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= cmp->fixed_post_div;
 -- 
-2.19.0
+2.18.0
