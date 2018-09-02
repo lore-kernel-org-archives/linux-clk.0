@@ -1,221 +1,129 @@
-Return-Path: <edgar.righi@lsitec.org.br>
-MIME-Version: 1.0
-From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date: Tue, 4 Sep 2018 12:38:24 -0300
-Message-ID: <CADHB5bAYs4QjhYVj--Vd5vVP0h5o8161St_=Yj2HfhFAR4U3eQ@mail.gmail.com>
-Subject: [PATCH v2 02/03] arm: dts: actions: Enable clock controller for
- Actions Semi S500 SoC
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
-	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
-	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
-	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
-	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
-	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
-	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 23/27] drm: sun4i: add quirks for TCON TOP
+Date: Sun,  2 Sep 2018 09:26:39 +0200
+Message-Id: <20180902072643.4917-24-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable clock controller for Actions Semi S500 SoC on owl-s500 device tree.
-Set UART clock reference from CMU for Actions Semi S500 SoC.
-Tested on a Lemaker Guitar board.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
 
+Add quirks support for TCON TOP.
 
-diff --git a/arch/arm/boot/dts/owl-s500-cubieboard6.dts
-b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
-index 7c96c59b610d..4a91a29d2f29 100644
---- a/arch/arm/boot/dts/owl-s500-cubieboard6.dts
-+++ b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
-@@ -3,6 +3,7 @@
-  * Cubietech CubieBoard6
-  *
-  * Copyright (c) 2017 Andreas F=C3=A4rber
-+ * Copyright (c) 2018 Edgar Bernardi Righi
-  */
+Currently the presence of TCON_TV1 and DSI is controlled via the quirks
+structure.
 
- /dts-v1/;
-@@ -25,12 +26,6 @@
-         device_type =3D "memory";
-         reg =3D <0x0 0x80000000>;
-     };
--
--    uart3_clk: uart3-clk {
--        compatible =3D "fixed-clock";
--        clock-frequency =3D <921600>;
--        #clock-cells =3D <0>;
--    };
- };
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 9 deletions(-)
 
- &timer {
-@@ -39,5 +34,4 @@
-
- &uart3 {
-     status =3D "okay";
--    clocks =3D <&uart3_clk>;
- };
-diff --git a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
-b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
-index e610d49395d2..1a980ca6a426 100644
---- a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
-+++ b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
- /*
-  * Copyright (c) 2016-2017 Andreas F=C3=A4rber
-+ * Copyright (c) 2018-2018 Edgar Bernardi Righi
-  */
-
- /dts-v1/;
-@@ -18,15 +19,8 @@
-     chosen {
-         stdout-path =3D "serial3:115200n8";
-     };
--
--    uart3_clk: uart3-clk {
--        compatible =3D "fixed-clock";
--        clock-frequency =3D <921600>;
--        #clock-cells =3D <0>;
--    };
- };
-
- &uart3 {
-     status =3D "okay";
--    clocks =3D <&uart3_clk>;
- };
-diff --git a/arch/arm/boot/dts/owl-s500-sparky.dts
-b/arch/arm/boot/dts/owl-s500-sparky.dts
-index c665ce8b88b4..65555afee584 100644
---- a/arch/arm/boot/dts/owl-s500-sparky.dts
-+++ b/arch/arm/boot/dts/owl-s500-sparky.dts
-@@ -3,6 +3,7 @@
-  * Allo.com Sparky
-  *
-  * Copyright (c) 2017 Andreas F=C3=A4rber
-+ * Copyright (c) 2018-2018 Edgar Bernardi Righi
-  */
-
- /dts-v1/;
-@@ -25,12 +26,6 @@
-         device_type =3D "memory";
-         reg =3D <0x0 0x40000000>; /* 1 or 2 GiB */
-     };
--
--    uart3_clk: uart3-clk {
--        compatible =3D "fixed-clock";
--        clock-frequency =3D <921600>;
--        #clock-cells =3D <0>;
--    };
- };
-
- &timer {
-@@ -39,5 +34,4 @@
-
- &uart3 {
-     status =3D "okay";
--    clocks =3D <&uart3_clk>;
- };
-diff --git a/arch/arm/boot/dts/owl-s500.dtsi b/arch/arm/boot/dts/owl-s500.d=
-tsi
-index 5ceb6cc4451d..bf506038e22b 100644
---- a/arch/arm/boot/dts/owl-s500.dtsi
-+++ b/arch/arm/boot/dts/owl-s500.dtsi
-@@ -3,10 +3,12 @@
-  * Actions Semi S500 SoC
-  *
-  * Copyright (c) 2016-2017 Andreas F=C3=A4rber
-+ * Copyright (c) 2018-2018 Edgar Bernardi Righi
-  */
-
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/owl-s500-powergate.h>
-+#include <dt-bindings/clock/actions,s500-cmu.h>
-
- / {
-     compatible =3D "actions,s500";
-@@ -69,6 +71,12 @@
-         clock-frequency =3D <24000000>;
-         #clock-cells =3D <0>;
-     };
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+index 37158548b447..ed13233cad88 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+@@ -9,11 +9,17 @@
+ #include <linux/component.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
+ 
+ #include "sun8i_tcon_top.h"
+ 
++struct sun8i_tcon_top_quirks {
++	bool has_tcon_tv1;
++	bool has_dsi;
++};
 +
-+    losc: losc {
-+        compatible =3D "fixed-clock";
-+        clock-frequency =3D <32678>;
-+        #clock-cells =3D <0>;
-+    };
-
-     soc {
-         compatible =3D "simple-bus";
-@@ -124,6 +132,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb0120000 0x2000>;
-             interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART0>;
-             status =3D "disabled";
-         };
-
-@@ -131,6 +140,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb0122000 0x2000>;
-             interrupts =3D <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART1>;
-             status =3D "disabled";
-         };
-
-@@ -138,6 +148,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb0124000 0x2000>;
-             interrupts =3D <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART2>;
-             status =3D "disabled";
-         };
-
-@@ -145,6 +156,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb0126000 0x2000>;
-             interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART3>;
-             status =3D "disabled";
-         };
-
-@@ -152,6 +164,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb0128000 0x2000>;
-             interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART4>;
-             status =3D "disabled";
-         };
-
-@@ -159,6 +172,7 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb012a000 0x2000>;
-             interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART5>;
-             status =3D "disabled";
-         };
-
-@@ -166,8 +180,18 @@
-             compatible =3D "actions,s500-uart", "actions,owl-uart";
-             reg =3D <0xb012c000 0x2000>;
-             interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks =3D <&cmu CLK_UART6>;
-             status =3D "disabled";
-         };
+ static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
+ {
+ 	return !!of_match_node(sun8i_tcon_top_of_table, node);
+@@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct sun8i_tcon_top *tcon_top;
++	const struct sun8i_tcon_top_quirks *quirks;
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	int ret, i;
+ 
++	quirks = of_device_get_match_data(&pdev->dev);
 +
-+        cmu: clock-controller@b0160000 {
-+            compatible =3D "actions,s500-cmu";
-+            reg =3D <0xb0160000 0x8000>;
-+            clocks =3D <&hosc>, <&losc>;
-+            clock-indices =3D <CLK_UART0>, <CLK_UART1>, <CLK_UART2>,
-+                            <CLK_UART3>, <CLK_UART4>, <CLK_UART5>, <CLK_UA=
-RT6>;
-+            #clock-cells =3D <1>;
-+        };
-
-         timer: timer@b0168000 {
-             compatible =3D "actions,s500-timer";
+ 	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+ 	if (!tcon_top)
+ 		return -ENOMEM;
+@@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+ 					     &tcon_top->reg_lock,
+ 					     TCON_TOP_TCON_TV0_GATE, 0);
+ 
+-	clk_data->hws[CLK_TCON_TOP_TV1] =
+-		sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
+-					     &tcon_top->reg_lock,
+-					     TCON_TOP_TCON_TV1_GATE, 1);
++	if (quirks->has_tcon_tv1) {
++		clk_data->hws[CLK_TCON_TOP_TV1] =
++			sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
++						     &tcon_top->reg_lock,
++						     TCON_TOP_TCON_TV1_GATE, 1);
++	} else {
++		clk_data->hws[CLK_TCON_TOP_TV1] = NULL;
++	}
+ 
+-	clk_data->hws[CLK_TCON_TOP_DSI] =
+-		sun8i_tcon_top_register_gate(dev, "dsi", regs,
+-					     &tcon_top->reg_lock,
+-					     TCON_TOP_TCON_DSI_GATE, 2);
++	if (quirks->has_dsi) {
++		clk_data->hws[CLK_TCON_TOP_DSI] =
++			sun8i_tcon_top_register_gate(dev, "dsi", regs,
++						     &tcon_top->reg_lock,
++						     TCON_TOP_TCON_DSI_GATE, 2);
++	} else {
++		clk_data->hws[CLK_TCON_TOP_DSI] = NULL;
++	}
+ 
+ 	for (i = 0; i < CLK_NUM; i++)
+ 		if (IS_ERR(clk_data->hws[i])) {
+@@ -257,9 +274,17 @@ static int sun8i_tcon_top_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++const struct sun8i_tcon_top_quirks sun8i_r40_tcon_top_quirks = {
++	.has_tcon_tv1	= true,
++	.has_dsi	= true,
++};
++
+ /* sun4i_drv uses this list to check if a device node is a TCON TOP */
+ const struct of_device_id sun8i_tcon_top_of_table[] = {
+-	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
++	{
++		.compatible = "allwinner,sun8i-r40-tcon-top",
++		.data = &sun8i_r40_tcon_top_quirks
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
+-- 
+2.18.0
