@@ -1,42 +1,66 @@
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-Return-Path: <sergei.shtylyov@cogentembedded.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77970: add CMT clocks
-To: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- linux-clk@vger.kernel.org
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Message-ID: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-Date: Wed, 5 Sep 2018 19:59:48 +0300
-MIME-Version: 1.0
-In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 01/27] dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
+Date: Sun,  2 Sep 2018 09:26:17 +0200
+Message-Id: <20180902072643.4917-2-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add the R8A77970 CMT module clocks.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Based on the original (and large) patch by Vladimir Barinov.
+The Allwinner H6 SoC's DE3 needs the SRAM C section being claimed in the
+system controller to work, like A64 DE2.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+As H6 and A64 system controller are quite similar, code is reused now,
+and the A64 fallback compatible string is added after the H6 compatible
+string.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[fixed typo in compatible string]
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/renesas/r8a77970-cpg-mssr.c |    4 ++++
+ Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
  1 file changed, 4 insertions(+)
 
-Index: renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
-===================================================================
---- renesas.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -118,6 +118,10 @@ static const struct mssr_mod_clk r8a7797
- 	DEF_MOD("mfis",			 213,	R8A77970_CLK_S2D2),
- 	DEF_MOD("sys-dmac2",		 217,	R8A77970_CLK_S2D1),
- 	DEF_MOD("sys-dmac1",		 218,	R8A77970_CLK_S2D1),
-+	DEF_MOD("cmt3",			 300,	R8A77970_CLK_R),
-+	DEF_MOD("cmt2",			 301,	R8A77970_CLK_R),
-+	DEF_MOD("cmt1",			 302,	R8A77970_CLK_R),
-+	DEF_MOD("cmt0",			 303,	R8A77970_CLK_R),
- 	DEF_MOD("sd-if",		 314,	R8A77970_CLK_SD0),
- 	DEF_MOD("rwdt",			 402,	R8A77970_CLK_R),
- 	DEF_MOD("intc-ex",		 407,	R8A77970_CLK_CP),
+diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index c51ade86578c..62dd0748f0ef 100644
+--- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -18,6 +18,7 @@ Required properties:
+     - "allwinner,sun8i-h3-system-control"
+     - "allwinner,sun50i-a64-sram-controller" (deprecated)
+     - "allwinner,sun50i-a64-system-control"
++    - "allwinner,sun50i-h6-system-control", "allwinner,sun50i-a64-system-control"
+ - reg : sram controller register offset + length
+ 
+ SRAM nodes
+@@ -54,6 +55,9 @@ The valid sections compatible for H3 are:
+ The valid sections compatible for A64 are:
+     - allwinner,sun50i-a64-sram-c
+ 
++The valid sections compatible for H6 are:
++    - allwinner,sun50i-h6-sram-c, allwinner,sun50i-a64-sram-c
++
+ Devices using SRAM sections
+ ---------------------------
+ 
+-- 
+2.18.0
