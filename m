@@ -1,41 +1,78 @@
-Return-Path: <andy.tang@nxp.com>
-From: andy.tang@nxp.com
-To: mturquette@baylibre.com,
-	oss@buserror.net
-Cc: sboyd@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
 	devicetree@vger.kernel.org,
-	Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 3/3] clk: qoriq: add t1023 soc support
-Date: Wed, 19 Sep 2018 15:39:06 +0800
-Message-Id: <20180919073906.34187-3-andy.tang@nxp.com>
-In-Reply-To: <20180919073906.34187-2-andy.tang@nxp.com>
-References: <20180919073906.34187-1-andy.tang@nxp.com>
- <20180919073906.34187-2-andy.tang@nxp.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 24/27] dt-bindings: display: sun4i-drm: document H6 TCON TOP
+Date: Sun,  2 Sep 2018 09:26:40 +0200
+Message-Id: <20180902072643.4917-25-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yuantian Tang <andy.tang@nxp.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Add t1023 clock compatible string to support t1023 soc.
+Allwinner H6 SoC has a cut down version of TCON TOP.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Add binding documentation for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[expanded description]
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/clk-qoriq.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ .../bindings/display/sunxi/sun4i-drm.txt           | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f..b43df2a 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -1424,6 +1424,7 @@ static void __init clockgen_init(struct device_node *np)
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_t1023, "fsl,t1023-clockgen", clockgen_init);
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 278410e43940..a14eb9313e70 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -221,24 +221,26 @@ It allows display pipeline to be configured in very different ways:
+                  \ [3] TCON-TV1 [1] - TVE1/RGB
  
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+ Note that both TCON TOP references same physical unit. Both mixers can be
+-connected to any TCON.
++connected to any TCON. Not all TCON TOP variants support all features.
+ 
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-r40-tcon-top
++    * allwinner,sun50i-h6-tcon-top
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandle to the clocks feeding the TCON TOP
+     * bus: TCON TOP interface clock
+     * tcon-tv0: TCON TV0 clock
+-    * tve0: TVE0 clock
+-    * tcon-tv1: TCON TV1 clock
+-    * tve1: TVE0 clock
+-    * dsi: MIPI DSI clock
++    * tve0: TVE0 clock (R40 only)
++    * tcon-tv1: TCON TV1 clock (R40 only)
++    * tve1: TVE0 clock (R40 only)
++    * dsi: MIPI DSI clock (R40 only)
+   - clock-names: clock name mentioned above
+   - resets: phandle to the reset line driving the TCON TOP
+   - #clock-cells : must contain 1
+   - clock-output-names: Names of clocks created for TCON TV0 channel clock,
+-    TCON TV1 channel clock and DSI channel clock, in that order.
++    TCON TV1 channel clock (R40 only) and DSI channel clock (R40 only), in
++    that order.
+ 
+ - ports: A ports node with endpoint definitions as defined in
+     Documentation/devicetree/bindings/media/video-interfaces.txt. 6 ports should
 -- 
-1.7.1
+2.18.0
