@@ -1,61 +1,174 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 00/11] clk: ti: clkctrl data split based on clkdm
- boundaries
-To: Tony Lindgren <tony@atomide.com>
-CC: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>
-References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
- <20180904153657.GB5662@atomide.com> <20180926191301.GX5662@atomide.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <e4e90740-393f-edaf-947c-aa1010ab79a3@ti.com>
-Date: Thu, 27 Sep 2018 09:31:10 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180926191301.GX5662@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
+Date: Sun,  2 Sep 2018 09:26:24 +0200
+Message-Id: <20180902072643.4917-9-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 26/09/18 22:13, Tony Lindgren wrote:
-> Hi,
-> 
-> * Tony Lindgren <tony@atomide.com> [180904 15:41]:
->> * Tero Kristo <t-kristo@ti.com> [180831 15:11]:
->>> Hi,
->>>
->>> This series splits up the clkctrl data for TI SoCs based on clockdomain
->>> boundaries, instead of the current CM boundaries. For rest of the SoCs,
->>> the CM boundaries are actually the same as clockdomains, only am3/am4/dra7
->>> are mutants.
->>>
->>> This is done in preparation for better supporting Tony's upcoming
->>> interconnect driver data introduction for these SoCs.
->>>
->>> One thing to note is that we maintain backwards compatibility with this
->>> series, the compat data is introduced temporarily for this purpose. The
->>> compat data can be ditched after couple of release cycles when nobody
->>> needs it anymore.
->>>
->>> The series can be applied independently, as the compat data support
->>> makes care that the switch is only done once DT changes are in place.
->>
->> When this is ready for merging, can you guys please set up an
->> immutable branch against v4.19-rc1 with the drivers/clk changes
->> for me to merge in too?
->>
->> I've tested this on am335x and am437x so far and it works fine
->> for me, so for the whole series:
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
-> 
-> Any news on getting this into Linux next and merged? The
-> immutable is still needed too for the dts changes.
-> 
+Support for mixer0, mixer1, writeback and rotation units is added.
 
-This is currently blocked from my side, as the patch [1] from Johan got 
-in clk-next is conflicting with my series. Asked Stephen for either 
-dropping that patch and letting me pick it up but no response so far.
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65 ++++++++++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
+ 2 files changed, 66 insertions(+)
 
-[1] https://lkml.org/lkml/2018/8/22/160
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index bae5ee67a797..4535c1c27d27 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk,	"bus-mixer1",	"bus-de",
+ 		      0x04, BIT(1), 0);
+ static SUNXI_CCU_GATE(bus_wb_clk,	"bus-wb",	"bus-de",
+ 		      0x04, BIT(2), 0);
++static SUNXI_CCU_GATE(bus_rot_clk,	"bus-rot",	"bus-de",
++		      0x04, BIT(3), 0);
+ 
+ static SUNXI_CCU_GATE(mixer0_clk,	"mixer0",	"mixer0-div",
+ 		      0x00, BIT(0), CLK_SET_RATE_PARENT);
+@@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,	"mixer1",	"mixer1-div",
+ 		      0x00, BIT(1), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(wb_clk,		"wb",		"wb-div",
+ 		      0x00, BIT(2), CLK_SET_RATE_PARENT);
++static SUNXI_CCU_GATE(rot_clk,		"rot",		"rot-div",
++		      0x00, BIT(3), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+ 		   CLK_SET_RATE_PARENT);
+@@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de", 0x0c, 4, 4,
+ 		   CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
++static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
++		   CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0, 4,
+ 		   CLK_SET_RATE_PARENT);
+@@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
+ static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
+ 
++static struct ccu_common *sun50i_h6_de3_clks[] = {
++	&mixer0_clk.common,
++	&mixer1_clk.common,
++	&wb_clk.common,
++
++	&bus_mixer0_clk.common,
++	&bus_mixer1_clk.common,
++	&bus_wb_clk.common,
++
++	&mixer0_div_clk.common,
++	&mixer1_div_clk.common,
++	&wb_div_clk.common,
++
++	&bus_rot_clk.common,
++	&rot_clk.common,
++	&rot_div_clk.common,
++};
++
+ static struct ccu_common *sun8i_a83t_de2_clks[] = {
+ 	&mixer0_clk.common,
+ 	&mixer1_clk.common,
+@@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+ 	&wb_div_clk.common,
+ };
+ 
++static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks = {
++	.hws	= {
++		[CLK_MIXER0]		= &mixer0_clk.common.hw,
++		[CLK_MIXER1]		= &mixer1_clk.common.hw,
++		[CLK_WB]		= &wb_clk.common.hw,
++		[CLK_ROT]		= &rot_clk.common.hw,
++
++		[CLK_BUS_MIXER0]	= &bus_mixer0_clk.common.hw,
++		[CLK_BUS_MIXER1]	= &bus_mixer1_clk.common.hw,
++		[CLK_BUS_WB]		= &bus_wb_clk.common.hw,
++		[CLK_BUS_ROT]		= &bus_rot_clk.common.hw,
++
++		[CLK_MIXER0_DIV]	= &mixer0_div_clk.common.hw,
++		[CLK_MIXER1_DIV]	= &mixer1_div_clk.common.hw,
++		[CLK_WB_DIV]		= &wb_div_clk.common.hw,
++		[CLK_ROT_DIV]		= &rot_div_clk.common.hw,
++	},
++	.num	= 12,
++};
++
+ static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+ 	.hws	= {
+ 		[CLK_MIXER0]		= &mixer0_clk.common.hw,
+@@ -156,6 +200,13 @@ static struct ccu_reset_map sun50i_a64_de2_resets[] = {
+ 	[RST_WB]	= { 0x08, BIT(2) },
+ };
+ 
++static struct ccu_reset_map sun50i_h6_de3_resets[] = {
++	[RST_MIXER0]	= { 0x08, BIT(0) },
++	[RST_MIXER1]	= { 0x08, BIT(1) },
++	[RST_WB]	= { 0x08, BIT(2) },
++	[RST_ROT]	= { 0x08, BIT(3) },
++};
++
+ static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
+ 	.ccu_clks	= sun8i_a83t_de2_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun8i_a83t_de2_clks),
+@@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_de2_resets),
+ };
+ 
++static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
++	.ccu_clks	= sun50i_h6_de3_clks,
++	.num_ccu_clks	= ARRAY_SIZE(sun50i_h6_de3_clks),
++
++	.hw_clks	= &sun50i_h6_de3_hw_clks,
++
++	.resets		= sun50i_h6_de3_resets,
++	.num_resets	= ARRAY_SIZE(sun50i_h6_de3_resets),
++};
++
+ static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+ 	.ccu_clks	= sun8i_v3s_de2_clks,
+ 	.num_ccu_clks	= ARRAY_SIZE(sun8i_v3s_de2_clks),
+@@ -296,6 +357,10 @@ static const struct of_device_id sunxi_de2_clk_ids[] = {
+ 		.compatible = "allwinner,sun50i-h5-de2-clk",
+ 		.data = &sun50i_a64_de2_clk_desc,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-h6-de3-clk",
++		.data = &sun50i_h6_de3_clk_desc,
++	},
+ 	{ }
+ };
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+index 530c006e0ae9..27bd88539f42 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+@@ -22,6 +22,7 @@
+ #define CLK_MIXER0_DIV	3
+ #define CLK_MIXER1_DIV	4
+ #define CLK_WB_DIV	5
++#define CLK_ROT_DIV	11
+ 
+ #define CLK_NUMBER	(CLK_WB + 1)
+ 
+-- 
+2.18.0
