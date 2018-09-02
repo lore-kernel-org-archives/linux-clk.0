@@ -1,247 +1,207 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 1/2] arm64: dts: allwinner: a64: Add display pipeline
-Date: Tue, 25 Sep 2018 14:19:39 +0530
-Message-Id: <20180925084940.27903-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 21/27] drm/sun4i: Add support for H6 HDMI PHY
+Date: Sun,  2 Sep 2018 09:26:37 +0200
+Message-Id: <20180902072643.4917-22-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-TCON is connected to LCD and the second is to HDMI.
+H6 has Synopsys DWC HDMI 2.0 TX PHY.
 
-The HDMI controller/PHY pair is similar to the one on H3/H5.
+mpll settings were calculated from specifications of similar Synopsys
+HDMI PHY found in i.MX6. Other PHY settings were derived from BSP PHY
+driver code.
 
-Add all required device tree nodes of the display pipeline, including
-the TCON0 LCD one and the TCON1 HDMI one.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: refactor commit message and add 1st pipeline]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
-Changes for v5:
-- Use hdmi_phy compatible for A64
-Changes for v4:
-- Misc fixes
-- Dropped second PLL from HDMI PHY clock
-Changes for v3.1:
-- Refactor commit message to make it more clear.
-- Added first pipeline (mixer0 -> tcon0)
-Changes for v3:
-- Squash all pipeline components in one patch
-- Add status for mixer1 and tcon1
-Changes for v2:
-- Change compatibles and other based on previous patch changes
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
+ 1 file changed, 137 insertions(+)
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 166 ++++++++++++++++++
- 1 file changed, 166 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index e4cfa8778623..f3a66f888205 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -121,6 +121,13 @@
- 		};
- 	};
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index ee2bf61cd4d2..2f5499bd35ec 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -14,6 +14,122 @@
+  */
+ #define I2C_ADDR	0x69
  
-+	de: display-engine {
-+		compatible = "allwinner,sun50i-a64-display-engine";
-+		allwinner,pipelines = <&mixer0>,
-+				      <&mixer1>;
-+		status = "disabled";
-+	};
++static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] = {
++	{
++		30666000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2153, 0x0000 },
++			{ 0x40f3, 0x0000 },
++		},
++	},  {
++		36800000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2153, 0x0000 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		46000000, {
++			{ 0x00b3, 0x0000 },
++			{ 0x2142, 0x0001 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		61333000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2142, 0x0001 },
++			{ 0x40a2, 0x0001 },
++		},
++	},  {
++		73600000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2142, 0x0001 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		92000000, {
++			{ 0x0072, 0x0001 },
++			{ 0x2145, 0x0002 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		122666000, {
++			{ 0x0051, 0x0002 },
++			{ 0x2145, 0x0002 },
++			{ 0x4061, 0x0002 },
++		},
++	},  {
++		147200000, {
++			{ 0x0051, 0x0002 },
++			{ 0x2145, 0x0002 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		184000000, {
++			{ 0x0051, 0x0002 },
++			{ 0x214c, 0x0003 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		226666000, {
++			{ 0x0040, 0x0003 },
++			{ 0x214c, 0x0003 },
++			{ 0x4064, 0x0003 },
++		},
++	},  {
++		272000000, {
++			{ 0x0040, 0x0003 },
++			{ 0x214c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	},  {
++		340000000, {
++			{ 0x0040, 0x0003 },
++			{ 0x3b4c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	},  {
++		600000000, {
++			{ 0x1a40, 0x0003 },
++			{ 0x3b4c, 0x0003 },
++			{ 0x5a64, 0x0003 },
++		},
++	}, {
++		~0UL, {
++			{ 0x0000, 0x0000 },
++			{ 0x0000, 0x0000 },
++			{ 0x0000, 0x0000 },
++		},
++	}
++};
 +
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -203,6 +210,52 @@
- 				#clock-cells = <1>;
- 				#reset-cells = <1>;
- 			};
++static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] = {
++	/* pixelclk    bpp8    bpp10   bpp12 */
++	{ 25175000,  { 0x0000, 0x0000, 0x0000 }, },
++	{ 27000000,  { 0x0012, 0x0000, 0x0000 }, },
++	{ 59400000,  { 0x0008, 0x0008, 0x0008 }, },
++	{ 72000000,  { 0x0008, 0x0008, 0x001b }, },
++	{ 74250000,  { 0x0013, 0x0013, 0x0013 }, },
++	{ 90000000,  { 0x0008, 0x001a, 0x001b }, },
++	{ 118800000, { 0x001b, 0x001a, 0x001b }, },
++	{ 144000000, { 0x001b, 0x001a, 0x0034 }, },
++	{ 180000000, { 0x001b, 0x0033, 0x0034 }, },
++	{ 216000000, { 0x0036, 0x0033, 0x0034 }, },
++	{ 237600000, { 0x0036, 0x0033, 0x001b }, },
++	{ 288000000, { 0x0036, 0x001b, 0x001b }, },
++	{ 297000000, { 0x0019, 0x001b, 0x0019 }, },
++	{ 330000000, { 0x0036, 0x001b, 0x001b }, },
++	{ 600000000, { 0x003f, 0x001b, 0x001b }, },
++	{ ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
++};
 +
-+			mixer0: mixer@100000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-0";
-+				reg = <0x100000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER0>,
-+					 <&display_clocks CLK_MIXER0>;
-+				clock-names = "bus",
-+					      "mod";
-+				resets = <&display_clocks RST_MIXER0>;
++static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] = {
++	/*pixelclk   symbol   term   vlev*/
++	{ 74250000,  0x8009, 0x0004, 0x0232},
++	{ 148500000, 0x8029, 0x0004, 0x0273},
++	{ 600000000, 0x8039, 0x0004, 0x014a},
++	{ ~0UL,	     0x0000, 0x0000, 0x0000}
++};
 +
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					mixer0_out: port@1 {
-+						reg = <1>;
-+
-+						mixer0_out_tcon0: endpoint {
-+							remote-endpoint = <&tcon0_in_mixer0>;
-+						};
-+					};
-+				};
-+			};
-+
-+			mixer1: mixer@200000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-1";
-+				reg = <0x200000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER1>,
-+					 <&display_clocks CLK_MIXER1>;
-+				clock-names = "bus",
-+					      "mod";
-+				resets = <&display_clocks RST_MIXER1>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					mixer1_out: port@1 {
-+						reg = <1>;
-+
-+						mixer1_out_tcon1: endpoint {
-+							remote-endpoint = <&tcon1_in_mixer1>;
-+						};
-+					};
-+				};
-+			};
- 		};
+ static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
+ 				      struct sun8i_hdmi_phy *phy,
+ 				      unsigned int clk_rate)
+@@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
+ 		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
+ }
  
- 		syscon: syscon@1c00000 {
-@@ -237,6 +290,75 @@
- 			#dma-cells = <1>;
- 		};
++static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
++{
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
++			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
++			   SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
++
++	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
++			   0xffff0000, 0x80c00000);
++}
++
+ static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+ {
+ 	sun8i_hdmi_phy_unlock(phy);
+@@ -423,6 +549,13 @@ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+ 	.phy_config = &sun8i_hdmi_phy_config_h3,
+ };
  
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun50i-a64-tcon-lcd",
-+				     "allwinner,sun8i-a83t-tcon-lcd";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-+			clock-names = "ahb", "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
-+			reset-names = "lcd", "lvds";
++static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy = {
++	.cur_ctr  = sun50i_h6_cur_ctr,
++	.mpll_cfg = sun50i_h6_mpll_cfg,
++	.phy_cfg  = sun50i_h6_phy_config,
++	.phy_init = &sun50i_hdmi_phy_init_h6,
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun50i-a64-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint {
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun50i-a64-mmc";
- 			reg = <0x01c0f000 0x1000>;
-@@ -707,6 +829,50 @@
- 			status = "disabled";
- 		};
- 
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun50i-a64-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun50i-a64-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu 7>;
-+			clock-names = "bus", "mod", "pll-0";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
+ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
+ 	.is_custom_phy = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_a83t,
+@@ -443,6 +576,10 @@ static const struct of_device_id sun8i_hdmi_phy_of_table[] = {
+ 		.compatible = "allwinner,sun50i-a64-hdmi-phy",
+ 		.data = &sun50i_a64_hdmi_phy,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-h6-hdmi-phy",
++		.data = &sun50i_h6_hdmi_phy,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-a83t-hdmi-phy",
+ 		.data = &sun8i_a83t_hdmi_phy,
 -- 
-2.18.0.321.gffc6fa0e3
+2.18.0
