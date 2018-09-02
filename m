@@ -1,59 +1,114 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v3 2/6] soc/fsl/guts: Add compatible string for LX2160A
-Date: Mon, 24 Sep 2018 05:38:57 +0530
-Message-Id: <1537747741-6245-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 00/27] Allwinner H6 DE3 and HDMI support
+Date: Sun,  2 Sep 2018 09:26:16 +0200
+Message-Id: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding compatible string "lx2160a-dcfg" to
-initialize guts driver for lx2160
+This series adds support for Display Engine 3.0 and HDMI 2.0a, which
+can be found on H6 SoC.
 
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
----
- drivers/soc/fsl/guts.c | 1 +
- 1 file changed, 1 insertion(+)
+Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
+displaying and processing 10-bit and AFBC formats, which are not yet
+supported by this series.
 
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index 302e0c8..5e1e633 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -222,6 +222,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
- 	{ .compatible = "fsl,ls1088a-dcfg", },
- 	{ .compatible = "fsl,ls1012a-dcfg", },
- 	{ .compatible = "fsl,ls1046a-dcfg", },
-+	{ .compatible = "fsl,lx2160a-dcfg", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
+This series is based on linux-next at next-20180828, which has working
+R40 display pipeline support. I'll rebase series on later linux-next, if
+needed, once R40 display pipeline support is reintroduced.
+
+I suggest all patches go through allwinner tree, except DRM patches,
+which should go through drm-misc tree.
+
+Last detail, PineH64 model A schematic has DDC_EN signal, which enables
+DDC voltage level shifter. TL Lim, PINE64 founder, said that this
+signal is not actually present on PineH64 model A board. It is, however
+present on PineH64 model B engineering samples, but it will be removed
+in production version. Because of that, I didn't include any code for
+it.
+
+Please take a look.
+
+Best regards,
+Jernej
+
+Icenowy Zheng (7):
+  dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
+  arm64: allwinner: h6: add system controller device tree node
+  dt-bindings: bus: add H6 DE3 bus binding
+  dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
+  drm: sun4i: add quirks for TCON TOP
+  dt-bindings: display: sun4i-drm: document H6 TCON TOP
+  drm: sun4i: add support for H6 TCON TOP
+
+Jernej Skrabec (20):
+  clk: sunxi-ng: Adjust MP clock parent rate when allowed
+  clk: sunxi-ng: Use u64 for calculation of NM rate
+  clk: sunxi-ng: h6: Set video PLLs limits
+  dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
+  clk: sunxi-ng: Add support for H6 DE3 clocks
+  dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
+  drm/sun4i: Add compatible for H6 display engine
+  drm/sun4i: Rework DE2 register defines
+  drm/sun4i: Add basic support for DE3
+  drm/sun4i: Add support for H6 DE3 mixer 0
+  drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
+  drm/sun4i: Not all DW HDMI controllers has scrambled addresses
+  drm/sun4i: dw-hdmi: Make mode_valid function configurable
+  drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
+  drm/sun4i: Add support for H6 DW HDMI controller
+  drm/sun4i: Add support for Synopsys HDMI PHY
+  drm/sun4i: Add support for H6 HDMI PHY
+  drm/sun4i: Initialize registers in tcon-top driver
+  arm64: dts: sun50i: h6: Add HDMI pipeline
+  arm64: dts: sun50i: h6: Enable HDMI output on Pine H64 board
+
+ .../bindings/bus/sun50i-de2-bus.txt           |   9 +-
+ .../devicetree/bindings/clock/sun8i-de2.txt   |   5 +-
+ .../bindings/display/sunxi/sun4i-drm.txt      |  30 ++-
+ .../devicetree/bindings/sram/sunxi-sram.txt   |   4 +
+ .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  25 ++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 224 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   4 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  65 +++++
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.h          |   1 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |  64 ++++-
+ drivers/clk/sunxi-ng/ccu_nm.c                 |  18 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |   1 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
+ drivers/gpu/drm/sun4i/sun8i_csc.c             |  96 +++++++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  45 +++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |  14 +-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        | 178 +++++++++++++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  44 +++-
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |  61 +++--
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c        |  58 ++++-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  47 ++--
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.h        |  37 +--
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |  45 ++--
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.h       |  28 +--
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  55 +++--
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.h        |  25 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |  85 +++++--
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |  68 ++++--
+ include/dt-bindings/clock/sun8i-de2.h         |   3 +
+ include/dt-bindings/reset/sun8i-de2.h         |   1 +
+ 30 files changed, 1127 insertions(+), 214 deletions(-)
+
 -- 
-2.7.4
+2.18.0
