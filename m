@@ -1,127 +1,120 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.130]:42972 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbeICOSc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Sep 2018 10:18:32 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v4 3/5] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-Date: Mon,  3 Sep 2018 18:00:27 +0800
-Message-Id: <1535968829-19418-4-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
-References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 16/27] drm/sun4i: dw-hdmi: Make mode_valid function configurable
+Date: Sun,  2 Sep 2018 09:26:32 +0200
+Message-Id: <20180902072643.4917-17-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+Since it is not possible to access sun8i-dw-hdmi driver private data
+inside mode_valid function, make it configurable. That way different
+versions of HDMI controllers can set different function, depending on
+it's limitations.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 18 ++++++++++++++----
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  6 ++++++
+ 2 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 91b6522..c025a99 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 31875b636434..a5020fe8bd69 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -5,6 +5,7 @@
  
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
-@@ -46,6 +50,28 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
+ #include <linux/component.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
  
-+Optional RK809 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
+ #include <drm/drm_of.h>
+@@ -33,8 +34,8 @@ static const struct drm_encoder_funcs sun8i_dw_hdmi_encoder_funcs = {
+ };
  
-+Following regulators of the RK809 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK808 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2.
-+
-+Following regulators of the RK817 PMIC block are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK818 datasheet.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 4.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9.
-+	- BOOST
-+	- OTG_SWITCH
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -99,6 +147,14 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
+ static enum drm_mode_status
+-sun8i_dw_hdmi_mode_valid(struct drm_connector *connector,
+-			 const struct drm_display_mode *mode)
++sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *connector,
++			      const struct drm_display_mode *mode)
+ {
+ 	if (mode->clock > 297000)
+ 		return MODE_CLOCK_HIGH;
+@@ -102,6 +103,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	hdmi->dev = &pdev->dev;
+ 	encoder = &hdmi->encoder;
  
-+There are three pins needed to config for each of RK809 and RK817,
-+named "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
++	hdmi->quirks = of_device_get_match_data(dev);
 +
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
+ 	encoder->possible_crtcs =
+ 		sun8i_dw_hdmi_find_possible_crtcs(drm, dev->of_node);
+ 	/*
+@@ -156,7 +159,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 
+ 	sun8i_hdmi_phy_init(hdmi->phy);
+ 
+-	plat_data->mode_valid = &sun8i_dw_hdmi_mode_valid;
++	plat_data->mode_valid = hdmi->quirks->mode_valid;
+ 	plat_data->phy_ops = sun8i_hdmi_phy_get_ops();
+ 	plat_data->phy_name = "sun8i_dw_hdmi_phy";
+ 	plat_data->phy_data = hdmi->phy;
+@@ -215,8 +218,15 @@ static int sun8i_dw_hdmi_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks = {
++	.mode_valid = sun8i_dw_hdmi_mode_valid_a83t,
++};
++
+ static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
+-	{ .compatible = "allwinner,sun8i-a83t-dw-hdmi" },
++	{
++		.compatible = "allwinner,sun8i-a83t-dw-hdmi",
++		.data = &sun8i_a83t_quirks,
++	},
+ 	{ /* sentinel */ },
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_dw_hdmi_dt_ids);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index aadbe0a10b0c..b718c47e00be 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -169,6 +169,11 @@ struct sun8i_hdmi_phy {
+ 	struct sun8i_hdmi_phy_variant	*variant;
+ };
+ 
++struct sun8i_dw_hdmi_quirks {
++	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
++					   const struct drm_display_mode *mode);
++};
++
+ struct sun8i_dw_hdmi {
+ 	struct clk			*clk_tmds;
+ 	struct device			*dev;
+@@ -176,6 +181,7 @@ struct sun8i_dw_hdmi {
+ 	struct drm_encoder		encoder;
+ 	struct sun8i_hdmi_phy		*phy;
+ 	struct dw_hdmi_plat_data	plat_data;
++	const struct sun8i_dw_hdmi_quirks *quirks;
+ 	struct reset_control		*rst_ctrl;
+ };
+ 
 -- 
-1.9.1
+2.18.0
