@@ -1,79 +1,136 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH v3 RESEND 0/4] clk: clk: Add functions to save/restore
- clock context en-masse
-To: Keerthy <j-keerthy@ti.com>, <tony@atomide.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <russ.dill@ti.com>
-References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
- <2b898faf-ca7d-1ef9-f862-9a3f05717884@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <ff898a7e-5fef-2057-d8ea-7e0c234c3ab6@ti.com>
-Date: Wed, 19 Sep 2018 12:26:40 +0300
-MIME-Version: 1.0
-In-Reply-To: <2b898faf-ca7d-1ef9-f862-9a3f05717884@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 20/27] drm/sun4i: Add support for Synopsys HDMI PHY
+Date: Sun,  2 Sep 2018 09:26:36 +0200
+Message-Id: <20180902072643.4917-21-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19/09/18 10:50, Keerthy wrote:
-> 
-> 
-> On Tuesday 04 September 2018 12:19 PM, Keerthy wrote:
->> Deep enough power saving mode can result into losing context of the clock
->> registers also, and they need to be restored once coming back from the power
->> saving mode. Hence add functions to save/restore clock context.
-> 
-> A gentle ping on this series.
+Currently sun8i-hdmi-phy driver supports only custom PHYs connected to
+DW HDMI controller. Since newest Allwinner SoCs have unmodified Synopsys
+PHY, driver has to be reorganized to support them.
 
-Stephen,
+Variant structure is expanded to allow differentiation between custom
+and Sysnopsys PHYs and to hold Synopsys PHY settings.
 
-what is your take on this? I can pick this up as part of my changes for 
-4.20 and send a pull-req, however it contains changes to clock core so I 
-am somewhat hesitant to do that.
+Since DW HDMI bridge platform data has different fields for custom and
+Sysnopsys PHY, function sun8i_hdmi_phy_get_ops() is replaced with
+sun8i_hdmi_phy_set_ops().
 
--Tero
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c  |  4 +---
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  7 ++++++-
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 18 ++++++++++++++++--
+ 3 files changed, 23 insertions(+), 6 deletions(-)
 
-> 
->>
->> Tested for DS0 on am437x-gp-evm
->>
->> Based on top of linux-next
->>
->> Resend Series:
->>
->>    * Rebased on top of Linux 4.19-rc2
->>    * Added Tony's Ack.
->>
->> Changes in v2:
->>
->>          * Renamed clk_dflt_restore to clk_gate_restore_context
->>
->> Changes in v3: Corrected the e-mail address of linux-omap list
->>
->> Keerthy (2):
->>    clk: clk: Add clk_gate_restore_context function
->>    ti: pm33xx: Save/restore clk context based on enable_off_mode setting
->>
->> Russ Dill (2):
->>    clk: clk: Add functions to save/restore clock context en-masse
->>    clk: ti: Add functions to save/restore clk context
->>
->>   arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
->>   drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
->>   drivers/clk/ti/clock.h               |   2 +
->>   drivers/clk/ti/divider.c             |  36 ++++++++++
->>   drivers/clk/ti/dpll.c                |   6 ++
->>   drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
->>   drivers/clk/ti/gate.c                |   3 +
->>   drivers/clk/ti/mux.c                 |  29 ++++++++
->>   drivers/soc/ti/pm33xx.c              |  13 ++++
->>   include/linux/clk-provider.h         |   9 +++
->>   include/linux/clk.h                  |  25 +++++++
->>   include/linux/clk/ti.h               |   6 ++
->>   include/linux/platform_data/pm33xx.h |   1 +
->>   13 files changed, 362 insertions(+)
->>
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 44143c9f20d0..bf35975dd100 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -172,9 +172,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	sun8i_hdmi_phy_init(hdmi->phy);
+ 
+ 	plat_data->mode_valid = hdmi->quirks->mode_valid;
+-	plat_data->phy_ops = sun8i_hdmi_phy_get_ops();
+-	plat_data->phy_name = "sun8i_dw_hdmi_phy";
+-	plat_data->phy_data = hdmi->phy;
++	sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
+ 
+ 	platform_set_drvdata(pdev, hdmi);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 94cf13d09abe..e48cd9b3cce3 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -149,6 +149,10 @@ struct sun8i_hdmi_phy;
+ struct sun8i_hdmi_phy_variant {
+ 	bool has_phy_clk;
+ 	bool has_second_pll;
++	bool is_custom_phy;
++	const struct dw_hdmi_curr_ctrl *cur_ctr;
++	const struct dw_hdmi_mpll_config *mpll_cfg;
++	const struct dw_hdmi_phy_config *phy_cfg;
+ 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
+ 	void (*phy_disable)(struct dw_hdmi *hdmi,
+ 			    struct sun8i_hdmi_phy *phy);
+@@ -196,7 +200,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node);
+ void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
+ 
+ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
+-const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
++void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
++			    struct dw_hdmi_plat_data *plat_data);
+ 
+ int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
+ 			 bool second_parent);
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index ad4ba1cc83b4..ee2bf61cd4d2 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -390,9 +390,20 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
+ 	phy->variant->phy_init(phy);
+ }
+ 
+-const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
++void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
++			    struct dw_hdmi_plat_data *plat_data)
+ {
+-	return &sun8i_hdmi_phy_ops;
++	struct sun8i_hdmi_phy_variant *variant = phy->variant;
++
++	if (variant->is_custom_phy) {
++		plat_data->phy_ops = &sun8i_hdmi_phy_ops;
++		plat_data->phy_name = "sun8i_dw_hdmi_phy";
++		plat_data->phy_data = phy;
++	} else {
++		plat_data->mpll_cfg = variant->mpll_cfg;
++		plat_data->cur_ctr = variant->cur_ctr;
++		plat_data->phy_config = variant->phy_cfg;
++	}
+ }
+ 
+ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+@@ -405,6 +416,7 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
+ 
+ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+ 	.has_phy_clk = true,
++	.is_custom_phy = true,
+ 	.has_second_pll = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_h3,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
+@@ -412,6 +424,7 @@ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
+ };
+ 
+ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
++	.is_custom_phy = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_a83t,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
+ 	.phy_config = &sun8i_hdmi_phy_config_a83t,
+@@ -419,6 +432,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
+ 
+ static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
+ 	.has_phy_clk = true,
++	.is_custom_phy = true,
+ 	.phy_init = &sun8i_hdmi_phy_init_h3,
+ 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
+ 	.phy_config = &sun8i_hdmi_phy_config_h3,
+-- 
+2.18.0
