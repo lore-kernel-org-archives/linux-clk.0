@@ -1,52 +1,89 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48364 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730272AbeIFUi6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:38:58 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/2] clk: samsung: Use NOIRQ stage for Exynos5433 clocks
- suspend/resume
-Date: Thu, 06 Sep 2018 18:02:35 +0200
-Message-id: <20180906160236.4326-2-m.szyprowski@samsung.com>
-In-reply-to: <20180906160236.4326-1-m.szyprowski@samsung.com>
-References: <20180906160236.4326-1-m.szyprowski@samsung.com>
-        <CGME20180906160245eucas1p257fef879d3bb6127cb1afa6c357a953f@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com
+Subject: [PATCH 15/27] drm/sun4i: Not all DW HDMI controllers has scrambled addresses
+Date: Sun,  2 Sep 2018 09:26:31 +0200
+Message-Id: <20180902072643.4917-16-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-SoC clock drivers should suspend after every other drivers in the system,
-which are using clocks and resume before them. The last stage for calling
-suspend device callbacks is NOIRQ stage and there exists driver, which use
-that state (dwmmc-exynos), so Exynos5433 clocks driver should also use it.
-During the same stage, clocks driver will be always suspended after its
-clients as a direct result of proper device probe order (deferred probe
-reorders the suspend call sequence).
+Currently supported Allwinner SoCs with DW HDMI controller have
+scrambled addresses and read lock. However, that is not true in general.
+For example, A80 and H6 have normal addresses and normal read access.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Move code for unscrambling addresses and unlocking read access to it's
+own function and call it from init function.
+
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 162de44df099..426980514e67 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5630,7 +5630,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
- static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
- 	SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
- 			   NULL)
--	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
- 				     pm_runtime_force_resume)
+diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+index 82502b351aec..ad4ba1cc83b4 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
++++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
+@@ -279,8 +279,21 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
+ 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
  };
  
++static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
++{
++	/* enable read access to HDMI controller */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
++		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
++
++	/* unscramble register offsets */
++	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
++		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
++}
++
+ static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
+ {
++	sun8i_hdmi_phy_unlock(phy);
++
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
+ 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
+@@ -298,6 +311,8 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
+ {
+ 	unsigned int val;
+ 
++	sun8i_hdmi_phy_unlock(phy);
++
+ 	regmap_write(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG, 0);
+ 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
+ 			   SUN8I_HDMI_PHY_ANA_CFG1_ENBI,
+@@ -372,14 +387,6 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
+ 
+ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
+ {
+-	/* enable read access to HDMI controller */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
+-		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
+-
+-	/* unscramble register offsets */
+-	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
+-		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
+-
+ 	phy->variant->phy_init(phy);
+ }
+ 
 -- 
-2.17.1
+2.18.0
