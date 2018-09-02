@@ -1,49 +1,74 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Fri, 21 Sep 2018 11:52:58 -0700
-From: Lee Jones <lee.jones@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        sboyd@kernel.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
- management IC
-Message-ID: <20180921185258.GC4358@dell>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <20180921172959.GG20825@sirena.org.uk>
- <20180921180241.GA4358@dell>
- <20180921181217.GI20825@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <20180921181217.GI20825@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
+To: robh+dt@kernel.org,
+	maxime.ripard@bootlin.com,
+	wens@csie.org
+Cc: mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	airlied@linux.ie,
+	architt@codeaurora.org,
+	a.hajda@samsung.com,
+	jernej.skrabec@siol.net,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-sunxi@googlegroups.com,
+	Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 02/27] arm64: allwinner: h6: add system controller device tree node
+Date: Sun,  2 Sep 2018 09:26:18 +0200
+Message-Id: <20180902072643.4917-3-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 21 Sep 2018, Mark Brown wrote:
+From: Icenowy Zheng <icenowy@aosc.io>
 
-> On Fri, Sep 21, 2018 at 11:02:41AM -0700, Lee Jones wrote:
-> > On Fri, 21 Sep 2018, Mark Brown wrote:
-> 
-> > > This looks OK to me - Lee, the patch is almost entirely a regulator one,
-> > > are you OK with me applying it?
-> 
-> > The diff in rohm-bd718x7.h does not look significant.
-> 
-> > You can apply it so long as you provide me with a PR in order to avoid
-> > any potential merge conflicts.  Especially as Linus is out for this
-> > release.
-> 
-> Great, thanks.  There's also the MFD DT bindings and another patch later
-> on with Acked-for-MFD tags on them, should I convert the tags to acks,
-> apply those as well and include them in the pull request?
+As we have already binding for the H6 system controller, add its node
+to the device tree.
 
-Please.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[fixed compatible string]
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index cfa5fffcf62b..040828d2e2c0 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -92,6 +92,29 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
++		syscon: syscon@3000000 {
++			compatible = "allwinner,sun50i-h6-system-control",
++				     "allwinner,sun50i-a64-system-control";
++			reg = <0x03000000 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			sram_c: sram@28000 {
++				compatible = "mmio-sram";
++				reg = <0x00028000 0x1e000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x00028000 0x1e000>;
++
++				de2_sram: sram-section@0 {
++					compatible = "allwinner,sun50i-h6-sram-c",
++						     "allwinner,sun50i-a64-sram-c";
++					reg = <0x0000 0x1e000>;
++				};
++			};
++		};
++
+ 		ccu: clock@3001000 {
+ 			compatible = "allwinner,sun50i-h6-ccu";
+ 			reg = <0x03001000 0x1000>;
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.18.0
