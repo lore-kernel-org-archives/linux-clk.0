@@ -1,58 +1,114 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46866 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbeIFUcG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:06 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 01/10] clk: samsung: Remove excessive include
-Date: Thu, 06 Sep 2018 17:55:23 +0200
-Message-id: <20180906155532.4085-2-m.szyprowski@samsung.com>
-In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
-References: <20180906155532.4085-1-m.szyprowski@samsung.com>
-        <CGME20180906155555eucas1p2ee5a32177a108e01496d2210b8e197b1@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <3a4274af2200923875ff05f945888a34d6dccee3.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Andy Tang <andy.tang@nxp.com>, Vabhav Sharma <vabhav.sharma@nxp.com>,
+ "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "mark.rutland@arm.com"
+ <mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
+ <linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+ <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+ "rjw@rjwysocki.net"
+ <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+ "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+ <linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
+ <linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
+ <catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+ "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>, "arnd@arndb.de" <arnd@arndb.de>,
+ "kstewart@linuxfoundation.org"
+ <kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
+ <yamada.masahiro@socionext.com>
+Date: Mon, 03 Sep 2018 15:33:33 -0500
+In-Reply-To: <DB5PR0401MB221332A5ED14C8E14C8D18A1F30C0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+ <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+ <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+ <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+ <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+ <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
+ <DB5PR0401MB22130C025AA4CCAD0221781DF30F0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+ <f6707cb54c3e6da1b50f45f915c996dfccfeacda.camel@buserror.net>
+ <DB5PR0401MB221332A5ED14C8E14C8D18A1F30C0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+Mime-Version: 1.0
+Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>, Varun Sethi <V.Sethi@nxp.com>,
+ Udit Kumar <udit.kumar@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Exynos Audio SubSystem and Exynos3250 clock drivers don't use any syscore
-function, so don't include linux/syscore_ops.h in their code.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos-audss.c | 1 -
- drivers/clk/samsung/clk-exynos3250.c   | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index f659c5cbf1d5..8f8a0f9fc842 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -15,7 +15,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
--#include <linux/syscore_ops.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 27c9d23657b3..0e9a41a4cac8 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -12,7 +12,6 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
--#include <linux/syscore_ops.h>
- 
- #include <dt-bindings/clock/exynos3250.h>
- 
--- 
-2.17.1
+T24gTW9uLCAyMDE4LTA5LTAzIGF0IDAxOjE3ICswMDAwLCBBbmR5IFRhbmcgd3JvdGU6Cj4gSGkg
+U2NvdHQsCj4gCj4gUGxlYXNlIHNlZSBteSByZXBsYXkgaW4gbGluZS4KPiAKPiA+IC0tLS0tT3Jp
+Z2luYWwgTWVzc2FnZS0tLS0tCj4gPiBGcm9tOiBMaW51eHBwYy1kZXYKPiA+IDxsaW51eHBwYy1k
+ZXYtYm91bmNlcytiMjk5ODM9ZnJlZXNjYWxlLmNvbUBsaXN0cy5vemxhYnMub3JnPiBPbgo+ID4g
+QmVoYWxmIE9mIFNjb3R0IFdvb2QKPiA+IFNlbnQ6IDIwMTjlubQ55pyIMeaXpSA0OjI5Cj4gPiBU
+bzogQW5keSBUYW5nIDxhbmR5LnRhbmdAbnhwLmNvbT47IFZhYmhhdiBTaGFybWEKPiA+IDx2YWJo
+YXYuc2hhcm1hQG54cC5jb20+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOwo+ID4gZGV2
+aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IHJvYmgrZHRAa2VybmVsLm9yZzsKPiA+IG1hcmsucnV0
+bGFuZEBhcm0uY29tOyBsaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZzsKPiA+IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207Cj4g
+PiBzYm95ZEBrZXJuZWwub3JnOyByandAcmp3eXNvY2tpLm5ldDsgdmlyZXNoLmt1bWFyQGxpbmFy
+by5vcmc7Cj4gPiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51eC1wbUB2Z2VyLmtlcm5l
+bC5vcmc7Cj4gPiBsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnOyBjYXRhbGluLm1h
+cmluYXNAYXJtLmNvbTsKPiA+IHdpbGwuZGVhY29uQGFybS5jb207IGdyZWdraEBsaW51eGZvdW5k
+YXRpb24ub3JnOyBhcm5kQGFybmRiLmRlOwo+ID4ga3N0ZXdhcnRAbGludXhmb3VuZGF0aW9uLm9y
+ZzsgeWFtYWRhLm1hc2FoaXJvQHNvY2lvbmV4dC5jb20KPiA+IENjOiBZb2dlc2ggTmFyYXlhbiBH
+YXVyIDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT47Cj4gPiBsaW51eEBhcm1saW51eC5vcmcu
+dWs7IFVkaXQgS3VtYXIgPHVkaXQua3VtYXJAbnhwLmNvbT47IFZhcnVuIFNldGhpCj4gPiA8Vi5T
+ZXRoaUBueHAuY29tPgo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAzLzVdIGRyaXZlcnM6IGNsay1x
+b3JpcTogQWRkIGNsb2NrZ2VuIHN1cHBvcnQgZm9yCj4gPiBseDIxNjBhCj4gPiAKPiA+IE9uIEZy
+aSwgMjAxOC0wOC0zMSBhdCAwNjoxMiArMDAwMCwgQW5keSBUYW5nIHdyb3RlOgo+ID4gPiBXZSBk
+b24ndCB3YW50IHRvIGluY3JlYXNlIE5VTV9DTVVYIGVhY2ggdGltZSBuZXcgc29jIHdpdGggbW9y
+ZQo+ID4gCj4gPiBjbXV4ZXMgYWRkZWQuCj4gPiAKPiA+IFlvdSBkb24ndCB3YW50IHRvIGhhdmUg
+dG8gbWFrZSBhIHRyaXZpYWwgY2hhbmdlIGVhY2ggdGltZSB5b3UgZXhjZWVkIGEKPiA+IGxpbWl0
+IHRoYXQgaGFzIHlldCB0byBiZSBleGNlZWRlZCBvbmNlIHNpbmNlIE5VTV9DTVVYIHdhcyBhZGRl
+ZD8KPiA+IFRoaXMgaXNuJ3QgQUJJIG9yIGluIGFueSBvdGhlciB3YXkgaGFyZCB0byBjaGFuZ2Uu
+ICBJdCdzIHJpZ2h0IGluIHRoZSBzYW1lCj4gPiBmaWxlCj4gPiBhcyB0aGUgY2hpcCBkZXNjcmlw
+dGlvbiB5b3UnZCBiZSBhZGRpbmcuCj4gPiAKPiA+IEFuZCBldmVuIGlmIGEgY2hpcCBkaWQgY29t
+ZSBhbG9uZyB3aXRoIDE2IGNtdXhlcywgeW91J2QgdGhlbiBuZWVkIHRvCj4gPiBpbmNyZWFzZSB0
+aGUgYXJyYXkgdG8gMTcgdG8gaG9sZCB0aGUgLTEgaWYgeW91IGRvbid0IHdhbnQgdG8gbGVhdmUg
+YQo+ID4gc2l0dWF0aW9uCj4gPiBsaWtlIHRoZQo+ID4gcDQwODAgaXMgaW4gbm93LCB3aGVyZSBh
+IGNoaXAncyBjbXV4IGFycmF5IGNvdWxkIGJlIGJyb2tlbiBieSBpbmNyZWFzaW5nCj4gPiBOVU1f
+Q01VWCBmdXJ0aGVyLgo+ID4gCj4gCj4gW0FuZHldIEFkZGluZyBidWZmZXIgdG8gYSBsaW1pdGF0
+aW9uIG51bWJlciBpcyBhbHdheXMgYSBnb29kIGhhYml0IHdoZW4KPiBjb2RpbmcuIFdlIG9mdGVu
+IGZvcmdldCB0byBpbmNyZWFzZSB0aGlzIHZhbHVlIHdoZW4KPiBhIG5ldyBjaGlwIHdpdGggbW9y
+ZSBjbXV4ZXMgYWRkZWQuIAoKIm9mdGVuIj8gIFRoZXJlIGhhcyBuZXZlciBiZWVuIGEgbmV3IGNo
+aXAgYWRkZWQgd2l0aCBtb3JlIGNtdXhlcyB0aGFuIHA0MDgwJ3MKOCwgYW5kIGlmIG9uZSBkb2Vz
+IGNvbWUgYWxvbmcgYW5kIHlvdSBmb3JnZXQsIHRoZSBjb21waWxlciBzaG91bGQgY29tcGxhaW4K
+YWJvdXQgZXhjZWVkaW5nIHRoZSBhcnJheSBsZW5ndGggd2l0aCBhIHN0YXRpYyBpbml0aWFsaXpl
+ci4gIFRoaXMgaXNuJ3QgbGlrZQphbiBhcnJheSB0aGF0IGlzIGZpbGxlZCB3aXRoIGEgcnVudGlt
+ZS1kZXRlcm1pbmVkIGxlbmd0aC4KCj4gTGlrZSB0aGlzIHBhdGNoLCB3ZSBkaWRuJ3QgaW5jcmVh
+c2UgdGhpcyB2YWx1ZSBhdCBmaXJzdC4gV2Ugc3BlbnQgYSBsb3Qgb2YKPiB0aW1lIGZpbmRpbmcg
+b3V0IHRoYXQgTlVNX0NNVVggbmVlZHMgdG8gYmUgaW5jcmVhc2VkIHRvby4KCkFyZSB5b3UgdGFs
+a2luZyBhYm91dCBzb21lIG90aGVyIGNoaXAgdGhhdCB5b3UgaGF2ZW4ndCBzZW50IGEgcGF0Y2gg
+Zm9yIHlldD8gCk9yIGlzIHRoZSBjbXV4IGFycmF5IGZvciB0aGlzIGNoaXAgd3Jvbmc/ICBXaGF0
+IHNwZWNpZmljYWxseSBkaWQgeW91IHNlZQpoYXBwZW4gImF0IGZpcnN0Ij8KCj4gSXQgaXMgYSBw
+ZXJzb25hbCBwcmVmZXJlbmNlIGhvdyB0byBzZXQgdGhpcyB2YWx1ZS4gSSB0aGluayBpdCBpcyBi
+ZXR0ZXIgdG8KPiBpbmNyZWFzZSBpdCB0byAxNiwgbm90IE5VTV9DTVVYKzEgYXMgbG9uZyBhcyB3
+ZSBmaXggdGhlIFA0MDgwIGlzc3VlCj4gZXZlbiB0aG91Z2ggaXQgaXMgYSB0cml2aWFsIGNoYW5n
+ZS4gQW5kIEkgYWdyZWUgdGhlIGRlc2NyaXB0aW9uIG5lZWRzIHRvIGJlCj4gdXBkYXRlZC4KCkkn
+bSBub3QgdGhlIGNsb2NrIG1haW50YWluZXIsIHNvIGl0J3Mgbm90IHVwIHRvIG1lLCBidXQgSSBk
+b24ndCBzZWUgdGhlIHBvaW50CmluIHNldHRpbmcgaXQgdG8gYW4gYXJiaXRyYXJ5IG51bWJlciwg
+YW5kIEkgZG8gbm90IGFncmVlIHRoYXQgaW5jcmVhc2luZwpOVU1fQ01VWCBpcyBhIHN1aXRhYmxl
+IHJlcGxhY2VtZW50IGZvciBOVU1fQ01VWCsxIGluIGNtdXhfdG9fZ3JvdXBbXSwgYXMgdGhhdAph
+cnJheSBzaG91bGQgYmUgb25lIGxhcmdlciB0aGFuIGNtdXhbXSBpbiBvcmRlciB0byBhbGxvdyBl
+dmVyeSBjaGlwIHRvIGhhdmUgYQotMSB0ZXJtaW5hdG9yLiAgSW4gYW55IGNhc2UsIGFueSBjaGFu
+Z2UgdG8gTlVNX0NNVVggc2hvdWxkIGJlIGEgc2VwYXJhdGUgcGF0Y2gKYmVjYXVzZSBpdCdzIG5v
+dCByZXF1aXJlZCBmb3IgbHgyMTYwYSBzdXBwb3J0IChhc3N1bWluZyBseDIxNjBhIHdhcyBjb3Jy
+ZWN0bHkKZGVzY3JpYmVkIGJ5IHRoaXMgcGF0Y2gpLgoKLVNjb3R0CgoKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
+ZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
