@@ -1,231 +1,118 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726821AbeINALn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Sep 2018 20:11:43 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8DIsceK091129
-        for <linux-clk@vger.kernel.org>; Thu, 13 Sep 2018 15:00:55 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mfvruj96n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-clk@vger.kernel.org>; Thu, 13 Sep 2018 15:00:54 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-clk@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Thu, 13 Sep 2018 15:00:54 -0400
-Subject: Re: [PATCH 4/4] media: platform: Add Aspeed Video Engine driver
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
-        openbmc@lists.ozlabs.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mchehab@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1535576973-8067-5-git-send-email-eajames@linux.vnet.ibm.com>
- <77243417-e832-dcfa-0eeb-d45f356dd9e8@xs4all.nl>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-Date: Thu, 13 Sep 2018 14:00:39 -0500
+Return-Path: <phil.edworthy@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Stephen Boyd <sboyd@kernel.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Michael Turquette
+	<mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
+	<horms@verge.net.au>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
+Date: Mon, 3 Sep 2018 13:21:02 +0000
+Message-ID: 
+ <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
+ <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
+ <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
+ <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <77243417-e832-dcfa-0eeb-d45f356dd9e8@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <5cd805fa-31e9-a011-f8cd-32590125f136@linux.vnet.ibm.com>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 09/03/2018 06:40 AM, Hans Verkuil wrote:
-> On 08/29/2018 11:09 PM, Eddie James wrote:
->> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->> can capture and compress video data from digital or analog sources. With
->> the Aspeed chip acting a service processor, the Video Engine can capture
->> the host processor graphics output.
->>
->> Add a V4L2 driver to capture video data and compress it to JPEG images,
->> making the data available through a standard read interface.
->>
->> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
->> ---
->>   drivers/media/platform/Kconfig        |    8 +
->>   drivers/media/platform/Makefile       |    1 +
->>   drivers/media/platform/aspeed-video.c | 1307 +++++++++++++++++++++++++++++++++
-> Missing MAINTAINERS file update.
->
->>   3 files changed, 1316 insertions(+)
->>   create mode 100644 drivers/media/platform/aspeed-video.c
->> +
->> +static void aspeed_video_init_jpeg_table(u32 *table, bool yuv420)
->> +{
->> +	int i;
->> +	unsigned int base;
->> +
->> +	for (i = 0; i < ASPEED_VIDEO_JPEG_NUM_QUALITIES; i++) {
->> +		int j;
->> +
->> +		base = 256 * i;	/* AST HW requires this header spacing */
->> +
->> +		for (j = 0; j < ASPEED_VIDEO_JPEG_HEADER_SIZE; j++)
->> +			table[base + j] =
->> +				le32_to_cpu(aspeed_video_jpeg_header[j]);
-> This doesn't look right. These tables are in cpu format to begin with,
-> so le32_to_cpu doesn't make sense.
->
-> BTW, what is the endianness of an aspeed SoC?
-
-Hi,
-
-Yes, Aspeed SoCs are LE, it's a standard ARM core. I'll do a simple copy 
-instead of converting endianness, since this code can really only run on 
-an Aspeed chip anyway.
-
->
->> +
->> +		base += ASPEED_VIDEO_JPEG_HEADER_SIZE;
->> +		for (j = 0; j < ASPEED_VIDEO_JPEG_DCT_SIZE; j++)
->> +			table[base + j] =
->> +				le32_to_cpu(aspeed_video_jpeg_dct[i][j]);
->> +
->> +		base += ASPEED_VIDEO_JPEG_DCT_SIZE;
->> +		for (j = 0; j < ASPEED_VIDEO_JPEG_QUANT_SIZE; j++)
->> +			table[base + j] =
->> +				le32_to_cpu(aspeed_video_jpeg_quant[j]);
->> +
->> +		if (yuv420)
->> +			table[base + 2] = le32_to_cpu(0x00220103);
->> +	}
->> +}
->> +
->> +
->> +static int aspeed_video_querycap(struct file *file, void *fh,
->> +				 struct v4l2_capability *cap)
->> +{
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->> +	strncpy(cap->driver, DEVICE_NAME, sizeof(cap->driver));
-> Use strlcpy.
->
-> Also fill in bus_info ("platform:<foo>").
->
->> +	cap->capabilities = video->vdev.device_caps | V4L2_CAP_DEVICE_CAPS;
-> You can drop this, it's filled in for you.
->
->> +
->> +	return 0;
->> +}
->> +
->> +static int aspeed_video_get_format(struct file *file, void *fh,
->> +				   struct v4l2_format *f)
->> +{
->> +	int rc;
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->> +	if (test_bit(VIDEO_RES_CHANGE, &video->flags)) {
->> +		if (file->f_flags & O_NONBLOCK)
->> +			return -EAGAIN;
->> +
->> +		rc = wait_event_interruptible(video->wait,
->> +					      !test_bit(VIDEO_RES_CHANGE,
->> +							&video->flags));
->> +		if (rc)
->> +			return -EINTR;
-> No, get_format should always just return the currently set format,
-> not the format that is detected.
->
-> Use VIDIOC_QUERY_DV_TIMINGS for that.
->
->> +	}
->> +
->> +	f->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-> Drop this, not needed.
->
->> +	f->fmt.pix = video->fmt;
->> +
->> +	return 0;
->> +}
->> +
->> +static int aspeed_video_set_format(struct file *file, void *fh,
->> +				   struct v4l2_format *f)
->> +{
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->> +	if (f->fmt.pix.pixelformat == video->fmt.pixelformat)
->> +		return 0;
->> +
->> +	if (f->fmt.pix.pixelformat == V4L2_PIX_FMT_YUV444) {
->> +		video->fmt.pixelformat = V4L2_PIX_FMT_YUV444;
->> +		aspeed_video_init_jpeg_table(video->jpeg.virt, false);
->> +		aspeed_video_update(video, VE_SEQ_CTRL, ~VE_SEQ_CTRL_YUV420,
->> +				    0);
->> +	} else if (f->fmt.pix.pixelformat == V4L2_PIX_FMT_YUV420) {
->> +		video->fmt.pixelformat = V4L2_PIX_FMT_YUV420;
->> +		aspeed_video_init_jpeg_table(video->jpeg.virt, true);
->> +		aspeed_video_update(video, VE_SEQ_CTRL, 0xFFFFFFFF,
->> +				    VE_SEQ_CTRL_YUV420);
-> This isn't filling in any of the other fields.
->
->> +	} else {
->> +		return -EINVAL;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int aspeed_video_get_jpegcomp(struct file *file, void *fh,
->> +				     struct v4l2_jpegcompression *a)
->> +{
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->> +	a->quality = video->jpeg_quality;
->> +
->> +	return 0;
->> +}
->> +
->> +static int aspeed_video_set_jpegcomp(struct file *file, void *fh,
->> +				     const struct v4l2_jpegcompression *a)
->> +{
->> +	u32 comp_ctrl;
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->> +	if (a->quality < 0 || a->quality > 11)
->> +		return -EINVAL;
->> +
->> +	video->jpeg_quality = a->quality;
->> +	comp_ctrl = FIELD_PREP(VE_COMP_CTRL_DCT_LUM, video->jpeg_quality) |
->> +		FIELD_PREP(VE_COMP_CTRL_DCT_CHR, video->jpeg_quality | 0x10);
->> +
->> +	aspeed_video_update(video, VE_COMP_CTRL,
->> +			    ~(VE_COMP_CTRL_DCT_LUM | VE_COMP_CTRL_DCT_CHR),
->> +			    comp_ctrl);
->> +
->> +	return 0;
->> +}
-> As the spec says, the jpegcomp ioctls are deprecated and you should use
-> JPEG controls instead.
->
-> See: https://hverkuil.home.xs4all.nl/spec/uapi/v4l/vidioc-g-jpegcomp.html
->
-> I stop reviewing here, since the first thing you need to do is to run
-> v4l2-compliance for your device driver.
->
-> See my reply to patch 0/4.
->
-> Regards,
->
-> 	Hans
-
-Thanks for all the comments! I have addressed these items and will push 
-up another patch set.
-
-Thanks,
-Eddie
-
->
->> +
->> +static int aspeed_video_get_parm(struct file *file, void *fh,
->> +				 struct v4l2_streamparm *a)
->> +{
->> +	struct aspeed_video *video = video_drvdata(file);
->> +
->>
+SGkgU3RlcGhlbiwNCg0KT24gMDMgU2VwdGVtYmVyIDIwMTggMTA6MzMgUGhpbCBFZHdvcnRoeSB3
+cm90ZToNCj4gT24gMDEgU2VwdGVtYmVyIDIwMTggMDM6NDYsIFN0ZXBoZW4gQm95ZCB3cm90ZToN
+Cj4gPiBRdW90aW5nIFBoaWwgRWR3b3J0aHkgKDIwMTgtMDgtMzEgMDc6MDc6MjIpDQo+ID4gPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrZGV2LmMgYi9kcml2ZXJzL2Nsay9jbGtkZXYuYyBp
+bmRleA0KPiA+ID4gOWFiM2RiOC4uNGFkYjk5ZSAxMDA2NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMv
+Y2xrL2Nsa2Rldi5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGtkZXYuYw0KPiA+ID4gQEAg
+LTU0LDMwICs1NCwyOSBAQCBFWFBPUlRfU1lNQk9MKG9mX2Nsa19nZXQpOw0KPiA+ID4NCj4gPiA+
+ICBzdGF0aWMgc3RydWN0IGNsayAqX19vZl9jbGtfZ2V0X2J5X25hbWUoc3RydWN0IGRldmljZV9u
+b2RlICpucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBj
+b25zdCBjaGFyICpkZXZfaWQsDQo+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgY29uc3QgY2hhciAqbmFtZSkNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpuYW1lLA0KPiA+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGJvb2wgb3B0aW9uYWwpDQo+ID4gPiAgew0KPiA+ID4g
+ICAgICAgICBzdHJ1Y3QgY2xrICpjbGsgPSBFUlJfUFRSKC1FTk9FTlQpOw0KPiA+ID4gKyAgICAg
+ICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmNoaWxkID0gbnA7DQo+ID4gPiArICAgICAgIGludCBpbmRl
+eCA9IDA7DQo+ID4gPg0KPiA+ID4gICAgICAgICAvKiBXYWxrIHVwIHRoZSB0cmVlIG9mIGRldmlj
+ZXMgbG9va2luZyBmb3IgYSBjbG9jayB0aGF0IG1hdGNoZXMgKi8NCj4gPiA+ICAgICAgICAgd2hp
+bGUgKG5wKSB7DQo+ID4gPiAtICAgICAgICAgICAgICAgaW50IGluZGV4ID0gMDsNCj4gPiA+DQo+
+ID4gPiAgICAgICAgICAgICAgICAgLyoNCj4gPiA+ICAgICAgICAgICAgICAgICAgKiBGb3IgbmFt
+ZWQgY2xvY2tzLCBmaXJzdCBsb29rIHVwIHRoZSBuYW1lIGluIHRoZQ0KPiA+ID4gICAgICAgICAg
+ICAgICAgICAqICJjbG9jay1uYW1lcyIgcHJvcGVydHkuICBJZiBpdCBjYW5ub3QgYmUgZm91bmQs
+IHRoZW4NCj4gPiA+IC0gICAgICAgICAgICAgICAgKiBpbmRleCB3aWxsIGJlIGFuIGVycm9yIGNv
+ZGUsIGFuZCBvZl9jbGtfZ2V0KCkgd2lsbCBmYWlsLg0KPiA+ID4gKyAgICAgICAgICAgICAgICAq
+IGluZGV4IHdpbGwgYmUgYW4gZXJyb3IgY29kZS4NCj4gPiA+ICAgICAgICAgICAgICAgICAgKi8N
+Cj4gPiA+ICAgICAgICAgICAgICAgICBpZiAobmFtZSkNCj4gPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIGluZGV4ID0gb2ZfcHJvcGVydHlfbWF0Y2hfc3RyaW5nKG5wLCAiY2xvY2stbmFtZXMi
+LA0KPiBuYW1lKTsNCj4gPiA+IC0gICAgICAgICAgICAgICBjbGsgPSBfX29mX2Nsa19nZXQobnAs
+IGluZGV4LCBkZXZfaWQsIG5hbWUpOw0KPiA+ID4gLSAgICAgICAgICAgICAgIGlmICghSVNfRVJS
+KGNsaykpIHsNCj4gPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOw0KPiA+ID4gLSAg
+ICAgICAgICAgICAgIH0gZWxzZSBpZiAobmFtZSAmJiBpbmRleCA+PSAwKSB7DQo+ID4gPiAtICAg
+ICAgICAgICAgICAgICAgICAgICBpZiAoUFRSX0VSUihjbGspICE9IC1FUFJPQkVfREVGRVIpDQo+
+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByX2VycigiRVJST1I6IGNvdWxk
+IG5vdCBnZXQgY2xvY2sgJXBPRjolcyglaSlcbiIsDQo+ID4gPiAtICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgbnAsIG5hbWUgPyBuYW1lIDogIiIsIGluZGV4KTsNCj4gPiA+
+ICsgICAgICAgICAgICAgICBpZiAoaW5kZXggPj0gMCkNCj4gPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgIGNsayA9IF9fb2ZfY2xrX2dldChucCwgaW5kZXgsIGRldl9pZCwgbmFtZSk7DQo+ID4g
+PiArICAgICAgICAgICAgICAgaWYgKCFJU19FUlIoY2xrKSkNCj4gPg0KPiA+IFdhcyB0aGlzIGNo
+YW5nZSBuZWNlc3Nhcnk/IEl0IGxvb2tzIGxpa2Ugd2UgY2FuIGxlYXZlIGl0IGFsbCBhbG9uZSBh
+bmQga2VlcA0KPiA+IHBhc3NpbmcgYSBuZWdhdGl2ZSBudW1iZXIgdG8gX19vZl9jbGtfZ2V0KCkg
+YW5kIGhhdmUgdGhhdCByZXR1cm4gYW4gZXJyb3INCj4gPiBwb2ludGVyIHdoaWNoIHdlIHRoZW4g
+cmV0dXJuIGltbWVkaWF0ZWx5IGFzIGFuIGVycm9yLiBCdXQsIGlmIHRoZSBjbG9jayBpcw0KPiA+
+IG9wdGlvbmFsIGFuZCB3ZSd2ZSBwYXNzZWQgYSBuYW1lIGhlcmUsIHNob3VsZG4ndCB3ZSB0cmVh
+dCBhbiBlcnJvciBmcm9tDQo+ID4gb2ZfcHJvcGVydHlfbWF0Y2hfc3RyaW5nKCkgYXMgc3VjY2Vz
+cyB0b28/IFRoaXMgaXMgYWxsIGxvb2tpbmcgcHJldHR5IGZyYWdpbGUNCj4gc28NCj4gPiBtYXli
+ZSBpdCBjYW4gYmUgYmV0dGVyIGNvbW1lbnRlZCBhbmQgYWxzbyBtb3JlIGV4cGxpY2l0IGluc3Rl
+YWQgb2YgcmVseWluZw0KPiA+IG9uIHRoZSByZWFkZXIgdG8ganVtcCB0aHJvdWdoIGFsbCB0aGUg
+ZnVuY3Rpb24gY2FsbHMgdG8gZmlndXJlIG91dCB3aGF0IHRoZQ0KPiA+IHJldHVybiB2YWx1ZSBp
+cyBpbiBzb21lIGNhc2VzLg0KPiBJZiB3ZSBjYWxsIF9fb2ZfY2xrX2dldCwgd2l0aCBpbmRleCA8
+IDAsIHdlIHdpbGwgbm90IGJlIGFibGUgdG8gZGlmZmVyZW50aWF0ZQ0KPiBiZXR3ZWVuIGNsb2Nr
+IHByb3ZpZGVyIG5vdCBwcmVzZW50IGFuZCBvdGhlciBlcnJvcnMgd2l0aCB0aGUgcGFzc2VkIGRh
+dGEsDQo+IGFzIGl0IHdpbGwganVzdCByZXR1cm4gLUVJTlZBTC4NCj4gDQo+IG9mX3Byb3BlcnR5
+X21hdGNoX3N0cmluZygpIHdpbGwgcmV0dXJuIC1FSU5WQUwgaWYgdGhlICJjbG9jay1uYW1lcyIN
+Cj4gcHJvcGVydHkNCj4gaXMgbWlzc2luZywgb3IgLUVOT0RBVEEgaWYgdGhlIHNwZWNpZmllZCBj
+bG9jayBuYW1lIGluIHRoZSAiY2xvY2stbmFtZXMiDQo+IHByb3BlcnR5IGlzIG1pc3NpbmcuIFRo
+YXQgaXMgd2h5IEkgaGF2ZSBjaGFuZ2VkIHRoZSBjb2RlIHRvIGNvbmRpdGlvbmFsbHkNCj4gY2Fs
+bCBfX29mX2Nsa19nZXQsIHNvIHRoZSBjb2RlIHdpbGwgY29ycmVjdGx5IHRyZWF0IG9wdGlvbmFs
+IGNsb2NrcyB0aGF0IGFyZSBub3QNCj4gcHJlc2VudC4NCldoZW4gZ2V0dGluZyBuYW1lZCBvcHRp
+b25hbCBjbG9ja3MsIGlmIHRoZSBub2RlIGhhcyBhICJjbG9jay1uYW1lcyIgcHJvcGVydHksDQpi
+dXQgbm8gY2xvY2sgbWF0Y2hpbmcgdGhlIG5hbWUgd2Ugd2FudCwgSSB0aGluayB0aGUgZnVuY3Rp
+b24gc2hvdWxkIHN0b3AgdGhlcmUNCmFuZCAqbm90KiB3YWxrIHVwIHRoZSB0cmVlIG9mIGRldmlj
+ZXMgbG9va2luZyBmb3IgYSBtYXRjaGluZyBjbG9jay4gSW4gdGhpcyBjYXNlLA0KdGhlIGNvZGUg
+ZGV0ZXJtaW5lcyB0aGF0IHRoZSBvcHRpb25hbCBjbG9jayBpcyBub3QgcHJlc2VudC4NCg0KSWYg
+dGhlcmUgaXNu4oCZdCBhICJjbG9jay1uYW1lcyIgcHJvcGVydHkgaW4gdGhlIGN1cnJlbnQgbm9k
+ZSwgdGhlIGZ1bmN0aW9uIHNob3VsZA0Kd2FsayB1cCB0aGUgdHJlZSBvZiBkZXZpY2VzIGxvb2tp
+bmcgZm9yIGEgbWF0Y2hpbmcgb3B0aW9uYWwgY2xvY2suIElmIHRoZXJlIGFyZSBubw0KcGFyZW50
+IG5vZGVzIGxlZnQgYW5kIHdlIGhhdmVuJ3QgZm91bmQgYSBtYXRjaGluZyBvcHRpb25hbCBjbG9j
+aywgd2UgZGV0ZXJtaW5lDQp0aGF0IHRoZSBjbG9jayBpc27igJl0IHRoZXJlLg0KDQpJcyB0aGF0
+IGhvdyB0aGlzIHNob3VsZCB3b3JrPw0KDQpUaGFua3MNClBoaWwNCg0KDQo+ID4gPiAgICAgICAg
+ICAgICAgICAgICAgICAgICByZXR1cm4gY2xrOw0KPiA+ID4gLSAgICAgICAgICAgICAgIH0NCj4g
+PiA+ICsgICAgICAgICAgICAgICBpZiAobmFtZSAmJiBpbmRleCA+PSAwKQ0KPiA+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4NCj4gPiBBbmQgdGhpcyBjYXVzZXMgdXMgdG8g
+ZHVwbGljYXRlIGxvZ2ljIGRvd24gYmVsb3cgYmVjYXVzZSB3ZSBoYXZlIHRvIGNoZWNrDQo+IGl0
+DQo+ID4gYWdhaW4gaWYgaXQncyBub3Qgb3B0aW9uYWwgb3Igc29tZSBvdGhlciBlcnJvciBjb25k
+aXRpb24/DQo+IFllcywgdGhlIGVycm9yIGhhbmRsaW5nIGlzIG1lc3N5LCB0aG91Z2ggSSBoYXZl
+IHRyaWVkIHRvIG1ha2UgdGhpcyBzaW1wbGUuDQo+IEknbGwgaGF2ZSBhIHRoaW5rIGFib3V0IHNv
+bWUgb3RoZXIgd2F5IHRvIG1ha2UgdGhpcyBjbGVhbmVyLg0KPiANCj4gDQo+ID4gPg0KPiA+ID4g
+ICAgICAgICAgICAgICAgIC8qDQo+ID4gPiAgICAgICAgICAgICAgICAgICogTm8gbWF0Y2hpbmcg
+Y2xvY2sgZm91bmQgb24gdGhpcyBub2RlLiAgSWYgdGhlDQo+ID4gPiBwYXJlbnQgbm9kZSBAQCAt
+ODksNiArODgsMTYgQEAgc3RhdGljIHN0cnVjdCBjbGsNCj4gPiAqX19vZl9jbGtfZ2V0X2J5X25h
+bWUoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
+IGJyZWFrOw0KPiA+ID4gICAgICAgICB9DQo+ID4gPg0KPiA+ID4gKyAgICAgICAvKiBUaGUgY2xv
+Y2sgaXMgbm90IHZhbGlkLCBidXQgaXQgY291bGQgYmUgb3B0aW9uYWwgb3IgZGVmZXJyZWQgKi8N
+Cj4gPiA+ICsgICAgICAgaWYgKG9wdGlvbmFsICYmIFBUUl9FUlIoY2xrKSA9PSAtRU5PRU5UKSB7
+DQo+ID4gPiArICAgICAgICAgICAgICAgY2xrID0gTlVMTDsNCj4gPiA+ICsgICAgICAgICAgICAg
+ICBwcl9pbmZvKCJubyBvcHRpb25hbCBjbG9jayAlcE9GOiVzXG4iLCBjaGlsZCwNCj4gPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIG5hbWUgPyBuYW1lIDogIiIpOw0KPiA+DQo+ID4gSXMgdGhp
+cyBpbnRlbnRpb25hbGx5IHByX2luZm8/DQo+IFllcywgaXQncyBub3QgYW4gZXJyb3IgaWYgYW4g
+b3B0aW9uYWwgY2xvY2sgaXNu4oCZdCB0aGVyZS4NCj4gV291bGQgcHJfZGVidWcgYmUgbW9yZSBh
+cHByb3ByaWF0ZT8NCj4gDQo+IA0KPiA+ID4gKyAgICAgICB9IGVsc2UgaWYgKG5hbWUgJiYgaW5k
+ZXggPj0gMCAmJiBQVFJfRVJSKGNsaykgIT0gLUVQUk9CRV9ERUZFUikgew0KPiA+ID4gKyAgICAg
+ICAgICAgICAgIHByX2VycigiRVJST1I6IGNvdWxkIG5vdCBnZXQgY2xvY2sgJXBPRjolcyglaSlc
+biIsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBjaGlsZCwgbmFtZSwgaW5kZXgpOw0K
+PiA+ID4gKyAgICAgICB9DQo+ID4gPiArDQo+ID4gPiAgICAgICAgIHJldHVybiBjbGs7DQo+ID4g
+PiAgfQ0KPiA+ID4NCj4gDQo+IFRoYW5rcw0KPiBQaGlsDQo=
