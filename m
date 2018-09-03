@@ -1,47 +1,87 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Sun, 9 Sep 2018 10:00:23 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180909020021.GA18838@dragon>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
- <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:60922 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbeICQik (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Sep 2018 12:38:40 -0400
+Date: Mon, 3 Sep 2018 14:18:45 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: robh+dt@kernel.org, wens@csie.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
+        architt@codeaurora.org, a.hajda@samsung.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 10/27] drm/sun4i: Add compatible for H6 display engine
+Message-ID: <20180903121845.znqhufx24ihcpmkn@flea>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <20180902072643.4917-11-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180906101516.GA5360@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="77ysc5vzzbqkmyxl"
+In-Reply-To: <20180902072643.4917-11-jernej.skrabec@siol.net>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
-> On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
-> 
-> > Can you ACK on those two regulator patches, so that I can queue this
-> > series up on IMX tree?
-> 
-> I was expecting to get a pull request with the precursor patches in it -
-> the regulator driver seems to get a moderate amount of development so
-> there's a reasonable risk of conflicts.
 
-What about you create a stable topic branch for regulator patches and I
-pull it into IMX tree?
+--77ysc5vzzbqkmyxl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shawn
+hi,
+
+On Sun, Sep 02, 2018 at 09:26:26AM +0200, Jernej Skrabec wrote:
+> H6 is first Allwinner SoC which supports 10 bit colors, HDR and AFBC.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/su=
+n4i_drv.c
+> index dd19d674055c..e5731d092e1a 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@ -410,6 +410,7 @@ static int sun4i_drv_remove(struct platform_device *p=
+dev)
+> =20
+>  static const struct of_device_id sun4i_drv_of_table[] =3D {
+>  	{ .compatible =3D "allwinner,sun4i-a10-display-engine" },
+> +	{ .compatible =3D "allwinner,sun50i-h6-display-engine" },
+>  	{ .compatible =3D "allwinner,sun5i-a10s-display-engine" },
+>  	{ .compatible =3D "allwinner,sun5i-a13-display-engine" },
+>  	{ .compatible =3D "allwinner,sun6i-a31-display-engine" },
+
+While it makes sens from an alphabetical point of view, we usually
+follow the number order here (so after sun9i).
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--77ysc5vzzbqkmyxl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluNJqQACgkQ0rTAlCFN
+r3TU3g/7BeCLrG4kOHLUDVaR380EbyM6CDNX1B8+Dbpq53AyM+um4m0GRb6bAaIo
+V2USXEkIu+NBPjpOEvPTsm2SkApe7ghTLBGnypaw+QCZTDbBnK8vIpwxO22Jt9Uw
+WNBAEne8Rx6O9MPUkuzZHrPch6VAWceB/FBAIgMATtYSskLKQP+WjwN8LFQHLxWd
+qjRA+K2msn4PVbBmzmmBgKnnV/5wlGDjNpBgcv7MvwxXBLdbW99U54604A9JZKRh
+KFf7ZF2wuBbXUM1jkLVuFYPLsxJXFB8AnVLRutBYa7uwlwPL1/n8/RcIRHzc9Cb0
+M/vi3wq5NLWxuzs7SFUIGkgBHDcLtBaRDOknfci2c8cDj+kisbfzvpkL4ZiVN9if
+FjIIZaOkB2xAdr7Eqau7MO3P9SnQgBPzG2eu8F1NgFlZi1+l1jEuDSUdqni3txAP
+6u0MEmq6S0g027ffWy8M0tw9fIJWT3bPnWKJCzX0b2KQ/1wJqVnkBu0L6Jl0hSOc
+zw7WSgUvzt0h72PYotCXmC9nEK4hlmJ+rJb+yfB5sSqrFRSJ3hTIDFbnYg+aste+
+Rv9OboR8gPWAM5hH1+vovz3DG9X8qkLIXTiGGvNXQY4n0K5qCRJhvqCkWgHh+YtH
+rBSMeAo4bqj5Os3BQSVALbWVxPQO8fYCNuqaHqhRAF7eCTlyfME=
+=WKT1
+-----END PGP SIGNATURE-----
+
+--77ysc5vzzbqkmyxl--
