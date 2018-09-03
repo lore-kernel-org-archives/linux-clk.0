@@ -1,58 +1,127 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] clk: qcom: Add lpass clock controller driver for
- SDM845
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org
-References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
- <1533298874-22863-3-git-send-email-tdas@codeaurora.org>
- <153540431524.129321.12826367247850332291@swboyd.mtv.corp.google.com>
- <15984aab-d815-56bb-af9c-7be9cfd9a103@codeaurora.org>
- <153619871329.119890.8761547440925666785@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <a74ae0f1-caa7-9b49-e4f4-32b82e2ba423@codeaurora.org>
-Date: Thu, 6 Sep 2018 17:01:31 +0530
-MIME-Version: 1.0
-In-Reply-To: <153619871329.119890.8761547440925666785@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:42972 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727487AbeICOSc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Sep 2018 10:18:32 -0400
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v4 3/5] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+Date: Mon,  3 Sep 2018 18:00:27 +0800
+Message-Id: <1535968829-19418-4-git-send-email-tony.xie@rock-chips.com>
+In-Reply-To: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
 
+Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-On 9/6/2018 7:21 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-09-05 11:26:10)
->> On 8/28/2018 2:41 AM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-08-03 05:21:14)
->>>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
->>>> new file mode 100644
->>>> index 0000000..6f387f9
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
->>> [...]
->>>> +
->>>> +/* CLK_OFF would not toggle until LPASS is not out of reset */
->>>
->>> Can we change the branch ops to check for out of reset or not? Do the
->>> clks even work when LPASS isn't out of reset? Why would the clk APIs
->>> even be called on here if it hadn't taken LPASS out of reset?
->>>
->>
->> The branches need to be turned ON before the LPASS is out of reset.
->> But we would not be able to check the CLK_ENABLE bit.
-> 
-> Ok. Are the branches actually outputting any clk frequency when LPASS is
-> in reset? It sounds like the hardware is broken and we can't ever check
-> the halt bits?
-> 
-Yes, they would output when the reset is pulled for LPASS. These are as 
-per the steps to be followed to bring the LPASS out of reset.
-
+diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+index 91b6522..c025a99 100644
+--- a/Documentation/devicetree/bindings/mfd/rk808.txt
++++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+ The rk8xx family current members:
+ rk805
+ rk808
++rk809
++rk817
+ rk818
+ 
+ Required properties:
+ - compatible: "rockchip,rk805"
+ - compatible: "rockchip,rk808"
++- compatible: "rockchip,rk809"
++- compatible: "rockchip,rk817"
+ - compatible: "rockchip,rk818"
+ - reg: I2C slave address
+ - interrupt-parent: The parent interrupt controller.
+@@ -46,6 +50,28 @@ Optional RK808 properties:
+   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+   very quickly with no slow ramp time.
+ 
++Optional RK809 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for SWITCH_REG1
++- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
++
++Optional RK817 properties:
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
++- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
++- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
++- vcc8-supply:  The input supply for BOOST
++- vcc9-supply:  The input supply for OTG_SWITCH
++
+ Optional RK818 properties:
+ - vcc1-supply:  The input supply for DCDC_REG1
+ - vcc2-supply:  The input supply for DCDC_REG2
+@@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+ 	- SWITCH_REGn
+ 		- valid values for n are 1 to 2
+ 
++Following regulators of the RK809 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK808 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 5.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- SWITCH_REGn
++		- valid values for n are 1 to 2.
++
++Following regulators of the RK817 PMIC block are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in RK818 datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 1 to 4.
++	- LDO_REGn
++		- valid values for n are 1 to 9.
++	- BOOST
++	- OTG_SWITCH
++
+ Following regulators of the RK818 PMIC block are supported. Note that
+ the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+ number as described in RK818 datasheet.
+@@ -99,6 +147,14 @@ number as described in RK818 datasheet.
+ 	- HDMI_SWITCH
+ 	- OTG_SWITCH
+ 
++There are three pins needed to config for each of RK809 and RK817,
++named "gpio_ts" "gpio_gt" "gpio_slp".
++	The gpio_gt and gpio_ts pins support the gpio function.
++	The gpio_slp pin is for controlling the pmic states, as below:
++		- reset
++		- power down
++		- sleep
++
+ Standard regulator bindings are used inside regulator subnodes. Check
+   Documentation/devicetree/bindings/regulator/regulator.txt
+ for more details
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+1.9.1
