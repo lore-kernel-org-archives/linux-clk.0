@@ -1,63 +1,55 @@
-Return-Path: <sudeep.holla@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
- Ingo Molnar <mingo@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, matt@codeblueprint.co.uk,
- hkallweit1@gmail.com, Kees Cook <keescook@chromium.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Michal Simek <michal.simek@xilinx.com>,
- Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
- Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- DTML <devicetree@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To: Olof Johansson <olof@lixom.net>, Jolly Shah <jolly.shah@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com>
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Message-ID: <64fbd7ca-48a8-7cb0-af3a-131ee61aef5a@arm.com>
-Date: Mon, 10 Sep 2018 09:43:27 +0100
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 3 Sep 2018 11:01:11 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
+Message-ID: <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+ <20180830184210.5369-2-digetx@gmail.com>
+ <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+ <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 09/09/18 02:18, Olof Johansson wrote:
-> Hi,
+On Fri, Aug 31, 2018 at 12:45:17PM +0300, Dmitry Osipenko wrote:
+> On 8/31/18 12:29 PM, Peter De Schrijver wrote:
+> > On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
+> >> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+> >> a lock-status bit. The lock-status polling was disabled ~7 years ago
+> >> because PLLE was failing to lock and was a suspicion that other PLLs
+> >> might be faulty too. Other PLLs are okay, hence enable the lock-status
+> >> polling for them. This reduces delay of any operation that require PLL
+> >> to lock.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>
+> >> Changelog:
+> >>
+> >> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+> >>
+> > 
+> > This isn't correct. The lock bit of PLLE can declare lock too early, but the
+> > PLL itself does lock.
 > 
-> On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
->> From: Rajan Vaja <rajanv@xilinx.com>
->>
->> Add ZynqMP firmware IOCTL API to control and configure
->> devices like PLLs, SD, Gem, etc.
->>
->> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
->> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> Indeed, it locks but can't be polled for the lock-status as it doesn't have the
+> lock-status bit.
 > 
-> This patch worries me somewhat. It's a transparent pass-through ioctl
-> driver. Is there a spec available for what the implemented IOCTLs are?
-> 
-> Should some of them be proper drivers instead of an opaque
-> pass-through like this? Could some of them have stability impact on
-> the platform such that there are security concerns and the list of
-> arguments should somehow be sanitized?
-> 
-> What's the intended usecase anyway? Just a debug tool during
-> development, or something that you expect heavy use of by some
-> userspace middleware?
+> Do you want me to adjust the commit description or it is fine as is?
 > 
 
-Thanks for pointing this out. My earlier attempts were ignored[1]
-and I gave up.
+I think it's better to adjust it.
 
--- 
-Regards,
-Sudeep
+> It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
 
-[1] https://lkml.org/lkml/2018/5/10/298
+That seems odd yes..
+
+Peter.
