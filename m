@@ -1,136 +1,70 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 20/27] drm/sun4i: Add support for Synopsys HDMI PHY
-Date: Sun,  2 Sep 2018 09:26:36 +0200
-Message-Id: <20180902072643.4917-21-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from lucky1.263xmail.com ([211.157.147.130]:42798 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbeICOSW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Sep 2018 10:18:22 -0400
+From: Tony Xie <tony.xie@rock-chips.com>
+To: heiko@sntech.de
+Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v4 0/5] support a new type of PMIC,including two chips(rk817 and rk809)
+Date: Mon,  3 Sep 2018 18:00:24 +0800
+Message-Id: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently sun8i-hdmi-phy driver supports only custom PHYs connected to
-DW HDMI controller. Since newest Allwinner SoCs have unmodified Synopsys
-PHY, driver has to be reorganized to support them.
+Most of functions and registers of the rk817 and rk808 are the same,
+so they can share allmost all codes.
 
-Variant structure is expanded to allow differentiation between custom
-and Sysnopsys PHYs and to hold Synopsys PHY settings.
+Their specifications are as follows：
+  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same registers
+     for these components except dcdc5.
+  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+  3) The RK817 has one switch but The Rk809 has two.
 
-Since DW HDMI bridge platform data has different fields for custom and
-Sysnopsys PHY, function sun8i_hdmi_phy_get_ops() is replaced with
-sun8i_hdmi_phy_set_ops().
+Changes in V2:
+1. initialize the pm_pwroff_fn to NULL. 
+2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
+3. change patch 2/3/4/5 subjects. 
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c  |  4 +---
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h  |  7 ++++++-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 18 ++++++++++++++++--
- 3 files changed, 23 insertions(+), 6 deletions(-)
+Changes in V3：
+1. change patch 4 subjects
+2. replace pr_ with dev_ for printing in patch 2
+3. modify switch1 and switch2 configs in patch 2
+4. explain gpio information for rk809 and rk817 in patch 4
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 44143c9f20d0..bf35975dd100 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -172,9 +172,7 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	sun8i_hdmi_phy_init(hdmi->phy);
- 
- 	plat_data->mode_valid = hdmi->quirks->mode_valid;
--	plat_data->phy_ops = sun8i_hdmi_phy_get_ops();
--	plat_data->phy_name = "sun8i_dw_hdmi_phy";
--	plat_data->phy_data = hdmi->phy;
-+	sun8i_hdmi_phy_set_ops(hdmi->phy, plat_data);
- 
- 	platform_set_drvdata(pdev, hdmi);
- 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index 94cf13d09abe..e48cd9b3cce3 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -149,6 +149,10 @@ struct sun8i_hdmi_phy;
- struct sun8i_hdmi_phy_variant {
- 	bool has_phy_clk;
- 	bool has_second_pll;
-+	bool is_custom_phy;
-+	const struct dw_hdmi_curr_ctrl *cur_ctr;
-+	const struct dw_hdmi_mpll_config *mpll_cfg;
-+	const struct dw_hdmi_phy_config *phy_cfg;
- 	void (*phy_init)(struct sun8i_hdmi_phy *phy);
- 	void (*phy_disable)(struct dw_hdmi *hdmi,
- 			    struct sun8i_hdmi_phy *phy);
-@@ -196,7 +200,8 @@ int sun8i_hdmi_phy_probe(struct sun8i_dw_hdmi *hdmi, struct device_node *node);
- void sun8i_hdmi_phy_remove(struct sun8i_dw_hdmi *hdmi);
- 
- void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy);
--const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void);
-+void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
-+			    struct dw_hdmi_plat_data *plat_data);
- 
- int sun8i_phy_clk_create(struct sun8i_hdmi_phy *phy, struct device *dev,
- 			 bool second_parent);
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index ad4ba1cc83b4..ee2bf61cd4d2 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -390,9 +390,20 @@ void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- 	phy->variant->phy_init(phy);
- }
- 
--const struct dw_hdmi_phy_ops *sun8i_hdmi_phy_get_ops(void)
-+void sun8i_hdmi_phy_set_ops(struct sun8i_hdmi_phy *phy,
-+			    struct dw_hdmi_plat_data *plat_data)
- {
--	return &sun8i_hdmi_phy_ops;
-+	struct sun8i_hdmi_phy_variant *variant = phy->variant;
-+
-+	if (variant->is_custom_phy) {
-+		plat_data->phy_ops = &sun8i_hdmi_phy_ops;
-+		plat_data->phy_name = "sun8i_dw_hdmi_phy";
-+		plat_data->phy_data = phy;
-+	} else {
-+		plat_data->mpll_cfg = variant->mpll_cfg;
-+		plat_data->cur_ctr = variant->cur_ctr;
-+		plat_data->phy_config = variant->phy_cfg;
-+	}
- }
- 
- static struct regmap_config sun8i_hdmi_phy_regmap_config = {
-@@ -405,6 +416,7 @@ static struct regmap_config sun8i_hdmi_phy_regmap_config = {
- 
- static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
- 	.has_phy_clk = true,
-+	.is_custom_phy = true,
- 	.has_second_pll = true,
- 	.phy_init = &sun8i_hdmi_phy_init_h3,
- 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
-@@ -412,6 +424,7 @@ static const struct sun8i_hdmi_phy_variant sun50i_a64_hdmi_phy = {
- };
- 
- static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
-+	.is_custom_phy = true,
- 	.phy_init = &sun8i_hdmi_phy_init_a83t,
- 	.phy_disable = &sun8i_hdmi_phy_disable_a83t,
- 	.phy_config = &sun8i_hdmi_phy_config_a83t,
-@@ -419,6 +432,7 @@ static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
- 
- static const struct sun8i_hdmi_phy_variant sun8i_h3_hdmi_phy = {
- 	.has_phy_clk = true,
-+	.is_custom_phy = true,
- 	.phy_init = &sun8i_hdmi_phy_init_h3,
- 	.phy_disable = &sun8i_hdmi_phy_disable_h3,
- 	.phy_config = &sun8i_hdmi_phy_config_h3,
+Changes in V4：
+1. modify some codes for patch 2 and patch 5 according to comments 
+2. add reviewer mail lists for patch 3 and 4
+
+Tony Xie (5):
+  mfd: rk808: Add RK817 and RK809 support
+  regulator: rk808: add RK809 and RK817 support.
+  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+  rtc: rk808: add RK809 and RK817 support.
+  clk: RK808: add RK809 and RK817 support.
+
+ Documentation/devicetree/bindings/mfd/rk808.txt |  56 ++
+ drivers/clk/Kconfig                             |   9 +-
+ drivers/clk/clk-rk808.c                         |  64 ++-
+ drivers/mfd/Kconfig                             |   6 +-
+ drivers/mfd/rk808.c                             | 218 +++++++-
+ drivers/regulator/Kconfig                       |   4 +-
+ drivers/regulator/rk808-regulator.c             | 657 +++++++++++++++++++++++-
+ drivers/rtc/Kconfig                             |   4 +-
+ drivers/rtc/rtc-rk808.c                         |  68 ++-
+ include/linux/mfd/rk808.h                       | 175 +++++++
+ kernel/reboot.c                                 |   1 +
+ 11 files changed, 1204 insertions(+), 58 deletions(-)
+
 -- 
-2.18.0
+1.9.1
