@@ -1,46 +1,52 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	xuwei5@hisilicon.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amit.kucheria@linaro.org,
-	linux-clk@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/4] Add clock support for Hi3670 SoC
-Date: Thu, 20 Sep 2018 23:00:59 -0700
-Message-Id: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <yixin.zhu@linux.intel.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Stephen Boyd <sboyd@kernel.org>, Songjun Wu <songjun.wu@linux.intel.com>,
+ chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+ <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
+ <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
+From: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <3fcc4615-eea8-8cb7-987f-c58ab9683e0c@linux.intel.com>
+Date: Mon, 3 Sep 2018 18:52:21 +0800
+MIME-Version: 1.0
+In-Reply-To: <153573558557.93865.3835503209987304514@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
-the HiSi common clock code. While adding clock support, let's remove the
-fixed clock for UART and source SoC clock on HiKey970 board.
 
-This patchset has been verified on HiKey970 board.
+On 9/1/2018 1:13 AM, Stephen Boyd wrote:
+> Quoting Zhu, Yi Xin (2018-08-29 03:34:26)
+>>>>>> +}
+>>>>>> +
+>>>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>>>> It provides CPU clock which is used in early boot stage.
+>>>>
+>>> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+>>> frequency? If the driver can be split into two pieces, one to handle the
+>>> really early stuff that must be in place to get timers up and running
+>>> and the other to register the rest of the clks that aren't critical from
+>>> a regular platform driver it would be good. That's preferred model if
+>>> something is super critical.
+>>>
+>> Just to make sure my approach is same as you think.
+>>
+>> In the driver, there's two clock registrations.
+>>
+>> - One through CLK_OF_DECLARE for early stage clocks.
+>>
+>> - The other via platform driver for the non-critical clocks.
+> You can use the same DT node for both parts, no need to split the node
+> into two and use syscon here.
+>
+Thank you.
 
-Thanks,
-Mani
-
-Manivannan Sadhasivam (4):
-  dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
-  arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
-  arm64: dts: hisilicon: Source SoC clock for UART6
-  clk: hisilicon: Add clock driver for Hi3670 SoC
-
- .../bindings/clock/hi3670-clock.txt           |   43 +
- arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
- drivers/clk/hisilicon/Kconfig                 |    7 +
- drivers/clk/hisilicon/Makefile                |    1 +
- drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
- include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
- 6 files changed, 1458 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
- create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
- create mode 100644 include/dt-bindings/clock/hi3670-clock.h
-
--- 
-2.17.1
+Will use CLK_OF_DECLARE_DRIVER to use the same DT node.
