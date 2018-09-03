@@ -1,291 +1,104 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: linux-imx@nxp.com,
-	Abel Vesa <abelvesa@linux.com>,
-	Abel Vesa <abel.vesa@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v8 2/5] clk: imx: add fractional PLL output clock
-Date: Fri, 21 Sep 2018 15:11:31 +0300
-Message-Id: <1537531894-18499-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
-References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+To: Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
+Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+ openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
+ joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
+Date: Mon, 3 Sep 2018 13:57:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+In-Reply-To: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Hi Eddie,
 
-This is a new clock type introduced on i.MX8.
+Thank you for your work on this. Interesting to see support for this SoC :-)
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 215 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 219 insertions(+)
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
+On 08/29/2018 11:09 PM, Eddie James wrote:
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting as a service processor, the Video Engine can
+> capture the host processor graphics output.
+> 
+> This series adds a V4L2 driver for the VE, providing a read() interface
+> only. The driver triggers the hardware to capture the host graphics output
+> and compress it to JPEG format.
+> 
+> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
+> was significantly slower than the simple read() interface, so I have not
+> included the streaming part.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y += \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
- 	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-new file mode 100644
-index 0000000..030df76
---- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+#include "clk.h"
-+
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD_MASK		BIT(19)
-+#define PLL_BYPASS_MASK		BIT(14)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	GENMASK(30, 7)
-+#define PLL_INT_DIV_MASK	GENMASK(6, 0)
-+#define PLL_OUTPUT_DIV_MASK	GENMASK(4, 0)
-+#define PLL_FRAC_DENOM		0x1000000
-+
-+#define PLL_FRAC_LOCK_TIMEOUT	10000
-+#define PLL_FRAC_ACK_TIMEOUT	500000
-+
-+struct clk_frac_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-+
-+static int clk_wait_lock(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_STATUS, 0,
-+					PLL_FRAC_LOCK_TIMEOUT);
-+}
-+
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
-+
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	return readl_poll_timeout(pll->base, val, val & PLL_NEWDIV_ACK, 0,
-+					PLL_FRAC_ACK_TIMEOUT);
-+}
-+
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
-+}
-+
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	divff = FIELD_GET(PLL_FRAC_DIV_MASK, val);
-+	divfi = (val & PLL_INT_DIV_MASK);
-+
-+	temp64 = (u64)parent_rate * 8;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /= divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64)(rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	temp64 = (u64)parent_rate;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + (unsigned long)temp64) / 2;
-+}
-+
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64;
-+	int ret;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64) (rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	val &= ~(PLL_FRAC_DIV_MASK | PLL_INT_DIV_MASK);
-+	val |= ((divff << 7) | (divfi - 1));
-+	writel_relaxed(val, pll->base + PLL_CFG1);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret = clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops clk_frac_pll_ops = {
-+	.prepare	= clk_pll_prepare,
-+	.unprepare	= clk_pll_unprepare,
-+	.is_prepared	= clk_pll_is_prepared,
-+	.recalc_rate	= clk_pll_recalc_rate,
-+	.round_rate	= clk_pll_round_rate,
-+	.set_rate	= clk_pll_set_rate,
-+};
-+
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
-+{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
-+	struct clk *clk;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	init.ops = &clk_frac_pll_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..13daf1c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
- 
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
--- 
-2.7.4
+Do you know why? It should be equal or faster, not slower.
+
+I reviewed about half of the driver, but then I stopped since there were too
+many things missing.
+
+First of all, you need to test your driver with v4l2-compliance (available here:
+https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
+the versions from distros tend to be too old.
+
+Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
+'v4l2-compliance -s -d /dev/videoX' to test streaming.
+
+This utility checks if the driver follows the V4L2 API correctly, implements
+all ioctls that it should and fills in all the fields that it should.
+
+Please add the output of 'v4l2-compliance -s' to future versions of this patch
+series: I don't accept V4L2 drivers without a clean report of this utility.
+
+If you have any questions, then mail me or (usually quicker) ask on the #v4l
+freenode irc channel (I'm in the CET timezone).
+
+One thing that needs more explanation: from what I could tell from the driver
+the VIDIOC_G_FMT ioctl returns the detected format instead of the current
+format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
+ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
+
+The normal sequence is that userspace queries the current timings with
+VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
+timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
+change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
+event.
+
+When the application receives this event it can take action, such as
+increasing the size of the buffer for the jpeg data that it reads into.
+
+The reason for this sequence of events is that you can't just change the
+format/resolution mid-stream without giving userspace the chance to
+reconfigure.
+
+Regards,
+
+	Hans
+
+> 
+> It's also possible to use an automatic mode for the VE such that
+> re-triggering the HW every frame isn't necessary. However this wasn't
+> reliable on the AST2400, and probably used more CPU anyway due to excessive
+> interrupts. It was approximately 15% faster.
+> 
+> The series also adds the necessary parent clock definitions to the Aspeed
+> clock driver, with both a mux and clock divider.
+> 
+> Eddie James (4):
+>   clock: aspeed: Add VIDEO reset index definition
+>   clock: aspeed: Setup video engine clocking
+>   dt-bindings: media: Add Aspeed Video Engine binding documentation
+>   media: platform: Add Aspeed Video Engine driver
+> 
+>  .../devicetree/bindings/media/aspeed-video.txt     |   23 +
+>  drivers/clk/clk-aspeed.c                           |   41 +-
+>  drivers/media/platform/Kconfig                     |    8 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
+>  include/dt-bindings/clock/aspeed-clock.h           |    1 +
+>  6 files changed, 1379 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>  create mode 100644 drivers/media/platform/aspeed-video.c
+> 
