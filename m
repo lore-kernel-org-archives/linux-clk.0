@@ -1,107 +1,90 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 11/12] arm64: dts: allwinner: a64: Add DSI pipeline
-Date: Thu, 27 Sep 2018 17:18:49 +0530
-Message-Id: <20180927114850.24565-12-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Jerome Forissier <jerome.forissier@linaro.org>, Peng
+ Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
+CC: dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date: Mon, 3 Sep 2018 07:20:53 +0000
+Message-ID: 
+ <AM6PR0402MB391120110A289BA5FB6B9F0DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
+ <a6489bda-703f-207c-0b24-60f4044fe89f@linaro.org>
+ <153573827629.93865.6200966443862432044@swboyd.mtv.corp.google.com>
+In-Reply-To: 
+ <153573827629.93865.6200966443862432044@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The A64 has a MIPI-DSI block which is similar to A31
-without mod clock.
-
-So, add dsi node with A64 compatible, dphy node with
-A31 compatible and finally connect dsi to tcon0 to
-make proper DSI pipeline.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index f3a66f888205..308eedc53150 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -320,6 +320,11 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon0_out_dsi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&dsi_in_tcon0>;
-+					};
- 				};
- 			};
- 		};
-@@ -818,6 +823,45 @@
- 			#interrupt-cells = <3>;
- 		};
- 
-+
-+		dsi: dsi@1ca0000 {
-+			compatible = "allwinner,sun50i-a64-mipi-dsi";
-+			reg = <0x01ca0000 0x1000>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>;
-+			clock-names = "bus";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			phys = <&dphy>;
-+			phy-names = "dphy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					dsi_in_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_out_dsi>;
-+					};
-+				};
-+			};
-+		};
-+
-+		dphy: d-phy@1ca1000 {
-+			compatible = "allwinner,sun6i-a31-mipi-dphy";
-+			reg = <0x01ca1000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>,
-+				 <&ccu CLK_DSI_DPHY>;
-+			clock-names = "bus", "mod";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			status = "disabled";
-+			#phy-cells = <0>;
-+		};
-+
- 		pwm: pwm@1c21400 {
- 			compatible = "allwinner,sun50i-a64-pwm",
- 				     "allwinner,sun5i-a13-pwm";
--- 
-2.18.0.321.gffc6fa0e3
+DQoNCkFuc29uIEh1YW5nDQpCZXN0IFJlZ2FyZHMhDQoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQo+IFNlbnQ6
+IFNhdHVyZGF5LCBTZXB0ZW1iZXIgMSwgMjAxOCAxOjU4IEFNDQo+IFRvOiBrZXJuZWxAcGVuZ3V0
+cm9uaXguZGU7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgt
+Y2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gbXR1
+cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IHNoYXduZ3VvQGtl
+cm5lbC5vcmc7DQo+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgRmFiaW8gRXN0
+ZXZhbQ0KPiA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsgSmVyb21lIEZvcmlzc2llciA8amVyb21l
+LmZvcmlzc2llckBsaW5hcm8ub3JnPjsNCj4gUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+OyBS
+b2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPg0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1p
+bXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAyLzJdIGNsazogaW14OiBpbXg3ZDog
+cmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiANCj4gUXVvdGluZyBKZXJvbWUgRm9yaXNzaWVy
+ICgyMDE4LTA4LTMxIDAxOjAxOjQ0KQ0KPiA+DQo+ID4NCj4gPiBPbiAwOC8zMS8yMDE4IDAzOjI5
+IEFNLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+ID4gPiBRdW90aW5nIFBlbmcgRmFuICgyMDE4LTA4
+LTEyIDE4OjE1OjQxKQ0KPiA+ID4+IEhpIEFuc29uLA0KPiA+ID4+DQo+ID4gPj4+Pj4gLS0tLS1P
+cmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+Pj4+PiBGcm9tOiBBbnNvbiBIdWFuZw0KPiA+ID4+
+Pj4+IFNlbnQ6IDIwMTjlubQ45pyIOOaXpSAxMjozOQ0KPiA+ID4+Pj4+IFRvOiBzaGF3bmd1b0Br
+ZXJuZWwub3JnOyBzLmhhdWVyQHBlbmd1dHJvbml4LmRlOw0KPiA+ID4+Pj4+IGtlcm5lbEBwZW5n
+dXRyb25peC5kZTsgRmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPjsNCj4gPiA+
+Pj4+PiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVsLm9yZzsNCj4gPiA+Pj4+
+PiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4gPj4+Pj4gbGludXgt
+Y2xrQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiA+ID4+
+Pj4+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiA+ID4+Pj4+IFN1Ympl
+Y3Q6IFtQQVRDSCAyLzJdIGNsazogaW14OiBpbXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJh
+eQ0KPiA+ID4+Pj4+DQo+ID4gPj4+Pj4gQ2xvY2sgZnJhbWV3b3JrIHdpbGwgZW5hYmxlIHRob3Nl
+IGNsb2NrcyByZWdpc3RlcmVkIHdpdGgNCj4gPiA+Pj4+PiBDTEtfSVNfQ1JJVElDQUwgZmxhZywg
+c28gbm8gbmVlZCB0byBoYXZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiA+ID4+Pj4+IGR1cmluZyBj
+bG9jaw0KPiA+ID4+Pj4gaW5pdGlhbGl6YXRpb24gbm93Lg0KPiA+ID4+Pj4NCj4gPiA+Pj4+IFdp
+bGwgaXQgYmUgbW9yZSBmbGV4aWJsZSB0byBwYXJzZSBkdHMgc2F5aW5nICJjcml0aWNhbC1jbG9j
+a3MgPSA8eHh4PiINCj4gPiA+Pj4+IG9yICJpbml0LW9uLWFycmFyeT08eHh4PiINCj4gPiA+Pj4+
+IGFuZCBlbmFibGUgdGhvc2UgY2xvY2tzPw0KPiA+ID4+Pg0KPiA+ID4+PiBQYXJzaW5nIHRoZSBj
+bG9ja3MgYXJyYXlzIGZyb20gZHRiIGlzIGFub3RoZXIgd2F5IG9mIGVuYWJsaW5nDQo+ID4gPj4+
+IGNyaXRpY2FsIGNsb2NrcywgYnV0IGZvciBjdXJyZW50IGkuTVg2LzcgcGxhdGZvcm1zLCB3ZSBp
+bXBsZW1lbnQNCj4gPiA+Pj4gaXQgaW4gc2FtZSB3YXkgYXMgbW9zdCBvZiBvdGhlciBTb0NzLCBj
+dXJyZW50bHkgSSBkaWQgTk9UIHNlZSBhbnkNCj4gPiA+Pj4gbmVjZXNzaXR5IG9mIHB1dHRpbmcg
+dGhlbSBpbiBkdGIsIGp1c3QgYWRkaW5nIGZsYWcgZHVyaW5nIGNsb2NrDQo+ID4gPj4+IHJlZ2lz
+dGVyaW5nIGlzIG1vcmUgc2ltcGxlLCBpZiB0aGVyZSBpcyBhbnkgc3BlY2lhbCByZXF1aXJlbWVu
+dA0KPiA+ID4+PiBmb3IgZGlmZmVyZW50IGNsb2NrcyBzZXQgdG8gYmUgZW5hYmxlZCwgdGhlbiB3
+ZSBjYW4gYWRkIHN1cHBvcnQgdG8gZW5hYmxlDQo+IHRoZSBtZXRob2Qgb2YgcGFyc2luZyBjcml0
+aWNhbC1jbG9ja3MgZnJvbSBkdGIuIEp1c3QgbXkgdHdvIGNlbnRzLg0KPiA+ID4+DQo+ID4gPj4g
+VGhpbmtpbmcgYWJvdXQgT1AtVEVFIHdhbnQgdG8gdXNlIG9uZSBkZXZpY2UsIGJ1dCBpdCdzIGNs
+b2NrcyBhcmUNCj4gPiA+PiByZWdpc3RlcmVkIGJ5IExpbnV4LCBiZWNhdXNlIHRoZXJlIGlzIG5v
+IG1vZHVsZSBpbiBMaW51eCBzaWRlIHVzZQ0KPiA+ID4+IGl0LCBpdCB3aWxsIHNodXRkb3duIHRo
+ZSBjbG9jaywgd2hpY2ggY2F1c2UgT1AtVEVFIGNvdWxkIG5vdCBhY2Nlc3MgdGhlDQo+IGRldmlj
+ZS4NCj4gPiA+Pg0KPiA+ID4+IFRoZW4gcGVvcGxlIGhhdmUgdG8gbW9kaWZ5IGNsayBjb2RlIHRv
+IGFkZCBDTEtfSVNfQ1JJVElDQUwgZmxhZyB0bw0KPiA+ID4+IG1ha2Ugc3VyZSB0aGUgY2xvY2tz
+IGFyZSBub3Qgc2h1dGRvd24gYnkgTGludXguDQo+ID4gPj4NCj4gPiA+PiBIb3dldmVyIGFkZGlu
+ZyBhIG5ldyBwcm9wZXJ0eSBpbiBjbGsgbm9kZSBhbmQgbGV0IGRyaXZlciBjb2RlIHBhcnNlDQo+
+ID4gPj4gdGhlIGR0cywgdGhlcmUgaXMgbm8gbmVlZCB0byBtb2RpZnkgY2xrIGRyaXZlciBjb2Rl
+IHdoZW4gT1AtVEVFIG5lZWRzDQo+IGFub3RoZXIgZGV2aWNlIGNsb2NrLg0KPiA+ID4+DQo+ID4g
+Pg0KPiA+ID4gSWYgT1AtVEVFIG5lZWRzIGxpbnV4IHRvIGtlZXAgdGhpbmdzIG9uIHRoZW4gd2h5
+IGNhbid0IHRoZSBPUC1URUUNCj4gPiA+IGRyaXZlciBpbiBMaW51eCBwcm9iZSwgYWNxdWlyZSBj
+bG9ja3MsIGFuZCBrZWVwIHRoZSBjbGtzIGVuYWJsZWQgZm9yZXZlcj8NCj4gPg0KPiA+IFNvdW5k
+cyByZWFzb25hYmxlLCBidXQgaG93IGNvdWxkIHRoaXMgYmUgZG9uZSB3aXRob3V0IGludHJvZHVj
+aW5nDQo+ID4gcGxhdGZvcm0tc3BlY2lmaWMgc3R1ZmYgaW4gdGhlIE9QLVRFRSBkcml2ZXI/DQo+
+ID4NCj4gDQo+IFdoeSBpcyB0aGF0IGEgZ29hbD8NCiANCkkgZG8gTk9UIHRoaW5rIHdlIHNob3Vs
+ZCBjb25zaWRlciBzdWNoIGNhc2UgaW4gdGhpcyBwYXRjaCBzZXJpZXMsIHdoYXRldmVyIE9QLVRF
+RSBuZWVkcyBmb3IgaXRzIG93bg0KZmVhdHVyZSwgaXQgc2hvdWxkIGRvIG5lY2Vzc2FyeSBvcGVy
+YXRpb25zIGVpdGhlciBpbiBpdHMgZHJpdmVyIG9yIHNvbWV3aGVyZSBlbHNlIGJ5IGFkZGluZyBu
+ZXcgcGF0Y2guDQoNCkFuc29uLg0KDQo=
