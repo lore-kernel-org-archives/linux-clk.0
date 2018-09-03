@@ -1,95 +1,83 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 5 Sep 2018 09:07:48 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
-Message-ID: <20180905070748.g43lfdqdhmoci6pk@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180904163609.10171-3-jagan@amarulasolutions.com>
+Return-Path: <yixin.zhu@linux.intel.com>
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To: Stephen Boyd <sboyd@kernel.org>, Songjun Wu <songjun.wu@linux.intel.com>,
+ chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com, qi-ming.wu@intel.com
+Cc: linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+ <75f8313b-42e6-e741-196d-af27ad1e4f9b@linux.intel.com>
+ <153573545028.93865.1832322708533849519@swboyd.mtv.corp.google.com>
+From: "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <cb3a0dcd-c9b4-136a-abff-200299186113@linux.intel.com>
+Date: Mon, 3 Sep 2018 18:47:39 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yadrlpym4unrl57x"
-In-Reply-To: <20180904163609.10171-3-jagan@amarulasolutions.com>
+In-Reply-To: <153573545028.93865.1832322708533849519@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
 
---yadrlpym4unrl57x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/1/2018 1:10 AM, Stephen Boyd wrote:
+> Quoting Zhu, Yi Xin (2018-08-28 23:56:22)
+>> On 8/28/2018 3:09 AM, Stephen Boyd wrote:
+>>> Quoting yixin zhu (2018-08-08 01:52:20)
+>>>> On 8/8/2018 1:50 PM, Stephen Boyd wrote:
+>>>>>> +/* clock flags definition */
+>>>>>> +#define CLOCK_FLAG_VAL_INIT    BIT(16)
+>>>>>> +#define GATE_CLK_HW            BIT(17)
+>>>>>> +#define GATE_CLK_SW            BIT(18)
+>>>>>> +#define GATE_CLK_VT            BIT(19)
+>>>>> What does VT mean? Virtual?
+>>>> Yes. VT means virtual here.
+>>>> Will change to GATE_CLK_VIRT.
+>>>>
+>>> Is it a hardware concept? Or virtualization with hypervisor?
+>> Some peripheral drivers want to use same code cross platforms.
+>>
+>> But not all platforms provide HW gate clock.  So in this case, clock
+>> driver creates
+>>
+>> a virtual gate clock to make it work if no HW gate clock in the SoC.
+> That's not how things are supposed to work. If a clk isn't there in the
+> hardware we don't make them up in software so that the consumer software
+> drivers can keep requesting clks on different platforms. On a different
+> platform, the driver needs to know that the clks aren't there with a
+> different compatible string.
 
-On Tue, Sep 04, 2018 at 10:06:08PM +0530, Jagan Teki wrote:
-> Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
-> so enable them as default.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v4, v3:
-> - none
-> Changes for v2:
-> - Enable for SUN8I
->=20
->  drivers/gpu/drm/sun4i/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-> index c2c042287c19..cfa8b96273fb 100644
-> --- a/drivers/gpu/drm/sun4i/Kconfig
-> +++ b/drivers/gpu/drm/sun4i/Kconfig
-> @@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
-> =20
->  config DRM_SUN8I_MIXER
->  	tristate "Support for Allwinner Display Engine 2.0 Mixer"
-> -	default MACH_SUN8I
-> +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+OK. Will remove virtual gate clock.
 
-I'm not really sure we should put it as a default. We should just
-enable it in the defconfig.
 
-Maxime
+>>
+>>>>>> +}
+>>>>>> +
+>>>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>>>> It provides CPU clock which is used in early boot stage.
+>>>>
+>>> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+>>> frequency? If the driver can be split into two pieces, one to handle the
+>>> really early stuff that must be in place to get timers up and running
+>>> and the other to register the rest of the clks that aren't critical from
+>>> a regular platform driver it would be good. That's preferred model if
+>>> something is super critical.
+>> Yes, CPU clock is providing CPU frequency in the early boot stage.
+>>
+>> Will put the non-critical clocks in the platform driver.
+>>
+>>
+> Sure the CPU clock is handling frequency, but does that matter for early
+> boot to get going? If timers aren't involved here then it doesn't sound
+> like this needs CLK_OF_DECLARE.
 
->  	help
->  	  Choose this option if you have an Allwinner SoC with the
->  	  Allwinner Display Engine 2.0, which has a mixer to do some
-> --=20
-> 2.18.0.321.gffc6fa0e3
->=20
+Yes, timer is involved here.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+CPU frequency get by early stage platform code used in clockevent 
+registration.
 
---yadrlpym4unrl57x
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPgMMACgkQ0rTAlCFN
-r3Qfmg/8DUMh/rPlmuctAJWYEIVIYo99Ezw0S+gJleodO3zYJTyfD37nGdZd4L4w
-yhayFKxorJuGh2ANM6JfFFGnJWhLLNp8zD0LJ2rq/E4cEHnC14tyi6utf3hwJkiw
-5/uQ9XPhYtQfxkuo0d2hSJmUH5wrS/BStpktH4WFDRemFNvNEAm2yI3HOda5N70R
-unlxdBrzismawYSDj1Ix3wrJpijPvtz1Im4f2GfUR9bf718rcJdP0sLmSSJTA1mH
-WeLuijtbNC0gfLEFSWrZ0T5CwnkDJdO0oY+C4x6VEC+m954CxHP4kofa5GnWj8ZH
-3zBlUWpQbgM+mCO5llejGDPbbjqGjG4hADFHPNCpE1arjwe157A8Qf2ofh/My881
-pbRQHWJfrwiE+idf8P34m8B2zVh31qpIQ6oi8XQO11y0kwfgVQ9edEQdxpswdMH1
-Cc3nEln14H/VyU5y7p+PfIwZj1i0nGLzRYdXDsc3j4vAMQWTZ1qgN8mGhtjcs4yS
-fWX8/iKqhatQC7UsauOkzAvzg27TOESvNf6dxD2Ubma0OucmJedDU9JEa1fIQl5x
-bQcoCVLOtQhgvw21bEEnldAUxgrn05kuRXTgko2kZ+5gSaPquhWFey9pE6KvmboH
-y04oVP2BY6SfL5SIktlSBXWWcl1DTWJPGgcdrN/mJ5/TbFz+1E0=
-=x6Ve
------END PGP SIGNATURE-----
-
---yadrlpym4unrl57x--
+>
