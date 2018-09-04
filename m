@@ -1,59 +1,76 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+From: Rob Herring <robh@kernel.org>
+To: Eddie James <eajames@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+	andrew@aj.id.au, mchehab@kernel.org, joel@jms.id.au,
+	mark.rutland@arm.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/4] dt-bindings: media: Add Aspeed Video Engine binding
+ documentation
+Message-ID: <20180904005015.GA5214@bogus>
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1535576973-8067-4-git-send-email-eajames@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <4f401a77-ae41-5a6e-3e10-51dad300e183@cogentembedded.com>
-In-Reply-To: <4f401a77-ae41-5a6e-3e10-51dad300e183@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Sep 2018 09:43:21 +0200
-Message-ID: <CAMuHMdVA1VXzouJcz2-cJUStsirErt4ROEszRZ9tPLXFzsSROw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r8a77970: add SD0H/SD0 clocks for SDHI
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1535576973-8067-4-git-send-email-eajames@linux.vnet.ibm.com>
+Date: Mon, 3 Sep 2018 19:50:18 -0500
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Sergei,
-
-On Sat, Sep 1, 2018 at 10:12 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On R-Car V3M (AKA R8A77970), the SD0CKCR is laid out differently than on
-> the other R-Car gen3 SoCs. In fact, the layout is the same as on R-Car gen2
-> SoCs, so we'll need to copy the divisor tables from the R-Car gen2 driver.
-> We'll also need to support the SoC specific clock types, thus we're adding
-> CLK_TYPE_GEN3_SOC_BASE at the end of 'enum rcar_gen3_clk_types', declare
-> SD0H/SDH clocks in 'enum r8a77970_clk_types', and handle those clocks in
-> the overridden cpg_clk_register() method; then, finally, add the SD-IF
-> module clock (derived from the SD0 clock).
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->
+On Wed, Aug 29, 2018 at 04:09:32PM -0500, Eddie James wrote:
+> Document the bindings.
+> 
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 > ---
-> This patch is against the 'clk-renesas' branch of Geert's 'renesas-drivers.git'
-> repo.
->
-> Changes in version 2:
-> - made r8a77970_cpg_clk_register() *static*;
-> - #define'd CPG_SD0CKCR and used it instead of the bare number.
+>  .../devicetree/bindings/media/aspeed-video.txt     | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/aspeed-video.txt b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> new file mode 100644
+> index 0000000..58c056a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/aspeed-video.txt
+> @@ -0,0 +1,23 @@
+> +* Device tree bindings for Aspeed Video Engine
+> +
+> +The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs can
+> +capture and compress video data from digital or analog sources.
+> +
+> +Required properties:
+> + - compatible:		"aspeed,ast2400-video" or "aspeed,ast2500-video"
 
-Thanks for the update!
+Maybe "video-engine" or "ve" would be more specific than just "video". 
+Use what is closest to the name of the block.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20, with s/add/Add/ in the
-oneline-summary,
-and
+> + - reg:			contains the offset and length of the VE memory region
+> + - clocks:		pointers to the the "vclk" and "eclk" of the syscon
 
-> +static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
+No pointers in DT. "Clock specifier"
 
-... the TAB after "static" replaced by a space.
+> + - clock-names:		"vclk-gate", "eclk-gate"
 
-Gr{oetje,eeting}s,
+Is that the name at or in the module? The fact that it is gated is 
+really outside the block and a property of the clock controller.
 
-                        Geert
+> + - resets:		pointer to the VE reset of the syscon
+> + - interrupts:		the interrupt associated with the VE on this platform
+> +
+> +Example:
+> +
+> +video: video@1e700000 {
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+video-codec@...
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +    compatible = "aspeed,ast2500-video";
+> +    reg = <0x1e700000 0x20000>;
+> +    clocks = <&syscon ASPEED_CLK_GATE_VCLK>, <&syscon ASPEED_CLK_GATE_ECLK>;
+> +    clock-names = "vclk-gate", "eclk-gate";
+> +    resets = <&syscon ASPEED_RESET_VIDEO>;
+> +    interrupts = <7>;
+> +};
+> -- 
+> 1.8.3.1
+> 
