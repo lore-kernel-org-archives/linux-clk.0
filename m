@@ -1,226 +1,236 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <olof@lixom.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <arm@kernel.org>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>, Jolly
- Shah <jollys@xilinx.com>
-Subject: [PATCH v3 3/4] dt-bindings: clock: Add bindings for ZynqMP clock driver
-Date: Wed, 26 Sep 2018 11:13:00 -0700
-Message-ID: <1537985581-32164-4-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
-References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
+Date: Tue, 04 Sep 2018 19:45:59 +0200
+Message-ID: <1677668.BePkXd9qNa@jernej-laptop>
+In-Reply-To: <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-9-jernej.skrabec@siol.net> <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(a):
+> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Support for mixer0, mixer1, writeback and rotation units is added.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> > 
+> >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65 ++++++++++++++++++++++++++++
+> >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
+> >  2 files changed, 66 insertions(+)
+> > 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index bae5ee67a797..4535c1c27d27
+> > 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1",  
+> > "bus-de",> 
+> >                       0x04, BIT(1), 0);
+> >  
+> >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
+> >  
+> >                       0x04, BIT(2), 0);
+> > 
+> > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
+> > +                     0x04, BIT(3), 0);
+> > 
+> >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div",
+> >  
+> >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
+> > 
+> > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",      
+> > "mixer1-div",> 
+> >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
+> >  
+> >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
+> >  
+> >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
+> > 
+> > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
+> > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
+> > 
+> >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+> >  
+> >                    CLK_SET_RATE_PARENT);
+> > 
+> > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "de",
+> > 0x0c, 4, 4,> 
+> >                    CLK_SET_RATE_PARENT);
+> >  
+> >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+> >  
+> >                    CLK_SET_RATE_PARENT);
+> > 
+> > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
+> > +                  CLK_SET_RATE_PARENT);
+> > 
+> >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c, 0,
+> >  4,
+> >  
+> >                    CLK_SET_RATE_PARENT);
+> > 
+> > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div",
+> > "pll-de", 0x0c, 4, 4,> 
+> >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+> >  
+> >                    CLK_SET_RATE_PARENT);
+> > 
+> > +static struct ccu_common *sun50i_h6_de3_clks[] = {
+> > +       &mixer0_clk.common,
+> > +       &mixer1_clk.common,
+> > +       &wb_clk.common,
+> > +
+> > +       &bus_mixer0_clk.common,
+> > +       &bus_mixer1_clk.common,
+> > +       &bus_wb_clk.common,
+> > +
+> > +       &mixer0_div_clk.common,
+> > +       &mixer1_div_clk.common,
+> > +       &wb_div_clk.common,
+> > +
+> > +       &bus_rot_clk.common,
+> > +       &rot_clk.common,
+> > +       &rot_div_clk.common,
+> > +};
+> > +
+> > 
+> >  static struct ccu_common *sun8i_a83t_de2_clks[] = {
+> >  
+> >         &mixer0_clk.common,
+> >         &mixer1_clk.common,
+> > 
+> > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+> > 
+> >         &wb_div_clk.common,
+> >  
+> >  };
+> > 
+> > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks = {
+> > +       .hws    = {
+> > +               [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> > +               [CLK_MIXER1]            = &mixer1_clk.common.hw,
+> > +               [CLK_WB]                = &wb_clk.common.hw,
+> > +               [CLK_ROT]               = &rot_clk.common.hw,
+> > +
+> > +               [CLK_BUS_MIXER0]        = &bus_mixer0_clk.common.hw,
+> > +               [CLK_BUS_MIXER1]        = &bus_mixer1_clk.common.hw,
+> > +               [CLK_BUS_WB]            = &bus_wb_clk.common.hw,
+> > +               [CLK_BUS_ROT]           = &bus_rot_clk.common.hw,
+> > +
+> > +               [CLK_MIXER0_DIV]        = &mixer0_div_clk.common.hw,
+> > +               [CLK_MIXER1_DIV]        = &mixer1_div_clk.common.hw,
+> > +               [CLK_WB_DIV]            = &wb_div_clk.common.hw,
+> > +               [CLK_ROT_DIV]           = &rot_div_clk.common.hw,
+> > +       },
+> > +       .num    = 12,
+> 
+> It's best not to openly code these. It is error prone, like having
+> an index beyond .num, which then never gets registered.
+> 
+> Instead, please update CLK_NUMBERS and use that instead. sunxi_ccu_probe()
+> can handle holes in .hws.
 
-Add documentation to describe Xilinx ZynqMP clock driver
-bindings.
+I'm not sure this will work. All newly introduced indices are at the end, so 
+other arrays will still have same length (hole at the end). You will just 
+claim that arrays are larger than they really are, which means bad things.
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
----
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++++++++++
- include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 +++++++++++++++++++++
- 2 files changed, 169 insertions(+)
- create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+But I take any other suggestion. I really can't think of better solution.
 
-diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-index 1b431d9..614bac5 100644
---- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-+++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
-@@ -17,6 +17,53 @@ Required properties:
- 		  - "smc" : SMC #0, following the SMCCC
- 		  - "hvc" : HVC #0, following the SMCCC
- 
-+--------------------------------------------------------------------------
-+Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
-+Zynq MPSoC firmware interface
-+--------------------------------------------------------------------------
-+The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
-+tree. It reads required input clock frequencies from the devicetree and acts
-+as clock provider for all clock consumers of PS clocks.
-+
-+See clock_bindings.txt for more information on the generic clock bindings.
-+
-+Required properties:
-+ - #clock-cells:	Must be 1
-+ - compatible:		Must contain:	"xlnx,zynqmp-clk"
-+ - clocks:		List of clock specifiers which are external input
-+			clocks to the given clock controller. Please refer
-+			the next section to find the input clocks for a
-+			given controller.
-+ - clock-names:		List of clock names which are exteral input clocks
-+			to the given clock controller. Please refer to the
-+			clock bindings for more details.
-+
-+Input clocks for zynqmp Ultrascale+ clock controller:
-+
-+The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
-+inputs. These required clock inputs are:
-+ - pss_ref_clk (PS reference clock)
-+ - video_clk (reference clock for video system )
-+ - pss_alt_ref_clk (alternative PS reference clock)
-+ - aux_ref_clk
-+ - gt_crx_ref_clk (transceiver reference clock)
-+
-+The following strings are optional parameters to the 'clock-names' property in
-+order to provide an optional (E)MIO clock source:
-+ - swdt0_ext_clk
-+ - swdt1_ext_clk
-+ - gem0_emio_clk
-+ - gem1_emio_clk
-+ - gem2_emio_clk
-+ - gem3_emio_clk
-+ - mio_clk_XX		# with XX = 00..77
-+ - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
-+
-+
-+Output clocks are registered based on clock information received
-+from firmware. Output clocks indexes are mentioned in
-+include/dt-bindings/clock/xlnx,zynqmp-clk.h.
-+
- -------
- Example
- -------
-@@ -25,5 +72,11 @@ firmware {
- 	zynqmp_firmware: zynqmp-firmware {
- 		compatible = "xlnx,zynqmp-firmware";
- 		method = "smc";
-+		zynqmp_clk: clock-controller {
-+			#clock-cells = <1>;
-+			compatible = "xlnx,zynqmp-clk";
-+			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
-+			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
-+		};
- 	};
- };
-diff --git a/include/dt-bindings/clock/xlnx,zynqmp-clk.h b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
-new file mode 100644
-index 0000000..4aebe6e
---- /dev/null
-+++ b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
-@@ -0,0 +1,116 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Xilinx Zynq MPSoC Firmware layer
-+ *
-+ *  Copyright (C) 2014-2018 Xilinx, Inc.
-+ *
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_ZYNQMP_H
-+#define _DT_BINDINGS_CLK_ZYNQMP_H
-+
-+#define IOPLL			0
-+#define RPLL			1
-+#define APLL			2
-+#define DPLL			3
-+#define VPLL			4
-+#define IOPLL_TO_FPD		5
-+#define RPLL_TO_FPD		6
-+#define APLL_TO_LPD		7
-+#define DPLL_TO_LPD		8
-+#define VPLL_TO_LPD		9
-+#define ACPU			10
-+#define ACPU_HALF		11
-+#define DBF_FPD			12
-+#define DBF_LPD			13
-+#define DBG_TRACE		14
-+#define DBG_TSTMP		15
-+#define DP_VIDEO_REF		16
-+#define DP_AUDIO_REF		17
-+#define DP_STC_REF		18
-+#define GDMA_REF		19
-+#define DPDMA_REF		20
-+#define DDR_REF			21
-+#define SATA_REF		22
-+#define PCIE_REF		23
-+#define GPU_REF			24
-+#define GPU_PP0_REF		25
-+#define GPU_PP1_REF		26
-+#define TOPSW_MAIN		27
-+#define TOPSW_LSBUS		28
-+#define GTGREF0_REF		29
-+#define LPD_SWITCH		30
-+#define LPD_LSBUS		31
-+#define USB0_BUS_REF		32
-+#define USB1_BUS_REF		33
-+#define USB3_DUAL_REF		34
-+#define USB0			35
-+#define USB1			36
-+#define CPU_R5			37
-+#define CPU_R5_CORE		38
-+#define CSU_SPB			39
-+#define CSU_PLL			40
-+#define PCAP			41
-+#define IOU_SWITCH		42
-+#define GEM_TSU_REF		43
-+#define GEM_TSU			44
-+#define GEM0_REF		45
-+#define GEM1_REF		46
-+#define GEM2_REF		47
-+#define GEM3_REF		48
-+#define GEM0_TX			49
-+#define GEM1_TX			50
-+#define GEM2_TX			51
-+#define GEM3_TX			52
-+#define QSPI_REF		53
-+#define SDIO0_REF		54
-+#define SDIO1_REF		55
-+#define UART0_REF		56
-+#define UART1_REF		57
-+#define SPI0_REF		58
-+#define SPI1_REF		59
-+#define NAND_REF		60
-+#define I2C0_REF		61
-+#define I2C1_REF		62
-+#define CAN0_REF		63
-+#define CAN1_REF		64
-+#define CAN0			65
-+#define CAN1			66
-+#define DLL_REF			67
-+#define ADMA_REF		68
-+#define TIMESTAMP_REF		69
-+#define AMS_REF			70
-+#define PL0_REF			71
-+#define PL1_REF			72
-+#define PL2_REF			73
-+#define PL3_REF			74
-+#define WDT			75
-+#define IOPLL_INT		76
-+#define IOPLL_PRE_SRC		77
-+#define IOPLL_HALF		78
-+#define IOPLL_INT_MUX		79
-+#define IOPLL_POST_SRC		80
-+#define RPLL_INT		81
-+#define RPLL_PRE_SRC		82
-+#define RPLL_HALF		83
-+#define RPLL_INT_MUX		84
-+#define RPLL_POST_SRC		85
-+#define APLL_INT		86
-+#define APLL_PRE_SRC		87
-+#define APLL_HALF		88
-+#define APLL_INT_MUX		89
-+#define APLL_POST_SRC		90
-+#define DPLL_INT		91
-+#define DPLL_PRE_SRC		92
-+#define DPLL_HALF		93
-+#define DPLL_INT_MUX		94
-+#define DPLL_POST_SRC		95
-+#define VPLL_INT		96
-+#define VPLL_PRE_SRC		97
-+#define VPLL_HALF		98
-+#define VPLL_INT_MUX		99
-+#define VPLL_POST_SRC		100
-+#define CAN0_MIO		101
-+#define CAN1_MIO		102
-+
-+#endif
--- 
-2.7.4
+Best regards,
+Jernej
+
+> 
+> On the other hand, it can't handle holes in the ccu_reset_map. Hope we
+> never have to deal with such an instance.
+> 
+> ChenYu
+> 
+> > +};
+> > +
+> > 
+> >  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+> >  
+> >         .hws    = {
+> >         
+> >                 [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> > 
+> > @@ -156,6 +200,13 @@ static struct ccu_reset_map sun50i_a64_de2_resets[] =
+> > {> 
+> >         [RST_WB]        = { 0x08, BIT(2) },
+> >  
+> >  };
+> > 
+> > +static struct ccu_reset_map sun50i_h6_de3_resets[] = {
+> > +       [RST_MIXER0]    = { 0x08, BIT(0) },
+> > +       [RST_MIXER1]    = { 0x08, BIT(1) },
+> > +       [RST_WB]        = { 0x08, BIT(2) },
+> > +       [RST_ROT]       = { 0x08, BIT(3) },
+> > +};
+> > +
+> > 
+> >  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc = {
+> >  
+> >         .ccu_clks       = sun8i_a83t_de2_clks,
+> >         .num_ccu_clks   = ARRAY_SIZE(sun8i_a83t_de2_clks),
+> > 
+> > @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc
+> > sun50i_a64_de2_clk_desc = {> 
+> >         .num_resets     = ARRAY_SIZE(sun50i_a64_de2_resets),
+> >  
+> >  };
+> > 
+> > +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
+> > +       .ccu_clks       = sun50i_h6_de3_clks,
+> > +       .num_ccu_clks   = ARRAY_SIZE(sun50i_h6_de3_clks),
+> > +
+> > +       .hw_clks        = &sun50i_h6_de3_hw_clks,
+> > +
+> > +       .resets         = sun50i_h6_de3_resets,
+> > +       .num_resets     = ARRAY_SIZE(sun50i_h6_de3_resets),
+> > +};
+> > +
+> > 
+> >  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+> >  
+> >         .ccu_clks       = sun8i_v3s_de2_clks,
+> >         .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
+> > 
+> > @@ -296,6 +357,10 @@ static const struct of_device_id sunxi_de2_clk_ids[]
+> > = {> 
+> >                 .compatible = "allwinner,sun50i-h5-de2-clk",
+> >                 .data = &sun50i_a64_de2_clk_desc,
+> >         
+> >         },
+> > 
+> > +       {
+> > +               .compatible = "allwinner,sun50i-h6-de3-clk",
+> > +               .data = &sun50i_h6_de3_clk_desc,
+> > +       },
+> > 
+> >         { }
+> >  
+> >  };
+> > 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h index 530c006e0ae9..27bd88539f42
+> > 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > @@ -22,6 +22,7 @@
+> > 
+> >  #define CLK_MIXER0_DIV 3
+> >  #define CLK_MIXER1_DIV 4
+> >  #define CLK_WB_DIV     5
+> > 
+> > +#define CLK_ROT_DIV    11
+> > 
+> >  #define CLK_NUMBER     (CLK_WB + 1)
+> > 
+> > --
+> > 2.18.0
