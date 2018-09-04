@@ -1,37 +1,48 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <edgar.righi@lsitec.org.br>
 MIME-Version: 1.0
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Sep 2018 13:05:20 +0200
-Message-ID: <CAMuHMdUu8YFTo=7ieCz3CPA=MjE64WS_Vb08zNZ5GNV-m6hoVA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add CMT clocks
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date: Tue, 4 Sep 2018 12:34:24 -0300
+Message-ID: <CADHB5bAFM=Qs6f0zf6iQuYfmT-ErSwG3-2mTsLnL-MCCUw1FhQ@mail.gmail.com>
+Subject: [PATCH v2 00/03] Add clock driver for Actions Semi S500 SoC
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
+	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
+	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 6:59 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the R8A77970 CMT module clocks.
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+This patchset adds clock support for Actions Semi Owl series S500 SoC
+with relevant clock bindings and device tree info.
+Updates from v1 to v2:
+SoC supports were organized in alphabetical manner.
+"_DELAY" suffixes were removed.
+Patch generation format changed.
+Commits were rebased on top of Saravanan's patches.
+Changed patches ordering.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.2.0.
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+ arch/arm/boot/dts/owl-s500-cubieboard6.dts     |   8 +-
+ arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts |   8 +-
+ arch/arm/boot/dts/owl-s500-sparky.dts          |   8 +-
+ arch/arm/boot/dts/owl-s500.dtsi                |  24 ++
+ drivers/clk/actions/Kconfig                    |   5 +
+ drivers/clk/actions/Makefile                   |   1 +
+ drivers/clk/actions/owl-pll.c                  |   2 +-
+ drivers/clk/actions/owl-pll.h                  |  15 +-
+ drivers/clk/actions/owl-s500.c                 | 524 +++++++++++++++++++++++++
+ drivers/clk/actions/owl-s700.c                 |  18 +-
+ drivers/clk/actions/owl-s900.c                 |  18 +-
+ include/dt-bindings/clock/actions,s500-cmu.h   |  78 ++++
+ 12 files changed, 664 insertions(+), 45 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-s500.c
+ create mode 100644 include/dt-bindings/clock/actions,s500-cmu.
