@@ -1,247 +1,115 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
-Date: Tue,  4 Sep 2018 12:40:50 +0800
-Message-Id: <20180904044053.15425-9-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <edgar.righi@lsitec.org.br>
+MIME-Version: 1.0
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date: Tue, 4 Sep 2018 12:36:36 -0300
+Message-ID: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
+Subject: [PATCH v2 01/03] dt-bindings: clock: Add Clock Management Unit for
+ Actions Semi S500 SoC
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
+	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
+	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
+constants added.
+Tested on a Lemaker Guitar board.
 
-Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-TCON is connected to LCD and the second is to HDMI.
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-The HDMI controller/PHY pair is similar to the one on H3/H5.
-
-Add all required device tree nodes of the display pipeline, including
-the TCON0 LCD one and the TCON1 HDMI one.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: refactor commit message and add 1st pipeline]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes for v4:
-- Misc fixes
-- Dropped second PLL from HDMI PHY clock
-Changes for v3.1:
-- Refactor commit message to make it more clear.
-- Added first pipeline (mixer0 -> tcon0)
-Changes for v3:
-- Squash all pipeline components in one patch
-- Add status for mixer1 and tcon1
-Changes for v2:
-- Change compatibles and other based on previous patch changes
-
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 170 ++++++++++++++++++
- 1 file changed, 170 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index b73f9287c3f0..8c7bcae0b8ec 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -121,6 +121,13 @@
- 		};
- 	};
- 
-+	de: display-engine {
-+		compatible = "allwinner,sun50i-a64-display-engine";
-+		allwinner,pipelines = <&mixer0>,
-+				      <&mixer1>;
-+		status = "disabled";
-+	};
+diff --git a/include/dt-bindings/clock/actions,s500-cmu.h
+b/include/dt-bindings/clock/actions,s500-cmu.h
+new file mode 100644
+index 000000000000..34e5849ffcf1
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s500-cmu.h
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Device Tree binding constants for Actions Semi S500 Clock Management Unit
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Copyright (c) 2018 Linaro Ltd.
++// Copyright (c) 2018 LSI-TEC - Caninos Loucos
 +
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -203,6 +210,52 @@
- 				#clock-cells = <1>;
- 				#reset-cells = <1>;
- 			};
++#ifndef __DT_BINDINGS_CLOCK_S500_CMU_H
++#define __DT_BINDINGS_CLOCK_S500_CMU_H
 +
-+			mixer0: mixer@100000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-0";
-+				reg = <0x100000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER0>,
-+					 <&display_clocks CLK_MIXER0>;
-+				clock-names = "bus",
-+					      "mod";
-+				resets = <&display_clocks RST_MIXER0>;
++#define CLK_NONE            0
 +
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
++/* fixed rate clocks */
++#define CLK_LOSC            1
++#define CLK_HOSC            2
 +
-+					mixer0_out: port@1 {
-+						reg = <1>;
++/* pll clocks */
++#define CLK_CORE_PLL        3
++#define CLK_DEV_PLL            4
++#define CLK_DDR_PLL            5
++#define CLK_NAND_PLL        6
++#define CLK_DISPLAY_PLL        7
++#define CLK_ETHERNET_PLL    8
++#define CLK_AUDIO_PLL        9
 +
-+						mixer0_out_tcon0: endpoint {
-+							remote-endpoint = <&tcon0_in_mixer0>;
-+						};
-+					};
-+				};
-+			};
++/* system clock */
++#define CLK_DEV                10
++#define CLK_H                11
++#define CLK_AHBPREDIV        12
++#define CLK_AHB                13
++#define CLK_DE                14
++#define CLK_BISP            15
++#define CLK_VCE                16
++#define CLK_VDE                17
 +
-+			mixer1: mixer@200000 {
-+				compatible = "allwinner,sun50i-a64-de2-mixer-1";
-+				reg = <0x200000 0x100000>;
-+				clocks = <&display_clocks CLK_BUS_MIXER1>,
-+					 <&display_clocks CLK_MIXER1>;
-+				clock-names = "bus",
-+					      "mod";
-+				resets = <&display_clocks RST_MIXER1>;
++/* peripheral device clock */
++#define CLK_TIMER            18
++#define CLK_I2C0            19
++#define CLK_I2C1            20
++#define CLK_I2C2            21
++#define CLK_I2C3            22
++#define CLK_PWM0            23
++#define CLK_PWM1            24
++#define CLK_PWM2            25
++#define CLK_PWM3            26
++#define CLK_PWM4            27
++#define CLK_PWM5            28
++#define CLK_SD0                29
++#define CLK_SD1                30
++#define CLK_SD2                31
++#define CLK_SENSOR0            32
++#define CLK_SENSOR1            33
++#define CLK_SPI0            34
++#define CLK_SPI1            35
++#define CLK_SPI2            36
++#define CLK_SPI3            37
++#define CLK_UART0            38
++#define CLK_UART1            39
++#define CLK_UART2            40
++#define CLK_UART3            41
++#define CLK_UART4            42
++#define CLK_UART5            43
++#define CLK_UART6            44
++#define CLK_DE1                45
++#define CLK_DE2                46
++#define CLK_I2SRX            47
++#define CLK_I2STX            48
++#define CLK_HDMI_AUDIO        49
++#define CLK_HDMI            50
++#define CLK_SPDIF            51
++#define CLK_NAND            52
++#define CLK_ECC                53
++#define CLK_RMII_REF        54
 +
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
++#define CLK_NR_CLKS            (CLK_RMII_REF + 1)
 +
-+					mixer1_out: port@1 {
-+						reg = <1>;
-+
-+						mixer1_out_tcon1: endpoint {
-+							remote-endpoint = <&tcon1_in_mixer1>;
-+						};
-+					};
-+				};
-+			};
- 		};
- 
- 		syscon: syscon@1c00000 {
-@@ -237,6 +290,75 @@
- 			#dma-cells = <1>;
- 		};
- 
-+		tcon0: lcd-controller@1c0c000 {
-+			compatible = "allwinner,sun50i-a64-tcon-lcd",
-+				     "allwinner,sun8i-a83t-tcon-lcd";
-+			reg = <0x01c0c000 0x1000>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
-+			clock-names = "ahb", "tcon-ch0";
-+			clock-output-names = "tcon-pixel-clock";
-+			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
-+			reset-names = "lcd", "lvds";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon0_in: port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					tcon0_in_mixer0: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&mixer0_out_tcon0>;
-+					};
-+				};
-+
-+				tcon0_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		tcon1: lcd-controller@1c0d000 {
-+			compatible = "allwinner,sun50i-a64-tcon-tv",
-+				     "allwinner,sun8i-a83t-tcon-tv";
-+			reg = <0x01c0d000 0x1000>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
-+			clock-names = "ahb", "tcon-ch1";
-+			resets = <&ccu RST_BUS_TCON1>;
-+			reset-names = "lcd";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				tcon1_in: port@0 {
-+					reg = <0>;
-+
-+					tcon1_in_mixer1: endpoint {
-+						remote-endpoint = <&mixer1_out_tcon1>;
-+					};
-+				};
-+
-+				tcon1_out: port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					tcon1_out_hdmi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&hdmi_in_tcon1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun50i-a64-mmc";
- 			reg = <0x01c0f000 0x1000>;
-@@ -700,6 +826,50 @@
- 			status = "disabled";
- 		};
- 
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun50i-a64-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				hdmi_in: port@0 {
-+					reg = <0>;
-+
-+					hdmi_in_tcon1: endpoint {
-+						remote-endpoint = <&tcon1_out_hdmi>;
-+					};
-+				};
-+
-+				hdmi_out: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun8i-h3-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu 7>;
-+			clock-names = "bus", "mod", "pll-0";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
++#endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
 -- 
-2.18.0
+2.11.0
