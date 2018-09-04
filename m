@@ -1,95 +1,136 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40575 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727839AbeINNk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:40:58 -0400
-Date: Fri, 14 Sep 2018 11:27:20 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
-        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 0/7] regulator/mfd/dt_bindings: bd718x7: Support ROHM
- bd71847
-Message-ID: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <andy.tang@nxp.com>
+From: Andy Tang <andy.tang@nxp.com>
+To: Scott Wood <oss@buserror.net>, Vabhav Sharma <vabhav.sharma@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"rjw@rjwysocki.net" <rjw@rjwysocki.net>, "viresh.kumar@linaro.org"
+	<viresh.kumar@linaro.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-kernel-owner@vger.kernel.org"
+	<linux-kernel-owner@vger.kernel.org>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will.deacon@arm.com" <will.deacon@arm.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "arnd@arndb.de"
+	<arnd@arndb.de>, "kstewart@linuxfoundation.org"
+	<kstewart@linuxfoundation.org>, "yamada.masahiro@socionext.com"
+	<yamada.masahiro@socionext.com>
+CC: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, Varun Sethi <V.Sethi@nxp.com>, Udit Kumar
+	<udit.kumar@nxp.com>
+Subject: RE: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
+Date: Tue, 4 Sep 2018 03:08:57 +0000
+Message-ID: 
+ <DB5PR0401MB221372E7A7DA3ED53BA721B2F3030@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+ <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
+ <4a9ea6b451683ec98c92e86a5ae6b91213a6afcf.camel@buserror.net>
+ <VI1PR04MB4800E8B1E8541FCA9221A1CFF3080@VI1PR04MB4800.eurprd04.prod.outlook.com>
+ <d2cfd49eb33a3ce74f0e78f2b53d3954d2cb3e76.camel@buserror.net>
+ <b31ae8e788fb93971167faa9b55b497e838532c4.camel@buserror.net>
+ <DB5PR0401MB22130C025AA4CCAD0221781DF30F0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+ <f6707cb54c3e6da1b50f45f915c996dfccfeacda.camel@buserror.net>
+ <DB5PR0401MB221332A5ED14C8E14C8D18A1F30C0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+ <3a4274af2200923875ff05f945888a34d6dccee3.camel@buserror.net>
+In-Reply-To: <3a4274af2200923875ff05f945888a34d6dccee3.camel@buserror.net>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Patch series adding support for ROHM BD71847 PMIC.
-
-ROHM BD71847 is modified version of ROHM BD71837 Power Management IC.
-BD71847 integrates 6 buck regulators and 6  LDO’s.
-
-The patch series adds support for BD71847 in BD71837 driver. It also
-extends BD71837 to support all BUCK/LDO output voltages.
-
-Support for "pickable voltage ranges" is introduced in order to fully
-support BD71837/BD71847 voltage selection registers. Some of the voltage
-regulators provide different multiple voltage ranges and output voltage
-is determined by range selection bit(s) and voltage selection bits
-instead of plain voltage selection bits.
-
-Changelog v3
-- Fix warning caused by void * to unsigned int cast
-- Fix patch dependency issue (patch 4 used define from patch 5)
-- Fix indent problem.
-Changelog v2
-- Dropped first patch (voltage monitoring fix) and "rebased" on top of
-  next-20180912 because first patch was already applied.
-- Fixed two commit message typos.
-Fixes based on comments from Lee Jones
-- removed PMIC revision check.
-- stored chip type directly to data pointer
-- minor readability improvement to DT binding
-- unified naming for last enum members
-- moved unrelated changes from pickable ranges patch
-- removed C++ style comment
-
-Patch 2:
-	limited BD71847 support (without range selection)
-Patch 3:
-	BD71847 device-tree bindings for regulators
-Patch 4:
-	BD71847 device-tree bindings for mfd
-Patch 5:
-	Voltage range selection support to regulator helpers
-Patch 6:
-	Simple renaming plenty of BD71837 occurrences to BD718XX
-Patch 7:
-	BD71837/BD71847 Full voltage range support using helpers from
-	patch 5
-Patch 8:
-	Renaming bd71837 regulator driver to bd718x7
-
-this patch series is based on linux-next tag next-20180912.
-
-Matti Vaittinen (7):
-  regulator/mfd: Support ROHM BD71847 power management IC
-  regulator: dt bindings: add BD71847 device-tree binding documentation
-  mfd: dt bindings: add BD71847 device-tree binding documentation
-  regulator: Support regulators where voltage ranges are selectable
-  regulator/mfd: bd718xx: rename bd71837/bd71847 common instances
-  regulator: bd718XX use pickable ranges
-  regulator: bd718xx: rename bd71837 to 718xx
-
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |   17 +-
- .../bindings/regulator/rohm,bd71837-regulator.txt  |   12 +-
- drivers/mfd/rohm-bd718x7.c                         |  162 ++-
- drivers/regulator/Kconfig                          |    2 +-
- drivers/regulator/Makefile                         |    2 +-
- drivers/regulator/bd71837-regulator.c              |  644 -----------
- drivers/regulator/bd718x7-regulator.c              | 1138 ++++++++++++++++++++
- drivers/regulator/core.c                           |    5 +
- drivers/regulator/helpers.c                        |  232 ++++
- include/linux/mfd/rohm-bd718x7.h                   |  333 +++---
- include/linux/regulator/driver.h                   |   20 +-
- 11 files changed, 1646 insertions(+), 921 deletions(-)
- delete mode 100644 drivers/regulator/bd71837-regulator.c
- create mode 100644 drivers/regulator/bd718x7-regulator.c
-
--- 
-2.14.3
+SGkgU2NvdHQsDQoNClBsZWFzZSBzZWUgbXkgcmVwbGF5IGlubGluZS4NCg0KPiAtLS0tLU9yaWdp
+bmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1hcm0ta2VybmVsIDxsaW51eC1hcm0ta2Vy
+bmVsLWJvdW5jZXNAbGlzdHMuaW5mcmFkZWFkLm9yZz4NCj4gT24gQmVoYWxmIE9mIFNjb3R0IFdv
+b2QNCj4gU2VudDogMjAxOOW5tDnmnIg05pelIDQ6MzQNCj4gVG86IEFuZHkgVGFuZyA8YW5keS50
+YW5nQG54cC5jb20+OyBWYWJoYXYgU2hhcm1hDQo+IDx2YWJoYXYuc2hhcm1hQG54cC5jb20+OyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+Zzsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbGludXhwcGMt
+ZGV2QGxpc3RzLm96bGFicy5vcmc7DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFk
+Lm9yZzsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNib3lkQGtlcm5lbC5vcmc7IHJqd0By
+and5c29ja2kubmV0OyB2aXJlc2gua3VtYXJAbGluYXJvLm9yZzsNCj4gbGludXgtY2xrQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgtcG1Admdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWwtb3du
+ZXJAdmdlci5rZXJuZWwub3JnOyBjYXRhbGluLm1hcmluYXNAYXJtLmNvbTsNCj4gd2lsbC5kZWFj
+b25AYXJtLmNvbTsgZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IGFybmRAYXJuZGIuZGU7DQo+
+IGtzdGV3YXJ0QGxpbnV4Zm91bmRhdGlvbi5vcmc7IHlhbWFkYS5tYXNhaGlyb0Bzb2Npb25leHQu
+Y29tDQo+IENjOiBZb2dlc2ggTmFyYXlhbiBHYXVyIDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNv
+bT47DQo+IGxpbnV4QGFybWxpbnV4Lm9yZy51azsgVmFydW4gU2V0aGkgPFYuU2V0aGlAbnhwLmNv
+bT47IFVkaXQgS3VtYXINCj4gPHVkaXQua3VtYXJAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
+QVRDSCAzLzVdIGRyaXZlcnM6IGNsay1xb3JpcTogQWRkIGNsb2NrZ2VuIHN1cHBvcnQgZm9yDQo+
+IGx4MjE2MGENCj4gDQo+IE9uIE1vbiwgMjAxOC0wOS0wMyBhdCAwMToxNyArMDAwMCwgQW5keSBU
+YW5nIHdyb3RlOg0KPiA+IEhpIFNjb3R0LA0KPiA+DQo+ID4gUGxlYXNlIHNlZSBteSByZXBsYXkg
+aW4gbGluZS4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZy
+b206IExpbnV4cHBjLWRldg0KPiA+ID4gPGxpbnV4cHBjLWRldi1ib3VuY2VzK2IyOTk4Mz1mcmVl
+c2NhbGUuY29tQGxpc3RzLm96bGFicy5vcmc+IE9uDQo+ID4gPiBCZWhhbGYgT2YgU2NvdHQgV29v
+ZA0KPiA+ID4gU2VudDogMjAxOOW5tDnmnIgx5pelIDQ6MjkNCj4gPiA+IFRvOiBBbmR5IFRhbmcg
+PGFuZHkudGFuZ0BueHAuY29tPjsgVmFiaGF2IFNoYXJtYQ0KPiA+ID4gPHZhYmhhdi5zaGFybWFA
+bnhwLmNvbT47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiBkZXZpY2V0cmVl
+QHZnZXIua2VybmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiA+ID4gbWFyay5ydXRsYW5k
+QGFybS5jb207IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOw0KPiA+ID4gbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsNCj4g
+PiA+IHNib3lkQGtlcm5lbC5vcmc7IHJqd0Byand5c29ja2kubmV0OyB2aXJlc2gua3VtYXJAbGlu
+YXJvLm9yZzsNCj4gPiA+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LXBtQHZnZXIu
+a2VybmVsLm9yZzsNCj4gPiA+IGxpbnV4LWtlcm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmc7IGNh
+dGFsaW4ubWFyaW5hc0Bhcm0uY29tOw0KPiA+ID4gd2lsbC5kZWFjb25AYXJtLmNvbTsgZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IGFybmRAYXJuZGIuZGU7DQo+ID4gPiBrc3Rld2FydEBsaW51
+eGZvdW5kYXRpb24ub3JnOyB5YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbQ0KPiA+ID4gQ2M6
+IFlvZ2VzaCBOYXJheWFuIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPjsNCj4gPiA+
+IGxpbnV4QGFybWxpbnV4Lm9yZy51azsgVWRpdCBLdW1hciA8dWRpdC5rdW1hckBueHAuY29tPjsg
+VmFydW4NCj4gU2V0aGkNCj4gPiA+IDxWLlNldGhpQG54cC5jb20+DQo+ID4gPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIDMvNV0gZHJpdmVyczogY2xrLXFvcmlxOiBBZGQgY2xvY2tnZW4gc3VwcG9ydA0K
+PiA+ID4gZm9yIGx4MjE2MGENCj4gPiA+DQo+ID4gPiBPbiBGcmksIDIwMTgtMDgtMzEgYXQgMDY6
+MTIgKzAwMDAsIEFuZHkgVGFuZyB3cm90ZToNCj4gPiA+ID4gV2UgZG9uJ3Qgd2FudCB0byBpbmNy
+ZWFzZSBOVU1fQ01VWCBlYWNoIHRpbWUgbmV3IHNvYyB3aXRoDQo+IG1vcmUNCj4gPiA+DQo+ID4g
+PiBjbXV4ZXMgYWRkZWQuDQo+ID4gPg0KPiA+ID4gWW91IGRvbid0IHdhbnQgdG8gaGF2ZSB0byBt
+YWtlIGEgdHJpdmlhbCBjaGFuZ2UgZWFjaCB0aW1lIHlvdSBleGNlZWQNCj4gPiA+IGEgbGltaXQg
+dGhhdCBoYXMgeWV0IHRvIGJlIGV4Y2VlZGVkIG9uY2Ugc2luY2UgTlVNX0NNVVggd2FzIGFkZGVk
+Pw0KPiA+ID4gVGhpcyBpc24ndCBBQkkgb3IgaW4gYW55IG90aGVyIHdheSBoYXJkIHRvIGNoYW5n
+ZS4gIEl0J3MgcmlnaHQgaW4NCj4gPiA+IHRoZSBzYW1lIGZpbGUgYXMgdGhlIGNoaXAgZGVzY3Jp
+cHRpb24geW91J2QgYmUgYWRkaW5nLg0KPiA+ID4NCj4gPiA+IEFuZCBldmVuIGlmIGEgY2hpcCBk
+aWQgY29tZSBhbG9uZyB3aXRoIDE2IGNtdXhlcywgeW91J2QgdGhlbiBuZWVkIHRvDQo+ID4gPiBp
+bmNyZWFzZSB0aGUgYXJyYXkgdG8gMTcgdG8gaG9sZCB0aGUgLTEgaWYgeW91IGRvbid0IHdhbnQg
+dG8gbGVhdmUgYQ0KPiA+ID4gc2l0dWF0aW9uIGxpa2UgdGhlDQo+ID4gPiBwNDA4MCBpcyBpbiBu
+b3csIHdoZXJlIGEgY2hpcCdzIGNtdXggYXJyYXkgY291bGQgYmUgYnJva2VuIGJ5DQo+ID4gPiBp
+bmNyZWFzaW5nIE5VTV9DTVVYIGZ1cnRoZXIuDQo+ID4gPg0KPiA+DQo+ID4gW0FuZHldIEFkZGlu
+ZyBidWZmZXIgdG8gYSBsaW1pdGF0aW9uIG51bWJlciBpcyBhbHdheXMgYSBnb29kIGhhYml0DQo+
+ID4gd2hlbiBjb2RpbmcuIFdlIG9mdGVuIGZvcmdldCB0byBpbmNyZWFzZSB0aGlzIHZhbHVlIHdo
+ZW4gYSBuZXcgY2hpcA0KPiA+IHdpdGggbW9yZSBjbXV4ZXMgYWRkZWQuDQo+IA0KPiAib2Z0ZW4i
+PyAgVGhlcmUgaGFzIG5ldmVyIGJlZW4gYSBuZXcgY2hpcCBhZGRlZCB3aXRoIG1vcmUgY211eGVz
+DQo+IHRoYW4gcDQwODAncyA4LCBhbmQgaWYgb25lIGRvZXMgY29tZSBhbG9uZyBhbmQgeW91IGZv
+cmdldCwgdGhlIGNvbXBpbGVyDQo+IHNob3VsZCBjb21wbGFpbiBhYm91dCBleGNlZWRpbmcgdGhl
+IGFycmF5IGxlbmd0aCB3aXRoIGEgc3RhdGljIGluaXRpYWxpemVyLg0KPiBUaGlzIGlzbid0IGxp
+a2UgYW4gYXJyYXkgdGhhdCBpcyBmaWxsZWQgd2l0aCBhIHJ1bnRpbWUtZGV0ZXJtaW5lZCBsZW5n
+dGguDQo+IA0KPiA+IExpa2UgdGhpcyBwYXRjaCwgd2UgZGlkbid0IGluY3JlYXNlIHRoaXMgdmFs
+dWUgYXQgZmlyc3QuIFdlIHNwZW50IGENCj4gPiBsb3Qgb2YgdGltZSBmaW5kaW5nIG91dCB0aGF0
+IE5VTV9DTVVYIG5lZWRzIHRvIGJlIGluY3JlYXNlZCB0b28uDQo+IA0KPiBBcmUgeW91IHRhbGtp
+bmcgYWJvdXQgc29tZSBvdGhlciBjaGlwIHRoYXQgeW91IGhhdmVuJ3Qgc2VudCBhIHBhdGNoIGZv
+cg0KPiB5ZXQ/DQo+IE9yIGlzIHRoZSBjbXV4IGFycmF5IGZvciB0aGlzIGNoaXAgd3Jvbmc/ICBX
+aGF0IHNwZWNpZmljYWxseSBkaWQgeW91IHNlZQ0KPiBoYXBwZW4gImF0IGZpcnN0Ij8NCj4gDQpb
+QW5keV0gU29ycnksICJPZnRlbiIgaXMgbm90IGEgcmlnaHQgd29yZC4gSSBtZWFudCB3ZSB0ZW5k
+IHRvIGFkZCBuZXcgc29jIHdpdGhvdXQgdXBkYXRpbmcgTlVNX0NNVVguDQogDQo+ID4gSXQgaXMg
+YSBwZXJzb25hbCBwcmVmZXJlbmNlIGhvdyB0byBzZXQgdGhpcyB2YWx1ZS4gSSB0aGluayBpdCBp
+cw0KPiA+IGJldHRlciB0byBpbmNyZWFzZSBpdCB0byAxNiwgbm90IE5VTV9DTVVYKzEgYXMgbG9u
+ZyBhcyB3ZSBmaXggdGhlDQo+ID4gUDQwODAgaXNzdWUgZXZlbiB0aG91Z2ggaXQgaXMgYSB0cml2
+aWFsIGNoYW5nZS4gQW5kIEkgYWdyZWUgdGhlDQo+ID4gZGVzY3JpcHRpb24gbmVlZHMgdG8gYmUg
+dXBkYXRlZC4NCj4gDQo+IEknbSBub3QgdGhlIGNsb2NrIG1haW50YWluZXIsIHNvIGl0J3Mgbm90
+IHVwIHRvIG1lLCBidXQgSSBkb24ndCBzZWUgdGhlIHBvaW50DQo+IGluIHNldHRpbmcgaXQgdG8g
+YW4gYXJiaXRyYXJ5IG51bWJlciwgYW5kIEkgZG8gbm90IGFncmVlIHRoYXQgaW5jcmVhc2luZw0K
+PiBOVU1fQ01VWCBpcyBhIHN1aXRhYmxlIHJlcGxhY2VtZW50IGZvciBOVU1fQ01VWCsxIGluDQo+
+IGNtdXhfdG9fZ3JvdXBbXSwgYXMgdGhhdCBhcnJheSBzaG91bGQgYmUgb25lIGxhcmdlciB0aGFu
+IGNtdXhbXSBpbiBvcmRlcg0KPiB0byBhbGxvdyBldmVyeSBjaGlwIHRvIGhhdmUgYQ0KPiAtMSB0
+ZXJtaW5hdG9yLiAgSW4gYW55IGNhc2UsIGFueSBjaGFuZ2UgdG8gTlVNX0NNVVggc2hvdWxkIGJl
+IGENCj4gc2VwYXJhdGUgcGF0Y2ggYmVjYXVzZSBpdCdzIG5vdCByZXF1aXJlZCBmb3IgbHgyMTYw
+YSBzdXBwb3J0IChhc3N1bWluZw0KPiBseDIxNjBhIHdhcyBjb3JyZWN0bHkgZGVzY3JpYmVkIGJ5
+IHRoaXMgcGF0Y2gpLg0KW0FuZHldIEkgZG9uJ3Qgc2VlIGFueSBpbXByb3ByaWF0ZSBhYm91dCB5
+b3VyIHN1Z2dlc3Rpb24uIHNvIHdlIGFyZSBnb2luZyB0byBkbyBpbiB5b3VyIHdheS4NCg0KVGhh
+bmtzLA0KQW5keQ0KPiANCj4gLVNjb3R0DQo+IA0KPiANCj4gDQo+IF9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
+ZyBsaXN0DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwczov
+L2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHAlM0ElMkYl
+MkZsaXN0DQo+IHMuaW5mcmFkZWFkLm9yZyUyRm1haWxtYW4lMkZsaXN0aW5mbyUyRmxpbnV4LWFy
+bS1rZXJuZWwmYW1wO2RhdGE9MDINCj4gJTdDMDElN0NhbmR5LnRhbmclNDBueHAuY29tJTdDZGJj
+ODI0ZmMzOTY3NDcxMTMxNjIwOGQ2MTFkY2YNCj4gNjFiJTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmNk
+OTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNjcxNjAzDQo+IDgwNjA3OTcxMTMmYW1wO3NkYXRhPWlD
+TEtHTUV6UlgyZHBINSUyQmY0TldJaVBEYzVMNU5wVGNwWjdYDQo+IHVzZWhkSXclM0QmYW1wO3Jl
+c2VydmVkPTANCg==
