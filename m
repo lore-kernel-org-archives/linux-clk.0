@@ -1,97 +1,54 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-	Tang Yuantian <andy.tang@nxp.com>,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v3 4/6] drivers: clk-qoriq: Add clockgen support for lx2160a
-Date: Mon, 24 Sep 2018 05:38:59 +0530
-Message-Id: <1537747741-6245-5-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44984 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727379AbeIDJFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:05:25 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 05/11] drm/sun4i: Add support for A64 display engine
+Date: Tue,  4 Sep 2018 12:40:47 +0800
+Message-Id: <20180904044053.15425-6-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-Add clockgen support for lx2160a.
-Added entry for compat 'fsl,lx2160a-clockgen'.
+Display Engine(DE2) in Allwinner A64 has two mixers and tcons.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+The routing for mixer0 is through tcon0 and connected to
+LVDS/RGB/MIPI-DSI controller.
+
+The routing for mixer1 is through tcon1 and connected to HDMI.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/clk/clk-qoriq.c         | 12 ++++++++++++
- drivers/cpufreq/qoriq-cpufreq.c |  1 +
- 2 files changed, 13 insertions(+)
+Changes for v4, v3.1, v3, v2:
+- none
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index e152bfb..99675de 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
- 	},
- 	{
-+		.compat = "fsl,lx2160a-clockgen",
-+		.cmux_groups = {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group = {
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
-+		},
-+		.pll_mask = 0x37,
-+		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat = "fsl,p2041-clockgen",
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p2041_init_periph,
-@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 3d773f6..83921b7 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
- 	{ .compatible = "fsl,ls1046a-clockgen", },
- 	{ .compatible = "fsl,ls1088a-clockgen", },
- 	{ .compatible = "fsl,ls2080a-clockgen", },
-+	{ .compatible = "fsl,lx2160a-clockgen", },
- 	{ .compatible = "fsl,p4080-clockgen", },
- 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 8b0cd08034e0..fbd5a3d44d11 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -420,6 +420,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun8i-h3-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-v3s-display-engine" },
+ 	{ .compatible = "allwinner,sun9i-a80-display-engine" },
++	{ .compatible = "allwinner,sun50i-a64-display-engine" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
 -- 
-2.7.4
+2.18.0
