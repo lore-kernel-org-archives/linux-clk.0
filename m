@@ -1,54 +1,25 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 01/12] clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
-Date: Thu, 27 Sep 2018 17:18:39 +0530
-Message-Id: <20180927114850.24565-2-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
-MIME-Version: 1.0
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Message-ID: <5b8e8a75.1c69fb81.84d1a.57d3@mx.google.com>
+Date: Tue, 04 Sep 2018 08:36:53 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 4/7] clk: imx6sll: add mmdc1 ipg clock
+References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com> <1535701998-20443-5-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1535701998-20443-5-git-send-email-Anson.Huang@nxp.com>
+Cc: shawnguo@kernel.org, 	s.hauer@pengutronix.de, 	kernel@pengutronix.de, 	fabio.estevam@nxp.com, 	robh+dt@kernel.org, 	mark.rutland@arm.com, 	linux@armlinux.org.uk, 	mturquette@baylibre.com, 	sboyd@kernel.org, 	colin.didier@devialet.com, 	clement.peron@devialet.com, 	ping.bai@nxp.com, 	aisheng.dong@nxp.com, 	shengjiu.wang@nxp.com, 	matteo.lisi@engicam.com, 	michael@amarulasolutions.com, 	linux-arm-kernel@lists.infradead.org, 	devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org, 	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+To: Anson Huang <Anson.Huang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-DSI DPHY gate bit on MIPI DSI clock register is bit 15
-not bit 30.
+On Fri, 31 Aug 2018 15:53:15 +0800, Anson Huang wrote:
+> i.MX6SLL has MMDC1 ipg clock in CCM CCGR, add it into
+> clock tree for clock management.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx6sll.c             | 1 +
+>  include/dt-bindings/clock/imx6sll-clock.h | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 5f80eb018014..b639e79641df 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -581,7 +581,7 @@ static const char * const dsi_dphy_parents[] = { "pll-video0", "pll-periph0" };
- static const u8 dsi_dphy_table[] = { 0, 2, };
- static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(dsi_dphy_clk, "dsi-dphy",
- 				       dsi_dphy_parents, dsi_dphy_table,
--				       0x168, 0, 4, 8, 2, BIT(31), CLK_SET_RATE_PARENT);
-+				       0x168, 0, 4, 8, 2, BIT(15), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
- 			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
--- 
-2.18.0.321.gffc6fa0e3
+Reviewed-by: Rob Herring <robh@kernel.org>
