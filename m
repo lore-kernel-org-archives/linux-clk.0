@@ -1,114 +1,186 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:48894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729332AbeIYUxQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:53:16 -0400
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <t-kristo@ti.com>
+CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <j-keerthy@ti.com>, <russ.dill@ti.com>, Russ Dill <Russ.Dill@ti.com>
+Subject: [PATCH v3 RESEND 1/4] clk: clk: Add functions to save/restore clock context en-masse
+Date: Tue, 4 Sep 2018 12:19:35 +0530
+Message-ID: <1536043778-2232-2-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
+References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
- <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
- <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com> <20180925130329.GK7636@tbergstrom-lnx.Nvidia.com>
-In-Reply-To: <20180925130329.GK7636@tbergstrom-lnx.Nvidia.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 25 Sep 2018 09:45:12 -0500
-Message-ID: <CAL_JsqJjbCDk5HU8-ox=2hr7yBcaj5kv-V521CieGC7SJQu_HA@mail.gmail.com>
-Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: vkuruturi@nvidia.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        daniel@octaforge.org, Andre Heider <a.heider@gmail.com>,
-        swtcr0@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 8:03 AM Peter De Schrijver
-<pdeschrijver@nvidia.com> wrote:
->
-> On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
-> > On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >
-> > Needs a commit msg.
-> >
-> > > ---
-> > >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
-> > >  1 file changed, 448 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > new file mode 100644
-> > > index 0000000..1c52f47
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > @@ -0,0 +1,448 @@
-> > > +NVIDIA Tegra210 SoC EMC (external memory controller)
-> > > +====================================================
-> > > +
-> > > +Required properties :
-> > > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
-> > > +- reg : physical base address and length of the controller's registers.
-> > > +- nvidia,memory-controller : phandle of the MC driver.
-> >
-> > Huh? What is this block then?
-> >
-> > > +- clocks : phandles of the possible source clocks
-> > > +- clock-names : names of the possible source clocks
-> > > +
-> > > +The node should contain a "emc-table" subnode for each supported RAM type
-> > > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
-> > > +being its RAM_CODE.
-> >
-> > Unit address is based on reg property.
-> >
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> > > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
-> > > +used for.
-> > > +
-> > > +Each "emc-table" node should contain a "emc-table" subnode for every supported
-> > > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
-> > > +their unit address.
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> >
-> > Which emc-table nodes, the child or grand-child nodes?
-> >
-> > > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
-> >
-> > > +- nvidia,revision : revision of the parameter set used for this node. All
-> > > +                    nodes in the same "emc-table" should have the same revision
-> > > +- clock-frequency : frequency in kHz
-> > > +- nvidia,emc-min-mv : minimum voltage for this OPP
-> > > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
-> > > +- nvidia,source : clock source to be used for this OPP
-> >
-> > Is this memory timings/settings or OPPs? We have a binding for OPPs
-> > already.
-> >
-> > > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
-> > > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
-> > > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
-> > > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
-> > > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
-> > > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
-> >
-> > [...]
-> >
-> > This is a huge list of properties. For all the things that are memory
-> > timings, is there really value to defining a property for each setting?
-> > Perhaps you should just define your own format and either make it a
-> > separate firmware file or include that file in the dtb.
-> >
->
-> The problem with moving to a binary blob is that it will break compatibility
-> with existing devices (eg. Jetson TX1 and shield TV) because their bootloaders
-> rely on the existing format.
+From: Russ Dill <Russ.Dill@ti.com>
 
-Good to know, but not really my problem that bindings shipped without
-review. While this is self-contained and doesn't have any sort of
-common binding which could be used instead, can you say that about
-*everything* the bootloader depends on.
+Deep enough power saving mode can result into losing context of the clock
+registers also, and they need to be restored once coming back from the power
+saving mode. Hence add functions to save/restore clock context.
 
-Rob
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Russ Dill <Russ.Dill@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/clk/clk.c            | 74 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  7 +++++
+ include/linux/clk.h          | 25 +++++++++++++++
+ 3 files changed, 106 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d31055a..8a0254a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -923,6 +923,80 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++static int _clk_save_context(struct clk_core *clk)
++{
++	struct clk_core *child;
++	int ret = 0;
++
++	hlist_for_each_entry(child, &clk->children, child_node) {
++		ret = _clk_save_context(child);
++		if (ret < 0)
++			return ret;
++	}
++
++	if (clk->ops && clk->ops->save_context)
++		ret = clk->ops->save_context(clk->hw);
++
++	return ret;
++}
++
++static void _clk_restore_context(struct clk_core *clk)
++{
++	struct clk_core *child;
++
++	if (clk->ops && clk->ops->restore_context)
++		clk->ops->restore_context(clk->hw);
++
++	hlist_for_each_entry(child, &clk->children, child_node)
++		_clk_restore_context(child);
++}
++
++/**
++ * clk_save_context - save clock context for poweroff
++ *
++ * Saves the context of the clock register for powerstates in which the
++ * contents of the registers will be lost. Occurs deep within the suspend
++ * code.  Returns 0 on success.
++ */
++int clk_save_context(void)
++{
++	struct clk_core *clk;
++	int ret;
++
++	hlist_for_each_entry(clk, &clk_root_list, child_node) {
++		ret = _clk_save_context(clk);
++		if (ret < 0)
++			return ret;
++	}
++
++	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
++		ret = _clk_save_context(clk);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(clk_save_context);
++
++/**
++ * clk_restore_context - restore clock context after poweroff
++ *
++ * Restore the saved clock context upon resume.
++ *
++ */
++void clk_restore_context(void)
++{
++	struct clk_core *clk;
++
++	hlist_for_each_entry(clk, &clk_root_list, child_node)
++		_clk_restore_context(clk);
++
++	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
++		_clk_restore_context(clk);
++}
++EXPORT_SYMBOL_GPL(clk_restore_context);
++
+ /**
+  * clk_enable - ungate a clock
+  * @clk: the clk being ungated
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 08b1aa7..df7379d 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -119,6 +119,11 @@ struct clk_duty {
+  *		Called with enable_lock held.  This function must not
+  *		sleep.
+  *
++ * @save_context: Save the context of the clock in prepration for poweroff.
++ *
++ * @restore_context: Restore the context of the clock after a restoration
++ *		of power.
++ *
+  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+  *		ensure that the prepare_mutex is held across this call.
+@@ -223,6 +228,8 @@ struct clk_ops {
+ 	void		(*disable)(struct clk_hw *hw);
+ 	int		(*is_enabled)(struct clk_hw *hw);
+ 	void		(*disable_unused)(struct clk_hw *hw);
++	int		(*save_context)(struct clk_hw *hw);
++	void		(*restore_context)(struct clk_hw *hw);
+ 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
+ 					unsigned long parent_rate);
+ 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 4f750c4..7da754d 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -629,6 +629,23 @@ int __must_check clk_bulk_enable(int num_clks,
+  */
+ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
+ 
++/**
++ * clk_save_context - save clock context for poweroff
++ *
++ * Saves the context of the clock register for powerstates in which the
++ * contents of the registers will be lost. Occurs deep within the suspend
++ * code so locking is not necessary.
++ */
++int clk_save_context(void);
++
++/**
++ * clk_restore_context - restore clock context after poweroff
++ *
++ * This occurs with all clocks enabled. Occurs deep within the resume code
++ * so locking is not necessary.
++ */
++void clk_restore_context(void);
++
+ #else /* !CONFIG_HAVE_CLK */
+ 
+ static inline struct clk *clk_get(struct device *dev, const char *id)
+@@ -728,6 +745,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ {
+ 	return NULL;
+ }
++
++static inline int clk_save_context(void)
++{
++	return 0;
++}
++
++static inline void clk_restore_context(void) {}
++
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
+-- 
+1.9.1
