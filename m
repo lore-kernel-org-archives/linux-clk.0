@@ -1,65 +1,79 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 10 Sep 2018 13:24:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add R7S9210 support
-Message-ID: <20180910182423.GA18862@bogus>
-References: <20180907165849.106182-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180907165849.106182-1-chris.brandt@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44946 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726093AbeIDJFN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:05:13 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 03/11] dt-bindings: display: Add compatible for A64 DE2 display pipeline
+Date: Tue,  4 Sep 2018 12:40:45 +0800
+Message-Id: <20180904044053.15425-4-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 07, 2018 at 11:58:49AM -0500, Chris Brandt wrote:
-> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> Standby.
-> 
-> The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-> for how the registers are laid out.
-> The MSTP registers are only 8-bits wide, there is no status registers
-> (MSTPSR), and the register offsets are a little different. Since the RZ/A
-> hardware manuals refer to these registers as the Standby Control Registers,
-> we'll use that name to distinguish the RZ/A type from the R-Car type.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v4:
->  * Preserved sort order of SoC listings
->  * Removed R7S9210_CLK_PLL from dt-binding since it's an internal clock
->  * ratio_tab is now a struct making it look a little nicer
->  * Removed CLK_I,...CLK_P0 because they are already defined in dt-bindings
->  * Sorted mod_clks by ascending MSTP number
->  * Removed cast from clk_get_rate(parent)
->  * Corrected register index of stbcr[1]
->  * Don't use MOD_CLK_PACK_10 for non priv->stbyctrl devices (bug fix)
-> v3:
->  * Use actual register bit names and numbers from manual for both DT and
->    tables ("36" instead of "306")
->  * Do not register reset controller for stbyctrl (RZ/A) SoCs
->  * Changed SPDX from "GPL-2.0+" to "GPL-2.0"
-> v2:
->  * num_hw_mod_clks was wrong
->  * added ethernet clocks
-> ---
->  .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   5 +-
->  drivers/clk/renesas/Kconfig                        |   5 +
->  drivers/clk/renesas/Makefile                       |   1 +
->  drivers/clk/renesas/r7s9210-cpg-mssr.c             | 189 +++++++++++++++++++++
->  drivers/clk/renesas/renesas-cpg-mssr.c             |  81 +++++++--
->  drivers/clk/renesas/renesas-cpg-mssr.h             |  13 ++
->  include/dt-bindings/clock/r7s9210-cpg-mssr.h       |  20 +++
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-For DT bits,
+Allwinner A64 has a DE2 display pipeline. The TCONs are similar to the
+ones in A83T, but the mixers are new (similar to the later R40 SoC).
 
-Acked-by: Rob Herring <robh@kernel.org>
+This patch adds dt-binding documentation for A64 DE2 display pipeline.
 
->  7 files changed, 300 insertions(+), 14 deletions(-)
->  create mode 100644 drivers/clk/renesas/r7s9210-cpg-mssr.c
->  create mode 100644 include/dt-bindings/clock/r7s9210-cpg-mssr.h
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+[Icenowy: Refactor and also cover TCON1]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes for v4:
+- none
+Changes for v3.1:
+- added mixer0 and TCON0
+Changes for v3:
+- collect Rob r-w-b tag
+Changes for v2:
+- Add fallback compatible for tcon1
+- Add separate compatible for mixer1 
+
+ .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index f8773ecb7525..7b79c5e3dffc 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -151,6 +151,8 @@ Required properties:
+    * allwinner,sun8i-v3s-tcon
+    * allwinner,sun9i-a80-tcon-lcd
+    * allwinner,sun9i-a80-tcon-tv
++   * "allwinner,sun50i-a64-tcon-lcd", "allwinner,sun8i-a83t-tcon-lcd"
++   * "allwinner,sun50i-a64-tcon-tv", "allwinner,sun8i-a83t-tcon-tv"
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON.
+@@ -370,6 +372,8 @@ Required properties:
+     * allwinner,sun8i-a83t-de2-mixer-1
+     * allwinner,sun8i-h3-de2-mixer-0
+     * allwinner,sun8i-v3s-de2-mixer
++    * allwinner,sun50i-a64-de2-mixer-0
++    * allwinner,sun50i-a64-de2-mixer-1
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
+@@ -403,6 +407,7 @@ Required properties:
+     * allwinner,sun8i-r40-display-engine
+     * allwinner,sun8i-v3s-display-engine
+     * allwinner,sun9i-a80-display-engine
++    * allwinner,sun50i-a64-display-engine
+ 
+   - allwinner,pipelines: list of phandle to the display engine
+     frontends (DE 1.0) or mixers (DE 2.0) available.
+-- 
+2.18.0
