@@ -1,95 +1,71 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 27 Sep 2018 19:14:51 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
- start delay
-Message-ID: <20180927171451.7iqt2nt2log5qojf@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180927114850.24565-9-jagan@amarulasolutions.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 07/11] dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO0 macro
+Date: Tue,  4 Sep 2018 12:40:49 +0800
+Message-Id: <20180904044053.15425-8-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> can be computed by subtracting total vertical timing with
-> front porch timing and with adding 1 delay line for TCON.
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-This is what the current code is doing as well.
+Allwinner A64 HDMI PHY clock has PLL_VIDEO0 as a parent.
 
-> This patch simply add the start_delay logic from BPI-M64-bsp,
-> w/o this new computation, the DSI on A64 encounter vblank time out.
->=20
-> [CRTC:36:crtc-0] vblank wait timed out
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.c
-> index 9918fdb990ff..217db74c6dc3 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *ds=
-i,
->  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
->  					   struct drm_display_mode *mode)
->  {
-> -	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> +	u32 vfp =3D mode->vsync_start - mode->vdisplay;
+Include the macro on dt-bindings so-that the same can be used
+while defining CCU clock phandles.
 
-Again, this is wrong and contrary to what your commit log is saying.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes for v4:
+- Dropped PLL_VIDEO1
+Changes for v3.1:
+- none
+Changes for v3:
+- collect Rob r-w-b tag
+Changes for v2:
+- new patch
 
-The Allwinner code has:
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h      | 4 +++-
+ include/dt-bindings/clock/sun50i-a64-ccu.h | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-u32 dsi_start_delay =3D panel->lcd_vt - vfp + 1;
-
-So, essentially:
-
-vtotal - (vtotal - vdisplay - back porch) + 1
-
-The backporch is hsync_total - hsync_end, so we end up, removing the
-addition / removal of vtotal, with:
-
-vdisplay - (vsync_total - vsync_end) + 1
-
-The formula used there looks indeed different, but unlike what you
-were saying.
-
-> +	u32 start_delay;
-> +
-> +	start_delay =3D mode->vtotal - vfp + 1;
-> +	if (start_delay > mode->vtotal)
-> +		start_delay -=3D mode->vtotal;
-> +
-> +	if (!start_delay)
-> +		start_delay =3D 1;
-> +
-
-I guess that it's actually the clamping that fixes thing. It should be
-mentionned in your commit log.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+index 061b6fbb4f95..a83951cf0224 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
+@@ -27,7 +27,9 @@
+ #define CLK_PLL_AUDIO_2X		4
+ #define CLK_PLL_AUDIO_4X		5
+ #define CLK_PLL_AUDIO_8X		6
+-#define CLK_PLL_VIDEO0			7
++
++/* PLL_VIDEO0 exported for HDMI PHY */
++
+ #define CLK_PLL_VIDEO0_2X		8
+ #define CLK_PLL_VE			9
+ #define CLK_PLL_DDR0			10
+diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+index d66432c6e675..a8ac4cfcdcbc 100644
+--- a/include/dt-bindings/clock/sun50i-a64-ccu.h
++++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+@@ -43,6 +43,7 @@
+ #ifndef _DT_BINDINGS_CLK_SUN50I_A64_H_
+ #define _DT_BINDINGS_CLK_SUN50I_A64_H_
+ 
++#define CLK_PLL_VIDEO0		7
+ #define CLK_PLL_PERIPH0		11
+ 
+ #define CLK_BUS_MIPI_DSI	28
+-- 
+2.18.0
