@@ -1,71 +1,63 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <31463c95ba928534c8329c4665f92f6153b1840b.camel@baylibre.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: meson8b: use the registers from
- the HHI syscon
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, Martin Blumenstingl
-	 <martin.blumenstingl@googlemail.com>, robh@kernel.org
-Cc: Neil Armstrong <narmstrong@baylibre.com>, mark.rutland@arm.com,
-	linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, carlo@caione.org, khilman@baylibre.com,
-	linux-clk@vger.kernel.org
-Date: Tue, 04 Sep 2018 14:08:53 +0200
-In-Reply-To: <153573714081.93865.1632567834341845994@swboyd.mtv.corp.google.com>
-References: <20180721192846.18811-1-martin.blumenstingl@googlemail.com>
-	 <20180721192846.18811-2-martin.blumenstingl@googlemail.com>
-	 <20180725200755.GA24555@rob-hp-laptop>
-	 <CAFBinCAdsC-VisufKu9jm0vZER6JjFq4O5WAfsMoXdQfzNFcfg@mail.gmail.com>
-	 <18543f2e-0162-9201-571c-73ce8d707e50@baylibre.com>
-	 <CAFBinCDLWqXCcB3b3SAOxxkq+EbQazGmMVLbVLyTjWCD4wTarA@mail.gmail.com>
-	 <153573714081.93865.1632567834341845994@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4 4/4] drm/sun4i: Enable DesignWare HDMI for SUN50I
+Date: Tue,  4 Sep 2018 22:06:09 +0530
+Message-Id: <20180904163609.10171-4-jagan@amarulasolutions.com>
+In-Reply-To: <20180904163609.10171-1-jagan@amarulasolutions.com>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-08-31 at 10:39 -0700, Stephen Boyd wrote:
-> > > The clock controller node was badly represented from the beginning, the
-> > > HHI register zone *is* a "system control" zone with a lot of different
-> > > registers controller the system, including all the EE clocks, *some* HDMI
-> > > PHY settings, *some* Video DAC settings, *some* memory power control...
-> > > 
-> > > Thus, the clock controller *is* entirely in the HHI registers space, but
-> > > the HHI register space should be used by other nodes for control some
-> > > part of the SoCs. This is why we decided to model the HHI zone as a
-> > > "syscon" to permit other node to have access to these registers and
-> > > "simple-mfd" to expose the *big* feature of the HHI : the clock controller.
-> > 
-> > does our (Neil's and mine) explanation make sense to you?
-> > I understand your point that a DT node can provide multiple "things".
-> > this is the case on the Meson HHI region, but in addition to that the
-> > HHI region contains additional bits for other IP blocks. so my
-> > understanding is that using a syscon here is fine
-> > 
-> 
-> I'm dropping this from my review queue because nobody has replied in
-> many weeks. I think Rob wants people to move away from syscon so if you
-> can't do that then we need good reasons. I recommend putting those
-> reasons in the commit text and resending this series.
+Allwinner SUN50I are now using DesignWare HDMI so enable
+them as default. This can build DRM_SUN8I_DW_HDMI as module
+since DRM in arm64 has module.
 
-Doubling down on what Neil and Martin already reported:
+Making this as defult to SUN8I, may cause an issue while
+loading since arm32 DRM built as static.
 
-When this clock controller what initially added, It was thought that the HHI
-register space only contained clocks and resets, which we know how to handle in
-a single driver and does not mandate a 'syscon'
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v4:
+- none
+Changes for v3:
+- skip SUN8I enablement, since it built statically for arm32
+Changes for v2:
+- Enable for SUN8I
 
-Since then, we learn that HHI has more than just clocks and reset. This is the
-case on every amlogic platform, which is why we already moved gxbb/gxl to
-syscon. axg arrived later and used this model directly. Meson8 did not mandate
-the change so far. We tried to avoid this mess as long as it was not absolutely
-necessary.
+ drivers/gpu/drm/sun4i/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-This particular platform (meson8) has an ADC block with is own registers space.
-The ADC comes with temperature sensor which has a few compensation values. 4 of
-these compensation values are in the ADC register space, the 5th is apparently
-in the HHI... HW is what it is ...
-
-Bottom line is, HHI is a typical system controller which need to be access by
-several devices. We are not particularly fond of syscon either but there are
-still some situations were this is cleanest solution, AFAIK.
-
-Jerome
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index cfa8b96273fb..5d0c450db148 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -52,6 +52,7 @@ config DRM_SUN6I_DSI
+ 
+ config DRM_SUN8I_DW_HDMI
+ 	tristate "Support for Allwinner version of DesignWare HDMI"
++	default ARM64 && ARCH_SUNXI
+ 	depends on DRM_SUN4I
+ 	select DRM_DW_HDMI
+ 	help
+-- 
+2.18.0.321.gffc6fa0e3
