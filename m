@@ -1,121 +1,221 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:11414 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbeIODXj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:23:39 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 01/14] memory: tegra: mc: Add Tegra210 MC emem registers
-Date: Sat, 15 Sep 2018 00:48:02 +0300
-Message-ID: <1536961695-27809-2-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <edgar.righi@lsitec.org.br>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date: Tue, 4 Sep 2018 12:38:24 -0300
+Message-ID: <CADHB5bAYs4QjhYVj--Vd5vVP0h5o8161St_=Yj2HfhFAR4U3eQ@mail.gmail.com>
+Subject: [PATCH v2 02/03] arm: dts: actions: Enable clock controller for
+ Actions Semi S500 SoC
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	=?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, sboyd@kernel.org,
+	mark.rutland@arm.com, linux@cubietech.com, support@cubietech.com,
+	catalin.marinas@arm.com, Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com, robh+dt@kernel.org,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/tegra210.c | 80 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+Enable clock controller for Actions Semi S500 SoC on owl-s500 device tree.
+Set UART clock reference from CMU for Actions Semi S500 SoC.
+Tested on a Lemaker Guitar board.
 
-diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
-index 5e144ab..aa9dcf0 100644
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -15,6 +15,84 @@
- 
- #include "mc.h"
- 
-+#define MC_EMEM_ADR_CFG						0x54
-+#define MC_EMEM_ARB_CFG						0x90
-+#define MC_EMEM_ARB_OUTSTANDING_REQ				0x94
-+#define MC_EMEM_ARB_TIMING_RCD					0x98
-+#define MC_EMEM_ARB_TIMING_RP					0x9c
-+#define MC_EMEM_ARB_TIMING_RC					0xa0
-+#define MC_EMEM_ARB_TIMING_RAS					0xa4
-+#define MC_EMEM_ARB_TIMING_FAW					0xa8
-+#define MC_EMEM_ARB_TIMING_RRD					0xac
-+#define MC_EMEM_ARB_TIMING_RAP2PRE				0xb0
-+#define MC_EMEM_ARB_TIMING_WAP2PRE				0xb4
-+#define MC_EMEM_ARB_TIMING_R2R					0xb8
-+#define MC_EMEM_ARB_TIMING_W2W					0xbc
-+#define MC_EMEM_ARB_TIMING_R2W					0xc0
-+#define MC_EMEM_ARB_TIMING_W2R					0xc4
-+#define MC_EMEM_ARB_DA_TURNS					0xd0
-+#define MC_EMEM_ARB_DA_COVERS					0xd4
-+#define MC_EMEM_ARB_MISC0					0xd8
-+#define MC_EMEM_ARB_MISC1					0xdc
-+#define MC_EMEM_ARB_MISC2					0xc8
-+#define MC_EMEM_ARB_RING1_THROTTLE				0xe0
-+#define MC_MLL_MPCORER_PTSA_RATE				0x44c
-+#define MC_FTOP_PTSA_RATE					0x50c
-+#define MC_EMEM_ARB_TIMING_RFCPB				0x6c0
-+#define MC_EMEM_ARB_TIMING_CCDMW				0x6c4
-+#define MC_EMEM_ARB_REFPB_HP_CTRL				0x6f0
-+#define MC_EMEM_ARB_REFPB_BANK_CTRL				0x6f4
-+#define MC_PTSA_GRANT_DECREMENT					0x960
-+#define MC_EMEM_ARB_DHYST_CTRL					0xbcc
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0			0xbd0
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1			0xbd4
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2			0xbd8
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3			0xbdc
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4			0xbe0
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5			0xbe4
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
-+#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
-+
-+static const unsigned long tegra210_mc_emem_regs[] = {
-+	 MC_EMEM_ADR_CFG,
-+	 MC_EMEM_ARB_CFG,
-+	 MC_EMEM_ARB_OUTSTANDING_REQ,
-+	 MC_EMEM_ARB_TIMING_RCD,
-+	 MC_EMEM_ARB_TIMING_RP,
-+	 MC_EMEM_ARB_TIMING_RC,
-+	 MC_EMEM_ARB_TIMING_RAS,
-+	 MC_EMEM_ARB_TIMING_FAW,
-+	 MC_EMEM_ARB_TIMING_RRD,
-+	 MC_EMEM_ARB_TIMING_RAP2PRE,
-+	 MC_EMEM_ARB_TIMING_WAP2PRE,
-+	 MC_EMEM_ARB_TIMING_R2R,
-+	 MC_EMEM_ARB_TIMING_W2W,
-+	 MC_EMEM_ARB_TIMING_R2W,
-+	 MC_EMEM_ARB_TIMING_W2R,
-+	 MC_EMEM_ARB_DA_TURNS,
-+	 MC_EMEM_ARB_DA_COVERS,
-+	 MC_EMEM_ARB_MISC0,
-+	 MC_EMEM_ARB_MISC1,
-+	 MC_EMEM_ARB_MISC2,
-+	 MC_EMEM_ARB_RING1_THROTTLE,
-+	 MC_MLL_MPCORER_PTSA_RATE,
-+	 MC_FTOP_PTSA_RATE,
-+	 MC_EMEM_ARB_TIMING_RFCPB,
-+	 MC_EMEM_ARB_TIMING_CCDMW,
-+	 MC_EMEM_ARB_REFPB_HP_CTRL,
-+	 MC_EMEM_ARB_REFPB_BANK_CTRL,
-+	 MC_PTSA_GRANT_DECREMENT,
-+	 MC_EMEM_ARB_DHYST_CTRL,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6,
-+	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7,
-+};
-+
- static const struct tegra_mc_client tegra210_mc_clients[] = {
- 	{
- 		.id = 0x00,
-@@ -1077,4 +1155,6 @@
- 	.atom_size = 64,
- 	.client_id_mask = 0xff,
- 	.smmu = &tegra210_smmu_soc,
-+	.emem_regs = tegra210_mc_emem_regs,
-+	.num_emem_regs = ARRAY_SIZE(tegra210_mc_emem_regs),
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+
+
+diff --git a/arch/arm/boot/dts/owl-s500-cubieboard6.dts
+b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
+index 7c96c59b610d..4a91a29d2f29 100644
+--- a/arch/arm/boot/dts/owl-s500-cubieboard6.dts
++++ b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
+@@ -3,6 +3,7 @@
+  * Cubietech CubieBoard6
+  *
+  * Copyright (c) 2017 Andreas F=C3=A4rber
++ * Copyright (c) 2018 Edgar Bernardi Righi
+  */
+
+ /dts-v1/;
+@@ -25,12 +26,6 @@
+         device_type =3D "memory";
+         reg =3D <0x0 0x80000000>;
+     };
+-
+-    uart3_clk: uart3-clk {
+-        compatible =3D "fixed-clock";
+-        clock-frequency =3D <921600>;
+-        #clock-cells =3D <0>;
+-    };
  };
--- 
-1.9.1
+
+ &timer {
+@@ -39,5 +34,4 @@
+
+ &uart3 {
+     status =3D "okay";
+-    clocks =3D <&uart3_clk>;
+ };
+diff --git a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
+b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
+index e610d49395d2..1a980ca6a426 100644
+--- a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
++++ b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ /*
+  * Copyright (c) 2016-2017 Andreas F=C3=A4rber
++ * Copyright (c) 2018-2018 Edgar Bernardi Righi
+  */
+
+ /dts-v1/;
+@@ -18,15 +19,8 @@
+     chosen {
+         stdout-path =3D "serial3:115200n8";
+     };
+-
+-    uart3_clk: uart3-clk {
+-        compatible =3D "fixed-clock";
+-        clock-frequency =3D <921600>;
+-        #clock-cells =3D <0>;
+-    };
+ };
+
+ &uart3 {
+     status =3D "okay";
+-    clocks =3D <&uart3_clk>;
+ };
+diff --git a/arch/arm/boot/dts/owl-s500-sparky.dts
+b/arch/arm/boot/dts/owl-s500-sparky.dts
+index c665ce8b88b4..65555afee584 100644
+--- a/arch/arm/boot/dts/owl-s500-sparky.dts
++++ b/arch/arm/boot/dts/owl-s500-sparky.dts
+@@ -3,6 +3,7 @@
+  * Allo.com Sparky
+  *
+  * Copyright (c) 2017 Andreas F=C3=A4rber
++ * Copyright (c) 2018-2018 Edgar Bernardi Righi
+  */
+
+ /dts-v1/;
+@@ -25,12 +26,6 @@
+         device_type =3D "memory";
+         reg =3D <0x0 0x40000000>; /* 1 or 2 GiB */
+     };
+-
+-    uart3_clk: uart3-clk {
+-        compatible =3D "fixed-clock";
+-        clock-frequency =3D <921600>;
+-        #clock-cells =3D <0>;
+-    };
+ };
+
+ &timer {
+@@ -39,5 +34,4 @@
+
+ &uart3 {
+     status =3D "okay";
+-    clocks =3D <&uart3_clk>;
+ };
+diff --git a/arch/arm/boot/dts/owl-s500.dtsi b/arch/arm/boot/dts/owl-s500.d=
+tsi
+index 5ceb6cc4451d..bf506038e22b 100644
+--- a/arch/arm/boot/dts/owl-s500.dtsi
++++ b/arch/arm/boot/dts/owl-s500.dtsi
+@@ -3,10 +3,12 @@
+  * Actions Semi S500 SoC
+  *
+  * Copyright (c) 2016-2017 Andreas F=C3=A4rber
++ * Copyright (c) 2018-2018 Edgar Bernardi Righi
+  */
+
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/owl-s500-powergate.h>
++#include <dt-bindings/clock/actions,s500-cmu.h>
+
+ / {
+     compatible =3D "actions,s500";
+@@ -69,6 +71,12 @@
+         clock-frequency =3D <24000000>;
+         #clock-cells =3D <0>;
+     };
++
++    losc: losc {
++        compatible =3D "fixed-clock";
++        clock-frequency =3D <32678>;
++        #clock-cells =3D <0>;
++    };
+
+     soc {
+         compatible =3D "simple-bus";
+@@ -124,6 +132,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb0120000 0x2000>;
+             interrupts =3D <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART0>;
+             status =3D "disabled";
+         };
+
+@@ -131,6 +140,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb0122000 0x2000>;
+             interrupts =3D <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART1>;
+             status =3D "disabled";
+         };
+
+@@ -138,6 +148,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb0124000 0x2000>;
+             interrupts =3D <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART2>;
+             status =3D "disabled";
+         };
+
+@@ -145,6 +156,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb0126000 0x2000>;
+             interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART3>;
+             status =3D "disabled";
+         };
+
+@@ -152,6 +164,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb0128000 0x2000>;
+             interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART4>;
+             status =3D "disabled";
+         };
+
+@@ -159,6 +172,7 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb012a000 0x2000>;
+             interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART5>;
+             status =3D "disabled";
+         };
+
+@@ -166,8 +180,18 @@
+             compatible =3D "actions,s500-uart", "actions,owl-uart";
+             reg =3D <0xb012c000 0x2000>;
+             interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++            clocks =3D <&cmu CLK_UART6>;
+             status =3D "disabled";
+         };
++
++        cmu: clock-controller@b0160000 {
++            compatible =3D "actions,s500-cmu";
++            reg =3D <0xb0160000 0x8000>;
++            clocks =3D <&hosc>, <&losc>;
++            clock-indices =3D <CLK_UART0>, <CLK_UART1>, <CLK_UART2>,
++                            <CLK_UART3>, <CLK_UART4>, <CLK_UART5>, <CLK_UA=
+RT6>;
++            #clock-cells =3D <1>;
++        };
+
+         timer: timer@b0168000 {
+             compatible =3D "actions,s500-timer";
