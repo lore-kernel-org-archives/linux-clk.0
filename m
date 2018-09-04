@@ -1,8 +1,4 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:45101 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbeIDJGC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:06:02 -0400
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -12,339 +8,96 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
         Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Tue,  4 Sep 2018 12:40:53 +0800
-Message-Id: <20180904044053.15425-12-icenowy@aosc.io>
+Subject: [PATCH v4 02/11] clk: sunxi-ng: a64: Add max. rate constraint to video PLLs
+Date: Tue,  4 Sep 2018 12:40:44 +0800
+Message-Id: <20180904044053.15425-3-icenowy@aosc.io>
 In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
 References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+Video PLLs on A64 can be set to higher rate that it is actually
+supported by HW.
 
-Enable all necessary device tree nodes and add connector node to device
-trees for all supported A64 boards with HDMI.
+Limit maximum rate to 1008 MHz. This is the maximum allowed rate by BSP
+clock driver. Interestengly, user manual specifies maximum frequency to
+be 600 MHz. Historically, this data was wrong in some user manuals for
+other SoCs, so more faith is put in BSP clock driver.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: squash all board patches altogether and change supply name]
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
-Changes in v4:
-- Rebase some device trees.
-Changes in v3,1:
-- Squash all enablement patches altogether.
-- Change supply name to match DT binding & driver change.
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
+New patch in v4.
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
- 6 files changed, 204 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 50 ++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 094cfed13df9..cdd03d1145f3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index d0e30192f0cf..5f80eb018014 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -64,18 +64,19 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
+ 				   BIT(28),	/* lock */
+ 				   CLK_SET_RATE_UNGATE);
  
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
+-					    "osc24M", 0x010,
+-					    192000000,	/* Minimum rate */
+-					    8, 7,		/* N */
+-					    0, 4,		/* M */
+-					    BIT(24),	/* frac enable */
+-					    BIT(25),	/* frac select */
+-					    270000000,	/* frac rate 0 */
+-					    297000000,	/* frac rate 1 */
+-					    BIT(31),	/* gate */
+-					    BIT(28),	/* lock */
+-					    CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-video0",
++						"osc24M", 0x010,
++						192000000,	/* Minimum rate */
++						1008000000,	/* Maximum rate */
++						8, 7,		/* N */
++						0, 4,		/* M */
++						BIT(24),	/* frac enable */
++						BIT(25),	/* frac select */
++						270000000,	/* frac rate 0 */
++						297000000,	/* frac rate 1 */
++						BIT(31),	/* gate */
++						BIT(28),	/* lock */
++						CLK_SET_RATE_UNGATE);
  
-@@ -86,6 +97,10 @@
- 	};
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+ 					"osc24M", 0x018,
+@@ -126,18 +127,19 @@ static struct ccu_nk pll_periph1_clk = {
+ 	},
  };
  
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
+-static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
+-					    "osc24M", 0x030,
+-					    192000000,	/* Minimum rate */
+-					    8, 7,		/* N */
+-					    0, 4,		/* M */
+-					    BIT(24),	/* frac enable */
+-					    BIT(25),	/* frac select */
+-					    270000000,	/* frac rate 0 */
+-					    297000000,	/* frac rate 1 */
+-					    BIT(31),	/* gate */
+-					    BIT(28),	/* lock */
+-					    CLK_SET_RATE_UNGATE);
++static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video1_clk, "pll-video1",
++						"osc24M", 0x030,
++						192000000,	/* Minimum rate */
++						1008000000,	/* Maximum rate */
++						8, 7,		/* N */
++						0, 4,		/* M */
++						BIT(24),	/* frac enable */
++						BIT(25),	/* frac select */
++						270000000,	/* frac rate 0 */
++						297000000,	/* frac rate 1 */
++						BIT(31),	/* gate */
++						BIT(28),	/* lock */
++						CLK_SET_RATE_UNGATE);
  
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index 0ee915d8eb24..22cd5223ede3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -59,6 +59,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -76,6 +87,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -93,6 +108,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index a1c2f06ed474..3c18a2f27538 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -59,6 +59,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_usb1_vbus: usb1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb1-vbus";
-@@ -76,6 +87,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -93,6 +108,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index c879aa8d8d1b..6109074e3613 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -64,6 +64,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -101,6 +112,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -118,6 +133,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index 1b9b92e541d2..93a7455347a7 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -62,6 +62,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -82,6 +97,17 @@
- 
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index c21f2331add6..c09c131ae077 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc1v8: vcc1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc1v8";
-@@ -69,6 +80,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -86,6 +101,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
+ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+ 					"osc24M", 0x038,
 -- 
 2.18.0
