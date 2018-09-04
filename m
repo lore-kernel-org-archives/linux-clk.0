@@ -1,88 +1,56 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45548 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727650AbeIGA0S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 20:26:18 -0400
-Subject: Re: [PATCH 09/10] clk: samsung: exynos4: Use generic helper for
- handling suspend/resume
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <20180829155046.29359-1-m.szyprowski@samsung.com>
- <CGME20180829155102eucas1p2a4b1c554623ff97a23f85f26a6b537e2@eucas1p2.samsung.com>
- <20180829155046.29359-10-m.szyprowski@samsung.com>
-From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
-Message-ID: <5140d376-b5dc-0021-6a78-782ffbfe0a7f@gmail.com>
-Date: Thu, 6 Sep 2018 21:49:14 +0200
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+Date: Tue,  4 Sep 2018 22:06:06 +0530
+Message-Id: <20180904163609.10171-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20180829155046.29359-10-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Marek,
+Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+as default.
 
-On 08/29/2018 05:50 PM, Marek Szyprowski wrote:
-> Replace common suspend/resume handling code by generic helper.
-> Handling of PLLs is a bit different in generic code, as they are handled
-> in the same way as other clock registers. Such approach was already used
-> on later Exynos SoCs and worked fine. Tests have shown that it works also
-> on Exynos4 SoCs and significantly simplifies the code.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v4, v3:
+- none
+Changes for v2:
+- Enable for MACH_SUN8I
 
-I was going to ask whether it is safe to drop that PLL state polling code after 
-looking at the diff but then I found it all explained in the commit message. 
-Thank you for this clean up series, I have applied it to the samsung-clk tree.
-Thanks Chanwoo and Krzysztof for review and testing.
+ drivers/clk/sunxi-ng/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos4.c | 147 ++++--------------------------
->   1 file changed, 16 insertions(+), 131 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 0421960eb963..d3bd9ffd8a09 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -16,7 +16,6 @@
-
-> -static void exynos4_clk_enable_pll(u32 reg)
-> -{
-> -	u32 pll_con = readl(reg_base + reg);
-> -	pll_con |= PLL_ENABLED;
-> -	writel(pll_con, reg_base + reg);
-> -
-> -	while (!(pll_con & PLL_LOCKED)) {
-> -		cpu_relax();
-> -		pll_con = readl(reg_base + reg);
-> -	}
-> -}
-> -
-> -static void exynos4_clk_wait_for_pll(u32 reg)
-> -{
-> -	u32 pll_con;
-> -
-> -	pll_con = readl(reg_base + reg);
-> -	if (!(pll_con & PLL_ENABLED))
-> -		return;
-> -
-> -	while (!(pll_con & PLL_LOCKED)) {
-> -		cpu_relax();
-> -		pll_con = readl(reg_base + reg);
-> -	}
-> -}
-> -
-> -static int exynos4_clk_suspend(void)
-> -{
-
-> -	exynos4_clk_enable_pll(EPLL_CON0);
-> -	exynos4_clk_enable_pll(VPLL_CON0);
-
-> -	return 0;
-> -}
-
---
-Regards,
-Sylwester
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 826674d090fd..e20182aa9748 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
+ 
+ config SUN8I_DE2_CCU
+ 	bool "Support for the Allwinner SoCs DE2 CCU"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
++	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
+ 
+ config SUN8I_R40_CCU
+ 	bool "Support for the Allwinner R40 CCU"
+-- 
+2.18.0.321.gffc6fa0e3
