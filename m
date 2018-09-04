@@ -1,72 +1,34 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Olof Johansson <olof@lixom.net>
-CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar
-	<mingo@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, Sudeep Holla
-	<sudeep.holla@arm.com>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>, Kees
- Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michal Simek <michals@xilinx.com>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>, Linux ARM
- Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-Date: Mon, 10 Sep 2018 19:17:45 +0000
-Message-ID: 
- <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com>
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-In-Reply-To: 
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 05/27] clk: sunxi-ng: Use u64 for calculation of NM rate
+Date: Tue, 04 Sep 2018 20:06:52 +0200
+Message-ID: <4377030.YGBN1y1aZP@jernej-laptop>
+In-Reply-To: <CAGb2v64Y0ui6ZvAJqc2dXMKtSSQJ-T4ubrV9188JTV7aFSrFCA@mail.gmail.com>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-6-jernej.skrabec@siol.net> <CAGb2v64Y0ui6ZvAJqc2dXMKtSSQJ-T4ubrV9188JTV7aFSrFCA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgQWxsLA0KDQpBZGRpbmcgbW9yZSBjbGFyaWZpY2F0aW9uIG9uIHRvcCBvZiB3aGF0IE1pY2hh
-bCBzYWlkOg0KSGVyZSBpb2N0bCBpcyBub3QgYSBzeXN0ZW0gaW9jdGwgYW5kIGp1c3QgYSBlZW1p
-IEFQSSBsaWtlIG90aGVyIGludGVyZmFjZSBBUElzLiBJdCBjYW5ub3QgYmUgY2FsbGVkIGZyb20g
-dXNlcnNwYWNlLiBPbmx5IExpbnV4IGRyaXZlcnMgY2FuIHVzZSB0aGlzIEFQSSBmb3IgZGVmaW5l
-ZCBpb2N0bCBvcGVyYXRpb25zLiBUaGlzIEFQSSBpcyBtZWFudCBmb3IgYW55IHBsYXRmb3JtIHNw
-ZWNpZmljIG9wZXJhdGlvbnMgd2hpY2ggbmVlZHMgdG8gYmUgbWFuYWdlZCBieSBmaXJtd2FyZS4g
-RmlybXdhcmUgd2lsbCBhbHdheXMgdmFsaWRhdGUgdGhlIHJlcXVlc3QgZm9yIGFjdGlvbiBiZWlu
-ZyBwZXJmb3JtZWQuDQpEZWJ1Z2ZzIGludGVyZmFjZSBpcyBqdXN0IGZvciBkZWJ1Z2dpbmcgZHVy
-aW5nIGRldmVsb3BtZW50LiBXZSBjYW4gcmVtb3ZlIGRlYnVnZnMgc3VwcG9ydCBmb3IgaW9jdGwg
-QVBJIGlmIHlvdSBzdWdnZXN0Lg0KDQpUaGFua3MsDQpKb2xseSBTaGFoDQoNCg0KPiAtLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBPbG9mIEpvaGFuc3NvbiBbbWFpbHRvOm9sb2ZA
-bGl4b20ubmV0XQ0KPiBTZW50OiBTYXR1cmRheSwgU2VwdGVtYmVyIDA4LCAyMDE4IDY6MTkgUE0N
-Cj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29tPg0KPiBDYzogYXJkLmJpZXNoZXV2
-ZWxAbGluYXJvLm9yZzsgSW5nbyBNb2xuYXIgPG1pbmdvQGtlcm5lbC5vcmc+OyBHcmVnIEtyb2Fo
-LQ0KPiBIYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz47IG1hdHRAY29kZWJsdWVw
-cmludC5jby51azsgU3VkZWVwDQo+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IGhrYWxs
-d2VpdDFAZ21haWwuY29tOyBLZWVzIENvb2sNCj4gPGtlZXNjb29rQGNocm9taXVtLm9yZz47IERt
-aXRyeSBUb3Jva2hvdiA8ZG1pdHJ5LnRvcm9raG92QGdtYWlsLmNvbT47DQo+IE1pY2hhZWwgVHVy
-cXVldHRlIDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRA
-Y29kZWF1cm9yYS5vcmc+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47IFJvYiBI
-ZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFu
-ZEBhcm0uY29tPjsgbGludXgtY2xrDQo+IDxsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnPjsgUmFq
-YW4gVmFqYSA8UkFKQU5WQHhpbGlueC5jb20+OyBMaW51eCBBUk0NCj4gTWFpbGluZyBMaXN0IDxs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGlu
-ZyBMaXN0DQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgRFRNTCA8ZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc+OyBKb2xseQ0KPiBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4NCj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2MTEgMDMvMTFdIGZpcm13YXJlOiB4aWxpbng6IEFkZCB6eW5x
-bXAgSU9DVEwgQVBJIGZvcg0KPiBkZXZpY2UgY29udHJvbA0KPiANCj4gSGksDQo+IA0KPiBPbiBG
-cmksIEF1ZyAzLCAyMDE4IGF0IDEwOjUzIEFNLCBKb2xseSBTaGFoIDxqb2xseS5zaGFoQHhpbGlu
-eC5jb20+IHdyb3RlOg0KPiA+IEZyb206IFJhamFuIFZhamEgPHJhamFudkB4aWxpbnguY29tPg0K
-PiA+DQo+ID4gQWRkIFp5bnFNUCBmaXJtd2FyZSBJT0NUTCBBUEkgdG8gY29udHJvbCBhbmQgY29u
-ZmlndXJlIGRldmljZXMgbGlrZQ0KPiA+IFBMTHMsIFNELCBHZW0sIGV0Yy4NCj4gPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFJhamFuIFZhamEgPHJhamFudkB4aWxpbnguY29tPg0KPiA+IFNpZ25lZC1v
-ZmYtYnk6IEpvbGx5IFNoYWggPGpvbGx5c0B4aWxpbnguY29tPg0KPiANCj4gVGhpcyBwYXRjaCB3
-b3JyaWVzIG1lIHNvbWV3aGF0LiBJdCdzIGEgdHJhbnNwYXJlbnQgcGFzcy10aHJvdWdoIGlvY3Rs
-IGRyaXZlci4gSXMNCj4gdGhlcmUgYSBzcGVjIGF2YWlsYWJsZSBmb3Igd2hhdCB0aGUgaW1wbGVt
-ZW50ZWQgSU9DVExzIGFyZT8NCj4gDQo+IFNob3VsZCBzb21lIG9mIHRoZW0gYmUgcHJvcGVyIGRy
-aXZlcnMgaW5zdGVhZCBvZiBhbiBvcGFxdWUgcGFzcy10aHJvdWdoIGxpa2UNCj4gdGhpcz8gQ291
-bGQgc29tZSBvZiB0aGVtIGhhdmUgc3RhYmlsaXR5IGltcGFjdCBvbiB0aGUgcGxhdGZvcm0gc3Vj
-aCB0aGF0IHRoZXJlDQo+IGFyZSBzZWN1cml0eSBjb25jZXJucyBhbmQgdGhlIGxpc3Qgb2YgYXJn
-dW1lbnRzIHNob3VsZCBzb21laG93IGJlIHNhbml0aXplZD8NCj4gDQo+IFdoYXQncyB0aGUgaW50
-ZW5kZWQgdXNlY2FzZSBhbnl3YXk/IEp1c3QgYSBkZWJ1ZyB0b29sIGR1cmluZyBkZXZlbG9wbWVu
-dCwgb3INCj4gc29tZXRoaW5nIHRoYXQgeW91IGV4cGVjdCBoZWF2eSB1c2Ugb2YgYnkgc29tZSB1
-c2Vyc3BhY2UgbWlkZGxld2FyZT8NCj4gDQo+IA0KPiAtT2xvZg0K
+Dne torek, 04. september 2018 ob 11:18:47 CEST je Chen-Yu Tsai napisal(a):
+> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
+> > rate is 24MHz, intermediate result when calculating final rate easily
+> > overflows 32 bit variable.
+> > 
+> > Because of that, introduce function for calculating clock rate which
+> > uses 64 bit variable for intermediate result.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> 
+> The code looks good. The A80's Video PLLs are also affected by this.
+> The range for N on the A80 is 12 ~ 255.
+> 
+> Can you add fixes and stable tags?
+
+Sure.
+
+> 
+> ChenYu
