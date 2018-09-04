@@ -1,79 +1,53 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-Date: Mon, 24 Sep 2018 15:11:38 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
-Message-ID: <20180924121138.GN15943@smile.fi.intel.com>
-References: <20180924101150.23349-1-brgl@bgdev.pl>
- <20180924101150.23349-5-brgl@bgdev.pl>
- <20180924112303.GM15943@smile.fi.intel.com>
- <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-In-Reply-To: <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:45065 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727626AbeIDJFt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:05:49 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 09/11] dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
+Date: Tue,  4 Sep 2018 12:40:51 +0800
+Message-Id: <20180904044053.15425-10-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 01:44:19PM +0200, Bartosz Golaszewski wrote:
-> pon., 24 wrz 2018 o 13:23 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> napisał(a):
-> >
-> > On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
-> > > Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> > > an example of how to use this new routine to shrink driver code.
-> > >
-> > > While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> >
-> > > @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
-> > >               goto err_drop_mclk;
-> > >       }
-> > >
-> > > -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> > > -
-> > >       platform_set_drvdata(pdev, data);
-> > >       return 0;
-> >
-> > I don't think this is a good example.
-> >
-> > You changed a behaviour here in the way that you keep all chunks of memory
-> > (even small enough for pointers) during entire life time of the driver, which
-> > pretty likely would be forever till next boot.
-> >
-> > In the original case the memory was freed immediately in probe either it fails
-> > or returns with success.
-> >
-> > NAK, sorry.
-> >
-> >
-> 
-> I see.
-> 
-> I'd like to still merge patches 1-3 and then I'd come up with better
-> examples for the next release cycle once these are in?
+Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
+pin, which is the VCC of HDMI part.
 
-I'm fine with first three, though I can't come up with better example for you
-now. My previous comment solely to clk-pmc-atom code.
+Add a supply property to specify HVCC's regulator in the device tree.
 
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Rename the supply name to "hvcc".
+Changes in v3.1:
+- New patch.
+
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index fdb8fb29033f..0bbb5d47f228 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -97,6 +97,9 @@ Required properties:
+     first port should be the input endpoint. The second should be the
+     output, usually to an HDMI connector.
+ 
++Optional properties:
++  - hvcc-supply: the VCC power supply of the controller
++
+ DWC HDMI PHY
+ ------------
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.18.0
