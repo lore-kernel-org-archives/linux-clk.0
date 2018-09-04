@@ -1,82 +1,58 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 27 Sep 2018 18:58:53 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-Message-ID: <20180927165853.dpluekbqzat663q7@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-8-jagan@amarulasolutions.com>
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <t-kristo@ti.com>
+CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <j-keerthy@ti.com>, <russ.dill@ti.com>
+Subject: [PATCH v3 RESEND 0/4] clk: clk: Add functions to save/restore clock context en-masse
+Date: Tue, 4 Sep 2018 12:19:34 +0530
+Message-ID: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180927114850.24565-8-jagan@amarulasolutions.com>
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
-> TCON DRQ set bits for non-burst DSI mode can computed via
-> horizontal front porch instead of front porch + sync timings.
->
-> Since there no documentation for TCON_DRQ_REG(0x7c) register
-> this change is taken as reference from BPI-M64-bsp.
+Deep enough power saving mode can result into losing context of the clock
+registers also, and they need to be restored once coming back from the power
+saving mode. Hence add functions to save/restore clock context.
 
-Detailing more what the issue is would be great.
+Tested for DS0 on am437x-gp-evm
 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.c
-> index 599284971ab6..9918fdb990ff 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *d=
-si,
->  	struct mipi_dsi_device *device =3D dsi->device;
->  	u32 val =3D 0;
+Based on top of linux-next
 
-The computation here is in the A64 driver:
+Resend Series:
 
-if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
-	dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode =3D 0;
-} else {
-	dsi_dev[sel]->dsi_tcon_drq.bits.drq_set	=3D
-		(panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
-		dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
-}
+  * Rebased on top of Linux 4.19-rc2
+  * Added Tony's Ack.
 
-It is testing that the sync + front porch is smaller than 21, and
-otherwise sets the drq.
+Changes in v2:
 
-> -	if ((mode->hsync_end - mode->hdisplay) > 20) {
+        * Renamed clk_dflt_restore to clk_gate_restore_context
 
-My code here is testing that the difference between hsync_end and
-hdisplay is superior to 20, and sets the DRQ if true. The condition is
-reversed, but otherwise, that difference is the front porch plus the
-sync length.
+Changes in v3: Corrected the e-mail address of linux-omap list 
 
-> +	if ((mode->hsync_start - mode->hdisplay) > 20) {
+Keerthy (2):
+  clk: clk: Add clk_gate_restore_context function
+  ti: pm33xx: Save/restore clk context based on enable_off_mode setting
 
-However, you are testing for just the front porch, unlike what your
-commit log is saying, and unlike what allwinner's code is saying. So
-this deserves some explanation.
+Russ Dill (2):
+  clk: clk: Add functions to save/restore clock context en-masse
+  clk: ti: Add functions to save/restore clk context
 
-Maxime
+ arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
+ drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h               |   2 +
+ drivers/clk/ti/divider.c             |  36 ++++++++++
+ drivers/clk/ti/dpll.c                |   6 ++
+ drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/gate.c                |   3 +
+ drivers/clk/ti/mux.c                 |  29 ++++++++
+ drivers/soc/ti/pm33xx.c              |  13 ++++
+ include/linux/clk-provider.h         |   9 +++
+ include/linux/clk.h                  |  25 +++++++
+ include/linux/clk/ti.h               |   6 ++
+ include/linux/platform_data/pm33xx.h |   1 +
+ 13 files changed, 362 insertions(+)
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+1.9.1
