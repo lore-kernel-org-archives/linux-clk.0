@@ -1,66 +1,72 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v3 1/6] dt-bindings: arm64: add compatible for LX2160A
-Date: Mon, 24 Sep 2018 05:38:56 +0530
-Message-Id: <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <j-keerthy@ti.com>
+From: Keerthy <j-keerthy@ti.com>
+To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <t-kristo@ti.com>
+CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <j-keerthy@ti.com>, <russ.dill@ti.com>
+Subject: [PATCH v3 RESEND 2/4] clk: clk: Add clk_gate_restore_context function
+Date: Tue, 4 Sep 2018 12:19:36 +0530
+Message-ID: <1536043778-2232-3-git-send-email-j-keerthy@ti.com>
+In-Reply-To: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
+References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add compatible for LX2160A SoC,QDS and RDB board
+The clock gate restore context function enables or disables
+the gate clocks based on the enable_count. This is done in cases
+where the clock context is lost and based on the enable_count
+the clock either needs to be enabled/disabled.
 
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/clk/clk.c            | 19 +++++++++++++++++++
+ include/linux/clk-provider.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
-index cdb9dd7..76256bd 100644
---- a/Documentation/devicetree/bindings/arm/fsl.txt
-+++ b/Documentation/devicetree/bindings/arm/fsl.txt
-@@ -218,3 +218,15 @@ Required root node properties:
- LS2088A ARMv8 based RDB Board
- Required root node properties:
-     - compatible = "fsl,ls2088a-rdb", "fsl,ls2088a";
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8a0254a..dd77577 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -923,6 +923,25 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++/**
++ * clk_gate_restore_context - restore context for poweroff
++ * @hw: the clk_hw pointer of clock whose state is to be restored
++ *
++ * The clock gate restore context function enables or disables
++ * the gate clocks based on the enable_count. This is done in cases
++ * where the clock context is lost and based on the enable_count
++ * the clock either needs to be enabled/disabled. This
++ * helps restore the state of gate clocks.
++ */
++void clk_gate_restore_context(struct clk_hw *hw)
++{
++	if (hw->clk->core->enable_count)
++		hw->clk->core->ops->enable(hw);
++	else
++		hw->clk->core->ops->disable(hw);
++}
++EXPORT_SYMBOL_GPL(clk_gate_restore_context);
 +
-+LX2160A SoC
-+Required root node properties:
-+    - compatible = "fsl,lx2160a";
+ static int _clk_save_context(struct clk_core *clk)
+ {
+ 	struct clk_core *child;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index df7379d..60c5187 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1018,5 +1018,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
+ 
+ #endif	/* platform dependent I/O accessors */
+ 
++void clk_gate_restore_context(struct clk_hw *hw);
 +
-+LX2160A ARMv8 based QDS Board
-+Required root node properties:
-+    - compatible = "fsl,lx2160a-qds", "fsl,lx2160a";
-+
-+LX2160A ARMv8 based RDB Board
-+Required root node properties:
-+    - compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+ #endif /* CONFIG_COMMON_CLK */
+ #endif /* CLK_PROVIDER_H */
 -- 
-2.7.4
+1.9.1
