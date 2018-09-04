@@ -1,106 +1,43 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <olof@lixom.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <arm@kernel.org>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>, Jolly
- Shah <jollys@xilinx.com>
-Subject: [PATCH v3 1/4] Documentation: xilinx: Add documentation for eemi APIs
-Date: Wed, 26 Sep 2018 11:12:58 -0700
-Message-ID: <1537985581-32164-2-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
-References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <5b8e8a6f.1c69fb81.8fb5e.93c2@mx.google.com>
+Date: Tue, 04 Sep 2018 08:36:47 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/6] clk: imx: vf610: Add CRC clock
+References: <20180830171539.20008-1-krzk@kernel.org>
+ <20180830171539.20008-3-krzk@kernel.org>
+In-Reply-To: <20180830171539.20008-3-krzk@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: , devicetree@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+On Thu, 30 Aug 2018 19:15:35 +0200, Krzysztof Kozlowski wrote:
+> Add the clock for CRC block allowing it to be enabled by HW CRC driver.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/clk/imx/clk-vf610.c             | 1 +
+>  include/dt-bindings/clock/vf610-clock.h | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Add documentation for embedded energy management interface (EEMI)
-APIs. It includes information about eemi ops and how to use them.
-It also includes API information and supported IOCTL IDs which can
-be used for device and control configuration.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- Documentation/xilinx/eemi.txt | 67 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/xilinx/eemi.txt
 
-diff --git a/Documentation/xilinx/eemi.txt b/Documentation/xilinx/eemi.txt
-new file mode 100644
-index 0000000..0ab686c
---- /dev/null
-+++ b/Documentation/xilinx/eemi.txt
-@@ -0,0 +1,67 @@
-+---------------------------------------------------------------------
-+Xilinx Zynq MPSoC EEMI Documentation
-+---------------------------------------------------------------------
-+
-+Xilinx Zynq MPSoC Firmware Interface
-+-------------------------------------
-+The zynqmp-firmware node describes the interface to platform firmware.
-+ZynqMP has an interface to communicate with secure firmware. Firmware
-+driver provides an interface to firmware APIs. Interface APIs can be
-+used by any driver to communicate with PMC(Platform Management Controller).
-+
-+Embedded Energy Management Interface (EEMI)
-+----------------------------------------------
-+The embedded energy management interface is used to allow software
-+components running across different processing clusters on a chip or
-+device to communicate with a power management controller (PMC) on a
-+device to issue or respond to power management requests.
-+
-+EEMI ops is a structure containing all eemi APIs supported by Zynq MPSoC.
-+The zynqmp-firmware driver maintain all EEMI APIs in zynqmp_eemi_ops
-+structure. Any driver who want to communicate with PMC using EEMI APIs
-+can call zynqmp_pm_get_eemi_ops().
-+
-+Example of EEMI ops:
-+
-+	/* zynqmp-firmware driver maintain all EEMI APIs */
-+	struct zynqmp_eemi_ops {
-+		int (*get_api_version)(u32 *version);
-+		int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
-+	};
-+
-+	static const struct zynqmp_eemi_ops eemi_ops = {
-+		.get_api_version = zynqmp_pm_get_api_version,
-+		.query_data = zynqmp_pm_query_data,
-+	};
-+
-+Example of EEMI ops usage:
-+
-+	static const struct zynqmp_eemi_ops *eemi_ops;
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	eemi_ops = zynqmp_pm_get_eemi_ops();
-+	if (!eemi_ops)
-+		return -ENXIO;
-+
-+	ret = eemi_ops->query_data(qdata, ret_payload);
-+
-+IOCTL
-+------
-+IOCTL API is for device control and configuration. It is not a system
-+IOCTL but it is an EEMI API. This API can be used by master to control
-+any device specific configuration. IOCTL definitions can be platform
-+specific. This API also manage shared device configuration.
-+
-+The following IOCTL IDs are valid for device control:
-+- IOCTL_SET_PLL_FRAC_MODE	8
-+- IOCTL_GET_PLL_FRAC_MODE	9
-+- IOCTL_SET_PLL_FRAC_DATA	10
-+- IOCTL_GET_PLL_FRAC_DATA	11
-+
-+Refer EEMI API guide [0] for IOCTL specific parameters and other EEMI APIs.
-+
-+References
-+----------
-+[0] Embedded Energy Management Interface (EEMI) API guide:
-+    https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pdf
--- 
-2.7.4
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
