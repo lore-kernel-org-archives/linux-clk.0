@@ -1,54 +1,58 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:51012 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbeIDNIw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 09:08:52 -0400
-Date: Tue, 04 Sep 2018 16:44:30 +0800
-In-Reply-To: <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-3-jernej.skrabec@siol.net> <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com>
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+Date: Tue,  4 Sep 2018 22:06:08 +0530
+Message-Id: <20180904163609.10171-3-jagan@amarulasolutions.com>
+In-Reply-To: <20180904163609.10171-1-jagan@amarulasolutions.com>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] Re: [PATCH 02/27] arm64: allwinner: h6: add system controller device tree node
-To: wens@csie.org, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-CC: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <9915D9F1-1C60-4AEF-9074-CE040FCD7BF0@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
+so enable them as default.
 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v4, v3:
+- none
+Changes for v2:
+- Enable for SUN8I
 
-于 2018年9月4日 GMT+08:00 下午4:40:56, Chen-Yu Tsai <wens@csie.org> 写到:
->On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
->wrote:
->>
->> From: Icenowy Zheng <icenowy@aosc.io>
->>
->> As we have already binding for the H6 system controller, add its node
->> to the device tree.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> [fixed compatible string]
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->
->Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+ drivers/gpu/drm/sun4i/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-By the way can these patches be applied first? (patches
-related to syscon).
-
-They're also needed for EMAC.
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index c2c042287c19..cfa8b96273fb 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
+ 
+ config DRM_SUN8I_MIXER
+ 	tristate "Support for Allwinner Display Engine 2.0 Mixer"
+-	default MACH_SUN8I
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+ 	help
+ 	  Choose this option if you have an Allwinner SoC with the
+ 	  Allwinner Display Engine 2.0, which has a mixer to do some
+-- 
+2.18.0.321.gffc6fa0e3
