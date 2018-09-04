@@ -1,155 +1,67 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
- <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
- <20180917031811.GA11141@bogus>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <e04d9bcf-0559-922c-8d9a-8dacfcd4e814@codeaurora.org>
-Date: Tue, 18 Sep 2018 15:55:33 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180917031811.GA11141@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:44890 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726093AbeIDJEh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:04:37 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 00/11] arm64: allwinner: Add A64 DE2 HDMI support
+Date: Tue,  4 Sep 2018 12:40:42 +0800
+Message-Id: <20180904044053.15425-1-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Rob,
+Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
 
-Thanks for the review comments.
+A64 behaviour similar to Allwinner A83T where
+Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
+Mixer1 => TCON1 => HDMI
+as per Display System Block Diagram from the A64 user manual.
 
-On 9/17/2018 8:48 AM, Rob Herring wrote:
-> On Tue, Sep 11, 2018 at 10:30:05PM +0530, Taniya Das wrote:
->> Add device tree bindings for Low Power Audio subsystem clock controller for
->> Qualcomm Technology Inc's SDM845 SoCs.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
->>   .../devicetree/bindings/clock/qcom,lpasscc.txt     | 31 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
->>   include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
->>   4 files changed, 51 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->>   create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> index 664ea1f..b3ff6e8 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
->>   part of the GCC/clock-controller node.
->>   For more details on the TSENS properties please refer
->>   Documentation/devicetree/bindings/thermal/qcom-tsens.txt
->> +- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
->> +			 unusable due to firmware access control restrictions.
->>   
->>   Example:
->>   	clock-controller@900000 {
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> new file mode 100644
->> index 0000000..d312957
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> @@ -0,0 +1,31 @@
->> +Qualcomm LPASS Clock Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible		: shall contain "qcom,sdm845-lpasscc"
->> +- #clock-cells		: from common clock binding, shall contain 1.
->> +- reg			: shall contain base register address and size,
->> +			  in the order
->> +			Index-0 maps to LPASS_CC register region
->> +			Index-1 maps to LPASS_QDSP6SS register region
->> +
->> +Optional properties :
->> +- reg-names	: register names of LPASS domain
->> +		 "lpass_cc", "lpass_qdsp6ss".
-> 
-> "cc" and "qdsp6ss" is sufficient.
-> 
+This patchset adds support for the two display pipelines, and enables
+the HDMI output on several boards. The first pipeline is not enabled in
+this patchset yet, although it's added.
 
-Sure will update in the next patch series.
+Icenowy Zheng (2):
+  clk: sunxi-ng: a64: Add max. rate constraint to video PLLs
+  dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
 
->> +
->> +Example:
->> +
->> +The below node has to be defined in the cases where the LPASS peripheral loader
->> +would bring the subsystem out of reset.
->> +
->> +	lpasscc: clock-controller {
-> 
-> Needs a unit-address.
-> 
+Jagan Teki (8):
+  clk: sunxi-ng: a64: Add minimal rate for video PLLs
+  dt-bindings: display: Add compatible for A64 DE2 display pipeline
+  drm/sun4i: Add support for A64 mixers
+  drm/sun4i: Add support for A64 display engine
+  dt-bindings: display: Add compatible for A64 HDMI
+  dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO0 macro
+  arm64: dts: allwinner: a64: Add display pipeline
+  arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
 
-Yes, my mistake. Missed adding it.
+Jernej Skrabec (1):
+  drm/sun4i: Add support for HDMI voltage regulator
 
->> +		compatible = "qcom,sdm845-lpasscc";
->> +		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
->> +		reg-names = "lpass_cc", "lpass_qdsp6ss";
->> +		#clock-cells = <1>;
->> +	};
->> +
->> +	gcc: clock-controller@100000 {
-> 
-> This needs a reg property.
-> 
-
-Sure, will update the same.
-
->> +		compatible = "qcom,gcc-sdm845";
->> +		qcom,lpass-protected;
->> +	};
-> 
->> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> index b8eae5a..968fa65 100644
->> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> @@ -197,6 +197,8 @@
->>   #define GCC_QSPI_CORE_CLK_SRC					187
->>   #define GCC_QSPI_CORE_CLK					188
->>   #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
->> +#define GCC_LPASS_Q6_AXI_CLK					190
->> +#define GCC_LPASS_SWAY_CLK					191
->>   
->>   /* GCC Resets */
->>   #define GCC_MMSS_BCR						0
->> diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
->> new file mode 100644
->> index 0000000..015968e
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
->> +#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
->> +
->> +#define LPASS_AUDIO_WRAPPER_AON_CLK			0
->> +#define LPASS_Q6SS_AHBM_AON_CLK				1
->> +#define LPASS_Q6SS_AHBS_AON_CLK				2
->> +#define LPASS_QDSP6SS_XO_CLK				3
->> +#define LPASS_QDSP6SS_SLEEP_CLK				4
->> +#define LPASS_QDSP6SS_CORE_CLK				5
->> +
->> +#endif
->> -- 
->> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
->> of the Code Aurora Forum, hosted by the  Linux Foundation.
->>
-> 
+ .../bindings/display/sunxi/sun4i-drm.txt      |   9 +
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  34 ++++
+ .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  34 ++++
+ .../dts/allwinner/sun50i-a64-olinuxino.dts    |  34 ++++
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts |  34 ++++
+ .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  34 ++++
+ .../allwinner/sun50i-a64-sopine-baseboard.dts |  34 ++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 170 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |  48 ++---
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h         |   4 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  17 +-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   2 +
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  24 +++
+ include/dt-bindings/clock/sun50i-a64-ccu.h    |   1 +
+ 15 files changed, 456 insertions(+), 24 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+2.18.0
