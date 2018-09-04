@@ -1,395 +1,350 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11291 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeIOGoK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Sep 2018 02:44:10 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 11/14] memory: tegra: parse DT and costruct timing tables
-Date: Sat, 15 Sep 2018 00:48:12 +0300
-Message-ID: <1536961695-27809-12-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Received: from hermes.aosc.io ([199.195.250.187]:45101 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbeIDJGC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Sep 2018 05:06:02 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
+Date: Tue,  4 Sep 2018 12:40:53 +0800
+Message-Id: <20180904044053.15425-12-icenowy@aosc.io>
+In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/tegra210-dt-parse.c | 363 +++++++++++++++++++++++++++++++
- 1 file changed, 363 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra210-dt-parse.c
+From: Jagan Teki <jagan@amarulasolutions.com>
 
-diff --git a/drivers/memory/tegra/tegra210-dt-parse.c b/drivers/memory/tegra/tegra210-dt-parse.c
-new file mode 100644
-index 0000000..553663a
---- /dev/null
-+++ b/drivers/memory/tegra/tegra210-dt-parse.c
-@@ -0,0 +1,363 @@
-+/*
-+ * drivers/platform/tegra/mc/tegra_emc_dt_parse.c
-+ *
-+ * Copyright (c) 2013-2017, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, write to the Free Software Foundation, Inc.,
-+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ *
-+ */
+Enable all necessary device tree nodes and add connector node to device
+trees for all supported A64 boards with HDMI.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+[Icenowy: squash all board patches altogether and change supply name]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v4:
+- Rebase some device trees.
+Changes in v3,1:
+- Squash all enablement patches altogether.
+- Change supply name to match DT binding & driver change.
+Changes for v3:
+- Enable all pipeline components
+Changes for v2:
+- none
+
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+ .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+ .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+ .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+ .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+ 6 files changed, 204 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 094cfed13df9..cdd03d1145f3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <soc/tegra/fuse.h>
-+//#include <soc/tegra/tegra_emc.h>
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
-+#include "tegra210-emc-reg.h"
-+
-+static struct device_node *tegra_emc_ramcode_devnode(
-+	struct device_node *np)
-+{
-+	struct device_node *iter;
-+	u32 reg;
-+
-+	for_each_child_of_node(np, iter) {
-+		if (of_property_read_u32(iter, "nvidia,ram-code", &reg))
-+			continue;
-+		if (reg == tegra_read_ram_code())
-+			return of_node_get(iter);
-+	}
-+
-+	return NULL;
-+}
-+
-+static void *tegra_emc_dt_parse_pdata_comp(const char *emc_mode,
-+				    const char *comp,
-+				    void *pdata,
-+				    struct device_node *tnp,
-+				    struct platform_device *pdev,
-+				    int num_tables, int *table_count)
-+{
-+#define PNE_U32(node, entry, tbl_entry)					\
-+	do {								\
-+		int __ret__;						\
-+		u32 __tmp__;						\
-+									\
-+		__ret__ = of_property_read_u32((node), (entry), &__tmp__); \
-+		if (__ret__) {						\
-+			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
-+				(entry), (node)->full_name, __ret__);	\
-+			continue;					\
-+		}							\
-+									\
-+		tables[i].tbl_entry = __tmp__;				\
-+	} while (0)
-+
-+#define PNE_U32_ARRAY(node, entry, tbl_entry, length)			\
-+	do {								\
-+		int __ret__;						\
-+									\
-+		__ret__ = of_property_read_u32_array((node), (entry),	\
-+						     (tbl_entry), (length)); \
-+		if (__ret__) {						\
-+			dev_err(&pdev->dev, "Failed to parse %s in %s: %d\n", \
-+				(entry), (node)->full_name, __ret__);	\
-+			continue;					\
-+		}							\
-+	} while (0)
-+
-+	int i = 0, ret = 0;
-+	struct device_node *iter;
-+	struct emc_timing *tables;
-+
-+	tables = devm_kzalloc(&pdev->dev,
-+			sizeof(*tables) * num_tables, GFP_KERNEL);
-+
-+	if (!tables) {
-+		of_node_put(tnp);
-+		return tables;
-+	}
-+
-+	for_each_child_of_node(tnp, iter) {
-+		if (of_device_is_compatible(iter, comp)) {
-+			const char *source_name;
-+			const char *dvfs_ver;
-+
-+			ret = of_property_read_string(iter,
-+					"nvidia,source", &source_name);
-+			if (ret) {
-+				dev_err(&pdev->dev, "no source name in %s\n",
-+						iter->full_name);
-+				continue;
-+			}
-+			strlcpy(tables[i].clock_src, source_name,
-+					sizeof(tables[i].clock_src));
-+
-+			ret = of_property_read_string(iter,
-+					"nvidia,dvfs-version", &dvfs_ver);
-+			if (ret) {
-+				dev_err(&pdev->dev, "no dvfs version in %s\n",
-+						iter->full_name);
-+				continue;
-+			}
-+			strlcpy(tables[i].dvfs_ver, dvfs_ver,
-+					sizeof(tables[i].dvfs_ver));
-+
-+			PNE_U32(iter, "nvidia,revision", rev);
-+			PNE_U32(iter, "clock-frequency", rate);
-+			PNE_U32(iter, "nvidia,emc-min-mv", min_volt);
-+			PNE_U32(iter, "nvidia,gk20a-min-mv", gpu_min_volt);
-+			PNE_U32(iter, "nvidia,src-sel-reg", clk_src_emc);
-+			PNE_U32(iter, "nvidia,burst-regs-num", num_burst);
-+			PNE_U32(iter, "nvidia,emc-cfg-2", emc_cfg_2);
-+			PNE_U32(iter, "nvidia,emc-sel-dpd-ctrl",
-+				emc_sel_dpd_ctrl);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config",
-+				emc_auto_cal_config);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config2",
-+				emc_auto_cal_config2);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config3",
-+				emc_auto_cal_config3);
-+			PNE_U32(iter, "nvidia,emc-clock-latency-change",
-+				latency);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-registers",
-+				      tables[i].burst_regs,
-+				      tables[i].num_burst);
-+
-+			PNE_U32(iter, "nvidia,needs-training", needs_training);
-+			PNE_U32(iter, "nvidia,trained", trained);
-+			if (tables[i].rev < 0x6)
-+				goto skip_periodic_training_params;
-+			PNE_U32(iter, "nvidia,periodic_training",
-+				periodic_training);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d0u0",
-+				trained_dram_clktree_c0d0u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d0u1",
-+				trained_dram_clktree_c0d0u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d1u0",
-+				trained_dram_clktree_c0d1u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c0d1u1",
-+				trained_dram_clktree_c0d1u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d0u0",
-+				trained_dram_clktree_c1d0u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d0u1",
-+				trained_dram_clktree_c1d0u1);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d1u0",
-+				trained_dram_clktree_c1d1u0);
-+			PNE_U32(iter, "nvidia,trained_dram_clktree_c1d1u1",
-+				trained_dram_clktree_c1d1u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d0u0",
-+				current_dram_clktree_c0d0u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d0u1",
-+				current_dram_clktree_c0d0u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d1u0",
-+				current_dram_clktree_c0d1u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c0d1u1",
-+				current_dram_clktree_c0d1u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d0u0",
-+				current_dram_clktree_c1d0u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d0u1",
-+				current_dram_clktree_c1d0u1);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d1u0",
-+				current_dram_clktree_c1d1u0);
-+			PNE_U32(iter, "nvidia,current_dram_clktree_c1d1u1",
-+				current_dram_clktree_c1d1u1);
-+			PNE_U32(iter, "nvidia,run_clocks", run_clocks);
-+			PNE_U32(iter, "nvidia,tree_margin", tree_margin);
-+
-+skip_periodic_training_params:
-+			PNE_U32(iter, "nvidia,burst-regs-per-ch-num",
-+				num_burst_per_ch);
-+			PNE_U32(iter, "nvidia,trim-regs-num", num_trim);
-+			PNE_U32(iter, "nvidia,trim-regs-per-ch-num",
-+				num_trim_per_ch);
-+			PNE_U32(iter, "nvidia,burst-mc-regs-num",
-+				num_mc_regs);
-+			PNE_U32(iter, "nvidia,la-scale-regs-num",
-+				num_up_down);
-+			PNE_U32(iter, "nvidia,vref-regs-num", vref_num);
-+			PNE_U32(iter, "nvidia,dram-timing-regs-num",
-+				dram_timing_num);
-+			PNE_U32(iter, "nvidia,min-mrs-wait", min_mrs_wait);
-+			PNE_U32(iter, "nvidia,emc-mrw", emc_mrw);
-+			PNE_U32(iter, "nvidia,emc-mrw2", emc_mrw2);
-+			PNE_U32(iter, "nvidia,emc-mrw3", emc_mrw3);
-+			PNE_U32(iter, "nvidia,emc-mrw4", emc_mrw4);
-+			PNE_U32(iter, "nvidia,emc-mrw9", emc_mrw9);
-+			PNE_U32(iter, "nvidia,emc-mrs", emc_mrs);
-+			PNE_U32(iter, "nvidia,emc-emrs", emc_emrs);
-+			PNE_U32(iter, "nvidia,emc-emrs2", emc_emrs2);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config4",
-+				emc_auto_cal_config4);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config5",
-+				emc_auto_cal_config5);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config6",
-+				emc_auto_cal_config6);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config7",
-+				emc_auto_cal_config7);
-+			PNE_U32(iter, "nvidia,emc-auto-cal-config8",
-+				emc_auto_cal_config8);
-+			PNE_U32(iter, "nvidia,emc-fdpd-ctrl-cmd-no-ramp",
-+				emc_fdpd_ctrl_cmd_no_ramp);
-+			PNE_U32(iter, "nvidia,dll-clk-src", dll_clk_src);
-+			PNE_U32(iter, "nvidia,clk-out-enb-x-0-clk-enb-emc-dll",
-+				clk_out_enb_x_0_clk_enb_emc_dll);
-+
-+			if (tables[i].rev >= 0x7)
-+				PNE_U32_ARRAY(iter, "nvidia,ptfv",
-+					      tables[i].ptfv_list,
-+					      sizeof(tables[i].ptfv_list)
-+							/ sizeof(u32));
-+
-+			PNE_U32_ARRAY(iter, "nvidia,emc-burst-regs-per-ch",
-+				      tables[i].burst_reg_per_ch,
-+				      tables[i].num_burst_per_ch);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-ca-train",
-+				      tables[i].shadow_regs_ca_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-quse-train",
-+				      tables[i].shadow_regs_quse_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-shadow-regs-rdwr-train",
-+				      tables[i].shadow_regs_rdwr_train,
-+				      tables[i].num_burst);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-trim-regs",
-+				      tables[i].trim_regs,
-+				      tables[i].num_trim);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-trim-regs-per-ch",
-+				      tables[i].trim_perch_regs,
-+				      tables[i].num_trim_per_ch);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-vref-regs",
-+				      tables[i].vref_perch_regs,
-+				      tables[i].vref_num);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-dram-timing-regs",
-+				      tables[i].dram_timings,
-+				      tables[i].dram_timing_num);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-burst-mc-regs",
-+				      tables[i].burst_mc_regs,
-+				      tables[i].num_mc_regs);
-+			PNE_U32_ARRAY(iter, "nvidia,emc-la-scale-regs",
-+				      tables[i].la_scale_regs,
-+				      tables[i].num_up_down);
-+			i++;
-+		}
-+	}
-+	*table_count = i;
-+	return tables;
-+}
-+
-+static const struct of_device_id emc_table_match[] = {
-+	{
-+		.compatible = "nvidia,tegra210-emc-table",
-+		.data = "nvidia,tegra210-emc-table-derated",
-+	},
-+	{
-+		.compatible = "nvidia,tegra21-emc-table",
-+		.data = "nvidia,tegra21-emc-table-derated",
-+	},
-+	{ },
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -86,6 +97,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
 +};
 +
-+int tegra_emc_dt_parse_pdata(struct platform_device *pdev,
-+			       struct emc_timing **tables,
-+			       struct emc_timing **derated_tables,
-+			       int *num_entries)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *tnp, *iter;
-+	int num_tables, table_count;
-+	u32 tegra_bct_strapping;
-+	const char *emc_mode = "nvidia,emc-mode-0";
-+	struct tegra21_emc_pdata *pdata = NULL;
-+	const char *comp = NULL;
-+	const char *comp_derated = NULL;
-+	const void *prop;
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -103,6 +118,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
 +
-+	if (!np) {
-+		dev_err(&pdev->dev,
-+			"Unable to find external-memory-controller node\n");
-+		return -ENODEV;
-+	}
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+	tegra_bct_strapping = tegra_read_ram_code();
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index 0ee915d8eb24..22cd5223ede3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -59,6 +59,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+	prop = of_get_property(pdev->dev.of_node,
-+			       "nvidia,poll_thresh_freq", NULL);
-+	if (prop) {
-+		unsigned long freq_thresh = (unsigned long)be32_to_cpup(prop);
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
-+//		tegra210_emc_mr4_set_freq_thresh(freq_thresh);
-+		pr_info("tegra: emc: Using MR4 freq threshold: %lu\n",
-+			freq_thresh);
-+	}
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -76,6 +87,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
 +
-+	if (of_find_property(np, "nvidia,use-ram-code", NULL)) {
-+		tnp = tegra_emc_ramcode_devnode(np);
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -93,6 +108,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
 +
-+		if (!tnp) {
-+			dev_warn(&pdev->dev,
-+				"can't find emc table for ram-code 0x%02x\n",
-+				tegra_bct_strapping);
-+			return -ENODEV;
-+		}
-+	} else
-+		tnp = of_node_get(np);
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+	num_tables = 0;
-+	for_each_child_of_node(tnp, iter) {
-+		if (!comp) {
-+			const struct of_device_id *m =
-+				of_match_node(emc_table_match, iter);
-+			if (m) {
-+				comp = m->compatible;
-+				comp_derated = m->data;
-+				num_tables++;
-+			}
-+			continue;
-+		}
-+		if (of_device_is_compatible(iter, comp))
-+			num_tables++;
-+	}
+ /* i2c1 connected with gpio headers like pine64, bananapi */
+ &i2c1 {
+ 	pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index a1c2f06ed474..3c18a2f27538 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -59,6 +59,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+	if (!num_tables) {
-+		*tables = NULL;
-+		goto out;
-+	}
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
-+	*tables = tegra_emc_dt_parse_pdata_comp(emc_mode, comp, pdata, tnp,
-+						pdev, num_tables, &table_count);
-+	*num_entries = table_count;
+ 	reg_usb1_vbus: usb1-vbus {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "usb1-vbus";
+@@ -76,6 +87,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
 +
-+	/* populate the derated tables */
-+	num_tables = 0;
-+	for_each_child_of_node(tnp, iter) {
-+		if (of_device_is_compatible(iter, comp_derated))
-+			num_tables++;
-+	}
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -93,6 +108,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
 +
-+	if (!num_tables) {
-+		*derated_tables = NULL;
-+		goto out;
-+	}
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
 +
-+	*derated_tables = tegra_emc_dt_parse_pdata_comp(emc_mode,
-+				comp_derated, pdata, tnp, pdev, num_tables,
-+				&table_count);
+ &mdio {
+ 	ext_rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index c879aa8d8d1b..6109074e3613 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -64,6 +64,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
-+out:
-+	of_node_put(tnp);
-+	return 0;
-+}
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -101,6 +112,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -118,6 +133,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mdio {
+ 	ext_rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+index 1b9b92e541d2..93a7455347a7 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
+@@ -62,6 +62,21 @@
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++};
++
++&de {
++	status = "okay";
+ };
+ 
+ &ehci0 {
+@@ -82,6 +97,17 @@
+ 
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+index c21f2331add6..c09c131ae077 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
+@@ -61,6 +61,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
++
+ 	reg_vcc1v8: vcc1v8 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc1v8";
+@@ -69,6 +80,10 @@
+ 	};
+ };
+ 
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -86,6 +101,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &mdio {
+ 	ext_rgmii_phy: ethernet-phy@1 {
+ 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-1.9.1
+2.18.0
