@@ -1,276 +1,150 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-9-jernej.skrabec@siol.net> <CAGb2v66y1iVDknM0uQKbHQFoWn7RveTky8jZO=_2iDqL=bJd-w@mail.gmail.com>
- <1677668.BePkXd9qNa@jernej-laptop>
-In-Reply-To: <1677668.BePkXd9qNa@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 12 Sep 2018 20:20:08 +0800
-Message-ID: <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
-Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
+References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
+ <1534945703-4730-4-git-send-email-abel.vesa@nxp.com> <20180824074011.lufm653imkf6fyd3@pengutronix.de>
+ <20180828105821.gbd7tba7uvmeeqcx@fsr-ub1664-175> <CAHQ1cqEsHoF0ZFY5+CpQFJ+b3sKd3yJPvmRZMAbaa9+Xzhe3=g@mail.gmail.com>
+ <20180904131341.ef7tvt6hvtkkpdhw@fsr-ub1664-175>
+In-Reply-To: <20180904131341.ef7tvt6hvtkkpdhw@fsr-ub1664-175>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Tue, 4 Sep 2018 12:30:44 -0700
+Message-ID: <CAHQ1cqFPUm5xnWGto5wRz2dMzxdWe4tAJwe0SxySmfnnkf9_Bg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] clk: imx: add SCCG PLL type
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, Lucas Stach <l.stach@pengutronix.de>,
+	Sascha Hauer <kernel@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, sboyd@kernel.org,
+	Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
+	abelvesa@linux.com, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 1:46 AM Jernej =C5=A0krabec <jernej.skrabec@siol.net=
-> wrote:
+On Tue, Sep 4, 2018 at 6:13 AM Abel Vesa <abel.vesa@nxp.com> wrote:
 >
-> Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(a)=
-:
-> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
-> wrote:
-> > > Support for mixer0, mixer1, writeback and rotation units is added.
+> On Tue, Aug 28, 2018 at 12:11:13PM -0700, Andrey Smirnov wrote:
+> > On Tue, Aug 28, 2018 at 3:58 AM Abel Vesa <abel.vesa@nxp.com> wrote:
 > > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > ---
+> > > On Fri, Aug 24, 2018 at 09:40:11AM +0200, Sascha Hauer wrote:
+> > > > +Cc Andrey Smirnov who made me aware of this issue.
+> > > >
+> > > > On Wed, Aug 22, 2018 at 04:48:21PM +0300, Abel Vesa wrote:
+> > > > > From: Lucas Stach <l.stach@pengutronix.de>
+> > > > >
+> > > > > The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+> > > > > The driver currently misses the PLL lock check, as the preliminary
+> > > > > documentation mentions lock configurations, but is quiet about where
+> > > > > to find the actual lock status signal.
+> > > > >
+> > > > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > > > > ---
+> > > > > +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > > > +                       unsigned long parent_rate)
+> > > > > +{
+> > > > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > > > > +   u32 val;
+> > > > > +   u32 divf;
+> > > > > +
+> > > > > +   divf = rate / (parent_rate * 2);
+> > > > > +
+> > > > > +   val = readl_relaxed(pll->base + PLL_CFG2);
+> > > > > +   val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
+> > > > > +   val |= (divf - 1) << PLL_DIVF1_SHIFT;
+> > > > > +   writel_relaxed(val, pll->base + PLL_CFG2);
+> > > > > +
+> > > > > +   /* FIXME: PLL lock check */
+> > > >
+> > > > Shouldn't be too hard to add, no?
 > > >
-> > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65 ++++++++++++++++++++++++++=
-++
-> > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
-> > >  2 files changed, 66 insertions(+)
+> > > Added to the next version which I intend to send today.
 > > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index bae5ee67a797..4535c1c27d=
-27
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1",
-> > > "bus-de",>
-> > >                       0x04, BIT(1), 0);
+> > > >
+> > > > > +
+> > > > > +   return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static int clk_pll1_prepare(struct clk_hw *hw)
+> > > > > +{
+> > > > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
+> > > > > +   u32 val;
+> > > > > +
+> > > > > +   val = readl_relaxed(pll->base);
+> > > > > +   val &= ~(1 << PLL_PD);
+> > > > > +   writel_relaxed(val, pll->base);
+> > > >
+> > > > pll->base + PLL_CFG0 please.
 > > >
-> > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
+> > > Same as above.
 > > >
-> > >                       0x04, BIT(2), 0);
+> > > >
+> > > > > +static const struct clk_ops clk_sccg_pll1_ops = {
+> > > > > +   .is_prepared    = clk_pll1_is_prepared,
+> > > > > +   .recalc_rate    = clk_pll1_recalc_rate,
+> > > > > +   .round_rate     = clk_pll1_round_rate,
+> > > > > +   .set_rate       = clk_pll1_set_rate,
+> > > > > +};
+> > > > > +
+> > > > > +static const struct clk_ops clk_sccg_pll2_ops = {
+> > > > > +   .prepare        = clk_pll1_prepare,
+> > > > > +   .unprepare      = clk_pll1_unprepare,
+> > > > > +   .recalc_rate    = clk_pll2_recalc_rate,
+> > > > > +   .round_rate     = clk_pll2_round_rate,
+> > > > > +   .set_rate       = clk_pll2_set_rate,
+> > > > > +};
+> > > >
+> > > > So these are two PLLs that share the same enable register. Doing the
+> > > > prepare/unprepare for only one PLL can lead to all kinds of trouble.
+> > > > Finding a good abstraction the properly handles this case with the
+> > > > clock framework is probably also not easy.
+> > > >
+> > > > I could imagine we'll need to track the enable state on both PLLs and
+> > > > only if both are disabled we disable it in hardware.
+> > > >
+> > > > With the current code we disable the PLLs when all consumers are
+> > > > reparented to pll1, which probably has bad effects.
+> > > >
 > > >
-> > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
-> > > +                     0x04, BIT(3), 0);
+> > > So it took me a while to understand exactly why this needs to stay like it is.
 > > >
-> > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div",
-> > >
-> > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
-> > > "mixer1-div",>
-> > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
-> > >
-> > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
-> > >
-> > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
-> > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div", "d=
-e",
-> > > 0x0c, 4, 4,>
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
-> > > +                  CLK_SET_RATE_PARENT);
-> > >
-> > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0c,=
- 0,
-> > >  4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div=
-",
-> > > "pll-de", 0x0c, 4, 4,>
-> > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
-> > >
-> > >                    CLK_SET_RATE_PARENT);
-> > >
-> > > +static struct ccu_common *sun50i_h6_de3_clks[] =3D {
-> > > +       &mixer0_clk.common,
-> > > +       &mixer1_clk.common,
-> > > +       &wb_clk.common,
-> > > +
-> > > +       &bus_mixer0_clk.common,
-> > > +       &bus_mixer1_clk.common,
-> > > +       &bus_wb_clk.common,
-> > > +
-> > > +       &mixer0_div_clk.common,
-> > > +       &mixer1_div_clk.common,
-> > > +       &wb_div_clk.common,
-> > > +
-> > > +       &bus_rot_clk.common,
-> > > +       &rot_clk.common,
-> > > +       &rot_div_clk.common,
-> > > +};
-> > > +
-> > >
-> > >  static struct ccu_common *sun8i_a83t_de2_clks[] =3D {
-> > >
-> > >         &mixer0_clk.common,
-> > >         &mixer1_clk.common,
-> > >
-> > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] =
-=3D {
-> > >
-> > >         &wb_div_clk.common,
-> > >
-> > >  };
-> > >
-> > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
-> > > +       .hws    =3D {
-> > > +               [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
-> > > +               [CLK_MIXER1]            =3D &mixer1_clk.common.hw,
-> > > +               [CLK_WB]                =3D &wb_clk.common.hw,
-> > > +               [CLK_ROT]               =3D &rot_clk.common.hw,
-> > > +
-> > > +               [CLK_BUS_MIXER0]        =3D &bus_mixer0_clk.common.hw=
-,
-> > > +               [CLK_BUS_MIXER1]        =3D &bus_mixer1_clk.common.hw=
-,
-> > > +               [CLK_BUS_WB]            =3D &bus_wb_clk.common.hw,
-> > > +               [CLK_BUS_ROT]           =3D &bus_rot_clk.common.hw,
-> > > +
-> > > +               [CLK_MIXER0_DIV]        =3D &mixer0_div_clk.common.hw=
-,
-> > > +               [CLK_MIXER1_DIV]        =3D &mixer1_div_clk.common.hw=
-,
-> > > +               [CLK_WB_DIV]            =3D &wb_div_clk.common.hw,
-> > > +               [CLK_ROT_DIV]           =3D &rot_div_clk.common.hw,
-> > > +       },
-> > > +       .num    =3D 12,
 > >
-> > It's best not to openly code these. It is error prone, like having
-> > an index beyond .num, which then never gets registered.
+> > IMHO this means that, if nothing else, all of the below should be
+> > documented in code as a comment, otherwise simpletons like me are
+> > going to continue stumbling over it and wondering what's going on.
+>
+> Will try to add proper comment to explain what's happening.
+>
 > >
-> > Instead, please update CLK_NUMBERS and use that instead. sunxi_ccu_prob=
-e()
-> > can handle holes in .hws.
+> > > The PLL1 is never used by any device, instead it is used as a source for PLL2.
+> > >
+> > > But because the interlink between the two of them is too complicated,
+> > > the PLLs 1 and 2 need to be separate clocks.
+> > >
+> >
+> > Can you go a little bit more into detail as for why PLL1 needs to be
+> > exposed in the first place and can't just be dealt with behind the
+> > scenes as a part of PLL2 abstraction? Are there use-cases where the
+> > rates of the two are going to be adjusted individually in Linux?
+> >
 >
-> I'm not sure this will work. All newly introduced indices are at the end,=
- so
-> other arrays will still have same length (hole at the end). You will just
-> claim that arrays are larger than they really are, which means bad things=
-.
+> Here is the SCCG PLL Block Diagram:
 >
-> But I take any other suggestion. I really can't think of better solution.
+> https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=834
+>
+> Now lets take the System PLL 2 for example. If you follow the hierarchy,
+> when you reach the sys2_pll1_out you can see that one of its selectors is
+> actually sys1_pll1_ref_sel. Same thing applies to sys3_pll2_out with
+> sys2_pll1_ref_sel. This means there is an input reference clock interlinking
+> between different System PLLs.
+>
 
-Then maybe have macros for both cases instead?
-CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
+Hmm, I am not sure I see how this would prevent you from treating a
+PLL pair as a black box, but OTOH, doing that probably wouldn't result
+cleaner or simpler code. IMHO, it's unfortunate that PD bit is shared
+between the two clocks, but if PLL1 could only be ever connected to
+corresponding PLL2, then my concerns were probably misguided and
+current implementation is good enough.
 
-ChenYu
-
-> Best regards,
-> Jernej
->
-> >
-> > On the other hand, it can't handle holes in the ccu_reset_map. Hope we
-> > never have to deal with such an instance.
-> >
-> > ChenYu
-> >
-> > > +};
-> > > +
-> > >
-> > >  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks =3D {
-> > >
-> > >         .hws    =3D {
-> > >
-> > >                 [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
-> > >
-> > > @@ -156,6 +200,13 @@ static struct ccu_reset_map sun50i_a64_de2_reset=
-s[] =3D
-> > > {>
-> > >         [RST_WB]        =3D { 0x08, BIT(2) },
-> > >
-> > >  };
-> > >
-> > > +static struct ccu_reset_map sun50i_h6_de3_resets[] =3D {
-> > > +       [RST_MIXER0]    =3D { 0x08, BIT(0) },
-> > > +       [RST_MIXER1]    =3D { 0x08, BIT(1) },
-> > > +       [RST_WB]        =3D { 0x08, BIT(2) },
-> > > +       [RST_ROT]       =3D { 0x08, BIT(3) },
-> > > +};
-> > > +
-> > >
-> > >  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
-> > >
-> > >         .ccu_clks       =3D sun8i_a83t_de2_clks,
-> > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_a83t_de2_clks),
-> > >
-> > > @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc
-> > > sun50i_a64_de2_clk_desc =3D {>
-> > >         .num_resets     =3D ARRAY_SIZE(sun50i_a64_de2_resets),
-> > >
-> > >  };
-> > >
-> > > +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc =3D {
-> > > +       .ccu_clks       =3D sun50i_h6_de3_clks,
-> > > +       .num_ccu_clks   =3D ARRAY_SIZE(sun50i_h6_de3_clks),
-> > > +
-> > > +       .hw_clks        =3D &sun50i_h6_de3_hw_clks,
-> > > +
-> > > +       .resets         =3D sun50i_h6_de3_resets,
-> > > +       .num_resets     =3D ARRAY_SIZE(sun50i_h6_de3_resets),
-> > > +};
-> > > +
-> > >
-> > >  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc =3D {
-> > >
-> > >         .ccu_clks       =3D sun8i_v3s_de2_clks,
-> > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_v3s_de2_clks),
-> > >
-> > > @@ -296,6 +357,10 @@ static const struct of_device_id sunxi_de2_clk_i=
-ds[]
-> > > =3D {>
-> > >                 .compatible =3D "allwinner,sun50i-h5-de2-clk",
-> > >                 .data =3D &sun50i_a64_de2_clk_desc,
-> > >
-> > >         },
-> > >
-> > > +       {
-> > > +               .compatible =3D "allwinner,sun50i-h6-de3-clk",
-> > > +               .data =3D &sun50i_h6_de3_clk_desc,
-> > > +       },
-> > >
-> > >         { }
-> > >
-> > >  };
-> > >
-> > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h index 530c006e0ae9..27bd88539f=
-42
-> > > 100644
-> > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > @@ -22,6 +22,7 @@
-> > >
-> > >  #define CLK_MIXER0_DIV 3
-> > >  #define CLK_MIXER1_DIV 4
-> > >  #define CLK_WB_DIV     5
-> > >
-> > > +#define CLK_ROT_DIV    11
-> > >
-> > >  #define CLK_NUMBER     (CLK_WB + 1)
-> > >
-> > > --
-> > > 2.18.0
->
->
->
->
+Thanks,
+Andrey Smirnov
