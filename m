@@ -1,42 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
-To: Stephen Boyd <sboyd@kernel.org>, Johan Hovold <johan@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180822090319.29167-1-johan@kernel.org>
- <153566556601.129321.16962771053169973395@swboyd.mtv.corp.google.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <9a80b925-a36e-3895-f91b-4716d5524249@ti.com>
-Date: Thu, 20 Sep 2018 10:11:08 +0300
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 5 Sep 2018 09:07:48 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+Message-ID: <20180905070748.g43lfdqdhmoci6pk@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180904163609.10171-3-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <153566556601.129321.16962771053169973395@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yadrlpym4unrl57x"
+In-Reply-To: <20180904163609.10171-3-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 31/08/18 00:46, Stephen Boyd wrote:
-> Quoting Johan Hovold (2018-08-22 02:03:19)
->> Fix child-node lookup which by using the wrong OF helper was searching
->> the whole tree depth-first, something which could end up matching an
->> unrelated node.
->>
->> Also fix the related node-reference leaks.
->>
->> Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
->> Signed-off-by: Johan Hovold <johan@kernel.org>
->> ---
-> 
-> Applied to clk-next
-> 
 
-Stephen, this patch causes a merge conflict with some of the code I am 
-planning to send a pull-req against (the clkctrl work series: 
-https://patchwork.kernel.org/project/linux-clk/list/?series=13841)
+--yadrlpym4unrl57x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Would it be possible to drop this from clk-next, and for me to 
-pick-it-up via my own branch? I can get this setup either today or tomorrow.
+On Tue, Sep 04, 2018 at 10:06:08PM +0530, Jagan Teki wrote:
+> Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
+> so enable them as default.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v4, v3:
+> - none
+> Changes for v2:
+> - Enable for SUN8I
+>=20
+>  drivers/gpu/drm/sun4i/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+> index c2c042287c19..cfa8b96273fb 100644
+> --- a/drivers/gpu/drm/sun4i/Kconfig
+> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> @@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
+> =20
+>  config DRM_SUN8I_MIXER
+>  	tristate "Support for Allwinner Display Engine 2.0 Mixer"
+> -	default MACH_SUN8I
+> +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
 
-Alternatively I need an immutable branch against which I can work.
+I'm not really sure we should put it as a default. We should just
+enable it in the defconfig.
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Maxime
+
+>  	help
+>  	  Choose this option if you have an Allwinner SoC with the
+>  	  Allwinner Display Engine 2.0, which has a mixer to do some
+> --=20
+> 2.18.0.321.gffc6fa0e3
+>=20
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--yadrlpym4unrl57x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPgMMACgkQ0rTAlCFN
+r3Qfmg/8DUMh/rPlmuctAJWYEIVIYo99Ezw0S+gJleodO3zYJTyfD37nGdZd4L4w
+yhayFKxorJuGh2ANM6JfFFGnJWhLLNp8zD0LJ2rq/E4cEHnC14tyi6utf3hwJkiw
+5/uQ9XPhYtQfxkuo0d2hSJmUH5wrS/BStpktH4WFDRemFNvNEAm2yI3HOda5N70R
+unlxdBrzismawYSDj1Ix3wrJpijPvtz1Im4f2GfUR9bf718rcJdP0sLmSSJTA1mH
+WeLuijtbNC0gfLEFSWrZ0T5CwnkDJdO0oY+C4x6VEC+m954CxHP4kofa5GnWj8ZH
+3zBlUWpQbgM+mCO5llejGDPbbjqGjG4hADFHPNCpE1arjwe157A8Qf2ofh/My881
+pbRQHWJfrwiE+idf8P34m8B2zVh31qpIQ6oi8XQO11y0kwfgVQ9edEQdxpswdMH1
+Cc3nEln14H/VyU5y7p+PfIwZj1i0nGLzRYdXDsc3j4vAMQWTZ1qgN8mGhtjcs4yS
+fWX8/iKqhatQC7UsauOkzAvzg27TOESvNf6dxD2Ubma0OucmJedDU9JEa1fIQl5x
+bQcoCVLOtQhgvw21bEEnldAUxgrn05kuRXTgko2kZ+5gSaPquhWFey9pE6KvmboH
+y04oVP2BY6SfL5SIktlSBXWWcl1DTWJPGgcdrN/mJ5/TbFz+1E0=
+=x6Ve
+-----END PGP SIGNATURE-----
+
+--yadrlpym4unrl57x--
