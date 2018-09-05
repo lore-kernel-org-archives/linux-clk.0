@@ -1,70 +1,65 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-Date: Thu, 27 Sep 2018 17:18:46 +0530
-Message-Id: <20180927114850.24565-9-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 5 Sep 2018 09:22:05 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 09/11] dt-bindings: sun4i-drm: add HDMI VCC supply
+ property for sun8i-dw-hdmi
+Message-ID: <20180905072205.63qmmqr45323xllc@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-10-icenowy@aosc.io>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rlpbalzc2vivwqzf"
+In-Reply-To: <20180904044053.15425-10-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Accordingly to BPI-M64-bsp DE DSI code Video start delay
-can be computed by subtracting total vertical timing with
-front porch timing and with adding 1 delay line for TCON.
 
-This patch simply add the start_delay logic from BPI-M64-bsp,
-w/o this new computation, the DSI on A64 encounter vblank time out.
+--rlpbalzc2vivwqzf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[CRTC:36:crtc-0] vblank wait timed out
+On Tue, Sep 04, 2018 at 12:40:51PM +0800, Icenowy Zheng wrote:
+> Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
+> pin, which is the VCC of HDMI part.
+>=20
+> Add a supply property to specify HVCC's regulator in the device tree.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Applied, thanks!
+Maxime
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 9918fdb990ff..217db74c6dc3 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
--	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-+	u32 vfp = mode->vsync_start - mode->vdisplay;
-+	u32 start_delay;
-+
-+	start_delay = mode->vtotal - vfp + 1;
-+	if (start_delay > mode->vtotal)
-+		start_delay -= mode->vtotal;
-+
-+	if (!start_delay)
-+		start_delay = 1;
-+
-+	return start_delay;
- }
- 
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
--- 
-2.18.0.321.gffc6fa0e3
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rlpbalzc2vivwqzf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPhBwACgkQ0rTAlCFN
+r3SXZg/6A3RU2hgIonPIwzbtmVglv3hKt4gvJyi4jPNZ/ktv1ZaQMjVOzqs3so09
+rs100I6BzKjPjiDdt6MKm9KVxZqjkhvIEVCLFPudCig/ODGCrsJOs+A5TpAByaQH
+dUP8HdGDed0kS+vqnZCm8hQLXi4gERU1tx0JK3vXMvjZtggMZsNmM3Vi8np5n9PN
+kiPvHwZwQcUC8tdvOiJAl/TukRmAINfpMvc15iUIGPBVyArF60FuUHz0kb8Z5O/C
+LwX/Unj19pBaZIkvUBxP6Ind6ywOgy9Z/uFeVBObHQ6hMYFW1VcmnYL6K9lwWGwR
+yUcy3gwV6QmUjsLGN+ao58b8zpVO5JBtNs/cqsuZFa1HBjFX40Ua8xOocOvtyJ4h
+zcN4fUvxT37D8OvbFSAY+A8eb2pengRr9rLKesT4BT5B41C9PKpwnWS8SQQvr6uO
+3oCse3a9GvIJFA1JUJziQNG9ckLkoBqRaW+gWuF3RRkW5UyrW8UgL6dsJWVBfzr4
+S1ZwTN+ypuKhcctIBwDCa4WwXVGB2JLyOuAocC6QJ8EXaYD+Xk9XZ0YtyrjkD87G
+QXo5/rUvsPB6bhiBodQyfnLokzkbAKqpCXjDr4zWbabij+PNeB6fe+7hXRkNvuT4
+MlP1oOhFa5ikKsc4kHnbsl2CsRyyzq2v0mX1s+CdYBSpz3/+/pE=
+=i6OQ
+-----END PGP SIGNATURE-----
+
+--rlpbalzc2vivwqzf--
