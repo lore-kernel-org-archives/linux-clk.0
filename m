@@ -1,65 +1,74 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:40141 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728681AbeIRUhp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 16:37:45 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Mark Brown <broonie@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
-Date: Tue, 18 Sep 2018 15:04:37 +0000
-Message-ID: <TY1PR01MB15625BAD12E2CB56AB47ACE88A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180829132954.64862-1-chris.brandt@renesas.com>
- <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org>
- <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org>
- <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
- <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org>
- <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
- <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org>
- <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
- <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org>
- <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
- <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
- <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org>
- <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
- <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
- <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
- <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
-In-Reply-To: <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Received: from mail.bootlin.com ([62.4.15.54]:34760 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeIELtn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:49:43 -0400
+Date: Wed, 5 Sep 2018 09:20:51 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 03/11] dt-bindings: display: Add compatible for A64
+ DE2 display pipeline
+Message-ID: <20180905072051.ac7nfa4f65gcqaf7@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-4-icenowy@aosc.io>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="77l3kc73q5njcdnm"
+In-Reply-To: <20180904044053.15425-4-icenowy@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCwgR2VlcnQgVXl0dGVy
-aG9ldmVuIHdyb3RlOg0KPiBUaGVuIHRoZSBlYXJseSBpbml0IGZyb20gQ0xLX09GX0RFQ0xBUkUo
-KSB3aWxsIGp1c3QgcmVnaXN0ZXIgdGhlDQo+IGVhcmx5IGNsb2NrcywgYW5kIGNwZ19tc3NyX3By
-b2JlKCkgY2FuIHRha2UgY2FyZSBvZiB0aGUgcmVtYWluaW5nIHBhcnRzPw0KDQpXaGF0IGlzIG5v
-dCBjbGVhciB0byBtZSBpcyB3aGF0IGdvZXMgaW4gRFQ/Pz8/DQoNCkkgd2lsbCBoYXZlIHRoaXMg
-aW4gLmR0c2kgZm9yIGNwZ19tc3NyX3Byb2JlKCk6DQoNCgljcGc6IGNsb2NrLWNvbnRyb2xsZXJA
-ZmNmZTAwMjAgew0KCQljb21wYXRpYmxlID0gInJlbmVzYXMscjdzOTIxMC1jcGctbXNzciI7DQoJ
-CXJlZyA9IDwweGZjZmUwMDEwIDB4NDU1PjsgIC8qIC0tLS0tLS0tLS0tIEZDRkUwMDEwIC0gRkNG
-RTA0NjUgKi8NCgkJY2xvY2tzID0gPCZleHRhbF9jbGs+Ow0KCQljbG9jay1uYW1lcyA9ICJleHRh
-bCI7DQoNCg0KQnV0LCBJIGFsc28gbmVlZCAvc29tZXRoaW5nLyBmb3IgQ0xLX09GX0RFQ0xBUkUo
-KS4NClRoYXQgbWVhbnMgYSBzZWNvbmQgRFQgbm9kZSAod2hpY2ggbWVhbnMgMiBkaWZmZXJlbnQg
-ZGV2aWNlcywgMiANCmRpZmZlcmVudCBkcml2ZXJzKQ0KDQpXaGF0IGRvIHlvdSBzZWUgdGhlIC5k
-dHNpIGFuZCAuZHRzIGxvb2tpbmcgbGlrZT8NCg0KVGhhbmtzLA0KQ2hyaXMNCg0KDQo=
+
+--77l3kc73q5njcdnm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 04, 2018 at 12:40:45PM +0800, Icenowy Zheng wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>=20
+> Allwinner A64 has a DE2 display pipeline. The TCONs are similar to the
+> ones in A83T, but the mixers are new (similar to the later R40 SoC).
+>=20
+> This patch adds dt-binding documentation for A64 DE2 display pipeline.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> [Icenowy: Refactor and also cover TCON1]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--77l3kc73q5njcdnm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg9IACgkQ0rTAlCFN
+r3Sagg/9G1DUgxGja5yNzn7SLh5g9IwVFLOHdtsfx1EYCGhYnh6yLMa+W4wU9OqK
+d9VoyRBU99RYbLFpj7ngYfdVHZ8Zh5ybr51WzLq2Jk51YkG1kt3cxC4GIJClUnMn
+auNj8fiFcCtIisaEcUatbD8Bv0QK4GWHdMM95U/p5D/0SUKHxeowvYxZvQ9OjOEm
+aVci6TVa85IWb2vn8oDcZLjRHVUnghYtS1UpkOfjcckpuk54+1dcy7FySRKOQ/Js
+jzTKEhbp5VqfYU/ErViab+ITJKh+IdIc2ebYBOKmt0CfUjCrUPIiBs2Qq1Lu3cKA
+7NHj+Y8Ayc99gi8C2QGyZnliC3SRsKzSuO6ThoADKzZHXRieXAZJYPJ9nrNeXe+o
+441fWgqaes+WZC4Ahxm/IBxAnk1IUhWDt2TpLsNfdMqcqv1TsS6UwC4MsSoqzJpz
+e7cPMP7IX1uhAjM3TGYsllqnQghmZ8dZgt84Ih4taQto7f9gG64fHoCpdl16u2BL
+gb5KEQWRqJBaOMMKuz+gPclfona4iEmEmwZKHS1iBPXDoGGBc3Nt2kMa2dMJhESt
+cGnHUXCw7nX2RlIGUfLHvcblKlKm+hRI3T50ajp/jsZcLH2JVV7LXLbCwM2QnJkD
+EKivM1K0dIP5QyIh9PdaJEGd891Ky+jdNowvVGTlM1lI3fqd7uQ=
+=1Ecl
+-----END PGP SIGNATURE-----
+
+--77l3kc73q5njcdnm--
