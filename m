@@ -1,373 +1,43 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40919 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbeINNpR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:45:17 -0400
-Date: Fri, 14 Sep 2018 11:31:36 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
-        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 4/7] regulator: Support regulators where voltage ranges
- are selectable
-Message-ID: <024e0bb1fc3d5a2f041a83c2445724548be4ce5f.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Wed, 5 Sep 2018 15:02:19 +0000
+Message-ID: 
+ <TYXPR01MB1568DD90490B28E46E949D658A020@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180829132841.64787-1-chris.brandt@renesas.com>
+ <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-For example ROHM BD71837 and ROHM BD71847 Power management ICs have
-regulators which provide multiple linear ranges. Ranges can be
-selected by individual non contagious bit in vsel register. Add
-regmap helper functions for selecting ranges.
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/core.c         |   5 +
- drivers/regulator/helpers.c      | 232 +++++++++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  20 +++-
- 3 files changed, 256 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 5f2218c67edf..b836a129288a 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2788,6 +2788,11 @@ static int regulator_map_voltage(struct regulator_dev *rdev, int min_uV,
- 	if (desc->ops->list_voltage == regulator_list_voltage_linear_range)
- 		return regulator_map_voltage_linear_range(rdev, min_uV, max_uV);
- 
-+	if (desc->ops->list_voltage ==
-+		regulator_list_voltage_pickable_linear_range)
-+		return regulator_map_voltage_pickable_linear_range(rdev,
-+							min_uV, max_uV);
-+
- 	return regulator_map_voltage_iterate(rdev, min_uV, max_uV);
- }
- 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index ef09021dc46e..5686a1335bd3 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -103,6 +103,128 @@ int regulator_disable_regmap(struct regulator_dev *rdev)
- }
- EXPORT_SYMBOL_GPL(regulator_disable_regmap);
- 
-+static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-+					     unsigned int rval)
-+{
-+	int i;
-+
-+	if (!rdev->desc->linear_range_selectors)
-+		return -EINVAL;
-+
-+	rval &= rdev->desc->vsel_range_mask;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		if (rdev->desc->linear_range_selectors[i] == rval)
-+			return i;
-+	}
-+	return -EINVAL;
-+}
-+
-+/**
-+ * regulator_get_voltage_sel_pickable_regmap - pickable range get_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their get_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-+{
-+	unsigned int r_val;
-+	int range;
-+	unsigned int val;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	if (!rdev->desc->linear_ranges)
-+		return -EINVAL;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-+	if (ret != 0)
-+		return ret;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_range_reg, &r_val);
-+	if (ret != 0)
-+		return ret;
-+
-+	val &= rdev->desc->vsel_mask;
-+	val >>= ffs(rdev->desc->vsel_mask) - 1;
-+
-+	range = regulator_range_selector_to_index(rdev, r_val);
-+	if (range < 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < range; i++)
-+		voltages_in_range += (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+
-+	return val + voltages_in_range;
-+}
-+EXPORT_SYMBOL_GPL(regulator_get_voltage_sel_pickable_regmap);
-+
-+/**
-+ * regulator_set_voltage_sel_pickable_regmap - pickable range set_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ * @sel: Selector to set
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their set_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+					      unsigned int sel)
-+{
-+	unsigned int range;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		voltages_in_range = (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+		if (sel < voltages_in_range)
-+			break;
-+		sel -= voltages_in_range;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	sel <<= ffs(rdev->desc->vsel_mask) - 1;
-+	sel += rdev->desc->linear_ranges[i].min_sel;
-+
-+	range = rdev->desc->linear_range_selectors[i];
-+
-+	if (rdev->desc->vsel_reg == rdev->desc->vsel_range_reg) {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_reg,
-+					 rdev->desc->vsel_range_mask |
-+					 rdev->desc->vsel_mask, sel | range);
-+	} else {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_range_reg,
-+					 rdev->desc->vsel_range_mask, range);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
-+				  rdev->desc->vsel_mask, sel);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	if (rdev->desc->apply_bit)
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->apply_reg,
-+					 rdev->desc->apply_bit,
-+					 rdev->desc->apply_bit);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_pickable_regmap);
-+
- /**
-  * regulator_get_voltage_sel_regmap - standard get_voltage_sel for regmap users
-  *
-@@ -337,6 +459,76 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
- 
-+/**
-+ * regulator_map_voltage_pickable_linear_range - map_voltage, pickable ranges
-+ *
-+ * @rdev: Regulator to operate on
-+ * @min_uV: Lower bound for voltage
-+ * @max_uV: Upper bound for voltage
-+ *
-+ * Drivers providing pickable linear_ranges in their descriptor can use
-+ * this as their map_voltage() callback.
-+ */
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						int min_uV, int max_uV)
-+{
-+	const struct regulator_linear_range *range;
-+	int ret = -EINVAL;
-+	int voltage, i;
-+	unsigned int selector = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		int linear_max_uV;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+		linear_max_uV = range->min_uV +
-+			(range->max_sel - range->min_sel) * range->uV_step;
-+
-+		if (!(min_uV <= linear_max_uV && max_uV >= range->min_uV)) {
-+			selector += (range->max_sel - range->min_sel + 1);
-+			continue;
-+		}
-+
-+		if (min_uV <= range->min_uV)
-+			min_uV = range->min_uV;
-+
-+		/* range->uV_step == 0 means fixed voltage range */
-+		if (range->uV_step == 0) {
-+			ret = 0;
-+		} else {
-+			ret = DIV_ROUND_UP(min_uV - range->min_uV,
-+					   range->uV_step);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		ret += selector;
-+
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * We may have overlapping voltage ranges. Hence we don't
-+		 * exit but retry until we have checked all ranges.
-+		 */
-+		if (voltage < min_uV || voltage > max_uV)
-+			selector += (range->max_sel - range->min_sel + 1);
-+		else
-+			break;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_map_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear - List voltages with simple calculation
-  *
-@@ -361,6 +553,46 @@ int regulator_list_voltage_linear(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_list_voltage_linear);
- 
-+/**
-+ * regulator_list_voltage_pickable_linear_range - pickable range list voltages
-+ *
-+ * @rdev: Regulator device
-+ * @selector: Selector to convert into a voltage
-+ *
-+ * list_voltage() operation, intended to be used by drivers utilizing pickable
-+ * ranges helpers.
-+ */
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						 unsigned int selector)
-+{
-+	const struct regulator_linear_range *range;
-+	int i;
-+	unsigned int all_sels = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		unsigned int sels_in_range;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+
-+		sels_in_range = range->max_sel - range->min_sel;
-+
-+		if (all_sels + sels_in_range >= selector) {
-+			selector -= all_sels;
-+			return range->min_uV + (range->uV_step * selector);
-+		}
-+
-+		all_sels += (sels_in_range + 1);
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear_range - List voltages for linear ranges
-  *
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 0fd8fbb74763..a9c030192147 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -271,9 +271,16 @@ enum regulator_type {
-  * @ramp_delay: Time to settle down after voltage change (unit: uV/us)
-  * @min_dropout_uV: The minimum dropout voltage this regulator can handle
-  * @linear_ranges: A constant table of possible voltage ranges.
-- * @n_linear_ranges: Number of entries in the @linear_ranges table.
-+ * @linear_range_selectors: A constant table of voltage range selectors.
-+ *			    If pickable ranges are used each range must
-+ *			    have corresponding selector here.
-+ * @n_linear_ranges: Number of entries in the @linear_ranges (and in
-+ *		     linear_range_selectors if used) table(s).
-  * @volt_table: Voltage mapping table (if table based mapping)
-  *
-+ * @vsel_range_reg: Register for range selector when using pickable ranges
-+ *		    and regulator_regmap_X_voltage_X_pickable functions.
-+ * @vsel_range_mask: Mask for register bitfield used for range selector
-  * @vsel_reg: Register for selector when using regulator_regmap_X_voltage_
-  * @vsel_mask: Mask for register bitfield used for selector
-  * @csel_reg: Register for TPS65218 LS3 current regulator
-@@ -338,10 +345,14 @@ struct regulator_desc {
- 	int min_dropout_uV;
- 
- 	const struct regulator_linear_range *linear_ranges;
-+	const unsigned int *linear_range_selectors;
-+
- 	int n_linear_ranges;
- 
- 	const unsigned int *volt_table;
- 
-+	unsigned int vsel_range_reg;
-+	unsigned int vsel_range_mask;
- 	unsigned int vsel_reg;
- 	unsigned int vsel_mask;
- 	unsigned int csel_reg;
-@@ -498,18 +509,25 @@ int regulator_mode_to_status(unsigned int);
- 
- int regulator_list_voltage_linear(struct regulator_dev *rdev,
- 				  unsigned int selector);
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						   unsigned int selector);
- int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
- 					unsigned int selector);
- int regulator_list_voltage_table(struct regulator_dev *rdev,
- 				  unsigned int selector);
- int regulator_map_voltage_linear(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						  int min_uV, int max_uV);
- int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 				       int min_uV, int max_uV);
- int regulator_map_voltage_iterate(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
- int regulator_map_voltage_ascend(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev);
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+						unsigned int sel);
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev);
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel);
- int regulator_is_enabled_regmap(struct regulator_dev *rdev);
--- 
-2.14.3
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDA1LCAyMDE4IDEsIEdlZXJ0IFV5
+dHRlcmhvZXZlbiB3cm90ZToNCj4gPiBTbywgSSB0aGluayBJIG5lZWQgdG8gcmV3b3JrIHRoaXMg
+ZHJpdmVyIHRvIGFkZCB0aGUgYWJpbGl0eSB0byBhZGQNCj4gPiBtdWx0aXBsZSBhZGRyZXNzIHJl
+Z2lvbnMuDQo+IA0KPiBZb3VyIG1haW4gZHJpdmVyIGZvciB0aGlzIGJsb2NrIChjbG9jaz8pIGNh
+biByZWdpc3RlciB0aGUgd2F0Y2hkb2cuDQo+IEVpdGhlciBkaXJlY3RseSB3aXRoIHRoZSB3YXRj
+aGRvZyBzdWJzeXN0ZW0sIG9yIGJ5IHJlZ2lzdGVyaW5nIGFuDQo+ICJyemFfd2R0IiBwbGF0Zm9y
+bSBkZXZpY2UuDQoNCkl0IHdvdWxkIHNlZW0gc3RyYW5nZSB0aGF0IHRoZSBjbG9jayBkcml2ZXIg
+d291bGQgcmVnaXN0ZXIgdGhlIHdhdGNoZG9nIA0KdGltZXIgZm9yIG5vIG90aGVyIHJlYXNvbiBv
+dGhlciB0aGFuIHdoZXJlIHRoZSBjaGlwIGRlc2lnbmVyIGhhcHBlbiB0byANCnB1dCB0aGUgcmVn
+aXN0ZXIgYWRkcmVzc2VzLg0KDQoNCk5vdyB0aGF0IEkgbG9vayBhdCBpdDoNCiBDUEcgaXMgYXQg
+RkNGRV8wMDEwIC0gRkNGRV8wMTA0DQpNU1RQIGlzIGF0IEZDRkVfMDQwMCAtIEZDRkVfMDQ2NA0K
+DQpOb3RoaW5nIHNpdHMgaW4gYmV0d2VlbiBDUEcgYW5kIE1TVFAuDQoNCkluIHRoZSBoYXJkd2Fy
+ZSBtYW51YWwsIHRoZXJlIGlzIG90aGVyICdyYW5kb20gb3RoZXIgc3R1ZmYnIHRoYXQgdGhleSAN
+CnB1dCBpbiB0aGF0IGNoYXB0ZXIgdGhhdCBpcyBsb2NhdGVkIGluIG11bHRpcGxlIGFkZHJlc3Mg
+cGxhY2VzLCBidXQgdGhhdCANCmRvZXNuJ3QgbWVhbiBJIGhhdmUgdG8gbWFwIHRoZW0gYWxsIGlu
+IHRoaXMgZHJpdmVyLg0KDQoNCkkgc2ltcGx5IGNoYW5nZWQgdGhlIERUUyB0byBqdXN0IG1hcCBD
+UEcgYW5kIE1TVFAgYW5kIG5vdyBldmVyeXRoaW5nIGlzIA0KZmluZS4gTXkgd2F0Y2hkb2cgZHJp
+dmVyIGlzIGhhcHB5IGFuZCB0aGlzIENQRy9NU1RQIGRyaXZlciB3b3JrcyB0aGUgDQpzYW1lLg0K
+DQpTby4uLi5JIGd1ZXNzIEkgZGlkbid0IHJlYWxseSBoYXZlIGFuIGlzc3VlIGFmdGVyIGFsbC4N
+Cg0KQ2hyaXMNCg0K
