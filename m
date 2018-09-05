@@ -1,141 +1,104 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH 1/4] ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
-Date: Tue, 18 Sep 2018 14:19:05 +0800
-Message-Id: <1537251548-27845-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
-References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 5 Sep 2018 16:48:52 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+Message-ID: <20180905144852.db2galdquxx22kjh@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180904163609.10171-3-jagan@amarulasolutions.com>
+ <20180905070748.g43lfdqdhmoci6pk@flea>
+ <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="en7fpj6tbqjjbcyr"
+In-Reply-To: <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6ULZ is new SoC of i.MX6 family, compared to i.MX6ULL,
-it removes below modules:
 
-- UART5/UART6/UART7/UART8;
-- PWM5/PWM6/PWM7/PWM8;
-- eCSPI3/eCSPI4;
-- CAN1/CAN2;
-- FEC1/FEC2;
-- I2C3/I2C4;
-- EPIT2;
-- LCDIF;
-- GPT2;
-- ADC1;
-- TSC;
+--en7fpj6tbqjjbcyr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds support for i.MX6ULZ and i.MX6ULZ 14x14 EVK
-board.
+On Wed, Sep 05, 2018 at 01:51:25PM +0530, Jagan Teki wrote:
+> On Wed, Sep 5, 2018 at 12:37 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Sep 04, 2018 at 10:06:08PM +0530, Jagan Teki wrote:
+> >> Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
+> >> so enable them as default.
+> >>
+> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >> ---
+> >> Changes for v4, v3:
+> >> - none
+> >> Changes for v2:
+> >> - Enable for SUN8I
+> >>
+> >>  drivers/gpu/drm/sun4i/Kconfig | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kco=
+nfig
+> >> index c2c042287c19..cfa8b96273fb 100644
+> >> --- a/drivers/gpu/drm/sun4i/Kconfig
+> >> +++ b/drivers/gpu/drm/sun4i/Kconfig
+> >> @@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
+> >>
+> >>  config DRM_SUN8I_MIXER
+> >>       tristate "Support for Allwinner Display Engine 2.0 Mixer"
+> >> -     default MACH_SUN8I
+> >> +     default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> >
+> > I'm not really sure we should put it as a default. We should just
+> > enable it in the defconfig.
+>=20
+> What would be the difference in both cases it would be build as module
+> since DRM_SUN4I=3Dm for ARM64
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/Makefile              |  3 ++-
- arch/arm/boot/dts/imx6ulz-14x14-evk.dts | 20 +++++++++++++++++
- arch/arm/boot/dts/imx6ulz.dtsi          | 38 +++++++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
- create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
+We wouldn't force it down the throat to every user by default, even
+though they have no interest in that driver being compiled into their
+kernel.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b3ec70d..d7268ae 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -560,7 +560,8 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-tx6ul-mainboard.dtb \
- 	imx6ull-14x14-evk.dtb \
- 	imx6ull-colibri-eval-v3.dtb \
--	imx6ull-colibri-wifi-eval-v3.dtb
-+	imx6ull-colibri-wifi-eval-v3.dtb \
-+	imx6ulz-14x14-evk.dtb
- dtb-$(CONFIG_SOC_IMX7D) += \
- 	imx7d-cl-som-imx7.dtb \
- 	imx7d-colibri-emmc-eval-v3.dtb \
-diff --git a/arch/arm/boot/dts/imx6ulz-14x14-evk.dts b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
-new file mode 100644
-index 0000000..e2d67a3
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright 2018 NXP.
-+
-+/dts-v1/;
-+
-+#include "imx6ulz.dtsi"
-+#include "imx6ul-14x14-evk.dtsi"
-+
-+/delete-node/ &fec1;
-+/delete-node/ &fec2;
-+/delete-node/ &lcdif;
-+/delete-node/ &tsc;
-+
-+/ {
-+	model = "Freescale i.MX6 ULZ 14x14 EVK Board";
-+	compatible = "fsl,imx6ulz-14x14-evk", "fsl,imx6ulz";
-+
-+	/delete-node/ panel;
-+};
-diff --git a/arch/arm/boot/dts/imx6ulz.dtsi b/arch/arm/boot/dts/imx6ulz.dtsi
-new file mode 100644
-index 0000000..ae6d7e5
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ulz.dtsi
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright 2018 NXP.
-+
-+#include "imx6ull.dtsi"
-+
-+/ {
-+	aliases {
-+		/delete-property/ ethernet0;
-+		/delete-property/ ethernet1;
-+		/delete-property/ i2c2;
-+		/delete-property/ i2c3;
-+		/delete-property/ serial4;
-+		/delete-property/ serial5;
-+		/delete-property/ serial6;
-+		/delete-property/ serial7;
-+		/delete-property/ spi2;
-+		/delete-property/ spi3;
-+	};
-+};
-+
-+/delete-node/ &adc1;
-+/delete-node/ &can1;
-+/delete-node/ &can2;
-+/delete-node/ &ecspi3;
-+/delete-node/ &ecspi4;
-+/delete-node/ &epit2;
-+/delete-node/ &gpt2;
-+/delete-node/ &i2c3;
-+/delete-node/ &i2c4;
-+/delete-node/ &pwm5;
-+/delete-node/ &pwm6;
-+/delete-node/ &pwm7;
-+/delete-node/ &pwm8;
-+/delete-node/ &uart5;
-+/delete-node/ &uart6;
-+/delete-node/ &uart7;
-+/delete-node/ &uart8;
--- 
-2.7.4
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--en7fpj6tbqjjbcyr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluP7NMACgkQ0rTAlCFN
+r3SA3w//UvUCidVC1bCGgZ1mFpBQJ6Jyw4gvoHRH/oJzrN/PwzJQlMleDRrlIhc3
+JkWwmGyZKZGLISF3Xa/Z1pgQoFrl2HV9jiTUNVKkQ9kxwIebLAM5th72Ksurl1U/
+Y1HuDO9Qk1RGmFogRiJpdmw99Z3pModUUWOM+OxUADd8JP8bTnA4yrvcebAcXV+p
++/x29nNZUmCjrN1YdZSXLDtg3TdxhIA3QFDBETlJuZioM3HIzZ6p6DeSzzBC91IN
+IBGF3TMXU+cVa3JM2PbGYOO0c/W2P1oB6s+PFTw74crfxSqAI28mc+j/gjGm18OS
+fMmk6ENVSt6SB8mp1quKh+peoVZ0hQ/vBmcIwKaTFUTeVE741wBGzpp2rb/gCThx
+N3aXFLiAVpdCnjZNE+ATWAnTFnmlfl4K4Oo2XYeIdaAcyatxQGSgdOypz72C4A+q
+2Sg7rpYKB7h8IOYlkGkrroU/S4641P8swC3+9yxNxY8KK8G1Zed4X3V/+I+JmCG5
+BHmxSaq74KjzBs9BRrwQsy/GBE3FnhpBF/GeSPQVUnRuf1MJzyvDRgpIrMi0L442
+rI6imPJHKlDHvYE3EInLXIsSmFC82YNj0ULlGQLP8hsdgVNQ/umGs5ZAHhPm8f3A
+ZE5ET7x0rpVJlkzioNl8ZaWmM8EXt38/H/xTTMn20XmLdbpvqAQ=
+=Ma1n
+-----END PGP SIGNATURE-----
+
+--en7fpj6tbqjjbcyr--
