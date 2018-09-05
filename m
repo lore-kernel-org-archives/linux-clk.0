@@ -1,106 +1,81 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-	Tang Yuantian <andy.tang@nxp.com>,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v2 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-Date: Fri, 14 Sep 2018 02:07:53 +0530
-Message-Id: <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:33506 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeIELaj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:30:39 -0400
+Date: Wed, 5 Sep 2018 09:01:53 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to
+ MMC module clocks
+Message-ID: <20180905070153.a5ba6razlhdwdjde@flea>
+References: <20180820134013.16527-1-icenowy@aosc.io>
+ <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="64gjh43w4wb2y7ri"
+In-Reply-To: <153540143478.129321.8502068006504989469@swboyd.mtv.corp.google.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 
-Add clockgen support for lx2160a.
-Added entry for compat 'fsl,lx2160a-clockgen'.
+--64gjh43w4wb2y7ri
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
- drivers/cpufreq/qoriq-cpufreq.c |  1 +
- 2 files changed, 14 insertions(+), 1 deletion(-)
+On Mon, Aug 27, 2018 at 01:23:54PM -0700, Stephen Boyd wrote:
+> Quoting Icenowy Zheng (2018-08-20 06:40:13)
+> > On the H6, the MMC module clocks are fixed in the new timing mode,
+> > i.e. they do not have a bit to select the mode. These clocks have
+> > a 2x divider somewhere between the clock and the MMC module.
+> >=20
+> > To be consistent with other SoCs supporting the new timing mode,
+> > we model the 2x divider as a fixed post-divider on the MMC module
+> > clocks.
+> >=20
+> > This patch adds the post-dividers to the MMC clocks, following the
+> > approach on A64.
+> >=20
+> > Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+>=20
+> This commit doesn't exist. Did you mean:
+>=20
+> 524353ea48
+>=20
+> instead?
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f..e9ae70b 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -79,7 +79,7 @@ struct clockgen_chipinfo {
- 	const struct clockgen_muxinfo *cmux_groups[2];
- 	const struct clockgen_muxinfo *hwaccel[NUM_HWACCEL];
- 	void (*init_periph)(struct clockgen *cg);
--	int cmux_to_group[NUM_CMUX]; /* -1 terminates if fewer than NUM_CMUX */
-+	int cmux_to_group[NUM_CMUX+1]; /* -1 terminate if fewer to NUM_CMUX+1 */
- 	u32 pll_mask;	/* 1 << n bit set if PLL n is valid */
- 	u32 flags;	/* CG_xxx */
- };
-@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
- 	},
- 	{
-+		.compat = "fsl,lx2160a-clockgen",
-+		.cmux_groups = {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group = {
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
-+		},
-+		.pll_mask = 0x37,
-+		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat = "fsl,p2041-clockgen",
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p2041_init_periph,
-@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
-+CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
- 
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
-index 3d773f6..83921b7 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
- 	{ .compatible = "fsl,ls1046a-clockgen", },
- 	{ .compatible = "fsl,ls1088a-clockgen", },
- 	{ .compatible = "fsl,ls2080a-clockgen", },
-+	{ .compatible = "fsl,lx2160a-clockgen", },
- 	{ .compatible = "fsl,p4080-clockgen", },
- 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
--- 
-2.7.4
+I changed it. Please also use 12-characters commit IDs, as recommended
+in the kernel documentation.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--64gjh43w4wb2y7ri
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPf2AACgkQ0rTAlCFN
+r3SZCQ//U7fTlRzK3nbV79CQPigCtjxAfJk46/xpkxQ36wz9RcAKfOkxvqJ8u22V
+tAsQQoaLgkdSpwyIaLyaVX7Z9r0fiNOX7e8hJGZC+UqwZ3I/Tllk2l16p0AmRySM
+sUeM7z6e84gETwv3YcZyVUFQXSd/gsXDhZ6jO2tP8OmprFvxciIJjRuN7Paqct0F
+GQcBzgRt7Xle5eSkFqxV8WAbaETaUETtMOENzNskhE+pTD1slPHrim+bhSFYza6P
+58OoFztk4s/XCqd78kzW7y7j8/IleWH5CSu4LAnWC6Oo19t0Dxn1agYzHTEa20dj
+qA7l0bSmrRbnY/1hqQLbYToBvNavQqmcFZbk0Ge5wSRYhIqo8T9S3Bs8UM043u9/
+y5o6YODtIeNvk+/X3uh2bhi5DXbKF+1FzAaKPHHAgsR7an7LJpfSP0wnWkew/moz
+EGwJJ6wiEWUM7AcO92XoLgaMl6WjaKV90uDqHxGfKjcDPpvw/P8vTny8iNMUPoCV
+Bcj0hsT7gS4Me+zCFUbcJ1Hc762lZz1zM6Iq6Vu3h1YYW9SlDaBJcIG178/fO501
+HXV8JCu/eF0kCit11x/V4g6Ys1nAnlfH6WsRGoUWxJi0sTjEm1BF82kjQ5T2YBik
++GAUwMzXwSsU5kEhVeuS6qyE9HfB6EjQ/Evy3Xe7upmaLZ+3t7Q=
+=ZDFf
+-----END PGP SIGNATURE-----
+
+--64gjh43w4wb2y7ri--
