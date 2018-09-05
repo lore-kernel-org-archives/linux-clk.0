@@ -1,103 +1,238 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 3 Sep 2018 09:38:43 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org, corbet@lwn.net,
-	mturquette@baylibre.com, linux@armlinux.org.uk,
-	andrew.smirnov@gmail.com, robh@kernel.org, sre@kernel.org,
-	linux@roeck-us.net, sjhuang@iluvatar.ai, mazziesaccount@gmail.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: Re: [PATCH 2/2] clk: bd718x7: Initial support for ROHM
- bd71837/bd71847 PMIC clock
-Message-ID: <20180903063843.GD2472@localhost.localdomain>
-References: <0e6f19f99a4321d37472635c9210f6c13ac53147.1535630942.git.matti.vaittinen@fi.rohmeurope.com>
- <201808310820.GfPfChXp%fengguang.wu@intel.com>
- <20180831102123.GA2472@localhost.localdomain>
- <153582920636.19113.4389105687778850598@swboyd.mtv.corp.google.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org
+References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
+ <1533298874-22863-3-git-send-email-tdas@codeaurora.org>
+ <153540431524.129321.12826367247850332291@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <15984aab-d815-56bb-af9c-7be9cfd9a103@codeaurora.org>
+Date: Wed, 5 Sep 2018 23:56:10 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <153582920636.19113.4389105687778850598@swboyd.mtv.corp.google.com>
+In-Reply-To: <153540431524.129321.12826367247850332291@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen
+Hello Stephen,
 
-On Sat, Sep 01, 2018 at 12:13:26PM -0700, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-08-31 03:21:23)
-> > Hello All,
-> > 
-> > Just wanted to point out for the reviewers that this patch depends on
-> > not yet accepted MFD/regulator patch. (struct/defines in
-> > include/linux/mfd/rohm-bd718x7.h were changed)
-> > https://lore.kernel.org/lkml/cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com/
-> > 
-> > On Fri, Aug 31, 2018 at 09:18:19AM +0800, kbuild test robot wrote:
-> > > Hi Matti,
-> > > 
-> > > Thank you for the patch! Yet something to improve:
-> > > 
-> > > [auto build test ERROR on clk/clk-next]
-> > > [also build test ERROR on v4.19-rc1 next-20180830]
-> > > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > 
-> > Thus this error was expected. What is the generally best way to work
-> > when there is changes to more than one subsystem? With this approach
-> > the patch set here won't compile until MFD part gets applied. But if
-> > I use old definitions/structs here, then clk tree gets broken when
-> > MFD/regulator part changes defines. I see only bad and worse options =)
-> > Anyways, I guess sending this patch with new defines (and applying it
-> > only after MFD) is still better than applying this with old defines and
-> > breaking it when MFD changes. (Assuming all of the patches get applied
-> > at some point).
-> > 
+Thanks for the review comments.
+
+On 8/28/2018 2:41 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-08-03 05:21:14)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 2b69cf2..7bd940d 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -254,6 +254,15 @@ config SDM_VIDEOCC_845
+>>            Say Y if you want to support video devices and functionality such as
+>>            video encode and decode.
+>>
+>> +config SDM_LPASSCC_845
+>> +       tristate "SDM845 LPASS Clock Controller"
 > 
-> Does anything besides the clk driver need the defines that are in the
-> header which are used in this file?
-
-The register address for clk enable and bit mask are not used by any
-other driver. But I'd like to keep all the register addresses in one
-enum. That eases checking changes when new chips come.
-
-The private data for MFD (which contains for example the regmap and chip
-type) are required by other drivers too.
-
-> If not, then it's better to put
-> those defines in the C file for the clk driver so we don't have to hop
-> between files and have merge dependencies. Also, the regmap could
-> possibly by grabbed from the dev->parent pointer instead of passing it
-> down through an mfd structure, allowing this driver to be more generic
-> assuming it is always a child of some mfd device that has a regmap.
-
-Currently clk only uses regmap directly from the struct bd718xx. But I
-would like to have the access to chip_type as well. And even if we forget
-the chip_type. Well, I only see two bad ways of omitting the struct
-bd718xx:
-
-1. Always keep the regmap as first member in parent device's driver_data.
-Then we can just get the driver data and do cast to regmap. I am not fan
-of this as it breaks as fast as someone changes the struct bd718xx - and
-as this is part of MFD - well, there is no guarantees the clk people are
-even reviewing such change. Also if we need the chip type we are back
-using the struct.
-
-2. Use some regmnap wrapper functions which would only take the parent
-dev pointer and dig out the regmap details. This would be doable but
-then we still have dependency to these wrappers (so dependency is not
-solved). Additionally these wrappers are something we decided to get rid
-of few patch versions ago.
-
-I don't expect much renamings to take place after the latest patch set
-to MFD/regulator tree has been applied. So maybe the clk patch set can
-just wait untill MFD/regulator stuff gets integrated. I would be
-gratefull if we could review the clk patch set already now though so I
-could do improvements/changes to clk side while waiting for
-MFD/regulator to get applied. Also, the devm_ functions (patch 1) are
-not depending on MFD - so maybe we can get them reviewed/applied? If I
-have the spare time I can look if I can clean up some of those not freed
-clkdev lookups.
-
-Br,
-	Matti Vaittinen
+> Spell out the acronym? So "SDM845 Low Power Audio Subsystem (LPASS)
+> Clock Controller"?
 > 
+
+Sure will update in the next patch.
+
+>> +       depends on COMMON_CLK_QCOM
+>> +       select SDM_GCC_845
+>> +       help
+>> +         Support for the LPASS clock controller on SDM845 devices.
+>> +         Say Y if you want to use the LPASS branch clocks of the LPASS clock
+>> +         controller to reset the LPASS subsystem.
+>> +
+>>   config SPMI_PMIC_CLKDIV
+>>          tristate "SPMI PMIC clkdiv Support"
+>>          depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+>> index 0f694ed..068cf53 100644
+>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -3086,6 +3086,32 @@ enum {
+>>          },
+>>   };
+>>
+>> +static struct clk_branch gcc_lpass_q6_axi_clk = {
+>> +       .halt_reg = 0x47000,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x47000,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_q6_axi_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_lpass_sway_clk = {
+>> +       .halt_reg = 0x47008,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x47008,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_sway_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>>   static struct gdsc pcie_0_gdsc = {
+>>          .gdscr = 0x6b004,
+>>          .pd = {
+>> @@ -3383,6 +3409,8 @@ enum {
+>>          [GPLL4] = &gpll4.clkr,
+>>          [GCC_CPUSS_DVM_BUS_CLK] = &gcc_cpuss_dvm_bus_clk.clkr,
+>>          [GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+>> +       [GCC_LPASS_Q6_AXI_CLK] = NULL,
+>> +       [GCC_LPASS_SWAY_CLK] = NULL,
+>>   };
+>>
+>>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
+>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+>> new file mode 100644
+>> index 0000000..6f387f9
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+> [...]
+>> +
+>> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+> 
+> Can we change the branch ops to check for out of reset or not? Do the
+> clks even work when LPASS isn't out of reset? Why would the clk APIs
+> even be called on here if it hadn't taken LPASS out of reset?
+> 
+
+The branches need to be turned ON before the LPASS is out of reset.
+But we would not be able to check the CLK_ENABLE bit.
+
+>> +static struct clk_branch lpass_qdsp6ss_sleep_clk = {
+>> +       .halt_reg = 0x3c,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+>> +       .clkr = {
+>> +               .enable_reg = 0x3c,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_sleep_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct regmap_config lpass_regmap_config = {
+>> +       .reg_bits       = 32,
+>> +       .reg_stride     = 4,
+>> +       .val_bits       = 32,
+>> +       .fast_io        = true,
+>> +};
+>> +
+>> +static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
+>> +       [LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
+>> +       [LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
+>> +       [LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
+>> +       .config = &lpass_regmap_config,
+>> +       .clks = lpass_cc_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
+>> +};
+>> +
+>> +static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
+>> +       [LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
+>> +       [LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
+>> +       [LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
+>> +       .config = &lpass_regmap_config,
+>> +       .clks = lpass_qdsp6ss_sdm845_clocks,
+>> +       .num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
+>> +};
+>> +
+>> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
+>> +                                    const struct qcom_cc_desc *desc)
+>> +{
+>> +       struct regmap *regmap;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(base))
+>> +               return -ENOMEM;
+> 
+> return PTR_ERR(base)?
+> 
+
+Sure will update it.
+
+>> +
+>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       return qcom_cc_really_probe(pdev, desc, regmap);
+>> +}
+>> +
+>> +/* LPASS CC clock controller */
+>> +static const struct of_device_id lpass_cc_sdm845_match_table[] = {
+>> +       { .compatible = "qcom,sdm845-lpasscc" },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
+>> +
+>> +static int lpass_cc_sdm845_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct qcom_cc_desc *desc;
+>> +       int ret;
+>> +
+>> +       lpass_regmap_config.name = "lpass_cc";
+>> +       desc = &lpass_cc_sdm845_desc;
+>> +
+>> +       ret = lpass_clocks_sdm845_probe(pdev, 0, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       lpass_regmap_config.name = "lpass_qdsp6ss";
+>> +       desc = &lpass_qdsp6ss_sdm845_desc;
+>> +
+>> +       return lpass_clocks_sdm845_probe(pdev, 1, desc);
+>> +}
+>> +
+>> +static struct platform_driver lpass_cc_sdm845_driver = {
+>> +       .probe          = lpass_cc_sdm845_probe,
+>> +       .driver         = {
+>> +               .name   = "sdm845-lpasscc",
+>> +               .of_match_table = lpass_cc_sdm845_match_table,
+>> +       },
+>> +};
+>> +
+>> +static int __init lpass_cc_sdm845_init(void)
+>> +{
+>> +       return platform_driver_register(&lpass_cc_sdm845_driver);
+>> +}
+>> +subsys_initcall(lpass_cc_sdm845_init);
+> 
+> Also add module_exit() path.
+> 
+
+Will update in the next patch.
+
+>> +
+>> +MODULE_LICENSE("GPL v2");
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
