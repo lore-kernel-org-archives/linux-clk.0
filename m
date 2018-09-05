@@ -1,58 +1,83 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <t-kristo@ti.com>
-CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <j-keerthy@ti.com>, <russ.dill@ti.com>
-Subject: [PATCH v3 RESEND 0/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Tue, 4 Sep 2018 12:19:34 +0530
-Message-ID: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 5 Sep 2018 16:49:29 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH v4 4/4] drm/sun4i: Enable DesignWare HDMI for SUN50I
+Message-ID: <20180905144929.67kmbuef2ae6fm23@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180904163609.10171-4-jagan@amarulasolutions.com>
+ <20180905070819.gisznpkvvuqire7c@flea>
+ <CAMty3ZAzjSwq86BwB8O_7DrT0jrhn3ByzN34dY37pF3ZsAZ6uA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="q6f2ab7olekwmy4f"
+In-Reply-To: <CAMty3ZAzjSwq86BwB8O_7DrT0jrhn3ByzN34dY37pF3ZsAZ6uA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
 
-Tested for DS0 on am437x-gp-evm
+--q6f2ab7olekwmy4f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on top of linux-next
+On Wed, Sep 05, 2018 at 01:54:42PM +0530, Jagan Teki wrote:
+> On Wed, Sep 5, 2018 at 12:38 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Tue, Sep 04, 2018 at 10:06:09PM +0530, Jagan Teki wrote:
+> >> Allwinner SUN50I are now using DesignWare HDMI so enable
+> >> them as default. This can build DRM_SUN8I_DW_HDMI as module
+> >> since DRM in arm64 has module.
+> >>
+> >> Making this as defult to SUN8I, may cause an issue while
+> >> loading since arm32 DRM built as static.
+> >
+> > Uh? Why? We should fix this instead of working around it.
+>=20
+> I didn't dig further on this. Since ARM64 has is fine with it both
+> (module and static) may be we can take this.
 
-Resend Series:
+No, this build breakage needs to be (reported and) addressed first.
 
-  * Rebased on top of Linux 4.19-rc2
-  * Added Tony's Ack.
+Maxime
 
-Changes in v2:
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-        * Renamed clk_dflt_restore to clk_gate_restore_context
+--q6f2ab7olekwmy4f
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes in v3: Corrected the e-mail address of linux-omap list 
+-----BEGIN PGP SIGNATURE-----
 
-Keerthy (2):
-  clk: clk: Add clk_gate_restore_context function
-  ti: pm33xx: Save/restore clk context based on enable_off_mode setting
+iQIyBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluP7PgACgkQ0rTAlCFN
+r3T5kw/2Od43n9hafoNg1tqco9mclwfhV/jFpSOtIcn5up/zPCDuTmICAvcrL4eR
+Lp6FsVGmWDfKgVAFzbN9okOeOBb4q9UnFdxdM+kF/6Wimj6rfXXPGPZMRvrCkTe1
+84jtjJqnQh7tIAA4rvnqesGrXLhGJIwK0h7j9/tuG28Yub/mVXjbHF4F8HkAeSVP
+u6PCWJjWZ9UIk55hs7xcWfsojrNuue3+fkvmgZJ1bfgQ0XUQXC2bDCvU2QU6JM1h
+7x2bSVoBS4mKbdoYFUmP65gqLu5jwk52ZVrU2quvTPemebEv/jhziRbPOKokNZpm
+QCPkaDHZ+GGvr0yChUAhY8B2s/N7QXIyP296JZmXrzDHElri63VLWzjU2G8F80nt
+wmvhRaXCyQzZHnTypR+s6OBBqn1K2Nd67zmtiiP+m0CoTLOuxj5trf7CJ/jRISR8
+wIGExrVXMyWtXD+sq4tqYFyen7hitlir+suMHf5ebFg36usO4MNPfSQHSQw0QwcH
+3ES/svV/xVP73hCmU6Fsd03R0pieFuqh7tXhZEPOdDbY0z4VyOQ0ZuvDL4WaS3Qd
+s2xRXzjtCWyFBSIHTK9fslj8MeR5Twj9o52AANPXVzOr+Kr4ulxYypANuRwImWVz
+xtYmjxMdYqY8MasOiHCCkCYzeX84xhlkbpcIf9g+H3K/8vS1Mg==
+=Q3K4
+-----END PGP SIGNATURE-----
 
-Russ Dill (2):
-  clk: clk: Add functions to save/restore clock context en-masse
-  clk: ti: Add functions to save/restore clk context
-
- arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
- drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
- drivers/clk/ti/clock.h               |   2 +
- drivers/clk/ti/divider.c             |  36 ++++++++++
- drivers/clk/ti/dpll.c                |   6 ++
- drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c                |   3 +
- drivers/clk/ti/mux.c                 |  29 ++++++++
- drivers/soc/ti/pm33xx.c              |  13 ++++
- include/linux/clk-provider.h         |   9 +++
- include/linux/clk.h                  |  25 +++++++
- include/linux/clk/ti.h               |   6 ++
- include/linux/platform_data/pm33xx.h |   1 +
- 13 files changed, 362 insertions(+)
-
--- 
-1.9.1
+--q6f2ab7olekwmy4f--
