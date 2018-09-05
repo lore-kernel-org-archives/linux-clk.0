@@ -1,93 +1,52 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
-Date: Mon, 24 Sep 2018 12:11:48 +0200
-Message-Id: <20180924101150.23349-3-brgl@bgdev.pl>
-In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
-References: <20180924101150.23349-1-brgl@bgdev.pl>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Wed, 5 Sep 2018 15:31:56 +0000
+Message-ID: 
+ <TYXPR01MB1568EA45A14A2E811546ED2A8A020@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180829132841.64787-1-chris.brandt@renesas.com>
+ <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
+ <TYXPR01MB1568DD90490B28E46E949D658A020@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAMuHMdUojvTWiGhULtp=tgTz56S2MAuYnT1p-JQWBn3PUag8jg@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdUojvTWiGhULtp=tgTz56S2MAuYnT1p-JQWBn3PUag8jg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Export this routine so that we can use it later in devm_kstrdup_const()
-and devm_kfree_const().
-
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- include/asm-generic/sections.h | 14 ++++++++++++++
- mm/util.c                      |  7 -------
- 2 files changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
-index 849cd8eb5ca0..d79abca81a52 100644
---- a/include/asm-generic/sections.h
-+++ b/include/asm-generic/sections.h
-@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
- 	return memory_intersects(__init_begin, __init_end, virt, size);
- }
- 
-+/**
-+ * is_kernel_rodata - checks if the pointer address is located in the
-+ *                    .rodata section
-+ *
-+ * @addr: address to check
-+ *
-+ * Returns: true if the address is located in .rodata, false otherwise.
-+ */
-+static inline bool is_kernel_rodata(unsigned long addr)
-+{
-+	return addr >= (unsigned long)__start_rodata &&
-+	       addr < (unsigned long)__end_rodata;
-+}
-+
- #endif /* _ASM_GENERIC_SECTIONS_H_ */
-diff --git a/mm/util.c b/mm/util.c
-index 9e3ebd2ef65f..470f5cd80b64 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -15,17 +15,10 @@
- #include <linux/vmalloc.h>
- #include <linux/userfaultfd_k.h>
- 
--#include <asm/sections.h>
- #include <linux/uaccess.h>
- 
- #include "internal.h"
- 
--static inline int is_kernel_rodata(unsigned long addr)
--{
--	return addr >= (unsigned long)__start_rodata &&
--		addr < (unsigned long)__end_rodata;
--}
--
- /**
-  * kfree_const - conditionally free memory
-  * @x: pointer to the memory
--- 
-2.18.0
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDA1LCAyMDE4IDEsIEdlZXJ0IFV5
+dHRlcmhvZXZlbiB3cm90ZToNCj4gPiBTby4uLi5JIGd1ZXNzIEkgZGlkbid0IHJlYWxseSBoYXZl
+IGFuIGlzc3VlIGFmdGVyIGFsbC4NCj4gDQo+IFlvdSBkbyB3YW50IHRvOg0KPiAgIDEuIERvY3Vt
+ZW50IHRoZSB0d28gcmVnaXN0ZXIgcmFuZ2VzIGluIHRoZSBEVCBiaW5kaW5ncywNCj4gICAyLiBV
+cGRhdGUgdGhlIGRyaXZlciB0byBtYXAgYm90aCByYW5nZXMgb24gUlovQTIuDQoNClRoZSBkcml2
+ZXIgZG9lcyBub3QgbmVlZCB0byBiZSB1cGRhdGVkLg0KDQpHaXZlbiB0aGlzIG1hcHBpbmc6DQoN
+CgljcGc6IGNsb2NrLWNvbnRyb2xsZXJAZmNmZTAwMjAgew0KCQljb21wYXRpYmxlID0gInJlbmVz
+YXMscjdzOTIxMC1jcGctbXNzciI7DQoJCXJlZyA9IDwweGZjZmUwMDEwIDB4NDU1PjsgIC8qIEZD
+RkUwMDEwIC0gRkNGRTA0NjUgKi8NCgkJY2xvY2tzID0gPCZleHRhbF9jbGs+Ow0KCQljbG9jay1u
+YW1lcyA9ICJleHRhbCI7DQoJCSNjbG9jay1jZWxscyA9IDwyPjsNCgkJI3Bvd2VyLWRvbWFpbi1j
+ZWxscyA9IDwwPjsNCgkJI3Jlc2V0LWNlbGxzID0gPDE+Ow0KCX07DQoNClRoaXMgY292ZXJzIGFs
+bCB0aGUgQ1BHLCBNU1RQLCBwb3dlciBkb3duIGFuZCByZXNldCByZWdpc3RlcnMuDQoNClNvIEkn
+bSBqdXN0IGdvaW5nIHRvIG1hcCB0aGVtIGFsbCBhdCBvbmNlLg0KDQpBbmQsIHlvdSBjYW4gc2Vl
+IHRoYXQgc29tZSBDUEcgYW5kIE1TVFAgcmVnaXN0ZXIgYXJlIG1peGVkIHRvZ2V0aGVyLg0KSGVy
+ZSBpcyB0aGUgbGlzdCBvZiByZWdpc3RlcnMgaW4gYWRkcmVzcyBvcmRlcjoNCg0KIEZSUUNSICAg
+RkNGRV8wMDEwICAoQ1BHKQ0KU1RCQ1IxICAgRkNGRV8wMDIwICAoTVNUUCkNClNUQkNSMiAgIEZD
+RkVfMDAyNCAgKE1TVFApDQpDS0lPU0VMICBGQ0ZFXzAxMDAgIChDUEcpDQpTQ0xLU0VMICBGQ0ZF
+XzAxMDQgIChDUEcpDQpTVEJDUjMgICBGQ0ZFXzA0MjAgIChNU1RQKQ0KU1RCQ1I0ICAgRkNGRV8w
+NDI0ICAoTVNUUCkNClNUQkNSNSAgIEZDRkVfMDQyOCAgKE1TVFApDQpTVEJDUjYgICBGQ0ZFXzA0
+MkMgIChNU1RQKQ0KU1RCQ1I3ICAgRkNGRV8wNDMwICAoTVNUUCkNClNUQkNSOCAgIEZDRkVfMDQz
+NCAgKE1TVFApDQpTVEJDUjkgICBGQ0ZFXzA0MzggIChNU1RQKQ0KU1RCQ1IxMCAgRkNGRV8wNDND
+ICAoTVNUUCkNClNXUlNUQ1IxIEZDRkVfMDQ2MCAgKFJFU0VUKQ0KU1dSU1RDUjIgRkNGRV8wNDY0
+ICAoUkVTRVQpDQogIGV0Yy4uLg0KDQpTbyB0aGlzIHNob3VsZCBiZSBhbGwgb25lIG1lbW9yeSBi
+bG9jayBpbiB0aGlzIGRyaXZlci4NCg0KV2hlbiB5b3UgZ2V0IHRvIEZDRkZfQzAwMCssIHRoYXQn
+cyB3aGVyZSB0aGUgJ3NwZWNpYWx0eScgcmVnaXN0ZXJzIGFyZS4gDQpJIHRoaW5rIEZDRkZfQzAw
+MCsgc2hvdWxkIGJlIGEgc2VwYXJhdGUgYmxvY2ssIG1heWJlIGluIGEgc2VwYXJhdGUgZHJpdmVy
+Lg0KDQoNCkNocmlzDQoNCg==
