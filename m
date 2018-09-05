@@ -1,110 +1,54 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59519 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730304AbeIFUcG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:06 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 03/10] clk: samsung: s3c2412: Use generic helper for
- handling suspend/resume
-Date: Thu, 06 Sep 2018 17:55:25 +0200
-Message-id: <20180906155532.4085-4-m.szyprowski@samsung.com>
-In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
-References: <20180906155532.4085-1-m.szyprowski@samsung.com>
-        <CGME20180906155555eucas1p209b1988a1a1bf42298f1f1e483f47b55@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <jagan@amarulasolutions.com>
+MIME-Version: 1.0
+In-Reply-To: <20180905070335.dclhpxjld4vdkdu4@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com> <20180905070335.dclhpxjld4vdkdu4@flea>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Wed, 5 Sep 2018 13:25:30 +0530
+Message-ID: <CAMty3ZDVnsjJ0eRx1LxFjX+ti85=jRy=1x_sZ5d3yCHsVCD3HA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-Almost no functional change, the only difference is in handling
-of hypothetical memory allocation failure on boot.
+On Wed, Sep 5, 2018 at 12:33 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Tue, Sep 04, 2018 at 10:06:06PM +0530, Jagan Teki wrote:
+>> Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+>> as default.
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> ---
+>> Changes for v4, v3:
+>> - none
+>> Changes for v2:
+>> - Enable for MACH_SUN8I
+>>
+>>  drivers/clk/sunxi-ng/Kconfig | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+>> index 826674d090fd..e20182aa9748 100644
+>> --- a/drivers/clk/sunxi-ng/Kconfig
+>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>> @@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
+>>
+>>  config SUN8I_DE2_CCU
+>>       bool "Support for the Allwinner SoCs DE2 CCU"
+>> +     default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+>> +     depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
+>
+> I don't see why there's a dependency on the DRM driver. I'm pretty
+> sure this would even break simplefb.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-s3c2412.c | 43 ++-----------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-s3c2412.c b/drivers/clk/samsung/clk-s3c2412.c
-index 6bc94d3aff78..dd1159050a5a 100644
---- a/drivers/clk/samsung/clk-s3c2412.c
-+++ b/drivers/clk/samsung/clk-s3c2412.c
-@@ -11,7 +11,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- #include <linux/reboot.h>
- 
- #include <dt-bindings/clock/s3c2412.h>
-@@ -29,9 +28,6 @@
- 
- static void __iomem *reg_base;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *s3c2412_save;
--
- /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -45,42 +41,6 @@ static unsigned long s3c2412_clk_regs[] __initdata = {
- 	CLKSRC,
- };
- 
--static int s3c2412_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, s3c2412_save,
--				ARRAY_SIZE(s3c2412_clk_regs));
--
--	return 0;
--}
--
--static void s3c2412_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, s3c2412_save,
--				ARRAY_SIZE(s3c2412_clk_regs));
--}
--
--static struct syscore_ops s3c2412_clk_syscore_ops = {
--	.suspend = s3c2412_clk_suspend,
--	.resume = s3c2412_clk_resume,
--};
--
--static void __init s3c2412_clk_sleep_init(void)
--{
--	s3c2412_save = samsung_clk_alloc_reg_dump(s3c2412_clk_regs,
--						ARRAY_SIZE(s3c2412_clk_regs));
--	if (!s3c2412_save) {
--		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--			__func__);
--		return;
--	}
--
--	register_syscore_ops(&s3c2412_clk_syscore_ops);
--	return;
--}
--#else
--static void __init s3c2412_clk_sleep_init(void) {}
--#endif
--
- static struct clk_div_table divxti_d[] = {
- 	{ .val = 0, .div = 1 },
- 	{ .val = 1, .div = 2 },
-@@ -278,7 +238,8 @@ void __init s3c2412_common_clk_init(struct device_node *np, unsigned long xti_f,
- 	samsung_clk_register_alias(ctx, s3c2412_aliases,
- 				   ARRAY_SIZE(s3c2412_aliases));
- 
--	s3c2412_clk_sleep_init();
-+	samsung_clk_sleep_init(reg_base, s3c2412_clk_regs,
-+			       ARRAY_SIZE(s3c2412_clk_regs));
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
--- 
-2.17.1
+Ok, got it. I will drop the depends on just add default.
