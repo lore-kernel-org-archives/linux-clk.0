@@ -1,55 +1,57 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43764 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeISMJR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Sep 2018 08:09:17 -0400
-Date: Wed, 19 Sep 2018 09:32:47 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        sboyd@kernel.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
-Message-ID: <20180919063247.GC2295@localhost.localdomain>
-References: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <201809181853.7HyPgIo6%fengguang.wu@intel.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <201809181853.7HyPgIo6%fengguang.wu@intel.com>
-Sender: linux-clk-owner@vger.kernel.org
+References: <20180829132841.64787-1-chris.brandt@renesas.com> <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Sep 2018 16:31:08 +0200
+Message-ID: <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello All,
+Hi Chris,
 
-On Tue, Sep 18, 2018 at 06:13:48PM +0800, kbuild test robot wrote:
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on regulator/for-next]
-> [also build test ERROR on next-20180913]
-> [cannot apply to v4.19-rc4]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regulator-mfd-dt_bindings-bd718x7-Support-ROHM-bd71847/20180914-210454
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-> config: x86_64-randconfig-s4-09181517 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
-> >> drivers/regulator/bd718x7-regulator.c:364:16: error: implicit declaration of function 'of_match_ptr'; did you mean 'hash_ptr'? [-Werror=implicit-function-declaration]
->        .of_match = of_match_ptr("BUCK1"),
->                    ^~~~~~~~~~~~
->                    hash_ptr
+On Wed, Sep 5, 2018 at 4:12 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Wednesday, August 29, 2018, Chris Brandt wrote:
+> > Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+> > Standby.
+>
+> I ran into an issue with this driver.
+>
+> The issue is that the registers needed for this driver are scattered
+> throughout the address space.
+>
+> I can't just reserve one big block of addresses that cover everything
+> because then I can't reserve any of the addresses that sit in the middle.
 
-This error is not introduced in this patch series. The already in-tree
-implementation of bd71837 driver has this bug already. I'll send a
-trivial patch to Mark for adding the missing include.
+Yeah, this address range is kind of a "syscon" block.
 
-Br,
-	Matti Vaittinen
+> For example, my watchdog timer driver doesn't work with this driver
+> because it cannot allocate its register region.
+>
+> So, I think I need to rework this driver to add the ability to add
+> multiple address regions.
+
+Your main driver for this block (clock?) can register the watchdog.
+Either directly with the watchdog subsystem, or by registering an
+"rza_wdt" platform device.
+
+One more vote for a separate rza2-cpg-stb-wdt driver?...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
