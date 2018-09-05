@@ -1,32 +1,103 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Wed, 26 Sep 2018 17:55:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de,
-	fabio.estevam@nxp.com, linux@armlinux.org.uk,
-	mturquette@baylibre.com, sboyd@kernel.org, ping.bai@nxp.com,
-	Aisheng.dong@nxp.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2 3/4] dt-bindings: arm: add compatible for i.MX6ULZ
- 14x14 EVK board
-Message-ID: <20180926225543.GA20330@bogus>
-References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
- <1537337088-28819-4-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:36344 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbeIEMUp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Sep 2018 08:20:45 -0400
+Date: Wed, 5 Sep 2018 09:51:36 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64:
+ Enable HDMI output on A64 boards w/ HDMI
+Message-ID: <20180905075136.chumwosx76o2n66l@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1537337088-28819-4-git-send-email-Anson.Huang@nxp.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gtusaa4loc5rodye"
+In-Reply-To: <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 19 Sep 2018 14:04:47 +0800, Anson Huang wrote:
-> This patch adds compatible for i.MX6ULZ 14x14 EVK board.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--gtusaa4loc5rodye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > From: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > Enable all necessary device tree nodes and add connector node to device
+> > trees for all supported A64 boards with HDMI.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > [Icenowy: squash all board patches altogether and change supply name]
+> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > ---
+> > Changes in v4:
+> > - Rebase some device trees.
+> > Changes in v3,1:
+> > - Squash all enablement patches altogether.
+> > - Change supply name to match DT binding & driver change.
+> > Changes for v3:
+> > - Enable all pipeline components
+> > Changes for v2:
+> > - none
+> >
+> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+> >  6 files changed, 204 insertions(+)
+>=20
+> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+> A64-Olinuxino, NPI-A64
+>=20
+> Pine64 boards look unable by saying
+> [drm] Cannot find any crtc or sizes
+>=20
+> May be someone can confirm, it.
+
+Then we should drop the pine64 additions until someone figures it out,
+as it has been already discussed.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--gtusaa4loc5rodye
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPiwcACgkQ0rTAlCFN
+r3SElg//XDj99sAXXwkPKmW6hF9CnEGV/SAmzw8P/sbjvHMQmXH1sDS4KC8F3BAk
+AQvA8rQI/Scm4lS9A+6obtT+a4XXWb2icKYeee73wb68goVhPS3lbftl0EzW3IrB
+sCgDhiDKlNmacwMG5qM663UgfsnusbfqEae+KTHdpyskHgz5RUPve/SmzsAPtFhV
+aK42v/glNWGogb+U39CI9B1Ox9UYiwm1JKOWkCfDHV/uRwpRtan7XmmSKJLZadOq
+MJXinDRuO6w4UO6eCkvL6m9Nf8npKF5lrjGOMBInISysAfDD/Tgb8gquvr2dq2G/
+iDjXzVH+brqrjl8CNSUpwNleAmQ/pP4NN9zyQfP+g7d7EioIEGa2GRttxTYhoUuO
+lkDI77d/zidEjW7Sr4OCRqNSfWdb3RNvHBrtevqaSLbUGwiwcudPLUkVTQnarsQr
+q4Hr92d+gaZu/jyH4vw4C9U3LNv5QdUw7ITtaUjkiUD83f23LpsFwQvDhsgJh0j9
+vDCISwBDG8rb22PajSCgqUl7EtXon5O5PuwAiwDw/mmU2ZCREapcfbZw4rRRMLBN
+K4612S/5sxzw1DA8BZL+rG/LdaJIMwhvIdq8P3Xi0YakGvG68+fpK7Jj0cTGMxQD
+MaWCa/lW1SHaCBH6wgqt89v9p0h6zlGT08P5PIzZMcfXGRezVqk=
+=uU07
+-----END PGP SIGNATURE-----
+
+--gtusaa4loc5rodye--
