@@ -1,34 +1,72 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 05/27] clk: sunxi-ng: Use u64 for calculation of NM rate
-Date: Tue, 04 Sep 2018 20:06:52 +0200
-Message-ID: <4377030.YGBN1y1aZP@jernej-laptop>
-In-Reply-To: <CAGb2v64Y0ui6ZvAJqc2dXMKtSSQJ-T4ubrV9188JTV7aFSrFCA@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-6-jernej.skrabec@siol.net> <CAGb2v64Y0ui6ZvAJqc2dXMKtSSQJ-T4ubrV9188JTV7aFSrFCA@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:34814 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeIELt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:49:56 -0400
+Date: Wed, 5 Sep 2018 09:21:04 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 04/11] drm/sun4i: Add support for A64 mixers
+Message-ID: <20180905072104.n2v54om6lc4hylf4@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-5-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gqzvseqdskkuquks"
+In-Reply-To: <20180904044053.15425-5-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne torek, 04. september 2018 ob 11:18:47 CEST je Chen-Yu Tsai napisal(a):
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
-> > rate is 24MHz, intermediate result when calculating final rate easily
-> > overflows 32 bit variable.
-> > 
-> > Because of that, introduce function for calculating clock rate which
-> > uses 64 bit variable for intermediate result.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> 
-> The code looks good. The A80's Video PLLs are also affected by this.
-> The range for N on the A80 is 12 ~ 255.
-> 
-> Can you add fixes and stable tags?
 
-Sure.
+--gqzvseqdskkuquks
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> ChenYu
+On Tue, Sep 04, 2018 at 12:40:46PM +0800, Icenowy Zheng wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>=20
+> Mixers in Allwinner have similar capabilities as others SoCs with DE2.
+>=20
+> Add support for them.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> [Icenowy: Add mixer1]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--gqzvseqdskkuquks
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg98ACgkQ0rTAlCFN
+r3TKAQ//ZtxhtHf+V1D9/0wEn+/6lO6xD62DDNIAT0l7KUHEx+Sz7EWFm5kyuGX9
+kMmjV1TqKK0a35pMaiH/HZcgxr7vCtK+JkgKKy30rx2NCeszVHm5GVMXBTzHsPqF
+saDB2ULWRbcfYKE/arPljmj7cI4Qjk7z/kVwnedvwLi4NcNWd4M27FmhzDFnH+wU
+Mq/fvzCMbUb8Acsr7TyY5jgO9c/O4GXV/W5tTKGANo+YuU6NJBZPjJxWl/YLH5qd
+e48CdfOIMOpdvGXWXRj4PMUXft0eR/JtzKXp9FqvogdbgGRXuqBFawmv1Vv6QlX6
+ZRmqxh7LGcV+dDyt6HG/NE/Aljvo9Bqu1azCWG+RXWKeYnKaQ5kQhG6ALwMSXz32
+4na6PyLbN9T3ZYrB6rNMqBK6PpGNcD+hEEqMPHsul9wk6NY8q3m8QW+6p/AuGbqZ
+HP1QEQrzNynTWE51C1MGBdhjBGlj920jc687g1T5CgW+H7AfIFeD8FxDHI8BbEn7
+OrwQn2q6HXg+NDsI8QA/pqLNZI3QbTCTXLsmRDNX2rFFiOTmfEdg0LiyNeAMMZKJ
+7ftw+zkMPIYwUbMiAxD3+cnIBTW7CcluFyX0kG+q6ejfgV1AI1P7P/p00zskTeTH
+ShZ2hsblcKo78DLGHRF7Nw6TRnAwMhfHjtobMOcOGfQFz4NO+Mc=
+=arh9
+-----END PGP SIGNATURE-----
+
+--gqzvseqdskkuquks--
