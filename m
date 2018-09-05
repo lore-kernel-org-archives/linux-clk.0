@@ -1,71 +1,73 @@
-Return-Path: <lkp@intel.com>
-Date: Tue, 4 Sep 2018 23:49:09 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: kbuild-all@01.org, robh+dt@kernel.org, maxime.ripard@bootlin.com,
-	wens@csie.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-	a.hajda@samsung.com, jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/27] clk: sunxi-ng: h6: Set video PLLs limits
-Message-ID: <20180904154909.GR17047@intel.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.bootlin.com ([62.4.15.54]:34970 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeIELum (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Sep 2018 07:50:42 -0400
+Date: Wed, 5 Sep 2018 09:21:51 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 07/11] dt-bindings: clock: sun50i-a64-ccu: Add
+ PLL_VIDEO0 macro
+Message-ID: <20180905072151.3jqfpzuawyohov3f@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-8-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180902072643.4917-7-jernej.skrabec@siol.net>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t3gzuf2gmgk6626l"
+In-Reply-To: <20180904044053.15425-8-icenowy@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jernej,
 
-Thank you for the patch! Perhaps something to improve:
+--t3gzuf2gmgk6626l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test WARNING on sunxi/sunxi/for-next]
-[also build test WARNING on v4.19-rc2 next-20180831]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+On Tue, Sep 04, 2018 at 12:40:49PM +0800, Icenowy Zheng wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>=20
+> Allwinner A64 HDMI PHY clock has PLL_VIDEO0 as a parent.
+>=20
+> Include the macro on dt-bindings so-that the same can be used
+> while defining CCU clock phandles.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-url:    https://github.com/0day-ci/linux/commits/Jernej-Skrabec/Allwinner-H6-DE3-and-HDMI-support/20180903-082543
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi/for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-:::::: branch date: 6 hours ago
-:::::: commit date: 6 hours ago
+Applied, thanks!
+Maxime
 
->> drivers/clk/sunxi-ng/ccu-sun50i-h6.c:124:27: sparse: constant 2400000000 is so big it is long
-   drivers/clk/sunxi-ng/ccu-sun50i-h6.c:142:27: sparse: constant 2400000000 is so big it is long
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-# https://github.com/0day-ci/linux/commit/752a88510f0bcada69753fccb31adb187f80f29a
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 752a88510f0bcada69753fccb31adb187f80f29a
-vim +124 drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+--t3gzuf2gmgk6626l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-524353ea4 Icenowy Zheng  2018-03-16  111  
-524353ea4 Icenowy Zheng  2018-03-16  112  /*
-524353ea4 Icenowy Zheng  2018-03-16  113   * For Video PLLs, the output divider is described as "used for testing"
-524353ea4 Icenowy Zheng  2018-03-16  114   * in the user manual. So it's not modelled and forced to 0.
-524353ea4 Icenowy Zheng  2018-03-16  115   */
-524353ea4 Icenowy Zheng  2018-03-16  116  #define SUN50I_H6_PLL_VIDEO0_REG	0x040
-524353ea4 Icenowy Zheng  2018-03-16  117  static struct ccu_nm pll_video0_clk = {
-524353ea4 Icenowy Zheng  2018-03-16  118  	.enable		= BIT(31),
-524353ea4 Icenowy Zheng  2018-03-16  119  	.lock		= BIT(28),
-524353ea4 Icenowy Zheng  2018-03-16  120  	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
-524353ea4 Icenowy Zheng  2018-03-16  121  	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
-524353ea4 Icenowy Zheng  2018-03-16  122  	.fixed_post_div	= 4,
-752a88510 Jernej Skrabec 2018-09-02  123  	.min_rate	= 288000000,
-752a88510 Jernej Skrabec 2018-09-02 @124  	.max_rate	= 2400000000,
-524353ea4 Icenowy Zheng  2018-03-16  125  	.common		= {
-524353ea4 Icenowy Zheng  2018-03-16  126  		.reg		= 0x040,
-524353ea4 Icenowy Zheng  2018-03-16  127  		.features	= CCU_FEATURE_FIXED_POSTDIV,
-524353ea4 Icenowy Zheng  2018-03-16  128  		.hw.init	= CLK_HW_INIT("pll-video0", "osc24M",
-524353ea4 Icenowy Zheng  2018-03-16  129  					      &ccu_nm_ops,
-524353ea4 Icenowy Zheng  2018-03-16  130  					      CLK_SET_RATE_UNGATE),
-524353ea4 Icenowy Zheng  2018-03-16  131  	},
-524353ea4 Icenowy Zheng  2018-03-16  132  };
-524353ea4 Icenowy Zheng  2018-03-16  133  
+-----BEGIN PGP SIGNATURE-----
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPhA4ACgkQ0rTAlCFN
+r3QDQxAAj7mPvzsiH5fbSmjgQ+8ntWeBcT2+HPD+cPwtc6eSLNzjFBYEGmmp1yge
+ek+tHfSqaNNaSMv8DDRoOX24hYCwJEyZSlLM9nJ67X6v71eWKV6eIYStA7NeWYfZ
+FNIp+aF++6eKkTlDa+ouyh/z3nsbcJ/yWcD9FFoISfCNCL3InlmRRh/9vTHUBabU
+AHprK7P0m3YICEbKjDw0Vnm6zYptLn5RcHSCFWRi0i6fk/XTzovp8+w0qzaxygK5
+ivkgBM9mBI6KZhCBq3Laf/OHe/cL/bERYX52N2fcdFhQNroT/IaR8EW5+zvBm8/b
+Z0gzgblz62E0qHIvPwdpT/5JJksezmZQPbXvNRi5TUFri+dsVZ/VBjp1MefgiLqC
+Yv+rz9OuXA9rC7ql57/lznqmvSfygH+SjNdoFkRgj47gdDpX02nEMVn/MHkeW3WU
+K+0ZHMtiWEhc2YySEZngBfC4UyR1cl6teD6d+lVamfl98V/LlthWF8MaVlllBM1y
+YKdXVQ9lSJr1IzAddN10ca6oQVbnJAHUBoVMMqw/L2ep83OaJ39sXXrI4Y3CELIJ
+6Jc0Xo6M1f07aO9vccecsN7gHeqLctnxesUR/QOSEaoRAUbSDYhC37TzPjAAO+nO
+JuV68cT2too0edp4bDMK4OqxM8lVGWDbjCGfPAc89wGYM1pTv0A=
+=TGu8
+-----END PGP SIGNATURE-----
+
+--t3gzuf2gmgk6626l--
