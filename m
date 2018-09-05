@@ -1,43 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15257 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeIOEXq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Sep 2018 00:23:46 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 13/14] memory: tegra: enable Tegra210 EMC scaling driver
-Date: Sat, 15 Sep 2018 00:48:14 +0300
-Message-ID: <1536961695-27809-14-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Wed, 5 Sep 2018 09:08:19 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 4/4] drm/sun4i: Enable DesignWare HDMI for SUN50I
+Message-ID: <20180905070819.gisznpkvvuqire7c@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180904163609.10171-4-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dalurjfys7j4k4zw"
+In-Reply-To: <20180904163609.10171-4-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 6d74e49..456719a 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -15,3 +15,13 @@ config TEGRA124_EMC
- 	  Tegra124 chips. The EMC controls the external DRAM on the board.
- 	  This driver is required to change memory timings / clock rate for
- 	  external memory.
-+
-+config TEGRA210_EMC
-+	bool "NVIDIA Tegra210 External Memory Controller driver"
-+	default y
-+	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-+	help
-+	  This driver is for the External Memory Controller (EMC) found on
-+	  Tegra210 chips. The EMC controls the external DRAM on the board.
-+	  This driver is required to change memory timings / clock rate for
-+	  external memory.
--- 
-1.9.1
+--dalurjfys7j4k4zw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 04, 2018 at 10:06:09PM +0530, Jagan Teki wrote:
+> Allwinner SUN50I are now using DesignWare HDMI so enable
+> them as default. This can build DRM_SUN8I_DW_HDMI as module
+> since DRM in arm64 has module.
+>=20
+> Making this as defult to SUN8I, may cause an issue while
+> loading since arm32 DRM built as static.
+
+Uh? Why? We should fix this instead of working around it.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--dalurjfys7j4k4zw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPgOIACgkQ0rTAlCFN
+r3SxWg/+Psm2VdDssaS2hlPN8yqt6NwxWzfVgyg51qEsdyGMD4+d3TR+10iXfnM+
+rzH076iYp0ZBKFJ1ehkLhfW7/RLOPHY18H8MVPckjde6BhRlTtqOfc3lBtCwxkxt
+rYMidQMOij0+w4sFtv98gcdtozfbz8y9PorSpVreJj2lkA9DonTTbX44h0JTLJLQ
+DpvBdliDCkDxRDzrnGgcWhVqOsCuw5FtaLcGaA8Mh2Gx5AAUz4b8pPMmhV8zZWxO
+pdTW3da3YReUwbQs40BI4z3w6m5tQ3p3puDWQU/js34Ihi83mqzQO7Nb7rNFsnHB
+QCK9RtzdaTYm9XhC+0WqHmltn3LKlJJqTM6p5Nstx9rycAHqCzcWpYYzR6JES6rK
+tKz0u2+p15I3piA9lB95G+qgqJMXO5VhIAMVS+IuPa0sttLFPPS2DKy4cEKvSoto
+3PUpz8z9n2j8wlr6hT4dYOOLkA4nyVBwHZ4hXrakyy65/1gMB2VXNzzna7GWfY1B
++zH7EJ0W1WI4Qd0bk2dXERAkcGW1JhyStWD13udnTratz/51EEAx1pOVV4tAOPEL
+PyRyGdAVfe5ycUP2g8J+n3rdi+NKaztoqhfSJhIkNzdog8eO3VUuCCj8FbFtAIQX
+43zurL9W0rCt5MSU3raho3Dwo3Ju1FX8r40sa95QSHLA1KHo2sM=
+=SQ9C
+-----END PGP SIGNATURE-----
+
+--dalurjfys7j4k4zw--
