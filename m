@@ -1,134 +1,80 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34482 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727527AbeIFD0F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Sep 2018 23:26:05 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180919121342.18288-1-m.szyprowski@samsung.com>
-References: <CGME20180919121357eucas1p19717351c40697483d3bf467c55e46f51@eucas1p1.samsung.com>
- <20180919121342.18288-1-m.szyprowski@samsung.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 19 Sep 2018 23:18:52 +0200
-Message-ID: <CAPDyKFpcs8VgPcBF4fta=tLPUatxbhvSN3TLrxm1qqDN=OS29Q@mail.gmail.com>
-Subject: Re: [RFC/PATCH] clk: samsung: exynos5433: Fix NOIRQ suspend/resume support
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+ <20180905075136.chumwosx76o2n66l@flea> <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Wed, 5 Sep 2018 15:53:23 -0700
+Message-ID: <CA+E=qVdWXWztLj3989X+U+=4P5FpM4hs+6ByVmq8bf7mPeiWsA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable
+ HDMI output on A64 boards w/ HDMI
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Icenowy Zheng <icenowy@aosc.io>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-pm-owner@vger.kernel.org
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On 19 September 2018 at 14:13, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> My recent commit af68ec14f112 'clk: samsung: Use NOIRQ stage for Exynos5433
-> clocks suspend/resume' moved Exynos5433 CMU suspend/resume callbacks
-> to NOIRQ stage. It turned out that in some cases this is not enough to
-> ensure that clocks provided by the given CMU will be available for other
-> drivers during their NOIRQ system suspend/resume phase. Device core calls
-> pm_runtime_disable and pm_runtime_enable unconditionally on every device
-> during LATE system suspend/resume phase. This means that during
-> noirq_resume, CMU device cannot be runtime resumed, because its
-> power.disable_depth is higher than zero (runtime PM for it will be enabled
-> later in device_resume_early function).
->
-> To let other devices properly use clocks and keep runtime PM enabled also
-> during NOIRQ system sleep phase, add calls to pm_runtime_enable/disable
-> to balance the actions done by device core. The CMU device will be
-> suspended in its noirq_suspend callback and finally resumed in noirq_resume.
+I can test it tonight.
 
-
+On Wed, Sep 5, 2018 at 12:57 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> On Wed, Sep 5, 2018 at 1:21 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>> On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+>>> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>> > From: Jagan Teki <jagan@amarulasolutions.com>
+>>> >
+>>> > Enable all necessary device tree nodes and add connector node to device
+>>> > trees for all supported A64 boards with HDMI.
+>>> >
+>>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>> > [Icenowy: squash all board patches altogether and change supply name]
+>>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>> > ---
+>>> > Changes in v4:
+>>> > - Rebase some device trees.
+>>> > Changes in v3,1:
+>>> > - Squash all enablement patches altogether.
+>>> > - Change supply name to match DT binding & driver change.
+>>> > Changes for v3:
+>>> > - Enable all pipeline components
+>>> > Changes for v2:
+>>> > - none
+>>> >
+>>> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+>>> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+>>> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+>>> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+>>> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+>>> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+>>> >  6 files changed, 204 insertions(+)
+>>>
+>>> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+>>> A64-Olinuxino, NPI-A64
+>>>
+>>> Pine64 boards look unable by saying
+>>> [drm] Cannot find any crtc or sizes
+>>>
+>>> May be someone can confirm, it.
+>>
+>> Then we should drop the pine64 additions until someone figures it out,
+>> as it has been already discussed.
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Hi!
+> That is fine, but If anyone have pine64 can confirm this.
 >
-> The unconditional calls to pm_runtime_enable and pm_runtime_enable
-> in device_suspend_late and device_resume_early core functions were a bit
-> surprising for me, because they make NOIRQ phase a special case from
-> the perspective of runtime PM handling. Using LATE system sleep phase
-> to call pm_runtime_enable/disable looks like a workaround for me, but right
-> now I have no other idea how to ensure proper behavior of the Exynos5433
-> CMU driver.
->
-> The most strange thing is that I didn't observe this initially after
-> switching to NOIRQ phase. The CMU device (FSYS_CMU) which is not under
-> any power domain behaved correctly and was properly available for DWMMC
-> device, which needs to enable clocks in its noirq_resume callback.
->
-> However, in case of AUD_CMU and its clients (for example serial_3 device,
-> which is a part of audio-subsytem), the pm_runtime_get_sync() called from
-> clk_prepare() failed, because AUD_CMU device had still disabled runtime PM
-> support. The only difference between FSYS_CMU and AUD_CMU, is the fact
-> that AUD_CMU is under AUD power domain, while FSYS_CMU device has no power
-> domain assigned (for completely other reasons FSYS power domains is not yet
-> instantiated in exynos5433.dtsi).
->
-> Ulf/Rafael: could You comment a bit on this issue? How it should be solved
-> properly?
-
-In general, this sounds like the classical problem of
-suspending/resuming devices in a correct order. The long term solution
-is to use device links to address this problem.
-
-However, as a simple fix, I would try to add a ->prepare() callback
-and call pm_runtime_get_sync() from it and then in a new corresponding
-->complete() callback, call pm_runtime_put().
-
-This means that the device will stay runtime resumed until the
-suspend_noirq phase. It would also means the pm_runtime_force_resume()
-will resume the device at resume_noirq phase. Would that work?
-
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 4a0f8ff87ca0..7e6c0c9397a9 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -5623,6 +5623,24 @@ static int __maybe_unused exynos5433_cmu_resume(struct device *dev)
->         return 0;
->  }
->
-> +/*
-> + * late_suspend and early_resume callbacks are required to balance
-> + * pm_runtime_disable and pm_runtime_enable calls in device_suspend_late
-> + * and device_resume_early core functions to keep runtime enabled for
-> + * CMU device during noirq sleep phase.
-> + */
-> +static int __maybe_unused exynos5433_late_suspend(struct device *dev)
-> +{
-> +       pm_runtime_enable(dev);
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused exynos5433_early_resume(struct device *dev)
-> +{
-> +       pm_runtime_disable(dev);
-> +       return 0;
-> +}
-> +
->  static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  {
->         const struct samsung_cmu_info *info;
-> @@ -5760,6 +5778,8 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
->  static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
->         SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
->                            NULL)
-> +       SET_LATE_SYSTEM_SLEEP_PM_OPS(exynos5433_late_suspend,
-> +                                    exynos5433_early_resume)
->         SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
->                                      pm_runtime_force_resume)
->  };
-> --
-> 2.17.1
->
-
-Kind regards
-Uffe
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
