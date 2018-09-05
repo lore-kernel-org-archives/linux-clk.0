@@ -1,67 +1,41 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH V2 0/4] Add i.MX6ULZ SoC support
-Date: Wed, 19 Sep 2018 14:04:44 +0800
-Message-Id: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Wed, 5 Sep 2018 14:12:18 +0000
+Message-ID: 
+ <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180829132841.64787-1-chris.brandt@renesas.com>
+In-Reply-To: <20180829132841.64787-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-This patch set adds i.MX6ULZ SoC support, i.MX6ULZ is a new SoC of
-i.MX6 family, compared to i.MX6ULL, it removes below modules:
+Hi Geert,
 
-    - UART5/UART6/UART7/UART8;
-    - PWM5/PWM6/PWM7/PWM8;
-    - eCSPI3/eCSPI4;
-    - CAN1/CAN2;
-    - FEC1/FEC2;
-    - I2C3/I2C4;
-    - EPIT2;
-    - LCDIF;
-    - GPT2;
-    - TSC;
+On Wednesday, August 29, 2018, Chris Brandt wrote:
+>=20
+> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+> Standby.
 
-And i.MX6ULZ has same soc_id as i.MX6ULL, but SRC_SBMR2 bit[6] is
-to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means i.MX6ULZ and
-1'b0 means i.MX6ULL. i.MX6ULZ reuse most of i.MX6UL/i.MX6ULL code,
-just add the new CPU type and remove those non-exist modules from dtb.
+I ran into an issue with this driver.
 
-Anson Huang (4):
-  ARM: imx: add i.mx6ulz msl support
-  clk: imx6ul: add i.mx6ulz support
-  dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
-  ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
+The issue is that the registers needed for this driver are scattered=20
+throughout the address space.
 
- Documentation/devicetree/bindings/arm/fsl.txt |  4 +++
- arch/arm/boot/dts/Makefile                    |  3 ++-
- arch/arm/boot/dts/imx6ulz-14x14-evk.dts       | 20 ++++++++++++++
- arch/arm/boot/dts/imx6ulz.dtsi                | 38 +++++++++++++++++++++++++++
- arch/arm/mach-imx/anatop.c                    | 20 ++++++++++++++
- arch/arm/mach-imx/cpu.c                       |  3 +++
- arch/arm/mach-imx/mach-imx6ul.c               |  1 +
- arch/arm/mach-imx/mxc.h                       |  7 +++++
- arch/arm/mach-imx/pm-imx6.c                   |  4 +--
- drivers/clk/imx/clk-imx6ul.c                  |  3 ++-
- 10 files changed, 99 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
- create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
+I can't just reserve one big block of addresses that cover everything=20
+because then I can't reserve any of the addresses that sit in the middle.
 
--- 
-2.7.4
+For example, my watchdog timer driver doesn't work with this driver=20
+because it cannot allocate its register region.
+
+So, I think I need to rework this driver to add the ability to add=20
+multiple address regions.
+
+Chris
