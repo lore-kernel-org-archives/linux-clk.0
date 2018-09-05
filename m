@@ -1,133 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46877 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730394AbeIFUcH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:07 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 05/10] clk: samsung: s3c64xx: Use generic helper for
- handling suspend/resume
-Date: Thu, 06 Sep 2018 17:55:27 +0200
-Message-id: <20180906155532.4085-6-m.szyprowski@samsung.com>
-In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
-References: <20180906155532.4085-1-m.szyprowski@samsung.com>
-        <CGME20180906155556eucas1p2546c6d2fa7d42bad8ea021aea249752a@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 5 Sep 2018 09:21:36 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 06/11] dt-bindings: display: Add compatible for A64
+ HDMI
+Message-ID: <20180905072136.kzky22gkpkvjh35z@flea>
+References: <20180904044053.15425-1-icenowy@aosc.io>
+ <20180904044053.15425-7-icenowy@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4xrw2dfl335tthev"
+In-Reply-To: <20180904044053.15425-7-icenowy@aosc.io>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-Almost no functional change, the only difference is in handling
-of hypothetical memory allocation failure on boot.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-s3c64xx.c | 66 +++----------------------------
- 1 file changed, 6 insertions(+), 60 deletions(-)
+--4xrw2dfl335tthev
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index 6db01cf5ab83..329a449f78c3 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -12,7 +12,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- 
- #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
- 
-@@ -59,10 +58,6 @@
- static void __iomem *reg_base;
- static bool is_s3c6400;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *s3c64xx_save_common;
--static struct samsung_clk_reg_dump *s3c64xx_save_soc;
--
- /*
-  * List of controller registers to be saved and restored during
-  * a suspend/resume cycle.
-@@ -89,60 +84,6 @@ static unsigned long s3c6410_clk_regs[] __initdata = {
- 	MEM0_GATE,
- };
- 
--static int s3c64xx_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, s3c64xx_save_common,
--				ARRAY_SIZE(s3c64xx_clk_regs));
--
--	if (!is_s3c6400)
--		samsung_clk_save(reg_base, s3c64xx_save_soc,
--					ARRAY_SIZE(s3c6410_clk_regs));
--
--	return 0;
--}
--
--static void s3c64xx_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, s3c64xx_save_common,
--				ARRAY_SIZE(s3c64xx_clk_regs));
--
--	if (!is_s3c6400)
--		samsung_clk_restore(reg_base, s3c64xx_save_soc,
--					ARRAY_SIZE(s3c6410_clk_regs));
--}
--
--static struct syscore_ops s3c64xx_clk_syscore_ops = {
--	.suspend = s3c64xx_clk_suspend,
--	.resume = s3c64xx_clk_resume,
--};
--
--static void __init s3c64xx_clk_sleep_init(void)
--{
--	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
--						ARRAY_SIZE(s3c64xx_clk_regs));
--	if (!s3c64xx_save_common)
--		goto err_warn;
--
--	if (!is_s3c6400) {
--		s3c64xx_save_soc = samsung_clk_alloc_reg_dump(s3c6410_clk_regs,
--						ARRAY_SIZE(s3c6410_clk_regs));
--		if (!s3c64xx_save_soc)
--			goto err_soc;
--	}
--
--	register_syscore_ops(&s3c64xx_clk_syscore_ops);
--	return;
--
--err_soc:
--	kfree(s3c64xx_save_common);
--err_warn:
--	pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--		__func__);
--}
--#else
--static void __init s3c64xx_clk_sleep_init(void) {}
--#endif
--
- /* List of parent clocks common for all S3C64xx SoCs. */
- PNAME(spi_mmc_p)	= { "mout_epll", "dout_mpll", "fin_pll", "clk27m" };
- PNAME(uart_p)		= { "mout_epll", "dout_mpll" };
-@@ -508,7 +449,12 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
- 
- 	samsung_clk_register_alias(ctx, s3c64xx_clock_aliases,
- 					ARRAY_SIZE(s3c64xx_clock_aliases));
--	s3c64xx_clk_sleep_init();
-+
-+	samsung_clk_sleep_init(reg_base, s3c64xx_clk_regs,
-+			       ARRAY_SIZE(s3c64xx_clk_regs));
-+        if (!is_s3c6400)
-+		samsung_clk_sleep_init(reg_base, s3c6410_clk_regs,
-+				       ARRAY_SIZE(s3c6410_clk_regs));
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
--- 
-2.17.1
+On Tue, Sep 04, 2018 at 12:40:48PM +0800, Icenowy Zheng wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>=20
+> The HDMI controller on Allwinner A64 is similar on the one on
+> H3/H5/A83T (although the PHY is different with A83T).
+>=20
+> Add A64 compatible and append A83T compatible as fallback.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> [Icenowy: refactor commit log]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4xrw2dfl335tthev
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg/8ACgkQ0rTAlCFN
+r3TfqBAAh+KfQix0sYDpcqb0FchTDdVxqzewRs6mDTgJRLlXVoL2mjdxHwPHHXta
+SVp0lr1nDrHWE9s2Qmkf2ckp/s3A4nBL20AVTon3xHsCusZh3mGmu0su30VSw7iw
+aZD473t6VYRdhVYZyrzqS1/cjp4s1mKzjoVd5TSfGgUm+ltvw5tBHNuSIyIQqCoq
+TeJ3L0tRS7ybbUAEeJTGvw6lS2qmZzGFQsqRHx24Dt/mi6nqk9oS3bRqrjmQ8yHs
+0fLQ7kEzLzmzolS1F97pf8V1svWfTEU412GaNsoV/W2K37kZyrTfRzaG8RC6RNFG
+TVnmqlZP/0kJ2v4O4UoDb2qixVyQ3vb8oqKo85hMkQsQANfsKTewfYsP+hoTlX5T
++wGumT2l+d4Yci6r6xUROvsqbNwVdcOHf1/knDYO+bDiJJrUzaJoBLe0mEzCHE18
+QThZbDCLuizK+zCtojjOLyYDslOWEufwCmODdAsx1WvM031Iyix4Uk1t8fTYtbQd
+Pae1KLhoDQZJKvpGxmXiYPYJO4Et1TBXtWem4z2AgI7AK657lIpUbQ/r9YZnd2D5
+IF2Mm7xVGAYQCC6lsQXYQrA98xxCOVn8jyc6mcruSh9MqV/FOUHEZeEAdrZJKQFz
+siVzxPRJQNfwoXFDlu16YUFqXX/muBLiABdvzstlNAGQsx3aAwI=
+=Turg
+-----END PGP SIGNATURE-----
+
+--4xrw2dfl335tthev--
