@@ -1,86 +1,133 @@
-Return-Path: <sha@pengutronix.de>
-Date: Mon, 24 Sep 2018 08:47:03 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
-	Abel Vesa <abelvesa@linux.com>, Shawn Guo <shawnguo@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v8 4/5] clk: imx: add imx composite clock
-Message-ID: <20180924064703.GY4097@pengutronix.de>
-References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
- <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46877 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730394AbeIFUcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:07 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 05/10] clk: samsung: s3c64xx: Use generic helper for
+ handling suspend/resume
+Date: Thu, 06 Sep 2018 17:55:27 +0200
+Message-id: <20180906155532.4085-6-m.szyprowski@samsung.com>
+In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
+References: <20180906155532.4085-1-m.szyprowski@samsung.com>
+        <CGME20180906155556eucas1p2546c6d2fa7d42bad8ea021aea249752a@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Abel,
+Replace common suspend/resume handling code by generic helper.
+Almost no functional change, the only difference is in handling
+of hypothetical memory allocation failure on boot.
 
-On Fri, Sep 21, 2018 at 03:11:33PM +0300, Abel Vesa wrote:
-> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
-> divider, the idea here is to combine all of those into one composite clock,
-> but we need to deal with both predivider and divider at the same time and
-> therefore we add the imx_clk_composite_divider_ops and register the composite
-> clock with those.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
-> ---
->  drivers/clk/imx/Makefile        |   1 +
->  drivers/clk/imx/clk-composite.c | 156 ++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h           |  14 ++++
->  3 files changed, 171 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-composite.c
-> 
-> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-> +					unsigned long rate,
-> +					unsigned long parent_rate)
-> +{
-> +	struct clk_divider *divider = to_clk_divider(hw);
-> +	unsigned long prediv_rate;
-> +	unsigned long flags = 0;
-> +	int prediv_value;
-> +	int div_value;
-> +	u32 val;
-> +
-> +	prediv_value = divider_get_val(rate, parent_rate, NULL,
-> +				PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (prediv_value < 0)
-> +		return prediv_value;
-> +
-> +	prediv_rate = DIV_ROUND_UP_ULL((u64)parent_rate, prediv_value + 1);
-> +
-> +	div_value = divider_get_val(rate, prediv_rate, NULL,
-> +				PCG_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
-> +	if (div_value < 0)
-> +		return div_value;
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-s3c64xx.c | 66 +++----------------------------
+ 1 file changed, 6 insertions(+), 60 deletions(-)
 
-Does this work with expected accuracy? Consider the best divider you are
-looking for is 9. With the above you'll end up with a predivider of 8
-and a postdivider of 1 instead of the optimum divider values of 3 and 3.
-
-I think you have to iterate over all possible divider combinations and
-then use the best one found. The original divider code does this, albeit
-a little obfuscated.
-
-You have to do the same in round_rate aswell.
-
-Sorry, I missed that when I last looked at it in v6.
-
-Sascha
-
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 6db01cf5ab83..329a449f78c3 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -12,7 +12,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
+ 
+ #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
+ 
+@@ -59,10 +58,6 @@
+ static void __iomem *reg_base;
+ static bool is_s3c6400;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s3c64xx_save_common;
+-static struct samsung_clk_reg_dump *s3c64xx_save_soc;
+-
+ /*
+  * List of controller registers to be saved and restored during
+  * a suspend/resume cycle.
+@@ -89,60 +84,6 @@ static unsigned long s3c6410_clk_regs[] __initdata = {
+ 	MEM0_GATE,
+ };
+ 
+-static int s3c64xx_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s3c64xx_save_common,
+-				ARRAY_SIZE(s3c64xx_clk_regs));
+-
+-	if (!is_s3c6400)
+-		samsung_clk_save(reg_base, s3c64xx_save_soc,
+-					ARRAY_SIZE(s3c6410_clk_regs));
+-
+-	return 0;
+-}
+-
+-static void s3c64xx_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s3c64xx_save_common,
+-				ARRAY_SIZE(s3c64xx_clk_regs));
+-
+-	if (!is_s3c6400)
+-		samsung_clk_restore(reg_base, s3c64xx_save_soc,
+-					ARRAY_SIZE(s3c6410_clk_regs));
+-}
+-
+-static struct syscore_ops s3c64xx_clk_syscore_ops = {
+-	.suspend = s3c64xx_clk_suspend,
+-	.resume = s3c64xx_clk_resume,
+-};
+-
+-static void __init s3c64xx_clk_sleep_init(void)
+-{
+-	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
+-						ARRAY_SIZE(s3c64xx_clk_regs));
+-	if (!s3c64xx_save_common)
+-		goto err_warn;
+-
+-	if (!is_s3c6400) {
+-		s3c64xx_save_soc = samsung_clk_alloc_reg_dump(s3c6410_clk_regs,
+-						ARRAY_SIZE(s3c6410_clk_regs));
+-		if (!s3c64xx_save_soc)
+-			goto err_soc;
+-	}
+-
+-	register_syscore_ops(&s3c64xx_clk_syscore_ops);
+-	return;
+-
+-err_soc:
+-	kfree(s3c64xx_save_common);
+-err_warn:
+-	pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+-		__func__);
+-}
+-#else
+-static void __init s3c64xx_clk_sleep_init(void) {}
+-#endif
+-
+ /* List of parent clocks common for all S3C64xx SoCs. */
+ PNAME(spi_mmc_p)	= { "mout_epll", "dout_mpll", "fin_pll", "clk27m" };
+ PNAME(uart_p)		= { "mout_epll", "dout_mpll" };
+@@ -508,7 +449,12 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 
+ 	samsung_clk_register_alias(ctx, s3c64xx_clock_aliases,
+ 					ARRAY_SIZE(s3c64xx_clock_aliases));
+-	s3c64xx_clk_sleep_init();
++
++	samsung_clk_sleep_init(reg_base, s3c64xx_clk_regs,
++			       ARRAY_SIZE(s3c64xx_clk_regs));
++        if (!is_s3c6400)
++		samsung_clk_sleep_init(reg_base, s3c6410_clk_regs,
++				       ARRAY_SIZE(s3c6410_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.17.1
