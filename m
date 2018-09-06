@@ -1,59 +1,108 @@
-Return-Path: <rsalveti@rsalveti.net>
-MIME-Version: 1.0
-References: <20180614215358.11264-1-ilia.lin@gmail.com> <20180614215358.11264-4-ilia.lin@gmail.com>
-In-Reply-To: <20180614215358.11264-4-ilia.lin@gmail.com>
-From: Ricardo Salveti <rsalveti@rsalveti.net>
-Date: Fri, 14 Sep 2018 15:53:02 -0300
-Message-ID: <CAHYQr0rR=mcV-SxZFW+5M4CTUaTv_f_bruyq91HiGP6sqUZ3Yw@mail.gmail.com>
-Subject: Re: [PATCH v13 3/8] clk: Use devm_ in the register fixed factor clock
-To: ilia.lin@gmail.com
-Cc: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
-	robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-	david.brown@linaro.org, will.deacon@arm.com,
-	Amit Kucheria <amit.kucheria@linaro.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59529 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730358AbeIFUcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:07 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 06/10] clk: samsung: s5pv210: Use generic helper for
+ handling suspend/resume
+Date: Thu, 06 Sep 2018 17:55:28 +0200
+Message-id: <20180906155532.4085-7-m.szyprowski@samsung.com>
+In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
+References: <20180906155532.4085-1-m.szyprowski@samsung.com>
+        <CGME20180906155556eucas1p26451379042b32e08d9199d6eab9841ef@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Jun 14, 2018 at 6:55 PM <ilia.lin@gmail.com> wrote:
->
-> From: Ilia Lin <ilialin@codeaurora.org>
->
-> Use devm_clk_hw_register instead of clk_hw_register
-> to simplify the usage of this API. This way drivers that call
-> the clk_hw_register_fixed_factor won't need to maintain
-> a data structure for further cleanup.
->
-> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/clk/clk-fixed-factor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-> index a5d402de5584..8e39bda8e596 100644
-> --- a/drivers/clk/clk-fixed-factor.c
-> +++ b/drivers/clk/clk-fixed-factor.c
-> @@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
->         init.num_parents = 1;
->
->         hw = &fix->hw;
-> -       ret = clk_hw_register(dev, hw);
-> +       ret = devm_clk_hw_register(dev, hw);
+Replace common suspend/resume handling code by generic helper.
+Almost no functional change, the only difference is in handling
+of hypothetical memory allocation failure on boot.
 
-Not sure what is the current state of this patch-set, but this change
-breaks drivers calling clk_hw_register_fixed_factor with a NULL dev
-(e.g. imx_clk_fixed_factor), as devm_clk_hw_register needs a valid dev
-for devres_add to work.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-s5pv210.c | 41 ++-----------------------------
+ 1 file changed, 2 insertions(+), 39 deletions(-)
 
->         if (ret) {
->                 kfree(fix);
->                 hw = ERR_PTR(ret);
-> --
-> 2.11.0
-
-Cheers,
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+index fd2725710a6f..41d2337fe030 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -14,7 +14,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
+ 
+ #include "clk.h"
+ #include "clk-pll.h"
+@@ -83,9 +82,6 @@ enum {
+ 
+ static void __iomem *reg_base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s5pv210_clk_dump;
+-
+ /* List of registers that need to be preserved across suspend/resume. */
+ static unsigned long s5pv210_clk_regs[] __initdata = {
+ 	CLK_SRC0,
+@@ -132,40 +128,6 @@ static unsigned long s5pv210_clk_regs[] __initdata = {
+ 	CLK_OUT,
+ };
+ 
+-static int s5pv210_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s5pv210_clk_dump,
+-				ARRAY_SIZE(s5pv210_clk_regs));
+-	return 0;
+-}
+-
+-static void s5pv210_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s5pv210_clk_dump,
+-				ARRAY_SIZE(s5pv210_clk_regs));
+-}
+-
+-static struct syscore_ops s5pv210_clk_syscore_ops = {
+-	.suspend = s5pv210_clk_suspend,
+-	.resume = s5pv210_clk_resume,
+-};
+-
+-static void s5pv210_clk_sleep_init(void)
+-{
+-	s5pv210_clk_dump =
+-		samsung_clk_alloc_reg_dump(s5pv210_clk_regs,
+-					   ARRAY_SIZE(s5pv210_clk_regs));
+-	if (!s5pv210_clk_dump) {
+-		pr_warn("%s: Failed to allocate sleep save data\n", __func__);
+-		return;
+-	}
+-
+-	register_syscore_ops(&s5pv210_clk_syscore_ops);
+-}
+-#else
+-static inline void s5pv210_clk_sleep_init(void) { }
+-#endif
+-
+ /* Mux parent lists. */
+ static const char *const fin_pll_p[] __initconst = {
+ 	"xxti",
+@@ -822,7 +784,8 @@ static void __init __s5pv210_clk_init(struct device_node *np,
+ 	samsung_clk_register_alias(ctx, s5pv210_aliases,
+ 						ARRAY_SIZE(s5pv210_aliases));
+ 
+-	s5pv210_clk_sleep_init();
++	samsung_clk_sleep_init(reg_base, s5pv210_clk_regs,
++			       ARRAY_SIZE(s5pv210_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
 -- 
-Ricardo Salveti de Araujo
+2.17.1
