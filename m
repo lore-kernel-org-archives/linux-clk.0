@@ -1,85 +1,88 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40656 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbeI0Ufk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 16:35:40 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45548 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727650AbeIGA0S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 20:26:18 -0400
+Subject: Re: [PATCH 09/10] clk: samsung: exynos4: Use generic helper for
+ handling suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <20180829155046.29359-1-m.szyprowski@samsung.com>
+ <CGME20180829155102eucas1p2a4b1c554623ff97a23f85f26a6b537e2@eucas1p2.samsung.com>
+ <20180829155046.29359-10-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Message-ID: <5140d376-b5dc-0021-6a78-782ffbfe0a7f@gmail.com>
+Date: Thu, 6 Sep 2018 21:49:14 +0200
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
- <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-In-Reply-To: <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 27 Sep 2018 22:16:56 +0800
-Message-ID: <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
- missing DSI bus clock
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180829155046.29359-10-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > DSI bus_clk is already available in sun6i_dsi but missed to
-> > > get the clk and process for enable/disable.
-> > >
-> > > This patch add support for it.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > index 8e9c76febca2..156b371243c6 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
-> > >                 return PTR_ERR(dsi->reset);
-> > >         }
-> > >
-> > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> > > +       if (IS_ERR(dsi->bus_clk)) {
-> > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> > > +               return PTR_ERR(dsi->bus_clk);
-> > > +       }
-> > > +
-> >
-> > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-> > clock behind the scenes when regmap access needs it enabled.
-> >
-> > Did you have any issues without this patch?
->
-> I'm unable to read register values via devmem, I see all 0's for all
-> dsi reg space.
+Hi Marek,
 
-Well that is to be expected given how mmio with clk regmap works.
-Did you encounter any other problems besides this?
+On 08/29/2018 05:50 PM, Marek Szyprowski wrote:
+> Replace common suspend/resume handling code by generic helper.
+> Handling of PLLs is a bit different in generic code, as they are handled
+> in the same way as other clock registers. Such approach was already used
+> on later Exynos SoCs and worked fine. Tests have shown that it works also
+> on Exynos4 SoCs and significantly simplifies the code.
 
-FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
+I was going to ask whether it is safe to drop that PLL state polling code after 
+looking at the diff but then I found it all explained in the commit message. 
+Thank you for this clean up series, I have applied it to the samsung-clk tree.
+Thanks Chanwoo and Krzysztof for review and testing.
 
-ChenYu
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   drivers/clk/samsung/clk-exynos4.c | 147 ++++--------------------------
+>   1 file changed, 16 insertions(+), 131 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 0421960eb963..d3bd9ffd8a09 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -16,7 +16,6 @@
+
+> -static void exynos4_clk_enable_pll(u32 reg)
+> -{
+> -	u32 pll_con = readl(reg_base + reg);
+> -	pll_con |= PLL_ENABLED;
+> -	writel(pll_con, reg_base + reg);
+> -
+> -	while (!(pll_con & PLL_LOCKED)) {
+> -		cpu_relax();
+> -		pll_con = readl(reg_base + reg);
+> -	}
+> -}
+> -
+> -static void exynos4_clk_wait_for_pll(u32 reg)
+> -{
+> -	u32 pll_con;
+> -
+> -	pll_con = readl(reg_base + reg);
+> -	if (!(pll_con & PLL_ENABLED))
+> -		return;
+> -
+> -	while (!(pll_con & PLL_LOCKED)) {
+> -		cpu_relax();
+> -		pll_con = readl(reg_base + reg);
+> -	}
+> -}
+> -
+> -static int exynos4_clk_suspend(void)
+> -{
+
+> -	exynos4_clk_enable_pll(EPLL_CON0);
+> -	exynos4_clk_enable_pll(VPLL_CON0);
+
+> -	return 0;
+> -}
+
+--
+Regards,
+Sylwester
