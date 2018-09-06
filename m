@@ -1,72 +1,42 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <t-kristo@ti.com>
-CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <j-keerthy@ti.com>, <russ.dill@ti.com>
-Subject: [PATCH v3 RESEND 2/4] clk: clk: Add clk_gate_restore_context function
-Date: Tue, 4 Sep 2018 12:19:36 +0530
-Message-ID: <1536043778-2232-3-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
-References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36682 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727650AbeIGA0c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 20:26:32 -0400
+Subject: Re: [PATCH v2 00/10] Cleanup suspend/resume code in Samsung clock
+ drivers
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20180906155555eucas1p2cab3dde337bf2f9f7a7d8b4dc17c371d@eucas1p2.samsung.com>
+ <20180906155532.4085-1-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Message-ID: <9e9d9847-4ea6-595c-fc87-57fcdb4f4239@gmail.com>
+Date: Thu, 6 Sep 2018 21:49:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180906155532.4085-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The clock gate restore context function enables or disables
-the gate clocks based on the enable_count. This is done in cases
-where the clock context is lost and based on the enable_count
-the clock either needs to be enabled/disabled.
+On 09/06/2018 05:55 PM, Marek Szyprowski wrote:
+> Patch summary:
+> 
+> Marek Szyprowski (10):
+>    clk: samsung: Remove excessive include
+>    clk: samsung: s3c2410: Use generic helper for handling suspend/resume
+>    clk: samsung: s3c2412: Use generic helper for handling suspend/resume
+>    clk: samsung: s3c2443: Use generic helper for handling suspend/resume
+>    clk: samsung: s3c64xx: Use generic helper for handling suspend/resume
+>    clk: samsung: s5pv210: Use generic helper for handling suspend/resume
+>    clk: samsung: exynos5250: Use generic helper for handling
+>      suspend/resume
+>    clk: samsung: Add support for setting registers state before suspend
+>    clk: samsung: exynos4: Use generic helper for handling suspend/resume
+>    clk: samsung: exynos5420: Use generic helper for handling
+>      suspend/resume
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/clk.c            | 19 +++++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8a0254a..dd77577 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -923,6 +923,25 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+/**
-+ * clk_gate_restore_context - restore context for poweroff
-+ * @hw: the clk_hw pointer of clock whose state is to be restored
-+ *
-+ * The clock gate restore context function enables or disables
-+ * the gate clocks based on the enable_count. This is done in cases
-+ * where the clock context is lost and based on the enable_count
-+ * the clock either needs to be enabled/disabled. This
-+ * helps restore the state of gate clocks.
-+ */
-+void clk_gate_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_gate_restore_context);
-+
- static int _clk_save_context(struct clk_core *clk)
- {
- 	struct clk_core *child;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index df7379d..60c5187 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1018,5 +1018,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
- 
- #endif	/* platform dependent I/O accessors */
- 
-+void clk_gate_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
--- 
-1.9.1
+Whole series applied, thanks.
