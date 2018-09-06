@@ -1,59 +1,37 @@
-Return-Path: <olof@lixom.net>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
- <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
- <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com> <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
-From: Olof Johansson <olof@lixom.net>
-Date: Sun, 23 Sep 2018 14:10:59 +0100
-Message-ID: <CAOesGMgqjGEXzRPXFxUcSyTof_wgjErPhZ7wokdGEDY9SnCvdw@mail.gmail.com>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To: Jolly Shah <JOLLYS@xilinx.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	Kees Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michal Simek <michals@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	Rajan Vaja <RAJANV@xilinx.com>,
-	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Sep 2018 13:05:20 +0200
+Message-ID: <CAMuHMdUu8YFTo=7ieCz3CPA=MjE64WS_Vb08zNZ5GNV-m6hoVA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77970: add CMT clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
-
-Apologies for the slow responses here, I meant to follow up on this sooner.
-
-On Tue, Sep 11, 2018 at 8:20 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
-> Hi Sudeep and Olof,
+On Wed, Sep 5, 2018 at 6:59 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Add the R8A77970 CMT module clocks.
 >
-> Clock driver from same patch set uses ioctl API along with other clock ee=
-mi APIs. As clock patches' final review is pending by Stephen, Michal only =
-created pull request for rest of the patches and that doesn't require ioctl=
- api. I will remove it and submit new patch set.
+> Based on the original (and large) patch by Vladimir Barinov.
 >
-> For future patches which requires ioctl api, would like to understand you=
-r suggestion so I can make required changes. For zynqmp, EEMI interface all=
-ows clock, reset, power etc management through firmware but apart from thos=
-e there are some operations which needs secure access through firmware. Exa=
-mples are accessing some storage registers for inter agent communication, c=
-onfiguring another agent(RPU) mode, setting PLL parameters, boot device con=
-figuration etc. Those operations are covered as ioctls as they are very pla=
-tform specific. Do you suggest to handle them with individual EEMI APIs ins=
-tead of ioctl API?
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-I'm personally less worried about whether the calls are through an
-ioctl API or an EEMI one, but if it is through ioctl, I'd prefer if it
-wasn't wide-open pass-through. I.e. that the ioctls you actually use
-are documented, and only those who are whitelisted are passed through
-(and not in general exported to userspace).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.2.0.
 
-Does that make sense?
+Gr{oetje,eeting}s,
 
+                        Geert
 
--Olof
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
