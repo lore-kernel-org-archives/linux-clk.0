@@ -1,41 +1,43 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Subject: RE: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Wed, 5 Sep 2018 14:12:18 +0000
-Message-ID: 
- <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180829132841.64787-1-chris.brandt@renesas.com>
-In-Reply-To: <20180829132841.64787-1-chris.brandt@renesas.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20180904044053.15425-9-icenowy@aosc.io>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-9-icenowy@aosc.io>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Thu, 6 Sep 2018 11:48:13 +0530
+Message-ID: <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 08/11] arm64: dts: allwinner: a64: Add
+ display pipeline
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Geert,
+On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> From: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
+> TCON is connected to LCD and the second is to HDMI.
+>
+> The HDMI controller/PHY pair is similar to the one on H3/H5.
+>
+> Add all required device tree nodes of the display pipeline, including
+> the TCON0 LCD one and the TCON1 HDMI one.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> [Icenowy: refactor commit message and add 1st pipeline]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+> Changes for v4:
+> - Misc fixes
+> - Dropped second PLL from HDMI PHY clock
 
-On Wednesday, August 29, 2018, Chris Brandt wrote:
->=20
-> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> Standby.
-
-I ran into an issue with this driver.
-
-The issue is that the registers needed for this driver are scattered=20
-throughout the address space.
-
-I can't just reserve one big block of addresses that cover everything=20
-because then I can't reserve any of the addresses that sit in the middle.
-
-For example, my watchdog timer driver doesn't work with this driver=20
-because it cannot allocate its register region.
-
-So, I think I need to rework this driver to add the ability to add=20
-multiple address regions.
-
-Chris
+Why? it was there in previous versions.
