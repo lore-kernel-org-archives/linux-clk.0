@@ -1,145 +1,122 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10974 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbeIODNf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:13:35 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 03/14] clk: tegra: emc: simplify parent matching
-Date: Sat, 15 Sep 2018 00:48:04 +0300
-Message-ID: <1536961695-27809-4-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44284 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeIFIqt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 04:46:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <CA+E=qVdWXWztLj3989X+U+=4P5FpM4hs+6ByVmq8bf7mPeiWsA@mail.gmail.com>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-12-icenowy@aosc.io>
+ <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+ <20180905075136.chumwosx76o2n66l@flea> <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+ <CA+E=qVdWXWztLj3989X+U+=4P5FpM4hs+6ByVmq8bf7mPeiWsA@mail.gmail.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Date: Wed, 5 Sep 2018 21:12:51 -0700
+Message-ID: <CA+E=qVd4siJReWxbEeQ1DjFrTnewSGW=UJitduLT=52YfB-rag@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable
+ HDMI output on A64 boards w/ HDMI
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-We can't change the rate of a parent clock source when that clock source
-in use. However pll_m_ud and pll_c_ud are just low jitter paths to the
-same clock source, so when comparing clock sources we should treat those
-as the same source.
+On Wed, Sep 5, 2018 at 3:53 PM, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> I can test it tonight.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-emc.c | 61 ++++++++++++++++++++++++---------------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+It works fine for me on pine64-lts with HDMI monitor:
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index ce41d07..e836a9b 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -49,24 +49,10 @@
- 	"pll_c2", "pll_c3", "pll_c_ud"
- };
- 
--/*
-- * List of clock sources for various parents the EMC clock can have.
-- * When we change the timing to a timing with a parent that has the same
-- * clock source as the current parent, we must first change to a backup
-- * timing that has a different clock source.
-- */
--
--#define EMC_SRC_PLL_M 0
--#define EMC_SRC_PLL_C 1
--#define EMC_SRC_PLL_P 2
--#define EMC_SRC_CLK_M 3
--#define EMC_SRC_PLL_C2 4
--#define EMC_SRC_PLL_C3 5
--
--static const char emc_parent_clk_sources[] = {
--	EMC_SRC_PLL_M, EMC_SRC_PLL_C, EMC_SRC_PLL_P, EMC_SRC_CLK_M,
--	EMC_SRC_PLL_M, EMC_SRC_PLL_C2, EMC_SRC_PLL_C3, EMC_SRC_PLL_C
--};
-+#define TEGRA124_EMC_PARENT_PLL_M 0
-+#define TEGRA124_EMC_PARENT_PLL_M_UD 4
-+#define TEGRA124_EMC_PARENT_PLL_C 1
-+#define TEGRA124_EMC_PARENT_PLL_C_UD 7
- 
- struct emc_timing {
- 	unsigned long rate, parent_rate;
-@@ -266,6 +252,22 @@ static int emc_set_timing(struct tegra_clk_emc *tegra,
- 	return 0;
- }
- 
-+static int normalize_parent_idx(int parent_idx)
-+{
-+	switch (parent_idx) {
-+	case TEGRA124_EMC_PARENT_PLL_M:
-+	case TEGRA124_EMC_PARENT_PLL_M_UD:
-+		return TEGRA124_EMC_PARENT_PLL_M;
-+
-+	case TEGRA124_EMC_PARENT_PLL_C:
-+	case TEGRA124_EMC_PARENT_PLL_C_UD:
-+		return TEGRA124_EMC_PARENT_PLL_C:;
-+
-+	default:
-+		return parent_idx;
-+	}
-+}
-+
- /*
-  * Get backup timing to use as an intermediate step when a change between
-  * two timings with the same clock source has been requested. First try to
-@@ -275,18 +277,20 @@ static int emc_set_timing(struct tegra_clk_emc *tegra,
- static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
- 					    int timing_index)
- {
--	int i;
-+	int i, new_parent_idx;
- 	u32 ram_code = tegra_read_ram_code();
- 	struct emc_timing *timing;
- 
-+	new_parent_idx = tegra->timings[timing_index].parent_index;
-+	new_parent_idx = normalize_parent_idx(new_parent_idx);
-+
- 	for (i = timing_index+1; i < tegra->num_timings; i++) {
- 		timing = tegra->timings + i;
- 		if (timing->ram_code != ram_code)
- 			continue;
- 
--		if (emc_parent_clk_sources[timing->parent_index] !=
--		    emc_parent_clk_sources[
--		      tegra->timings[timing_index].parent_index])
-+		if (normalize_parent_idx(timing->parent_index)
-+			!= new_parent_idx)
- 			return timing;
- 	}
- 
-@@ -295,9 +299,8 @@ static struct emc_timing *get_backup_timing(struct tegra_clk_emc *tegra,
- 		if (timing->ram_code != ram_code)
- 			continue;
- 
--		if (emc_parent_clk_sources[timing->parent_index] !=
--		    emc_parent_clk_sources[
--		      tegra->timings[timing_index].parent_index])
-+		if (normalize_parent_idx(timing->parent_index)
-+			!= new_parent_idx)
- 			return timing;
- 	}
- 
-@@ -309,7 +312,7 @@ static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct tegra_clk_emc *tegra;
- 	struct emc_timing *timing = NULL;
--	int i, err;
-+	int i, err, new_parent_idx, cur_parent_idx;
- 	u32 ram_code = tegra_read_ram_code();
- 
- 	tegra = container_of(hw, struct tegra_clk_emc, hw);
-@@ -338,8 +341,10 @@ static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
- 		return -EINVAL;
- 	}
- 
--	if (emc_parent_clk_sources[emc_get_parent(hw)] ==
--	    emc_parent_clk_sources[timing->parent_index] &&
-+	cur_parent_idx = normalize_parent_idx(emc_get_parent(hw));
-+	new_parent_idx = normalize_parent_idx(timing->parent_index);
-+
-+	if (cur_parent_idx == new_parent_idx &&
- 	    clk_get_rate(timing->parent) != timing->parent_rate) {
- 		/*
- 		 * Parent clock source not changed but parent rate has changed,
--- 
-1.9.1
+[    1.969772] sun4i-drm display-engine: bound 1100000.mixer (ops
+sun8i_mixer_ops)
+[    1.979302] sun4i-drm display-engine: bound 1200000.mixer (ops
+sun8i_mixer_ops)
+[    1.979738] sun4i-drm display-engine: No panel or bridge found...
+RGB output disabled
+[    1.979755] sun4i-drm display-engine: bound 1c0c000.lcd-controller
+(ops sun4i_tcon_ops)
+[    1.979935] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+(ops sun4i_tcon_ops)
+[    1.980017] sun4i-drm display-engine: failed to bind 1ee0000.hdmi
+(ops sun8i_dw_hdmi_ops): -517
+[    1.980306] sun4i-drm display-engine: Couldn't bind all pipelines components
+[    1.980446] sun4i-drm display-engine: master bind failed: -517
+[    4.230997] sun4i-drm display-engine: bound 1100000.mixer (ops
+sun8i_mixer_ops)
+[    4.247886] sun4i-drm display-engine: bound 1200000.mixer (ops
+sun8i_mixer_ops)
+[    4.255639] sun4i-drm display-engine: No panel or bridge found...
+RGB output disabled
+[    4.263482] sun4i-drm display-engine: bound 1c0c000.lcd-controller
+(ops sun4i_tcon_ops)
+[    4.283255] sun4i-drm display-engine: bound 1c0d000.lcd-controller
+(ops sun4i_tcon_ops)
+[    4.322055] sun4i-drm display-engine: bound 1ee0000.hdmi (ops
+sun8i_dw_hdmi_ops)
+[    4.342115] fb: switching to sun4i-drm-fb from simple
+[    5.001434] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
+[    5.008933] [drm] Initialized sun4i-drm 1.0.0 20150629 for
+display-engine on minor 0
+
+I tested non-applied patches from this series on top of
+git://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git
+sunxi/for-next
+
+Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+
+>
+> On Wed, Sep 5, 2018 at 12:57 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>> On Wed, Sep 5, 2018 at 1:21 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>>> On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
+>>>> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>>>> > From: Jagan Teki <jagan@amarulasolutions.com>
+>>>> >
+>>>> > Enable all necessary device tree nodes and add connector node to device
+>>>> > trees for all supported A64 boards with HDMI.
+>>>> >
+>>>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>> > [Icenowy: squash all board patches altogether and change supply name]
+>>>> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>> > ---
+>>>> > Changes in v4:
+>>>> > - Rebase some device trees.
+>>>> > Changes in v3,1:
+>>>> > - Squash all enablement patches altogether.
+>>>> > - Change supply name to match DT binding & driver change.
+>>>> > Changes for v3:
+>>>> > - Enable all pipeline components
+>>>> > Changes for v2:
+>>>> > - none
+>>>> >
+>>>> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
+>>>> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
+>>>> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
+>>>> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
+>>>> >  6 files changed, 204 insertions(+)
+>>>>
+>>>> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
+>>>> A64-Olinuxino, NPI-A64
+>>>>
+>>>> Pine64 boards look unable by saying
+>>>> [drm] Cannot find any crtc or sizes
+>>>>
+>>>> May be someone can confirm, it.
+>>>
+>>> Then we should drop the pine64 additions until someone figures it out,
+>>> as it has been already discussed.
+>>
+>> That is fine, but If anyone have pine64 can confirm this.
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
