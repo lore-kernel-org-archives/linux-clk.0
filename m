@@ -1,107 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44906 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726093AbeIDJEr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:04:47 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 01/11] clk: sunxi-ng: a64: Add minimal rate for video PLLs
-Date: Tue,  4 Sep 2018 12:40:43 +0800
-Message-Id: <20180904044053.15425-2-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <15984aab-d815-56bb-af9c-7be9cfd9a103@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org
+References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
+ <1533298874-22863-3-git-send-email-tdas@codeaurora.org>
+ <153540431524.129321.12826367247850332291@swboyd.mtv.corp.google.com>
+ <15984aab-d815-56bb-af9c-7be9cfd9a103@codeaurora.org>
+Message-ID: <153619871329.119890.8761547440925666785@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add lpass clock controller driver for SDM845
+Date: Wed, 05 Sep 2018 18:51:53 -0700
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+Quoting Taniya Das (2018-09-05 11:26:10)
+> On 8/28/2018 2:41 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-08-03 05:21:14)
+> >> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpas=
+scc-sdm845.c
+> >> new file mode 100644
+> >> index 0000000..6f387f9
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+> > [...]
+> >> +
+> >> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+> > =
 
-According to documentation and experience with other similar SoCs, video
-PLLs don't work stable if their output frequency is set below 192 MHz.
+> > Can we change the branch ops to check for out of reset or not? Do the
+> > clks even work when LPASS isn't out of reset? Why would the clk APIs
+> > even be called on here if it hadn't taken LPASS out of reset?
+> > =
 
-Because of that, set minimal rate to both A64 video PLLs to 192 MHz.
+> =
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
-Changes for v3..v4:
-- none 
-Changes for v2:
-- New patch
+> The branches need to be turned ON before the LPASS is out of reset.
+> But we would not be able to check the CLK_ENABLE bit.
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 46 ++++++++++++++-------------
- 1 file changed, 24 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index ee9c12cf3f08..d0e30192f0cf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -64,17 +64,18 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video0_clk, "pll-video0",
--					"osc24M", 0x010,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
-+					    "osc24M", 0x010,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x018,
-@@ -125,17 +126,18 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
- };
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video1_clk, "pll-video1",
--					"osc24M", 0x030,
--					8, 7,		/* N */
--					0, 4,		/* M */
--					BIT(24),	/* frac enable */
--					BIT(25),	/* frac select */
--					270000000,	/* frac rate 0 */
--					297000000,	/* frac rate 1 */
--					BIT(31),	/* gate */
--					BIT(28),	/* lock */
--					CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
-+					    "osc24M", 0x030,
-+					    192000000,	/* Minimum rate */
-+					    8, 7,		/* N */
-+					    0, 4,		/* M */
-+					    BIT(24),	/* frac enable */
-+					    BIT(25),	/* frac select */
-+					    270000000,	/* frac rate 0 */
-+					    297000000,	/* frac rate 1 */
-+					    BIT(31),	/* gate */
-+					    BIT(28),	/* lock */
-+					    CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x038,
--- 
-2.18.0
+Ok. Are the branches actually outputting any clk frequency when LPASS is
+in reset? It sounds like the hardware is broken and we can't ever check
+the halt bits?
