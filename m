@@ -1,89 +1,47 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 05/27] clk: sunxi-ng: Use u64 for calculation of NM rate
-Date: Sun,  2 Sep 2018 09:26:21 +0200
-Message-Id: <20180902072643.4917-6-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] clk: renesas: r8a77970: add TMU clocks
+To: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-clk@vger.kernel.org
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Message-ID: <d06fcbaf-020f-d78f-2535-d50d8eb43915@cogentembedded.com>
+Date: Thu, 6 Sep 2018 23:28:12 +0300
+MIME-Version: 1.0
+In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
-rate is 24MHz, intermediate result when calculating final rate easily
-overflows 32 bit variable.
+The TMU clocks weren't present in the original R8A77970 patch by Daisuke
+Matsushita, they were added in a later BSP version...
 
-Because of that, introduce function for calculating clock rate which
-uses 64 bit variable for intermediate result.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/clk/sunxi-ng/ccu_nm.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+This patch is against the 'clk-renesas' branch of Geert's 'renesas-drivers.git'
+repo...
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
-index 6fe3c14f7b2d..424d8635b053 100644
---- a/drivers/clk/sunxi-ng/ccu_nm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nm.c
-@@ -19,6 +19,17 @@ struct _ccu_nm {
- 	unsigned long	m, min_m, max_m;
+ drivers/clk/renesas/r8a77970-cpg-mssr.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+Index: renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -106,6 +106,11 @@ static const struct cpg_core_clk r8a7797
  };
  
-+static unsigned long ccu_nm_calc_rate(unsigned long parent,
-+				      unsigned long n, unsigned long m)
-+{
-+	u64 rate = parent;
-+
-+	rate *= n;
-+	do_div(rate, m);
-+
-+	return rate;
-+}
-+
- static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 			     struct _ccu_nm *nm)
- {
-@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
- 
- 	for (_n = nm->min_n; _n <= nm->max_n; _n++) {
- 		for (_m = nm->min_m; _m <= nm->max_m; _m++) {
--			unsigned long tmp_rate = parent * _n  / _m;
-+			unsigned long tmp_rate = ccu_nm_calc_rate(parent,
-+								  _n, _m);
- 
- 			if (tmp_rate > rate)
- 				continue;
-@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw *hw,
- 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
- 		rate = ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
- 	else
--		rate = parent_rate * n / m;
-+		rate = ccu_nm_calc_rate(parent_rate, n, m);
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nm->fixed_post_div;
-@@ -149,7 +161,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
- 	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
- 
- 	ccu_nm_find_best(*parent_rate, rate, &_nm);
--	rate = *parent_rate * _nm.n / _nm.m;
-+	rate = ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
- 
- 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate /= nm->fixed_post_div;
--- 
-2.18.0
+ static const struct mssr_mod_clk r8a77970_mod_clks[] __initconst = {
++	DEF_MOD("tmu4",			 121,	R8A77970_CLK_S2D2),
++	DEF_MOD("tmu3",			 122,	R8A77970_CLK_S2D2),
++	DEF_MOD("tmu2",			 123,	R8A77970_CLK_S2D2),
++	DEF_MOD("tmu1",			 124,	R8A77970_CLK_S2D2),
++	DEF_MOD("tmu0",			 125,	R8A77970_CLK_CP),
+ 	DEF_MOD("ivcp1e",		 127,	R8A77970_CLK_S2D1),
+ 	DEF_MOD("scif4",		 203,	R8A77970_CLK_S2D4),
+ 	DEF_MOD("scif3",		 204,	R8A77970_CLK_S2D4),
