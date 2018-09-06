@@ -1,32 +1,30 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45788 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728996AbeIGA3H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 20:29:07 -0400
+Subject: Re: [PATCH v2 0/2] Prepare Exynos5433 clocks driver for system
+ suspend/resume
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20180906160243eucas1p224c199de3c21ef2d8d3343c91480d953@eucas1p2.samsung.com>
+ <20180906160236.4326-1-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Message-ID: <7d99b1c2-b5aa-97ad-687e-1ec6602b0dc8@gmail.com>
+Date: Thu, 6 Sep 2018 21:52:04 +0200
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-17-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 22 Sep 2018 21:29:06 +0800
-Message-ID: <CAGb2v64J7N+z1v2mXvB2hZuDEMZ2Zty-AG3L12r37NZvkk_n5g@mail.gmail.com>
-Subject: Re: [PATCH 16/27] drm/sun4i: dw-hdmi: Make mode_valid function configurable
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180906160236.4326-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Since it is not possible to access sun8i-dw-hdmi driver private data
-> inside mode_valid function, make it configurable. That way different
-> versions of HDMI controllers can set different function, depending on
-> it's limitations.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 09/06/2018 06:02 PM, Marek Szyprowski wrote:
+> Marek Szyprowski (2):
+>    clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
+>    clk: samsung: exynos5433: Add suspend state for TOP, CPIF & PERIC CMUs
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Applied both patches, thanks.
