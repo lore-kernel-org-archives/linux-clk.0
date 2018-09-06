@@ -1,55 +1,110 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 3 Sep 2018 11:01:11 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
-Message-ID: <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
-References: <20180830184210.5369-1-digetx@gmail.com>
- <20180830184210.5369-2-digetx@gmail.com>
- <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
- <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46872 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730389AbeIFUcI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:08 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 04/10] clk: samsung: s3c2443: Use generic helper for
+ handling suspend/resume
+Date: Thu, 06 Sep 2018 17:55:26 +0200
+Message-id: <20180906155532.4085-5-m.szyprowski@samsung.com>
+In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
+References: <20180906155532.4085-1-m.szyprowski@samsung.com>
+        <CGME20180906155556eucas1p26cc9f85524938192ea01bde8e1b977e2@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Aug 31, 2018 at 12:45:17PM +0300, Dmitry Osipenko wrote:
-> On 8/31/18 12:29 PM, Peter De Schrijver wrote:
-> > On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
-> >> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
-> >> a lock-status bit. The lock-status polling was disabled ~7 years ago
-> >> because PLLE was failing to lock and was a suspicion that other PLLs
-> >> might be faulty too. Other PLLs are okay, hence enable the lock-status
-> >> polling for them. This reduces delay of any operation that require PLL
-> >> to lock.
-> >>
-> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> >> ---
-> >>
-> >> Changelog:
-> >>
-> >> v2:	Don't enable polling for PLLE as it known to not being able to lock.
-> >>
-> > 
-> > This isn't correct. The lock bit of PLLE can declare lock too early, but the
-> > PLL itself does lock.
-> 
-> Indeed, it locks but can't be polled for the lock-status as it doesn't have the
-> lock-status bit.
-> 
-> Do you want me to adjust the commit description or it is fine as is?
-> 
+Replace common suspend/resume handling code by generic helper.
+Almost no functional change, the only difference is in handling
+of hypothetical memory allocation failure on boot.
 
-I think it's better to adjust it.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-s3c2443.c | 43 ++-----------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
 
-> It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
-
-That seems odd yes..
-
-Peter.
+diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
+index c46e6d5bc9bc..884067e4f1a1 100644
+--- a/drivers/clk/samsung/clk-s3c2443.c
++++ b/drivers/clk/samsung/clk-s3c2443.c
+@@ -11,7 +11,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/syscore_ops.h>
+ #include <linux/reboot.h>
+ 
+ #include <dt-bindings/clock/s3c2443.h>
+@@ -43,9 +42,6 @@ enum supported_socs {
+ 
+ static void __iomem *reg_base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-static struct samsung_clk_reg_dump *s3c2443_save;
+-
+ /*
+  * list of controller registers to be saved and restored during a
+  * suspend/resume cycle.
+@@ -65,42 +61,6 @@ static unsigned long s3c2443_clk_regs[] __initdata = {
+ 	SCLKCON,
+ };
+ 
+-static int s3c2443_clk_suspend(void)
+-{
+-	samsung_clk_save(reg_base, s3c2443_save,
+-				ARRAY_SIZE(s3c2443_clk_regs));
+-
+-	return 0;
+-}
+-
+-static void s3c2443_clk_resume(void)
+-{
+-	samsung_clk_restore(reg_base, s3c2443_save,
+-				ARRAY_SIZE(s3c2443_clk_regs));
+-}
+-
+-static struct syscore_ops s3c2443_clk_syscore_ops = {
+-	.suspend = s3c2443_clk_suspend,
+-	.resume = s3c2443_clk_resume,
+-};
+-
+-static void __init s3c2443_clk_sleep_init(void)
+-{
+-	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
+-						ARRAY_SIZE(s3c2443_clk_regs));
+-	if (!s3c2443_save) {
+-		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
+-			__func__);
+-		return;
+-	}
+-
+-	register_syscore_ops(&s3c2443_clk_syscore_ops);
+-	return;
+-}
+-#else
+-static void __init s3c2443_clk_sleep_init(void) {}
+-#endif
+-
+ PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
+ PNAME(esysclk_p) = { "epllref", "epll" };
+ PNAME(mpllref_p) = { "xti", "mdivclk" };
+@@ -450,7 +410,8 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
+ 		break;
+ 	}
+ 
+-	s3c2443_clk_sleep_init();
++	samsung_clk_sleep_init(reg_base, s3c2443_clk_regs,
++			       ARRAY_SIZE(s3c2443_clk_regs));
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ 
+-- 
+2.17.1
