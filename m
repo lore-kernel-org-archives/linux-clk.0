@@ -1,45 +1,58 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Wed, 12 Sep 2018 09:10:34 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20180912011033.GB28469@dragon>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-3-o.rempel@pengutronix.de>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH v3 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>,
+ Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org
+References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
+ <1533298874-22863-3-git-send-email-tdas@codeaurora.org>
+ <153540431524.129321.12826367247850332291@swboyd.mtv.corp.google.com>
+ <15984aab-d815-56bb-af9c-7be9cfd9a103@codeaurora.org>
+ <153619871329.119890.8761547440925666785@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <a74ae0f1-caa7-9b49-e4f4-32b82e2ba423@codeaurora.org>
+Date: Thu, 6 Sep 2018 17:01:31 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180802103425.3053-3-o.rempel@pengutronix.de>
+In-Reply-To: <153619871329.119890.8761547440925666785@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Aug 02, 2018 at 12:34:21PM +0200, Oleksij Rempel wrote:
-> One of the Freescale recommended sequences for power off with external
-> PMIC is the following:
-> ...
-> 3.  SoC is programming PMIC for power off when standby is asserted.
-> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> 
-> See:
-> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-> page 5083
-> 
-> This patch implements step 4. of this sequence.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Applied, thanks.
+
+On 9/6/2018 7:21 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-09-05 11:26:10)
+>> On 8/28/2018 2:41 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-08-03 05:21:14)
+>>>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+>>>> new file mode 100644
+>>>> index 0000000..6f387f9
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+>>> [...]
+>>>> +
+>>>> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+>>>
+>>> Can we change the branch ops to check for out of reset or not? Do the
+>>> clks even work when LPASS isn't out of reset? Why would the clk APIs
+>>> even be called on here if it hadn't taken LPASS out of reset?
+>>>
+>>
+>> The branches need to be turned ON before the LPASS is out of reset.
+>> But we would not be able to check the CLK_ENABLE bit.
+> 
+> Ok. Are the branches actually outputting any clk frequency when LPASS is
+> in reset? It sounds like the hardware is broken and we can't ever check
+> the halt bits?
+> 
+Yes, they would output when the reset is pulled for LPASS. These are as 
+per the steps to be followed to bring the LPASS out of reset.
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
