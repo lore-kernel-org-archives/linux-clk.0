@@ -1,39 +1,76 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "thor.thayer@linux.intel.com"
+	<thor.thayer@linux.intel.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>
+Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Date: Thu, 6 Sep 2018 03:22:42 +0000
+Message-ID: 
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-2-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-2-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 4 Sep 2018 16:39:05 +0800
-Message-ID: <CAGb2v66V=7ArH0hssVZbBhD1v9P86oOXSh+1pY3e9xrzCHXBeQ@mail.gmail.com>
-Subject: Re: [PATCH 01/27] dt-bindings: sunxi-sram: add binding for Allwinner
- H6 SRAM C
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> From: Icenowy Zheng <icenowy@aosc.io>
->
-> The Allwinner H6 SoC's DE3 needs the SRAM C section being claimed in the
-> system controller to work, like A64 DE2.
->
-> As H6 and A64 system controller are quite similar, code is reused now,
-> and the A64 fallback compatible string is added after the H6 compatible
-> string.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> [fixed typo in compatible string]
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Gently ping...
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> -----Original Message-----
+> From: A.s. Dong
+> Sent: Friday, August 31, 2018 12:46 PM
+> To: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+> hdegoede@redhat.com; A.s. Dong <aisheng.dong@nxp.com>
+> Subject: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>=20
+> This patch series is a continue of discussion from here,
+> https://patchwork.kernel.org/patch/9986293/
+> that some users may want to handle all available clocks from device tree
+> without need to know the detailed clock information likes clock numbers a=
+nd
+> names. This is useful in writing some generic drivers to handle clock par=
+t.
+>=20
+> Note:
+> This patch series is tested on MX6Q SDB cpufreq driver with a minor chang=
+e to
+> switch to use clk_bulk_get_all.
+> But patch 4 only test compiling. Hopefully someone could help test the
+> function.
+>=20
+> v3->v4:
+>  * improve 'devres->clks =3D *clks' according to Stephen's suggestion
+> v2->v3:
+>  * address all comments from Stephen
+>  * fix build warnings on other architectures.
+> v1->v2:
+>  * add clk_bulk_{get|put}_all() which only supports DT platform currently
+>  * remove _all variants and the wrapper struct clk_bulk
+>  * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+>    proves they need it because they don't have a struct device pointer.
+>=20
+> Dong Aisheng (4):
+>   clk: bulk: add of_clk_bulk_get()
+>   clk: add new APIs to operate on all available clocks
+>   clk: add managed version of clk_bulk_get_all
+>   video: simplefb: switch to use clk_bulk API to simplify clock
+>     operations
+>=20
+>  drivers/clk/clk-bulk.c         | 80
+> ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/clk-devres.c       | 24 +++++++++++++
+>  drivers/video/fbdev/simplefb.c | 72 ++++++++++--------------------------=
+-
+>  include/linux/clk.h            | 65
+> +++++++++++++++++++++++++++++++++-
+>  4 files changed, 186 insertions(+), 55 deletions(-)
+>=20
+> --
+> 2.7.4
