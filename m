@@ -1,66 +1,25 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33172 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeINNnj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:43:39 -0400
-Date: Fri, 14 Sep 2018 11:30:06 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
-        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 2/7] regulator: dt bindings: add BD71847 device-tree
- binding documentation
-Message-ID: <1ad7584e0e610de5564226dfb189e7e75d21951d.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Received: from mail-bn3nam01on0112.outbound.protection.outlook.com ([104.47.33.112]:54102
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726926AbeIFSfz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Sep 2018 14:35:55 -0400
+From: "Spruyt, Randy" <Randy.Spruyt@christiedigital.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: getting a PHC reference in a kernel module?
+Date: Thu, 6 Sep 2018 14:00:07 +0000
+Message-ID: <BC3A5CD34524E4468CEC38A99142631601AD938581@cktexmb01.cds.int>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Add ROHM BD71847 Power Management IC regulator binding information to
-device-tree binding documents.
+I'm new to kernel driver development, so I hope you bear with me on the question. 
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/regulator/rohm,bd71837-regulator.txt | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+I'd like to timestamp an IRQ event in a kernel moudle using a PTP synchronized clock (e.g. the PHC from eth0 = /dev/ptp0). E.g. a GPIO pin goes high, I'd like to keep track of when this happened. Low latency is important. One option is to use getnstimeofday() and have phc2sys synchronize /dev/ptp0 with the system  clock. 
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-index 76ead07072b1..4b98ca26e61a 100644
---- a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -1,7 +1,9 @@
--ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-+ROHM BD71837 and BD71847 Power Management Integrated Circuit regulator bindings
- 
- Required properties:
-- - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
-+ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7" for
-+                   BD71837. For BD71847 names should be "buck1", ..., "buck6"
-+		   and "ldo1", ..., "ldo6"
- 
- List of regulators provided by this controller. BD71837 regulators node
- should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
-@@ -16,10 +18,14 @@ disabled by driver at startup. LDO5 and LDO6 are supplied by those and
- if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
- cause PMIC to reset.
- 
--The valid names for regulator nodes are:
-+The valid names for BD71837 regulator nodes are:
- BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
- LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
- 
-+The valid names for BD71847 regulator nodes are:
-+BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
-+LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
-+
- Optional properties:
- - Any optional property defined in bindings/regulator/regulator.txt
- 
--- 
-2.14.3
+This seems to work but I feel like there is a more direct way to just query the PHC clock e.g. using struct ptp_clock* and gettime64(). The question is how to get this pointer, find_driver()? Or something else?
+
+If this is the wrong way to go about this, by all means, I'm open to suggestions.
+
+Randy
