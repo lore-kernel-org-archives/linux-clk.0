@@ -1,65 +1,53 @@
-Return-Path: <sudeep.holla@arm.com>
-Date: Tue, 11 Sep 2018 11:02:13 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jolly Shah <JOLLYS@xilinx.com>
-Cc: Olof Johansson <olof@lixom.net>,
-	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	Kees Cook <keescook@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Michal Simek <michals@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Rajan Vaja <RAJANV@xilinx.com>,
-	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	DTML <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-Message-ID: <20180911100213.GA29599@e107155-lin>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com>
- <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
- <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hermes.aosc.io ([199.195.250.187]:33938 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbeIFKxg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Sep 2018 06:53:36 -0400
+Date: Thu, 06 Sep 2018 14:19:17 +0800
+In-Reply-To: <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
+References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-9-icenowy@aosc.io> <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+Content-Type: text/plain;
+ charset=utf-8
+Subject: Re: [linux-sunxi] [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
+To: jagan@amarulasolutions.com, Jagan Teki <jagan@amarulasolutions.com>
+CC: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <73ADC796-D8CE-417C-82E3-0CDAF710A2F3@aosc.io>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 10, 2018 at 07:17:45PM +0000, Jolly Shah wrote:
-> Hi All,
-> 
-> Adding more clarification on top of what Michal said:
-> Here ioctl is not a system ioctl and just a eemi API like other interface
-> APIs. It cannot be called from userspace.
 
-I get that these are not system ioctl and you keep assuming that the issue
-raised here is related to that. *NO*, the main issue is the way this so
-called EEMI ioctl interface is exposing the users low level accessors
-without much abstraction. IMO, it defeats the idea of having EEMI interface
-altogether. There's abstraction but the level is not right. Anyways, this
-gets worse with read/write debugfs interface you want to add.
 
-> Only Linux drivers can use this
-> API for defined ioctl operations. This API is meant for any platform
-> specific operations which needs to be managed by firmware. Firmware will
-> always validate the request for action being performed.
+于 2018年9月6日 GMT+08:00 下午2:18:13, Jagan Teki <jagan@amarulasolutions.com> 写到:
+>On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
+>> From: Jagan Teki <jagan@amarulasolutions.com>
+>>
+>> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
+>> TCON is connected to LCD and the second is to HDMI.
+>>
+>> The HDMI controller/PHY pair is similar to the one on H3/H5.
+>>
+>> Add all required device tree nodes of the display pipeline, including
+>> the TCON0 LCD one and the TCON1 HDMI one.
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> [Icenowy: refactor commit message and add 1st pipeline]
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>> Changes for v4:
+>> - Misc fixes
+>> - Dropped second PLL from HDMI PHY clock
+>
+>Why? it was there in previous versions.
 
-> Debugfs interface is just for debugging during development. We can remove
-> debugfs support for ioctl API if you suggest.
-
-Yes please. I did suggest to remove them long back. You did only for the
-clock module but retained it in the core EEMI ioctl. But if you remove
-the debugfs, do you have any users of these ioctl in the series ? I
-couldn't find one, but if that's the case, drop this patch. I see only
-valid users for clock APIs in this series.
-
---
-Regards,
-Sudeep
+Based on my experiments, the bit has no effect on A64, and the parent
+is always PLL-VIDEO0.
