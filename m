@@ -1,109 +1,93 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46882 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730410AbeIFUcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:08 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 07/10] clk: samsung: exynos5250: Use generic helper for
- handling suspend/resume
-Date: Thu, 06 Sep 2018 17:55:29 +0200
-Message-id: <20180906155532.4085-8-m.szyprowski@samsung.com>
-In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
-References: <20180906155532.4085-1-m.szyprowski@samsung.com>
-        <CGME20180906155557eucas1p2075b7bcf09c328e77686f70c57fbf79d@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <87a7ouqdnm.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87a7ouqdnm.wl-kuninori.morimoto.gx@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Sep 2018 11:07:40 +0200
+Message-ID: <CAMuHMdUUW2PW2s3enOV+nr4_gBMTFuQ2tBLXd0wrD_Jot+F-BQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: convert to SPDX identifiers
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-Almost no functional change, the only difference is in handling
-of hypothetical memory allocation failure on boot.
+Hi Morimoto-san,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-exynos5250.c | 42 ++--------------------------
- 1 file changed, 2 insertions(+), 40 deletions(-)
+On Fri, Sep 7, 2018 at 3:57 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> This patch updates license to use SPDX-License-Identifier
+> instead of verbose license text.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 347fd80c351b..f14139bcb0c1 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -14,7 +14,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- 
- #include "clk.h"
- #include "clk-cpu.h"
-@@ -111,9 +110,6 @@ enum exynos5250_plls {
- 
- static void __iomem *reg_base;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *exynos5250_save;
--
- /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -172,41 +168,6 @@ static const unsigned long exynos5250_clk_regs[] __initconst = {
- 	GATE_IP_ISP1,
- };
- 
--static int exynos5250_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, exynos5250_save,
--				ARRAY_SIZE(exynos5250_clk_regs));
--
--	return 0;
--}
--
--static void exynos5250_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, exynos5250_save,
--				ARRAY_SIZE(exynos5250_clk_regs));
--}
--
--static struct syscore_ops exynos5250_clk_syscore_ops = {
--	.suspend = exynos5250_clk_suspend,
--	.resume = exynos5250_clk_resume,
--};
--
--static void __init exynos5250_clk_sleep_init(void)
--{
--	exynos5250_save = samsung_clk_alloc_reg_dump(exynos5250_clk_regs,
--					ARRAY_SIZE(exynos5250_clk_regs));
--	if (!exynos5250_save) {
--		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--			__func__);
--		return;
--	}
--
--	register_syscore_ops(&exynos5250_clk_syscore_ops);
--}
--#else
--static void __init exynos5250_clk_sleep_init(void) {}
--#endif
--
- /* list of all parent clock list */
- PNAME(mout_apll_p)	= { "fin_pll", "fout_apll", };
- PNAME(mout_cpu_p)	= { "mout_apll", "mout_mpll", };
-@@ -882,7 +843,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 		PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
- 	__raw_writel(tmp, reg_base + PWR_CTRL2);
- 
--	exynos5250_clk_sleep_init();
-+	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
-+			       ARRAY_SIZE(exynos5250_clk_regs));
- 	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
- 
- 	samsung_clk_of_add_provider(np, ctx);
+Thanks for your patch!
+
+> ---
+>  drivers/clk/renesas/Kconfig               |  2 ++
+>  drivers/clk/renesas/clk-div6.c            |  5 +----
+>  drivers/clk/renesas/clk-emev2.c           | 14 +-------------
+>  drivers/clk/renesas/clk-mstp.c            |  5 +----
+>  drivers/clk/renesas/clk-r8a73a4.c         |  5 +----
+>  drivers/clk/renesas/clk-r8a7740.c         |  5 +----
+>  drivers/clk/renesas/clk-r8a7778.c         |  5 +----
+>  drivers/clk/renesas/clk-r8a7779.c         |  5 +----
+>  drivers/clk/renesas/clk-rcar-gen2.c       |  5 +----
+>  drivers/clk/renesas/clk-rz.c              |  5 +----
+>  drivers/clk/renesas/clk-sh73a0.c          |  5 +----
+>  drivers/clk/renesas/r8a7743-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7745-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7790-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7791-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7792-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7794-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/r8a77970-cpg-mssr.c   |  5 +----
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c   |  5 +----
+>  drivers/clk/renesas/rcar-gen2-cpg.c       |  5 +----
+>  drivers/clk/renesas/rcar-gen2-cpg.h       |  7 ++-----
+>  drivers/clk/renesas/rcar-gen3-cpg.c       |  5 +----
+>  drivers/clk/renesas/rcar-gen3-cpg.h       |  7 ++-----
+>  drivers/clk/renesas/rcar-usb2-clock-sel.c |  5 +----
+>  drivers/clk/renesas/renesas-cpg-mssr.c    |  5 +----
+>  drivers/clk/renesas/renesas-cpg-mssr.h    |  7 ++-----
+>  include/linux/clk/renesas.h               |  8 ++------
+>  29 files changed, 34 insertions(+), 126 deletions(-)
+
+This duplicates some of the work by Wolfram, which was already applied:
+
+commit e848c2ea117f222b62715d5c4e1714ec4e0aa647
+Author: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date:   Wed Aug 22 00:02:14 2018 +0200
+
+    clk: renesas: use SPDX identifier for Renesas drivers
+
+    Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+    Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+
+ drivers/clk/renesas/clk-div6.c            | 5 +----
+ drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
+ drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
+ drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
+ drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
+ drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
+ drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
+ 8 files changed, 8 insertions(+), 32 deletions(-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
