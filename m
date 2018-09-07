@@ -1,55 +1,39 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 25 Sep 2018 14:10:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Guilherme =?iso-8859-1?B?Ry4gU2lt9WVz?= <guilherme.simoes@lsitec.org.br>,
-	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
-	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-	sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
-	support@cubietech.com, catalin.marinas@arm.com,
-	Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
-	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com,
-	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
-	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
-Subject: Re: [PATCH v2 01/03] dt-bindings: clock: Add Clock Management Unit
- for Actions Semi S500 SoC
-Message-ID: <20180925191047.GA14410@bogus>
-References: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Fri, 7 Sep 2018 13:19:40 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: zyw@rock-chips.com, mturquette@baylibre.com, sboyd@kernel.org,
+	w.egorov@phytec.de
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Does Rockchip RK808 driver unload work as intended?
+Message-ID: <20180907101940.GE2472@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 04, 2018 at 12:36:36PM -0300, Edgar Bernardi Righi wrote:
-> Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
-> constants added.
-> Tested on a Lemaker Guitar board.
-> 
-> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> 
-> diff --git a/include/dt-bindings/clock/actions,s500-cmu.h
-> b/include/dt-bindings/clock/actions,s500-cmu.h
-> new file mode 100644
-> index 000000000000..34e5849ffcf1
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/actions,s500-cmu.h
-> @@ -0,0 +1,78 @@
-> +// SPDX-License-Identifier: GPL-2.0+
+Hi dee Ho peeps,
 
-Headers should be /* */ style comments.
+I was browsing through the clk drivers as I tried to do some cleaning.
+Few days ago I submitted a patch which would add devm variants for
+clkdev lookup registration. I also added devm of_provider registration
+for cases where it is actually the parent device which contains clock
+definitions in DT. This seems to be quite typical for MFDs.
 
-Otherwise,
+While doing this I hit to Rockchip RK808 driver which seems to utilize
+oarent device (MFD dev) for pretty much all devm releasing. I wonder if
+this is safe? What happens if one tries to remove the RK808 clk module?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+I guess the clk deregistration and cleanups are not ran as parent device
+stays there, right? But is the clk module and clk module code still
+unload? So won't clk operation pointers registered to clk core become
+invalid?
 
-> +//
-> +// Device Tree binding constants for Actions Semi S500 Clock Management Unit
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Copyright (c) 2018 LSI-TEC - Caninos Loucos
+I guess I don't have any HW to test this mnyself. And as the driver has
+been there since 2014 - well, chances are the driver does work and I
+just don't get it =)
+
+So can someone please shed some light on this? Is this a bug or am I
+just plain wrong?
+
+Br,
+	Matti Vaittinen
