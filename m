@@ -1,74 +1,67 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 7 Sep 2018 10:21:03 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 00/12] drm/sun4i: Allwinner A64 MIPI-DSI support
-Date: Thu, 27 Sep 2018 17:18:38 +0530
-Message-Id: <20180927114850.24565-1-jagan@amarulasolutions.com>
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-sunxi@googlegroups.com, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: sun4i: Set VCO and PLL bias current to
+ lowest setting
+Message-ID: <20180907082103.lyuubyqpojehtkz4@flea>
+References: <20180906132537.20772-1-wens@csie.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4r465mu54fmqtukv"
+In-Reply-To: <20180906132537.20772-1-wens@csie.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-This series add MIPI-DSI support on Allwinner A64. The same A31 controller
-is reused and tweaked for A64 since the register space for both SoC's look same.
 
-The current clock rate (270MHz) with nkm (5,2,11) from PLL_MIPI is unable to work
-with A64 DSI block. I've tested with few changes to verify desired nkm divider
-values (1, 2, 5) but with existing nkm divider logic(ccu_nkm_find_best) I'm unable 
-to figure out the desired clock rate, anyone suggestion please let me know here.
+--4r465mu54fmqtukv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bananapi S070WV20-CT16 DSI panel with BPI-M64 board works fine,
-but will figure out and fix the clock logic in next versions.
+On Thu, Sep 06, 2018 at 09:25:37PM +0800, Chen-Yu Tsai wrote:
+> The default mid-level PLL bias current setting interferes with sigma
+> delta modulation. This manifests as decreased audio quality at lower
+> sampling rates, which sounds like radio broadcast quality, and
+> distortion noises at sampling rates at 48 kHz or above.
+>=20
+> Changing the bias current settings to the lowest gets rid of the
+> noise.
+>=20
+> Fixes: de3448519194 ("clk: sunxi-ng: sun4i: Use sigma-delta modulation
+> 		      for audio PLL")
+> Cc: <stable@vger.kernel.org> # 4.15.x
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks,
-Jagan.
+Applied, thanks!
+Maxime
 
-Jagan Teki (12):
-  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
-  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
-  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
-  drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
-  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
-    transfer
-  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-  dt-bindings: panel: Add Bananapi S070WV20-CT16 MIPI-DSI panel bindings
-  drm/panel: Add Bananapi S070WV20-CT16 MIPI-DSI panel driver
-  arm64: dts: allwinner: a64: Add DSI pipeline
-  arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
- .../panel/bananapi,s070wv20-ct16-dsi.txt      |  21 ++
- .../bindings/display/sunxi/sun6i-dsi.txt      |   1 +
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  44 +++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   2 +-
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-bananapi-s070wv20.c   | 336 ++++++++++++++++++
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        |  78 +++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   5 +
- 10 files changed, 522 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
- create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20.c
+--4r465mu54fmqtukv
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.18.0.321.gffc6fa0e3
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSNO4ACgkQ0rTAlCFN
+r3TMyRAAh3jAsO4qNUi+iFocPIIWANn3WoZXVWogssEqiN+p4nXmWeaMOor/6L0D
+tl+U57875b8p2Tg1zvhEL3f0ysophN1JekM9GblnCJPjYQdazJ/HMzDkzQWgxrKI
+/rx0TqxZrW3psXmwGlLGjkGFA067S6xkiIl6g3J+EFPyq8vg7GBbBnsGLRVP3E8f
+0qJOXf3wHLv2LSZuA8ioY3tQTYPUWMtGskTHk0iOM+6ShPMwrueT+eiAmVQAA5JU
+nv7xuKQlFpzsdoPTYJtTf33CS+2T7mft6Es4HhsIeSxUhMIlh0VzRDGhGehSNuFS
+frGfgF8jzwQ7BBZSl2tZvoPXMOl59TJrGyXh6VaGsFqq56EZXEWMIqaHup91Pfcn
+mD988om3lTeZ4HLUBGOj5I7WJmmoc3FLXK6Gq/4MSA1tq5SrqIlnEwytX2LXq5JT
+PRGm83Ul5eB49RUPa57zMTNHjcFZbap0cDTjbf9R+jawhqvjSpHosZmKZwy9FQe2
+UyVc9S40CD6W74a+lE2XbL4sz/uvrEBDVSQLHGeJdrtsK2mLI61wVR5ZFunIxbna
+SYfG+RHknIk88WU5Ll7woWqzsZQF/kyMyK6xbyCm0dHZu5PUnShJBK1Oe2KFJ2Ge
+fBaXBIpjrazq+dcbG6ClWK54XVph+IkFaU7QHKYVlB3QX+ib2D8=
+=AgJO
+-----END PGP SIGNATURE-----
+
+--4r465mu54fmqtukv--
