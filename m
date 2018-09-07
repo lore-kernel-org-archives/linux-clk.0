@@ -1,118 +1,80 @@
-Return-Path: <andy.tang@nxp.com>
-From: andy.tang@nxp.com
-To: mturquette@baylibre.com,
-	oss@buserror.net
-Cc: sboyd@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
-Date: Wed, 19 Sep 2018 15:39:05 +0800
-Message-Id: <20180919073906.34187-2-andy.tang@nxp.com>
-In-Reply-To: <20180919073906.34187-1-andy.tang@nxp.com>
-References: <20180919073906.34187-1-andy.tang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728425AbeIGSkA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 7 Sep 2018 14:40:00 -0400
+MIME-Version: 1.0
+References: <20180905193738.19325-1-robh@kernel.org> <CAHTX3d+BFKM-jFo8Ww_dXwAzsDVoWqE==erfwVTeijHfh8kkOw@mail.gmail.com>
+In-Reply-To: <CAHTX3d+BFKM-jFo8Ww_dXwAzsDVoWqE==erfwVTeijHfh8kkOw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 7 Sep 2018 08:58:41 -0500
+Message-ID: <CAL_JsqLvLoekvxcaBMxrboJzqS=NyB69NHLShos+LhETj7zNwQ@mail.gmail.com>
+Subject: Re: [PATCH 00/21] DT cpu node iterator
+To: Michal Simek <monstr@monstr.eu>
+Cc: devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Ley Foon Tan <lftan@altera.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Salter <msalter@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        nios2-dev@lists.rocketboards.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Rich Felker <dalias@libc.org>,
+        Simon Horman <horms@verge.net.au>,
+        Stafford Horne <shorne@gmail.com>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, vitb@kernel.crashing.org,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org, linux-clk <linux-clk@vger.kernel.org>,
+        linux-edac@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Yuantian Tang <andy.tang@nxp.com>
+On Fri, Sep 7, 2018 at 7:54 AM Michal Simek <monstr@monstr.eu> wrote:
+>
+> Hi Rob,
+>
+> 2018-09-05 21:37 GMT+02:00 Rob Herring <robh@kernel.org>:
+>>
+>> This series adds an iterator for cpu nodes and converts users over to use
+>> it or of_get_cpu_node in some cases. This allows us to remove the
+>> dependency on device_type property for cpu nodes though removing that
+>> from DTS files will have to wait for some time. In some cases, this makes
+>> the DT search more strict by only looking in /cpus child nodes rather
+>> than any node with the device_type == cpu. The iterator also honors the
+>> status property which is often forgotten.
+>>
+>> I've only tested on ARM under QEMU and compiled powerpc.
+>
+>
+>
+> Do you have this somewhere in your tree not to apply 21 patches by hand?
 
-There are issues in current lagacy clock node.
-The compatible string is not correct and the clocks property
-refers to the wrong node too.
-Instead of fixing them, upgrade it to use new clock binding
-which has been already ready to use.
+Yes, dt/cpu-type branch on my kernel.org tree.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
----
- arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi |   23 +++++++++++++++++++++++
- arch/powerpc/boot/dts/fsl/t1023si-post.dtsi   |   20 ++------------------
- arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi    |    4 ++--
- 3 files changed, 27 insertions(+), 20 deletions(-)
- create mode 100644 arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
-
-diff --git a/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
-new file mode 100644
-index 0000000..49c6f86
---- /dev/null
-+++ b/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
-@@ -0,0 +1,23 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Device Tree Include file for NXP PowerPC family SoC.
-+ *
-+ * Copyright 2017 NXP
-+ *
-+ * Tang Yuantian <andy.tang@nxp.com>
-+ *
-+ */
-+
-+sysclk: sysclk {
-+	compatible = "fixed-clock";
-+	#clock-cells = <0>;
-+	clock-frequency = <100000000>;
-+	clock-output-names = "sysclk";
-+};
-+
-+clockgen: global-utilities@e1000 {
-+	compatible = "fsl,qoriq-clockgen";
-+	reg = <0xe1000 0x1000>;
-+	#clock-cells = <2>;
-+	clocks = <&sysclk>;
-+};
-diff --git a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
-index 4908af5..c77d3e9 100644
---- a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
-+++ b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
-@@ -342,25 +342,9 @@
- 		fsl,liodn-bits = <12>;
- 	};
- 
--/include/ "qoriq-clockgen2.dtsi"
-+/include/ "qoriq-clockgen.dtsi"
- 	global-utilities@e1000 {
--		compatible = "fsl,t1023-clockgen", "fsl,qoriq-clockgen-2.0";
--		mux0: mux0@0 {
--			#clock-cells = <0>;
--			reg = <0x0 4>;
--			compatible = "fsl,core-mux-clock";
--			clocks = <&pll0 0>, <&pll0 1>;
--			clock-names = "pll0_0", "pll0_1";
--			clock-output-names = "cmux0";
--		};
--		mux1: mux1@20 {
--			#clock-cells = <0>;
--			reg = <0x20 4>;
--			compatible = "fsl,core-mux-clock";
--			clocks = <&pll0 0>, <&pll0 1>;
--			clock-names = "pll0_0", "pll0_1";
--			clock-output-names = "cmux1";
--		};
-+		compatible = "fsl,t1023-clockgen";
- 	};
- 
- 	rcpm: global-utilities@e2000 {
-diff --git a/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi b/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
-index 9d08a36..d87ea13 100644
---- a/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
-+++ b/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
-@@ -74,7 +74,7 @@
- 		cpu0: PowerPC,e5500@0 {
- 			device_type = "cpu";
- 			reg = <0>;
--			clocks = <&mux0>;
-+			clocks = <&clockgen 1 0>;
- 			next-level-cache = <&L2_1>;
- 			#cooling-cells = <2>;
- 			L2_1: l2-cache {
-@@ -84,7 +84,7 @@
- 		cpu1: PowerPC,e5500@1 {
- 			device_type = "cpu";
- 			reg = <1>;
--			clocks = <&mux1>;
-+			clocks = <&clockgen 1 1>;
- 			next-level-cache = <&L2_2>;
- 			#cooling-cells = <2>;
- 			L2_2: l2-cache {
--- 
-1.7.1
+Rob
