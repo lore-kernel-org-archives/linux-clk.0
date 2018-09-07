@@ -1,65 +1,104 @@
-Return-Path: <j-keerthy@ti.com>
-Subject: Re: [PATCH v3 RESEND 0/4] clk: clk: Add functions to save/restore
- clock context en-masse
-To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <t-kristo@ti.com>
-CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <russ.dill@ti.com>
-References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <2b898faf-ca7d-1ef9-f862-9a3f05717884@ti.com>
-Date: Wed, 19 Sep 2018 13:20:59 +0530
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Fri, 7 Sep 2018 15:31:26 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc: linux-sunxi@googlegroups.com, Jagan Teki <jagan@amarulasolutions.com>,
+	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU
+ for SUN8I and SUN50I
+Message-ID: <20180907133125.ghks5cgk5u6vrhd6@flea>
+References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+ <20180905070335.dclhpxjld4vdkdu4@flea>
+ <2955967.qdhifWMYUT@jernej-laptop>
 MIME-Version: 1.0
-In-Reply-To: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4nzkw2nv5o3dfnhg"
+In-Reply-To: <2955967.qdhifWMYUT@jernej-laptop>
 List-ID: <linux-clk.vger.kernel.org>
 
 
+--4nzkw2nv5o3dfnhg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 04 September 2018 12:19 PM, Keerthy wrote:
-> Deep enough power saving mode can result into losing context of the clock
-> registers also, and they need to be restored once coming back from the power
-> saving mode. Hence add functions to save/restore clock context.
+On Thu, Sep 06, 2018 at 07:10:06AM +0200, Jernej =C5=A0krabec wrote:
+> Dne sreda, 05. september 2018 ob 09:03:35 CEST je Maxime Ripard napisal(a=
+):
+> > On Tue, Sep 04, 2018 at 10:06:06PM +0530, Jagan Teki wrote:
+> > > Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+> > > as default.
+> > >=20
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v4, v3:
+> > > - none
+> > > Changes for v2:
+> > > - Enable for MACH_SUN8I
+> > >=20
+> > >  drivers/clk/sunxi-ng/Kconfig | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >=20
+> > > diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kcon=
+fig
+> > > index 826674d090fd..e20182aa9748 100644
+> > > --- a/drivers/clk/sunxi-ng/Kconfig
+> > > +++ b/drivers/clk/sunxi-ng/Kconfig
+> > > @@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
+> > >=20
+> > >  config SUN8I_DE2_CCU
+> > > =20
+> > >  	bool "Support for the Allwinner SoCs DE2 CCU"
+> > >=20
+> > > +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
+> > > +	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
+> >=20
+> > I don't see why there's a dependency on the DRM driver. I'm pretty
+> > sure this would even break simplefb.
+>=20
+> I think best approach would be that SUN8I_MIXER selects (or depends on?) =
+this=20
+> symbol, since it can't work if there is no DE2 CCU clock present.
 
-A gentle ping on this series.
+This is a runtime dependency, not a build time one. We're not doing it
+for any other similar driver, so there's no reason to do it in this
+particular case.
 
-> 
-> Tested for DS0 on am437x-gp-evm
-> 
-> Based on top of linux-next
-> 
-> Resend Series:
-> 
->   * Rebased on top of Linux 4.19-rc2
->   * Added Tony's Ack.
-> 
-> Changes in v2:
-> 
->         * Renamed clk_dflt_restore to clk_gate_restore_context
-> 
-> Changes in v3: Corrected the e-mail address of linux-omap list 
-> 
-> Keerthy (2):
->   clk: clk: Add clk_gate_restore_context function
->   ti: pm33xx: Save/restore clk context based on enable_off_mode setting
-> 
-> Russ Dill (2):
->   clk: clk: Add functions to save/restore clock context en-masse
->   clk: ti: Add functions to save/restore clk context
-> 
->  arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
->  drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
->  drivers/clk/ti/clock.h               |   2 +
->  drivers/clk/ti/divider.c             |  36 ++++++++++
->  drivers/clk/ti/dpll.c                |   6 ++
->  drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
->  drivers/clk/ti/gate.c                |   3 +
->  drivers/clk/ti/mux.c                 |  29 ++++++++
->  drivers/soc/ti/pm33xx.c              |  13 ++++
->  include/linux/clk-provider.h         |   9 +++
->  include/linux/clk.h                  |  25 +++++++
->  include/linux/clk/ti.h               |   6 ++
->  include/linux/platform_data/pm33xx.h |   1 +
->  13 files changed, 362 insertions(+)
-> 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4nzkw2nv5o3dfnhg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSfa0ACgkQ0rTAlCFN
+r3SkZBAAmUPFSM0fZN7/iHasr4dZei6lHt0x+qegvqVbl8dm9QCIEeBHIqgheV/k
+7uiiY67CaeHNXOUDVGnlxa/G2FxDSAN0SoDWqd/ERJjux6hD8G+RtYhpn+cpreph
+yIGDBLjsbZdDdx4J+BRD7gAXFDW+gm922MRzPPN8yRY/qlD8XxsBznHC9v5KzJsJ
+Uqhy5MWFDtMrt06F94OFnMmcmQvR6UA0wNkDcjEMhMEKsV2NRbOOYsdvIzfSaCYL
+wBeYpuuvK6pG5B83n6NRBm4x17Ky17VqR7s1qhe+rWqfX/qdySDY9HYXwp00Qcjv
+Ew2IBnYtkawtQC/dX85gnWJLRpWerD4tu0lpcn5Z8oI3ZvLBH0wC/pTjY4RAk5jD
+oyHQIAdSjcOHciN+BDqp2TYS2q5auKUMIGTCYYh3LwLvw/NSw3Y7fXfydnPob57E
+GtZinGViN0ANegiR451TkS6Dzj7zc9h241NgRmGvYlG2U/JBgPrH4iph1dvVsfEG
+H98ziz13+pdvjdAsnZ/6FBiTqnTl/6z5Lb36eYpQPG9riiklFA6F/ESgi/RbEdoB
+YW0a1qQrk0qnRBlc9kZwAz380e7JNZGN2NnFdbGFnFdE9wI+29p+IJH1Nb6RzNcI
+656FO7rLhkstUmdJmyYiRVclPJBL+0Dd+upCsjI5W+YMgOdoUKU=
+=Nbx1
+-----END PGP SIGNATURE-----
+
+--4nzkw2nv5o3dfnhg--
