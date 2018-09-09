@@ -1,44 +1,47 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39493 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIXRDA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:03:00 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: Enable PERIS clocks for suspend
-Date: Mon, 24 Sep 2018 13:01:20 +0200
-Message-id: <20180924110120.21319-1-m.szyprowski@samsung.com>
-References: <CGME20180924110126eucas1p221aba92e694fcdf2f0f288f20a0b07a2@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <shawnguo@kernel.org>
+Date: Sun, 9 Sep 2018 10:00:23 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180909020021.GA18838@dragon>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180906101516.GA5360@sirena.org.uk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Ensure that clocks for core SoC modules (including TZPC0..9 modules)
-are enabled for suspend/resume cycle. This fixes suspend/resume
-support on Exynos5422-based Odroid XU3/XU4 boards.
+On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
+> On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
+> 
+> > Can you ACK on those two regulator patches, so that I can queue this
+> > series up on IMX tree?
+> 
+> I was expecting to get a pull request with the precursor patches in it -
+> the regulator driver seems to get a moderate amount of development so
+> there's a reasonable risk of conflicts.
 
-Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 1 +
- 1 file changed, 1 insertion(+)
+What about you create a stable topic branch for regulator patches and I
+pull it into IMX tree?
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index a2d6e7f4bcd3..34cce3c5898f 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -276,6 +276,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
- 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
- };
- 
- /* list of all parent clocks */
--- 
-2.17.1
+Shawn
