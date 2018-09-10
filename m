@@ -1,52 +1,40 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH 3/4] clk: imx6ul: add i.mx6ulz support
-Date: Tue, 18 Sep 2018 14:19:07 +0800
-Message-Id: <1537251548-27845-4-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
-References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
+ TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH v4] clk: renesas: cpg-mssr: Add R7S9210 support
+Date: Mon, 10 Sep 2018 14:16:46 +0000
+Message-ID: 
+ <TY1PR01MB1562E64853EEB282E7D6227B8A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180907165849.106182-1-chris.brandt@renesas.com>
+ <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6ULZ has same CCM IP as i.MX6ULL, and it reuses
-i.MX6UL clock driver, this patch adds support for it.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx6ul.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 361b43f..42b857e 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -116,7 +116,8 @@ static inline int clk_on_imx6ul(void)
- 
- static inline int clk_on_imx6ull(void)
- {
--	return of_machine_is_compatible("fsl,imx6ull");
-+	return of_machine_is_compatible("fsl,imx6ull") ||
-+		of_machine_is_compatible("fsl,imx6ulz");
- }
- 
- static void __init imx6ul_clocks_init(struct device_node *ccm_node)
--- 
-2.7.4
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgU2VwdGVtYmVyIDEwLCAyMDE4IDEsIEdlZXJ0IFV5dHRl
+cmhvZXZlbiB3cm90ZToNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQr
+cmVuZXNhc0BnbGlkZXIuYmU+DQo+IGkuZS4gd2lsbCBxdWV1ZSBpbiBjbGstcmVuZXNhcy1mb3It
+djQuMjAuDQoNClRoYW5rIHlvdSENCg0KTm93IHRoYXQgSSBoYXZlIGEgY2xvY2ssIEkgY2FuIGdv
+IGFoZWFkIGFuZCBzdWJtaXQgYSBEZXZpY2UgVHJlZS4NCkhvd2V2ZXIsIEkgc3RpbGwgZG9uJ3Qg
+aGF2ZSBhIHNvbHV0aW9uIGZvciBteSBPU1RNIHRpbWVyIGRyaXZlciB3aGVuIA0KdXNpbmcgdGhp
+cyBuZXcgY2xvY2sgZHJpdmVyIGFyY2hpdGVjdHVyZS4NCg0KU2hvdWxkIEkgcmVtb3ZlIHRoZSBv
+c3RtIGVudHJpZXMgaW4gcjdzOTIxMF9tb2RfY2xrc1tdIGJlZm9yZSB5b3UgcXVldWUgDQppdCB1
+cD8/Pz8/DQoNCg0KDQo+IE9uZSBwb3NzaWJsZSBhcmVhIGZvciBpbXByb3ZlbWVudCBpcyByZW1v
+dmluZyB0aGUgdW51c2VkIGVudHJpZXMgaW4gdGhlDQo+IG1vZHVsZSBjbG9ja3MgcGFydCBvZiB0
+aGUgcHJpdi0+Y2xrc1tdIGFycmF5Og0KPiANCj4gKyAgICAgICAubnVtX2h3X21vZF9jbGtzID0g
+MTEgKiAzMiwgLyogaW5jbHVkZXMgU1RCQ1IwIHdoaWNoIGRvZXNuJ3QgZXhpc3QNCj4gKi8NCj4g
+DQo+IER1ZSB0byBoYXZpbmcgOC1iaXQgaW5zdGVhZCBvZiAzMi1iaXQgcmVnaXN0ZXJzLCAxMSAq
+IDI0IGVudHJpZXMgYXJlIG5vdA0KPiB1c2VkLg0KPiBGaXhpbmcgdGhhdCBtZWFucyBhZGRpbmcg
+bW9yZSBjaGVja3MgaW4gc2V2ZXJhbCBmdW5jdGlvbnMsIHRob3VnaCwgc28gSQ0KPiBkb24ndCBr
+bm93IGlmIHlvdSB3YW50IHRvIGdvIHRoYXQgZmFyLi4uDQoNClRoYXQncyBiYXNpY2FsbHkgd2h5
+IEkgZGlkbid0IHRvdWNoIGl0LiBJIGRpZG4ndCBzZWUgYW55IGJpZyBiZW5lZml0IA0KZnJvbSBh
+IHN5c3RlbSByZXNvdXJjZSBwb2ludCBvZiB2aWV3Lg0KDQoNCkNocmlzDQoNCg==
