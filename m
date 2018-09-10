@@ -1,44 +1,40 @@
-Return-Path: <Chris.Paterson2@renesas.com>
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH] clk: renesas: r8a77970: add CMT clocks
-Date: Thu, 6 Sep 2018 08:10:33 +0000
-Message-ID: 
- <TYAPR01MB2285DBEDCDFFDF824D45C78FB7010@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
- <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-In-Reply-To: <d7c78a11-b876-0587-c684-88f1865f0260@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <lkundrak@v3.sk>
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 3/8] dt-bindings: marvell,mmp2: Add clock id for the SP clock
+Date: Mon, 10 Sep 2018 13:26:49 +0200
+Message-Id: <20180910112654.42061-4-lkundrak@v3.sk>
+In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGVsbG8gU2VyZ2VpLA0KDQo+IEZyb206IGxpbnV4LXJlbmVzYXMtc29jLW93bmVyQHZnZXIua2Vy
-bmVsLm9yZyA8bGludXgtcmVuZXNhcy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24g
-QmVoYWxmIE9mIFNlcmdlaSBTaHR5bHlvdg0KPiBTZW50OiAwNSBTZXB0ZW1iZXIgMjAxOCAxODow
-MA0KPiANCj4gQWRkIHRoZSBSOEE3Nzk3MCBDTVQgbW9kdWxlIGNsb2Nrcy4NCj4gDQo+IEJhc2Vk
-IG9uIHRoZSBvcmlnaW5hbCAoYW5kIGxhcmdlKSBwYXRjaCBieSBWbGFkaW1pciBCYXJpbm92Lg0K
-PiANCj4gU2lnbmVkLW9mZi1ieTogVmxhZGltaXIgQmFyaW5vdiA8dmxhZGltaXIuYmFyaW5vdkBj
-b2dlbnRlbWJlZGRlZC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFNlcmdlaSBTaHR5bHlvdiA8c2Vy
-Z2VpLnNodHlseW92QGNvZ2VudGVtYmVkZGVkLmNvbT4NCg0KUmV2aWV3ZWQtYnk6IENocmlzIFBh
-dGVyc29uIDxjaHJpcy5wYXRlcnNvbjJAcmVuZXNhcy5jb20+DQoNCktpbmQgcmVnYXJkcywgQ2hy
-aXMNCg0KPiANCj4gLS0tDQo+ICBkcml2ZXJzL2Nsay9yZW5lc2FzL3I4YTc3OTcwLWNwZy1tc3Ny
-LmMgfCAgICA0ICsrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4gDQo+
-IEluZGV4OiByZW5lc2FzL2RyaXZlcnMvY2xrL3JlbmVzYXMvcjhhNzc5NzAtY3BnLW1zc3IuYw0K
-PiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09DQo+ID09PT09PT09PQ0KPiAtLS0gcmVuZXNhcy5vcmlnL2RyaXZlcnMvY2xrL3JlbmVzYXMv
-cjhhNzc5NzAtY3BnLW1zc3IuYw0KPiArKysgcmVuZXNhcy9kcml2ZXJzL2Nsay9yZW5lc2FzL3I4
-YTc3OTcwLWNwZy1tc3NyLmMNCj4gQEAgLTExOCw2ICsxMTgsMTAgQEAgc3RhdGljIGNvbnN0IHN0
-cnVjdCBtc3NyX21vZF9jbGsgcjhhNzc5Nw0KPiAgCURFRl9NT0QoIm1maXMiLAkJCSAyMTMsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMiksDQo+ICAJREVGX01PRCgic3lzLWRtYWMyIiwJCSAyMTcsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICAJREVGX01PRCgic3lzLWRtYWMxIiwJCSAyMTgsDQo+
-IAlSOEE3Nzk3MF9DTEtfUzJEMSksDQo+ICsJREVGX01PRCgiY210MyIsCQkJIDMwMCwJUjhBNzc5
-NzBfQ0xLX1IpLA0KPiArCURFRl9NT0QoImNtdDIiLAkJCSAzMDEsCVI4QTc3OTcwX0NMS19SKSwN
-Cj4gKwlERUZfTU9EKCJjbXQxIiwJCQkgMzAyLAlSOEE3Nzk3MF9DTEtfUiksDQo+ICsJREVGX01P
-RCgiY210MCIsCQkJIDMwMywJUjhBNzc5NzBfQ0xLX1IpLA0KPiAgCURFRl9NT0QoInNkLWlmIiwJ
-CSAzMTQsCVI4QTc3OTcwX0NMS19TRDApLA0KPiAgCURFRl9NT0QoInJ3ZHQiLAkJCSA0MDIsCVI4
-QTc3OTcwX0NMS19SKSwNCj4gIAlERUZfTU9EKCJpbnRjLWV4IiwJCSA0MDcsCVI4QTc3OTcwX0NM
-S19DUCksDQo=
+This is the clock for the "security processor" core.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ include/dt-bindings/clock/marvell,mmp2.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
+index 228a5e234af0..7b24fc791146 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -71,6 +71,7 @@
+ #define MMP2_CLK_CCIC1_MIX		117
+ #define MMP2_CLK_CCIC1_PHY		118
+ #define MMP2_CLK_CCIC1_SPHY		119
++#define MMP2_CLK_SP			120
+ 
+ #define MMP2_NR_CLKS			200
+ #endif
+-- 
+2.17.1
