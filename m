@@ -1,73 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:34885 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeIELuL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:50:11 -0400
-Date: Wed, 5 Sep 2018 09:21:20 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 05/11] drm/sun4i: Add support for A64 display engine
-Message-ID: <20180905072120.nejhsauwvocc3nhw@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-6-icenowy@aosc.io>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ao6drrzpdkozm76q"
-In-Reply-To: <20180904044053.15425-6-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+References: <20180907165849.106182-1-chris.brandt@renesas.com>
+In-Reply-To: <20180907165849.106182-1-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Sep 2018 16:04:33 +0200
+Message-ID: <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add R7S9210 support
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Chris,
 
---ao6drrzpdkozm76q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 7, 2018 at 6:59 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
+> Standby.
+>
+> The Module Standby HW in the RZ/A series is very close to R-Car HW, except
+> for how the registers are laid out.
+> The MSTP registers are only 8-bits wide, there is no status registers
+> (MSTPSR), and the register offsets are a little different. Since the RZ/A
+> hardware manuals refer to these registers as the Standby Control Registers,
+> we'll use that name to distinguish the RZ/A type from the R-Car type.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v4:
+>  * Preserved sort order of SoC listings
+>  * Removed R7S9210_CLK_PLL from dt-binding since it's an internal clock
+>  * ratio_tab is now a struct making it look a little nicer
+>  * Removed CLK_I,...CLK_P0 because they are already defined in dt-bindings
+>  * Sorted mod_clks by ascending MSTP number
+>  * Removed cast from clk_get_rate(parent)
+>  * Corrected register index of stbcr[1]
+>  * Don't use MOD_CLK_PACK_10 for non priv->stbyctrl devices (bug fix)
 
-On Tue, Sep 04, 2018 at 12:40:47PM +0800, Icenowy Zheng wrote:
-> From: Jagan Teki <jagan@amarulasolutions.com>
->=20
-> Display Engine(DE2) in Allwinner A64 has two mixers and tcons.
->=20
-> The routing for mixer0 is through tcon0 and connected to
-> LVDS/RGB/MIPI-DSI controller.
->=20
-> The routing for mixer1 is through tcon1 and connected to HDMI.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Thanks for the update!
 
-Applied, thanks!
-Maxime
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+One possible area for improvement is removing the unused entries in the
+module clocks part of the priv->clks[] array:
 
---ao6drrzpdkozm76q
-Content-Type: application/pgp-signature; name="signature.asc"
++       .num_hw_mod_clks = 11 * 32, /* includes STBCR0 which doesn't exist */
 
------BEGIN PGP SIGNATURE-----
+Due to having 8-bit instead of 32-bit registers, 11 * 24 entries are not used.
+Fixing that means adding more checks in several functions, though, so I
+don't know if you want to go that far...
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPg+8ACgkQ0rTAlCFN
-r3RsbQ/9GN0hCIJSA0ACatLI+tMVjhjuvnbGswm8vn5wcqaUeBv+1KSoeDqHiqF6
-0q0MPbXb6CT2cLPYreklb6fPJKTyoj0H1ZF0VcwkydXqlBcUIsWVP34u+2kkexWc
-yefMNbDM3QLushmAnWCRaHYNXu0UtMcvOEQYcQZ1tSp/K8HuBqHFbDOp/KuUqdny
-oMIOiKm8D6C1D1AhyKup5nszbC6I7ujBLdgXk7sycRfxvRF5DET1Iz/PEPcqXPIv
-o0F4sNcg8gS7oG4dh9kFM+lSRm6I2C2g3zjWPK75VOlBb+jLZwYSMof+KKKlbIJw
-kJ/FksWz89Q8L4md8B/2oSQU1lz0RgE1PJt/LzJn5My3Wdzxfbm5X5lgpl3UGS6M
-f5JWIWCht+vgCvxRaqAHG/0qMyoMR66ZvmcSLNn7HNlu7YwDEY0Nu2YYxN6Bd7iB
-/lXDWwD7WWGxFGo89Eg6h5ebCt11sI/X8Bfm8v4NvXvyu+SW6UPzpm8prOw6v07V
-1n6kPQy7WcWQjeqBBUR9v1lw3f9tRQFmsdREGUj10/52x80oe6gScg8q5jPUlrka
-nCUGOcPxKaR3b7/WsTYYqcEz1OIrH4+nmONJLBqwwKgJExP9KZP0q0GfvFOQzBNf
-asVBi65xjwdWxjpqckeaNIQPNVzyMRmdQJOlD7EbBO1u4RqaLss=
-=RzHt
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---ao6drrzpdkozm76q--
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
