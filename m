@@ -1,101 +1,70 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40586 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbeIZCVq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 22:21:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y8-v6so21008629wrh.7
-        for <linux-clk@vger.kernel.org>; Tue, 25 Sep 2018 13:12:31 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-watchdog@vger.kernel.org, od@zcrc.me,
-        linux-mips@linux-mips.org, Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5baa3fa9.1c69fb81.4c7b7.19fdSMTPIN_ADDED_MISSING@mx.google.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <346cb95c-f9ce-f19b-30f3-75e9fb379290@linaro.org>
-Date: Tue, 25 Sep 2018 22:12:28 +0200
+Return-Path: <broonie@sirena.org.uk>
+Date: Mon, 10 Sep 2018 16:19:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180910151926.GA10889@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk>
+ <20180909020021.GA18838@dragon>
 MIME-Version: 1.0
-In-Reply-To: <5baa3fa9.1c69fb81.4c7b7.19fdSMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+In-Reply-To: <20180909020021.GA18838@dragon>
 List-ID: <linux-clk.vger.kernel.org>
 
-On 25/09/2018 15:38, Paul Cercueil wrote:
-> 
-> Le 24 sept. 2018 9:14 AM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 24/09/2018 08:53, Paul Cercueil wrote: 
->>>
->>> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
->>>>
->>>> On 24/09/2018 07:49, Paul Cercueil wrote: 
->>>>>
->>>>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
->>>>> écrit : 
->>>>>>
->>>>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
->>>>>>> Hi Daniel, 
->>>>>>>
->>>>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
->>>>>>> <daniel.lezcano@linaro.org> a écrit : 
->>>>>>>>
->>>>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>>>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
->>>>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
->>>>>>>>> system timer, and optionally with a clocksource and a 
->>>>>>>>> sched_clock. 
->>>>>>>>>
->>>>>>>>> It also provides clocks and interrupt handling to client 
->>>>>>>>> drivers. 
->>>>>>>>
->>>>>>>> Can you provide a much more complete description of the timer 
->>>>>>>> in order to make my life easier for the review of this patch? 
->>>>>>>
->>>>>>> See patch [03/24], it adds a doc file that describes the 
->>>>>>> hardware. 
->>>>>>
->>>>>> Thanks, I went through but it is incomplete to understand what the 
->>>>>> timer do. I will reverse-engineer the code but it would help if you 
->>>>>> can give the gross approach. Why multiple channels ? mutexes and 
->>>>>> completion ? 
->>>>>
->>>>> Much of the complexity is because of the multi-purpose nature of the 
->>>>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
->>>>>
->>>>> The driver starts by using channels 0 and 1 as system timer and 
->>>>> clocksource, respectively, the other ones being unused for now. Then, 
->>>>> *if* the PWM driver requests one of the channels in use by the 
->>>>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
->>>>> will dynamically reassign the system timer to a free channel, from 
->>>>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
->>>>> are actually used. 
->>>>
->>>> Why do you need to do this? Can't be the channels dedicated and reserved 
->>>> for clocksource and clockevent? 
->>>
->>> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :( 
->>
->> Isn't possible to specify the channel to use in the DT? like renesas16 ? 
-> 
-> That's what I did in V6 (and before), but Rob did not want me to add properties for Linux-specific concepts such as clocksource.
 
-Hmm, I remember something like that, yes but I did a delete of the
-previous version when you posted the v7. Can you give a pointer to its
-answer ?
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
+> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
 
+> > I was expecting to get a pull request with the precursor patches in it -
+> > the regulator driver seems to get a moderate amount of development so
+> > there's a reasonable risk of conflicts.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> What about you create a stable topic branch for regulator patches and I
+> pull it into IMX tree?
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Sure, I can send a pull request back but the first two patches in the
+series are ARM ones - are you OK with me just applying them and sending
+them in the pull request or do you want to apply them first?
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluWi30ACgkQJNaLcl1U
+h9DfjQf+Mzg14+HDipidgPh6Bdg+IJD1Nj7k+nkPf1Swd7eZoS05uU8JnDGs2EPD
+xNvyzY4s12YQUOt5PwoTsQqa78Qi4VlkyQ64alwucoTZAqr49ohIThUfst/igMXP
+7GydiWcdwcGyxgecT45qT9AU/sULkb0ygCdTgUL4Jnhcy5D2YZGeWOc7PFQ2kI4j
+GDyXyQGJTGq4kSmKLtZPyyshFYcfjc/ICzU9gt8e0SerwSD5HcK/ZAleF/9HRK22
+QqSg/Z4BPi1Q1dWXJcwD4QdHC+0FRLQPCOIQx20GPgOuW0hNavALc55scwkdmMgg
+9t9K8G+F9Y9TjZvYapu910gdzOriJA==
+=y7uB
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
