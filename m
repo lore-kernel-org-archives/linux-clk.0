@@ -1,56 +1,42 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH 4/6] clk: mvebu: ap806: Fix clock name for the cluster
-Date: Sat, 22 Sep 2018 20:17:07 +0200
-Message-Id: <20180922181709.13007-5-gregory.clement@bootlin.com>
-In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from shell.v3.sk ([90.176.6.54]:36083 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727727AbeIJQzq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Sep 2018 12:55:46 -0400
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
+Date: Mon, 10 Sep 2018 14:01:44 +0200
+Message-Id: <20180910120144.163788-1-lkundrak@v3.sk>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Actually, the clocks exposed for the cluster are not the CPU clocks, but
-the PLL clock used as entry clock for the CPU clocks. The CPU clock will
-be managed by a driver submitting in the following patches.
+A typo that makes it impossible to get the correct clocks for
+MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/clk/mvebu/ap806-system-controller.c | 4 ++--
+ drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 0a58824ff053..73ba8fd7860f 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -97,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
- 	cpuclk_freq *= 1000 * 1000;
- 
- 	/* CPU clocks depend on the Sample At Reset configuration */
--	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
-+	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-0");
- 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
- 						0, cpuclk_freq);
- 	if (IS_ERR(ap806_clks[0])) {
-@@ -105,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
- 		goto fail0;
- 	}
- 
--	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
-+	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-1");
- 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
- 						cpuclk_freq);
- 	if (IS_ERR(ap806_clks[1])) {
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 0fc75c395957..d083b860f083 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+ 	/* The gate clocks has mux parent. */
+ 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
 -- 
-2.19.0
+2.17.1
