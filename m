@@ -1,133 +1,38 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 20 Sep 2018 09:39:06 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 3/4] devres: provide devm_kstrdup_const()
-Message-ID: <20180920163905.GH1367@tuxbook-pro>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <20180828093332.20674-4-brgl@bgdev.pl>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180828093332.20674-4-brgl@bgdev.pl>
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <d06fcbaf-020f-d78f-2535-d50d8eb43915@cogentembedded.com>
+In-Reply-To: <d06fcbaf-020f-d78f-2535-d50d8eb43915@cogentembedded.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Sep 2018 16:10:32 +0200
+Message-ID: <CAMuHMdX_RGXLT16Qzr0AGdZcRRAtNuuJ-cTkvVDMEUAM3eCa2Q@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77970: add TMU clocks
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
+On Thu, Sep 6, 2018 at 10:28 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The TMU clocks weren't present in the original R8A77970 patch by Daisuke
+> Matsushita, they were added in a later BSP version...
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> Provide a resource managed version of kstrdup_const(). This variant
-> internally calls devm_kstrdup() on pointers that are outside of
-> .rodata section and returns the string as is otherwise.
-> 
-> Also provide a corresponding version of devm_kfree().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Gr{oetje,eeting}s,
 
-Regards,
-Bjorn
+                        Geert
 
-> ---
->  drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/device.h |  3 +++
->  2 files changed, 41 insertions(+)
-> 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index 438c91a43508..48185d57bc5b 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -11,6 +11,8 @@
->  #include <linux/slab.h>
->  #include <linux/percpu.h>
->  
-> +#include <asm/sections.h>
-> +
->  #include "base.h"
->  
->  struct devres_node {
-> @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
->  }
->  EXPORT_SYMBOL_GPL(devm_kstrdup);
->  
-> +/**
-> + * devm_kstrdup_const - resource managed conditional string duplication
-> + * @dev: device for which to duplicate the string
-> + * @s: the string to duplicate
-> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> + *
-> + * Strings allocated by devm_kstrdup_const will be automatically freed when
-> + * the associated device is detached.
-> + *
-> + * RETURNS:
-> + * Source string if it is in .rodata section otherwise it falls back to
-> + * devm_kstrdup.
-> + */
-> +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-> +{
-> +	if (is_kernel_rodata((unsigned long)s))
-> +		return s;
-> +
-> +	return devm_kstrdup(dev, s, gfp);
-> +}
-> +EXPORT_SYMBOL(devm_kstrdup_const);
-> +
->  /**
->   * devm_kvasprintf - Allocate resource managed space and format a string
->   *		     into that.
-> @@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
->  }
->  EXPORT_SYMBOL_GPL(devm_kfree);
->  
-> +/**
-> + * devm_kfree_const - Resource managed conditional kfree
-> + * @dev: device this memory belongs to
-> + * @p: memory to free
-> + *
-> + * Function calls devm_kfree only if @p is not in .rodata section.
-> + */
-> +void devm_kfree_const(struct device *dev, const void *p)
-> +{
-> +	if (!is_kernel_rodata((unsigned long)p))
-> +		devm_kfree(dev, p);
-> +}
-> +EXPORT_SYMBOL(devm_kfree_const);
-> +
->  /**
->   * devm_kmemdup - Resource-managed kmemdup
->   * @dev: Device this memory belongs to
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 33f7cb271fbb..79ccc6eb0975 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
->  	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
->  }
->  extern void devm_kfree(struct device *dev, const void *p);
-> +extern void devm_kfree_const(struct device *dev, const void *p);
->  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-> +extern const char *devm_kstrdup_const(struct device *dev,
-> +				      const char *s, gfp_t gfp);
->  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
->  			  gfp_t gfp);
->  
-> -- 
-> 2.18.0
-> 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
