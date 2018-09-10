@@ -1,68 +1,51 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from relmlor4.renesas.com ([210.160.252.174]:56441 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726786AbeIRR1f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 13:27:35 -0400
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Mark Brown <broonie@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
-Date: Tue, 18 Sep 2018 11:55:10 +0000
-Message-ID: <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180829132954.64862-1-chris.brandt@renesas.com>
- <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org>
- <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org>
- <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
- <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org>
- <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
- <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org>
- <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
- <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org>
- <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
- <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
- <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org>
- <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
- <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
- <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+References: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
+In-Reply-To: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Sep 2018 15:11:15 +0200
+Message-ID: <CAMuHMdWCjHEZsHHq4+tEK2o-Qj3OuGpFZBFiRxHgjRqMJT0PPw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Fix UART34567 clock rate
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCwgbGludXgtcmVuZXNh
-cy1zb2Mtb3duZXJAdmdlci5rZXJuZWwub3JnIHdyb3RlOg0KPiA+IEkndmUgY29kZWQgdGhpcyB1
-cCBhbmQgaXQgd29ya3MgZmluZS4NCj4gDQo+IFdoaWxlIEkgZG9uJ3QgZG91YnQgdGhpcyB3b3Jr
-cyBmaW5lLCB5b3VyIERUIGlzIG5vIGxvbmdlciBkZXNjcmliaW5nDQo+IGhhcmR3YXJlLCBidXQg
-YWxzbyBzb2Z0d2FyZSBwb2xpY3kuDQo+IA0KPiBJIHRoaW5rIHRoZSBwcm9wZXIgc29sdXRpb24s
-IG1heGltaXppbmcgY29kZSByZXVzZSwgaXMgdG86DQo+ICAgLSBTcGxpdCBvZmYgZWFybHkgY2xv
-Y2tzIGZyb20gY3BnX21zc3JfaW5mby5jb3JlX2Nsa3NbXSBhbmQgLm1vZF9jbGtbXQ0KPiBpbnRv
-DQo+ICAgICBjcGdfbXNzcl9pbmZvLmVhcmx5X2NvcmVfY2xrc1tdIGFuZCAuZWFybHlfbW9kX2Ns
-a3NbXSwNCg0KVGhpcyBpcyB3aGVyZSBJIGdvdCBpbnRvIHRyb3VibGUuDQpJIG9yaWdpbmFsbHkg
-anVzdCB0cmllZCB0byByZWdpc3RlciBhbGwgdGhlIGNvcmUgY2xvY2tzIGluIHRoZSBlYXJseSAN
-CmluaXQuIEJ1dCB0aGVuIEkgaGFkIGlzc3VlcyB3aGVuIHRoZSBwbGF0Zm9ybSBwcm9iZSBjYW1l
-IGluIGxhdGVyIGFuZCANCndhbnRlZCB0byBkbyB0aGUgc2FtZSB0aGluZy4NCg0KRm9yIGV4YW1w
-bGUsIHRoZSBjbG9jayB0cmVlIGZvciBPU1RNIGlzOg0KICBFWFRBTCAtPiBQTEwgLT4gUDFDIC0+
-IE9TVE0NCg0KT2YgY291cnNlIHRoZXJlIGFyZSBvdGhlciBub24tZWFybHkgbW9kdWxlIHRoYXQg
-dXNlIHRoZSBQMUMgY2xvY2suDQoNCkRvIHlvdSB0aGluayBpdCB3b3VsZCBiZSBPSyBpZiBJIGp1
-c3QgcmVnaXN0ZXJzIGFsbCB0aGUgY29yZSBjbG9jayBpbiANCmVhcmx5IGluaXQsIHRoZW4ganVz
-dCBwYXNzIGJhY2sgdGhlIGNsayBwb2ludGVycyB0byBjcGdfbXNzcl9wcm9iZSBsYXRlciANCih0
-byBsZXQgdGhlIHBsYXRmb3JtIGRyaXZlciBtYW5hZ2UgdGhlbSk/DQoNCg0KQ2hyaXMNCg0K
+Hi Phil,
+
+On Fri, Aug 31, 2018 at 1:26 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> The clock for UARTs 0 through 2 is UART012, the clock for UARTs 3 through
+> 7 is UART34567.
+> For UART012, we stop the clock driver from changing the clock rate. This
+> is because the Synopsys UART driver simply sets the reference clock to 16x
+> the baud rate, but doesn't check if the actual rate is within the required
+> tolerance. The RZ/N1 clock divider can't provide this (we have to rely on
+> the UART's internal divider to set the correct clock rate), so you end up
+> with a clock rate that is way off what you wanted.
+>
+> In addition, since the clock is shared between multiple UARTs, you don't
+> want the driver trying to change the clock rate as it may affect the other
+> UARTs (which may not have been configured yet, so you don't know what baud
+> rate they will use). Normally, the clock rate is set early on before Linux
+> to some very high rate that supports all of the clock rates you want.
+>
+> This change stops the UART34567 clock rate from changing for the same
+> reasons.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
