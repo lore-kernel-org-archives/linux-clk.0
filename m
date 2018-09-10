@@ -1,79 +1,70 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
+Return-Path: <lkundrak@v3.sk>
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v2 0/5] arm64: dts: NXP: add basic dts file for LX2160A SoC
-Date: Fri, 14 Sep 2018 02:07:50 +0530
-Message-Id: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-Path: vabhav.sharma@nxp.com
+	linux-input@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 8/8] Input: olpc_apsp: allocate the GPIOs used
+Date: Mon, 10 Sep 2018 13:26:54 +0200
+Message-Id: <20180910112654.42061-9-lkundrak@v3.sk>
+In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes for v2:
-- Modified cmux_to_group array to include -1 terminator
-- Revert NUM_CMUX to original value 8 from 16
-- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
-  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
-  lx2160a" description
-- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
-- Removed reboot node from lx2160a device-tree as PSCI is implemented.
-- Removed incorrect comment for timer node interrupt property in
-  lx2160a device-tree.
-- Modified pmu node compatible property from "arm,armv8-pmuv3" to
-  "arm,cortex-a72-pmu" in lx2160a device-tree
-- Non-standard aliases removed in lx2160a rdb board device-tree
-- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
+Take the GPIO lines are used by the SP. The driver doesn't touch the
+lines -- this is done to disallow anything else from fiddling with
+them because that would confuse the SP firmware.
 
-Changes for v1:
-- Add compatible string for LX2160A clockgen support
-- Add compatible string to initialize LX2160A guts driver
-- Add compatible string for LX2160A support in dt-bindings
-- Add dts file to enable support for LX2160A SoC and LX2160A RDB
-  (Reference design board)
+Also, the lines are now nicely visible in /sys/kernel/debug/gpio.
 
-Vabhav Sharma (4):
-  dt-bindings: arm64: add compatible for LX2160A
-  soc/fsl/guts: Add compatible string for LX2160A
-  arm64: dts: add QorIQ LX2160A SoC support
-  arm64: dts: add LX2160ARDB board support
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/input/serio/olpc_apsp.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Yogesh Gaur (1):
-  drivers: clk-qoriq: Add clockgen support for lx2160a
-
- Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
- arch/arm64/boot/dts/freescale/Makefile            |   1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  88 +++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 693 ++++++++++++++++++++++
- drivers/clk/clk-qoriq.c                           |  14 +-
- drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
- drivers/soc/fsl/guts.c                            |   1 +
- 7 files changed, 809 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-
+diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+index fe9e19014e70..287759c5f36d 100644
+--- a/drivers/input/serio/olpc_apsp.c
++++ b/drivers/input/serio/olpc_apsp.c
+@@ -24,6 +24,7 @@
+ #include <linux/slab.h>
+ #include <linux/delay.h>
+ #include <linux/clk.h>
++#include <linux/gpio/consumer.h>
+ 
+ /*
+  * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 controller.
+@@ -76,6 +77,8 @@ struct olpc_apsp {
+ 	struct serio *padio;
+ 	void __iomem *base;
+ 	struct clk *clk;
++	struct gpio_desc *clk_gpio;
++	struct gpio_desc *data_gpio;
+ 	int open_count;
+ 	int irq;
+ };
+@@ -211,6 +214,16 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->clk))
+ 		return PTR_ERR(priv->clk);
+ 
++	priv->clk_gpio = devm_gpiod_get_optional(&pdev->dev, "clk",
++							GPIOD_ASIS);
++	if (IS_ERR(priv->clk_gpio))
++		return PTR_ERR(priv->clk_gpio);
++
++	priv->data_gpio = devm_gpiod_get_optional(&pdev->dev, "data",
++							GPIOD_ASIS);
++	if (IS_ERR(priv->data_gpio))
++		return PTR_ERR(priv->data_gpio);
++
+ 	/* KEYBOARD */
+ 	kb_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!kb_serio)
 -- 
-2.7.4
+2.17.1
