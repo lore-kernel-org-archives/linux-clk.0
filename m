@@ -1,52 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43012 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbeIUNKv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Sep 2018 09:10:51 -0400
-Date: Fri, 21 Sep 2018 09:23:13 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: r8a77990: Fix incorrect PLL0 divider in
- comment
-Message-ID: <20180921072312.vjzbjie32hzsqxll@verge.net.au>
-References: <20180919145042.8429-1-geert+renesas@glider.be>
+Return-Path: <mazziesaccount@gmail.com>
+Return-Path: <mazziesaccount@gmail.com>
+Date: Mon, 10 Sep 2018 10:28:18 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: zyw@rock-chips.com, mturquette@baylibre.com, sboyd@kernel.org,
+	w.egorov@phytec.de
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Does Rockchip RK808 driver unload work as intended?
+Message-ID: <20180910072818.GA2454@localhost.localdomain>
+References: <20180907101940.GE2472@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180919145042.8429-1-geert+renesas@glider.be>
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <20180907101940.GE2472@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 19, 2018 at 04:50:42PM +0200, Geert Uytterhoeven wrote:
-> PLL0 runs at 4.8 GHz, i.e. EXTAL x 100.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Fri, Sep 07, 2018 at 01:19:40PM +0300, Matti Vaittinen wrote:
+> While doing this I hit to Rockchip RK808 driver which seems to utilize
+> oarent device (MFD dev) for pretty much all devm releasing. I wonder if
+> this is safe? What happens if one tries to remove the RK808 clk module?
+> 
+> I guess the clk deregistration and cleanups are not ran as parent device
+> stays there, right? But is the clk module and clk module code still
+> unload? So won't clk operation pointers registered to clk core become
+> invalid?
+ 
+Maybe it is a good idea to paste some code and add my thoughts as
+comments here.
 
-> ---
-> To be queued in clk-renesas-for-v4.20.
-> 
->  drivers/clk/renesas/r8a77990-cpg-mssr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> index 7e000d0705891a3f..9eb80180eea0b1a6 100644
-> --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> @@ -250,8 +250,8 @@ static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
->  /*
->   * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
->   *--------------------------------------------------------------------
-> - * 0		48 x 1		x100/4		x100/3		x100/3
-> - * 1		48 x 1		x100/4		x100/3		 x58/3
-> + * 0		48 x 1		x100/1		x100/3		x100/3
-> + * 1		48 x 1		x100/1		x100/3		 x58/3
->   */
->  #define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
->  
-> -- 
-> 2.17.1
+static int rk808_clkout_probe(struct platform_device *pdev)
+{
+	/* Get the i2c device "driven by" the parent MFD driver */
+        struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
+        struct i2c_client *client = rk808->i2c;
+
+	[snip]
+
+	/* Allocate driver provate data using devm - but bind it to MFD
+	   device */
+	rk808_clkout = devm_kzalloc(&client->dev,
+                                    sizeof(*rk808_clkout), GFP_KERNEL);
+
+	[snip]
+
+	/* init clk ops to point operations brought in kernel in this
+	   module */
+	init.ops = &rk808_clkout1_ops;
+        rk808_clkout->clkout1_hw.init = &init;
+
+	[snip]
+
+	/* register clock using devm - bound to parent device again */
+        ret = devm_clk_hw_register(&client->dev, &rk808_clkout->clkout1_hw);
+
+	[snip]
+
+/* Omit remove callback => no clk deregistration at module removal */
+static struct platform_driver rk808_clkout_driver = {
+        .probe = rk808_clkout_probe,
+        .driver         = {
+                .name   = "rk808-clkout",
+        },
+};
+
+module_platform_driver(rk808_clkout_driver);
+
+
+> So can someone please shed some light on this? Is this a bug or am I
+> just plain wrong?
 > 
