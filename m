@@ -1,291 +1,83 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: linux-imx@nxp.com,
-	Abel Vesa <abelvesa@linux.com>,
-	Abel Vesa <abel.vesa@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
+Return-Path: <lkundrak@v3.sk>
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v9 2/5] clk: imx: add fractional PLL output clock
-Date: Mon, 24 Sep 2018 13:39:54 +0300
-Message-Id: <1537785597-26499-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+	Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 7/8] Input: olpc_apsp: enable the SP clock
+Date: Mon, 10 Sep 2018 13:26:53 +0200
+Message-Id: <20180910112654.42061-8-lkundrak@v3.sk>
+In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Without the clock, the keyboard controller won't operate.
+Tested on an OLPC XO 1.75.
 
-This is a new clock type introduced on i.MX8.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 215 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 219 insertions(+)
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ drivers/input/serio/olpc_apsp.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y += \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
- 	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-new file mode 100644
-index 0000000..030df76
---- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,215 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+#include "clk.h"
-+
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD_MASK		BIT(19)
-+#define PLL_BYPASS_MASK		BIT(14)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	GENMASK(30, 7)
-+#define PLL_INT_DIV_MASK	GENMASK(6, 0)
-+#define PLL_OUTPUT_DIV_MASK	GENMASK(4, 0)
-+#define PLL_FRAC_DENOM		0x1000000
-+
-+#define PLL_FRAC_LOCK_TIMEOUT	10000
-+#define PLL_FRAC_ACK_TIMEOUT	500000
-+
-+struct clk_frac_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-+
-+static int clk_wait_lock(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_STATUS, 0,
-+					PLL_FRAC_LOCK_TIMEOUT);
-+}
-+
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	u32 val;
-+
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
-+
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	return readl_poll_timeout(pll->base, val, val & PLL_NEWDIV_ACK, 0,
-+					PLL_FRAC_ACK_TIMEOUT);
-+}
-+
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
-+}
-+
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	divff = FIELD_GET(PLL_FRAC_DIV_MASK, val);
-+	divfi = (val & PLL_INT_DIV_MASK);
-+
-+	temp64 = (u64)parent_rate * 8;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /= divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64)(rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	temp64 = (u64)parent_rate;
-+	temp64 *= divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + (unsigned long)temp64) / 2;
-+}
-+
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout = parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL = 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64;
-+	int ret;
-+
-+	parent_rate *= 8;
-+	rate *= 2;
-+	divfi = rate / parent_rate;
-+	temp64 = (u64) (rate - divfi * parent_rate);
-+	temp64 *= PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff = temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG1);
-+	val &= ~(PLL_FRAC_DIV_MASK | PLL_INT_DIV_MASK);
-+	val |= ((divff << 7) | (divfi - 1));
-+	writel_relaxed(val, pll->base + PLL_CFG1);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret = clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops clk_frac_pll_ops = {
-+	.prepare	= clk_pll_prepare,
-+	.unprepare	= clk_pll_unprepare,
-+	.is_prepared	= clk_pll_is_prepared,
-+	.recalc_rate	= clk_pll_recalc_rate,
-+	.round_rate	= clk_pll_round_rate,
-+	.set_rate	= clk_pll_set_rate,
-+};
-+
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
-+{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
-+	struct clk *clk;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	init.ops = &clk_frac_pll_ops;
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..13daf1c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
+diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+index 8b19a47dfa46..fe9e19014e70 100644
+--- a/drivers/input/serio/olpc_apsp.c
++++ b/drivers/input/serio/olpc_apsp.c
+@@ -23,6 +23,7 @@
+ #include <linux/of.h>
+ #include <linux/slab.h>
+ #include <linux/delay.h>
++#include <linux/clk.h>
  
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
+ /*
+  * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 controller.
+@@ -74,6 +75,7 @@ struct olpc_apsp {
+ 	struct serio *kbio;
+ 	struct serio *padio;
+ 	void __iomem *base;
++	struct clk *clk;
+ 	int open_count;
+ 	int irq;
+ };
+@@ -146,8 +148,13 @@ static int olpc_apsp_open(struct serio *port)
+ 	struct olpc_apsp *priv = port->port_data;
+ 	unsigned int tmp;
+ 	unsigned long l;
++	int error;
+ 
+ 	if (priv->open_count++ == 0) {
++		error = clk_prepare_enable(priv->clk);
++		if (error)
++			return error;
 +
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
+ 		l = readl(priv->base + COMMAND_FIFO_STATUS);
+ 		if (!(l & CMD_STS_MASK)) {
+ 			dev_err(priv->dev, "SP cannot accept commands.\n");
+@@ -171,6 +178,8 @@ static void olpc_apsp_close(struct serio *port)
+ 		/* Disable interrupt 0 */
+ 		tmp = readl(priv->base + PJ_INTERRUPT_MASK);
+ 		writel(tmp | INT_0, priv->base + PJ_INTERRUPT_MASK);
++
++		clk_disable_unprepare(priv->clk);
+ 	}
+ }
+ 
+@@ -198,6 +207,10 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+ 	if (priv->irq < 0)
+ 		return priv->irq;
+ 
++	priv->clk = devm_clk_get(&pdev->dev, "sp");
++	if (IS_ERR(priv->clk))
++		return PTR_ERR(priv->clk);
++
+ 	/* KEYBOARD */
+ 	kb_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+ 	if (!kb_serio)
 -- 
-2.7.4
+2.17.1
