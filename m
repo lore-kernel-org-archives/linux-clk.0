@@ -1,72 +1,106 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:34391 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbeIELpg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Sep 2018 07:45:36 -0400
-Date: Wed, 5 Sep 2018 09:16:45 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 02/11] clk: sunxi-ng: a64: Add max. rate constraint to
- video PLLs
-Message-ID: <20180905071645.ibhcuq5coc6gl6k3@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-3-icenowy@aosc.io>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Stephen Boyd <sboyd@kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam
+	<fabio.estevam@nxp.com>, Jerome Forissier <jerome.forissier@linaro.org>, Peng
+ Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
+CC: dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
+Date: Mon, 10 Sep 2018 09:18:35 +0000
+Message-ID: 
+ <DB3PR0402MB391656D3F0C5E7AC1975064CF5050@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
+ <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
+ <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
+ <a6489bda-703f-207c-0b24-60f4044fe89f@linaro.org>
+ <153573827629.93865.6200966443862432044@swboyd.mtv.corp.google.com>
+ <AM6PR0402MB391120110A289BA5FB6B9F0DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+In-Reply-To: 
+ <AM6PR0402MB391120110A289BA5FB6B9F0DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dces3elbc3qktb53"
-In-Reply-To: <20180904044053.15425-3-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
---dces3elbc3qktb53
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Sep 04, 2018 at 12:40:44PM +0800, Icenowy Zheng wrote:
-> Video PLLs on A64 can be set to higher rate that it is actually
-> supported by HW.
->=20
-> Limit maximum rate to 1008 MHz. This is the maximum allowed rate by BSP
-> clock driver. Interestengly, user manual specifies maximum frequency to
-> be 600 MHz. Historically, this data was wrong in some user manuals for
-> other SoCs, so more faith is put in BSP clock driver.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---dces3elbc3qktb53
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPgtwACgkQ0rTAlCFN
-r3RVrw//SRBv9iwkAWY2srlzma7Vg6gA74p/Sov6R2VLLRswuDAJ02FlMeoY9bLh
-x2UdKCHEIvrf+257e+EzjSQiNgu1rnwLriQN/RfiyQJ1OcsTBqYE86/IF331GXDN
-Yf0apxaCAJ3/5YE6ZYEjaeUujfJblUeC8QRdIwkMBIpE1BTw/LvIJsrtf/RJ0WY0
-aIJN4naj/EOhiVj7YHFOi0NOVfO3uvTUT5Y888gOYHW+0emd9r6ZfRqCyGjuY/iB
-TzH/huqFlzTzUVT57NuKbtQyzjiJ2JqDC9bbfrrIEXgqyh+xGuB/aaUPkf51PrZ/
-mOW6kzrZUKgosRhJxf7XbH5dqG5EkTQMGOFzQLHrFBM1duHP+a57UwuIgzp1J9uw
-En0aQ1dY3hrwF30wuM/Yc6ZK50s45jRY9C4wZ5HNmd+ZO5hWQ2J7PNJ5AWcEl2Ir
-r7W9H1SIesFCDJmr83yYGkzG53m5akYu/H7aErqXQ39381PVDfAHI4ibIiIE7wOc
-fWemQpkc5ytl4acgDiJFkrYNyQ6t2gW0Yd2VkoFBGIvVMhu38PKRaogzsdoUaBWf
-qdtU87bfuGrzEQiqx+ZtnWrA+wK8cOcklZXsdaHb3cXJDM8pzmnnKCmKuVQaWqy2
-fY5P6kpUyTKUxZgaJForBcXFWEKMzHWrVSl7bGhy+0x8bBH3Gjs=
-=od8U
------END PGP SIGNATURE-----
-
---dces3elbc3qktb53--
+R2VudGxlIFBpbmcuLi4NCg0KQW5zb24gSHVhbmcNCkJlc3QgUmVnYXJkcyENCg0KDQo+IC0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFuc29uIEh1YW5nDQo+IFNlbnQ6IE1vbmRh
+eSwgU2VwdGVtYmVyIDMsIDIwMTggMzoyMSBQTQ0KPiBUbzogU3RlcGhlbiBCb3lkIDxzYm95ZEBr
+ZXJuZWwub3JnPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBzLmhhdWVy
+QHBlbmd1dHJvbml4LmRlOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBGYWJpbyBFc3RldmFtDQo+IDxm
+YWJpby5lc3RldmFtQG54cC5jb20+OyBKZXJvbWUgRm9yaXNzaWVyIDxqZXJvbWUuZm9yaXNzaWVy
+QGxpbmFyby5vcmc+Ow0KPiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT47IFJvYiBIZXJyaW5n
+IDxyb2JoQGtlcm5lbC5vcmc+DQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29t
+Pg0KPiBTdWJqZWN0OiBSRTogW1BBVENIIDIvMl0gY2xrOiBpbXg6IGlteDdkOiByZW1vdmUgY2xr
+c19pbml0X29uIGFycmF5DQo+IA0KPiANCj4gDQo+IEFuc29uIEh1YW5nDQo+IEJlc3QgUmVnYXJk
+cyENCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogU3Rl
+cGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwub3JnPg0KPiA+IFNlbnQ6IFNhdHVyZGF5LCBTZXB0ZW1i
+ZXIgMSwgMjAxOCAxOjU4IEFNDQo+ID4gVG86IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgbGludXgt
+YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiA+IGxpbnV4LWNsa0B2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gbXR1cnF1ZXR0ZUBiYXls
+aWJyZS5jb207IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7
+DQo+ID4gQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBGYWJpbyBFc3RldmFtDQo+
+ID4gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IEplcm9tZSBGb3Jpc3NpZXINCj4gPiA8amVyb21l
+LmZvcmlzc2llckBsaW5hcm8ub3JnPjsgUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+OyBSb2IN
+Cj4gPiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IGRsLWxpbnV4LWlteCA8bGlu
+dXgtaW14QG54cC5jb20+DQo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAyLzJdIGNsazogaW14OiBp
+bXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiA+DQo+ID4gUXVvdGluZyBKZXJvbWUg
+Rm9yaXNzaWVyICgyMDE4LTA4LTMxIDAxOjAxOjQ0KQ0KPiA+ID4NCj4gPiA+DQo+ID4gPiBPbiAw
+OC8zMS8yMDE4IDAzOjI5IEFNLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+ID4gPiA+IFF1b3Rpbmcg
+UGVuZyBGYW4gKDIwMTgtMDgtMTIgMTg6MTU6NDEpDQo+ID4gPiA+PiBIaSBBbnNvbiwNCj4gPiA+
+ID4+DQo+ID4gPiA+Pj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPj4+Pj4g
+RnJvbTogQW5zb24gSHVhbmcNCj4gPiA+ID4+Pj4+IFNlbnQ6IDIwMTjlubQ45pyIOOaXpSAxMjoz
+OQ0KPiA+ID4gPj4+Pj4gVG86IHNoYXduZ3VvQGtlcm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9u
+aXguZGU7DQo+ID4gPiA+Pj4+PiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IEZhYmlvIEVzdGV2YW0g
+PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47DQo+ID4gPiA+Pj4+PiBtdHVycXVldHRlQGJheWxpYnJl
+LmNvbTsgc2JveWRAa2VybmVsLm9yZzsNCj4gPiA+ID4+Pj4+IGxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZzsNCj4gPiA+ID4+Pj4+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4+Pj4+IENjOiBkbC1saW51eC1p
+bXggPGxpbnV4LWlteEBueHAuY29tPg0KPiA+ID4gPj4+Pj4gU3ViamVjdDogW1BBVENIIDIvMl0g
+Y2xrOiBpbXg6IGlteDdkOiByZW1vdmUgY2xrc19pbml0X29uDQo+ID4gPiA+Pj4+PiBhcnJheQ0K
+PiA+ID4gPj4+Pj4NCj4gPiA+ID4+Pj4+IENsb2NrIGZyYW1ld29yayB3aWxsIGVuYWJsZSB0aG9z
+ZSBjbG9ja3MgcmVnaXN0ZXJlZCB3aXRoDQo+ID4gPiA+Pj4+PiBDTEtfSVNfQ1JJVElDQUwgZmxh
+Zywgc28gbm8gbmVlZCB0byBoYXZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiA+ID4gPj4+Pj4gZHVy
+aW5nIGNsb2NrDQo+ID4gPiA+Pj4+IGluaXRpYWxpemF0aW9uIG5vdy4NCj4gPiA+ID4+Pj4NCj4g
+PiA+ID4+Pj4gV2lsbCBpdCBiZSBtb3JlIGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNy
+aXRpY2FsLWNsb2NrcyA9IDx4eHg+Ig0KPiA+ID4gPj4+PiBvciAiaW5pdC1vbi1hcnJhcnk9PHh4
+eD4iDQo+ID4gPiA+Pj4+IGFuZCBlbmFibGUgdGhvc2UgY2xvY2tzPw0KPiA+ID4gPj4+DQo+ID4g
+PiA+Pj4gUGFyc2luZyB0aGUgY2xvY2tzIGFycmF5cyBmcm9tIGR0YiBpcyBhbm90aGVyIHdheSBv
+ZiBlbmFibGluZw0KPiA+ID4gPj4+IGNyaXRpY2FsIGNsb2NrcywgYnV0IGZvciBjdXJyZW50IGku
+TVg2LzcgcGxhdGZvcm1zLCB3ZSBpbXBsZW1lbnQNCj4gPiA+ID4+PiBpdCBpbiBzYW1lIHdheSBh
+cyBtb3N0IG9mIG90aGVyIFNvQ3MsIGN1cnJlbnRseSBJIGRpZCBOT1Qgc2VlDQo+ID4gPiA+Pj4g
+YW55IG5lY2Vzc2l0eSBvZiBwdXR0aW5nIHRoZW0gaW4gZHRiLCBqdXN0IGFkZGluZyBmbGFnIGR1
+cmluZw0KPiA+ID4gPj4+IGNsb2NrIHJlZ2lzdGVyaW5nIGlzIG1vcmUgc2ltcGxlLCBpZiB0aGVy
+ZSBpcyBhbnkgc3BlY2lhbA0KPiA+ID4gPj4+IHJlcXVpcmVtZW50IGZvciBkaWZmZXJlbnQgY2xv
+Y2tzIHNldCB0byBiZSBlbmFibGVkLCB0aGVuIHdlIGNhbg0KPiA+ID4gPj4+IGFkZCBzdXBwb3J0
+IHRvIGVuYWJsZQ0KPiA+IHRoZSBtZXRob2Qgb2YgcGFyc2luZyBjcml0aWNhbC1jbG9ja3MgZnJv
+bSBkdGIuIEp1c3QgbXkgdHdvIGNlbnRzLg0KPiA+ID4gPj4NCj4gPiA+ID4+IFRoaW5raW5nIGFi
+b3V0IE9QLVRFRSB3YW50IHRvIHVzZSBvbmUgZGV2aWNlLCBidXQgaXQncyBjbG9ja3MgYXJlDQo+
+ID4gPiA+PiByZWdpc3RlcmVkIGJ5IExpbnV4LCBiZWNhdXNlIHRoZXJlIGlzIG5vIG1vZHVsZSBp
+biBMaW51eCBzaWRlIHVzZQ0KPiA+ID4gPj4gaXQsIGl0IHdpbGwgc2h1dGRvd24gdGhlIGNsb2Nr
+LCB3aGljaCBjYXVzZSBPUC1URUUgY291bGQgbm90DQo+ID4gPiA+PiBhY2Nlc3MgdGhlDQo+ID4g
+ZGV2aWNlLg0KPiA+ID4gPj4NCj4gPiA+ID4+IFRoZW4gcGVvcGxlIGhhdmUgdG8gbW9kaWZ5IGNs
+ayBjb2RlIHRvIGFkZCBDTEtfSVNfQ1JJVElDQUwgZmxhZw0KPiA+ID4gPj4gdG8gbWFrZSBzdXJl
+IHRoZSBjbG9ja3MgYXJlIG5vdCBzaHV0ZG93biBieSBMaW51eC4NCj4gPiA+ID4+DQo+ID4gPiA+
+PiBIb3dldmVyIGFkZGluZyBhIG5ldyBwcm9wZXJ0eSBpbiBjbGsgbm9kZSBhbmQgbGV0IGRyaXZl
+ciBjb2RlDQo+ID4gPiA+PiBwYXJzZSB0aGUgZHRzLCB0aGVyZSBpcyBubyBuZWVkIHRvIG1vZGlm
+eSBjbGsgZHJpdmVyIGNvZGUgd2hlbg0KPiA+ID4gPj4gT1AtVEVFIG5lZWRzDQo+ID4gYW5vdGhl
+ciBkZXZpY2UgY2xvY2suDQo+ID4gPiA+Pg0KPiA+ID4gPg0KPiA+ID4gPiBJZiBPUC1URUUgbmVl
+ZHMgbGludXggdG8ga2VlcCB0aGluZ3Mgb24gdGhlbiB3aHkgY2FuJ3QgdGhlIE9QLVRFRQ0KPiA+
+ID4gPiBkcml2ZXIgaW4gTGludXggcHJvYmUsIGFjcXVpcmUgY2xvY2tzLCBhbmQga2VlcCB0aGUg
+Y2xrcyBlbmFibGVkIGZvcmV2ZXI/DQo+ID4gPg0KPiA+ID4gU291bmRzIHJlYXNvbmFibGUsIGJ1
+dCBob3cgY291bGQgdGhpcyBiZSBkb25lIHdpdGhvdXQgaW50cm9kdWNpbmcNCj4gPiA+IHBsYXRm
+b3JtLXNwZWNpZmljIHN0dWZmIGluIHRoZSBPUC1URUUgZHJpdmVyPw0KPiA+ID4NCj4gPg0KPiA+
+IFdoeSBpcyB0aGF0IGEgZ29hbD8NCj4gDQo+IEkgZG8gTk9UIHRoaW5rIHdlIHNob3VsZCBjb25z
+aWRlciBzdWNoIGNhc2UgaW4gdGhpcyBwYXRjaCBzZXJpZXMsIHdoYXRldmVyDQo+IE9QLVRFRSBu
+ZWVkcyBmb3IgaXRzIG93biBmZWF0dXJlLCBpdCBzaG91bGQgZG8gbmVjZXNzYXJ5IG9wZXJhdGlv
+bnMgZWl0aGVyIGluIGl0cw0KPiBkcml2ZXIgb3Igc29tZXdoZXJlIGVsc2UgYnkgYWRkaW5nIG5l
+dyBwYXRjaC4NCj4gDQo+IEFuc29uLg0KDQo=
