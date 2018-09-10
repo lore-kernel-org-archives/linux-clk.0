@@ -1,93 +1,50 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-MIME-Version: 1.0
-References: <87a7ouqdnm.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87a7ouqdnm.wl-kuninori.morimoto.gx@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Sep 2018 11:07:40 +0200
-Message-ID: <CAMuHMdUUW2PW2s3enOV+nr4_gBMTFuQ2tBLXd0wrD_Jot+F-BQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: convert to SPDX identifiers
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <lkundrak@v3.sk>
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-kernel@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 1/8] dt-bindings: olpc,ap-sp: add clock
+Date: Mon, 10 Sep 2018 13:26:47 +0200
+Message-Id: <20180910112654.42061-2-lkundrak@v3.sk>
+In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Morimoto-san,
+The clock is necessary for the device operation, hence it's required.
+Its name, "sp", stands for "Security Processor". It is one of several
+names that are used for the processor that serves as the keyboard
+controller on an OLPC and is consistent with the node name.
 
-On Fri, Sep 7, 2018 at 3:57 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> This patch updates license to use SPDX-License-Identifier
-> instead of verbose license text.
->
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks for your patch!
-
-> ---
->  drivers/clk/renesas/Kconfig               |  2 ++
->  drivers/clk/renesas/clk-div6.c            |  5 +----
->  drivers/clk/renesas/clk-emev2.c           | 14 +-------------
->  drivers/clk/renesas/clk-mstp.c            |  5 +----
->  drivers/clk/renesas/clk-r8a73a4.c         |  5 +----
->  drivers/clk/renesas/clk-r8a7740.c         |  5 +----
->  drivers/clk/renesas/clk-r8a7778.c         |  5 +----
->  drivers/clk/renesas/clk-r8a7779.c         |  5 +----
->  drivers/clk/renesas/clk-rcar-gen2.c       |  5 +----
->  drivers/clk/renesas/clk-rz.c              |  5 +----
->  drivers/clk/renesas/clk-sh73a0.c          |  5 +----
->  drivers/clk/renesas/r8a7743-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7745-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7790-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7791-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7792-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7794-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7795-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a7796-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/r8a77970-cpg-mssr.c   |  5 +----
->  drivers/clk/renesas/r8a77995-cpg-mssr.c   |  5 +----
->  drivers/clk/renesas/rcar-gen2-cpg.c       |  5 +----
->  drivers/clk/renesas/rcar-gen2-cpg.h       |  7 ++-----
->  drivers/clk/renesas/rcar-gen3-cpg.c       |  5 +----
->  drivers/clk/renesas/rcar-gen3-cpg.h       |  7 ++-----
->  drivers/clk/renesas/rcar-usb2-clock-sel.c |  5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.c    |  5 +----
->  drivers/clk/renesas/renesas-cpg-mssr.h    |  7 ++-----
->  include/linux/clk/renesas.h               |  8 ++------
->  29 files changed, 34 insertions(+), 126 deletions(-)
-
-This duplicates some of the work by Wolfram, which was already applied:
-
-commit e848c2ea117f222b62715d5c4e1714ec4e0aa647
-Author: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date:   Wed Aug 22 00:02:14 2018 +0200
-
-    clk: renesas: use SPDX identifier for Renesas drivers
-
-    Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-    Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-    Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-
- drivers/clk/renesas/clk-div6.c            | 5 +----
- drivers/clk/renesas/r8a7795-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a7796-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/r8a77995-cpg-mssr.c   | 5 +----
- drivers/clk/renesas/rcar-gen3-cpg.c       | 5 +----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.c    | 5 +----
- drivers/clk/renesas/renesas-cpg-mssr.h    | 5 +----
- 8 files changed, 8 insertions(+), 32 deletions(-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
+index 0e72183f52bc..36603419d6f8 100644
+--- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
++++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
+@@ -4,10 +4,14 @@ Required properties:
+ - compatible : "olpc,ap-sp"
+ - reg : base address and length of SoC's WTM registers
+ - interrupts : SP-AP interrupt
++- clocks : phandle + clock-specifier for the clock that drives the WTM
++- clock-names:  should be "sp"
+ 
+ Example:
+ 	ap-sp@d4290000 {
+ 		compatible = "olpc,ap-sp";
+ 		reg = <0xd4290000 0x1000>;
+ 		interrupts = <40>;
++		clocks = <&soc_clocks MMP2_CLK_SP>;
++		clock-names = "sp";
+ 	}
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.1
