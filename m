@@ -1,71 +1,49 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51747 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729205AbeIYU0w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 16:26:52 -0400
-Received: by mail-it1-f194.google.com with SMTP id e14-v6so15607973itf.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Sep 2018 07:19:08 -0700 (PDT)
+Return-Path: <olof@lixom.net>
 MIME-Version: 1.0
-In-Reply-To: <4341860.rETXoYQeSX@aspire.rjw.lan>
-References: <CGME20180919121357eucas1p19717351c40697483d3bf467c55e46f51@eucas1p1.samsung.com>
- <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
- <CAPDyKFok_Fc=9EDOvKByyuOYhHbejXKRT9+a+nRDEJ_YAjP2Aw@mail.gmail.com> <4341860.rETXoYQeSX@aspire.rjw.lan>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 25 Sep 2018 16:18:27 +0200
-Message-ID: <CAPDyKFoprL3t3G-8MrRZokzmXcyftpGhF1Vo5ct8EtOMzM__yQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH] clk: samsung: exynos5433: Fix NOIRQ suspend/resume support
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+ <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+ <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+From: Olof Johansson <olof@lixom.net>
+Date: Tue, 11 Sep 2018 08:03:06 -0700
+Message-ID: <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com>
+Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+To: Jolly Shah <JOLLYS@xilinx.com>
+Cc: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, Sudeep Holla <sudeep.holla@arm.com>,
+	"hkallweit1@gmail.com" <hkallweit1@gmail.com>, Kees Cook <keescook@chromium.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michal Simek <michals@xilinx.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>,
+	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-[...]
+Hi Jolly,
 
->> >> However, as a simple fix, I would try to add a ->prepare() callback
->> >> and call pm_runtime_get_sync() from it and then in a new corresponding
->> >> ->complete() callback, call pm_runtime_put().
->> >>
->> >> This means that the device will stay runtime resumed until the
->> >> suspend_noirq phase. It would also means the pm_runtime_force_resume()
->> >> will resume the device at resume_noirq phase. Would that work?
->> >
->> > Yes, this will work, but it will unnecessarily wake all instances of
->> > exynos5433 cmu and their power domains during the system suspend/resume
->> > cycle, what I would like to avoid.
->>
->> I guess what you are saying is that it's not at every suspend sequence
->> that the client's needs to runtime resume the exynos5433 cmu device -
->> and in those cases when not  needed, runtime resuming it becomes a
->> waste in regards to both time and energy. Right?
->>
->> Anyway, I fully agree that this isn't very nice, but unfortunate
->> that's the best I can think of as a simple solution.
+On Mon, Sep 10, 2018 at 12:17 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
+> Hi All,
 >
-> Resuming in ->prepare() is a bit wasteful, because they are run sequentially,
-> so the times of all of the resumes add up.  It is slightly more efficient to
-> do it in ->suspend() in general.
+> Adding more clarification on top of what Michal said:
+> Here ioctl is not a system ioctl and just a eemi API like other interface=
+ APIs. It cannot be called from userspace. Only Linux drivers can use this =
+API for defined ioctl operations. This API is meant for any platform specif=
+ic operations which needs to be managed by firmware. Firmware will always v=
+alidate the request for action being performed.
+> Debugfs interface is just for debugging during development. We can remove=
+ debugfs support for ioctl API if you suggest.
 
-Good point!
+Are there any pending patchsets that make use of the ioctl interface
+besides the debugfs piece? None of the ones in this pull request
+(besides the debugfs) seems to call into it.
 
->
-> However, in this particular case, is there any reason why the clients cannot
-> resume their providers in ->suspend()?  They also might drop references to
-> them on the way out, in ->resume() to balance the usage counters.
+It might just be easier to leave it out until you have a use case for
+it. The rest of the patchset looks fine to me, and I'd be happy to
+take it. Once you have a need for it we can discuss specifics.
 
-I think the problem is that the clients don't know their providers. If
-they did, I rather think using device links should be the preferred
-solution.
 
-To make a client aware of its providers, for the general case, we
-would need to invent some DT bindings to describe the dependencies.
-
-Kind regards
-Uffe
+-Olof
