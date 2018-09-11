@@ -1,43 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Sep 2018 13:37:19 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v3 3/5] dt-bindings: mfd: rk808: Add binding information
+ for RK809 and RK817.
+Message-ID: <20180911123719.GM4185@dell>
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+ <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20180904044053.15425-9-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-9-icenowy@aosc.io>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 6 Sep 2018 11:48:13 +0530
-Message-ID: <CAMty3ZDn=uj3buvJx93R1J7Swr3CyfjJJ=MgQTGvRZ01izbAAA@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 08/11] arm64: dts: allwinner: a64: Add
- display pipeline
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> From: Jagan Teki <jagan@amarulasolutions.com>
->
-> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-> TCON is connected to LCD and the second is to HDMI.
->
-> The HDMI controller/PHY pair is similar to the one on H3/H5.
->
-> Add all required device tree nodes of the display pipeline, including
-> the TCON0 LCD one and the TCON1 HDMI one.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: refactor commit message and add 1st pipeline]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
-> Changes for v4:
-> - Misc fixes
-> - Dropped second PLL from HDMI PHY clock
+On Fri, 24 Aug 2018, Tony Xie wrote:
 
-Why? it was there in previous versions.
+> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+> index 91b6522..c025a99 100644
+> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
+> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+> @@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+>  The rk8xx family current members:
+>  rk805
+>  rk808
+> +rk809
+> +rk817
+>  rk818
+>  
+>  Required properties:
+>  - compatible: "rockchip,rk805"
+>  - compatible: "rockchip,rk808"
+> +- compatible: "rockchip,rk809"
+> +- compatible: "rockchip,rk817"
+>  - compatible: "rockchip,rk818"
+>  - reg: I2C slave address
+>  - interrupt-parent: The parent interrupt controller.
+> @@ -46,6 +50,28 @@ Optional RK808 properties:
+>    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+>    very quickly with no slow ramp time.
+>  
+> +Optional RK809 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +- vcc8-supply:  The input supply for SWITCH_REG1
+> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
+> +
+> +Optional RK817 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +- vcc8-supply:  The input supply for BOOST
+> +- vcc9-supply:  The input supply for OTG_SWITCH
+
+I think I'd like to see these squashed down a bit.
+
+Something like:
+
+> +Optional shared RK809 and RK817 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +
+> +Optional RK809 properties:
+> +- vcc8-supply:  The input supply for SWITCH_REG1
+> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
+> +
+> +Optional RK817 properties:
+> +- vcc8-supply:  The input supply for BOOST
+> +- vcc9-supply:  The input supply for OTG_SWITCH
+
+That's if 1-7 are as identical as they look at first glance.
+
+>  Optional RK818 properties:
+>  - vcc1-supply:  The input supply for DCDC_REG1
+>  - vcc2-supply:  The input supply for DCDC_REG2
+> @@ -87,6 +113,28 @@ number as described in RK808 datasheet.
+>  	- SWITCH_REGn
+>  		- valid values for n are 1 to 2
+>  
+> +Following regulators of the RK809 PMIC block are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK808 datasheet.
+> +
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 5.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9.
+> +	- SWITCH_REGn
+> +		- valid values for n are 1 to 2.
+> +
+> +Following regulators of the RK817 PMIC block are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK818 datasheet.
+
+Is there any need to keep saying the same thing over and over?
+
+Especially for something fairly obvious.
+
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 4.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9.
+> +	- BOOST
+> +	- OTG_SWITCH
+> +
+>  Following regulators of the RK818 PMIC block are supported. Note that
+>  the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+>  number as described in RK818 datasheet.
+> @@ -99,6 +147,14 @@ number as described in RK818 datasheet.
+>  	- HDMI_SWITCH
+>  	- OTG_SWITCH
+>  
+> +There are three pins needed to config for each of RK809 and RK817,
+> +named "gpio_ts" "gpio_gt" "gpio_slp".
+> +	The gpio_gt and gpio_ts pins support the gpio function.
+> +	The gpio_slp pin is for controlling the pmic states, as below:
+> +		- reset
+> +		- power down
+> +		- sleep
+> +
+>  Standard regulator bindings are used inside regulator subnodes. Check
+>    Documentation/devicetree/bindings/regulator/regulator.txt
+>  for more details
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
