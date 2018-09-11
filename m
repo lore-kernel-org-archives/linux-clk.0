@@ -1,65 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44198 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390076AbeIVAC3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Sep 2018 20:02:29 -0400
-Date: Fri, 21 Sep 2018 11:12:17 -0700
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
-        sboyd@kernel.org, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
- management IC
-Message-ID: <20180921181217.GI20825@sirena.org.uk>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
- <20180921172959.GG20825@sirena.org.uk>
- <20180921180241.GA4358@dell>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="byLs0wutDcxFdwtm"
-In-Reply-To: <20180921180241.GA4358@dell>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
+Date: Tue, 11 Sep 2018 22:30:05 +0530
+Message-Id: <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
+References: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+Add device tree bindings for Low Power Audio subsystem clock controller for
+Qualcomm Technology Inc's SDM845 SoCs.
 
---byLs0wutDcxFdwtm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     | 31 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
+ 4 files changed, 51 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
 
-On Fri, Sep 21, 2018 at 11:02:41AM -0700, Lee Jones wrote:
-> On Fri, 21 Sep 2018, Mark Brown wrote:
-
-> > This looks OK to me - Lee, the patch is almost entirely a regulator one,
-> > are you OK with me applying it?
-
-> The diff in rohm-bd718x7.h does not look significant.
-
-> You can apply it so long as you provide me with a PR in order to avoid
-> any potential merge conflicts.  Especially as Linus is out for this
-> release.
-
-Great, thanks.  There's also the MFD DT bindings and another patch later
-on with Acked-for-MFD tags on them, should I convert the tags to acks,
-apply those as well and include them in the pull request?
-
---byLs0wutDcxFdwtm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlulNH4ACgkQJNaLcl1U
-h9DfCwf/QRitJXFwyEvF50vNqxKDcwssX4NjRuVep4MnngUEVqS0EglOeKChgTVe
-wMCqzduSR6k4t91hxuSSgm/p7PuXDFEDnr2fnhHGWyY1Jsw2AAPDpja67xPguNAx
-6DeBbNlkbKTM8qVoEHYLjm57eZKO9VwH2Y3RJt8xRh3occL+XYVuZRb6U2XpErfr
-P/iH1uHitrBdZMBx5datBKNlTe7Gi1ETpLq1viJ0b2hT+7XgOZy9MZikIzSU9Zgo
-+s2sFVJZIurlgyZjD5PpciXsvMZPxWIDBVrnDZ0HVYqQhtot1Dts3XVlHZ3ZhMgz
-/VXk2Emz8TkLq3RMLSqlEtOXsHwHsg==
-=uNGQ
------END PGP SIGNATURE-----
-
---byLs0wutDcxFdwtm--
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+index 664ea1f..b3ff6e8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+@@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
+ part of the GCC/clock-controller node.
+ For more details on the TSENS properties please refer
+ Documentation/devicetree/bindings/thermal/qcom-tsens.txt
++- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
++			 unusable due to firmware access control restrictions.
+ 
+ Example:
+ 	clock-controller@900000 {
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+new file mode 100644
+index 0000000..d312957
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+@@ -0,0 +1,31 @@
++Qualcomm LPASS Clock Controller Binding
++-----------------------------------------------
++
++Required properties :
++- compatible		: shall contain "qcom,sdm845-lpasscc"
++- #clock-cells		: from common clock binding, shall contain 1.
++- reg			: shall contain base register address and size,
++			  in the order
++			Index-0 maps to LPASS_CC register region
++			Index-1 maps to LPASS_QDSP6SS register region
++
++Optional properties :
++- reg-names	: register names of LPASS domain
++		 "lpass_cc", "lpass_qdsp6ss".
++
++Example:
++
++The below node has to be defined in the cases where the LPASS peripheral loader
++would bring the subsystem out of reset.
++
++	lpasscc: clock-controller {
++		compatible = "qcom,sdm845-lpasscc";
++		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
++		reg-names = "lpass_cc", "lpass_qdsp6ss";
++		#clock-cells = <1>;
++	};
++
++	gcc: clock-controller@100000 {
++		compatible = "qcom,gcc-sdm845";
++		qcom,lpass-protected;
++	};
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+index b8eae5a..968fa65 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -197,6 +197,8 @@
+ #define GCC_QSPI_CORE_CLK_SRC					187
+ #define GCC_QSPI_CORE_CLK					188
+ #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
++#define GCC_LPASS_Q6_AXI_CLK					190
++#define GCC_LPASS_SWAY_CLK					191
+ 
+ /* GCC Resets */
+ #define GCC_MMSS_BCR						0
+diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+new file mode 100644
+index 0000000..015968e
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
++
++#define LPASS_AUDIO_WRAPPER_AON_CLK			0
++#define LPASS_Q6SS_AHBM_AON_CLK				1
++#define LPASS_Q6SS_AHBS_AON_CLK				2
++#define LPASS_QDSP6SS_XO_CLK				3
++#define LPASS_QDSP6SS_SLEEP_CLK				4
++#define LPASS_QDSP6SS_CORE_CLK				5
++
++#endif
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
