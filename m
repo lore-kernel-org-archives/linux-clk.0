@@ -1,84 +1,82 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 27 Sep 2018 19:17:47 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 12/12] arm64: dts: allwinner: bananapi-m64: Bananapi
- S070WV20-CT16 DSI panel
-Message-ID: <20180927171747.wqdt5eiwktyyoefz@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-13-jagan@amarulasolutions.com>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Olof Johansson <olof@lixom.net>, Sudeep Holla <sudeep.holla@arm.com>
+CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar
+	<mingo@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com"
+	<hkallweit1@gmail.com>, Kees Cook <keescook@chromium.org>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michal Simek <michals@xilinx.com>, Rob
+ Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>, Linux ARM
+ Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+Date: Tue, 11 Sep 2018 19:20:18 +0000
+Message-ID: 
+ <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+ <1533318808-10781-4-git-send-email-jollys@xilinx.com>
+ <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+ <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com>
+In-Reply-To: 
+ <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180927114850.24565-13-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 05:18:50PM +0530, Jagan Teki wrote:
-> This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> BPI-M64 board.
->=20
-> DSI panel connected via board DSI port with,
-> - DC1SW as AVDD supply
-> - DCDC1 as DVDD supply
-> - PD6 gpio for reset pin
-> - PD5 gpio for backlight enable pin
-> - PD7 gpio for backlight vdd supply
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42 +++++++++++++++++++
->  1 file changed, 42 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/=
-arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> index ef1c90401bb2..c0be949be68d 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> @@ -45,6 +45,7 @@
->  #include "sun50i-a64.dtsi"
-> =20
->  #include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> =20
->  / {
->  	model =3D "BananaPi-M64";
-> @@ -56,6 +57,24 @@
->  		serial1 =3D &uart1;
->  	};
-> =20
-> +	vdd_bl: regulator@0 {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "bl-3v3";
-> +		regulator-min-microvolt =3D <3300000>;
-> +		regulator-max-microvolt =3D <3300000>;
-> +		gpio =3D <&pio 3 7 GPIO_ACTIVE_HIGH>; /* PD7 */
-> +		enable-active-high;
-> +	};
-> +
-> +	backlight_dsi: backlight-dsi {
-> +		compatible =3D "pwm-backlight";
-> +		pwms =3D <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> +		brightness-levels =3D <0 10 20 30 40 50 60 70 80 90 100>;
-
-The brightness levels should be increasing linearly from a user point
-of view. Usually, with a PWM backlight, a quadratic rule works much
-better.
-
-MMaxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+SGkgU3VkZWVwIGFuZCBPbG9mLA0KDQpDbG9jayBkcml2ZXIgZnJvbSBzYW1lIHBhdGNoIHNldCB1
+c2VzIGlvY3RsIEFQSSBhbG9uZyB3aXRoIG90aGVyIGNsb2NrIGVlbWkgQVBJcy4gQXMgY2xvY2sg
+cGF0Y2hlcycgZmluYWwgcmV2aWV3IGlzIHBlbmRpbmcgYnkgU3RlcGhlbiwgTWljaGFsIG9ubHkg
+Y3JlYXRlZCBwdWxsIHJlcXVlc3QgZm9yIHJlc3Qgb2YgdGhlIHBhdGNoZXMgYW5kIHRoYXQgZG9l
+c24ndCByZXF1aXJlIGlvY3RsIGFwaS4gSSB3aWxsIHJlbW92ZSBpdCBhbmQgc3VibWl0IG5ldyBw
+YXRjaCBzZXQuDQoNCkZvciBmdXR1cmUgcGF0Y2hlcyB3aGljaCByZXF1aXJlcyBpb2N0bCBhcGks
+IHdvdWxkIGxpa2UgdG8gdW5kZXJzdGFuZCB5b3VyIHN1Z2dlc3Rpb24gc28gSSBjYW4gbWFrZSBy
+ZXF1aXJlZCBjaGFuZ2VzLiBGb3IgenlucW1wLCBFRU1JIGludGVyZmFjZSBhbGxvd3MgY2xvY2ss
+IHJlc2V0LCBwb3dlciBldGMgbWFuYWdlbWVudCB0aHJvdWdoIGZpcm13YXJlIGJ1dCBhcGFydCBm
+cm9tIHRob3NlIHRoZXJlIGFyZSBzb21lIG9wZXJhdGlvbnMgd2hpY2ggbmVlZHMgc2VjdXJlIGFj
+Y2VzcyB0aHJvdWdoIGZpcm13YXJlLiBFeGFtcGxlcyBhcmUgYWNjZXNzaW5nIHNvbWUgc3RvcmFn
+ZSByZWdpc3RlcnMgZm9yIGludGVyIGFnZW50IGNvbW11bmljYXRpb24sIGNvbmZpZ3VyaW5nIGFu
+b3RoZXIgYWdlbnQoUlBVKSBtb2RlLCBzZXR0aW5nIFBMTCBwYXJhbWV0ZXJzLCBib290IGRldmlj
+ZSBjb25maWd1cmF0aW9uIGV0Yy4gVGhvc2Ugb3BlcmF0aW9ucyBhcmUgY292ZXJlZCBhcyBpb2N0
+bHMgYXMgdGhleSBhcmUgdmVyeSBwbGF0Zm9ybSBzcGVjaWZpYy4gRG8geW91IHN1Z2dlc3QgdG8g
+aGFuZGxlIHRoZW0gd2l0aCBpbmRpdmlkdWFsIEVFTUkgQVBJcyBpbnN0ZWFkIG9mIGlvY3RsIEFQ
+ST8NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gRnJvbTogT2xvZiBKb2hhbnNzb24gW21haWx0bzpvbG9mQGxpeG9tLm5ldF0NCj4gU2Vu
+dDogVHVlc2RheSwgU2VwdGVtYmVyIDExLCAyMDE4IDg6MDMgQU0NCj4gVG86IEpvbGx5IFNoYWgg
+PEpPTExZU0B4aWxpbnguY29tPg0KPiBDYzogYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsgSW5n
+byBNb2xuYXIgPG1pbmdvQGtlcm5lbC5vcmc+OyBHcmVnIEtyb2FoLQ0KPiBIYXJ0bWFuIDxncmVn
+a2hAbGludXhmb3VuZGF0aW9uLm9yZz47IG1hdHRAY29kZWJsdWVwcmludC5jby51azsgU3VkZWVw
+DQo+IEhvbGxhIDxzdWRlZXAuaG9sbGFAYXJtLmNvbT47IGhrYWxsd2VpdDFAZ21haWwuY29tOyBL
+ZWVzIENvb2sNCj4gPGtlZXNjb29rQGNocm9taXVtLm9yZz47IERtaXRyeSBUb3Jva2hvdiA8ZG1p
+dHJ5LnRvcm9raG92QGdtYWlsLmNvbT47DQo+IE1pY2hhZWwgVHVycXVldHRlIDxtdHVycXVldHRl
+QGJheWxpYnJlLmNvbT47IFN0ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBN
+aWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0
+QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgbGludXgt
+Y2xrDQo+IDxsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnPjsgUmFqYW4gVmFqYSA8UkFKQU5WQHhp
+bGlueC5jb20+OyBMaW51eCBBUk0NCj4gTWFpbGluZyBMaXN0IDxsaW51eC1hcm0ta2VybmVsQGxp
+c3RzLmluZnJhZGVhZC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0DQo+IDxsaW51eC1r
+ZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgRFRNTCA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+
+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjExIDAzLzExXSBmaXJtd2FyZTogeGlsaW54OiBBZGQg
+enlucW1wIElPQ1RMIEFQSSBmb3INCj4gZGV2aWNlIGNvbnRyb2wNCj4gDQo+IEhpIEpvbGx5LA0K
+PiANCj4gT24gTW9uLCBTZXAgMTAsIDIwMTggYXQgMTI6MTcgUE0sIEpvbGx5IFNoYWggPEpPTExZ
+U0B4aWxpbnguY29tPiB3cm90ZToNCj4gPiBIaSBBbGwsDQo+ID4NCj4gPiBBZGRpbmcgbW9yZSBj
+bGFyaWZpY2F0aW9uIG9uIHRvcCBvZiB3aGF0IE1pY2hhbCBzYWlkOg0KPiA+IEhlcmUgaW9jdGwg
+aXMgbm90IGEgc3lzdGVtIGlvY3RsIGFuZCBqdXN0IGEgZWVtaSBBUEkgbGlrZSBvdGhlciBpbnRl
+cmZhY2UgQVBJcy4gSXQNCj4gY2Fubm90IGJlIGNhbGxlZCBmcm9tIHVzZXJzcGFjZS4gT25seSBM
+aW51eCBkcml2ZXJzIGNhbiB1c2UgdGhpcyBBUEkgZm9yIGRlZmluZWQNCj4gaW9jdGwgb3BlcmF0
+aW9ucy4gVGhpcyBBUEkgaXMgbWVhbnQgZm9yIGFueSBwbGF0Zm9ybSBzcGVjaWZpYyBvcGVyYXRp
+b25zIHdoaWNoDQo+IG5lZWRzIHRvIGJlIG1hbmFnZWQgYnkgZmlybXdhcmUuIEZpcm13YXJlIHdp
+bGwgYWx3YXlzIHZhbGlkYXRlIHRoZSByZXF1ZXN0IGZvcg0KPiBhY3Rpb24gYmVpbmcgcGVyZm9y
+bWVkLg0KPiA+IERlYnVnZnMgaW50ZXJmYWNlIGlzIGp1c3QgZm9yIGRlYnVnZ2luZyBkdXJpbmcg
+ZGV2ZWxvcG1lbnQuIFdlIGNhbiByZW1vdmUNCj4gZGVidWdmcyBzdXBwb3J0IGZvciBpb2N0bCBB
+UEkgaWYgeW91IHN1Z2dlc3QuDQo+IA0KPiBBcmUgdGhlcmUgYW55IHBlbmRpbmcgcGF0Y2hzZXRz
+IHRoYXQgbWFrZSB1c2Ugb2YgdGhlIGlvY3RsIGludGVyZmFjZSBiZXNpZGVzIHRoZQ0KPiBkZWJ1
+Z2ZzIHBpZWNlPyBOb25lIG9mIHRoZSBvbmVzIGluIHRoaXMgcHVsbCByZXF1ZXN0IChiZXNpZGVz
+IHRoZSBkZWJ1Z2ZzKSBzZWVtcw0KPiB0byBjYWxsIGludG8gaXQuDQo+IA0KPiBJdCBtaWdodCBq
+dXN0IGJlIGVhc2llciB0byBsZWF2ZSBpdCBvdXQgdW50aWwgeW91IGhhdmUgYSB1c2UgY2FzZSBm
+b3IgaXQuIFRoZSByZXN0IG9mDQo+IHRoZSBwYXRjaHNldCBsb29rcyBmaW5lIHRvIG1lLCBhbmQg
+SSdkIGJlIGhhcHB5IHRvIHRha2UgaXQuIE9uY2UgeW91IGhhdmUgYSBuZWVkDQo+IGZvciBpdCB3
+ZSBjYW4gZGlzY3VzcyBzcGVjaWZpY3MuDQo+IA0KPiANCj4gLU9sb2YNCg==
