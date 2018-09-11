@@ -1,80 +1,65 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-clk@vger.kernel.org,
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 1/4] devres: constify p in devm_kfree()
-Date: Mon, 24 Sep 2018 12:11:47 +0200
-Message-Id: <20180924101150.23349-2-brgl@bgdev.pl>
-In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
-References: <20180924101150.23349-1-brgl@bgdev.pl>
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v4 0/2]  Add support for LPASS clock controller for SDM845
+Date: Tue, 11 Sep 2018 22:30:04 +0530
+Message-Id: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Make devm_kfree() signature uniform with that of kfree(). To avoid
-compiler warnings: cast p to (void *) when calling devres_destroy().
+ [v4]
+  * Update the description in GCC Documentation binding for
+  'qcom,lpass-protected'.
+  * Remove 'qcom,lpass-protected' from LPASS Documentation binding.
+  * Update KConfig to use Low Power Audio Subsystem.
+  * Add module_exit() and also update return value for
+    devm_ioremap_resource failure.
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/base/devres.c  | 5 +++--
- include/linux/device.h | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ [v3]
+  * Add a device tree property to identify lpass protected GCC clocks.
+  * Update the GCC driver code to register the lpass clocks when the flag is
+   defined.
+  * Add comment for clocks using the BRANCH_HALT_SKIP flag.
+  * Use platform APIs instead of of_address_to_resource.
+  * Replace devm_ioremap with devm_ioremap_resource.
+  * Use fixed index for 'lpass_cc' & 'lpass_qdsp6ss' in probe.
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index f98a097e73f2..438c91a43508 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -885,11 +885,12 @@ EXPORT_SYMBOL_GPL(devm_kasprintf);
-  *
-  * Free memory allocated with devm_kmalloc().
-  */
--void devm_kfree(struct device *dev, void *p)
-+void devm_kfree(struct device *dev, const void *p)
- {
- 	int rc;
- 
--	rc = devres_destroy(dev, devm_kmalloc_release, devm_kmalloc_match, p);
-+	rc = devres_destroy(dev, devm_kmalloc_release,
-+			    devm_kmalloc_match, (void *)p);
- 	WARN_ON(rc);
- }
- EXPORT_SYMBOL_GPL(devm_kfree);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8f882549edee..33f7cb271fbb 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -692,7 +692,7 @@ static inline void *devm_kcalloc(struct device *dev,
- {
- 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
- }
--extern void devm_kfree(struct device *dev, void *p);
-+extern void devm_kfree(struct device *dev, const void *p);
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
- extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
- 			  gfp_t gfp);
--- 
-2.18.0
+ [v2]
+  * Make gcc_lpass_sway_clk static.
+  * Remove using child nodes and use reg-names to differentiate various
+    domains of LPASS CC.
+
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
+
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |   2 +
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  31 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sdm845.c                      |  35 ++++
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 195 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  16 ++
+ 8 files changed, 291 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
