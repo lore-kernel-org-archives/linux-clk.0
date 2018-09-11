@@ -1,46 +1,129 @@
-Return-Path: <fabrizio.castro@bp.renesas.com>
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das@bp.renesas.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: [PATCH 0/3] Add clocks to r8a774c0
-Date: Wed, 12 Sep 2018 11:41:51 +0100
-Message-Id: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60721 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbeIKJeK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Sep 2018 05:34:10 -0400
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
+        kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
+ <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
+Date: Tue, 11 Sep 2018 06:36:35 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180911015320.GA25790@dragon>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dear All,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
+Content-Type: multipart/mixed; boundary="IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+ yibin.gong@nxp.com, Michael Turquette <mturquette@baylibre.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ linux-imx@nxp.com, kernel@pengutronix.de, "A.s. Dong"
+ <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Leonard Crestez <leonard.crestez@nxp.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-ID: <134a7f76-6e0b-1a9f-26da-f01adaac44e6@pengutronix.de>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk> <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk> <20180909020021.GA18838@dragon>
+ <20180910151926.GA10889@sirena.org.uk> <20180911015320.GA25790@dragon>
+In-Reply-To: <20180911015320.GA25790@dragon>
 
-this series adds clock support for the RZ/G2E (a.k.a. r8a774c0),
-and applies on top of renesas-devel-20180910-v4.19-rc3.
+--IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Fab
+Hi Shawn,
+
+On 11.09.2018 03:53, Shawn Guo wrote:
+> On Mon, Sep 10, 2018 at 04:19:26PM +0100, Mark Brown wrote:
+>> On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
+>>> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
+>>
+>>>> I was expecting to get a pull request with the precursor patches in =
+it -
+>>>> the regulator driver seems to get a moderate amount of development s=
+o
+>>>> there's a reasonable risk of conflicts.
+>>
+>>> What about you create a stable topic branch for regulator patches and=
+ I
+>>> pull it into IMX tree?
+>>
+>> Sure, I can send a pull request back but the first two patches in the
+>> series are ARM ones - are you OK with me just applying them and sendin=
+g
+>> them in the pull request or do you want to apply them first?
+>=20
+> I just took another look at the series.  It seems that there is no
+> build-time dependency between regulator and platform patches.  So I
+> think we can handle the series like:
+>=20
+>  - You apply patch #3, #4 and #5 on regulator tree;
+>  - I apply the reset on IMX tree.
+>=20
+> There shouldn't be any build or run time regression on either tree, and=
+
+> the feature that the series adds will be available when both trees get
+> merged together on -next or Linus tree.
+>=20
+> @Oleksij Is my understanding above correct?
+
+Yes.
 
 
-Fabrizio Castro (3):
-  clk: renesas: Add r8a774c0 CPG Core Clock Definitions
-  clk: renesas: cpg-mssr: Add r8a774c0 support
-  dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
+--IQQAtMcNgGktm5ZFih1gXwZeXumOAOaYC--
 
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |   7 +-
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774c0-cpg-mssr.c            | 286 +++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h      |  60 +++++
- 7 files changed, 363 insertions(+), 3 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774c0-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
--- 
-2.7.4
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluXRlMACgkQdQOiSHVI
+77Sxowf8CjP6jDa4tEdi8nba/CtB4vRe2TXeKy4l+9nZNtPn8Bl4PrUC8sOZN0Pa
+GlXjWmDPrDBjJ/qV8AMwa0HhK4xvIHIDsM8NMRL7CRIYc9bmBw9AnJty9xgS3UAQ
+aYJfQbFx93cz/N3cXCR/ATt50YRPESprtwf8RQBcfNhMX6Fldco3oDfJsmoQBY4l
+LZZ5dezGMr1tQGIr/1FfoOUIUUVWrMHU8BfTiJXC+BtENiUITcDwjnUUAb/CcmFU
+kiulVUndoahTflqBnO1abaElmbePbKVXd+CHC++3uHDTl8ZY8zSpV6DazAjepmua
+57gabHI6prwAB6hDLmRmi0Mr4DMfmQ==
+=6PNd
+-----END PGP SIGNATURE-----
+
+--GH2qLEd1bdYflvrsNcftbP536dqJJG2Gz--
