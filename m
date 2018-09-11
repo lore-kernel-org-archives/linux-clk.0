@@ -1,81 +1,55 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 07/27] dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
-Date: Sun,  2 Sep 2018 09:26:23 +0200
-Message-Id: <20180902072643.4917-8-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Tue, 11 Sep 2018 13:39:07 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Tony Xie <tony.xie@rock-chips.com>
+Cc: heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v4 1/5] mfd: rk808: Add RK817 and RK809 support
+Message-ID: <20180911123907.GN4185@dell>
+References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
+ <1535968829-19418-2-git-send-email-tony.xie@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1535968829-19418-2-git-send-email-tony.xie@rock-chips.com>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds necessary description and dt includes for H6 DE3 clock.
-It is very similar to others, but memory region has some additional
-registers not found in DE2.
+On Mon, 03 Sep 2018, Tony Xie wrote:
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
- include/dt-bindings/clock/sun8i-de2.h                 | 3 +++
- include/dt-bindings/reset/sun8i-de2.h                 | 1 +
- 3 files changed, 7 insertions(+), 2 deletions(-)
+>     The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+>     and handheld devices. It contains the following components:
+> 
+>         - Regulators
+>         - RTC
+>         - Clocking
+> 
+>     Both RK809 and RK817 chips are using a similar register map,
+>     so we can reuse the RTC and Clocking and regulators functionality.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> ---
 
-diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-index e94582e8b8a9..41a52c2acffd 100644
---- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-+++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-@@ -1,5 +1,5 @@
--Allwinner Display Engine 2.0 Clock Control Binding
----------------------------------------------------
-+Allwinner Display Engine 2.0/3.0 Clock Control Binding
-+------------------------------------------------------
- 
- Required properties :
- - compatible: must contain one of the following compatibles:
-@@ -8,6 +8,7 @@ Required properties :
- 		- "allwinner,sun8i-v3s-de2-clk"
- 		- "allwinner,sun50i-a64-de2-clk"
- 		- "allwinner,sun50i-h5-de2-clk"
-+		- "allwinner,sun50i-h6-de3-clk"
- 
- - reg: Must contain the registers base address and length
- - clocks: phandle to the clocks feeding the display engine subsystem.
-diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
-index 3bed63b524aa..7768f73b051e 100644
---- a/include/dt-bindings/clock/sun8i-de2.h
-+++ b/include/dt-bindings/clock/sun8i-de2.h
-@@ -15,4 +15,7 @@
- #define CLK_MIXER1		7
- #define CLK_WB			8
- 
-+#define CLK_BUS_ROT		9
-+#define CLK_ROT			10
-+
- #endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
-diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
-index 9526017432f0..1c36a6ac86d6 100644
---- a/include/dt-bindings/reset/sun8i-de2.h
-+++ b/include/dt-bindings/reset/sun8i-de2.h
-@@ -10,5 +10,6 @@
- #define RST_MIXER0	0
- #define RST_MIXER1	1
- #define RST_WB		2
-+#define RST_ROT		3
- 
- #endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
+It's often helpful to place a Changelog in this space.
+
+>  drivers/mfd/Kconfig       |   6 +-
+>  drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
+>  kernel/reboot.c           |   1 +
+>  4 files changed, 391 insertions(+), 6 deletions(-)
+
+I just reviewed v4.
+
+It looks like the review comments are still relevant.
+
 -- 
-2.18.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
