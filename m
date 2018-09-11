@@ -1,110 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46872 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730389AbeIFUcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 16:32:08 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 04/10] clk: samsung: s3c2443: Use generic helper for
- handling suspend/resume
-Date: Thu, 06 Sep 2018 17:55:26 +0200
-Message-id: <20180906155532.4085-5-m.szyprowski@samsung.com>
-In-reply-to: <20180906155532.4085-1-m.szyprowski@samsung.com>
-References: <20180906155532.4085-1-m.szyprowski@samsung.com>
-        <CGME20180906155556eucas1p26cc9f85524938192ea01bde8e1b977e2@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <broonie@sirena.org.uk>
+Date: Tue, 11 Sep 2018 16:19:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
+Message-ID: <20180911151927.GB10123@sirena.org.uk>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-4-o.rempel@pengutronix.de>
+ <20180802104443.GH9117@sirena.org.uk>
+ <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
+ <20180802113552.GJ9117@sirena.org.uk>
+ <20180827014815.GD29208@dragon>
+ <20180906101516.GA5360@sirena.org.uk>
+ <20180909020021.GA18838@dragon>
+ <20180910151926.GA10889@sirena.org.uk>
+ <20180911015320.GA25790@dragon>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
+In-Reply-To: <20180911015320.GA25790@dragon>
 List-ID: <linux-clk.vger.kernel.org>
 
-Replace common suspend/resume handling code by generic helper.
-Almost no functional change, the only difference is in handling
-of hypothetical memory allocation failure on boot.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/samsung/clk-s3c2443.c | 43 ++-----------------------------
- 1 file changed, 2 insertions(+), 41 deletions(-)
+--DBIVS5p969aUjpLe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index c46e6d5bc9bc..884067e4f1a1 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -11,7 +11,6 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/syscore_ops.h>
- #include <linux/reboot.h>
- 
- #include <dt-bindings/clock/s3c2443.h>
-@@ -43,9 +42,6 @@ enum supported_socs {
- 
- static void __iomem *reg_base;
- 
--#ifdef CONFIG_PM_SLEEP
--static struct samsung_clk_reg_dump *s3c2443_save;
--
- /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -65,42 +61,6 @@ static unsigned long s3c2443_clk_regs[] __initdata = {
- 	SCLKCON,
- };
- 
--static int s3c2443_clk_suspend(void)
--{
--	samsung_clk_save(reg_base, s3c2443_save,
--				ARRAY_SIZE(s3c2443_clk_regs));
--
--	return 0;
--}
--
--static void s3c2443_clk_resume(void)
--{
--	samsung_clk_restore(reg_base, s3c2443_save,
--				ARRAY_SIZE(s3c2443_clk_regs));
--}
--
--static struct syscore_ops s3c2443_clk_syscore_ops = {
--	.suspend = s3c2443_clk_suspend,
--	.resume = s3c2443_clk_resume,
--};
--
--static void __init s3c2443_clk_sleep_init(void)
--{
--	s3c2443_save = samsung_clk_alloc_reg_dump(s3c2443_clk_regs,
--						ARRAY_SIZE(s3c2443_clk_regs));
--	if (!s3c2443_save) {
--		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
--			__func__);
--		return;
--	}
--
--	register_syscore_ops(&s3c2443_clk_syscore_ops);
--	return;
--}
--#else
--static void __init s3c2443_clk_sleep_init(void) {}
--#endif
--
- PNAME(epllref_p) = { "mpllref", "mpllref", "xti", "ext" };
- PNAME(esysclk_p) = { "epllref", "epll" };
- PNAME(mpllref_p) = { "xti", "mdivclk" };
-@@ -450,7 +410,8 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 		break;
- 	}
- 
--	s3c2443_clk_sleep_init();
-+	samsung_clk_sleep_init(reg_base, s3c2443_clk_regs,
-+			       ARRAY_SIZE(s3c2443_clk_regs));
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
--- 
-2.17.1
+On Tue, Sep 11, 2018 at 09:53:21AM +0800, Shawn Guo wrote:
+
+> There shouldn't be any build or run time regression on either tree, and
+> the feature that the series adds will be available when both trees get
+> merged together on -next or Linus tree.
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/pfuze100-poweroff
+
+for you to fetch changes up to c29daffa322ad36978cbce487f8ebcd9c3c3f7c0:
+
+  regulator: pfuze100-regulator: provide pm_power_off_prepare handler (2018-09-11 16:15:57 +0100)
+
+----------------------------------------------------------------
+regulator: pfuze100: Power off support
+
+The pfuze100 has some innovative and creative power off support which
+requires some cross tree work to handle; this tag is the regualtor bits
+of that work.
+
+----------------------------------------------------------------
+Oleksij Rempel (3):
+      kernel/reboot.c: export pm_power_off_prepare
+      regulator: pfuze100: add fsl,pmic-stby-poweroff property
+      regulator: pfuze100-regulator: provide pm_power_off_prepare handler
+
+ .../devicetree/bindings/regulator/pfuze100.txt     |  5 ++
+ drivers/regulator/pfuze100-regulator.c             | 91 ++++++++++++++++++++++
+ kernel/reboot.c                                    |  1 +
+ 3 files changed, 97 insertions(+)
+
+--DBIVS5p969aUjpLe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluX3P4ACgkQJNaLcl1U
+h9DYcQf/T4B8STe5DVYJ7XcIqMdP9niqyxfDHKXnaV83jPTBEbCXqBjxRlt/3JpU
+vTrcDW97YDnUk2iOeq3oPER4svv5ELXiOZSQIAZnR3sQxuDCPLRxVm0HpX12rFLv
+Lscfxv6LEbfbSqKG5v7w92wgYZA2ab0PdDGm4C1fbMKnq1Qs5ltpHMwtZDg48YDA
+O0gz4OCzTJmcwDICQemWP04xs3XL31dvO3ysdEJNwrqNBuv4MERrRtyljpTCMrVM
+gOcnWS4zKT4zTAvr8rnRVojR1kkLupoUgrPfADpYzPgMSSeL5RtuC+Ad8FOD7wDa
+rfhRp0nr2va6alTLEny2NghIXdxZTg==
+=bf0C
+-----END PGP SIGNATURE-----
+
+--DBIVS5p969aUjpLe--
