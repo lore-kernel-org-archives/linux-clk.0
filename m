@@ -1,89 +1,31 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10973 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbeIODNe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:13:34 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 05/14] memory: tegra: mc: Introduce helpers
-Date: Sat, 15 Sep 2018 00:48:06 +0300
-Message-ID: <1536961695-27809-6-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+Received: from mail.kernel.org ([198.145.29.99]:43948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727679AbeIMCJA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Sep 2018 22:09:00 -0400
+Subject: Re: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled
+ in suspend
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
+ <20180912131641.21688-1-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <eaa1c0c4-3f3e-c2c0-1429-45576d25fa92@kernel.org>
+Date: Wed, 12 Sep 2018 23:02:37 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180912131641.21688-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Introduce a few helper functions to lookup a timing for a given rate and
-modify MC register field. These will be useful when adding support for
-updating the latency allowance (LA) registers when scaling the EMC clock.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/mc.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+On 09/12/2018 03:16 PM, Marek Szyprowski wrote:
+> All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
+> cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
+> 
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
 
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index a4803ac..af4bf29 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -73,6 +73,17 @@
- };
- MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
- 
-+static void mc_modifyl(struct tegra_mc *mc, u32 reg, u32 value, u8 shift,
-+		       u8 mask)
-+{
-+	u32 val;
-+
-+	val = readl(mc->regs + reg);
-+	val &= ~(mask << shift);
-+	val |= (value & mask) << shift;
-+	writel(val, mc->regs + reg);
-+}
-+
- static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
- {
- 	unsigned long long tick;
-@@ -91,18 +102,14 @@ static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
- 	/* write latency allowance defaults */
- 	for (i = 0; i < mc->soc->num_clients; i++) {
- 		const struct tegra_mc_la *la = &mc->soc->clients[i].la;
--		u32 value;
--
--		value = readl(mc->regs + la->reg);
--		value &= ~(la->mask << la->shift);
--		value |= (la->def & la->mask) << la->shift;
--		writel(value, mc->regs + la->reg);
-+		mc_modifyl(mc, la->reg, la->def, la->shift, la->mask);
- 	}
- 
- 	return 0;
- }
- 
--void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
-+static struct tegra_mc_timing *find_mc_timing(struct tegra_mc *mc,
-+					      unsigned long rate)
- {
- 	unsigned int i;
- 	struct tegra_mc_timing *timing = NULL;
-@@ -114,6 +121,15 @@ void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
- 		}
- 	}
- 
-+	return timing;
-+}
-+
-+void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
-+{
-+	unsigned int i;
-+	struct tegra_mc_timing *timing = NULL;
-+
-+	timing = find_mc_timing(mc, rate);
- 	if (!timing) {
- 		dev_err(mc->dev, "no memory timing registered for rate %lu\n",
- 			rate);
--- 
-1.9.1
+Patch applied, thanks.
