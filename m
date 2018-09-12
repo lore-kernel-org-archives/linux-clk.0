@@ -1,112 +1,281 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-From: Rob Herring <robh@kernel.org>
-To: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 00/21] DT cpu node iterator
-Date: Wed,  5 Sep 2018 14:37:17 -0500
-Message-Id: <20180905193738.19325-1-robh@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-fbdev@vger.kernel.org, Rich Felker <dalias@libc.org>,
- Catalin Marinas <catalin.marinas@arm.com>, linux-sh@vger.kernel.org,
- Vitaly Bordug <vitb@kernel.crashing.org>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Palmer Dabbelt <palmer@sifive.com>, Will Deacon <will.deacon@arm.com>,
- dri-devel@lists.freedesktop.org,
- Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
- "H. Peter Anvin" <hpa@zytor.com>, linux-riscv@lists.infradead.org,
- Frank Rowand <frowand.list@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Jonas Bonn <jonas@southpole.se>, linux-c6x-dev@linux-c6x.org,
- Yoshinori Sato <ysato@users.sourceforge.jp>,
- Michael Ellerman <mpe@ellerman.id.au>, Joerg Roedel <joro@8bytes.org>,
- Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@armlinux.org.uk>,
- linux-clk@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
- Mark Salter <msalter@redhat.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Aurelien Jacquiot <jacquiot.aurelien@gmail.com>, openrisc@lists.librecores.org,
- Borislav Petkov <bp@alien8.de>, nios2-dev@lists.rocketboards.org,
- Stafford Horne <shorne@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
- Michal Simek <monstr@monstr.eu>, Stephen Boyd <sboyd@kernel.org>,
- linux-renesas-soc@vger.kernel.org, iommu@lists.linux-foundation.org,
- Simon Horman <horms@verge.net.au>, Ley Foon Tan <lftan@altera.com>,
- linuxppc-dev@lists.ozlabs.org
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
+Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
+Date: Wed, 12 Sep 2018 16:55:07 +0200
+Message-ID: <1702684.jtWEXlagAO@jernej-laptop>
+In-Reply-To: <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <1677668.BePkXd9qNa@jernej-laptop> <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-This series adds an iterator for cpu nodes and converts users over to use
-it or of_get_cpu_node in some cases. This allows us to remove the
-dependency on device_type property for cpu nodes though removing that
-from DTS files will have to wait for some time. In some cases, this makes
-the DT search more strict by only looking in /cpus child nodes rather
-than any node with the device_type == cpu. The iterator also honors the
-status property which is often forgotten.
+Dne sreda, 12. september 2018 ob 14:20:08 CEST je Chen-Yu Tsai napisal(a):
+> On Wed, Sep 5, 2018 at 1:46 AM Jernej =C5=A0krabec <jernej.skrabec@siol.n=
+et>=20
+wrote:
+> > Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(=
+a):
+> > > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.ne=
+t>
+> >=20
+> > wrote:
+> > > > Support for mixer0, mixer1, writeback and rotation units is added.
+> > > >=20
+> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > ---
+> > > >=20
+> > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65
+> > > >  ++++++++++++++++++++++++++++
+> > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
+> > > >  2 files changed, 66 insertions(+)
+> > > >=20
+> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index
+> > > > bae5ee67a797..4535c1c27d27
+> > > > 100644
+> > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> > > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1=
+",
+> > > > "bus-de",>
+> > > >=20
+> > > >                       0x04, BIT(1), 0);
+> > > > =20
+> > > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
+> > > > =20
+> > > >                       0x04, BIT(2), 0);
+> > > >=20
+> > > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
+> > > > +                     0x04, BIT(3), 0);
+> > > >=20
+> > > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div=
+",
+> > > > =20
+> > > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
+> > > > "mixer1-div",>
+> > > >=20
+> > > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
+> > > > =20
+> > > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
+> > > > =20
+> > > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
+> > > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
+> > > >=20
+> > > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
+> > > > =20
+> > > >                    CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div",
+> > > > "de",
+> > > > 0x0c, 4, 4,>
+> > > >=20
+> > > >                    CLK_SET_RATE_PARENT);
+> > > > =20
+> > > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
+> > > > =20
+> > > >                    CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
+> > > > +                  CLK_SET_RATE_PARENT);
+> > > >=20
+> > > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0=
+c,
+> > > >  0,
+> > > >  4,
+> > > > =20
+> > > >                    CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk,
+> > > > "mixer1-div",
+> > > > "pll-de", 0x0c, 4, 4,>
+> > > >=20
+> > > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+> > > > =20
+> > > >                    CLK_SET_RATE_PARENT);
+> > > >=20
+> > > > +static struct ccu_common *sun50i_h6_de3_clks[] =3D {
+> > > > +       &mixer0_clk.common,
+> > > > +       &mixer1_clk.common,
+> > > > +       &wb_clk.common,
+> > > > +
+> > > > +       &bus_mixer0_clk.common,
+> > > > +       &bus_mixer1_clk.common,
+> > > > +       &bus_wb_clk.common,
+> > > > +
+> > > > +       &mixer0_div_clk.common,
+> > > > +       &mixer1_div_clk.common,
+> > > > +       &wb_div_clk.common,
+> > > > +
+> > > > +       &bus_rot_clk.common,
+> > > > +       &rot_clk.common,
+> > > > +       &rot_div_clk.common,
+> > > > +};
+> > > > +
+> > > >=20
+> > > >  static struct ccu_common *sun8i_a83t_de2_clks[] =3D {
+> > > > =20
+> > > >         &mixer0_clk.common,
+> > > >         &mixer1_clk.common,
+> > > >=20
+> > > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] =
+=3D {
+> > > >=20
+> > > >         &wb_div_clk.common,
+> > > > =20
+> > > >  };
+> > > >=20
+> > > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
+> > > > +       .hws    =3D {
+> > > > +               [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
+> > > > +               [CLK_MIXER1]            =3D &mixer1_clk.common.hw,
+> > > > +               [CLK_WB]                =3D &wb_clk.common.hw,
+> > > > +               [CLK_ROT]               =3D &rot_clk.common.hw,
+> > > > +
+> > > > +               [CLK_BUS_MIXER0]        =3D &bus_mixer0_clk.common.=
+hw,
+> > > > +               [CLK_BUS_MIXER1]        =3D &bus_mixer1_clk.common.=
+hw,
+> > > > +               [CLK_BUS_WB]            =3D &bus_wb_clk.common.hw,
+> > > > +               [CLK_BUS_ROT]           =3D &bus_rot_clk.common.hw,
+> > > > +
+> > > > +               [CLK_MIXER0_DIV]        =3D &mixer0_div_clk.common.=
+hw,
+> > > > +               [CLK_MIXER1_DIV]        =3D &mixer1_div_clk.common.=
+hw,
+> > > > +               [CLK_WB_DIV]            =3D &wb_div_clk.common.hw,
+> > > > +               [CLK_ROT_DIV]           =3D &rot_div_clk.common.hw,
+> > > > +       },
+> > > > +       .num    =3D 12,
+> > >=20
+> > > It's best not to openly code these. It is error prone, like having
+> > > an index beyond .num, which then never gets registered.
+> > >=20
+> > > Instead, please update CLK_NUMBERS and use that instead.
+> > > sunxi_ccu_probe()
+> > > can handle holes in .hws.
+> >=20
+> > I'm not sure this will work. All newly introduced indices are at the en=
+d,
+> > so other arrays will still have same length (hole at the end). You will
+> > just claim that arrays are larger than they really are, which means bad
+> > things.
+> >=20
+> > But I take any other suggestion. I really can't think of better solutio=
+n.
+>=20
+> Then maybe have macros for both cases instead?
+> CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
 
-I've only tested on ARM under QEMU and compiled powerpc.
+That sounds reasonable. Do you want separate patch which renames original=20
+macro CLK_NUMBER to CLK_NUMBER_WITHOUT_ROT?
 
-Rob
+Best regards,
+Jernej
 
-Rob Herring (21):
-  of: Add cpu node iterator for_each_of_cpu_node()
-  of: Support matching cpu nodes with no 'reg' property
-  ARM: use for_each_of_cpu_node iterator
-  ARM: topology: remove unneeded check for /cpus node
-  ARM: shmobile: use for_each_of_cpu_node iterator
-  arm64: use for_each_of_cpu_node iterator
-  c6x: use for_each_of_cpu_node iterator
-  microblaze: get cpu node with of_get_cpu_node
-  nios2: get cpu node with of_get_cpu_node
-  openrisc: use for_each_of_cpu_node iterator
-  powerpc: use for_each_of_cpu_node iterator
-  powerpc: 4xx: get cpu node with of_get_cpu_node
-  powerpc: 8xx: get cpu node with of_get_cpu_node
-  riscv: use for_each_of_cpu_node iterator
-  SH: use for_each_of_cpu_node iterator
-  x86: DT: use for_each_of_cpu_node iterator
-  clk: mvebu: use for_each_of_cpu_node iterator
-  edac: cpc925: use for_each_of_cpu_node iterator
-  iommu: fsl_pamu: use for_each_of_cpu_node iterator
-  of: use for_each_of_cpu_node iterator
-  fbdev: fsl-diu: get cpu node with of_get_cpu_node
-
- arch/arm/kernel/devtree.c                 |  5 +--
- arch/arm/kernel/topology.c                |  6 ---
- arch/arm/mach-shmobile/pm-rcar-gen2.c     |  8 +---
- arch/arm/mach-shmobile/pm-rmobile.c       |  2 +-
- arch/arm/mach-shmobile/timer.c            | 10 +----
- arch/arm64/kernel/smp.c                   |  2 +-
- arch/c6x/kernel/setup.c                   | 11 ++---
- arch/microblaze/kernel/cpu/cpuinfo.c      |  4 +-
- arch/nios2/kernel/cpuinfo.c               |  4 +-
- arch/openrisc/kernel/setup.c              |  3 +-
- arch/powerpc/platforms/4xx/soc.c          |  2 +-
- arch/powerpc/platforms/8xx/m8xx_setup.c   |  5 ++-
- arch/powerpc/platforms/powermac/feature.c | 51 ++++++++---------------
- arch/powerpc/platforms/powermac/setup.c   | 15 +++----
- arch/riscv/kernel/smpboot.c               |  2 +-
- arch/sh/boards/of-generic.c               |  2 +-
- arch/x86/kernel/devicetree.c              |  2 +-
- drivers/clk/mvebu/clk-cpu.c               |  4 +-
- drivers/edac/cpc925_edac.c                | 20 +--------
- drivers/iommu/fsl_pamu.c                  |  2 +-
- drivers/of/base.c                         | 43 ++++++++++++++++++-
- drivers/of/of_numa.c                      | 15 +------
- drivers/video/fbdev/fsl-diu-fb.c          |  2 +-
- include/linux/of.h                        | 11 +++++
- 24 files changed, 111 insertions(+), 120 deletions(-)
-
---
-2.17.1
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+> ChenYu
+>=20
+> > Best regards,
+> > Jernej
+> >=20
+> > > On the other hand, it can't handle holes in the ccu_reset_map. Hope we
+> > > never have to deal with such an instance.
+> > >=20
+> > > ChenYu
+> > >=20
+> > > > +};
+> > > > +
+> > > >=20
+> > > >  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks =3D {
+> > > > =20
+> > > >         .hws    =3D {
+> > > >        =20
+> > > >                 [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
+> > > >=20
+> > > > @@ -156,6 +200,13 @@ static struct ccu_reset_map
+> > > > sun50i_a64_de2_resets[] =3D
+> > > > {>
+> > > >=20
+> > > >         [RST_WB]        =3D { 0x08, BIT(2) },
+> > > > =20
+> > > >  };
+> > > >=20
+> > > > +static struct ccu_reset_map sun50i_h6_de3_resets[] =3D {
+> > > > +       [RST_MIXER0]    =3D { 0x08, BIT(0) },
+> > > > +       [RST_MIXER1]    =3D { 0x08, BIT(1) },
+> > > > +       [RST_WB]        =3D { 0x08, BIT(2) },
+> > > > +       [RST_ROT]       =3D { 0x08, BIT(3) },
+> > > > +};
+> > > > +
+> > > >=20
+> > > >  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
+> > > > =20
+> > > >         .ccu_clks       =3D sun8i_a83t_de2_clks,
+> > > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_a83t_de2_clks),
+> > > >=20
+> > > > @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc
+> > > > sun50i_a64_de2_clk_desc =3D {>
+> > > >=20
+> > > >         .num_resets     =3D ARRAY_SIZE(sun50i_a64_de2_resets),
+> > > > =20
+> > > >  };
+> > > >=20
+> > > > +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc =3D {
+> > > > +       .ccu_clks       =3D sun50i_h6_de3_clks,
+> > > > +       .num_ccu_clks   =3D ARRAY_SIZE(sun50i_h6_de3_clks),
+> > > > +
+> > > > +       .hw_clks        =3D &sun50i_h6_de3_hw_clks,
+> > > > +
+> > > > +       .resets         =3D sun50i_h6_de3_resets,
+> > > > +       .num_resets     =3D ARRAY_SIZE(sun50i_h6_de3_resets),
+> > > > +};
+> > > > +
+> > > >=20
+> > > >  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc =3D {
+> > > > =20
+> > > >         .ccu_clks       =3D sun8i_v3s_de2_clks,
+> > > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_v3s_de2_clks),
+> > > >=20
+> > > > @@ -296,6 +357,10 @@ static const struct of_device_id
+> > > > sunxi_de2_clk_ids[]
+> > > > =3D {>
+> > > >=20
+> > > >                 .compatible =3D "allwinner,sun50i-h5-de2-clk",
+> > > >                 .data =3D &sun50i_a64_de2_clk_desc,
+> > > >        =20
+> > > >         },
+> > > >=20
+> > > > +       {
+> > > > +               .compatible =3D "allwinner,sun50i-h6-de3-clk",
+> > > > +               .data =3D &sun50i_h6_de3_clk_desc,
+> > > > +       },
+> > > >=20
+> > > >         { }
+> > > > =20
+> > > >  };
+> > > >=20
+> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h index
+> > > > 530c006e0ae9..27bd88539f42
+> > > > 100644
+> > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
+> > > > @@ -22,6 +22,7 @@
+> > > >=20
+> > > >  #define CLK_MIXER0_DIV 3
+> > > >  #define CLK_MIXER1_DIV 4
+> > > >  #define CLK_WB_DIV     5
+> > > >=20
+> > > > +#define CLK_ROT_DIV    11
+> > > >=20
+> > > >  #define CLK_NUMBER     (CLK_WB + 1)
+> > > >=20
+> > > > --
+> > > > 2.18.0
