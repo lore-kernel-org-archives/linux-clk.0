@@ -1,67 +1,118 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 2/3] r8169: Get and enable optional ether_clk clock
+Date: Wed, 12 Sep 2018 11:34:55 +0200
+Message-Id: <20180912093456.23400-3-hdegoede@redhat.com>
+In-Reply-To: <20180912093456.23400-1-hdegoede@redhat.com>
+References: <20180912093456.23400-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-References: <20180907165849.106182-1-chris.brandt@renesas.com>
-In-Reply-To: <20180907165849.106182-1-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Sep 2018 16:04:33 +0200
-Message-ID: <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: renesas: cpg-mssr: Add R7S9210 support
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Chris,
+On some boards a platform clock is used as clock for the r8169 chip,
+this commit adds support for getting and enabling this clock (assuming
+it has an "ether_clk" alias set on it).
 
-On Fri, Sep 7, 2018 at 6:59 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add support for the R7S9210 (RZ/A2) Clock Pulse Generator and Module
-> Standby.
->
-> The Module Standby HW in the RZ/A series is very close to R-Car HW, except
-> for how the registers are laid out.
-> The MSTP registers are only 8-bits wide, there is no status registers
-> (MSTPSR), and the register offsets are a little different. Since the RZ/A
-> hardware manuals refer to these registers as the Standby Control Registers,
-> we'll use that name to distinguish the RZ/A type from the R-Car type.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v4:
->  * Preserved sort order of SoC listings
->  * Removed R7S9210_CLK_PLL from dt-binding since it's an internal clock
->  * ratio_tab is now a struct making it look a little nicer
->  * Removed CLK_I,...CLK_P0 because they are already defined in dt-bindings
->  * Sorted mod_clks by ascending MSTP number
->  * Removed cast from clk_get_rate(parent)
->  * Corrected register index of stbcr[1]
->  * Don't use MOD_CLK_PACK_10 for non priv->stbyctrl devices (bug fix)
+This is related to commit d31fd43c0f9a ("clk: x86: Do not gate clocks
+enabled by the firmware") which is a previous attempt to fix this for some
+x86 boards, but this causes all Cherry Trail SoC using boards to not reach
+there lowest power states when suspending.
 
-Thanks for the update!
+This commit (together with an atom-pmc-clk driver commit adding the alias)
+fixes things properly by making the r8169 get the clock and enable it when
+it needs it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=196861
+Cc: Johannes Stezenbach <js@sig21.net>
+Cc: Carlo Caione <carlo@endlessm.com>
+Reported-by: Johannes Stezenbach <js@sig21.net>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+-Tweaked the commit msg a bit
+-Added: Stephen's Acked-by, Andy's Reviewed-by
+---
+ drivers/net/ethernet/realtek/r8169.c | 33 ++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-One possible area for improvement is removing the unused entries in the
-module clocks part of the priv->clks[] array:
-
-+       .num_hw_mod_clks = 11 * 32, /* includes STBCR0 which doesn't exist */
-
-Due to having 8-bit instead of 32-bit registers, 11 * 24 entries are not used.
-Fixing that means adding more checks in several functions, though, so I
-don't know if you want to go that far...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index b08d51bf7a20..474229548731 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -13,6 +13,7 @@
+ #include <linux/pci.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/ethtool.h>
+ #include <linux/phy.h>
+@@ -665,6 +666,7 @@ struct rtl8169_private {
+ 
+ 	u16 event_slow;
+ 	const struct rtl_coalesce_info *coalesce_info;
++	struct clk *clk;
+ 
+ 	struct mdio_ops {
+ 		void (*write)(struct rtl8169_private *, int, int);
+@@ -7254,6 +7256,11 @@ static int rtl_jumbo_max(struct rtl8169_private *tp)
+ 	}
+ }
+ 
++static void rtl_disable_clk(void *data)
++{
++	clk_disable_unprepare(data);
++}
++
+ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
+@@ -7274,6 +7281,32 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	tp->msg_enable = netif_msg_init(debug.msg_enable, R8169_MSG_DEFAULT);
+ 	tp->supports_gmii = cfg->has_gmii;
+ 
++	/* Get the *optional* external "ether_clk" used on some boards */
++	tp->clk = devm_clk_get(&pdev->dev, "ether_clk");
++	if (IS_ERR(tp->clk)) {
++		rc = PTR_ERR(tp->clk);
++		if (rc == -ENOENT) {
++			/* clk-core allows NULL (for suspend / resume) */
++			tp->clk = NULL;
++		} else if (rc == -EPROBE_DEFER) {
++			return rc;
++		} else {
++			dev_err(&pdev->dev, "failed to get clk: %d\n", rc);
++			return rc;
++		}
++	} else {
++		rc = clk_prepare_enable(tp->clk);
++		if (rc) {
++			dev_err(&pdev->dev, "failed to enable clk: %d\n", rc);
++			return rc;
++		}
++
++		rc = devm_add_action_or_reset(&pdev->dev, rtl_disable_clk,
++					      tp->clk);
++		if (rc)
++			return rc;
++	}
++
+ 	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+ 	rc = pcim_enable_device(pdev);
+ 	if (rc < 0) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.19.0.rc0
