@@ -1,118 +1,46 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Stephen Boyd <sboyd@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Michael Turquette
-	<mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
-	<horms@verge.net.au>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Mon, 3 Sep 2018 13:21:02 +0000
-Message-ID: 
- <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
- <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
- <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
- <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34775 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbeILSV2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Sep 2018 14:21:28 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled in
+ suspend
+Date: Wed, 12 Sep 2018 15:16:41 +0200
+Message-id: <20180912131641.21688-1-m.szyprowski@samsung.com>
+References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KT24gMDMgU2VwdGVtYmVyIDIwMTggMTA6MzMgUGhpbCBFZHdvcnRoeSB3
-cm90ZToNCj4gT24gMDEgU2VwdGVtYmVyIDIwMTggMDM6NDYsIFN0ZXBoZW4gQm95ZCB3cm90ZToN
-Cj4gPiBRdW90aW5nIFBoaWwgRWR3b3J0aHkgKDIwMTgtMDgtMzEgMDc6MDc6MjIpDQo+ID4gPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrZGV2LmMgYi9kcml2ZXJzL2Nsay9jbGtkZXYuYyBp
-bmRleA0KPiA+ID4gOWFiM2RiOC4uNGFkYjk5ZSAxMDA2NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMv
-Y2xrL2Nsa2Rldi5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGtkZXYuYw0KPiA+ID4gQEAg
-LTU0LDMwICs1NCwyOSBAQCBFWFBPUlRfU1lNQk9MKG9mX2Nsa19nZXQpOw0KPiA+ID4NCj4gPiA+
-ICBzdGF0aWMgc3RydWN0IGNsayAqX19vZl9jbGtfZ2V0X2J5X25hbWUoc3RydWN0IGRldmljZV9u
-b2RlICpucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBj
-b25zdCBjaGFyICpkZXZfaWQsDQo+ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgY29uc3QgY2hhciAqbmFtZSkNCj4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpuYW1lLA0KPiA+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGJvb2wgb3B0aW9uYWwpDQo+ID4gPiAgew0KPiA+ID4g
-ICAgICAgICBzdHJ1Y3QgY2xrICpjbGsgPSBFUlJfUFRSKC1FTk9FTlQpOw0KPiA+ID4gKyAgICAg
-ICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmNoaWxkID0gbnA7DQo+ID4gPiArICAgICAgIGludCBpbmRl
-eCA9IDA7DQo+ID4gPg0KPiA+ID4gICAgICAgICAvKiBXYWxrIHVwIHRoZSB0cmVlIG9mIGRldmlj
-ZXMgbG9va2luZyBmb3IgYSBjbG9jayB0aGF0IG1hdGNoZXMgKi8NCj4gPiA+ICAgICAgICAgd2hp
-bGUgKG5wKSB7DQo+ID4gPiAtICAgICAgICAgICAgICAgaW50IGluZGV4ID0gMDsNCj4gPiA+DQo+
-ID4gPiAgICAgICAgICAgICAgICAgLyoNCj4gPiA+ICAgICAgICAgICAgICAgICAgKiBGb3IgbmFt
-ZWQgY2xvY2tzLCBmaXJzdCBsb29rIHVwIHRoZSBuYW1lIGluIHRoZQ0KPiA+ID4gICAgICAgICAg
-ICAgICAgICAqICJjbG9jay1uYW1lcyIgcHJvcGVydHkuICBJZiBpdCBjYW5ub3QgYmUgZm91bmQs
-IHRoZW4NCj4gPiA+IC0gICAgICAgICAgICAgICAgKiBpbmRleCB3aWxsIGJlIGFuIGVycm9yIGNv
-ZGUsIGFuZCBvZl9jbGtfZ2V0KCkgd2lsbCBmYWlsLg0KPiA+ID4gKyAgICAgICAgICAgICAgICAq
-IGluZGV4IHdpbGwgYmUgYW4gZXJyb3IgY29kZS4NCj4gPiA+ICAgICAgICAgICAgICAgICAgKi8N
-Cj4gPiA+ICAgICAgICAgICAgICAgICBpZiAobmFtZSkNCj4gPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgIGluZGV4ID0gb2ZfcHJvcGVydHlfbWF0Y2hfc3RyaW5nKG5wLCAiY2xvY2stbmFtZXMi
-LA0KPiBuYW1lKTsNCj4gPiA+IC0gICAgICAgICAgICAgICBjbGsgPSBfX29mX2Nsa19nZXQobnAs
-IGluZGV4LCBkZXZfaWQsIG5hbWUpOw0KPiA+ID4gLSAgICAgICAgICAgICAgIGlmICghSVNfRVJS
-KGNsaykpIHsNCj4gPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIGJyZWFrOw0KPiA+ID4gLSAg
-ICAgICAgICAgICAgIH0gZWxzZSBpZiAobmFtZSAmJiBpbmRleCA+PSAwKSB7DQo+ID4gPiAtICAg
-ICAgICAgICAgICAgICAgICAgICBpZiAoUFRSX0VSUihjbGspICE9IC1FUFJPQkVfREVGRVIpDQo+
-ID4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByX2VycigiRVJST1I6IGNvdWxk
-IG5vdCBnZXQgY2xvY2sgJXBPRjolcyglaSlcbiIsDQo+ID4gPiAtICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgbnAsIG5hbWUgPyBuYW1lIDogIiIsIGluZGV4KTsNCj4gPiA+
-ICsgICAgICAgICAgICAgICBpZiAoaW5kZXggPj0gMCkNCj4gPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIGNsayA9IF9fb2ZfY2xrX2dldChucCwgaW5kZXgsIGRldl9pZCwgbmFtZSk7DQo+ID4g
-PiArICAgICAgICAgICAgICAgaWYgKCFJU19FUlIoY2xrKSkNCj4gPg0KPiA+IFdhcyB0aGlzIGNo
-YW5nZSBuZWNlc3Nhcnk/IEl0IGxvb2tzIGxpa2Ugd2UgY2FuIGxlYXZlIGl0IGFsbCBhbG9uZSBh
-bmQga2VlcA0KPiA+IHBhc3NpbmcgYSBuZWdhdGl2ZSBudW1iZXIgdG8gX19vZl9jbGtfZ2V0KCkg
-YW5kIGhhdmUgdGhhdCByZXR1cm4gYW4gZXJyb3INCj4gPiBwb2ludGVyIHdoaWNoIHdlIHRoZW4g
-cmV0dXJuIGltbWVkaWF0ZWx5IGFzIGFuIGVycm9yLiBCdXQsIGlmIHRoZSBjbG9jayBpcw0KPiA+
-IG9wdGlvbmFsIGFuZCB3ZSd2ZSBwYXNzZWQgYSBuYW1lIGhlcmUsIHNob3VsZG4ndCB3ZSB0cmVh
-dCBhbiBlcnJvciBmcm9tDQo+ID4gb2ZfcHJvcGVydHlfbWF0Y2hfc3RyaW5nKCkgYXMgc3VjY2Vz
-cyB0b28/IFRoaXMgaXMgYWxsIGxvb2tpbmcgcHJldHR5IGZyYWdpbGUNCj4gc28NCj4gPiBtYXli
-ZSBpdCBjYW4gYmUgYmV0dGVyIGNvbW1lbnRlZCBhbmQgYWxzbyBtb3JlIGV4cGxpY2l0IGluc3Rl
-YWQgb2YgcmVseWluZw0KPiA+IG9uIHRoZSByZWFkZXIgdG8ganVtcCB0aHJvdWdoIGFsbCB0aGUg
-ZnVuY3Rpb24gY2FsbHMgdG8gZmlndXJlIG91dCB3aGF0IHRoZQ0KPiA+IHJldHVybiB2YWx1ZSBp
-cyBpbiBzb21lIGNhc2VzLg0KPiBJZiB3ZSBjYWxsIF9fb2ZfY2xrX2dldCwgd2l0aCBpbmRleCA8
-IDAsIHdlIHdpbGwgbm90IGJlIGFibGUgdG8gZGlmZmVyZW50aWF0ZQ0KPiBiZXR3ZWVuIGNsb2Nr
-IHByb3ZpZGVyIG5vdCBwcmVzZW50IGFuZCBvdGhlciBlcnJvcnMgd2l0aCB0aGUgcGFzc2VkIGRh
-dGEsDQo+IGFzIGl0IHdpbGwganVzdCByZXR1cm4gLUVJTlZBTC4NCj4gDQo+IG9mX3Byb3BlcnR5
-X21hdGNoX3N0cmluZygpIHdpbGwgcmV0dXJuIC1FSU5WQUwgaWYgdGhlICJjbG9jay1uYW1lcyIN
-Cj4gcHJvcGVydHkNCj4gaXMgbWlzc2luZywgb3IgLUVOT0RBVEEgaWYgdGhlIHNwZWNpZmllZCBj
-bG9jayBuYW1lIGluIHRoZSAiY2xvY2stbmFtZXMiDQo+IHByb3BlcnR5IGlzIG1pc3NpbmcuIFRo
-YXQgaXMgd2h5IEkgaGF2ZSBjaGFuZ2VkIHRoZSBjb2RlIHRvIGNvbmRpdGlvbmFsbHkNCj4gY2Fs
-bCBfX29mX2Nsa19nZXQsIHNvIHRoZSBjb2RlIHdpbGwgY29ycmVjdGx5IHRyZWF0IG9wdGlvbmFs
-IGNsb2NrcyB0aGF0IGFyZSBub3QNCj4gcHJlc2VudC4NCldoZW4gZ2V0dGluZyBuYW1lZCBvcHRp
-b25hbCBjbG9ja3MsIGlmIHRoZSBub2RlIGhhcyBhICJjbG9jay1uYW1lcyIgcHJvcGVydHksDQpi
-dXQgbm8gY2xvY2sgbWF0Y2hpbmcgdGhlIG5hbWUgd2Ugd2FudCwgSSB0aGluayB0aGUgZnVuY3Rp
-b24gc2hvdWxkIHN0b3AgdGhlcmUNCmFuZCAqbm90KiB3YWxrIHVwIHRoZSB0cmVlIG9mIGRldmlj
-ZXMgbG9va2luZyBmb3IgYSBtYXRjaGluZyBjbG9jay4gSW4gdGhpcyBjYXNlLA0KdGhlIGNvZGUg
-ZGV0ZXJtaW5lcyB0aGF0IHRoZSBvcHRpb25hbCBjbG9jayBpcyBub3QgcHJlc2VudC4NCg0KSWYg
-dGhlcmUgaXNu4oCZdCBhICJjbG9jay1uYW1lcyIgcHJvcGVydHkgaW4gdGhlIGN1cnJlbnQgbm9k
-ZSwgdGhlIGZ1bmN0aW9uIHNob3VsZA0Kd2FsayB1cCB0aGUgdHJlZSBvZiBkZXZpY2VzIGxvb2tp
-bmcgZm9yIGEgbWF0Y2hpbmcgb3B0aW9uYWwgY2xvY2suIElmIHRoZXJlIGFyZSBubw0KcGFyZW50
-IG5vZGVzIGxlZnQgYW5kIHdlIGhhdmVuJ3QgZm91bmQgYSBtYXRjaGluZyBvcHRpb25hbCBjbG9j
-aywgd2UgZGV0ZXJtaW5lDQp0aGF0IHRoZSBjbG9jayBpc27igJl0IHRoZXJlLg0KDQpJcyB0aGF0
-IGhvdyB0aGlzIHNob3VsZCB3b3JrPw0KDQpUaGFua3MNClBoaWwNCg0KDQo+ID4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICByZXR1cm4gY2xrOw0KPiA+ID4gLSAgICAgICAgICAgICAgIH0NCj4g
-PiA+ICsgICAgICAgICAgICAgICBpZiAobmFtZSAmJiBpbmRleCA+PSAwKQ0KPiA+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4NCj4gPiBBbmQgdGhpcyBjYXVzZXMgdXMgdG8g
-ZHVwbGljYXRlIGxvZ2ljIGRvd24gYmVsb3cgYmVjYXVzZSB3ZSBoYXZlIHRvIGNoZWNrDQo+IGl0
-DQo+ID4gYWdhaW4gaWYgaXQncyBub3Qgb3B0aW9uYWwgb3Igc29tZSBvdGhlciBlcnJvciBjb25k
-aXRpb24/DQo+IFllcywgdGhlIGVycm9yIGhhbmRsaW5nIGlzIG1lc3N5LCB0aG91Z2ggSSBoYXZl
-IHRyaWVkIHRvIG1ha2UgdGhpcyBzaW1wbGUuDQo+IEknbGwgaGF2ZSBhIHRoaW5rIGFib3V0IHNv
-bWUgb3RoZXIgd2F5IHRvIG1ha2UgdGhpcyBjbGVhbmVyLg0KPiANCj4gDQo+ID4gPg0KPiA+ID4g
-ICAgICAgICAgICAgICAgIC8qDQo+ID4gPiAgICAgICAgICAgICAgICAgICogTm8gbWF0Y2hpbmcg
-Y2xvY2sgZm91bmQgb24gdGhpcyBub2RlLiAgSWYgdGhlDQo+ID4gPiBwYXJlbnQgbm9kZSBAQCAt
-ODksNiArODgsMTYgQEAgc3RhdGljIHN0cnVjdCBjbGsNCj4gPiAqX19vZl9jbGtfZ2V0X2J5X25h
-bWUoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
-IGJyZWFrOw0KPiA+ID4gICAgICAgICB9DQo+ID4gPg0KPiA+ID4gKyAgICAgICAvKiBUaGUgY2xv
-Y2sgaXMgbm90IHZhbGlkLCBidXQgaXQgY291bGQgYmUgb3B0aW9uYWwgb3IgZGVmZXJyZWQgKi8N
-Cj4gPiA+ICsgICAgICAgaWYgKG9wdGlvbmFsICYmIFBUUl9FUlIoY2xrKSA9PSAtRU5PRU5UKSB7
-DQo+ID4gPiArICAgICAgICAgICAgICAgY2xrID0gTlVMTDsNCj4gPiA+ICsgICAgICAgICAgICAg
-ICBwcl9pbmZvKCJubyBvcHRpb25hbCBjbG9jayAlcE9GOiVzXG4iLCBjaGlsZCwNCj4gPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIG5hbWUgPyBuYW1lIDogIiIpOw0KPiA+DQo+ID4gSXMgdGhp
-cyBpbnRlbnRpb25hbGx5IHByX2luZm8/DQo+IFllcywgaXQncyBub3QgYW4gZXJyb3IgaWYgYW4g
-b3B0aW9uYWwgY2xvY2sgaXNu4oCZdCB0aGVyZS4NCj4gV291bGQgcHJfZGVidWcgYmUgbW9yZSBh
-cHByb3ByaWF0ZT8NCj4gDQo+IA0KPiA+ID4gKyAgICAgICB9IGVsc2UgaWYgKG5hbWUgJiYgaW5k
-ZXggPj0gMCAmJiBQVFJfRVJSKGNsaykgIT0gLUVQUk9CRV9ERUZFUikgew0KPiA+ID4gKyAgICAg
-ICAgICAgICAgIHByX2VycigiRVJST1I6IGNvdWxkIG5vdCBnZXQgY2xvY2sgJXBPRjolcyglaSlc
-biIsDQo+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICBjaGlsZCwgbmFtZSwgaW5kZXgpOw0K
-PiA+ID4gKyAgICAgICB9DQo+ID4gPiArDQo+ID4gPiAgICAgICAgIHJldHVybiBjbGs7DQo+ID4g
-PiAgfQ0KPiA+ID4NCj4gDQo+IFRoYW5rcw0KPiBQaGlsDQo=
+All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
+cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+This change was missing in the initial patch, because 'no_console_suspend'
+kernel option did almost the same.
+---
+ drivers/clk/samsung/clk-exynos5433.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 13384f4911c7..84eac0ce5682 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -180,6 +180,8 @@ static const unsigned long top_clk_regs[] __initconst = {
+ static const struct samsung_clk_reg_dump top_suspend_regs[] = {
+ 	/* force all aclk clocks enabled */
+ 	{ ENABLE_ACLK_TOP, 0x67ecffed },
++	/* force all sclk_uart clocks enabled */
++	{ ENABLE_SCLK_TOP_PERIC, 0x38 },
+ 	/* ISP PLL has to be enabled for suspend: reset value + ENABLE bit */
+ 	{ ISP_PLL_CON0, 0x85cc0502 },
+ 	/* ISP PLL has to be enabled for suspend: reset value + ENABLE bit */
+-- 
+2.17.1
