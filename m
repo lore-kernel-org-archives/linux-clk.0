@@ -1,114 +1,57 @@
-Return-Path: <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-To: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
- Rajendra Nayak <rnayak@codeaurora.org>,
- Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org
-References: <1533298874-22863-1-git-send-email-tdas@codeaurora.org>
- <1533298874-22863-2-git-send-email-tdas@codeaurora.org>
- <153540448713.129321.8622050618939041593@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <47adf305-f649-dca6-e45e-51c7b418d418@codeaurora.org>
-Date: Wed, 5 Sep 2018 23:56:36 +0530
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <153540448713.129321.8622050618939041593@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <20180902072643.4917-3-jernej.skrabec@siol.net> <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com>
+ <9915D9F1-1C60-4AEF-9074-CE040FCD7BF0@aosc.io>
+In-Reply-To: <9915D9F1-1C60-4AEF-9074-CE040FCD7BF0@aosc.io>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 12 Sep 2018 22:49:12 +0800
+Message-ID: <CAGb2v64t40yTbrnkg33N2=jBdnvV45H1XSCF8U230LGAyuVySw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 02/27] arm64: allwinner: h6: add system
+ controller device tree node
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
+	Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>,
+	Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello Stephen,
+On Tue, Sep 4, 2018 at 4:44 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+>
+>
+> =E4=BA=8E 2018=E5=B9=B49=E6=9C=884=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=884=
+:40:56, Chen-Yu Tsai <wens@csie.org> =E5=86=99=E5=88=B0:
+> >On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
+> >wrote:
+> >>
+> >> From: Icenowy Zheng <icenowy@aosc.io>
+> >>
+> >> As we have already binding for the H6 system controller, add its node
+> >> to the device tree.
+> >>
+> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> [fixed compatible string]
+> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >
+> >Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>
+> By the way can these patches be applied first? (patches
+> related to syscon).
+>
+> They're also needed for EMAC.
 
-Thanks for the review comments.
+Applied.
 
-On 8/28/2018 2:44 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-08-03 05:21:13)
->> Add device tree bindings for Low Power Audio subsystem clock controller for
->> Qualcomm Technology Inc's SDM845 SoCs.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
->>   .../devicetree/bindings/clock/qcom,lpasscc.txt     | 33 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
->>   include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
->>   4 files changed, 53 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->>   create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> index 664ea1f..e452abc 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
->>   part of the GCC/clock-controller node.
->>   For more details on the TSENS properties please refer
->>   Documentation/devicetree/bindings/thermal/qcom-tsens.txt
->> +- qcom,lpass-protected : Indicate GCC to be able to access the
->> +                       lpass gcc clock branches.
-> 
-> This doesn't parse well for me. Maybe something like:
-> 
-> 'Indicate that the LPASS clock branches within GCC are unusable due to
-> firmware access control restrictions'?
-> 
+BTW, the H6 system control EMAC register also has the internal PHY
+related controls seen on H3/H5. IIRC you previously mentioned that
+they have no effect?
 
-Sure, will update in the next series.
-
->>
->>   Example:
->>          clock-controller@900000 {
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> new file mode 100644
->> index 0000000..062e413
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> @@ -0,0 +1,33 @@
->> +Qualcomm LPASS Clock Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible           : shall contain "qcom,sdm845-lpasscc"
->> +- #clock-cells         : from common clock binding, shall contain 1.
->> +- reg                  : shall contain base register address and size,
->> +                         in the order
->> +                       Index-0 maps to LPASS_CC register region
->> +                       Index-1 maps to LPASS_QDSP6SS register region
->> +- qcom,lpass-protected : Boolean property to indicate to GCC clock controller
->> +                        for the lpass GCC clocks.
-> 
-> Why is this here?
-> 
-
-Yes, I kept it to make sure it is marked in GCC clock driver too. May be 
-should remove it.
-
->> +
->> +Optional properties :
->> +- reg-names    : register names of LPASS domain
->> +                "lpass_cc", "lpass_qdsp6ss".
->> +
->> +Example:
->> +
->> +The below node has to be defined in the cases where the LPASS peripheral loader
->> +would bring the subsystem out of reset.
->> +
->> +       lpasscc: clock-controller {
->> +               compatible = "qcom,sdm845-lpasscc";
->> +               reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
->> +               reg-names = "lpass_cc", "lpass_qdsp6ss";
->> +               #clock-cells = <1>;
->> +       };
->> +
->> +       gcc: clock-controller@100000 {
->> +               compatible = "qcom,gcc-sdm845";
->> +               qcom,lpass-protected;
->> +       };
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+ChenYu
