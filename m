@@ -1,212 +1,45 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <shawnguo@kernel.org>
+Date: Wed, 12 Sep 2018 09:10:34 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	kernel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
+	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: Re: [PATCH v9 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Message-ID: <20180912011033.GB28469@dragon>
+References: <20180802103425.3053-1-o.rempel@pengutronix.de>
+ <20180802103425.3053-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <1677668.BePkXd9qNa@jernej-laptop> <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
- <1702684.jtWEXlagAO@jernej-laptop>
-In-Reply-To: <1702684.jtWEXlagAO@jernej-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 13 Sep 2018 00:16:32 +0800
-Message-ID: <CAGb2v652fPojGYE1nkAeEzFBcWjebi1zSnPGwm7zjPbE7ojD0Q@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6
- DE3 clocks
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180802103425.3053-3-o.rempel@pengutronix.de>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 12, 2018 at 10:55 PM Jernej =C5=A0krabec <jernej.skrabec@siol.n=
-et> wrote:
->
-> Dne sreda, 12. september 2018 ob 14:20:08 CEST je Chen-Yu Tsai napisal(a)=
-:
-> > On Wed, Sep 5, 2018 at 1:46 AM Jernej =C5=A0krabec <jernej.skrabec@siol=
-.net>
-> wrote:
-> > > Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisa=
-l(a):
-> > > > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.=
-net>
-> > >
-> > > wrote:
-> > > > > Support for mixer0, mixer1, writeback and rotation units is added=
-.
-> > > > >
-> > > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > > ---
-> > > > >
-> > > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65
-> > > > >  ++++++++++++++++++++++++++++
-> > > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
-> > > > >  2 files changed, 66 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index
-> > > > > bae5ee67a797..4535c1c27d27
-> > > > > 100644
-> > > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixe=
-r1",
-> > > > > "bus-de",>
-> > > > >
-> > > > >                       0x04, BIT(1), 0);
-> > > > >
-> > > > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
-> > > > >
-> > > > >                       0x04, BIT(2), 0);
-> > > > >
-> > > > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
-> > > > > +                     0x04, BIT(3), 0);
-> > > > >
-> > > > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-d=
-iv",
-> > > > >
-> > > > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
-> > > > > "mixer1-div",>
-> > > > >
-> > > > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
-> > > > >
-> > > > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
-> > > > >
-> > > > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div"=
-,
-> > > > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
-> > > > >
-> > > > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, =
-4,
-> > > > >
-> > > > >                    CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div"=
-,
-> > > > > "de",
-> > > > > 0x0c, 4, 4,>
-> > > > >
-> > > > >                    CLK_SET_RATE_PARENT);
-> > > > >
-> > > > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
-> > > > >
-> > > > >                    CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
-> > > > > +                  CLK_SET_RATE_PARENT);
-> > > > >
-> > > > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0=
-x0c,
-> > > > >  0,
-> > > > >  4,
-> > > > >
-> > > > >                    CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk,
-> > > > > "mixer1-div",
-> > > > > "pll-de", 0x0c, 4, 4,>
-> > > > >
-> > > > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, =
-4,
-> > > > >
-> > > > >                    CLK_SET_RATE_PARENT);
-> > > > >
-> > > > > +static struct ccu_common *sun50i_h6_de3_clks[] =3D {
-> > > > > +       &mixer0_clk.common,
-> > > > > +       &mixer1_clk.common,
-> > > > > +       &wb_clk.common,
-> > > > > +
-> > > > > +       &bus_mixer0_clk.common,
-> > > > > +       &bus_mixer1_clk.common,
-> > > > > +       &bus_wb_clk.common,
-> > > > > +
-> > > > > +       &mixer0_div_clk.common,
-> > > > > +       &mixer1_div_clk.common,
-> > > > > +       &wb_div_clk.common,
-> > > > > +
-> > > > > +       &bus_rot_clk.common,
-> > > > > +       &rot_clk.common,
-> > > > > +       &rot_div_clk.common,
-> > > > > +};
-> > > > > +
-> > > > >
-> > > > >  static struct ccu_common *sun8i_a83t_de2_clks[] =3D {
-> > > > >
-> > > > >         &mixer0_clk.common,
-> > > > >         &mixer1_clk.common,
-> > > > >
-> > > > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[=
-] =3D {
-> > > > >
-> > > > >         &wb_div_clk.common,
-> > > > >
-> > > > >  };
-> > > > >
-> > > > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
-> > > > > +       .hws    =3D {
-> > > > > +               [CLK_MIXER0]            =3D &mixer0_clk.common.hw=
-,
-> > > > > +               [CLK_MIXER1]            =3D &mixer1_clk.common.hw=
-,
-> > > > > +               [CLK_WB]                =3D &wb_clk.common.hw,
-> > > > > +               [CLK_ROT]               =3D &rot_clk.common.hw,
-> > > > > +
-> > > > > +               [CLK_BUS_MIXER0]        =3D &bus_mixer0_clk.commo=
-n.hw,
-> > > > > +               [CLK_BUS_MIXER1]        =3D &bus_mixer1_clk.commo=
-n.hw,
-> > > > > +               [CLK_BUS_WB]            =3D &bus_wb_clk.common.hw=
-,
-> > > > > +               [CLK_BUS_ROT]           =3D &bus_rot_clk.common.h=
-w,
-> > > > > +
-> > > > > +               [CLK_MIXER0_DIV]        =3D &mixer0_div_clk.commo=
-n.hw,
-> > > > > +               [CLK_MIXER1_DIV]        =3D &mixer1_div_clk.commo=
-n.hw,
-> > > > > +               [CLK_WB_DIV]            =3D &wb_div_clk.common.hw=
-,
-> > > > > +               [CLK_ROT_DIV]           =3D &rot_div_clk.common.h=
-w,
-> > > > > +       },
-> > > > > +       .num    =3D 12,
-> > > >
-> > > > It's best not to openly code these. It is error prone, like having
-> > > > an index beyond .num, which then never gets registered.
-> > > >
-> > > > Instead, please update CLK_NUMBERS and use that instead.
-> > > > sunxi_ccu_probe()
-> > > > can handle holes in .hws.
-> > >
-> > > I'm not sure this will work. All newly introduced indices are at the =
-end,
-> > > so other arrays will still have same length (hole at the end). You wi=
-ll
-> > > just claim that arrays are larger than they really are, which means b=
-ad
-> > > things.
-> > >
-> > > But I take any other suggestion. I really can't think of better solut=
-ion.
-> >
-> > Then maybe have macros for both cases instead?
-> > CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
->
-> That sounds reasonable. Do you want separate patch which renames original
-> macro CLK_NUMBER to CLK_NUMBER_WITHOUT_ROT?
+On Thu, Aug 02, 2018 at 12:34:21PM +0200, Oleksij Rempel wrote:
+> One of the Freescale recommended sequences for power off with external
+> PMIC is the following:
+> ...
+> 3.  SoC is programming PMIC for power off when standby is asserted.
+> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+> 
+> See:
+> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+> page 5083
+> 
+> This patch implements step 4. of this sequence.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-I don't think that's necessary. Just mention the name change in the changel=
-og,
-and justifying it by the addition of the ROT clocks.
-
-Thanks
+Applied, thanks.
