@@ -1,90 +1,27 @@
-Return-Path: <manivannan.sadhasivam@linaro.org>
-Return-Path: <manivannan.sadhasivam@linaro.org>
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh+dt@kernel.org,
-	xuwei5@hisilicon.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amit.kucheria@linaro.org,
-	linux-clk@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 2/4] arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
-Date: Thu, 20 Sep 2018 23:01:01 -0700
-Message-Id: <20180921060103.21370-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
-References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+Return-Path: <horms@verge.net.au>
+Date: Wed, 12 Sep 2018 12:11:02 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 08/10] clk: renesas: r8a7743: Add r8a7744 support
+Message-ID: <20180912101101.3juc2uzmnt7t6lji@verge.net.au>
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
+ <1536660771-32278-9-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1536660771-32278-9-git-send-email-biju.das@bp.renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add clock nodes for HiSilicon Hi3670 SoC.
+On Tue, Sep 11, 2018 at 11:12:49AM +0100, Biju Das wrote:
+> Add RZ/G1N (R8A7744) Clock Pulse Generator / Module Standby and Software
+> Reset support.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3670.dtsi | 43 +++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-index c90e6f6a34ec..8a0ee4b08886 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
-@@ -7,6 +7,7 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/hi3670-clock.h>
- 
- / {
- 	compatible = "hisilicon,hi3670";
-@@ -144,6 +145,48 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		crg_ctrl: crg_ctrl@fff35000 {
-+			compatible = "hisilicon,hi3670-crgctrl", "syscon";
-+			reg = <0x0 0xfff35000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pctrl: pctrl@e8a09000 {
-+			compatible = "hisilicon,hi3670-pctrl", "syscon";
-+			reg = <0x0 0xe8a09000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		pmuctrl: crg_ctrl@fff34000 {
-+			compatible = "hisilicon,hi3670-pmuctrl", "syscon";
-+			reg = <0x0 0xfff34000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		sctrl: sctrl@fff0a000 {
-+			compatible = "hisilicon,hi3670-sctrl", "syscon";
-+			reg = <0x0 0xfff0a000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		iomcu: iomcu@ffd7e000 {
-+			compatible = "hisilicon,hi3670-iomcu", "syscon";
-+			reg = <0x0 0xffd7e000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		media1_crg: media1_crgctrl@e87ff000 {
-+			compatible = "hisilicon,hi3670-media1-crg", "syscon";
-+			reg = <0x0 0xe87ff000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		media2_crg: media2_crgctrl@e8900000 {
-+			compatible = "hisilicon,hi3670-media2-crg","syscon";
-+			reg = <0x0 0xe8900000 0x0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
- 		uart6_clk: clk_19_2M {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
--- 
-2.17.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
