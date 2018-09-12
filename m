@@ -1,65 +1,92 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Date: Wed, 5 Sep 2018 09:22:05 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 09/11] dt-bindings: sun4i-drm: add HDMI VCC supply
- property for sun8i-dw-hdmi
-Message-ID: <20180905072205.63qmmqr45323xllc@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-10-icenowy@aosc.io>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rlpbalzc2vivwqzf"
-In-Reply-To: <20180904044053.15425-10-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-20-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-20-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 12 Sep 2018 20:29:45 +0800
+Message-ID: <CAGb2v67XJoJGQjF6bELkiRGnkG=ZumvScDb8_3j_yUi7nhuQtQ@mail.gmail.com>
+Subject: Re: [PATCH 19/27] drm/sun4i: Add support for H6 DW HDMI controller
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> H6 has DW HDMI 2.0 controller v2.12a.
+>
+> It supports 4K at 60 Hz and HDCP 2.2.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> index 16a0c7a88ea8..44143c9f20d0 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> @@ -43,6 +43,16 @@ sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *connector,
+>         return MODE_OK;
+>  }
+>
+> +static enum drm_mode_status
+> +sun8i_dw_hdmi_mode_valid_h6(struct drm_connector *connector,
+> +                           const struct drm_display_mode *mode)
+> +{
+> +       if (mode->clock > 600000)
 
---rlpbalzc2vivwqzf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+600 MHz seems slightly arbitrary. AFAIK the dot clock for 4K 60Hz is 594 MHz?
+A comment on this limit would be nice.
 
-On Tue, Sep 04, 2018 at 12:40:51PM +0800, Icenowy Zheng wrote:
-> Allwiner SoCs with DesignWare HDMI controller all come with a "HVCC"
-> pin, which is the VCC of HDMI part.
->=20
-> Add a supply property to specify HVCC's regulator in the device tree.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> +               return MODE_CLOCK_HIGH;
+> +
+> +       return MODE_OK;
+> +}
+> +
+>  static bool sun8i_dw_hdmi_node_is_tcon_top(struct device_node *node)
+>  {
+>         return IS_ENABLED(CONFIG_DRM_SUN8I_TCON_TOP) &&
+> @@ -220,12 +230,20 @@ static int sun8i_dw_hdmi_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> +static const struct sun8i_dw_hdmi_quirks sun50i_h6_quirks = {
+> +       .mode_valid = sun8i_dw_hdmi_mode_valid_h6,
+> +};
+> +
 
-Applied, thanks!
-Maxime
+Please "version" sort the SoC families and models.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks = {
+>         .mode_valid = sun8i_dw_hdmi_mode_valid_a83t,
+>         .set_rate = true,
+>  };
+>
+>  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
+> +       {
+> +               .compatible = "allwinner,sun50i-h6-dw-hdmi",
+> +               .data = &sun50i_h6_quirks,
+> +       },
 
---rlpbalzc2vivwqzf
-Content-Type: application/pgp-signature; name="signature.asc"
+Here also.
 
------BEGIN PGP SIGNATURE-----
+Once fixed,
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPhBwACgkQ0rTAlCFN
-r3SXZg/6A3RU2hgIonPIwzbtmVglv3hKt4gvJyi4jPNZ/ktv1ZaQMjVOzqs3so09
-rs100I6BzKjPjiDdt6MKm9KVxZqjkhvIEVCLFPudCig/ODGCrsJOs+A5TpAByaQH
-dUP8HdGDed0kS+vqnZCm8hQLXi4gERU1tx0JK3vXMvjZtggMZsNmM3Vi8np5n9PN
-kiPvHwZwQcUC8tdvOiJAl/TukRmAINfpMvc15iUIGPBVyArF60FuUHz0kb8Z5O/C
-LwX/Unj19pBaZIkvUBxP6Ind6ywOgy9Z/uFeVBObHQ6hMYFW1VcmnYL6K9lwWGwR
-yUcy3gwV6QmUjsLGN+ao58b8zpVO5JBtNs/cqsuZFa1HBjFX40Ua8xOocOvtyJ4h
-zcN4fUvxT37D8OvbFSAY+A8eb2pengRr9rLKesT4BT5B41C9PKpwnWS8SQQvr6uO
-3oCse3a9GvIJFA1JUJziQNG9ckLkoBqRaW+gWuF3RRkW5UyrW8UgL6dsJWVBfzr4
-S1ZwTN+ypuKhcctIBwDCa4WwXVGB2JLyOuAocC6QJ8EXaYD+Xk9XZ0YtyrjkD87G
-QXo5/rUvsPB6bhiBodQyfnLokzkbAKqpCXjDr4zWbabij+PNeB6fe+7hXRkNvuT4
-MlP1oOhFa5ikKsc4kHnbsl2CsRyyzq2v0mX1s+CdYBSpz3/+/pE=
-=i6OQ
------END PGP SIGNATURE-----
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
---rlpbalzc2vivwqzf--
+>         {
+>                 .compatible = "allwinner,sun8i-a83t-dw-hdmi",
+>                 .data = &sun8i_a83t_quirks,
+> --
+> 2.18.0
+>
