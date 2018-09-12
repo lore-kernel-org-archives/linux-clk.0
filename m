@@ -1,40 +1,368 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms+renesas@verge.net.au>
-Subject: RE: [PATCH v4] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Mon, 10 Sep 2018 14:16:46 +0000
-Message-ID: 
- <TY1PR01MB1562E64853EEB282E7D6227B8A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20180907165849.106182-1-chris.brandt@renesas.com>
- <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
-In-Reply-To: 
- <CAMuHMdXSmq_niZx6HWO-SYgXyzcUzx6VA+EsgvWNcFciR57CKw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH] clk: mvebu: use SPDX-License-Identifier
+Date: Wed, 12 Sep 2018 15:40:17 +0200
+Message-Id: <20180912134017.11236-1-gregory.clement@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgU2VwdGVtYmVyIDEwLCAyMDE4IDEsIEdlZXJ0IFV5dHRl
-cmhvZXZlbiB3cm90ZToNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQr
-cmVuZXNhc0BnbGlkZXIuYmU+DQo+IGkuZS4gd2lsbCBxdWV1ZSBpbiBjbGstcmVuZXNhcy1mb3It
-djQuMjAuDQoNClRoYW5rIHlvdSENCg0KTm93IHRoYXQgSSBoYXZlIGEgY2xvY2ssIEkgY2FuIGdv
-IGFoZWFkIGFuZCBzdWJtaXQgYSBEZXZpY2UgVHJlZS4NCkhvd2V2ZXIsIEkgc3RpbGwgZG9uJ3Qg
-aGF2ZSBhIHNvbHV0aW9uIGZvciBteSBPU1RNIHRpbWVyIGRyaXZlciB3aGVuIA0KdXNpbmcgdGhp
-cyBuZXcgY2xvY2sgZHJpdmVyIGFyY2hpdGVjdHVyZS4NCg0KU2hvdWxkIEkgcmVtb3ZlIHRoZSBv
-c3RtIGVudHJpZXMgaW4gcjdzOTIxMF9tb2RfY2xrc1tdIGJlZm9yZSB5b3UgcXVldWUgDQppdCB1
-cD8/Pz8/DQoNCg0KDQo+IE9uZSBwb3NzaWJsZSBhcmVhIGZvciBpbXByb3ZlbWVudCBpcyByZW1v
-dmluZyB0aGUgdW51c2VkIGVudHJpZXMgaW4gdGhlDQo+IG1vZHVsZSBjbG9ja3MgcGFydCBvZiB0
-aGUgcHJpdi0+Y2xrc1tdIGFycmF5Og0KPiANCj4gKyAgICAgICAubnVtX2h3X21vZF9jbGtzID0g
-MTEgKiAzMiwgLyogaW5jbHVkZXMgU1RCQ1IwIHdoaWNoIGRvZXNuJ3QgZXhpc3QNCj4gKi8NCj4g
-DQo+IER1ZSB0byBoYXZpbmcgOC1iaXQgaW5zdGVhZCBvZiAzMi1iaXQgcmVnaXN0ZXJzLCAxMSAq
-IDI0IGVudHJpZXMgYXJlIG5vdA0KPiB1c2VkLg0KPiBGaXhpbmcgdGhhdCBtZWFucyBhZGRpbmcg
-bW9yZSBjaGVja3MgaW4gc2V2ZXJhbCBmdW5jdGlvbnMsIHRob3VnaCwgc28gSQ0KPiBkb24ndCBr
-bm93IGlmIHlvdSB3YW50IHRvIGdvIHRoYXQgZmFyLi4uDQoNClRoYXQncyBiYXNpY2FsbHkgd2h5
-IEkgZGlkbid0IHRvdWNoIGl0LiBJIGRpZG4ndCBzZWUgYW55IGJpZyBiZW5lZml0IA0KZnJvbSBh
-IHN5c3RlbSByZXNvdXJjZSBwb2ludCBvZiB2aWV3Lg0KDQoNCkNocmlzDQoNCg==
+Convert the remaining files to SPDX license description.
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/clk/mvebu/ap806-system-controller.c | 4 +---
+ drivers/clk/mvebu/armada-370.c              | 4 +---
+ drivers/clk/mvebu/armada-375.c              | 4 +---
+ drivers/clk/mvebu/armada-37xx-tbg.c         | 5 +----
+ drivers/clk/mvebu/armada-37xx-xtal.c        | 4 +---
+ drivers/clk/mvebu/armada-38x.c              | 4 +---
+ drivers/clk/mvebu/armada-39x.c              | 4 +---
+ drivers/clk/mvebu/armada-xp.c               | 4 +---
+ drivers/clk/mvebu/clk-corediv.c             | 4 +---
+ drivers/clk/mvebu/clk-cpu.c                 | 4 +---
+ drivers/clk/mvebu/common.c                  | 4 +---
+ drivers/clk/mvebu/common.h                  | 4 +---
+ drivers/clk/mvebu/cp110-system-controller.c | 4 +---
+ drivers/clk/mvebu/dove.c                    | 4 +---
+ drivers/clk/mvebu/kirkwood.c                | 4 +---
+ drivers/clk/mvebu/mv98dx3236.c              | 4 +---
+ drivers/clk/mvebu/orion.c                   | 4 +---
+ 17 files changed, 17 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index fa2fbd2cef4a..9fbec3eb725f 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada AP806 System Controller
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #define pr_fmt(fmt) "ap806-system-controller: " fmt
+diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
+index 2c7c1085f883..7dedfaa6e152 100644
+--- a/drivers/clk/mvebu/armada-370.c
++++ b/drivers/clk/mvebu/armada-370.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada 370 SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/armada-375.c b/drivers/clk/mvebu/armada-375.c
+index c7af2242b796..a7157c690238 100644
+--- a/drivers/clk/mvebu/armada-375.c
++++ b/drivers/clk/mvebu/armada-375.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada 375 SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 7ff041f73b55..71f30149e80e 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -1,13 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Marvell Armada 37xx SoC Time Base Generator clocks
+  *
+  * Copyright (C) 2016 Marvell
+  *
+  * Gregory CLEMENT <gregory.clement@free-electrons.com>
+- *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2 or later. This program is licensed "as is"
+- * without any warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
+index 612d65ede10a..e9e306d4e9af 100644
+--- a/drivers/clk/mvebu/armada-37xx-xtal.c
++++ b/drivers/clk/mvebu/armada-37xx-xtal.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada 37xx SoC xtal clocks
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Gregory CLEMENT <gregory.clement@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
+index 9ff4ea63932d..ef2ab81f087d 100644
+--- a/drivers/clk/mvebu/armada-38x.c
++++ b/drivers/clk/mvebu/armada-38x.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada 380/385 SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/armada-39x.c b/drivers/clk/mvebu/armada-39x.c
+index 4fdfd32247a9..674ccfd6236e 100644
+--- a/drivers/clk/mvebu/armada-39x.c
++++ b/drivers/clk/mvebu/armada-39x.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada 39x SoC clocks
+  *
+@@ -8,9 +9,6 @@
+  * Andrew Lunn <andrew@lunn.ch>
+  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
+index 0ec44ae9a2a2..e8f03293ec83 100644
+--- a/drivers/clk/mvebu/armada-xp.c
++++ b/drivers/clk/mvebu/armada-xp.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada XP SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/clk-corediv.c b/drivers/clk/mvebu/clk-corediv.c
+index 68f05c53d40e..1fc84b0e72ee 100644
+--- a/drivers/clk/mvebu/clk-corediv.c
++++ b/drivers/clk/mvebu/clk-corediv.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * MVEBU Core divider clock
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
+index 072aa38374ce..d1a715767364 100644
+--- a/drivers/clk/mvebu/clk-cpu.c
++++ b/drivers/clk/mvebu/clk-cpu.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell MVEBU CPU clock handling.
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Gregory CLEMENT <gregory.clement@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ #include <linux/kernel.h>
+ #include <linux/slab.h>
+diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
+index 472c88b90256..6ab3c2e627c7 100644
+--- a/drivers/clk/mvebu/common.c
++++ b/drivers/clk/mvebu/common.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell EBU SoC common clock handling
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
+index f0de6c8a494a..d1ab79b43105 100644
+--- a/drivers/clk/mvebu/common.h
++++ b/drivers/clk/mvebu/common.h
+@@ -1,3 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Marvell EBU SoC common clock handling
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2. This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #ifndef __CLK_MVEBU_COMMON_H_
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 75bf7b8f282f..9781b1bf5998 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Armada CP110 System Controller
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ /*
+diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
+index 59fad9546c84..e0dd99f36bf4 100644
+--- a/drivers/clk/mvebu/dove.c
++++ b/drivers/clk/mvebu/dove.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Dove SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
+index a2a8d614039d..6f784167bda4 100644
+--- a/drivers/clk/mvebu/kirkwood.c
++++ b/drivers/clk/mvebu/kirkwood.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Kirkwood SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/mv98dx3236.c b/drivers/clk/mvebu/mv98dx3236.c
+index 6e203af73cac..0a74cf7a7725 100644
+--- a/drivers/clk/mvebu/mv98dx3236.c
++++ b/drivers/clk/mvebu/mv98dx3236.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell MV98DX3236 SoC clocks
+  *
+@@ -7,9 +8,6 @@
+  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+  * Andrew Lunn <andrew@lunn.ch>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+diff --git a/drivers/clk/mvebu/orion.c b/drivers/clk/mvebu/orion.c
+index a6e5bee23385..f681a65be20a 100644
+--- a/drivers/clk/mvebu/orion.c
++++ b/drivers/clk/mvebu/orion.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Marvell Orion SoC clocks
+  *
+@@ -5,9 +6,6 @@
+  *
+  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+  *
+- * This file is licensed under the terms of the GNU General Public
+- * License version 2.  This program is licensed "as is" without any
+- * warranty of any kind, whether express or implied.
+  */
+ 
+ #include <linux/kernel.h>
+-- 
+2.18.0
