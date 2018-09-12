@@ -1,62 +1,40 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+Return-Path: <hdegoede@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/3] clk: renesas: r7s9210: Add support for early clocks
-Date: Mon, 24 Sep 2018 11:49:34 -0500
-Message-Id: <20180924164937.36536-1-chris.brandt@renesas.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Johannes Stezenbach <js@sig21.net>,
+	Carlo Caione <carlo@endlessm.com>,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/3] r8169 (x86) clk fixes to fix S0ix not being reached
+Date: Wed, 12 Sep 2018 11:34:53 +0200
+Message-Id: <20180912093456.23400-1-hdegoede@redhat.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
-ostm module clocks to be registers early in boot.
+Hi David,
 
-This series add early clock support to cpg-mssr
+This series adds code to the r8169 ethernet driver to get and enable an
+external clock if present, avoiding the need for a hack in the
+clk-pmc-atom driver where that clock was left on continuesly causing x86
+some devices to not reach deep power saving states (S0ix) when suspended
+causing to them to quickly drain their battery while suspended.
 
-Here are some notes I took:
+The 3 commits in this series need to be merged in order to avoid
+regressions while bisecting. The clk-pmc-atom driver does not see much
+changes (it was last touched over a year ago). So the clk maintainers
+have agreed with merging all 3 patches through the net tree.
+All 3 patches have Stephen Boyd's Acked-by for this purpose.
 
- * Switched to using
-     of_iomap(cpg_np, 0)
-   instead of
-     platform_get_resource(pdev, IORESOURCE_MEM, 0)
+This v2 of the series only had some minor tweaks done to the commit
+messages and is ready for merging through the net tree now.
 
-*  All devm_xxx calls were replaced with the traditinal functions because
-   'dev' is not available for early probe
+Thanks & Regards,
 
-*  some functions are still using dev_dbg and dev_err for messages, but
-   in early init, dev is set to NULL so it doesn't crash, the messages
-   just look like this:
-      (NULL device *): Core clock extal at 24000000 Hz
-      (NULL device *): clock (1, 35) is ostm1 at 66000000 Hz
-
-*  np was added to priv
-   np is saved because dev->of_node doesn't exist during early init and we
-   need to avoid using 'dev' for any function that will run during early
-   init
-
-*  all .init functions (r8xxxx_cpg_mssr_init) for the SoCs do not use dev,
-   except for r8a7791_cpg_mssr_init for the lines:
-       struct device_node *np = dev->of_node;
-       of_device_is_compatible(np, "renesas,r8a7793-cpg-mssr")
-    But, so if early clock support was every needed for r8a7791 or r8a7793,
-    that line will need to be changed.
-
-* In r7s9210-cpg-mssr.c, I moved updating the clock ratio table to a
-  separate function (r7s9210_update_table) because it looks cleaner.
-
-Chris Brandt (3):
-  clk: renesas: cpg-mssr: Add early clock support
-  clk: renesas: r7s9210: Convert some clocks to early
-  clk: renesas: r7s9210: Move table update to separate function
-
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 126 ++++++++++++++++++++-------------
- drivers/clk/renesas/renesas-cpg-mssr.c |  95 +++++++++++++++++++------
- drivers/clk/renesas/renesas-cpg-mssr.h |  13 ++++
- 3 files changed, 163 insertions(+), 71 deletions(-)
-
--- 
-2.16.1
+Hans
