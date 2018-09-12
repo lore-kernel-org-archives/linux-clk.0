@@ -1,120 +1,31 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17207 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbeIYS6t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 14:58:49 -0400
-Date: Tue, 25 Sep 2018 15:51:17 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Rob Herring <robh@kernel.org>
-CC: <vkuruturi@nvidia.com>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <devicetree@vger.kernel.org>,
-        <daniel@octaforge.org>, <a.heider@gmail.com>, <swtcr0@gmail.com>
-Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
-Message-ID: <20180925125117.GA30156@tbergstrom-lnx.Nvidia.com>
-References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
- <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
- <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com>
- <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37024 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbeIMCI0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Sep 2018 22:08:26 -0400
+Subject: Re: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled
+ in suspend
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
+ <20180912131641.21688-1-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Message-ID: <43460289-8685-9377-5643-6255c2c7c8e4@gmail.com>
+Date: Wed, 12 Sep 2018 23:02:03 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20180912131641.21688-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
-Corrected the address of linux-clk in the CC line.
+On 09/12/2018 03:16 PM, Marek Szyprowski wrote:
+> All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
+> cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
+> 
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
 
-Peter.
-
-On Tue, Sep 25, 2018 at 03:11:07PM +0300, Peter De Schrijver wrote:
-> On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
-> > On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> > 
-> > Needs a commit msg.
-> > 
-> > > ---
-> > >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
-> > >  1 file changed, 448 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > new file mode 100644
-> > > index 0000000..1c52f47
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > @@ -0,0 +1,448 @@
-> > > +NVIDIA Tegra210 SoC EMC (external memory controller)
-> > > +====================================================
-> > > +
-> > > +Required properties :
-> > > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
-> > > +- reg : physical base address and length of the controller's registers.
-> > > +- nvidia,memory-controller : phandle of the MC driver.
-> > 
-> > Huh? What is this block then?
-> > 
-> 
-> This is the EMC. The EMC handles the interface with the external DRAM chips.
-> The MC aggregates and schedules requests to the EMC. It also handles address
-> translation. See figure 33 of the TRM.
-> 
-> > > +- clocks : phandles of the possible source clocks
-> > > +- clock-names : names of the possible source clocks
-> > > +
-> > > +The node should contain a "emc-table" subnode for each supported RAM type
-> > > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
-> > > +being its RAM_CODE.
-> > 
-> > Unit address is based on reg property.
-> > 
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> > > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
-> > > +used for.
-> > > +
-> > > +Each "emc-table" node should contain a "emc-table" subnode for every supported
-> > > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
-> > > +their unit address.
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> > 
-> > Which emc-table nodes, the child or grand-child nodes?
-> > 
-> 
-> The child "emc-table" node.
-> 
-> > > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
-> > 
-> > > +- nvidia,revision : revision of the parameter set used for this node. All
-> > > +                    nodes in the same "emc-table" should have the same revision
-> > > +- clock-frequency : frequency in kHz
-> > > +- nvidia,emc-min-mv : minimum voltage for this OPP
-> > > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
-> > > +- nvidia,source : clock source to be used for this OPP
-> > 
-> > Is this memory timings/settings or OPPs? We have a binding for OPPs 
-> > already.
-> > 
-> 
-> This is memory timings.
-> 
-> > > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
-> > > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
-> > > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
-> > > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
-> > > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
-> > > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
-> > 
-> > [...]
-> > 
-> > This is a huge list of properties. For all the things that are memory 
-> > timings, is there really value to defining a property for each setting? 
-> > Perhaps you should just define your own format and either make it a 
-> > separate firmware file or include that file in the dtb.
-> 
-> If it's a binary structure, how would this be passed given the bootloader has
-> to fill in the training information?
-> 
-> Peter.
+Patch applied, thanks.
