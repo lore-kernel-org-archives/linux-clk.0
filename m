@@ -1,337 +1,763 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH 3/6] clk: mvebu: add CPU clock driver for Armada 7K/8K
-Date: Sat, 22 Sep 2018 20:17:06 +0200
-Message-Id: <20180922181709.13007-4-gregory.clement@bootlin.com>
-In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>,
+	Ramneek Mehresh <ramneek.mehresh@nxp.com>,
+	Zhang Ying-22455 <ying.zhang22455@nxp.com>,
+	Nipun Gupta <nipun.gupta@nxp.com>,
+	Priyanka Jain <priyanka.jain@nxp.com>,
+	Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+	Sriram Dash <sriram.dash@nxp.com>
+Subject: [PATCH v2 4/5] arm64: dts: add QorIQ LX2160A SoC support
+Date: Fri, 14 Sep 2018 02:07:54 +0530
+Message-Id: <1536871075-3732-5-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-The CPU frequency is managed at the AP level for the Armada 7K/8K. The
-CPU frequency is modified by cluster: the CPUs of the same cluster have
-the same frequency.
+LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
 
-This patch adds the clock driver that will be used by CPUFreq, it is
-based on the work of Omri Itach <omrii@marvell.com>.
+LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
+in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
+controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
+UARTs etc.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
+Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
 ---
- drivers/clk/mvebu/Kconfig      |   3 +
- drivers/clk/mvebu/Makefile     |   1 +
- drivers/clk/mvebu/ap-cpu-clk.c | 265 +++++++++++++++++++++++++++++++++
- 3 files changed, 269 insertions(+)
- create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 693 +++++++++++++++++++++++++
+ 1 file changed, 693 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index 5492fae3f0ab..9d0b2f7cee21 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -39,6 +39,9 @@ config ARMADA_AP806_SYSCON
- 	bool
- 	select ARMADA_AP_CP_HELPER
- 
-+config ARMADA_AP_CPU_CLK
-+	bool
-+
- config ARMADA_CP110_SYSCON
- 	bool
- 	select ARMADA_AP_CP_HELPER
-diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
-index 6638ad962ec1..04464cef0f06 100644
---- a/drivers/clk/mvebu/Makefile
-+++ b/drivers/clk/mvebu/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-tbg.o
- obj-$(CONFIG_ARMADA_37XX_CLK)	+= armada-37xx-periph.o
- obj-$(CONFIG_ARMADA_XP_CLK)	+= armada-xp.o mv98dx3236.o
- obj-$(CONFIG_ARMADA_AP806_SYSCON) += ap806-system-controller.o
-+obj-$(CONFIG_ARMADA_AP_CPU_CLK) += ap-cpu-clk.o
- obj-$(CONFIG_ARMADA_CP110_SYSCON) += cp110-system-controller.o
- obj-$(CONFIG_DOVE_CLK)		+= dove.o dove-divider.o
- obj-$(CONFIG_KIRKWOOD_CLK)	+= kirkwood.o
-diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
 new file mode 100644
-index 000000000000..1b498cfe9191
+index 0000000..46eea16
 --- /dev/null
-+++ b/drivers/clk/mvebu/ap-cpu-clk.c
-@@ -0,0 +1,265 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Marvell Armada AP CPU Clock Controller
-+ *
-+ * Copyright (C) 2018 Marvell
-+ *
-+ * Omri Itach <omrii@marvell.com>
-+ * Gregory Clement <gregory.clement@bootlin.com>
-+ */
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -0,0 +1,693 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Device Tree Include file for Layerscape-LX2160A family SoC.
++//
++// Copyright 2018 NXP
 +
-+#define pr_fmt(fmt) "ap-cpu-clk: " fmt
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+#include "armada_ap_cp_helper.h"
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/init.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++/memreserve/ 0x80000000 0x00010000;
 +
-+#define AP806_CPU_CLUSTER0		0
-+#define AP806_CPU_CLUSTER1		1
-+#define AP806_CPUS_PER_CLUSTER		2
-+#define APN806_CPU1_MASK		0x1
++/ {
++	compatible = "fsl,lx2160a";
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+#define APN806_CLUSTER_NUM_OFFSET	8
-+#define APN806_CLUSTER_NUM_MASK		(1 << APN806_CLUSTER_NUM_OFFSET)
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+#define APN806_MAX_DIVIDER		32
++		// 8 clusters having 2 Cortex-A72 cores each
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x0>;
++			clocks = <&clockgen 1 0>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster0_l2>;
++		};
 +
-+/* AP806 CPU DFS register mapping*/
-+#define AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET		0x278
-+#define AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET		0x280
-+#define AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET		0x284
-+#define AP806_CA72MP2_0_PLL_SR_REG_OFFSET		0xC94
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x1>;
++			clocks = <&clockgen 1 0>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster0_l2>;
++		};
 +
-+#define AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET		0x14
-+#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET		0
-+#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK \
-+			(0x3f << AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET)
-+#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSET	24
-+#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK \
-+			(0x1 << AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSET)
-+#define AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET	16
-+#define AP806_CA72MP2_0_PLL_RATIO_STATE			11
++		cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x100>;
++			clocks = <&clockgen 1 1>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster1_l2>;
++		};
 +
-+#define to_clk(hw) container_of(hw, struct ap_cpu_clk, hw)
++		cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x101>;
++			clocks = <&clockgen 1 1>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster1_l2>;
++		};
 +
-+/*
-+ * struct ap806_clk: CPU cluster clock controller instance
-+ * @cluster: Cluster clock controller index
-+ * @clk_name: Cluster clock controller name
-+ * @dev : Cluster clock device
-+ * @hw: HW specific structure of Cluster clock controller
-+ * @pll_cr_base: CA72MP2 Register base (Device Sample at Reset register)
-+ */
-+struct ap_cpu_clk {
-+	int cluster;
-+	const char *clk_name;
-+	struct device *dev;
-+	struct clk_hw hw;
-+	struct regmap *pll_cr_base;
++		cpu@200 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x200>;
++			clocks = <&clockgen 1 2>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@201 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x201>;
++			clocks = <&clockgen 1 2>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster2_l2>;
++		};
++
++		cpu@300 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x300>;
++			clocks = <&clockgen 1 3>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@301 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x301>;
++			clocks = <&clockgen 1 3>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster3_l2>;
++		};
++
++		cpu@400 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x400>;
++			clocks = <&clockgen 1 4>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster4_l2>;
++		};
++
++		cpu@401 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x401>;
++			clocks = <&clockgen 1 4>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster4_l2>;
++		};
++
++		cpu@500 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x500>;
++			clocks = <&clockgen 1 5>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster5_l2>;
++		};
++
++		cpu@501 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x501>;
++			clocks = <&clockgen 1 5>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster5_l2>;
++		};
++
++		cpu@600 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x600>;
++			clocks = <&clockgen 1 6>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster6_l2>;
++		};
++
++		cpu@601 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x601>;
++			clocks = <&clockgen 1 6>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster6_l2>;
++		};
++
++		cpu@700 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x700>;
++			clocks = <&clockgen 1 7>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster7_l2>;
++		};
++
++		cpu@701 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a72";
++			reg = <0x701>;
++			clocks = <&clockgen 1 7>;
++			d-cache-size = <0x8000>;
++			d-cache-line-size = <64>;
++			d-cache-sets = <128>;
++			i-cache-size = <0xC000>;
++			i-cache-line-size = <64>;
++			i-cache-sets = <192>;
++			next-level-cache = <&cluster7_l2>;
++		};
++
++		cluster0_l2: l2-cache0 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster1_l2: l2-cache1 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster2_l2: l2-cache2 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster3_l2: l2-cache3 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster4_l2: l2-cache4 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster5_l2: l2-cache5 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster6_l2: l2-cache6 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++
++		cluster7_l2: l2-cache7 {
++			compatible = "cache";
++			cache-size = <0x100000>;
++			cache-line-size = <64>;
++			cache-sets = <1024>;
++			cache-level = <2>;
++		};
++	};
++
++	gic: interrupt-controller@6000000 {
++		compatible = "arm,gic-v3";
++		reg = <0x0 0x06000000 0 0x10000>, // GIC Dist
++			<0x0 0x06200000 0 0x200000>, // GICR (RD_base +
++						     // SGI_base)
++			<0x0 0x0c0c0000 0 0x2000>, // GICC
++			<0x0 0x0c0d0000 0 0x1000>, // GICH
++			<0x0 0x0c0e0000 0 0x20000>; // GICV
++		#interrupt-cells = <3>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		interrupt-controller;
++		interrupts = <1 9 0x4>;
++
++		its: gic-its@6020000 {
++			compatible = "arm,gic-v3-its";
++			msi-controller;
++			reg = <0x0 0x6020000 0 0x20000>;
++		};
++	};
++
++	rstcr: syscon@1e60000 {
++		compatible = "syscon";
++		reg = <0x0 0x1e60000 0x0 0x4>;
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <1 13 4>,
++			     <1 14 4>,
++			     <1 11 4>,
++			     <1 10 4>;
++	};
++
++	pmu {
++		compatible = "arm,cortex-a72-pmu";
++		interrupts = <1 7 0x8>; // PMU PPI, Level low type
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++	memory@80000000 {
++		// DRAM space - 1, size : 2 GB DRAM
++		device_type = "memory";
++		reg = <0x00000000 0x80000000 0 0x80000000>;
++	};
++
++	ddr1: memory-controller@1080000 {
++		compatible = "fsl,qoriq-memory-controller";
++		reg = <0x0 0x1080000 0x0 0x1000>;
++		interrupts = <0 17 0x4>;
++		little-endian;
++	};
++
++	ddr2: memory-controller@1090000 {
++		compatible = "fsl,qoriq-memory-controller";
++		reg = <0x0 0x1090000 0x0 0x1000>;
++		interrupts = <0 18 0x4>;
++		little-endian;
++	};
++
++	sysclk: sysclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++		clock-output-names = "sysclk";
++	};
++
++	soc {
++		compatible = "simple-bus";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		clockgen: clocking@1300000 {
++			compatible = "fsl,lx2160a-clockgen";
++			reg = <0 0x1300000 0 0xa0000>;
++			#clock-cells = <2>;
++			clocks = <&sysclk>;
++		};
++
++		crypto: crypto@8000000 {
++			compatible = "fsl,sec-v5.0", "fsl,sec-v4.0";
++			fsl,sec-era = <10>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0x0 0x00 0x8000000 0x100000>;
++			reg = <0x00 0x8000000 0x0 0x100000>;
++			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
++			dma-coherent;
++			status = "disabled";
++
++			sec_jr0: jr@10000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x10000 0x10000>;
++				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr1: jr@20000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x20000 0x10000>;
++				interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr2: jr@30000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x30000 0x10000>;
++				interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			sec_jr3: jr@40000 {
++				compatible = "fsl,sec-v5.0-job-ring",
++					     "fsl,sec-v4.0-job-ring";
++				reg        = <0x40000 0x10000>;
++				interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
++		dcfg: dcfg@1e00000 {
++			compatible = "fsl,lx2160a-dcfg", "syscon";
++			reg = <0x0 0x1e00000 0x0 0x10000>;
++			little-endian;
++		};
++
++		gpio0: gpio@2300000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2300000 0x0 0x10000>;
++			interrupts = <0 36 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio1: gpio@2310000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2310000 0x0 0x10000>;
++			interrupts = <0 36 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio2: gpio@2320000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2320000 0x0 0x10000>;
++			interrupts = <0 37 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		gpio3: gpio@2330000 {
++			compatible = "fsl,qoriq-gpio";
++			reg = <0x0 0x2330000 0x0 0x10000>;
++			interrupts = <0 37 0x4>; // Level high type
++			gpio-controller;
++			little-endian;
++			#gpio-cells = <2>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++
++		i2c0: i2c@2000000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2000000 0x0 0x10000>;
++			interrupts = <0 34 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			fsl-scl-gpio = <&gpio2 15 0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@2010000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2010000 0x0 0x10000>;
++			interrupts = <0 34 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@2020000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2020000 0x0 0x10000>;
++			interrupts = <0 35 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@2030000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2030000 0x0 0x10000>;
++			interrupts = <0 35 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@2040000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2040000 0x0 0x10000>;
++			interrupts = <0 74 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			fsl-scl-gpio = <&gpio2 16 0>;
++			status = "disabled";
++		};
++
++		i2c5: i2c@2050000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2050000 0x0 0x10000>;
++			interrupts = <0 74 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c6: i2c@2060000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2060000 0x0 0x10000>;
++			interrupts = <0 75 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		i2c7: i2c@2070000 {
++			compatible = "fsl,vf610-i2c";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x0 0x2070000 0x0 0x10000>;
++			interrupts = <0 75 0x4>; // Level high type
++			clock-names = "i2c";
++			clocks = <&clockgen 4 7>;
++			status = "disabled";
++		};
++
++		uart0: serial@21c0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21c0000 0x0 0x1000>;
++			interrupts = <0 32 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart1: serial@21d0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21d0000 0x0 0x1000>;
++			interrupts = <0 33 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart2: serial@21e0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21e0000 0x0 0x1000>;
++			interrupts = <0 72 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		uart3: serial@21f0000 {
++			device_type = "serial";
++			compatible = "arm,pl011","arm,sbsa-uart";
++			reg = <0x0 0x21f0000 0x0 0x1000>;
++			interrupts = <0 73 0x4>;	// Level high type
++			current-speed = <115200>;
++			status = "disabled";
++		};
++
++		smmu: iommu@5000000 {
++			compatible = "arm,mmu-500";
++			reg = <0 0x5000000 0 0x800000>;
++			#iommu-cells = <1>;
++			#global-interrupts = <14>;
++			interrupts = <0 13 4>, // global secure fault
++				     <0 14 4>, // combined secure interrupt
++				     <0 15 4>, // global non-secure fault
++				     <0 16 4>, // combined non-secure interrupt
++				// performance counter interrupts 0-9
++				     <0 211 4>, <0 212 4>,
++				     <0 213 4>, <0 214 4>,
++				     <0 215 4>, <0 216 4>,
++				     <0 217 4>, <0 218 4>,
++				     <0 219 4>, <0 220 4>,
++				// per context interrupt, 64 interrupts
++				     <0 146 4>, <0 147 4>,
++				     <0 148 4>, <0 149 4>,
++				     <0 150 4>, <0 151 4>,
++				     <0 152 4>, <0 153 4>,
++				     <0 154 4>, <0 155 4>,
++				     <0 156 4>, <0 157 4>,
++				     <0 158 4>, <0 159 4>,
++				     <0 160 4>, <0 161 4>,
++				     <0 162 4>, <0 163 4>,
++				     <0 164 4>, <0 165 4>,
++				     <0 166 4>, <0 167 4>,
++				     <0 168 4>, <0 169 4>,
++				     <0 170 4>, <0 171 4>,
++				     <0 172 4>, <0 173 4>,
++				     <0 174 4>, <0 175 4>,
++				     <0 176 4>, <0 177 4>,
++				     <0 178 4>, <0 179 4>,
++				     <0 180 4>, <0 181 4>,
++				     <0 182 4>, <0 183 4>,
++				     <0 184 4>, <0 185 4>,
++				     <0 186 4>, <0 187 4>,
++				     <0 188 4>, <0 189 4>,
++				     <0 190 4>, <0 191 4>,
++				     <0 192 4>, <0 193 4>,
++				     <0 194 4>, <0 195 4>,
++				     <0 196 4>, <0 197 4>,
++				     <0 198 4>, <0 199 4>,
++				     <0 200 4>, <0 201 4>,
++				     <0 202 4>, <0 203 4>,
++				     <0 204 4>, <0 205 4>,
++				     <0 206 4>, <0 207 4>,
++				     <0 208 4>, <0 209 4>;
++			dma-coherent;
++		};
++
++		usb0: usb3@3100000 {
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3100000 0x0 0x10000>;
++			interrupts = <0 80 0x4>; // Level high type
++			dr_mode = "host";
++			snps,quirk-frame-length-adjustment = <0x20>;
++			snps,dis_rxdet_inp3_quirk;
++			status = "disabled";
++		};
++
++		usb1: usb3@3110000 {
++			compatible = "snps,dwc3";
++			reg = <0x0 0x3110000 0x0 0x10000>;
++			interrupts = <0 81 0x4>; // Level high type
++			dr_mode = "host";
++			snps,quirk-frame-length-adjustment = <0x20>;
++			snps,dis_rxdet_inp3_quirk;
++			status = "disabled";
++		};
++
++		watchdog@23a0000 {
++			compatible = "arm,sbsa-gwdt";
++			reg = <0x0 0x23a0000 0 0x1000>,
++			      <0x0 0x2390000 0 0x1000>;
++			interrupts = <0 59 4>;
++			timeout-sec = <30>;
++		};
++
++	};
 +};
-+
-+static struct clk **cluster_clks;
-+static struct clk_onecell_data clk_data;
-+
-+static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	struct ap_cpu_clk *clk = to_clk(hw);
-+	unsigned int cpu_clkdiv_reg = AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET +
-+		(clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
-+	int cpu_clkdiv_ratio;
-+
-+	regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
-+	cpu_clkdiv_ratio &= AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK;
-+	cpu_clkdiv_ratio >>= AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET;
-+
-+	return parent_rate / cpu_clkdiv_ratio;
-+}
-+
-+static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct ap_cpu_clk *clk = to_clk(hw);
-+	int reg, divider = parent_rate / rate;
-+	unsigned int cpu_clkdiv_reg, cpu_force_reg, cpu_ratio_reg;
-+
-+	cpu_clkdiv_reg = AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET +
-+		(clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
-+	cpu_force_reg = AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET +
-+		(clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
-+	cpu_ratio_reg = AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET +
-+		(clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
-+
-+	/* 1. Set CPU divider */
-+	regmap_update_bits(clk->pll_cr_base, cpu_clkdiv_reg,
-+			   AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK, divider);
-+
-+	/* 2. Set Reload force */
-+	regmap_update_bits(clk->pll_cr_base, cpu_force_reg,
-+			   AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK,
-+			   AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK);
-+
-+	/* 3. Set Reload ratio */
-+	regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
-+			   BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET),
-+			   BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET));
-+
-+
-+	/* 4. Wait for stabilizing CPU Clock */
-+	do {
-+		regmap_read(clk->pll_cr_base,
-+			    AP806_CA72MP2_0_PLL_SR_REG_OFFSET,
-+			    &reg);
-+	} while (!(reg & BIT(clk->cluster * AP806_CA72MP2_0_PLL_RATIO_STATE)));
-+
-+	/* 5. Clear Reload ratio */
-+	regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
-+			   BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET), 0);
-+
-+	return 0;
-+}
-+
-+
-+static long ap_cpu_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *parent_rate)
-+{
-+	int divider = *parent_rate / rate;
-+
-+	if (divider > APN806_MAX_DIVIDER)
-+		divider = APN806_MAX_DIVIDER;
-+
-+	return *parent_rate / divider;
-+}
-+
-+static const struct clk_ops ap_cpu_clk_ops = {
-+	.recalc_rate	= ap_cpu_clk_recalc_rate,
-+	.round_rate	= ap_cpu_clk_round_rate,
-+	.set_rate	= ap_cpu_clk_set_rate,
-+};
-+
-+static int ap_cpu_clock_probe(struct platform_device *pdev)
-+{
-+	int ret, nclusters = 0, cluster_index = 0;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *dn, *np = dev->of_node;
-+	struct ap_cpu_clk *ap_cpu_clk;
-+	struct regmap *regmap;
-+
-+	regmap = syscon_node_to_regmap(np->parent);
-+	if (IS_ERR(regmap)) {
-+		pr_err("cannot get pll_cr_base regmap\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	/*
-+	 * AP806 has 4 cpus and DFS for AP806 is controlled per
-+	 * cluster (2 CPUs per cluster), cpu0 and cpu1 are fixed to
-+	 * cluster0 while cpu2 and cpu3 are fixed to cluster1 whether
-+	 * they are enabled or not.  Since cpu0 is the boot cpu, then
-+	 * cluster0 must exist.  If cpu2 or cpu3 is enabled, cluster1
-+	 * will exist and the cluster number is 2; otherwise the
-+	 * cluster number is 1.
-+	 */
-+	nclusters = 1;
-+	for_each_node_by_type(dn, "cpu") {
-+		int cpu, err;
-+
-+		err = of_property_read_u32(dn, "reg", &cpu);
-+		if (WARN_ON(err))
-+			return err;
-+
-+		/* If cpu2 or cpu3 is enabled */
-+		if ((cpu & APN806_CLUSTER_NUM_MASK)) {
-+			nclusters = 2;
-+			break;
-+		}
-+	}
-+	/*
-+	 * DFS for AP806 is controlled per cluster (2 CPUs per cluster),
-+	 * so allocate structs per cluster
-+	 */
-+	ap_cpu_clk = devm_kcalloc(dev, nclusters, sizeof(*ap_cpu_clk),
-+				  GFP_KERNEL);
-+	if (WARN_ON(!ap_cpu_clk))
-+		return -ENOMEM;
-+
-+	cluster_clks = devm_kcalloc(dev, nclusters, sizeof(*cluster_clks),
-+				    GFP_KERNEL);
-+	if (WARN_ON(!cluster_clks))
-+		return -ENOMEM;
-+
-+	for_each_node_by_type(dn, "cpu") {
-+		char *clk_name = "cpu-cluster-0";
-+		struct clk_init_data init;
-+		const char *parent_name;
-+		struct clk *clk, *parent;
-+		int cpu, err;
-+
-+		err = of_property_read_u32(dn, "reg", &cpu);
-+		if (WARN_ON(err))
-+			return err;
-+
-+		cluster_index = (cpu & APN806_CLUSTER_NUM_MASK);
-+		cluster_index >>= APN806_CLUSTER_NUM_OFFSET;
-+
-+		/* Initialize once for one cluster */
-+		if (cluster_clks[cluster_index])
-+			continue;
-+
-+		parent = of_clk_get(np, cluster_index);
-+		if (IS_ERR(parent)) {
-+			dev_err(dev, "Could not get the clock parent\n");
-+			return -EINVAL;
-+		}
-+		parent_name =  __clk_get_name(parent);
-+		clk_name[12] += cluster_index;
-+		ap_cpu_clk[cluster_index].clk_name =
-+			ap_cp_unique_name(dev, np->parent, clk_name);
-+		ap_cpu_clk[cluster_index].cluster = cluster_index;
-+		ap_cpu_clk[cluster_index].pll_cr_base = regmap;
-+		ap_cpu_clk[cluster_index].hw.init = &init;
-+		ap_cpu_clk[cluster_index].dev = dev;
-+
-+		init.name = ap_cpu_clk[cluster_index].clk_name;
-+		init.ops = &ap_cpu_clk_ops;
-+		init.num_parents = 1;
-+		init.parent_names = &parent_name;
-+		init.flags = CLK_GET_RATE_NOCACHE;
-+
-+		clk = devm_clk_register(dev, &ap_cpu_clk[cluster_index].hw);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk);
-+
-+		cluster_clks[cluster_index] = clk;
-+	}
-+
-+	clk_data.clk_num = cluster_index + 1;
-+	clk_data.clks = cluster_clks;
-+
-+	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-+	if (ret)
-+		dev_err(dev, "failed to register OF clock provider\n");
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id ap_cpu_clock_of_match[] = {
-+	{ .compatible = "marvell,ap806-cpu-clock", },
-+	{ }
-+};
-+
-+static struct platform_driver ap_cpu_clock_driver = {
-+	.probe = ap_cpu_clock_probe,
-+	.driver		= {
-+		.name	= "marvell-ap-cpu-clock",
-+		.of_match_table = ap_cpu_clock_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver(ap_cpu_clock_driver);
 -- 
-2.19.0
+2.7.4
