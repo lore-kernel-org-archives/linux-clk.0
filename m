@@ -1,60 +1,79 @@
-Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v2 0/5] arm64: dts: NXP: add basic dts file for LX2160A SoC
+Date: Fri, 14 Sep 2018 02:07:50 +0530
+Message-Id: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-7-jagan@amarulasolutions.com> <20180927152126.vovnvwmqdfpuxgdm@flea>
-In-Reply-To: <20180927152126.vovnvwmqdfpuxgdm@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 27 Sep 2018 21:50:34 +0530
-Message-ID: <CAMty3ZABx9Fod5W_T7JciZEsn7jGvuM-LsBFATdA=hQ2CVwELw@mail.gmail.com>
-Subject: Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
-> > According to horizontal and vertical timings are defined
-> > per the diagram from include/drm/drm_modes.h
-> >
-> > Back porch = [hv]total - [hv]sync_end
-> >
-> > So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
-> > mode->vtotal - mode->vsync_end
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 1c7e42015645..599284971ab6 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
-> >       regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
-> >                    SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
-> >                                              mode->vsync_start) |
-> > -                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
-> > -                                            mode->vdisplay));
-> > +                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
-> > +                                            mode->vsync_end));
->
-> Is it purely theoretical, or did you find some source that back that?
+Changes for v2:
+- Modified cmux_to_group array to include -1 terminator
+- Revert NUM_CMUX to original value 8 from 16
+- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
+  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+  lx2160a" description
+- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
+- Removed reboot node from lx2160a device-tree as PSCI is implemented.
+- Removed incorrect comment for timer node interrupt property in
+  lx2160a device-tree.
+- Modified pmu node compatible property from "arm,armv8-pmuv3" to
+  "arm,cortex-a72-pmu" in lx2160a device-tree
+- Non-standard aliases removed in lx2160a rdb board device-tree
+- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
 
-VSA is done as per that, sync_end - sync start would give sync time.
-VBP also done in BPI-M64-bsp[1] which results back porch existing code
-results fron porch.
+Changes for v1:
+- Add compatible string for LX2160A clockgen support
+- Add compatible string to initialize LX2160A guts driver
+- Add compatible string for LX2160A support in dt-bindings
+- Add dts file to enable support for LX2160A SoC and LX2160A RDB
+  (Reference design board)
 
-[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L955
+Vabhav Sharma (4):
+  dt-bindings: arm64: add compatible for LX2160A
+  soc/fsl/guts: Add compatible string for LX2160A
+  arm64: dts: add QorIQ LX2160A SoC support
+  arm64: dts: add LX2160ARDB board support
+
+Yogesh Gaur (1):
+  drivers: clk-qoriq: Add clockgen support for lx2160a
+
+ Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
+ arch/arm64/boot/dts/freescale/Makefile            |   1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  88 +++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 693 ++++++++++++++++++++++
+ drivers/clk/clk-qoriq.c                           |  14 +-
+ drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
+ drivers/soc/fsl/guts.c                            |   1 +
+ 7 files changed, 809 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+
+-- 
+2.7.4
