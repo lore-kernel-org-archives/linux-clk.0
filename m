@@ -1,62 +1,128 @@
-Return-Path: <biju.das@bp.renesas.com>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/10] dt-bindings: clock: renesas: cpg-mssr: Document r8a7744 binding
-Date: Tue, 11 Sep 2018 11:12:47 +0100
-Message-Id: <1536660771-32278-7-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
-References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com>
+Return-Path: <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, mchehab@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
+From: Eddie James <eajames@linux.vnet.ibm.com>
+Date: Thu, 13 Sep 2018 14:11:49 -0500
+MIME-Version: 1.0
+In-Reply-To: <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add binding documentation for the RZ/G1N (R8A7744) Clock Pulse
-Generator driver.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index 42d0f83..1b8d484 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -14,6 +14,7 @@ They provide the following functionalities:
- Required Properties:
-   - compatible: Must be one of:
-       - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
-+      - "renesas,r8a7744-cpg-mssr" for the r8a7744 SoC (RZ/G1N)
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
-@@ -36,12 +37,12 @@ Required Properties:
-   - clocks: References to external parent clocks, one entry for each entry in
-     clock-names
-   - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r8a7743, r8a7745, r8a77470, r8a774a1, r8a7790, r8a7791,
--		 r8a7792, r8a7793, r8a7794, r8a7795, r8a7796, r8a77965,
--		 r8a77970, r8a77980, r8a77990, r8a77995)
-+      - "extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1, r8a7790,
-+		 r8a7791, r8a7792, r8a7793, r8a7794, r8a7795, r8a7796,
-+		 r8a77965, r8a77970, r8a77980, r8a77990, r8a77995)
-       - "extalr" (r8a774a1, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
--      - "usb_extal" (r8a7743, r8a7745, r8a77470, r8a7790, r8a7791, r8a7793,
--		     r8a7794)
-+      - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
-+		     r8a7793, r8a7794)
- 
-   - #clock-cells: Must be 2
-       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
--- 
-2.7.4
+On 09/03/2018 06:57 AM, Hans Verkuil wrote:
+> Hi Eddie,
+>
+> Thank you for your work on this. Interesting to see support for this SoC :-)
+>
+> On 08/29/2018 11:09 PM, Eddie James wrote:
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting as a service processor, the Video Engine can
+>> capture the host processor graphics output.
+>>
+>> This series adds a V4L2 driver for the VE, providing a read() interface
+>> only. The driver triggers the hardware to capture the host graphics output
+>> and compress it to JPEG format.
+>>
+>> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
+>> was significantly slower than the simple read() interface, so I have not
+>> included the streaming part.
+> Do you know why? It should be equal or faster, not slower.
+
+Yes, it seems to be an issue with the timing of the video engine 
+interrupts compared with how a normal v4l2 application queues buffers. 
+With the simple read() application, the driver can swap between DMA 
+buffers freely and get a frame ahead. With the streaming buffers, I 
+found the driver ran through the queue quite quickly, but then, once 
+userspace queues again, we had to wait for the next frame, as I couldn't 
+get a frame ahead since no buffers were available during that time 
+period. This could possibly be solved with more buffers but this gets to 
+require a lot of memory, since each buffer is allocated for the full 
+frame size even though we only fill a fraction of it with JPEG data...
+
+>
+> I reviewed about half of the driver, but then I stopped since there were too
+> many things missing.
+>
+> First of all, you need to test your driver with v4l2-compliance (available here:
+> https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
+> the versions from distros tend to be too old.
+>
+> Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
+> 'v4l2-compliance -s -d /dev/videoX' to test streaming.
+>
+> This utility checks if the driver follows the V4L2 API correctly, implements
+> all ioctls that it should and fills in all the fields that it should.
+>
+> Please add the output of 'v4l2-compliance -s' to future versions of this patch
+> series: I don't accept V4L2 drivers without a clean report of this utility.
+
+Sure thing. Thanks for the guidance.
+
+>
+> If you have any questions, then mail me or (usually quicker) ask on the #v4l
+> freenode irc channel (I'm in the CET timezone).
+>
+> One thing that needs more explanation: from what I could tell from the driver
+> the VIDIOC_G_FMT ioctl returns the detected format instead of the current
+> format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
+> ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
+>
+> The normal sequence is that userspace queries the current timings with
+> VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
+> timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
+> change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
+> event.
+
+OK I see. I ended up simplifying this part anyway since it's not 
+possible to change the video size from the driver. I don't think there 
+is a need for VIDIOC_QUERY_DV_TIMINGS now, but feel free to review.
+
+Thanks again,
+Eddie
+
+>
+> When the application receives this event it can take action, such as
+> increasing the size of the buffer for the jpeg data that it reads into.
+>
+> The reason for this sequence of events is that you can't just change the
+> format/resolution mid-stream without giving userspace the chance to
+> reconfigure.
+>
+> Regards,
+>
+> 	Hans
+>
+>> It's also possible to use an automatic mode for the VE such that
+>> re-triggering the HW every frame isn't necessary. However this wasn't
+>> reliable on the AST2400, and probably used more CPU anyway due to excessive
+>> interrupts. It was approximately 15% faster.
+>>
+>> The series also adds the necessary parent clock definitions to the Aspeed
+>> clock driver, with both a mux and clock divider.
+>>
+>> Eddie James (4):
+>>    clock: aspeed: Add VIDEO reset index definition
+>>    clock: aspeed: Setup video engine clocking
+>>    dt-bindings: media: Add Aspeed Video Engine binding documentation
+>>    media: platform: Add Aspeed Video Engine driver
+>>
+>>   .../devicetree/bindings/media/aspeed-video.txt     |   23 +
+>>   drivers/clk/clk-aspeed.c                           |   41 +-
+>>   drivers/media/platform/Kconfig                     |    8 +
+>>   drivers/media/platform/Makefile                    |    1 +
+>>   drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
+>>   include/dt-bindings/clock/aspeed-clock.h           |    1 +
+>>   6 files changed, 1379 insertions(+), 2 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>
