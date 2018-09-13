@@ -1,62 +1,66 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 24 Sep 2018 13:40:37 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: ryang <decatf@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20180924114037.GT21032@ulmo>
-References: <20180921220149.17136-1-decatf@gmail.com>
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v2 1/5] dt-bindings: arm64: add compatible for LX2160A
+Date: Fri, 14 Sep 2018 02:07:51 +0530
+Message-Id: <1536871075-3732-2-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bn6XL8m8Y51x7rzV"
-In-Reply-To: <20180921220149.17136-1-decatf@gmail.com>
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
+Add compatible for LX2160A SoC,QDS and RDB board
 
---bn6XL8m8Y51x7rzV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+---
+ Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> The current behavior is that clk_round_rate would return the same clock
-> rate passed to it for valid PLL configurations. This change will return
-> the exact rate the PLL will provide in accordance with clk API.
->=20
-> Signed-off-by: ryang <decatf@gmail.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-
-With Peter's comment addressed:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---bn6XL8m8Y51x7rzV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluozTUACgkQ3SOs138+
-s6FelhAAvGzqVXT5LttZWdkwXLxdR4HGb90RkeYQLaA8/CAl+SaBOCatNzcT3Lir
-pdceI62Jl9PjVK5WiPCXcm3BuIWCNmXBDuiaHZ9qi4Zv7USl7Jc2/7Pq/Mtr/CJW
-plmhdu65Elad217ExedOptrsO8rRTEuh+mJKY4kBmN7MxovhPSt8jQCXZeMhMa1U
-2FJKM66nZIxR0Eq40BH16WOovqXkbT2+mQZNiZyssyCh5VrqKhru5Qw4tG6p6sUi
-VCiFt9RbT/OCXFlBatu8i19J+EPvT3mgyjXjpz1O40kWO0oQFAL7QUmLUQhqoybS
-XQ5lq7+UiOeLRq90+FldMZsAAylMwzg6dxFLDd+zGjcYJYMIYWBvUPUZxcG708mz
-/RefvWtwk1r4GokkfwZfZqDzd/71Cxs3WJp/hMcbxzIYDw+9nK54YgNxvVU2CDdK
-QONWALQwQBUutxH0R1lTH10u8yBUg1OAMyq9K8f/XQx2Z9Elcz69Dwml5s9Ot/wI
-K1Cu2r3cn6kZD3rKiphNQxEdPX3jER8OoB8FnCj1D7/YOmdyOlxX/GI0YS4oS8UB
-xhlxJhK6Q6dbGpiYyJk6o2KJ+r/BmHhUy6fgCHPg2pJ/nXYmwXy/Dd0UVmuGCrLo
-8ZXxbSkAN8RbjTNOd7X+zeXINLP/osPv8+ev5teCgUZNslFh4cM=
-=xTtX
------END PGP SIGNATURE-----
-
---bn6XL8m8Y51x7rzV--
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index cdb9dd7..76256bd 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -218,3 +218,15 @@ Required root node properties:
+ LS2088A ARMv8 based RDB Board
+ Required root node properties:
+     - compatible = "fsl,ls2088a-rdb", "fsl,ls2088a";
++
++LX2160A SoC
++Required root node properties:
++    - compatible = "fsl,lx2160a";
++
++LX2160A ARMv8 based QDS Board
++Required root node properties:
++    - compatible = "fsl,lx2160a-qds", "fsl,lx2160a";
++
++LX2160A ARMv8 based RDB Board
++Required root node properties:
++    - compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+-- 
+2.7.4
