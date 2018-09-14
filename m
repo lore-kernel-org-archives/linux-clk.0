@@ -1,65 +1,121 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34052 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeINNrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:47:42 -0400
-Date: Fri, 14 Sep 2018 11:34:02 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
-        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
-Message-ID: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11414 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbeIODXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:23:39 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 01/14] memory: tegra: mc: Add Tegra210 MC emem registers
+Date: Sat, 15 Sep 2018 00:48:02 +0300
+Message-ID: <1536961695-27809-2-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-rename bd71837-regulator.c to bd718x7-regulator.c to reflect the
-fact that also BD71847 is now supported by the driver.
-
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/regulator/Kconfig                                      | 2 +-
- drivers/regulator/Makefile                                     | 2 +-
- drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} | 0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} (100%)
+ drivers/memory/tegra/tegra210.c | 80 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 329cdd33ed62..6e96ef1bd74a 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -189,7 +189,7 @@ config REGULATOR_BD718XX
- 	  and LDO regulators.
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index 5e144ab..aa9dcf0 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -15,6 +15,84 @@
  
- 	  This driver can also be built as a module. If so, the module
--	  will be called bd71837-regulator.
-+	  will be called bd718x7-regulator.
+ #include "mc.h"
  
- config REGULATOR_BD9571MWV
- 	tristate "ROHM BD9571MWV Regulators"
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 801d9a34a203..eac4d794f3b8 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -27,7 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
- obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
- obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
- obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
--obj-$(CONFIG_REGULATOR_BD718XX) += bd71837-regulator.o
-+obj-$(CONFIG_REGULATOR_BD718XX) += bd718x7-regulator.o
- obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
- obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
- obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd718x7-regulator.c
-similarity index 100%
-rename from drivers/regulator/bd71837-regulator.c
-rename to drivers/regulator/bd718x7-regulator.c
++#define MC_EMEM_ADR_CFG						0x54
++#define MC_EMEM_ARB_CFG						0x90
++#define MC_EMEM_ARB_OUTSTANDING_REQ				0x94
++#define MC_EMEM_ARB_TIMING_RCD					0x98
++#define MC_EMEM_ARB_TIMING_RP					0x9c
++#define MC_EMEM_ARB_TIMING_RC					0xa0
++#define MC_EMEM_ARB_TIMING_RAS					0xa4
++#define MC_EMEM_ARB_TIMING_FAW					0xa8
++#define MC_EMEM_ARB_TIMING_RRD					0xac
++#define MC_EMEM_ARB_TIMING_RAP2PRE				0xb0
++#define MC_EMEM_ARB_TIMING_WAP2PRE				0xb4
++#define MC_EMEM_ARB_TIMING_R2R					0xb8
++#define MC_EMEM_ARB_TIMING_W2W					0xbc
++#define MC_EMEM_ARB_TIMING_R2W					0xc0
++#define MC_EMEM_ARB_TIMING_W2R					0xc4
++#define MC_EMEM_ARB_DA_TURNS					0xd0
++#define MC_EMEM_ARB_DA_COVERS					0xd4
++#define MC_EMEM_ARB_MISC0					0xd8
++#define MC_EMEM_ARB_MISC1					0xdc
++#define MC_EMEM_ARB_MISC2					0xc8
++#define MC_EMEM_ARB_RING1_THROTTLE				0xe0
++#define MC_MLL_MPCORER_PTSA_RATE				0x44c
++#define MC_FTOP_PTSA_RATE					0x50c
++#define MC_EMEM_ARB_TIMING_RFCPB				0x6c0
++#define MC_EMEM_ARB_TIMING_CCDMW				0x6c4
++#define MC_EMEM_ARB_REFPB_HP_CTRL				0x6f0
++#define MC_EMEM_ARB_REFPB_BANK_CTRL				0x6f4
++#define MC_PTSA_GRANT_DECREMENT					0x960
++#define MC_EMEM_ARB_DHYST_CTRL					0xbcc
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0			0xbd0
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1			0xbd4
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2			0xbd8
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3			0xbdc
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4			0xbe0
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5			0xbe4
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
++#define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
++
++static const unsigned long tegra210_mc_emem_regs[] = {
++	 MC_EMEM_ADR_CFG,
++	 MC_EMEM_ARB_CFG,
++	 MC_EMEM_ARB_OUTSTANDING_REQ,
++	 MC_EMEM_ARB_TIMING_RCD,
++	 MC_EMEM_ARB_TIMING_RP,
++	 MC_EMEM_ARB_TIMING_RC,
++	 MC_EMEM_ARB_TIMING_RAS,
++	 MC_EMEM_ARB_TIMING_FAW,
++	 MC_EMEM_ARB_TIMING_RRD,
++	 MC_EMEM_ARB_TIMING_RAP2PRE,
++	 MC_EMEM_ARB_TIMING_WAP2PRE,
++	 MC_EMEM_ARB_TIMING_R2R,
++	 MC_EMEM_ARB_TIMING_W2W,
++	 MC_EMEM_ARB_TIMING_R2W,
++	 MC_EMEM_ARB_TIMING_W2R,
++	 MC_EMEM_ARB_DA_TURNS,
++	 MC_EMEM_ARB_DA_COVERS,
++	 MC_EMEM_ARB_MISC0,
++	 MC_EMEM_ARB_MISC1,
++	 MC_EMEM_ARB_MISC2,
++	 MC_EMEM_ARB_RING1_THROTTLE,
++	 MC_MLL_MPCORER_PTSA_RATE,
++	 MC_FTOP_PTSA_RATE,
++	 MC_EMEM_ARB_TIMING_RFCPB,
++	 MC_EMEM_ARB_TIMING_CCDMW,
++	 MC_EMEM_ARB_REFPB_HP_CTRL,
++	 MC_EMEM_ARB_REFPB_BANK_CTRL,
++	 MC_PTSA_GRANT_DECREMENT,
++	 MC_EMEM_ARB_DHYST_CTRL,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_0,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_1,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_2,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_3,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_4,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_5,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6,
++	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7,
++};
++
+ static const struct tegra_mc_client tegra210_mc_clients[] = {
+ 	{
+ 		.id = 0x00,
+@@ -1077,4 +1155,6 @@
+ 	.atom_size = 64,
+ 	.client_id_mask = 0xff,
+ 	.smmu = &tegra210_smmu_soc,
++	.emem_regs = tegra210_mc_emem_regs,
++	.num_emem_regs = ARRAY_SIZE(tegra210_mc_emem_regs),
+ };
 -- 
-2.14.3
+1.9.1
