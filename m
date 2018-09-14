@@ -1,87 +1,146 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailoutvs20.siol.net ([185.57.226.211]:43148 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725851AbeIFJlE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Sep 2018 05:41:04 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Thu, 06 Sep 2018 07:07:19 +0200
-Message-ID: <1794260.muFTeCcfyt@jernej-laptop>
-In-Reply-To: <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
-References: <20180904044053.15425-1-icenowy@aosc.io> <20180905075136.chumwosx76o2n66l@flea> <CAMty3ZAVr_d+Rwry_DMWY221OC+YSWmReNm-TXzYWgpd1s68+w@mail.gmail.com>
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12737 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728031AbeIODnk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:43:40 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 08/14] clk: tegra: clock changes for emc scaling
+Date: Sat, 15 Sep 2018 00:48:09 +0300
+Message-ID: <1536961695-27809-9-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Jagan,
+1) Introduce low jitter paths for pllp and pll_mb used by the EMC scaling code
+2) Remove the old emc_mux clock and don't use the common EMC clock definition.
+   This will be replaced by a new clock defined in the EMC scaling code
+3) Export functions to allow accessing the CAR register required for EMC
+   clock scaling. This function will be used to access the CAR register as
+   part of the scaling sequence. The scaling sequence may also need to be
+   run when the DRAM temperature crosses a certain limit. To avoid
+   deadlocks it's easier to keep the whole sequence in one place.
 
-Dne sreda, 05. september 2018 ob 09:57:54 CEST je Jagan Teki napisal(a):
-> On Wed, Sep 5, 2018 at 1:21 PM, Maxime Ripard <maxime.ripard@bootlin.com> 
-wrote:
-> > On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
-> >> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> >> > From: Jagan Teki <jagan@amarulasolutions.com>
-> >> > 
-> >> > Enable all necessary device tree nodes and add connector node to device
-> >> > trees for all supported A64 boards with HDMI.
-> >> > 
-> >> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >> > [Icenowy: squash all board patches altogether and change supply name]
-> >> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> >> > ---
-> >> > Changes in v4:
-> >> > - Rebase some device trees.
-> >> > Changes in v3,1:
-> >> > - Squash all enablement patches altogether.
-> >> > - Change supply name to match DT binding & driver change.
-> >> > Changes for v3:
-> >> > - Enable all pipeline components
-> >> > Changes for v2:
-> >> > - none
-> >> > 
-> >> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
-> >> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
-> >> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
-> >> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
-> >> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
-> >> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
-> >> >  6 files changed, 204 insertions(+)
-> >> 
-> >> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
-> >> A64-Olinuxino, NPI-A64
-> >> 
-> >> Pine64 boards look unable by saying
-> >> [drm] Cannot find any crtc or sizes
-> >> 
-> >> May be someone can confirm, it.
-> > 
-> > Then we should drop the pine64 additions until someone figures it out,
-> > as it has been already discussed.
-> 
-> That is fine, but If anyone have pine64 can confirm this.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c         | 53 ++++++++++++++++++++++++++------
+ include/dt-bindings/clock/tegra210-car.h |  2 ++
+ 2 files changed, 46 insertions(+), 9 deletions(-)
 
-What is your monitor default resolution and more importantly, what is it's 
-pixel clock?
-
-Pine64 has U-Boot support for DE2/HDMI, which has some pixel clock issues 
-which can influence Linux, unfortunately. At the time, there wasn't enough 
-knowledge to do it properly. I plan to update it after A64 DE2/HDMI support is 
-finished in kernel.
-
-Meanwhile, can you test if it works for you either with disabled DE2/HDMI in 
-U-Boot or if you apply this patch to Linux:
-https://github.com/jernejsk/linux-1/commit/
-019121f953229ca2d624ac39300289a24e5389a1
-
-Best regards,
-Jernej
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 72de0e9..6286b1a 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2368,7 +2368,7 @@ struct utmi_clk_param {
+ 	[tegra_clk_i2c2] = { .dt_id = TEGRA210_CLK_I2C2, .present = true },
+ 	[tegra_clk_uartc_8] = { .dt_id = TEGRA210_CLK_UARTC, .present = true },
+ 	[tegra_clk_mipi_cal] = { .dt_id = TEGRA210_CLK_MIPI_CAL, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = true },
++	[tegra_clk_emc] = { .dt_id = TEGRA210_CLK_EMC, .present = false },
+ 	[tegra_clk_usb2] = { .dt_id = TEGRA210_CLK_USB2, .present = true },
+ 	[tegra_clk_bsev] = { .dt_id = TEGRA210_CLK_BSEV, .present = true },
+ 	[tegra_clk_uartd_8] = { .dt_id = TEGRA210_CLK_UARTD, .present = true },
+@@ -2780,6 +2780,34 @@ void tegra210_put_utmipll_out_iddq(void)
+ }
+ EXPORT_SYMBOL_GPL(tegra210_put_utmipll_out_iddq);
+ 
++void tegra210_clk_emc_update_setting(u32 emc_src_value)
++{
++	unsigned long flags = 0;
++
++	spin_lock_irqsave(&emc_lock, flags);
++
++	writel_relaxed(emc_src_value, clk_base + CLK_SOURCE_EMC);
++	readl(clk_base + CLK_SOURCE_EMC);
++
++	spin_unlock_irqrestore(&emc_lock, flags);
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
++
++u32 tegra210_clk_emc_get_setting(void)
++{
++	unsigned long flags = 0;
++	u32 val;
++
++	spin_lock_irqsave(&emc_lock, flags);
++
++	val = readl_relaxed(clk_base + CLK_SOURCE_EMC);
++
++	spin_unlock_irqrestore(&emc_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL_GPL(tegra210_clk_emc_get_setting);
++
+ static void tegra210_utmi_param_configure(void)
+ {
+ 	u32 reg;
+@@ -3016,13 +3044,8 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 	clk = tegra_clk_register_periph("la", la_parents,
+ 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
+ 			CLK_SOURCE_LA, 0);
+-	/* emc mux */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm), 0,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       29, 3, 0, &emc_lock);
+ 
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++	clk = tegra_clk_register_mc("mc", "emc", clk_base + CLK_SOURCE_EMC,
+ 				    &emc_lock);
+ 	clks[TEGRA210_CLK_MC] = clk;
+ 
+@@ -3088,13 +3111,13 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 
+ 	/* PLLM */
+ 	clk = tegra_clk_register_pllm("pll_m", "osc", clk_base, pmc,
+-			     CLK_SET_RATE_GATE, &pll_m_params, NULL);
++			     CLK_IS_CRITICAL | CLK_SET_RATE_GATE, &pll_m_params, NULL);
+ 	clk_register_clkdev(clk, "pll_m", NULL);
+ 	clks[TEGRA210_CLK_PLL_M] = clk;
+ 
+ 	/* PLLMB */
+ 	clk = tegra_clk_register_pllmb("pll_mb", "osc", clk_base, pmc,
+-			     CLK_SET_RATE_GATE, &pll_mb_params, NULL);
++			     CLK_IS_CRITICAL | CLK_SET_RATE_GATE, &pll_mb_params, NULL);
+ 	clk_register_clkdev(clk, "pll_mb", NULL);
+ 	clks[TEGRA210_CLK_PLL_MB] = clk;
+ 
+@@ -3104,6 +3127,18 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_m_ud", NULL);
+ 	clks[TEGRA210_CLK_PLL_M_UD] = clk;
+ 
++	/* PLLMB_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_mb_ud", "pll_mb",
++					CLK_SET_RATE_PARENT, 1, 1);
++	clk_register_clkdev(clk, "pll_mb_ud", NULL);
++	clks[TEGRA210_CLK_PLL_MB_UD] = clk;
++
++	/* PLLP_UD */
++	clk = clk_register_fixed_factor(NULL, "pll_p_ud", "pll_p",
++					0, 1, 1);
++	clks[TEGRA210_CLK_PLL_P_UD] = clk;
++
++
+ 	/* PLLU_VCO */
+ 	if (!tegra210_init_pllu()) {
+ 		clk = clk_register_fixed_rate(NULL, "pll_u_vco", "pll_ref", 0,
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 5df857a..453f814 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -396,6 +396,8 @@
+ #define TEGRA210_CLK_PLL_M_UD 363
+ #define TEGRA210_CLK_PLL_C_UD 364
+ #define TEGRA210_CLK_SCLK_MUX 365
++#define TEGRA210_CLK_PLL_MB_UD 366
++#define TEGRA210_CLK_PLL_P_UD 367
+ 
+ #define TEGRA210_CLK_ACLK 370
+ 
+-- 
+1.9.1
