@@ -1,31 +1,37 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37024 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbeIMCI0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Sep 2018 22:08:26 -0400
-Subject: Re: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled
- in suspend
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
- <20180912131641.21688-1-m.szyprowski@samsung.com>
-From: Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
-Message-ID: <43460289-8685-9377-5643-6255c2c7c8e4@gmail.com>
-Date: Wed, 12 Sep 2018 23:02:03 +0200
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180912131641.21688-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
+References: <1536660771-32278-1-git-send-email-biju.das@bp.renesas.com> <1536660771-32278-9-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536660771-32278-9-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 14 Sep 2018 15:00:09 +0200
+Message-ID: <CAMuHMdV9XbkrpYcAfK_OFH+NCjbOS8QfRAoRvjxNyhn7TX6tKg@mail.gmail.com>
+Subject: Re: [PATCH 08/10] clk: renesas: r8a7743: Add r8a7744 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue, Sep 11, 2018 at 12:19 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add RZ/G1N (R8A7744) Clock Pulse Generator / Module Standby and Software
+> Reset support.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On 09/12/2018 03:16 PM, Marek Szyprowski wrote:
-> All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
-> cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
-> 
-> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Patch applied, thanks.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
