@@ -1,64 +1,42 @@
-Return-Path: <shawnguo@kernel.org>
-Date: Tue, 11 Sep 2018 09:53:21 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180911015320.GA25790@dragon>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
- <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk>
- <20180909020021.GA18838@dragon>
- <20180910151926.GA10889@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180910151926.GA10889@sirena.org.uk>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH] clk: mvebu: armada-37xx-tbg: Balance devm_clk_get in probe
+Date: Fri, 14 Sep 2018 17:34:21 +0200
+Message-Id: <20180914153421.7090-1-gregory.clement@bootlin.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 10, 2018 at 04:19:26PM +0100, Mark Brown wrote:
-> On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
-> > On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
-> 
-> > > I was expecting to get a pull request with the precursor patches in it -
-> > > the regulator driver seems to get a moderate amount of development so
-> > > there's a reasonable risk of conflicts.
-> 
-> > What about you create a stable topic branch for regulator patches and I
-> > pull it into IMX tree?
-> 
-> Sure, I can send a pull request back but the first two patches in the
-> series are ARM ones - are you OK with me just applying them and sending
-> them in the pull request or do you want to apply them first?
+The parent clock is get only to have its name, and then the clock is no
+more used, so we can safely free it using devm_clk_put.
 
-I just took another look at the series.  It seems that there is no
-build-time dependency between regulator and platform patches.  So I
-think we can handle the series like:
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/clk/mvebu/armada-37xx-tbg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- - You apply patch #3, #4 and #5 on regulator tree;
- - I apply the reset on IMX tree.
-
-There shouldn't be any build or run time regression on either tree, and
-the feature that the series adds will be available when both trees get
-merged together on -next or Linus tree.
-
-@Oleksij Is my understanding above correct?
-
-Shawn
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 71f30149e80e..caaa91a41683 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -102,6 +102,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 	parent_name = __clk_get_name(parent);
++	devm_clk_put(dev, parent);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(dev, res);
+-- 
+2.18.0
