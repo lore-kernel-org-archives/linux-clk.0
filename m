@@ -1,30 +1,59 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk
-	<linux-clk@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms+renesas@verge.net.au>
-Subject: RE: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to
- separate function
-Date: Wed, 26 Sep 2018 12:34:16 +0000
-Message-ID: 
- <TYXPR01MB1568A4A2196EEFB785E4505C8A150@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-References: <20180924164937.36536-1-chris.brandt@renesas.com>
- <20180924164937.36536-4-chris.brandt@renesas.com>
- <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
-In-Reply-To: 
- <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <rsalveti@rsalveti.net>
 MIME-Version: 1.0
+References: <20180614215358.11264-1-ilia.lin@gmail.com> <20180614215358.11264-4-ilia.lin@gmail.com>
+In-Reply-To: <20180614215358.11264-4-ilia.lin@gmail.com>
+From: Ricardo Salveti <rsalveti@rsalveti.net>
+Date: Fri, 14 Sep 2018 15:53:02 -0300
+Message-ID: <CAHYQr0rR=mcV-SxZFW+5M4CTUaTv_f_bruyq91HiGP6sqUZ3Yw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/8] clk: Use devm_ in the register fixed factor clock
+To: ilia.lin@gmail.com
+Cc: ilialin@codeaurora.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+	david.brown@linaro.org, will.deacon@arm.com,
+	Amit Kucheria <amit.kucheria@linaro.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDI2LCAyMDE4LCBHZWVydCBVeXR0
-ZXJob2V2ZW4gd3JvdGU6DQo+ID4gKy8qIFRoZSBjbG9jayBkaXZpZGVycyBpbiB0aGUgdGFibGUg
-dmFyeSBiYXNlZCBvbiBEVCBhbmQgcmVnaXN0ZXINCj4gc2V0dGluZ3MgKi8NCj4gPiArc3RhdGlj
-IHZvaWQgcjdzOTIxMF91cGRhdGVfY2xrX3RhYmxlKHN0cnVjdCBjbGsgKmV4dGFsX2Nsaywgdm9p
-ZA0KPiBfX2lvbWVtICpiYXNlKQ0KPiANCj4gQ2FuIGJlIF9faW5pdC4NCj4gDQo+IFJldmlld2Vk
-LWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiBpLmUu
-IHdpbGwgcXVldWUgaW4gY2xrLXJlbmVzYXMtZm9yLXY0LjIwLCB3aXRoIHRoZSBhYm92ZSBmaXhl
-ZC4NCg0KT0ssIHRoYW5rIHlvdSENCg0KQ2hyaXMNCg0K
+On Thu, Jun 14, 2018 at 6:55 PM <ilia.lin@gmail.com> wrote:
+>
+> From: Ilia Lin <ilialin@codeaurora.org>
+>
+> Use devm_clk_hw_register instead of clk_hw_register
+> to simplify the usage of this API. This way drivers that call
+> the clk_hw_register_fixed_factor won't need to maintain
+> a data structure for further cleanup.
+>
+> Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+> Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  drivers/clk/clk-fixed-factor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+> index a5d402de5584..8e39bda8e596 100644
+> --- a/drivers/clk/clk-fixed-factor.c
+> +++ b/drivers/clk/clk-fixed-factor.c
+> @@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+>         init.num_parents = 1;
+>
+>         hw = &fix->hw;
+> -       ret = clk_hw_register(dev, hw);
+> +       ret = devm_clk_hw_register(dev, hw);
+
+Not sure what is the current state of this patch-set, but this change
+breaks drivers calling clk_hw_register_fixed_factor with a NULL dev
+(e.g. imx_clk_fixed_factor), as devm_clk_hw_register needs a valid dev
+for devres_add to work.
+
+>         if (ret) {
+>                 kfree(fix);
+>                 hw = ERR_PTR(ret);
+> --
+> 2.11.0
+
+Cheers,
+-- 
+Ricardo Salveti de Araujo
